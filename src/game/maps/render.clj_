@@ -1,0 +1,51 @@
+(defn- render-debug-map-info
+  [g render-tile-start-x render-tile-start-y render-start-x render-start-y]
+  (let [xrange (range -1 (+ display-width-in-tiles 3))
+        yrange (range -1 (+ display-height-in-tiles 3))
+        half-tile-width (/ tile-width 2)
+        half-tile-height (/ tile-height 2)
+        half-marker-size (/ marker-size 2)
+        mouseoverbody (get-mouseover-body)]
+    (when debug/potential-field-following-mouseover-info
+      (calculate-mouseover-body-colors mouseoverbody))
+    (doseq [x xrange
+            y yrange
+            :let [tilex (+ x render-tile-start-x)
+                  tiley (+ y render-tile-start-y)
+                  cell (get-cell [tilex tiley])
+                  corner-x (+ render-start-x (* x tile-width))
+                  corner-y (+ render-start-y (* y tile-height))
+                  xrect (- (+ corner-x half-tile-width) half-marker-size)
+                  yrect (- (+ corner-y half-tile-height) half-marker-size)]
+            :when cell]
+
+      (when
+        (and
+          debug/show-besetzte-cells
+          (seq (get-body-ids cell)))
+        (fill-rect xrect yrect marker-size marker-size color/yellow))
+
+      (when debug/show-blocked-cells
+        (when (cell-blocked? cell)
+          (fill-rect xrect yrect marker-size marker-size color/red)))
+
+      (when
+        (and
+          debug/show-occupied-cells
+          (seq (:occupied (deref cell))))
+        (fill-rect xrect yrect marker-size marker-size color/yellow))
+
+      (when debug/potential-field-following-mouseover-info
+        (render-potential-field-following-mouseover-info corner-x corner-y xrect yrect cell mouseoverbody))
+
+      (when debug/show-potential-field
+        (render-potential-field-info corner-x corner-y xrect yrect cell))
+      ; :translated bedeutet hier: translate nicht wie on-screen den text.
+
+      (comment
+        (when
+          (and
+            @current-steplist
+            (steplist-contains? tilex tiley))
+          (fill-rect xrect yrect pathfnd-marker-size pathfnd-marker-size color/black))))
+

@@ -1,0 +1,4 @@
+.DS_STORE
+target/
+.lein-repl-history
+Checkouts

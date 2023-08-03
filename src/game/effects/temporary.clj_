@@ -1,0 +1,58 @@
+#_(defmethod render-effect :slow [entity* position _]
+  (let [radius (+ (g/pixels->world-units 2)
+                  (:radius entity*))]
+    (shape-drawer/filled-circle position radius (color/rgb 0 1 0 0.6))))
+
+#_(defeffect :slow
+  :modifiers {:cast-speed -50
+              :attack-speed -50
+              :movement-speed [:speed -0.5]}
+  :stacks-duration true)
+
+#_(defmethod render-effect :battle-drugs [entity* position _]
+  (let [radius (+ (g/pixels->world-units 2)
+                  (:radius entity*))]
+    (shape-drawer/filled-circle position radius (color/rgb 1 0 0 0.6))))
+
+#_(defeffect :battle-drugs
+  :modifiers {:cast-speed 50
+              :attack-speed 50
+              :movement-speed [:speed 0.5]}
+  :stacks-duration true)
+
+
+#_(defctypefn :db/update-entity! :effects [entity delta]
+  (doseq [{:keys [type counter] :as effect} (vals (:effects @entity))
+          :let [{:keys [modifiers]} (type definitions)]
+          :when (and counter
+                     (update-counter! entity delta [:effects type :counter]))]
+    ; TODO sound/animatiion it disappears ? wuuhp
+    (when modifiers
+      (db/reverse-modifiers! entity modifiers))
+    (swap! entity dissoc :effects)))
+
+#_(defmulti render-effect (fn [entity* position type] type))
+#_(defmethod render-effect :default [entity* position type])
+#_(db/defctypefn :render :effects [entity* position]
+  (doseq [{:keys [type]} (vals (:effects entity*))]
+    ; TODO how to do below/above/info etc?
+    ; -> can I somehow fold back into ctype-fns inside render-effects ?
+    (render-effect entity* position type)))
+
+#_(defn- apply!* [source target [type value]]
+  (let [{:keys [modifiers stacks-duration]} (type definitions)
+        update-effect! #(update-in! target [:effects type] %)]
+    (if (and (contains? (:effects @target) type)
+             duration)
+      (update-effect! #(update % :counter
+                               (if stacks-duration
+                                 (update :maxcnt + duration)
+                                 reset)))
+      (do
+       (when modifiers
+         (db/apply-modifiers! target modifiers))
+       (when duration
+         (when-not (:effects @target)
+           (swap! target assoc :effects {}))
+         (update-effect! (fn [_]
+                           (assoc effect :counter (make-counter duration)))))))))

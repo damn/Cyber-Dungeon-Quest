@@ -1,0 +1,64 @@
+(nsx game.effects.projectile
+  (:require [game.maps.cell-grid :as cell-grid]
+            [game.components.skills :refer (ai-should-use?)]
+            [game.components.body :refer (fire-projectile)]
+            game.effects.stun))
+
+; -> range needs to be smaller than potential field range
+; -> first range check then ray ! otherwise somewhere in contentfield out of sight
+
+(def ^:private size 0.5)
+(def ^:private maxrange 10)
+(def ^:private speed 10)
+(def ^:private maxtime (/ maxrange (/ speed 1000)))
+
+(defn- projectile-path-blocked? [[sx sy] [tx ty]]
+  (cell-grid/is-path-blocked? sx sy tx ty size))
+
+; TODO valid params direction has to be  non-nil (entities not los player ) ?
+
+; TODO pass effect params (target ..)
+(defmethod ai-should-use? :projectile [_ entity]
+  (let [target (:target (:effect-params (:skillmanager @entity)))]
+    (and (not (projectile-path-blocked? (:position @entity) ; TODO test
+                                        (:position @target)))
+         ; TODO not taking into account body sizes
+         (< (v/distance (:position @entity)
+                        (:position @target))
+            maxrange))))
+
+(comment
+ ; for chance to do hit-effect -> use this code @ hit-effects
+ ; (extend hit-effects with chance , not effects themself)
+ ; and hit-effects to text ...hmmm
+ [game.utils.random :as random]
+ (or (not chance)
+     (random/percent-chance chance)))
+
+(def ^:private hit-effects
+  [[:damage [:magic [4 8]]]
+   [:stun 500]
+   ;[:stun {:duration 200} {:chance 100}]
+   ])
+
+(defn- do-effect! [{:keys [source direction]}]
+  (fire-projectile
+   :position (:position @source)
+   :faction  (:faction  @source)
+   :size size
+   :animation (media/black-projectile)
+   :speed speed
+   :movement-vector direction
+   :maxtime maxtime
+   :piercing false
+   :hit-effects hit-effects))
+
+(effects/defeffect :projectile
+  {:text (fn [params]
+           (str/join "\n"
+                     (for [effect hit-effects]
+                       (effects/text params effect))))
+   ; TODO source,direction
+   :valid-params? (fn [{:keys [target]}]
+                    target)
+   :do! do-effect!})

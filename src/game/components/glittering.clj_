@@ -1,0 +1,22 @@
+(nsx game.components.glittering
+  (:require [game.utils.counter :as counter]))
+
+(defcomponent :glittering {:keys [animation active] :as v}
+ (create [_]
+  {:counter (counter/make-counter 1000)
+   :active true
+   :animation (g/create-animation :folder "effects/itemglitter/" :looping false :duration 150)})
+
+  (tick [_  delta]
+    (if active
+      (let [animation (animation/update animation delta)] ; -> counter updates itself (what about nested 'blocks' , wouldnt work anymore )
+        (if (animation/stopped? animation)
+          (assoc v
+                 :active false
+                 :animation (animation/restart animation))
+          (assoc v :animation animation)))
+      (counter/update-finally-merge v :counter delta {:active true})))
+
+  (render-above [_ m position]
+    (when active
+      (animation/draw-centered animation position))))

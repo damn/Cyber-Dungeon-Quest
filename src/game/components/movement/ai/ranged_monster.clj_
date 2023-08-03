@@ -1,0 +1,93 @@
+; TODO use potential field for running away !!
+; game.components.movement-controls
+(nsx game.components.movement.ai.ranged-monster
+  (:require [game.utils.counter :refer :all]
+            [game.components.skills :refer (is-usable?)]
+            [game.player.entity :refer (player-entity)])
+  (:use
+    (game.components core body)
+    (game.utils random)
+    game.maps.potential-field))
+
+(defn- runaway [body component]
+  (cond
+    (not (is-usable? body (-> @body :skills :ranged)))
+    (potential-field-follow-to-enemy body)
+
+    ; TODO could check dist-to-player
+    ; also dont use ranged weapon in close distance , should not be possible ?!
+    ; but logic of the game seems to make it possible ?
+    ; they can just decide to evade
+    (< (v/distance (:position @body) (:position @player-entity))
+       (:runaway-dist-in-tiles component))
+    (v/direction (:position @player-entity) (:position @body))
+
+    :else
+    nil))
+
+(defn- randomise [body _]
+  (cond
+    (not (is-usable? body (-> @body :skills :ranged)))
+    (potential-field-follow-to-enemy body)
+
+    :else
+    (v/normalise
+     [(if-chance 50 (rand) (- (rand)))
+      (if-chance 50 (rand) (- (rand)))])))
+
+(defn- duration-counter-control
+  [entity {:keys [current-movement-vector create-vectorfn counter] :as component} delta]
+  (if-not (:active-skill? @entity)
+    (if (or (nil? current-movement-vector)
+            (update-counter! entity delta [:movement :counter]))
+      (let [v (create-vectorfn entity component)]
+        (assoc-in! entity [:movement :current-movement-vector] v)
+        v)
+      current-movement-vector)))
+
+(defn ranged-runaway-movement-comp [runaway-dist-in-tiles]
+  {:movement {:control-update duration-counter-control
+              :create-vectorfn runaway
+              :counter (make-counter 300)
+              :current-movement-vector nil
+              :runaway-dist-in-tiles runaway-dist-in-tiles}})
+
+(defn ranged-randomly-moving-comp [duration]
+  {:movement {:control-update duration-counter-control
+              :create-vectorfn randomise
+              :counter (make-counter duration)
+              :current-movement-vector nil}})
+
+; hat nix mit ranged_monster zu tun -> tu woanders hin
+; wenn hp wieder max ist (also geheilt wurden -> finished!)
+(defn- update-lowhp-runaway [entity {:keys [running-away counter] :as c} delta]
+  (if-not (:active-skill? @entity)
+    (let [finished (and running-away (update-counter! entity delta [:movement :counter]))]
+      (when finished
+        (assoc-in! entity [:movement :running-away] false))
+      (if (and running-away (not finished))
+        (v/direction (:position @player-entity) (:position @entity))
+        (potential-field-follow-to-enemy entity)))))
+
+(defn lowhp-runaway-movement []
+  {:movement {:control-update update-lowhp-runaway
+              :running-away false
+              :counter (make-counter 0)}})
+
+(defn rand-when-low-hp [body]
+  (->> @body
+       :hp
+       val-max-ratio
+       (- 1)
+       (* 100)
+       percent-chance))
+
+(defn lowhp-dealt-dmg-trigger [body lethal]
+  (let [move-comp (:movement @body)]
+    (when (and (not lethal)
+               (not (:running-away move-comp))
+               (rand-when-low-hp body))
+      (update-in! body [:movement]
+                  #(-> %
+                       (assoc-in [:counter :maxcnt] (* (rand-int-between 3 10) 1000))
+                       (assoc-in [:running-away] true))))))

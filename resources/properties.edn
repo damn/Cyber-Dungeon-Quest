@@ -1,0 +1,6 @@
+; :creature-types -> :id :banshee ?
+; :items -> :sword
+; => make different tables
+; but what about item = skill ??
+; also item action-time == attack-time make.
+( {:id :weapon/defaults, :range 0.5, :action-time 500, :damage [5 10]})

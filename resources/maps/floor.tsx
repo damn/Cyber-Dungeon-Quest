@@ -1,0 +1,1115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tileset version="1.10" tiledversion="1.10.1" name="floor" tilewidth="48" tileheight="48" tilecount="1568" columns="56">
+ <image source="floor.png" width="2688" height="1344"/>
+ <tile id="0">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="1">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="2">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="3">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="4">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="5">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="6">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="7">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="8">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="9">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="10">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="11">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="12">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="13">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="56">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="57">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="58">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="59">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="60">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="61">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="62">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="63">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="64">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="65">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="66">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="67">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="68">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="69">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="112">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="113">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="114">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="115">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="116">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="117">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="118">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="119">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="120">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="121">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="122">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="123">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="124">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="125">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="168">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="169">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="170">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="171">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="172">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="173">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="174">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="175">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="176">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="177">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="178">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="179">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="180">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="181">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="224">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="225">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="226">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="227">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="228">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="229">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="230">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="231">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="232">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="233">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="234">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="235">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="236">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="237">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="280">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="281">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="282">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="283">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="284">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="285">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="287">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="288">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="289">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="290">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="291">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="292">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="336">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="337">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="338">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="339">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="340">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="341">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="343">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="344">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="345">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="346">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="347">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="348">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="392">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="393">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="394">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="395">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="396">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="397">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="398">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="399">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="400">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="401">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="402">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="403">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="404">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="405">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="448">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="449">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="450">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="451">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="452">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="453">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="454">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="455">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="456">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="457">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="458">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="459">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="460">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="461">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="504">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="505">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="506">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="507">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="508">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="509">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="510">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="511">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="512">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="513">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="514">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="515">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="516">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="517">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="560">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="561">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="562">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="563">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="564">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="565">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="566">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="567">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="568">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="569">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="570">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="571">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="572">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="573">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="616">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="617">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="618">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="619">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="620">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="621">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="622">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="623">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="624">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="625">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="626">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="627">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="628">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="629">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="672">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="673">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="674">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="675">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="676">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="677">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="678">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="679">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="680">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="681">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="682">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="683">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="684">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="685">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="728">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="729">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="730">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="731">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="732">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="733">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="734">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="735">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="736">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="737">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="738">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="739">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="740">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="741">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <wangsets>
+  <wangset name="floor" type="mixed" tile="-1">
+   <wangcolor name="soil" color="#ff0000" tile="-1" probability="1"/>
+   <wangcolor name="grass" color="#00ff00" tile="-1" probability="1"/>
+   <wangtile tileid="0" wangid="2,2,2,2,2,2,2,2"/>
+   <wangtile tileid="1" wangid="2,2,2,2,2,2,2,2"/>
+   <wangtile tileid="2" wangid="2,2,2,2,2,2,2,2"/>
+   <wangtile tileid="3" wangid="2,2,2,2,2,2,2,2"/>
+   <wangtile tileid="4" wangid="2,2,2,2,2,2,2,2"/>
+   <wangtile tileid="5" wangid="2,2,2,2,2,2,2,2"/>
+   <wangtile tileid="6" wangid="2,2,2,2,2,2,2,2"/>
+   <wangtile tileid="7" wangid="2,2,1,1,1,2,2,2"/>
+   <wangtile tileid="8" wangid="2,2,1,1,1,1,1,2"/>
+   <wangtile tileid="9" wangid="2,2,2,2,1,1,1,2"/>
+   <wangtile tileid="10" wangid="2,2,2,2,1,2,2,2"/>
+   <wangtile tileid="11" wangid="1,1,1,2,1,1,1,1"/>
+   <wangtile tileid="12" wangid="1,1,1,2,1,2,1,1"/>
+   <wangtile tileid="13" wangid="1,1,1,1,1,2,1,1"/>
+   <wangtile tileid="56" wangid="2,2,2,2,2,2,2,2"/>
+   <wangtile tileid="57" wangid="2,2,2,2,2,2,2,2"/>
+   <wangtile tileid="58" wangid="2,2,2,2,2,2,2,2"/>
+   <wangtile tileid="59" wangid="2,2,2,2,2,2,2,2"/>
+   <wangtile tileid="60" wangid="2,2,2,2,2,2,2,2"/>
+   <wangtile tileid="61" wangid="2,2,2,2,2,2,2,2"/>
+   <wangtile tileid="62" wangid="2,2,2,2,2,2,2,2"/>
+   <wangtile tileid="63" wangid="1,1,1,1,1,2,2,2"/>
+   <wangtile tileid="64" wangid="1,1,1,1,1,1,1,1"/>
+   <wangtile tileid="65" wangid="1,2,2,2,1,1,1,1"/>
+   <wangtile tileid="66" wangid="1,2,2,2,1,2,2,2"/>
+   <wangtile tileid="67" wangid="1,2,1,2,1,1,1,1"/>
+   <wangtile tileid="68" wangid="1,2,1,2,1,2,1,2"/>
+   <wangtile tileid="69" wangid="1,1,1,1,1,2,1,2"/>
+   <wangtile tileid="112" wangid="2,2,2,2,2,2,2,2"/>
+   <wangtile tileid="113" wangid="2,2,2,2,2,2,2,2"/>
+   <wangtile tileid="114" wangid="2,2,2,2,2,2,2,2"/>
+   <wangtile tileid="115" wangid="2,2,2,2,2,2,2,2"/>
+   <wangtile tileid="116" wangid="2,2,2,2,2,2,2,2"/>
+   <wangtile tileid="117" wangid="2,2,2,2,2,2,2,2"/>
+   <wangtile tileid="118" wangid="2,2,2,2,2,2,2,2"/>
+   <wangtile tileid="119" wangid="1,1,1,2,2,2,2,2"/>
+   <wangtile tileid="120" wangid="1,1,1,2,2,2,1,1"/>
+   <wangtile tileid="121" wangid="1,2,2,2,2,2,1,1"/>
+   <wangtile tileid="122" wangid="1,2,2,2,2,2,2,2"/>
+   <wangtile tileid="123" wangid="1,2,1,1,1,1,1,1"/>
+   <wangtile tileid="124" wangid="1,2,1,1,1,1,1,2"/>
+   <wangtile tileid="125" wangid="1,1,1,1,1,1,1,2"/>
+   <wangtile tileid="168" wangid="2,2,2,2,2,2,2,2"/>
+   <wangtile tileid="169" wangid="2,2,2,2,2,2,2,2"/>
+   <wangtile tileid="170" wangid="2,2,2,2,2,2,2,2"/>
+   <wangtile tileid="171" wangid="2,2,2,2,2,2,2,2"/>
+   <wangtile tileid="172" wangid="2,2,2,2,2,2,2,2"/>
+   <wangtile tileid="173" wangid="2,2,2,2,2,2,2,2"/>
+   <wangtile tileid="174" wangid="2,2,2,2,2,2,2,2"/>
+   <wangtile tileid="175" wangid="2,2,1,2,2,2,2,2"/>
+   <wangtile tileid="176" wangid="2,2,1,2,2,2,1,2"/>
+   <wangtile tileid="177" wangid="2,2,2,2,2,2,1,2"/>
+   <wangtile tileid="178" wangid="2,2,2,2,2,2,2,2"/>
+   <wangtile tileid="179" wangid="2,2,1,2,1,1,1,2"/>
+   <wangtile tileid="180" wangid="2,2,1,2,1,2,1,2"/>
+   <wangtile tileid="181" wangid="2,2,1,1,1,2,1,2"/>
+   <wangtile tileid="224" wangid="2,2,2,2,2,2,2,2"/>
+   <wangtile tileid="225" wangid="2,2,2,2,2,2,2,2"/>
+   <wangtile tileid="226" wangid="2,2,2,2,2,2,2,2"/>
+   <wangtile tileid="227" wangid="2,2,2,2,2,2,2,2"/>
+   <wangtile tileid="228" wangid="2,2,2,2,2,2,2,2"/>
+   <wangtile tileid="229" wangid="2,2,2,2,2,2,2,2"/>
+   <wangtile tileid="230" wangid="2,2,2,2,2,2,2,2"/>
+   <wangtile tileid="231" wangid="1,1,1,2,1,2,2,2"/>
+   <wangtile tileid="232" wangid="1,2,2,2,1,2,1,1"/>
+   <wangtile tileid="233" wangid="1,1,1,2,1,1,1,2"/>
+   <wangtile tileid="234" wangid="1,2,1,1,1,2,1,1"/>
+   <wangtile tileid="235" wangid="1,2,1,2,2,2,1,1"/>
+   <wangtile tileid="236" wangid="1,2,1,2,2,2,1,2"/>
+   <wangtile tileid="237" wangid="1,1,1,2,2,2,1,2"/>
+   <wangtile tileid="280" wangid="2,2,2,2,2,2,2,2"/>
+   <wangtile tileid="281" wangid="2,2,2,2,2,2,2,2"/>
+   <wangtile tileid="282" wangid="2,2,2,2,2,2,2,2"/>
+   <wangtile tileid="283" wangid="2,2,2,2,2,2,2,2"/>
+   <wangtile tileid="284" wangid="2,2,2,2,2,2,2,2"/>
+   <wangtile tileid="285" wangid="2,2,2,2,2,2,2,2"/>
+   <wangtile tileid="287" wangid="1,2,1,2,1,2,2,2"/>
+   <wangtile tileid="288" wangid="1,2,2,2,1,2,1,2"/>
+   <wangtile tileid="289" wangid="2,2,1,2,1,2,2,2"/>
+   <wangtile tileid="290" wangid="2,2,2,2,1,2,1,2"/>
+   <wangtile tileid="291" wangid="1,2,1,2,1,2,1,1"/>
+   <wangtile tileid="292" wangid="1,1,1,2,1,2,1,2"/>
+   <wangtile tileid="336" wangid="2,2,2,2,2,2,2,2"/>
+   <wangtile tileid="337" wangid="2,2,2,2,2,2,2,2"/>
+   <wangtile tileid="338" wangid="2,2,2,2,2,2,2,2"/>
+   <wangtile tileid="339" wangid="2,2,2,2,2,2,2,2"/>
+   <wangtile tileid="340" wangid="2,2,2,2,2,2,2,2"/>
+   <wangtile tileid="341" wangid="2,2,2,2,2,2,2,2"/>
+   <wangtile tileid="343" wangid="1,2,1,1,1,2,2,2"/>
+   <wangtile tileid="344" wangid="1,2,2,2,1,1,1,2"/>
+   <wangtile tileid="345" wangid="1,2,1,2,2,2,2,2"/>
+   <wangtile tileid="346" wangid="1,2,2,2,2,2,1,2"/>
+   <wangtile tileid="347" wangid="1,2,1,2,1,1,1,2"/>
+   <wangtile tileid="348" wangid="1,2,1,1,1,2,1,2"/>
+  </wangset>
+  <wangset name="mixed with invisible" type="mixed" tile="-1">
+   <wangcolor name="pebblestone" color="#ff0000" tile="-1" probability="1"/>
+   <wangcolor name="invisible" color="#37a6f5" tile="-1" probability="1"/>
+   <wangtile tileid="1225" wangid="2,2,1,1,1,2,2,2"/>
+   <wangtile tileid="1226" wangid="2,2,1,1,1,1,1,2"/>
+   <wangtile tileid="1227" wangid="2,2,2,2,1,1,1,2"/>
+   <wangtile tileid="1228" wangid="2,2,2,2,1,2,2,2"/>
+   <wangtile tileid="1229" wangid="1,1,1,2,1,1,1,1"/>
+   <wangtile tileid="1230" wangid="1,1,1,2,1,2,1,1"/>
+   <wangtile tileid="1231" wangid="1,1,1,1,1,2,1,1"/>
+   <wangtile tileid="1281" wangid="1,1,1,1,1,2,2,2"/>
+   <wangtile tileid="1282" wangid="1,1,1,1,1,1,1,1"/>
+   <wangtile tileid="1283" wangid="1,2,2,2,1,1,1,1"/>
+   <wangtile tileid="1284" wangid="1,2,2,2,1,2,2,1"/>
+   <wangtile tileid="1285" wangid="1,2,1,2,1,1,1,1"/>
+   <wangtile tileid="1286" wangid="1,2,1,2,1,2,1,2"/>
+   <wangtile tileid="1287" wangid="1,1,1,1,1,2,1,2"/>
+   <wangtile tileid="1337" wangid="1,1,1,2,2,2,2,2"/>
+   <wangtile tileid="1338" wangid="1,1,1,2,2,2,1,1"/>
+   <wangtile tileid="1339" wangid="1,2,2,2,2,2,1,1"/>
+   <wangtile tileid="1340" wangid="1,2,2,2,2,2,2,1"/>
+   <wangtile tileid="1341" wangid="1,2,1,1,1,1,1,1"/>
+   <wangtile tileid="1342" wangid="1,2,1,1,1,1,1,2"/>
+   <wangtile tileid="1343" wangid="1,1,1,1,1,1,1,2"/>
+   <wangtile tileid="1393" wangid="2,2,1,2,2,2,2,2"/>
+   <wangtile tileid="1394" wangid="2,2,1,2,2,2,1,2"/>
+   <wangtile tileid="1395" wangid="2,2,2,2,2,2,1,2"/>
+   <wangtile tileid="1397" wangid="2,2,1,2,1,1,1,2"/>
+   <wangtile tileid="1398" wangid="2,2,1,2,1,2,1,2"/>
+   <wangtile tileid="1399" wangid="2,2,1,1,1,2,1,2"/>
+   <wangtile tileid="1449" wangid="1,1,1,2,1,0,0,0"/>
+   <wangtile tileid="1450" wangid="1,0,0,0,1,2,1,1"/>
+   <wangtile tileid="1451" wangid="1,1,1,2,1,1,1,2"/>
+   <wangtile tileid="1452" wangid="1,2,1,1,1,1,1,1"/>
+   <wangtile tileid="1453" wangid="1,2,1,2,2,2,1,1"/>
+   <wangtile tileid="1454" wangid="1,2,1,2,2,2,1,2"/>
+   <wangtile tileid="1455" wangid="1,1,1,2,2,2,1,2"/>
+   <wangtile tileid="1505" wangid="1,2,1,2,1,0,0,0"/>
+   <wangtile tileid="1506" wangid="1,0,0,0,1,2,1,2"/>
+   <wangtile tileid="1507" wangid="2,2,1,2,1,2,2,2"/>
+   <wangtile tileid="1508" wangid="2,2,2,2,1,2,1,2"/>
+   <wangtile tileid="1509" wangid="1,2,1,2,1,2,1,1"/>
+   <wangtile tileid="1510" wangid="1,1,1,2,1,2,1,2"/>
+   <wangtile tileid="1561" wangid="1,2,1,1,1,0,0,0"/>
+   <wangtile tileid="1562" wangid="1,0,0,0,1,1,1,2"/>
+   <wangtile tileid="1563" wangid="1,2,1,2,2,2,2,2"/>
+   <wangtile tileid="1564" wangid="1,2,2,2,2,2,1,2"/>
+   <wangtile tileid="1565" wangid="1,2,1,2,1,1,1,2"/>
+   <wangtile tileid="1566" wangid="1,2,1,1,1,2,1,2"/>
+   <wangtile tileid="1567" wangid="2,2,2,2,2,2,2,2"/>
+  </wangset>
+ </wangsets>
+</tileset>
