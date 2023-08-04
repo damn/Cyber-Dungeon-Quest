@@ -6,7 +6,9 @@
                  [com.github.damn/grid2d "1.0"]
 
 
-                 [nstools "0.2.5"]
+                 [com.github.clojens/clj-nstools "635f408a29"]
+                 ;[nstools "0.2.5"]
+
                  [potemkin "0.4.6"]
 
                  ;[gdl "1.0-SNAPSHOT"]  ; checkouts directory (TODO done automtaic ?)
