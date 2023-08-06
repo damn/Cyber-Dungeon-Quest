@@ -2,12 +2,22 @@
 ; defmedia ?
 ; media/ ?
 (ns game.media
-  (:require [gdl.app :as app]
+  (:require [gdl.utils :refer [set-var-root dispose]]
+            [gdl.app :as app]
+            [gdl.files :as files]
             [gdl.graphics.image :as image]
             [gdl.graphics.animation :as animation]
             [gdl.graphics.freetype :as freetype]))
 
-(freetype/def-font font "exocet/films.EXL_____.ttf" 16)
+(declare font)
+
+(app/on-create
+ (set-var-root #'font
+               (freetype/generate (files/internal "exocet/films.EXL_____.ttf")
+                                  16)))
+
+(app/on-destroy
+ (dispose font))
 
 ; spritesheet sprite position starts start top - left !
 
