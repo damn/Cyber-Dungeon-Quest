@@ -2,20 +2,12 @@
   :repositories [["jitpack" "https://jitpack.io"]]
   :dependencies [[org.clojure/clojure "1.11.1"]
                  [org.clojure/tools.macro "0.1.5"] ; TODO remove defnks
-
-                 [com.github.damn/grid2d "1.0"]
-
-
                  [com.github.clojens/clj-nstools "635f408a29"]
                  ;[nstools "0.2.5"]
-
                  [potemkin "0.4.6"]
-
-                 ;[gdl "1.0-SNAPSHOT"]  ; checkouts directory (TODO done automtaic ?)
-                 [com.github.damn/gdl "main-SNAPSHOT"] ; jitpack
-                 [com.github.damn/x.x "c75dae5c09"] ; jitpack
-                 ]
-
+                 [com.github.damn/grid2d "1.0"]
+                 [com.github.damn/x.x "main-SNAPSHOT"]
+                 [com.github.damn/gdl "main-SNAPSHOT"]]
   :plugins [[jonase/eastwood "1.2.2"]
             [lein-ancient "1.0.0-RC3"]
             [lein-codox "0.10.8"]
