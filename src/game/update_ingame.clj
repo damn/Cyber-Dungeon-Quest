@@ -45,28 +45,28 @@
 
 ; TODO == tick-e! tick-c / tick-e / tick-e! ? system = 'tick' only!
 
+(defn- tick-c [{v 1 :as c} delta]
+  (if-let [delta (delta? v delta)]
+    (tick c delta)
+    v))
+
+(defn- tick-e [{v 1 :as c} e delta]
+  (if-let [delta (delta? v delta)]
+    (tick! c e delta)
+    nil))
+
 ; no tick-e => if components working with each other, then it should be only 1 component !
 ; then move them together
 ; but tick! is always needed if we work with other entities
+; TODO only those keys who are subscribed to the 'tick!' event !
+; => (subscribed-keys tick! (keys @e))
+; => could be cached per keyset-to-keyset comparison -> 2 keysets give a hash ?
+; the hash could link to another keyset
+; each 'keys' could be a hash number saved in the map
+; do I need special extended maps ? maybe I dont think so
 (defn- tick-entity! [e delta]
-  (let [m (update-map (fn [{k 0 v 1 :as c}]
-                        (if-let [delta (delta? v delta)]
-                          (tick c delta)
-                          v))
-                      @e)]
-    (reset! e m))
-  ; TODO only those keys who are subscribed to the 'tick!' event !
-  ; => (subscribed-keys tick! (keys @e))
-  ; => could be cached per keyset-to-keyset comparison -> 2 keysets give a hash ?
-  ; the hash could link to another keyset
-  ; each 'keys' could be a hash number saved in the map
-  ; do I need special extended maps ? maybe I dont think so
-  (doseq [k (keys @e)]
-    (let [v (k @e)
-          c [k v]]
-      (if-let [delta (delta? v delta)]
-        (tick! c e delta)
-        nil))))
+  (swap! e update-map tick-c delta)
+  (doseq-entity e     tick-e delta))
 
 ; TODO if we work with datoms directly
 ; we have only 1 function/parameter :  [e a v]

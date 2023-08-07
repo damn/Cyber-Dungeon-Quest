@@ -17,7 +17,7 @@
    :valid-params? (fn [{:keys [source target]}]
                     (and target)) ; TODO needs :speed/:skillmanager ?!
    :do! (fn [{:keys [target] duration :value}]
-          (doseq-entity stun! target) ; TODO interrupt? (as sepearte ability also ? )
+          (doseq-entity target stun!) ; TODO interrupt? (as sepearte ability also ? )
           (modifiers/apply! target stun-modifiers)
           (if-let [stun-effect (->> @target
                                     :children

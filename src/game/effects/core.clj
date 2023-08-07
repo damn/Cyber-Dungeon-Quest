@@ -40,7 +40,7 @@
 
 (defn- trigger-affected! [target]
   (when target
-    (doseq-entity affected! target)))
+    (doseq-entity target affected!)))
 
 (defn do-effect! [params effect]
   (do-effect!* params effect)

@@ -39,8 +39,8 @@
 
 (defn create-entity! [m]
   {:pre [(not (contains? m :id))]}
-  (->> (assoc m :id nil)
-       (update-map create)
+  (-> (assoc m :id nil)
+      (update-map create)
       atom
       (doseq-entity create!)
       (doseq-entity after-create!)))
@@ -50,7 +50,7 @@
 (defn destroy-to-be-removed-entities! []
   (doseq [e (filter (comp :destroyed? deref) (vals @ids->entities))
           :when (exists? e)] ; TODO why is this ?
-    (swap! e #(update-map destroy %))
-    (doseq-entity destroy! e)))
+    (swap! e update-map destroy)
+    (doseq-entity e destroy!)))
 
 

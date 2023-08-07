@@ -226,10 +226,8 @@
 
 (defn apply-moved-systems! [e direction-vector]
   ; systems could apply to sub-components , specified in systems definition
-  (swap! e update :body #(update-map (fn [c] (moved c direction-vector))
-                                     %
-                                     ))
-  (doseq-entity moved! e))
+  (swap! e update :body update-map moved direction-vector)
+  (doseq-entity e moved!))
 
 ; TODO put movement-vector here also, make 'movement' component
 ; and further above 'body' component
