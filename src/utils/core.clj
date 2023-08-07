@@ -1,7 +1,6 @@
 (ns utils.core
   (:require (clojure [pprint :refer (pprint)]
                      set)
-            [clojure.tools.macro :refer (name-with-attributes)]
             [clojure.java.io :as io]
             [clojure.string :as str]))
 

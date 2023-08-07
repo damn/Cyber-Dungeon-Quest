@@ -1,7 +1,6 @@
 (defproject cyberdungeonquest "-SNAPSHOT"
   :repositories [["jitpack" "https://jitpack.io"]]
   :dependencies [[org.clojure/clojure "1.11.1"]
-                 [org.clojure/tools.macro "0.1.5"] ; TODO remove defnks
                  [com.github.clojens/clj-nstools "635f408a29"]
                  ;[nstools "0.2.5"]
                  [potemkin "0.4.6"]
