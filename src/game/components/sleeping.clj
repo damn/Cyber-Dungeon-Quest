@@ -29,11 +29,11 @@
     (modifiers/apply! entity modifiers))
 
   (render-above [_ {:keys [body]} [x y]]
-    (g/draw-text {:font media/font
-                  :text "zzz"
-                  :x x
-                  :y (+ y (:half-height body))
-                  :up? true}))
+    (font/draw-text {:font media/font
+                     :text "zzz"
+                     :x x
+                     :y (+ y (:half-height body))
+                     :up? true}))
 
   (render-info [_ entity* position]
     (when (:mouseover? entity*)

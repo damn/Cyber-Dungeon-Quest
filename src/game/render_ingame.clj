@@ -18,7 +18,7 @@
         (game.maps contentfields)))
 
 (defn- geom-test []
-  (let [position (g/map-coords)
+  (let [position (world/mouse-position)
         radius 0.8
         circle {:position position :radius radius}]
     (shape-drawer/circle position radius (color/rgb 1 0 0 0.5))
@@ -40,16 +40,16 @@
        (filter #(in-line-of-sight? @player-entity %))))
 
 (defn- tile-debug []
-  (let [[left-x right-x bottom-y top-y] (g/world-frustum)]
+  (let [[left-x right-x bottom-y top-y] (world/camera-frustum)]
     (shape-drawer/grid (int left-x)
                        (int bottom-y)
-                       (inc (int (g/world-viewport-width)))
-                       (+ 2 (int (g/world-viewport-height)))
+                       (inc (int (world/viewport-width)))
+                       (+ 2 (int (world/viewport-height)))
                        1
                        1
                        (color/rgb 0.5 0.5 0.5 0.5))
 
-    (doseq [[x y] (g/visible-tiles)
+    (doseq [[x y] (world/visible-tiles)
             :let [cell (game.maps.cell-grid/get-cell [x y])
                   faction :good
                   {:keys [distance entity]} (get-in @cell [faction])]
@@ -77,7 +77,7 @@
 
 
   ; highlight current mouseover-tile
-  #_(let [[x y] (mapv int (g/map-coords))
+  #_(let [[x y] (mapv int (world/mouse-position))
           cell (game.maps.cell-grid/get-cell [x y])]
       (shape-drawer/rectangle x y 1 1 (color/rgb 0 1 0 0.5))
       (g/render-readable-text x y {:shift false}
@@ -87,7 +87,7 @@
                                (pr-str (:potential-field @cell))])))
 
 (defn- print-mouse-tile-position []
-  (let [[tile-x tile-y] (g/map-coords)]
+  (let [[tile-x tile-y] (world/mouse-position)]
     (str (float tile-x) " " (float tile-y))))
 
 ; y selbst aufbauen mit font height.
@@ -115,12 +115,7 @@
   (render-message-to-player)) ; TODO render over gui windows... in extra window @ stage ?? top lvl ?
 
 (defn render-game []
-  (tiled/render-map
-   (:tiled-map (get-current-map-data))
-   #'tile-color-setter)
-
-  (g/render-world
-   render-map-content)
-
-  (g/render-gui
-   render-gui))
+  (tiled/render-map (:tiled-map (get-current-map-data))
+                    #'tile-color-setter)
+  (world/render render-map-content)
+  (gui/render render-gui))

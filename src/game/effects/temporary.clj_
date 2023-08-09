@@ -1,5 +1,5 @@
 #_(defmethod render-effect :slow [entity* position _]
-  (let [radius (+ (g/pixels->world-units 2)
+  (let [radius (+ (world/pixels->world-units 2)
                   (:radius entity*))]
     (shape-drawer/filled-circle position radius (color/rgb 0 1 0 0.6))))
 
@@ -10,7 +10,7 @@
   :stacks-duration true)
 
 #_(defmethod render-effect :battle-drugs [entity* position _]
-  (let [radius (+ (g/pixels->world-units 2)
+  (let [radius (+ (world/pixels->world-units 2)
                   (:radius entity*))]
     (shape-drawer/filled-circle position radius (color/rgb 1 0 0 0.6))))
 

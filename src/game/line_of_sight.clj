@@ -31,14 +31,14 @@
   (let [[x y] (:position entity*)
         x (float x)
         y (float y)
-        [cx cy] (g/camera-position)
+        [cx cy] (world/camera-position)
         px (float cx)
         py (float cy)
         xdist (Math/abs (- x px))
         ydist (Math/abs (- y py))]
     (and
-      (<= xdist (inc (/ (g/world-viewport-width)  2)))
-      (<= ydist (inc (/ (g/world-viewport-height) 2))))))
+      (<= xdist (inc (/ (world/viewport-width)  2)))
+      (<= ydist (inc (/ (world/viewport-height) 2))))))
 
 ; TODO big entities (big effects, nova effects, > 1 width/height)
 ; => check on-screen with width&height and also with ray-blocked to all 4 corners

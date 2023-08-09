@@ -167,12 +167,11 @@
               (reset! current-grid (generate-cave)))
             (destroy [_])
             (render [_]
-              (render-gui
-               (fn []
-                 (render-grid @current-grid)
-                 ;(draw-string 0 0 (str (get-mouse-tile-pos)))
-                 ;(draw-spawn-field-grid (/ border 2) (/ border 2) w h)
-                 )))
+              (gui/render (fn []
+                            (render-grid @current-grid)
+                            ;(draw-string 0 0 (str (get-mouse-tile-pos)))
+                            ;(draw-spawn-field-grid (/ border 2) (/ border 2) w h)
+                            )))
             (update-screen [_ delta]
               (doseq [[k command] key-commands
                       :let [f @(find-var command)]]

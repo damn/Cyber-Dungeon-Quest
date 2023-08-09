@@ -1,5 +1,5 @@
 (nsx game.start
-  (:require [gdl.backends.lwjgl3 :as lwjgl3]
+  (:require [gdl.game :as game]
             [mapgen.tiledmap-renderer :refer (tiledmap-renderer)]
             (game.screens [main         :refer (mainmenu-screen)]
                           [load-session :refer  (loading-screen)]
@@ -45,41 +45,24 @@
 ; 28.5 tiles -> 32 width module size -> 128
 ; 16 -> 20 height modules size - 80
 
-(def tile-size 48)
-(set-var-root #'g/world-unit-scale (/ 1 tile-size))
-
-(def screen-width 1440)
-(def screen-height 900)
-
-; TODO I want to be able to zoom ingame! (mousewheel, touchpad zoom)
-(def scale 1)
-
-
 ; TODO save window  position /resizing on restart
 ; (app get window & pass to lwjgl/create-app ... easy...
 ; user-config.edn (sound on/off/window fullcsreen/position/etc.)
-(def config
+(def window-config
   {:title "Cyber Dungeon Quest"
-   :width  screen-width
-   :height screen-height
+   :width  1440 ; TODO when setting full screen, uses the window size not full w/h, this is MBP full screen w/h
+   :height 900
    :full-screen false
-   :fps nil}) ; TODO dont limit!
-
-(defn create-game []
-  (game/create {:mainmenu mainmenu-screen
-                :loading loading-screen
-                :ingame ingame-screen
-                :minimap minimap-screen
-                :options options-screen
-                :editor tiledmap-renderer}))
+   :fps nil}) ; TODO dont limit! / config missign ?
 
 (defn app []
-  (lwjgl3/create-app (create-game) config))
-
-; Start dev-loop:
-; lein run -m gdl.dev-loop game.start app
-
-
-; Adjust to changes in gdl
-; app/defmanaged
-; what else ?
+  (game/start {:screens {:mainmenu mainmenu-screen
+                         :loading loading-screen
+                         :ingame ingame-screen
+                         :minimap minimap-screen
+                         :options options-screen
+                         :editor tiledmap-renderer}
+               :tile-size 48
+               :window window-config
+               :log-lc? true
+               :ns-components [[:x.temp]]}))

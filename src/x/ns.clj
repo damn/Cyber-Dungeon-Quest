@@ -1,11 +1,12 @@
 (ns x.ns
   (:require [clojure.string :as str]
             (x [x       :refer :all]
-               [db      :refer :all]
+               [db      :refer :all] ; TODO make :as db
                [systems :refer :all]
+               [temp        :as app]
                [session :as session]) ; TODO session also a system ! on db component !!!
-            (gdl [utils :refer :all]
-                 [app       :as app]
+            (gdl ;[utils :refer :all]
+                 app
                  [game      :as game]
                  [input     :as input]
                  [audio     :as audio]
@@ -18,7 +19,11 @@
             (gdl.graphics [color        :as color]
                           [shape-drawer :as shape-drawer]
                           [image        :as image]
-                          [animation    :as animation])
+                          [animation    :as animation]
+                          [gui :as gui]
+                          [world :as world]
+                          [font :as font]
+                          )
             ;; TODO what to do with those ???
             [utils.core :refer :all]
             [game.media :as media]

@@ -24,7 +24,7 @@
     ; default font or game font ?
     ; or just highlight that entity somehow
     ; or ignore @ normal game , at debug highlight and stop game.
-    (g/draw-text {:font media/font :x x,:y y,:text (str "[RED]" info)})))
+    (font/draw-text {:font media/font :x x,:y y,:text (str "[RED]" info)})))
 
 ; if lightning => pass render-on-map argument 'colorsetter' by default
 ; on all render-systems , has to be handled & everything has to have body then?
@@ -114,12 +114,12 @@
 ; => TODO just :text component ! !!! WTF
 (defcomponent :string-effect _
   (render-above [_ {:keys [text parent]} [x y]]
-    (g/draw-text {:font media/font
-                  :text text
-                  :x x
-                  :y (+ y (:half-height (:body @parent))
-                        (g/pixels->world-units hpbar-height-px))
-                  :up? true})))
+    (font/draw-text {:font media/font
+                     :text text
+                     :x x
+                     :y (+ y (:half-height (:body @parent))
+                           (world/pixels->world-units hpbar-height-px))
+                     :up? true})))
 
 ; TODO (destroy! => create a separate string entity which loves on for another some time
 ; otherwise suddenly dissappears
@@ -182,7 +182,7 @@
 ; TODO unused -> in body effect component
 (defcomponent :render-filled-circle {:keys [target color]}
   (render [_ m position]
-    (let [radius (+ (g/pixels->world-units 2)
+    (let [radius (+ (world/pixels->world-units 2)
                     (:radius @target))]
       (shape-drawer/filled-circle position radius color))))
 

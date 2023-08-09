@@ -2,7 +2,9 @@
   (:require [game.ui.mouseover-entity :refer (show-entity-props-on-mouseover)]
             ;[game.line-of-sight :refer (player-line-of-sight-checks)]
             [game.components.body :refer (show-body-bounds)]
-            [game.components.skills :refer (show-skill-icon-on-active)]))
+            [game.components.skills :refer (show-skill-icon-on-active)])
+  (:import com.badlogic.gdx.scenes.scene2d.Stage)
+  )
 
 ; no protocol
 (defprotocol StatusCheckBox
@@ -21,7 +23,7 @@
   (reify StatusCheckBox
     (get-text [this] (name (:name (meta avar))))
     (get-state [this] @avar)
-    (set-state [this is-selected] (set-var-root avar is-selected))))
+    (set-state [this is-selected] (.bindRoot avar is-selected))))
 
 ;(status-check-box
 ;  (get-text [this] "Music")
@@ -69,9 +71,9 @@
          (get-state status)]))
     (initial-data [_])))
 
-(def ^:private exit #(game/set-screen :ingame))
+(def ^:private exit #(gdl.app/set-screen :ingame))
 
-(ui/def-stage stage)
+(app/defmanaged ^:dispose ^Stage stage (ui/stage))
 
 (app/on-create
  (def table (ui/table))
@@ -80,7 +82,7 @@
  (.center table)
  (.setDebug table false)
  (def resume-button   (ui/text-button "Resume" exit))
- (def exit-button     (ui/text-button "Exit"   #(game/set-screen :mainmenu)))
+ (def exit-button     (ui/text-button "Exit"   #(gdl.app/set-screen :mainmenu)))
  (def padding 25)
  (.padBottom (.add table resume-button) (float padding))
  (.row table)
@@ -102,17 +104,17 @@
 
 (defn- render* []
   (image/draw-centered menu-bg-image
-                       [(/ (g/viewport-width)  2)
-                        (/ (g/viewport-height) 2)])
+                       [(/ (gui/viewport-width)  2)
+                        (/ (gui/viewport-height) 2)])
   (ui/draw-stage stage))
 
-(game/defscreen options-screen
-  :show (fn []
-          (input/set-processor stage))
-  :dispose (fn [])
-  :render (fn []
-            (g/render-gui render*))
-  :update (fn [delta]
-            (ui/update-stage stage delta)
-            (when (input/is-key-pressed? :ESCAPE)
-              (exit))))
+(def options-screen
+  (reify gdl.app/Screen
+    (show [_]
+      (input/set-processor stage))
+    (render [_]
+      (gui/render render*))
+    (tick [_ delta]
+      (ui/update-stage stage delta)
+      (when (input/is-key-pressed? :ESCAPE)
+        (exit)))))

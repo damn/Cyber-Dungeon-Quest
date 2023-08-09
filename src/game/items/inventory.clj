@@ -118,7 +118,7 @@
 
 (defn render-item-in-hand-on-cursor []
   (when @item-in-hand
-    (image/draw-centered (:image @item-in-hand) (input/get-mouse-pos))))
+    (image/draw-centered (:image @item-in-hand) (gui/mouse-position))))
 
 (defn- stackable? [item-a item-b]
   (and (:count item-a)
@@ -427,7 +427,7 @@
 (import 'com.badlogic.gdx.math.Vector2)
 
 (defn- mouseover? [^com.badlogic.gdx.scenes.scene2d.Actor actor]
-  (let [[x y] (g/mouse-coords)
+  (let [[x y] (gui/mouse-position)
         v (.stageToLocalCoordinates actor (Vector2. x y))]
     (.hit actor (.x v) (.y v) true)))
 

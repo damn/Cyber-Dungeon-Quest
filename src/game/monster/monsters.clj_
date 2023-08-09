@@ -161,8 +161,8 @@
         (audio/play "bfxr_monstercast.wav")
         (rand-spawn-monster mlist
                             (:position @player-entity)
-                            (/ (world-viewport-width) 2)
-                            (/ (world-viewport-height) 2)
+                            (/ (world/viewport-width) 2)
+                            (/ (world/viewport-height) 2)
                             :nospawn (rand-int-between 1 9))
         (assoc-in! entity [(:ctype c) :counter :maxcnt] (rand-int-between 1000 20000)))))))
 

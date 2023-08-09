@@ -5,11 +5,11 @@
     [game.player.session-data :only (current-character-name)]))
 
 (defn- render-infostr-on-bar [infostr y h]
-  (g/draw-text {:font media/font
-                :text infostr
-                :x (/ (g/viewport-width) 2)
-                :y (+ y 2)
-                :up? true}))
+  (font/draw-text {:font media/font
+                   :text infostr
+                   :x (/ (gui/viewport-width) 2)
+                   :y (+ y 2)
+                   :up? true}))
 
 (app/on-create
  (let [scale 2] ; TODO FIXME scale of the whole all game things can set somewhere (gui-scale) for all dists, etc.
@@ -26,7 +26,7 @@
   (render-infostr-on-bar (str (readable-number (minmaxval 0)) "/" (minmaxval 1) " " name) y rahmenh))
 
 (defn- render-player-stats []
-  (let [x (- (/ (g/viewport-width) 2)
+  (let [x (- (/ (gui/viewport-width) 2)
              (/ rahmenw 2))
         y-hp 54
         y-mana (+ y-hp rahmenh)]

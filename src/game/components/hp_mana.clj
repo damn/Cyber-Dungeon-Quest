@@ -115,8 +115,8 @@
       (when (or (< ratio 1) mouseover?)
         (let [x (- x half-width)
               y (+ y half-height)
-              height (g/pixels->world-units hpbar-height-px)
-              border (g/pixels->world-units borders-px)]
+              height (world/pixels->world-units hpbar-height-px)
+              border (world/pixels->world-units borders-px)]
           (shape-drawer/filled-rectangle x y width height color/black)
           (shape-drawer/filled-rectangle (+ x border)
                                          (+ y border)

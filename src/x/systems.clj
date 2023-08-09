@@ -1,6 +1,9 @@
 (ns x.systems
   (:require [x.x :refer [defsystem]]))
 
+; TODO move systems where they are used !
+; no HUGE BIG SYSTEMS NS
+
 ; x.db
 
 (defsystem create        [c])

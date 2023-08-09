@@ -6,22 +6,22 @@
 (def ^:private render-once (atom false))
 
 ; TODO not showing at all
-(game/defscreen loading-screen
-  :show (fn []
-          (reset! render-once false))
-  :render (fn []
-            (g/render-gui
-             (fn []
-               (reset! render-once true)
-               #_(font/draw-text "Loading..."
-                               (/ (g/viewport-width) 2)
-                               (/ (g/viewport-height) 2)
-                               #_{:centerx true}
-                               ))))
-  :update (fn [delta]
-            (when @render-once
-              ;(log "Loading new session")
-              (game.player.session-data/init @is-loaded-character)
-              ;(log "Finished loading new session")
-              (game/set-screen :ingame))))
+(def loading-screen
+  (reify gdl.app/Screen
+    (show [_]
+      (reset! render-once false))
+    (render [_]
+      (gui/render (fn []
+                    (reset! render-once true)
+                    #_(font/draw-text "Loading..."
+                                      (/ (gui/viewport-width) 2)
+                                      (/ (gui/viewport-height) 2)
+                                      #_{:centerx true}
+                                      ))))
+    (tick [_ delta]
+      (when @render-once
+        ;(log "Loading new session")
+        (game.player.session-data/init @is-loaded-character)
+        ;(log "Finished loading new session")
+        (gdl.app/set-screen :ingame)))))
 

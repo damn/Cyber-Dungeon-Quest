@@ -18,10 +18,10 @@
                                 (remove (fn [[position value]]
                                           (false? value))
                                         (seq @(:explored-tile-corners (get-current-map-data)))))
-        camera @#'gdl.graphics/world-camera
+        camera world/camera
         viewport-width (.viewportWidth camera)
         viewport-height (.viewportHeight camera)
-        [px py] (g/camera-position)
+        [px py] (world/camera-position)
         left   (apply min-key (fn [[x y]] x) positions-explored)
         top    (apply max-key (fn [[x y]] y) positions-explored)
         right  (apply max-key (fn [[x y]] x) positions-explored)
@@ -35,7 +35,7 @@
 
 ; TODO move to gdl.graphics - also in mapgen.tiledmap-renderer
 (defn- set-zoom [amount]
-  (let [camera @#'gdl.graphics/world-camera] ; keep it public why not?!
+  (let [camera world/camera] ; keep it public why not?!
     (set! (.zoom camera) amount)
     (.update camera)))
 
@@ -47,17 +47,18 @@
                     minimap-color-setter))
 
 (defn- render-map-level []
-  (shape-drawer/filled-circle (g/camera-position) 0.5 color/green)) ; render player..
+  (shape-drawer/filled-circle (world/camera-position) 0.5 color/green)) ; render player..
 
-(game/defscreen minimap-screen
-  :show (fn []
-          (reset! zoom-setting (calculate-zoom))
-          (set-zoom @zoom-setting))
-  :render (fn []
-            (render-minimap)
-            (g/render-world render-map-level))
-  :update (fn [delta]
-            (when (or (input/is-key-pressed? :TAB)
-                      (input/is-key-pressed? :ESCAPE))
-              (set-zoom 1)
-              (game/set-screen :ingame))))
+(def minimap-screen
+  (reify gdl.app/Screen
+    (show [_]
+      (reset! zoom-setting (calculate-zoom))
+      (set-zoom @zoom-setting))
+    (render [_]
+      (render-minimap)
+      (world/render render-map-level))
+    (tick [_ delta]
+      (when (or (input/is-key-pressed? :TAB)
+                (input/is-key-pressed? :ESCAPE))
+        (set-zoom 1)
+        (gdl.app/set-screen :ingame)))))

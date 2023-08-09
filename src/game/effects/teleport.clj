@@ -10,7 +10,7 @@
     :cost 15
     :info "Teleports you to the target destination."
     {:check-usable (fn [entity _]
-                     (valid-position? (g/map-coords)
+                     (valid-position? (world/mouse-position)
                                       entity))
      :do-skill (fn [entity component]
                  (audio/play "bfxr_playerteleport.wav")

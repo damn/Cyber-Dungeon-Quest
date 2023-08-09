@@ -2,8 +2,7 @@
 ; defmedia ?
 ; media/ ?
 (ns game.media
-  (:require [gdl.utils :refer [set-var-root dispose]]
-            [gdl.app :as app]
+  (:require [x.temp :as app :refer [set-var-root dispose]]
             [gdl.files :as files]
             [gdl.graphics.image :as image]
             [gdl.graphics.animation :as animation]

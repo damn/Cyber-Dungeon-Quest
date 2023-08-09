@@ -6,11 +6,11 @@
 (defcomponent :clickable {:keys [text]}
   (render [_ {:keys [mouseover? body]} [x y]]
     (when (and mouseover? text)
-      (g/draw-text {:font media/font
-                    :text text
-                    :x x
-                    :y (+ y (:half-height body))
-                    :up? true}))))
+      (font/draw-text {:font media/font
+                       :text text
+                       :x x
+                       :y (+ y (:half-height body))
+                       :up? true}))))
 
 (def ^:private click-distance-tiles 1.5)
 

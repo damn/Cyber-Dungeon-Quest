@@ -62,8 +62,8 @@
 (defn intern-nsx []
   (patch-clojure-tools-namespace)
   ; TODO select which symbols .... do this sparingly , only 'ns+' / 'x' !
-  (core nstools.ns)
-  (core x.intern))
+  (core nstools.ns) ; interns 'ns+
+  (core x.intern))  ; interns 'nsx'
 
 ;; Alternative:
 

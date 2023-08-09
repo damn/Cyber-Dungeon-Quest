@@ -19,7 +19,7 @@
            (let [target (or (saved-mouseover-entity)
                             (get-mouseover-entity))
                  target-position (or (and target (:position @target))
-                                     (g/map-coords))]
+                                     (world/mouse-position))]
              {:target target
               :target-position target-position
               :direction (v/direction (:position @entity)

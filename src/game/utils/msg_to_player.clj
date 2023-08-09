@@ -36,7 +36,7 @@
 
 (defn render-message-to-player []
   (when-let [msg @message]
-    #_(render-readable-text (/ (g/viewport-width) 2)
-                          (/ (g/viewport-height) 4)
-                          {:centerx true :background false}
-                          msg)))
+    #_(render-readable-text (/ (gui/viewport-width) 2)
+                            (/ (gui/viewport-height) 4)
+                            {:centerx true :background false}
+                            msg)))

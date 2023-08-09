@@ -40,21 +40,21 @@
            "foo"
            )
 
- (.setPosition debug-window/window 0 (g/viewport-height))
+ (.setPosition debug-window/window 0 (gui/viewport-height))
 
  (.setPosition help-window/window
-               (- (/ (g/viewport-width) 2)
+               (- (/ (gui/viewport-width) 2)
                   (/ (.getWidth help-window/window) 2))
-               (g/viewport-height))
+               (gui/viewport-height))
 
  (.setPosition inventory/window
-               (g/viewport-width)
-               (- (/ (g/viewport-height) 2)
+               (gui/viewport-width)
+               (- (/ (gui/viewport-height) 2)
                   (/ (.getHeight help-window/window) 2)))
 
  (.setPosition inventory/window
-               (g/viewport-width)
-               (- (/ (g/viewport-height) 2)
+               (gui/viewport-width)
+               (- (/ (gui/viewport-height) 2)
                   (/ (.getHeight help-window/window) 2)))
 
  (.setPosition entity-info/window
@@ -124,12 +124,12 @@
      (some (memfn isVisible) windows) (dorun (map #(.setVisible % false) windows))
 
      (is-dead? @player-entity) (if-not false ;#_(try-revive-player)
-                                 (game/set-screen :mainmenu))
+                                 (gdl.app/set-screen :mainmenu))
 
-     :else (game/set-screen :options)))
+     :else (gdl.app/set-screen :options)))
 
   (when (input/is-key-pressed? :TAB)
-    (game/set-screen :minimap))
+    (gdl.app/set-screen :minimap))
 
   ; TODO entity/skill info also
 
@@ -176,7 +176,7 @@
       (and (input/is-leftbutton-down?)
            (not (stage/mouseover-gui?)))
       (set-movement! (v/direction (:position @player-entity)
-                                  (g/map-coords)))))))
+                                  (world/mouse-position)))))))
 
 (import 'com.badlogic.gdx.graphics.Pixmap)
 (import 'com.badlogic.gdx.Gdx)
@@ -237,16 +237,16 @@
  ; Gdx.graphics.setCursor
  )
 
-(game/defscreen ingame-screen
-  :show (fn []
-          (input/set-processor stage/stage))
-  :render (fn []
-            (game.render-ingame/render-game)
-            (g/render-gui
-             (fn []
-               (ui/draw-stage stage/stage)
-               (inventory/render-item-in-hand-on-cursor))))
-  :update (fn [ delta]
-            (handle-key-input)
-            (ui/update-stage stage/stage delta)
-            (game.update-ingame/update-game delta)))
+(def ingame-screen
+  (reify gdl.app/Screen
+    (show [_]
+      (input/set-processor stage/stage))
+    (render [_]
+      (game.render-ingame/render-game)
+      (gui/render (fn []
+                    (ui/draw-stage stage/stage)
+                    (inventory/render-item-in-hand-on-cursor))))
+    (tick [_ delta]
+      (handle-key-input)
+      (ui/update-stage stage/stage delta)
+      (game.update-ingame/update-game delta))))

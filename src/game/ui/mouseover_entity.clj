@@ -40,7 +40,7 @@
 
 (defn- get-current-mouseover-entity []
   (when-not (stage/mouseover-gui?)
-    (let [tile-posi (g/map-coords)
+    (let [tile-posi (world/mouse-position)
           hits (get-bodies-at-position tile-posi)]
       ; TODO needs z-order ? what if 'shout' element or FX ?
       (when hits

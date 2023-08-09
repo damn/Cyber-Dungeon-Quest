@@ -2,10 +2,10 @@
 
 (defn- debug-infos []
   (str "FPS: " (g/fps)  "\n"
-       "World: "(mapv int (g/map-coords)) "\n"
-       "X:" ((g/map-coords) 0) "\n"
-       "Y:" ((g/map-coords) 1) "\n"
-       "GUI: " (g/mouse-coords) "\n"
+       "World: "(mapv int (world/mouse-position)) "\n"
+       "X:" ((world/mouse-position) 0) "\n"
+       "Y:" ((world/mouse-position) 1) "\n"
+       "GUI: " (gui/mouse-position) "\n"
        ;(game.ui.stage/mouseover-gui?)
        (when-not @game.running/running
          (str "\n~~ PAUSED ~~"))))

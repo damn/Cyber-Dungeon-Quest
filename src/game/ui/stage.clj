@@ -1,6 +1,9 @@
 (nsx game.ui.stage
   ; also change @ x.intern
-  (:require x.ns)) ; one time require so clojure.tools.namespace knows the dependency order
+  (:require x.ns) ; one time require so clojure.tools.namespace knows the dependency order
+  (:import com.badlogic.gdx.scenes.scene2d.Stage)
+
+  )
 
 (comment
 
@@ -40,7 +43,7 @@
    )
  )
 
-(ui/def-stage stage)
+(app/defmanaged ^:dispose ^Stage stage (ui/stage))
 
 (app/on-create
 
@@ -58,7 +61,7 @@
                         table))
 
 (defn mouseover-gui? []
-  (let [[x y] (g/mouse-coords)]
+  (let [[x y] (gui/mouse-position)]
     (.hit stage x y true)))
 
 ; TODO search through game on-create (defmanaged)

@@ -1,11 +1,6 @@
-(ns mapgen.tiledmap-renderer
-  (:require [gdl.game :as game]
-
-            [gdl.graphics :as g]
-            [gdl.graphics.color :as color]
-            [gdl.graphics.shape-drawer :as shape-drawer]
-            [gdl.input :as input]
-            [gdl.tiled :as tiled]
+(nsx mapgen.tiledmap-renderer
+  (:require [gdl.graphics.world :as world]
+            [gdl.graphics.gui :as gui]
             [mapgen.movement-property :refer (movement-property movement-properties)]
             [mapgen.module-gen :as module-gen]))
 
@@ -16,21 +11,21 @@
 ; TODO also zoom so to see all visible tiles
 ; -> useful for minimap later
 (defn center-camera []
-  (g/set-camera-position! [(/ (tiled/width  @current-tiled-map) 2)
-                           (/ (tiled/height @current-tiled-map) 2)]))
+  (world/set-camera-position! [(/ (tiled/width  @current-tiled-map) 2)
+                               (/ (tiled/height @current-tiled-map) 2)]))
 
 ; TODO also highlight current mouseover tile !
 (defn gui-render []
   #_(g/render-readable-text 0 60 {:shift true}
-                          (let [tile (mapv int (g/map-coords))
+                          (let [tile (mapv int (world/mouse-position))
                                 tiled-map @current-tiled-map]
-                            [(str "Area coords:" (mapv (comp int /) (g/map-coords) [32 20]))
+                            [(str "Area coords:" (mapv (comp int /) (world/mouse-position) [32 20]))
 
-                             (str "Map coords:" (g/map-coords))
+                             (str "Map coords:" (world/mouse-position))
 
                              (str "Tile coords:" tile)
 
-                             ;(str "Visible tiles: " (g/world-frustum))
+                             ;(str "Visible tiles: " (world/camera-frustum))
 
                              (when @current-area-level-grid
                                (let [level (get @current-area-level-grid tile)]
@@ -47,7 +42,7 @@
 ; TODO clamp movement / zoom
 ; https://libgdx.com/wiki/graphics/2d/orthographic-camera
 (defn adjust-zoom [by]
-  (let [camera @(var g/world-camera)]
+  (let [camera @(var world/camera)]
     (set! (.zoom camera) (+ (.zoom camera) by))
     (.update camera)))
 
@@ -62,8 +57,8 @@
   (if (input/is-leftbutton-down?)  (adjust-zoom    zoom-speed)) ; TODO only pass + / -
   (if (input/is-rightbutton-down?) (adjust-zoom (- zoom-speed)))
   (let [apply-position (fn [idx f]
-                         (g/set-camera-position!
-                          (update (g/camera-position)
+                         (world/set-camera-position!
+                          (update (world/camera-position)
                                   idx
                                   #(f % camera-movement-speed))))]
     (if (input/is-key-down? :LEFT)  (apply-position 0 -))
@@ -76,7 +71,7 @@
 (def ^:private show-area-level-colors false)
 
 (defn- render-on-map []
-  (let [visible-tiles (g/visible-tiles)]
+  (let [visible-tiles (world/visible-tiles)]
     (when show-area-level-colors
       (if @current-start-positions
         (doseq [[x y] visible-tiles
@@ -132,28 +127,30 @@
 ; WTF TODO why is show calleda again on click sometimes ?
 ; maybe use on-create fot initial not show
 
-(game/defscreen tiledmap-renderer
-  :show (fn []
-          (println "SHOW called")
-          (reset! current-tiled-map (tiled/load-map module-gen/modules-file))
-          (center-camera))
-  :render (fn []
-            (when @current-tiled-map
-              (tiled/render-map @current-tiled-map
-                                (fn [color x y] color/white))
-              (g/render-world render-on-map))
-            (g/render-gui gui-render))
-  :update (fn [delta]
-            (if (input/is-key-pressed? :L)
-              (swap! show-grid-lines not))
-            (if (input/is-key-pressed? :M)
-              (swap! show-movement-properties not))
-            (if (input/is-key-down? :G)
-              (generate))
-            (camera-controls))
-  :dispose (fn []
-             ; TODO dispose tiled-maps
-             ))
+(def tiledmap-renderer
+  (reify gdl.app/Screen
+    (show [_]
+      (println "SHOW called")
+      (reset! current-tiled-map (tiled/load-map module-gen/modules-file))
+      (center-camera))
+    (render [_]
+      (when @current-tiled-map
+        (tiled/render-map @current-tiled-map
+                          (fn [color x y] color/white))
+        (world/render render-on-map))
+      (gui/render gui-render))
+    (tick [_ delta]
+      (if (input/is-key-pressed? :L)
+        (swap! show-grid-lines not))
+      (if (input/is-key-pressed? :M)
+        (swap! show-movement-properties not))
+      (if (input/is-key-down? :G)
+        (generate))
+      (camera-controls))))
+
+    :dispose (fn []
+               ; TODO dispose tiled-maps
+               )
 
 ; TODO  bug zoomed out and mouse under the last down tiles
 ; still shows 0 tiles

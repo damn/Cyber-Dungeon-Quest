@@ -92,7 +92,7 @@
          (tiled/render-map (:tiled-map (get-current-map-data))
                            #'tile-color-setter-old))))
 #_(defn tile-color-setter-new [_ x y]
-  (let [light-position (g/camera-position)
+  (let [light-position (world/camera-position)
         position [x y]
         explored? (explored? position)
         base-color (if explored?
@@ -119,7 +119,7 @@
        color/white))))
 
 (defn tile-color-setter [_ x y]
-  (let [light-position (g/camera-position)
+  (let [light-position (world/camera-position)
         position [x y]
         explored? (explored? position)
         base-color (if explored?
