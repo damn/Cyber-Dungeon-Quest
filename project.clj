@@ -8,7 +8,7 @@
                  [potemkin "0.4.6"]
 
                  [com.github.damn/grid2d "1.0"]
-                 [com.github.damn/gdl "4dd63b1"]]
+                 [com.github.damn/gdl "7646118"]]
   :plugins [[jonase/eastwood "1.2.2"]
             [lein-ancient "1.0.0-RC3"]
             [lein-codox "0.10.8"]]
