@@ -6,8 +6,9 @@
                [temp        :as app]
                [session :as session]) ; TODO session also a system ! on db component !!!
             (gdl ;[utils :refer :all]
+                 [lc :as lc]
                  app
-                 [game      :as game]
+                 ;[game      :as game]
                  [input     :as input]
                  [audio     :as audio]
                  [geom      :as geom]

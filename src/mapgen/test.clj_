@@ -1,3 +1,7 @@
+
+
+; TODO FIX MAPGEN TEST ! I already have it...
+
 (ns mapgen.test
   (:require [gdl.graphics :as g]
             [gdl.graphics.color :as color]

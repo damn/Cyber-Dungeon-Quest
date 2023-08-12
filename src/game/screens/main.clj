@@ -3,52 +3,58 @@
             [game.player.session-data :refer (current-character-name)])
   (:import com.badlogic.gdx.scenes.scene2d.Stage))
 
+; TODO do all loading in 'loading' ns...
+
 (defn- start-loading-game [character-name & {new-character :new-character}]
   (reset! is-loaded-character (not new-character))
   (reset! current-character-name character-name)
-  (gdl.app/set-screen :loading))
+  (gdl.app/set-screen :game.screens.load-session))
 
 (defn- try-create-character []
   (when-let [char-name "FOO BAR"]
     (start-loading-game (apply str char-name) :new-character true)))
 
-(app/defmanaged ^:dispose ^Stage stage (ui/stage))
+(declare ^Stage stage)
 
-(app/on-create
- (let [table (ui/table)]
-   (.setFillParent table true)
-   (.addActor stage table)
-   (.center table)
-   (.setDebug table false)
-   (let [new-game-button (ui/text-button "New game" try-create-character)
-         editor-button   (ui/text-button "Editor" #(gdl.app/set-screen :editor))
-         exit-button     (ui/text-button "Exit" gdl.app/exit)
-         padding 25]
-     (.padBottom (.add table new-game-button) (float padding))
-     (.row table)
-     (.padBottom (.add table editor-button)   (float padding))
-     (.row table)
-     (.add table exit-button)))
+(defn- create* []
+  (.bindRoot #'stage (ui/stage))
+  (let [table (ui/table)]
+    (.setFillParent table true)
+    (.addActor stage table)
+    (.center table)
+    (.setDebug table false)
+    (let [new-game-button (ui/text-button "New game" try-create-character)
+          editor-button   (ui/text-button "Editor" #(gdl.app/set-screen :mapgen.tiledmap-renderer))
+          exit-button     (ui/text-button "Exit" gdl.app/exit)
+          padding 25]
+      (.padBottom (.add table new-game-button) (float padding))
+      (.row table)
+      (.padBottom (.add table editor-button)   (float padding))
+      (.row table)
+      (.add table exit-button))))
 
- (def menu-bg-image (image/create "ui/moon_background.png")))
+(declare ^:private skip-main-menu
+         ^:private bg-image)
 
-(defn- render* []
-  (image/draw-centered menu-bg-image
-                       [(/ (gui/viewport-width)  2)
-                        (/ (gui/viewport-height) 2)])
-  (ui/draw-stage stage))
-
-(def ^:private skip-main-menu true)
-
-(def mainmenu-screen
-  (reify gdl.app/Screen
-    (show [_]
-      (input/set-processor stage))
-    (render [_]
-      (gui/render render*))
-    (tick [_ delta]
-      (ui/update-stage stage delta)
-      (when (input/is-key-pressed? :ESCAPE)
-        (gdl.app/exit))
-      (when skip-main-menu
-        (try-create-character)))))
+(defcomponent (keyword (ns-name *ns*)) _
+  (lc/create [[_ {:keys [skip-main-menu bg-image]}]]
+    (.bindRoot #'skip-main-menu skip-main-menu)
+    (.bindRoot #'bg-image (image/create bg-image))
+    (create*))
+  (lc/dispose [_]
+    (.dispose stage))
+  (lc/show [_]
+    (input/set-processor stage))
+  (lc/render [_]
+    (gui/render
+     (fn []
+       (image/draw-centered bg-image
+                            [(/ (gui/viewport-width)  2)
+                             (/ (gui/viewport-height) 2)])
+       (ui/draw-stage stage))))
+  (lc/tick [_ delta]
+    (ui/update-stage stage delta) ; act
+    (when (input/is-key-pressed? :ESCAPE) ; no input/
+      (gdl.app/exit)) ; app/
+    (when skip-main-menu
+      (try-create-character))))

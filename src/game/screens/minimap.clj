@@ -49,16 +49,16 @@
 (defn- render-map-level []
   (shape-drawer/filled-circle (world/camera-position) 0.5 color/green)) ; render player..
 
-(def minimap-screen
-  (reify gdl.app/Screen
-    (show [_]
-      (reset! zoom-setting (calculate-zoom))
-      (set-zoom @zoom-setting))
-    (render [_]
-      (render-minimap)
-      (world/render render-map-level))
-    (tick [_ delta]
-      (when (or (input/is-key-pressed? :TAB)
-                (input/is-key-pressed? :ESCAPE))
-        (set-zoom 1)
-        (gdl.app/set-screen :ingame)))))
+
+(defcomponent (keyword (ns-name *ns*)) _
+  (lc/show [_]
+    (reset! zoom-setting (calculate-zoom))
+    (set-zoom @zoom-setting))
+  (lc/render [_]
+    (render-minimap)
+    (world/render render-map-level))
+  (lc/tick [_ delta]
+    (when (or (input/is-key-pressed? :TAB)
+              (input/is-key-pressed? :ESCAPE))
+      (set-zoom 1)
+      (gdl.app/set-screen :game.screens.ingame))))

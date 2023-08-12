@@ -23,7 +23,7 @@
   `(add-listener ~event
                  (fn []
                    ; TODO !
-                   (println "On" (quote ~event) " exprs:" (quote ~exprs))
+                   ;(println "On" (quote ~event) " exprs:" (quote ~exprs))
                    ~@exprs)))
 
 (defn fire-event! [event]
@@ -45,6 +45,6 @@
        (when (:dispose (meta var#))
          (dispose ~symbol))))))
 
-(defcomponent *ns* _
+(defcomponent (keyword (ns-name *ns*)) _
   (lc/create  [_] (fire-event! :app/create))
   (lc/dispose [_] (fire-event! :app/destroy)))

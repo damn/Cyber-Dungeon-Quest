@@ -124,12 +124,12 @@
      (some (memfn isVisible) windows) (dorun (map #(.setVisible % false) windows))
 
      (is-dead? @player-entity) (if-not false ;#_(try-revive-player)
-                                 (gdl.app/set-screen :mainmenu))
+                                 (gdl.app/set-screen :game.screens.main))
 
-     :else (gdl.app/set-screen :options)))
+     :else (gdl.app/set-screen :game.screens.options)))
 
   (when (input/is-key-pressed? :TAB)
-    (gdl.app/set-screen :minimap))
+    (gdl.app/set-screen :game.screens.minimap))
 
   ; TODO entity/skill info also
 
@@ -237,16 +237,15 @@
  ; Gdx.graphics.setCursor
  )
 
-(def ingame-screen
-  (reify gdl.app/Screen
-    (show [_]
-      (input/set-processor stage/stage))
-    (render [_]
-      (game.render-ingame/render-game)
-      (gui/render (fn []
-                    (ui/draw-stage stage/stage)
-                    (inventory/render-item-in-hand-on-cursor))))
-    (tick [_ delta]
-      (handle-key-input)
-      (ui/update-stage stage/stage delta)
-      (game.update-ingame/update-game delta))))
+(defcomponent (keyword (ns-name *ns*)) _
+  (lc/show [_]
+    (input/set-processor stage/stage))
+  (lc/render [_]
+    (game.render-ingame/render-game)
+    (gui/render (fn []
+                  (ui/draw-stage stage/stage)
+                  (inventory/render-item-in-hand-on-cursor))))
+  (lc/tick [_ delta]
+    (handle-key-input)
+    (ui/update-stage stage/stage delta)
+    (game.update-ingame/update-game delta)))

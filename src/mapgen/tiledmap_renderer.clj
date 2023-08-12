@@ -127,30 +127,30 @@
 ; WTF TODO why is show calleda again on click sometimes ?
 ; maybe use on-create fot initial not show
 
-(def tiledmap-renderer
-  (reify gdl.app/Screen
-    (show [_]
-      (println "SHOW called")
-      (reset! current-tiled-map (tiled/load-map module-gen/modules-file))
-      (center-camera))
-    (render [_]
-      (when @current-tiled-map
-        (tiled/render-map @current-tiled-map
-                          (fn [color x y] color/white))
-        (world/render render-on-map))
-      (gui/render gui-render))
-    (tick [_ delta]
-      (if (input/is-key-pressed? :L)
-        (swap! show-grid-lines not))
-      (if (input/is-key-pressed? :M)
-        (swap! show-movement-properties not))
-      (if (input/is-key-down? :G)
-        (generate))
-      (camera-controls))))
+(defcomponent (keyword (ns-name *ns*)) _
+  (lc/show [_]
+    (println "SHOW called")
+    (reset! current-tiled-map (tiled/load-map module-gen/modules-file))
+    (center-camera))
+  (lc/render [_]
+    (when @current-tiled-map
+      (tiled/render-map @current-tiled-map
+                        (fn [color x y] color/white))
+      (world/render render-on-map))
+    (gui/render gui-render))
+  (lc/tick [_ delta]
+    (if (input/is-key-pressed? :L)
+      (swap! show-grid-lines not))
+    (if (input/is-key-pressed? :M)
+      (swap! show-movement-properties not))
+    (if (input/is-key-down? :G)
+      (generate))
+    (camera-controls)))
 
+(comment
     :dispose (fn []
                ; TODO dispose tiled-maps
-               )
+               ))
 
 ; TODO  bug zoomed out and mouse under the last down tiles
 ; still shows 0 tiles

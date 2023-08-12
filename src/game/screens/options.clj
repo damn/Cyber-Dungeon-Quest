@@ -71,7 +71,7 @@
          (get-state status)]))
     (initial-data [_])))
 
-(def ^:private exit #(gdl.app/set-screen :ingame))
+(def ^:private exit #(gdl.app/set-screen :game.screens.ingame))
 
 (app/defmanaged ^:dispose ^Stage stage (ui/stage))
 
@@ -82,7 +82,7 @@
  (.center table)
  (.setDebug table false)
  (def resume-button   (ui/text-button "Resume" exit))
- (def exit-button     (ui/text-button "Exit"   #(gdl.app/set-screen :mainmenu)))
+ (def exit-button     (ui/text-button "Exit"   #(gdl.app/set-screen :game.screens.main)))
  (def padding 25)
  (.padBottom (.add table resume-button) (float padding))
  (.row table)
@@ -108,13 +108,12 @@
                         (/ (gui/viewport-height) 2)])
   (ui/draw-stage stage))
 
-(def options-screen
-  (reify gdl.app/Screen
-    (show [_]
-      (input/set-processor stage))
-    (render [_]
-      (gui/render render*))
-    (tick [_ delta]
-      (ui/update-stage stage delta)
-      (when (input/is-key-pressed? :ESCAPE)
-        (exit)))))
+(defcomponent (keyword (ns-name *ns*)) _
+  (lc/show [_]
+    (input/set-processor stage))
+  (lc/render [_]
+    (gui/render render*))
+  (lc/tick [_ delta]
+    (ui/update-stage stage delta)
+    (when (input/is-key-pressed? :ESCAPE)
+      (exit))))
