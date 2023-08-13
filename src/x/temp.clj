@@ -39,12 +39,9 @@
 
     (let [var# (var ~symbol)]
       (on-create
+       (println "on-create " ~symbol " init: " '~init)
        (set-var-root var# ~init))
 
       (on-destroy
        (when (:dispose (meta var#))
          (dispose ~symbol))))))
-
-(defcomponent (keyword (ns-name *ns*)) _
-  (lc/create  [_] (fire-event! :app/create))
-  (lc/dispose [_] (fire-event! :app/destroy)))

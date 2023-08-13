@@ -1,5 +1,8 @@
 (ns game.start
   (:require gdl.game
+            [gdl.lc :as lc]
+            [x.x :refer [defcomponent]]
+            [x.temp :refer :all]
             ; require
             game.components.image
             game.components.animation
@@ -32,15 +35,20 @@
 
  )
 
+(defcomponent (keyword (ns-name *ns*)) _
+  (lc/create  [_] (fire-event! :app/create))
+  (lc/dispose [_] (fire-event! :app/destroy)))
+
 (def modules
-  [[:x.temp]
-   [:game.screens.main {:bg-image "ui/moon_background.png"
+  [[:game.screens.main {:bg-image "ui/moon_background.png"
                         :skip-main-menu false}]
    [:game.screens.load-session]
    [:game.screens.ingame]
    [:game.screens.minimap]
    [:game.screens.options]
-   [:mapgen.tiledmap-renderer]])
+   [:mapgen.tiledmap-renderer]
+   [:game.start] ; temporary - fire-event!
+   ])
 
 (defn app []
   (gdl.app/start {:window window
