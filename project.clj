@@ -1,20 +1,11 @@
 (defproject cyberdungeonquest "-SNAPSHOT"
   :repositories [["jitpack" "https://jitpack.io"]]
   :dependencies [[org.clojure/clojure "1.11.1"]
-
                  [com.github.clojens/clj-nstools "635f408a29"]
                  ;[nstools "0.2.5"]
-
                  [potemkin "0.4.6"]
-
                  [com.github.damn/grid2d "1.0"]
-
-                 ; release:
-                 ;[com.github.damn/gdl "1.0-SNAPSHOT"]
-                 ; from checkouts folder:
-                 [gdl "1.0-SNAPSHOT"]
-
-                 ]
+                 [com.github.damn/gdl "ae48536"]]
   :plugins [[jonase/eastwood "1.2.2"]
             [lein-ancient "1.0.0-RC3"]
             [lein-codox "0.10.8"]]
