@@ -50,7 +50,7 @@
   (shape-drawer/filled-circle (world/camera-position) 0.5 color/green)) ; render player..
 
 
-(defcomponent (keyword (ns-name *ns*)) _
+(defmodule _
   (lc/show [_]
     (reset! zoom-setting (calculate-zoom))
     (set-zoom @zoom-setting))

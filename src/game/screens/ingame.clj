@@ -237,7 +237,7 @@
  ; Gdx.graphics.setCursor
  )
 
-(defcomponent (keyword (ns-name *ns*)) _
+(defmodule _
   (lc/show [_] (input/set-processor stage/stage))
   (lc/hide [_] (input/set-processor nil))
   (lc/render [_]

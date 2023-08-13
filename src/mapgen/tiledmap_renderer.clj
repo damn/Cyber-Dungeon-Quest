@@ -126,7 +126,7 @@
 ; WTF TODO why is show calleda again on click sometimes ?
 ; maybe use on-create fot initial not show
 
-(defcomponent (keyword (ns-name *ns*)) _
+(defmodule _
   (lc/show [_]
     (reset! current-tiled-map (tiled/load-map module-gen/modules-file))
     (center-camera))

@@ -6,7 +6,7 @@
 (def ^:private render-once (atom false))
 
 ; TODO not showing at all -> render two frames ? check
-(defcomponent (keyword (ns-name *ns*)) _
+(defmodule _
   (lc/show [_]
     (reset! render-once false))
   (lc/render [_]

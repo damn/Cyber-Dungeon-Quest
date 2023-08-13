@@ -108,7 +108,7 @@
                         (/ (gui/viewport-height) 2)])
   (ui/draw-stage stage))
 
-(defcomponent (keyword (ns-name *ns*)) _
+(defmodule _
   (lc/show [_] (input/set-processor stage))
   (lc/hide [_] (input/set-processor nil))
   (lc/render [_]

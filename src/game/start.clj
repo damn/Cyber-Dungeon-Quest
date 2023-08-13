@@ -1,7 +1,7 @@
 (ns game.start
   (:require gdl.game
             [gdl.lc :as lc]
-            [x.x :refer [defcomponent]]
+            [x.x :refer [defmodule]]
             [x.temp :refer :all]
             ; require
             game.components.image
@@ -35,7 +35,7 @@
 
  )
 
-(defcomponent (keyword (ns-name *ns*)) _
+(defmodule _
   (lc/create  [_] (fire-event! :app/create))
   (lc/dispose [_] (fire-event! :app/destroy)))
 

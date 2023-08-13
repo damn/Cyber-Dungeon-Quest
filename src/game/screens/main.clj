@@ -36,7 +36,7 @@
 (declare ^:private skip-main-menu
          ^:private bg-image)
 
-(defcomponent (keyword (ns-name *ns*)) _
+(defmodule _
   (lc/create [[_ {:keys [skip-main-menu bg-image]}]]
     (.bindRoot #'skip-main-menu skip-main-menu)
     (.bindRoot #'bg-image (image/create bg-image))
