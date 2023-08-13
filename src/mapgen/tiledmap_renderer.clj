@@ -113,7 +113,6 @@
                        (color/rgb 1 1 1 0.5))))
 
 (defn- generate []
-  (println "generate called.")
   (let [{:keys [tiled-map
                 area-level-grid
                 start-positions]} (module-gen/generate)]
@@ -129,7 +128,6 @@
 
 (defcomponent (keyword (ns-name *ns*)) _
   (lc/show [_]
-    (println "SHOW called")
     (reset! current-tiled-map (tiled/load-map module-gen/modules-file))
     (center-camera))
   (lc/render [_]

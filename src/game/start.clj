@@ -44,7 +44,7 @@
 
 (defn app []
   (gdl.app/start {:window window
-                   :tile-size 48
-                   :log-lc? true
-                   :modules modules
-                   :first-screen :game.screens.main}))
+                  :tile-size 48
+                  :log-lc? true
+                  :modules modules
+                  :first-screen :game.screens.main}))

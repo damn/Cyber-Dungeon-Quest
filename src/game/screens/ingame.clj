@@ -238,8 +238,8 @@
  )
 
 (defcomponent (keyword (ns-name *ns*)) _
-  (lc/show [_]
-    (input/set-processor stage/stage))
+  (lc/show [_] (input/set-processor stage/stage))
+  (lc/hide [_] (input/set-processor nil))
   (lc/render [_]
     (game.render-ingame/render-game)
     (gui/render (fn []

@@ -43,8 +43,8 @@
     (create*))
   (lc/dispose [_]
     (.dispose stage))
-  (lc/show [_]
-    (input/set-processor stage))
+  (lc/show [_] (input/set-processor stage))
+  (lc/hide [_] (input/set-processor nil))
   (lc/render [_]
     (gui/render
      (fn []

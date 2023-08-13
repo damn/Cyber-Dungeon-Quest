@@ -109,8 +109,8 @@
   (ui/draw-stage stage))
 
 (defcomponent (keyword (ns-name *ns*)) _
-  (lc/show [_]
-    (input/set-processor stage))
+  (lc/show [_] (input/set-processor stage))
+  (lc/hide [_] (input/set-processor nil))
   (lc/render [_]
     (gui/render render*))
   (lc/tick [_ delta]
