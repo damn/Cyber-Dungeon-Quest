@@ -1,5 +1,6 @@
 (nsx game.components.render ; TODO 'systems/render' not components
-  (:require [game.ui.config :refer (hpbar-height-px)]))
+  (:require [game.ui.config :refer (hpbar-height-px)]
+            game.components.delete-after-animation-stopped?))
 
 ; TODO render-order make vars so on compile time checked ?
 

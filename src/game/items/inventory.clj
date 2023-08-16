@@ -9,6 +9,7 @@
             [game.items.core :as items]
             [game.player.entity :refer (player-entity)]
             ;game.components.glittering
+            game.components.image
             )
   (:import [com.badlogic.gdx.scenes.scene2d.ui Widget Image Stack TextTooltip]
            [com.badlogic.gdx.scenes.scene2d.utils TextureRegionDrawable ClickListener]))

@@ -7,7 +7,8 @@
             [game.components.render :refer (animation-entity)]
             [game.items.inventory :refer (create-item-body #_create-rand-item)]
             [game.player.entity :refer (set-player-entity player-entity)]
-            game.components.sleeping))
+            game.components.sleeping
+            game.components.animation))
 
 (app/defmanaged creatures      (properties/load-edn "creatures/creatures.edn"))
 (app/defmanaged creature-types (properties/load-edn "creatures/creature-types.edn"))

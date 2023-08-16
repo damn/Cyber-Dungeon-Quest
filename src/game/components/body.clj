@@ -1,5 +1,6 @@
 (nsx game.components.body
   (:require game.components.delete-after-duration
+            game.components.body.rotation-angle
             [game.components.render :refer (animation-entity)]
             ; TODO just make :as cell and cell/add, etc.
             [game.maps.cell-grid :refer (rectangle->occupied-cells
