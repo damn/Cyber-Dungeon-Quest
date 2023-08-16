@@ -1,7 +1,9 @@
 (ns entity-editor.core
   (:require [clojure.edn :as edn]
             [clojure.java.io :as io]
-            [seesaw.core :as seesaw])
+            [seesaw.core :as seesaw]
+            game.effects.core
+            game.components.modifiers)
   (:import [javax.imageio ImageIO]
            [javax.swing JTable ImageIcon]
            [javax.swing.table DefaultTableModel]))
@@ -17,7 +19,15 @@
 (def resources "resources/")
 
 (def table-properties
-  [{:file "creatures/creatures.edn"
+  [{:rows (map (fn [k] {:id k}) (keys game.effects.core/effect-definitions))
+    :title "Effects"
+    :columns [:id]}
+
+   {:rows (map (fn [k] {:id k}) (keys game.components.modifiers/modifier-definitions))
+    :title "Modifiers"
+    :columns [:id]}
+
+   {:file "creatures/creatures.edn"
     :title "Creatures"
     :columns [:id :image :creature-type :level :items :skills]}
 
@@ -82,30 +92,29 @@
  )
 
 (defn- make-table [{:keys [title columns rows]}]
-   (let [table (seesaw/table
-                :background (seesaw.color/color 200 200 200)
-                :id title ; TODO title == id !
-                :model (seesaw.table/table-model
-                        [:columns (map (fn [column]
-                                         {:key column
-                                          :class (if (= column :image)
-                                                   ImageIcon
-                                                   Object)})
-                                       columns)
-                         :rows rows]))]
-     (seesaw/listen table :property-change (fn [e]
-
-                                           (when (= "tableCellEditor" (.getPropertyName e))
-                                             (println "Edited: " (def event-tmp e))
-                                             )
-                                           ))
-     (.setAutoCreateRowSorter table true)
-     (.setRowHeight table 48)
-     table))
+  (println "Table: " title " , columns: " columns, " rows: " (count rows))
+  (let [table (seesaw/table
+               :background (seesaw.color/color 200 200 200)
+               :id title ; TODO title == id !
+               :model [:columns (map (fn [column]
+                                        {:key column
+                                         :class (if (= column :image)
+                                                  ImageIcon
+                                                  Object)})
+                                      columns)
+                        :rows rows])]
+    (seesaw/listen table :property-change (fn [e]
+                                            (when (= "tableCellEditor" (.getPropertyName e))
+                                              (println "Edited: " (def event-tmp e)))))
+    (.setAutoCreateRowSorter table true)
+    (.setRowHeight table 48)
+    table))
 
 (defn- make-tabs []
-   (let [table-properties (->> table-properties
-                               (map #(assoc % :rows (load-edn (:file %)))))]
+  (let [table-properties (map #(if (:file %)
+                                 (assoc % :rows (load-edn (:file %)))
+                                 %)
+                              table-properties)]
      (map (fn [{:keys [title] :as properties}]
           {:title title
            :content (seesaw/scrollable
@@ -115,7 +124,9 @@
 (defn create-property-editor []
  (seesaw/native!)
  (def f (seesaw/frame :title "Property Editor"))
- (-> f seesaw/pack!  seesaw/show!)
+ (-> f
+     seesaw/pack!
+     seesaw/show!)
  (seesaw/config! f :content (seesaw/tabbed-panel
                              :placement :top
                              :tabs (make-tabs)))
@@ -147,15 +158,6 @@
                    (DefaultCellEditor. combo-box))
 
    )
-
-JComboBox comboBox = new JComboBox();
-comboBox.addItem("Snowboarding");
-comboBox.addItem("Rowing");
-comboBox.addItem("Chasing toddlers");
-comboBox.addItem("Speed reading");
-comboBox.addItem("Teaching high school");
-comboBox.addItem("None");
-sportColumn.setCellEditor(new DefaultCellEditor(comboBox));
 
  (clojure.pprint/pprint
   (first
