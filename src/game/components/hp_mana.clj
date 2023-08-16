@@ -22,19 +22,6 @@
       (zero? cost)
       (<= cost ((:mana entity*) 0))))
 
-#_(defcomponent :hp
-  (record [_] ValMaxRecord) ; => is data in the component whatever
-  (modifier/text )
-  (modifier/keys )
-  (modifier/apply [_ v])
-  (modifier/reverse [_ .])
-  (effect/do)
-  (effect/text)
-  )
-
-; components have record/keys/etc. this is not function but data
-; the component-TYPE itself can be a record too ?
-
 (modifiers/defmodifier :hp
   {:values  [[15 25] [35 45] [55 65]]
    :text    #(str "+" % " HP")
