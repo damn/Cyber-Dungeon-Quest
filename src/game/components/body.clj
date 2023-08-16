@@ -332,11 +332,3 @@
   ; TODO here also ! 3 times called ! DRY
   ; (call-on-position-changed-triggers entity)
   )
-
-(defn get-other-bodies-in-adjacent-cells [entity]
-  (->> entity  ; TODO could be faster using occupied-cell instead of :position/get-cell...
-       :position
-       get-cell
-       cached-get-adjacent-cells
-       get-entities-from-cells
-       (remove #(= (:id @%) (:id entity)))))
