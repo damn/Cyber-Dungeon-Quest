@@ -39,7 +39,7 @@
 
 ;;
 
-(defn- make-type [v] ; ???
+(defn- make-type [v] ; ??? => var-namespaced-name-str
   (.replace (str (ns-name (:ns (meta v))) "/" (:name (meta v))) "game." ""))
 
 (def state (reify session/State
@@ -62,6 +62,7 @@
         #'x.db/db-state
 
         ; reset cell-change-listeners before adding entities, because entities are listeners
+        ; => TODO do @ map
         #'game.maps.cell-grid/state
 
         #'game.items.inventory/state

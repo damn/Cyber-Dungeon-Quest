@@ -18,6 +18,9 @@
 
 (def resources "resources/")
 
+; TODO For effects & modifiers use 'format' => can see what it does at least
+;(format "+ %d max HP" 1)
+
 (def table-properties
   [{:rows (map (fn [k] {:id k}) (keys game.effects.core/effect-definitions))
     :title "Effects"

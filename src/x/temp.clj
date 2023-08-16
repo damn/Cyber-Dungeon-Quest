@@ -3,6 +3,8 @@
             [gdl.lc :as lc])
   (:import com.badlogic.gdx.utils.Disposable))
 
+;; TODO remove all this '!'!'
+
 (defn set-var-root [v value]
   (alter-var-root v (constantly value)))
 

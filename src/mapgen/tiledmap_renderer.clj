@@ -68,7 +68,7 @@
 
 (def current-start-positions (atom nil))
 
-(def ^:private show-area-level-colors false)
+(def ^:private show-area-level-colors true)
 
 (defn- render-on-map []
   (let [visible-tiles (world/visible-tiles)]
@@ -115,16 +115,14 @@
 (defn- generate []
   (let [{:keys [tiled-map
                 area-level-grid
-                start-positions]} (module-gen/generate)]
+                start-positions]} (module-gen/generate
+                                   {:map-size 7
+                                    :max-area-level 3
+                                    :spawn-rate (/ 20)})]
     (reset! current-tiled-map tiled-map)
     (reset! current-area-level-grid area-level-grid)
     (reset! current-start-positions (set start-positions))
     (center-camera)))
-
-; TODO I click and it reset the tm?
-
-; WTF TODO why is show calleda again on click sometimes ?
-; maybe use on-create fot initial not show
 
 (defmodule _
   (lc/show [_]

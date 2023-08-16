@@ -12,12 +12,6 @@
            [com.badlogic.gdx.maps.tiled TiledMap TiledMapTileLayer TiledMapTileLayer$Cell]
            [com.badlogic.gdx.maps.tiled.tiles StaticTiledMapTile]))
 
-; TODO config -
-; area-level => spawn-chance %
-; area-level => creature-types ?
-; # area levels
-; # grid size
-
 ; "Tiles are usually shared by multiple cells."
 ; https://libgdx.com/wiki/graphics/2d/tile-maps#cells
 ; No copied-tile for AnimatedTiledMapTile yet (there was no copy constructor/method)
@@ -49,7 +43,6 @@
     (.putAll properties (.getProperties modules-tiled-map)) ; tilewidth/tileheight
     (.put properties "width"  (grid/width  grid))
     (.put properties "height" (grid/height grid))
-
     (doseq [layer (tiled/layers modules-tiled-map)
             :let [new-layer (add-layer! tiled-map
                                         :name (tiled/layer-name layer)
@@ -62,7 +55,6 @@
           (set-tile! new-layer
                      position
                      (copy-tile (.getTile cell))))))
-
     tiled-map))
 
 (def modules-file "maps/modules.tmx")
@@ -81,18 +73,18 @@
 (defn- floor->module-index []
   ; TODO map consists of ~20 floor modules => shuffle (range 4) (range 4)
   ; -> no duplicates
-  [(rand-int 4)
+  [(rand-int 4) ; !
    (rand-int 4)])
 
 (defn- transition-idxvalue->module-index [idxvalue]
-  [(+ (rem idxvalue 4)
+  [(+ (rem idxvalue 4) ; !
       transition-modules-offset-x)
    (int (/ idxvalue 4))])
 
 (defn- place-module [modules unscaled-grid grid position {:keys [is-floor]}]
   (let [unscaled-position (mapv (comp int /) position [module-width module-height])
         idxvalue (if is-floor
-                   0
+                   0 ; !
                    (transitions/index-value unscaled-position
                                             #(= :wall (get unscaled-grid %))))
         local-positions (module-index->local-positions
@@ -104,7 +96,6 @@
                   [x y])
         offset->local-position (zipmap offsets
                                        local-positions)]
-
     (reduce (fn [grid offset]
               (assoc grid
                      (mapv + position offset)
@@ -121,8 +112,8 @@
 
 ; TODO move this into gdl.module-tiledmap
 (defn- place-modules [grid unscaled-grid positions]
-  (let [modules (tiled/load-map modules-file)
-        _ (assert (and (= (tiled/width  modules) (* 8 (+ module-width  module-offset)))
+  (let [modules (tiled/load-map modules-file) ; TODO not disposed
+        _ (assert (and (= (tiled/width  modules) (* 8 (+ module-width  module-offset))) ; TODO hardcoded 8/4
                        (= (tiled/height modules) (* 4 (+ module-height module-offset)))))
         grid (reduce (fn [grid position] (place-module modules unscaled-grid grid position {:is-floor true}))
                      grid
@@ -209,10 +200,10 @@
        _ (utils/printgrid (reduce #(assoc %1 %2 nil)
                            grid
                            (adjacent-wall-positions grid)))
-       #_{:keys [steps grid]} #_(area-level-grid :grid grid
+       {:keys [steps grid]} (area-level-grid :grid grid
                                              :start start
                                              :max-level 9)
-       #__ #_(utils/printgrid grid)])
+       _ (utils/printgrid grid)])
 )
 
 (defn- creatures-with-level [level]
@@ -226,12 +217,12 @@
        (.put (.getProperties tile) "id" id)
        tile))))
 
-(defn- creature-spawn-positions [tiled-map area-level-grid]
+(defn- creature-spawn-positions [spawn-rate tiled-map area-level-grid]
   (keep (fn [[position area-level]]
           (if (and (number? area-level)
                    (= "all" (movement-property tiled-map position)))
             ; module size 14x14 = 196 tiles, ca 5 monsters = 5/200 = 1/40
-            (if (<= (rand 20) 1)
+            (if (<= (rand) spawn-rate)
               (let [creatures (creatures-with-level area-level)]
                 #_(println "Spawn creature with level " area-level)
                 (when (seq creatures)
@@ -245,17 +236,16 @@
         area-level-grid))
 
 ; TODO use 'steps' ?
-(defn- place-creatures! [tiled-map area-level-grid]
+(defn- place-creatures! [spawn-rate tiled-map area-level-grid]
   (let [layer (add-layer! tiled-map
                           :name "creatures"
                           :visible true)]
-    (doseq [[position tile] (creature-spawn-positions tiled-map area-level-grid)]
+    (doseq [[position tile] (creature-spawn-positions spawn-rate tiled-map area-level-grid)]
       (set-tile! layer position tile))))
 
-(def ^:private map-size 1 ; 16
-  )
-
-(defn generate []
+(defn generate [{:keys [map-size
+                        max-area-level
+                        spawn-rate]}]
   (let [{:keys [start grid]} (make-grid :size map-size) ; TODO pass as arg
         ;_ (utils/printgrid grid) ; TODO logging where it is passed as arg
         ;_ (println)
@@ -268,7 +258,7 @@
 
         {:keys [steps grid]} (area-level-grid :grid grid
                                               :start start
-                                              :max-level 3)
+                                              :max-level max-area-level)
         area-level-grid grid
         ;_ (utils/printgrid area-level-grid)
         scale [module-width module-height]
@@ -287,7 +277,8 @@
                                        (and (number? area-level)
                                             (zero? area-level)))
                                      area-level-grid))]
-    (place-creatures! tiled-map ; TODO move out of this ns, use area-level-grid still
+    (place-creatures! spawn-rate
+                      tiled-map ; TODO move out of this ns, use area-level-grid still
                       area-level-grid)
     {:tiled-map tiled-map
      :start-positions start-positions

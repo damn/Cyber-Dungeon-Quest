@@ -4,7 +4,10 @@
             mapgen.module-gen))
 
 (defn first-level []
-  (let [{:keys [tiled-map start-positions]} (mapgen.module-gen/generate)
+  (let [{:keys [tiled-map start-positions]} (mapgen.module-gen/generate
+                                             {:map-size 7
+                                              :max-area-level 3
+                                              :spawn-rate (/ 20)})
         ;{:keys [end stuff-posis]} (get-populated-grid-posis grid start-posi 3)
         start-position (translate-to-tile-middle
                         (rand-nth (filter #(= "all" (movement-property tiled-map %))

@@ -2,7 +2,7 @@
   (:require [x.x       :refer :all]
             [x.systems :refer :all]))
 
-(def ^:private effect-definitions {})
+(def effect-definitions {})
 
 (defn defeffect [effect-type effect-def]
   (alter-var-root #'effect-definitions assoc effect-type effect-def)
