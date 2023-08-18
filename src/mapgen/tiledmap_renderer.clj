@@ -1,5 +1,7 @@
 (nsx mapgen.tiledmap-renderer
-  (:require [gdl.graphics.world :as world]
+  (:require [clojure.edn :as edn]
+            game.maps.impl
+            [gdl.graphics.world :as world]
             [gdl.graphics.gui :as gui]
             [mapgen.movement-property :refer (movement-property movement-properties)]
             [mapgen.module-gen :as module-gen]))
@@ -112,35 +114,72 @@
                        1 1
                        (color/rgb 1 1 1 0.5))))
 
-(defn- generate []
+(defn- generate [properties]
   (let [{:keys [tiled-map
                 area-level-grid
-                start-positions]} (module-gen/generate
-                                   {:map-size 7
-                                    :max-area-level 3
-                                    :spawn-rate (/ 20)})]
+                start-positions]} (module-gen/generate properties)]
     (reset! current-tiled-map tiled-map)
     (reset! current-area-level-grid area-level-grid)
     (reset! current-start-positions (set start-positions))
     (center-camera)))
 
+(app/defmanaged ^:dispose stage (ui/stage))
+
+; TODO any key typed and not saved -> show 'unsaved' icon
+; save => show saved icon.
+; TODO validation/schema (malli/clojure.spec)
+(defn edn-edit-form [edn-data-file]
+  (let [properties (edn/read-string (slurp edn-data-file))
+        table (ui/table)
+        get-properties #(into {}
+                              (for [k (keys properties)]
+                                [k (edn/read-string (.getText (.findActor table (str k))))]))]
+    (.colspan (.add table (ui/label edn-data-file)) 2)
+    (.row table)
+    (doseq [[k v] properties]
+      (.add table (ui/label (name k)))
+      (.add table (doto (ui/text-field (str v))
+                    (.setName (str k))))
+      (.row table))
+    (.colspan (.add table (ui/text-button (str "Save to file")
+                                          #(spit edn-data-file
+                                                 (with-out-str
+                                                  (clojure.pprint/pprint
+                                                   (get-properties))))))
+              2)
+    [table get-properties]))
+
+(app/on-create
+ (def window (ui/window "Properties"))
+ (.addActor stage window)
+ (let [[form get-properties] (edn-edit-form game.maps.impl/map-data-file)]
+   (.add window form)
+   (.row window)
+   (.add window (ui/text-button "Generate" #(generate (get-properties)))))
+ (.pack window))
+
 (defmodule _
   (lc/show [_]
+    (input/set-processor stage)
     (reset! current-tiled-map (tiled/load-map module-gen/modules-file))
     (center-camera))
+  (lc/hide [_] (input/set-processor nil))
   (lc/render [_]
     (when @current-tiled-map
       (tiled/render-map @current-tiled-map
                         (fn [color x y] color/white))
       (world/render render-on-map))
-    (gui/render gui-render))
+    (gui/render
+     (fn []
+       (ui/draw-stage stage))))
   (lc/tick [_ delta]
+    (ui/update-stage stage delta)
     (if (input/is-key-pressed? :L)
       (swap! show-grid-lines not))
     (if (input/is-key-pressed? :M)
       (swap! show-movement-properties not))
-    (if (input/is-key-down? :G)
-      (generate))
+    #_(if (input/is-key-down? :G)
+      (generate properties))
     (camera-controls)))
 
 (comment

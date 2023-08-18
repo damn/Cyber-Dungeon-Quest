@@ -108,6 +108,14 @@
 
 ; example:
 ; [:damage [:physical [5 6]]]
+(comment
+ ; malli:
+ [:tuple [:enum :damage]
+  [:tuple [:enum :physical :magic]
+   [:tuple int? int?]]]
+ ; TODO => val-max-data as schema!
+ ; two >=0 integers and val<=max.
+ )
 (effects/defeffect :damage
   {:text damage-infotext
    :valid-params? (fn [{:keys [source target]}]

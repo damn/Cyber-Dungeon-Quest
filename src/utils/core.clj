@@ -192,6 +192,15 @@
        (int? max) (>= max 0)
        (>= max val)))
 
+(comment
+ ; malli:
+ (def my-schema
+   [:and
+    [:tuple pos-int? pos-int?]
+    [:fn (fn [[vl mx]] (<= vl mx))]])
+ ; TODO but pos-int? doesnt allow 0.
+ )
+
 (defn val-max
   ([val]     [val val])
   ([val max] [val max]))

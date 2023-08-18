@@ -1,13 +1,17 @@
 (ns game.maps.impl
-  (:require [utils.core :refer [translate-to-tile-middle]]
+  (:require [clojure.edn :as edn]
+            [utils.core :refer [translate-to-tile-middle]]
             [mapgen.movement-property :refer (movement-property)]
             mapgen.module-gen))
 
+(def map-data-file "resources/maps/map.edn")
+; (.readString (gdl.files/internal "maps/map.edn"))
+; instead of 'slurp'
+; resources automatically included?
+
 (defn first-level []
   (let [{:keys [tiled-map start-positions]} (mapgen.module-gen/generate
-                                             {:map-size 7
-                                              :max-area-level 3
-                                              :spawn-rate (/ 20)})
+                                             (edn/read-string (slurp map-data-file)))
         ;{:keys [end stuff-posis]} (get-populated-grid-posis grid start-posi 3)
         start-position (translate-to-tile-middle
                         (rand-nth (filter #(= "all" (movement-property tiled-map %))

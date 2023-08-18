@@ -25,6 +25,10 @@
                        target-position
                        {:faction (:faction @source)}))
 
+(comment
+ ; keys: :faction(:source)/:target-position/:creature-id
+ )
+
 (effects/defeffect :spawn
   {:text (fn [{:keys [value]}]
            (str "Spawns a " value)) ; pretty name
