@@ -5,10 +5,8 @@
                [systems :refer :all]
                [temp        :as app]
                [session :as session]) ; TODO session also a system ! on db component !!!
-            (gdl ;[utils :refer :all]
-                 [lc :as lc]
+            (gdl [lc :as lc]
                  app
-                 ;[game      :as game]
                  [input     :as input]
                  [audio     :as audio]
                  [geom      :as geom]
@@ -23,8 +21,7 @@
                           [animation    :as animation]
                           [gui :as gui]
                           [world :as world]
-                          [font :as font]
-                          )
+                          [font :as font])
             ;; TODO what to do with those ???
             [utils.core :refer :all]
             [game.media :as media]

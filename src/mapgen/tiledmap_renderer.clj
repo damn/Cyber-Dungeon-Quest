@@ -1,49 +1,42 @@
 (nsx mapgen.tiledmap-renderer
   (:require [clojure.edn :as edn]
             game.maps.impl
-            [gdl.graphics.world :as world]
-            [gdl.graphics.gui :as gui]
             [mapgen.movement-property :refer (movement-property movement-properties)]
             [mapgen.module-gen :as module-gen]))
 
-(def current-tiled-map (atom nil))
-(def current-area-level-grid (atom nil))
+(def ^:private current-tiled-map (atom nil))
+(def ^:private current-area-level-grid (atom nil))
 
 ; TODO also zoom so to see all visible tiles
 ; -> useful for minimap later
-(defn center-camera []
+(defn- center-world-camera []
   (world/set-camera-position! [(/ (tiled/width  @current-tiled-map) 2)
                                (/ (tiled/height @current-tiled-map) 2)]))
 
 ; TODO also highlight current mouseover tile !
-(defn gui-render []
+(defn- gui-render []
   #_(g/render-readable-text 0 60 {:shift true}
                           (let [tile (mapv int (world/mouse-position))
                                 tiled-map @current-tiled-map]
                             [(str "Area coords:" (mapv (comp int /) (world/mouse-position) [32 20]))
-
                              (str "Map coords:" (world/mouse-position))
-
                              (str "Tile coords:" tile)
-
                              ;(str "Visible tiles: " (world/camera-frustum))
-
                              (when @current-area-level-grid
                                (let [level (get @current-area-level-grid tile)]
                                  (when (number? level)
                                    (str "Area level:" level))))
-
                              #_(when tiled-map
                                  (str "Movement properties: " (apply vector (movement-properties tiled-map tile))))
-
                              #_(when tiled-map
                                  (str "Movement property: " (movement-property tiled-map tile)))])))
 
 ; TODO try camera rotate also
-; TODO clamp movement / zoom
+; TODO clamp movement / zoom / zoom from max zoom rate (see whole map , to see 1 tile, percentage based )
+; maybe even a slider?
 ; https://libgdx.com/wiki/graphics/2d/orthographic-camera
 (defn adjust-zoom [by]
-  (let [camera @(var world/camera)]
+  (let [camera world/camera] ; TODO minimap also not necessary to @var
     (set! (.zoom camera) (+ (.zoom camera) by))
     (.update camera)))
 
@@ -51,12 +44,13 @@
 (def ^:private camera-movement-speed 1)
 (def ^:private zoom-speed 0.05)
 
-(def show-movement-properties (atom false))
-(def show-grid-lines (atom false))
+(def ^:private show-movement-properties (atom false))
+(def ^:private show-grid-lines (atom false))
 
-(defn camera-controls []
-  (if (input/is-leftbutton-down?)  (adjust-zoom    zoom-speed)) ; TODO only pass + / -
-  (if (input/is-rightbutton-down?) (adjust-zoom (- zoom-speed)))
+; TODO textfield takes control !
+(defn- camera-controls []
+  (if (input/is-key-down? :PLUS)  (adjust-zoom    zoom-speed)) ; TODO only pass + / -
+  (if (input/is-key-down? :MINUS) (adjust-zoom (- zoom-speed)))
   (let [apply-position (fn [idx f]
                          (world/set-camera-position!
                           (update (world/camera-position)
@@ -67,7 +61,7 @@
     (if (input/is-key-down? :UP)    (apply-position 1 +))
     (if (input/is-key-down? :DOWN)  (apply-position 1 -))))
 
-(def current-start-positions (atom nil))
+(def ^:private current-start-positions (atom nil))
 
 (def ^:private show-area-level-colors true)
 
@@ -108,7 +102,7 @@
 
   (when @show-grid-lines
     (shape-drawer/grid 0 0
-                       (tiled/width @current-tiled-map)
+                       (tiled/width  @current-tiled-map)
                        (tiled/height @current-tiled-map)
                        1 1
                        (color/rgb 1 1 1 0.5))))
@@ -117,16 +111,16 @@
   (let [{:keys [tiled-map
                 area-level-grid
                 start-positions]} (module-gen/generate properties)]
-    ; TODO if old map, dispose it !
+    (.dispose @current-tiled-map)
     (reset! current-tiled-map tiled-map)
     (reset! current-area-level-grid area-level-grid)
     (reset! current-start-positions (set start-positions))
-    (center-camera)))
+    (center-world-camera)))
 
 ; TODO any key typed and not saved -> show 'unsaved' icon
 ; save => show saved icon.
 ; TODO validation/schema (malli/clojure.spec)
-(defn edn-edit-form [edn-data-file]
+(defn- edn-edit-form [edn-data-file]
   (let [properties (edn/read-string (slurp edn-data-file))
         table (ui/table)
         get-properties #(into {}
@@ -162,20 +156,19 @@
   (lc/create [_]
     (create-stage))
   (lc/dispose [_]
-    (.dispose stage))
+    (.dispose stage)
+    (.dispose @current-tiled-map))
   (lc/show [_]
     (input/set-processor stage)
     (reset! current-tiled-map (tiled/load-map module-gen/modules-file))
-    (center-camera))
+    (center-world-camera))
   (lc/hide [_] (input/set-processor nil))
   (lc/render [_]
     (when @current-tiled-map
       (tiled/render-map @current-tiled-map
                         (fn [color x y] color/white))
       (world/render render-on-map))
-    (gui/render
-     (fn []
-       (ui/draw-stage stage))))
+    (gui/render #(ui/draw-stage stage)))
   (lc/tick [_ delta]
     (ui/update-stage stage delta)
     (if (input/is-key-pressed? :L)
@@ -190,12 +183,6 @@
 ; TODO confirmation saved/edited/??
 ; TODO fix zoom touchpad / show whole map
 
-
-
-(comment
-    :dispose (fn []
-               ; TODO dispose tiled-maps
-               ))
 
 ; TODO  bug zoomed out and mouse under the last down tiles
 ; still shows 0 tiles

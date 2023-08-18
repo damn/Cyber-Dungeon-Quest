@@ -49,7 +49,6 @@
 (defn- render-map-level []
   (shape-drawer/filled-circle (world/camera-position) 0.5 color/green)) ; render player..
 
-
 (defmodule _
   (lc/show [_]
     (reset! zoom-setting (calculate-zoom))
