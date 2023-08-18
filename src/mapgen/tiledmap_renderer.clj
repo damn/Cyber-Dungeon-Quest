@@ -7,7 +7,6 @@
             [mapgen.module-gen :as module-gen]))
 
 (def current-tiled-map (atom nil))
-
 (def current-area-level-grid (atom nil))
 
 ; TODO also zoom so to see all visible tiles
@@ -118,12 +117,11 @@
   (let [{:keys [tiled-map
                 area-level-grid
                 start-positions]} (module-gen/generate properties)]
+    ; TODO if old map, dispose it !
     (reset! current-tiled-map tiled-map)
     (reset! current-area-level-grid area-level-grid)
     (reset! current-start-positions (set start-positions))
     (center-camera)))
-
-(app/defmanaged ^:dispose stage (ui/stage))
 
 ; TODO any key typed and not saved -> show 'unsaved' icon
 ; save => show saved icon.
@@ -149,16 +147,22 @@
               2)
     [table get-properties]))
 
-(app/on-create
- (def window (ui/window "Properties"))
- (.addActor stage window)
- (let [[form get-properties] (edn-edit-form game.maps.impl/map-data-file)]
-   (.add window form)
-   (.row window)
-   (.add window (ui/text-button "Generate" #(generate (get-properties)))))
- (.pack window))
+(defn- create-stage []
+  (let [stage (ui/stage)
+        window (ui/window "Properties")
+        [form get-properties] (edn-edit-form game.maps.impl/map-data-file) ]
+    (.addActor stage window)
+    (.add window form)
+    (.row window)
+    (.add window (ui/text-button "Generate" #(generate (get-properties))))
+    (.pack window)
+    stage))
 
-(defmodule _
+(defmodule stage
+  (lc/create [_]
+    (create-stage))
+  (lc/dispose [_]
+    (.dispose stage))
   (lc/show [_]
     (input/set-processor stage)
     (reset! current-tiled-map (tiled/load-map module-gen/modules-file))
@@ -178,9 +182,15 @@
       (swap! show-grid-lines not))
     (if (input/is-key-pressed? :M)
       (swap! show-movement-properties not))
-    #_(if (input/is-key-down? :G)
-      (generate properties))
     (camera-controls)))
+
+; TODO remove key controls , add checkboxes
+; TODO fix mouse movement etc
+; TODO back to main menu
+; TODO confirmation saved/edited/??
+; TODO fix zoom touchpad / show whole map
+
+
 
 (comment
     :dispose (fn []
