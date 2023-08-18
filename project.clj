@@ -4,17 +4,16 @@
                  [com.github.clojens/clj-nstools "635f408a29"] ; not on clojars: [nstools "0.2.5"]
                  [potemkin "0.4.6"]
                  [com.github.damn/grid2d "1.0"]
-
                  ; release:
-                 [com.github.damn/gdl "ae48536"]
-
+                 [com.github.damn/gdl "0c743ca"]
                  ; checkouts folder:
                  ;[gdl "1.0-SNAPSHOT"]
-
                  [seesaw "1.5.0"]]
   :plugins [[jonase/eastwood "1.2.2"]
             [lein-ancient "1.0.0-RC3"]
-            [lein-codox "0.10.8"]]
+            [lein-codox "0.10.8"]
+            [lein-hiera "2.0.0"]
+            ]
   :injections [(do (require 'x.intern) (x.intern/intern-nsx))]
   :target-path "target/%s/" ; https://stackoverflow.com/questions/44246924/clojure-tools-namespace-refresh-fails-with-no-namespace-foo
   :uberjar-name "cdq_3.jar"
