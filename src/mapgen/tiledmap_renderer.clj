@@ -7,8 +7,6 @@
 (def ^:private current-tiled-map (atom nil))
 (def ^:private current-area-level-grid (atom nil))
 
-; TODO also zoom so to see all visible tiles
-; -> useful for minimap later
 (defn- center-world-camera []
   (world/set-camera-position! [(/ (tiled/width  @current-tiled-map) 2)
                                (/ (tiled/height @current-tiled-map) 2)]))
@@ -154,20 +152,19 @@
 
 (defmodule stage
   (lc/create [_]
+    (reset! current-tiled-map (tiled/load-map module-gen/modules-file))
     (create-stage))
   (lc/dispose [_]
     (.dispose stage)
     (.dispose @current-tiled-map))
   (lc/show [_]
     (input/set-processor stage)
-    (reset! current-tiled-map (tiled/load-map module-gen/modules-file))
     (center-world-camera))
-  (lc/hide [_] (input/set-processor nil))
+  (lc/hide [_]
+    (input/set-processor nil))
   (lc/render [_]
-    (when @current-tiled-map
-      (tiled/render-map @current-tiled-map
-                        (fn [color x y] color/white))
-      (world/render render-on-map))
+    (tiled/render-map @current-tiled-map (constantly color/white)) ; TODO colorsetter optional.
+    (world/render render-on-map)
     (gui/render #(ui/draw-stage stage)))
   (lc/tick [_ delta]
     (ui/update-stage stage delta)
