@@ -20,7 +20,7 @@
   * P   - Pause the game")
 
 (app/on-create
- (def window (ui/window "Controls"))
+ (def window (ui/window :title "Controls"))
  (def ^:private controls-label (ui/label controls-text))
  (.add window controls-label)
  (.pack window))

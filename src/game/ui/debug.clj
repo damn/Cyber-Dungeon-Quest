@@ -20,7 +20,7 @@
 
 ; private doesnt work here, inside not top level
 (app/on-create
- (def window (ui/window "Debug"))
+ (def window (ui/window :title "Debug"))
  (def ^:private label (ui/label ""))
  (def ^:private label-cell (.add window label))
  (.add window (ui/actor

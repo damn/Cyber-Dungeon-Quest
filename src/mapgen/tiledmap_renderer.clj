@@ -141,7 +141,7 @@
 
 (defn- create-stage []
   (let [stage (ui/stage)
-        window (ui/window "Properties")
+        window (ui/window :title "Properties")
         [form get-properties] (edn-edit-form game.maps.impl/map-data-file) ]
     (.addActor stage window)
     (.add window form)
@@ -168,6 +168,8 @@
     (gui/render #(ui/draw-stage stage)))
   (lc/tick [_ delta]
     (ui/update-stage stage delta)
+    (when (input/is-key-pressed? :ESCAPE)
+      (gdl.app/set-screen :game.screens.main))
     (if (input/is-key-pressed? :L)
       (swap! show-grid-lines not))
     (if (input/is-key-pressed? :M)

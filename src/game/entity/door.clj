@@ -2,7 +2,7 @@
   (:require [game.components.clickable :as clickable])
   (:use
     (game.components position body render)
-    (game.maps cell-grid)))
+    game.maps.cell-grid))
 
 ; TODO render on minimap
 

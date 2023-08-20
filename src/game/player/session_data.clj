@@ -1,7 +1,9 @@
 ; TODO move to x.session
 (nsx game.player.session-data
   (:require [clojure.walk :refer [postwalk]]
-            (game.maps cell-grid data load)
+            game.maps.cell-grid
+            game.maps.data
+            game.maps.load
             (game.utils msg-to-player)
             game.items.inventory
             game.screens.options

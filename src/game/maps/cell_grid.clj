@@ -118,6 +118,16 @@
   (set-cell-blocked-boolean-array (get-cell-blocked-boolean-array)
                                   cell))
 
+
+; many entities
+; performance bottleneck #1 is dereffing cells !!
+; => read more often than write?
+; => all grid as 1 atom ??
+; simple lookup
+; but potential field
+; => also 'maps.grid' / grid/get , etc.
+; => grid is 1 atom !
+
 (defn get-entities [cell]
   (if cell
     (:entities @cell)

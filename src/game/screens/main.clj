@@ -23,14 +23,14 @@
     (.addActor stage table)
     (.center table)
     (.setDebug table false)
-    (let [new-game-button (ui/text-button "New game" try-create-character)
-          editor-button   (ui/text-button "Editor" #(gdl.app/set-screen :mapgen.tiledmap-renderer))
-          exit-button     (ui/text-button "Exit" gdl.app/exit)
+    (let [new-game-button      (ui/text-button "New game" try-create-character)
+          editor-button        (ui/text-button "Map Editor"    #(gdl.app/set-screen :mapgen.tiledmap-renderer))
+          entity-editor-button (ui/text-button "Entity Editor" #(gdl.app/set-screen :entity-editor.screen))
+          exit-button          (ui/text-button "Exit" gdl.app/exit)
           padding 25]
-      (.padBottom (.add table new-game-button) (float padding))
-      (.row table)
-      (.padBottom (.add table editor-button)   (float padding))
-      (.row table)
+      (.padBottom (.add table new-game-button)      (float padding)) (.row table)
+      (.padBottom (.add table editor-button)        (float padding)) (.row table)
+      (.padBottom (.add table entity-editor-button) (float padding)) (.row table)
       (.add table exit-button))))
 
 (declare ^:private skip-main-menu

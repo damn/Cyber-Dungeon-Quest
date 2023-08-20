@@ -11,7 +11,7 @@
             ;game.components.glittering
             game.components.image
             )
-  (:import [com.badlogic.gdx.scenes.scene2d.ui Widget Image Stack TextTooltip]
+  (:import [com.badlogic.gdx.scenes.scene2d.ui Widget Image TextTooltip]
            [com.badlogic.gdx.scenes.scene2d.utils TextureRegionDrawable ClickListener]))
 
 ; TODO define inventory in 1 place -> slots, render-posi, background-image then take at diff. places !
@@ -445,7 +445,7 @@
 
 (defn- cell-widget [slot & {:keys [position]}]
   (let [cell [slot (or position [0 0])]]
-    (doto (Stack.)
+    (doto (ui/stack)
       (.setName (pr-str cell))
       (.addListener (proxy [ClickListener] []
                       (clicked [event x y]
@@ -456,7 +456,7 @@
               (.setName "image"))))))
 
 (app/on-create
- (def window (ui/window "Inventory"))
+ (def window (ui/window :title "Inventory"))
  (def ^:private table (ui/table)) ; TODO top level def, private doesnt work
  (.pad table (float 2))
  (.add window table))

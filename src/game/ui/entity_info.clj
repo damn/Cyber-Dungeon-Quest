@@ -39,7 +39,7 @@
                (keys (:skills @entity))))))))
 
 (app/on-create
- (def window (ui/window "Info"))
+ (def window (ui/window :title "Info"))
 
  (def ^:private label (ui/label (entity-info-text)))
  (.expand (.add window label))

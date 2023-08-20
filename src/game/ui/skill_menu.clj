@@ -24,7 +24,7 @@
          (update :skills assoc-skill skill-id))))
 
 (app/on-create
- (def window (ui/window "Skills"))
+ (def window (ui/window :title "Skills"))
 
  (doseq [id [:projectile
              :meditation
