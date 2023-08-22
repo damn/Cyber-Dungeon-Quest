@@ -3,7 +3,6 @@
   (:require [game.ui.mouseover-entity :refer (saved-mouseover-entity get-mouseover-entity)]
             [game.utils.counter :refer :all]
             [game.utils.msg-to-player :refer (show-msg-to-player)]
-            [game.components.hp-mana :refer (enough-mana?)]
             [game.effects.stun :as stun]
             [game.skills.core :as skills]
             [game.maps.potential-field :as potential-field]
@@ -119,6 +118,11 @@
     (when (and cooling-down? (:is-player entity*))
       (denied "Skill is on cooldown."))
     (not cooling-down?)))
+
+(defn- enough-mana? [entity* {:keys [cost] :as skill}]
+  (or (nil? cost)
+      (zero? cost) ; TODO zero cost means entity doesnt need mana?? no structure!
+      (<= cost ((:mana entity*) 0))))
 
 (defn- check-enough-mana [entity* skill]
   (let [enough (enough-mana? entity* skill)]

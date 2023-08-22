@@ -1,6 +1,5 @@
 (nsx game.ui.skill-menu
   (:require clojure.set
-            [game.components.hp-mana :refer (enough-mana?)]
             [game.components.skills :refer (assoc-skill has-skill? choose-skill)]
             [game.skills.core :as skills]
             [game.player.entity :refer (player-entity)]

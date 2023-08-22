@@ -16,11 +16,6 @@
 (defn is-dead? [{:keys [hp]}]
   (zero? (hp 0)))
 
-; TODO this move to skill, dont need to know this all here
-(defn enough-mana? [entity* {:keys [cost] :as skill}]
-  (or (nil? cost)
-      (zero? cost)
-      (<= cost ((:mana entity*) 0))))
 
 (modifiers/defmodifier :hp
   {:values  [[15 25] [35 45] [55 65]]
