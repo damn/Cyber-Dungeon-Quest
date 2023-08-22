@@ -1,5 +1,6 @@
 (nsx game.components.render ; TODO 'systems/render' not components
-  (:require [game.ui.config :refer (hpbar-height-px)]
+  (:require [game.utils.counter :as counter]
+            [game.ui.config :refer (hpbar-height-px)]
             game.components.delete-after-animation-stopped?))
 
 ; TODO render-order make vars so on compile time checked ?
@@ -113,12 +114,16 @@
     :delete-after-duration duration}))
 
 ; => TODO just :text component ! !!! WTF
-(defcomponent :string-effect _
-  (render-above [_ {:keys [text parent]} [x y]]
+; TODO similar to components.clickable
+(defcomponent :string-effect {:keys [text]}
+  (tick! [[k _] e delta]
+    (when (counter/update-counter! e delta [k :duration])
+      (swap! e dissoc k)))
+  (render-above [_ {:keys [body]} [x y]]
     (font/draw-text {:font media/font
                      :text text
                      :x x
-                     :y (+ y (:half-height (:body @parent))
+                     :y (+ y (:half-height body)
                            (world/pixels->world-units hpbar-height-px))
                      :up? true})))
 
@@ -145,20 +150,14 @@
 
 ; move to game/entities/string-effect
 ; TODO pass new color/string markup stuff [COLOR]STRING\n
-; TODO not stacking even with "\n"
 (defn show-string-effect [entity text]
-  (if-let [string-effect-entity (->> @entity
-                                     :children
-                                     (filter #(:string-effect @%))
-                                     first)]
-    (update-in! string-effect-entity [:text] str text "\n")
-    (create-entity!
-     {:position (:position @entity)
-      :parent entity
-      :z-order :effect
-      :string-effect true
-      :text text
-      :delete-after-duration 400})))
+  (if-let [string-effect (:string-effect @entity)]
+    (->! entity
+         (update-in [:string-effect :text] str "\n" text)
+         (update-in [:string-effect :duration] counter/reset))
+    (swap! entity assoc :string-effect
+           {:text text
+            :duration (counter/make-counter 400)})))
 
 (defn- hp-delta-color [delta]
   (cond (pos? delta) (color/rgb 0.2 1 0.2)

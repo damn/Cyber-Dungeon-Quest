@@ -22,7 +22,7 @@
 
 (defsystem render-below  [c m position]) ; entity effects, mouseover-outline
 (defsystem render        [c m position]) ; image, animation
-(defsystem render-above  [c m position]) ; psi-charges, glittering, shield
+(defsystem render-above  [c m position]) ; psi-charges, glittering, shield ( == 'effects' ?)
 (defsystem render-info   [c m position]) ; hp-bar, attacking-arc
 
 (defsystem render-debug  [c m position]) ; body-bounds, mouseover entity info
