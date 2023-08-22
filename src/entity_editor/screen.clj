@@ -1,6 +1,28 @@
 (nsx entity-editor.screen
   (:require [game.creatures.core :as creatures]
-            [game.items.core :as items]))
+            [game.items.core :as items]
+            [game.skills.core :as skills]
+            [game.effects.core :as effects]
+            [game.components.modifiers :as modifiers]))
+
+
+(comment
+
+ (gdl.app/with-context (set! *print-level* nil))
+
+ (keys effects/effect-definitions)
+ (:hp :mana :stun :damage :spawn :target-entity :restore-hp-mana :projectile)
+
+ (keys modifiers/modifier-definitions)
+ (:block :skill :mana-reg :shield :mana :hp-reg :cast-speed :damage :armor :update-speed :hp :attack-speed)
+
+
+ ; items/modifiers
+ ; * list with icon, add/remove
+
+ )
+
+; TODO editing the 'loaded' stuff, not from edn ...
 
 
 (import '[com.badlogic.gdx.scenes.scene2d.ui Widget Image TextTooltip])
@@ -11,14 +33,22 @@
 ; setFirstWidget
 ; setSecondWidget
 
-(defn set-center-screen [actor]
-  (.setPosition actor
-                (- (/ (gui/viewport-width)  2) (/ (.getWidth  actor) 2))
-                (- (/ (gui/viewport-height) 2) (/ (.getHeight actor) 2))))
+
 
 
 (import 'com.badlogic.gdx.scenes.scene2d.Actor)
 (import 'com.badlogic.gdx.scenes.scene2d.ui.Table)
+
+(defn set-center [^Actor actor x y]
+  (.setPosition actor
+                (- x (/ (.getWidth  actor) 2))
+                (- y (/ (.getHeight actor) 2))))
+
+(defn set-center-screen [actor]
+  (set-center actor
+              (/ (gui/viewport-width)  2)
+              (/ (gui/viewport-height) 2)))
+
 
 (defn add-rows [^Table table rows]
   (doseq [row rows]
@@ -74,6 +104,18 @@
      [["hp"    (ui/text-field (str (:hp props)))]
       ["speed" (ui/text-field (str (:speed props)))]])))
 
+; attributes of an entity
+; * text-editor
+; * 'link' => button to edit that connected entity (creature type)
+; * 'list' => items/skills/modifiers/etc.
+;  => define per entity base (but I do anyway through functions?)
+
+; TODO
+; * define widgets per attribute (e.g. id - not editable - label)
+; * => need to define entity-type-attribute-keysets
+; * what about links ? will become buttons ? schema? datomic?
+; save/undo/redo => datomic?
+
 (defn- creature-editor [id]
   (let [props (get creatures/creatures id)]
     (editor-window
@@ -87,7 +129,19 @@
                                                                (creature-type-editor (:creature-type props)))))]
       ["level"  (ui/text-field (str (:level props)))]
       ["skills" (ui/text-field (str (:skills props)))]
-      ["items"  (ui/text-field (str (:items props)))]])))
+      ["items"  (let [table (ui/table)]
+                  (doseq [item (:items props)]
+                    (.add table (Image. (TextureRegionDrawable. (:texture (:image (get items/items item))))))
+                    (.add table (ui/text-button "remove item" (fn [] (println "Remove " item))))
+                    (.row table))
+                  (.add table (ui/text-button "add item" (fn [] (println "Add item"))))
+                  table)]])))
+
+; entity-type 'item'
+; => edit entity with id
+; => where to read properties?
+; items => items/items
+; 'image-widget' => :image property
 
 (defn- item-editor [id]
   (let [props (get items/items id)]
@@ -97,6 +151,22 @@
      :image-widget (Image. (TextureRegionDrawable. (:texture (:image props))))
      :props-widget-pairs
      [["slot" (ui/label (name (:slot props)))]])))
+
+; TODO effect, first choose from list which one
+; then edit properties (different for each effect => depends on params !)
+; param types ... e.g. damage.
+
+(defn- skill-editor [id]
+  (let [props (get skills/skills id)]
+    (editor-window
+     :title "Skill"
+     :id (:id props)
+     :image-widget (Image. (TextureRegionDrawable. (:texture (:image props))))
+     :props-widget-pairs
+     [["action-time" (ui/text-field (str (:action-time props)))]
+      ["cooldown"    (ui/text-field (str (:cooldown props)))]
+      ["cost"        (ui/text-field (str (:cost props)))]
+      ["effect"      (ui/text-field (str (:effect props)))]])))
 
 ; TODO show hp/speed & with multipler for creatures too ?
 
@@ -148,6 +218,12 @@
                   :entity-editor item-editor
                   :extra-infos-widget (fn [_] (ui/label ""))))
 
+(defn- skills-table []
+  (entities-table :title "Skills"
+                  :entities (vals skills/skills)
+                  :entity-editor skill-editor
+                  :extra-infos-widget (fn [_] (ui/label ""))))
+
 (comment
  (.setFirstWidget split-pane (left-widget))
  (.setSecondWidget split-pane (creatures-table))
@@ -162,6 +238,7 @@
   (let [table (ui/table)]
     (.add table (ui/text-button "Creatures" #(.setSecondWidget split-pane (creatures-table)))) (.row table)
     (.add table (ui/text-button "Items"     #(.setSecondWidget split-pane (items-table))))     (.row table)
+    (.add table (ui/text-button "Skills"    #(.setSecondWidget split-pane (skills-table))))    (.row table)
     table))
 
 (defn- create-stage []
