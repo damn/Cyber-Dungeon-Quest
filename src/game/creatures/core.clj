@@ -7,6 +7,7 @@
             [game.components.render :refer (animation-entity)]
             [game.items.inventory :refer (create-item-body #_create-rand-item)]
             [game.player.entity :refer (set-player-entity player-entity)]
+            game.components.mana
             game.components.sleeping
             game.components.animation))
 

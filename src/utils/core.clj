@@ -185,7 +185,7 @@
 ; TODO also for counters ? also ratio there
 ; but reset function ... well just its a separate function
 
-(defn- val-max-valid? [{val 0 max 1 :as val-max}]
+(defn- val-max-valid? [{val 0 max 1 :as val-max}] ; TODO unused !!
   (and (vector? val-max)
        (= (count val-max) 2)
        (int? val) (>= val 0)
@@ -201,6 +201,8 @@
  ; TODO but pos-int? doesnt allow 0.
  )
 
+; TODO assert hitpoints/mana positive integer ?
+; => @ val-max ... => specs ?
 (defn val-max
   ([val]     [val val])
   ([val max] [val max]))
@@ -281,6 +283,14 @@
    [:max :inc] 0})
  ; -> [7 15]
  )
+
+; TODO do not use 'value' outside of defeffect -> use proper minimal names at other functions
+(defn affect-val-max-stat! [k {:keys [target value]}]
+  (let [modifier value
+        {val-old 0 :as val-max-old} (k @target)
+        {val-new 0 :as val-max-new} (apply-val-max-modifier val-max-old modifier)]
+    (swap! target assoc k val-max-new)
+    (- val-new val-old)))
 
 (defmacro when-seq [[aseq bind] & body]
   `(let [~aseq ~bind]

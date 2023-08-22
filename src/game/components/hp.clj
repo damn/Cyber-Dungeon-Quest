@@ -1,73 +1,5 @@
-(nsx game.components.hp-mana ; TODO separate !
-  (:require [game.components.render :refer (hp-changed-effect mana-changed-effect)]
-            [game.ui.config :refer (hpbar-height-px)]))
-
-; TODO assert hitpoints/mana positive integer ?
-
-(defcomponent :hp max-hp
-  (create [_]
-    (val-max max-hp)))
-
-(defcomponent :mana max-mana
-  (create [_]
-    (val-max max-mana)))
-
-; => rename dead? => grep is-.*?
-(defn is-dead? [{:keys [hp]}]
-  (zero? (hp 0)))
-
-
-(modifiers/defmodifier :hp
-  {:values  [[15 25] [35 45] [55 65]]
-   :text    #(str "+" % " HP")
-   :keys    [:hp]
-   :apply   (partial apply-max +)
-   :reverse (partial apply-max -)})
-
-(modifiers/defmodifier :mana
-  {:values  [[15 25] [35 45] [55 65]] ; TODO values ?
-   :text    #(str "+" % " Mana")
-   :keys    [:mana]
-   :apply   (partial apply-max +)
-   :reverse (partial apply-max -)})
-
-; TODO do not use 'value' outside of defeffect -> use proper minimal names at other functions
-(defn- affect-val-max-stat! [k {:keys [target value]}]
-  (let [modifier value
-        {val-old 0 :as val-max-old} (k @target)
-        {val-new 0 :as val-max-new} (apply-val-max-modifier val-max-old modifier)]
-    (swap! target assoc k val-max-new)
-    (- val-new val-old)))
-
-; heal/mana effects
-; value : [:hp [[:val :inc] 5]]
-; * leech ->      [[:val :inc] x]
-; * regenerate -> [[:val :inc] (percent of max)]
-(effects/defeffect :hp
-  {:text (fn [{:keys [value]}]
-           (str value " HP"))
-   :valid-params? (fn [{:keys [target]}]
-                    target)
-   :do! (fn [{:keys [target] :as params}]
-          (let [delta (affect-val-max-stat! :hp params)]
-            (hp-changed-effect target delta))
-          ; TODO this can be a system somewhere which checks
-          ; rule system ?
-          ; not even mark destroyed ?
-          (when (and (is-dead? @target)
-                     (not (:is-player @target)))
-            (swap! target assoc :destroyed? true)))})
-
-(effects/defeffect :mana
-  {:text (fn [{:keys [value]}]
-           (str value " MP"))
-   :valid-params? (fn [{:keys [target]}]
-                    target)
-   :do! (fn [{:keys [target] :as params}]
-          (let [delta (affect-val-max-stat! :mana params)]
-            (mana-changed-effect target delta)))})
-
-;; HP bar
+(nsx game.components.hp
+  (:require [game.ui.config :refer (hpbar-height-px)]))
 
 (def- hpbar-colors
   {:green     (color/rgb 0 0.8 0)
@@ -91,6 +23,8 @@
 ; this could be abstracted/automated , systems which connect different components
 ; query for them both ?
 (defcomponent :hp hp
+  (create [[_ max-hp]]
+    (val-max max-hp))
   (render-info [_ {:keys [body mouseover?]} [x y]]
     (let [{:keys [width half-width half-height]} body
           ratio (val-max-ratio hp)]
@@ -105,6 +39,16 @@
                                          (- (* width ratio) (* 2 border))
                                          (- height (* 2 border))
                                          (hpbar-color ratio)))))))
+
+(defn dead? [{:keys [hp]}]
+  (zero? (hp 0)))
+
+(modifiers/defmodifier :hp
+  {:values  [[15 25] [35 45] [55 65]]
+   :text    #(str "+" % " HP")
+   :keys    [:hp]
+   :apply   (partial apply-max +)
+   :reverse (partial apply-max -)})
 
 ;; Regeneration
 

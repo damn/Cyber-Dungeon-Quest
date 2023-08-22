@@ -1,5 +1,7 @@
 (nsx game.effects.restore-hp-mana
-  (:require [game.components.skills :refer (ai-should-use?)]))
+  (:require [game.components.skills :refer (ai-should-use?)]
+            game.effects.hp
+            game.effects.mana))
 
 (defmethod ai-should-use? :restore-hp-mana [_ entity]
   (or (lower-than-max? (:mana @entity))

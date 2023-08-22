@@ -76,7 +76,7 @@
 ; navigation meshes would make ray-blocked much simpler if in the same polygon/area
 (defn- healing-required-and-allowed? [entity healer]
   (and (exists? entity)
-       (not (is-dead? @entity))
+       (not (dead? @entity))
        (lower-than-max? (:hp @entity))
        (< (v/distance (:position @entity) (:position @healer))
           8)))

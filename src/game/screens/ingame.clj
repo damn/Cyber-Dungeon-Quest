@@ -9,7 +9,7 @@
             [game.ui.mouseover-entity :refer (saved-mouseover-entity)]
 
             [game.components.clickable :as clickable]
-            [game.components.hp-mana :refer (is-dead?)]
+            [game.components.hp :refer (dead?)]
 
             [game.maps.data :as maps-data]
 
@@ -123,7 +123,7 @@
 
      (some (memfn isVisible) windows) (dorun (map #(.setVisible % false) windows))
 
-     (is-dead? @player-entity) (if-not false ;#_(try-revive-player)
+     (dead? @player-entity) (if-not false ;#_(try-revive-player)
                                  (gdl.app/set-screen :game.screens.main))
 
      :else (gdl.app/set-screen :game.screens.options)))

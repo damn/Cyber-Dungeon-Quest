@@ -1,7 +1,7 @@
 (nsx game.effects.damage
   (:require [game.utils.random :as random]
             [game.components.render :refer :all]
-            [game.components.hp-mana :refer (is-dead?)]))
+            [game.components.hp :refer (dead?)]))
 
 (defn- effect-modifiers [{:keys [source target]} effect-type]
   {:source-modifiers (-> @source :effect-modifiers effect-type :source)
@@ -70,7 +70,7 @@
      :animation (media/fx-impact-animation fx-idx))))
 
 (defn- deal-damage! [{:keys [target] [damage-type] :value :as params}]
-  (when-not (is-dead? @target)
+  (when-not (dead? @target)
     (cond
      (blocks? :shield params) (shield-blocked-effect target)
      (blocks? :armor  params) (armor-blocked-effect  target)

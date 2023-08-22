@@ -1,10 +1,9 @@
-; TODO game.tick ?
-(nsx game.update-ingame
+(nsx game.update-ingame ; TODO game.tick
   (:require [clj-commons.pretty.repl :as p]
             [game.running :refer (running)]
             [game.utils.counter :refer :all]
             [game.player.entity :refer (player-entity)]
-            [game.components.hp-mana :refer (is-dead?)]
+            [game.components.hp :refer (dead?)]
             [game.items.inventory :as inventory]
             [game.ui.mouseover-entity :refer (update-mouseover-entity)]
             game.components.update ; TODO namespace now only 2 modifiers.
@@ -134,7 +133,7 @@
   ; TODO leftbutton in GUI handle ! all mouse presses / down handle check not processed by gui-stage
   (when pausing
     (if (and (not @thrown-error)
-             (not (is-dead? @player-entity))
+             (not (dead? @player-entity))
              (not (inventory/is-item-in-hand?)) ; do not run around w. item in hand
 
              ; == TODO =
@@ -170,7 +169,7 @@
              (reset! thrown-error t)))))
 
   (if (and @running
-           (is-dead? @player-entity))
+           (dead? @player-entity))
     ; TODO here reset-running false not @ player-death
     (player-death))
 
