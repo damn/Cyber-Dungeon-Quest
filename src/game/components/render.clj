@@ -117,7 +117,7 @@
 ; TODO similar to components.clickable
 (defcomponent :string-effect {:keys [text]}
   (tick! [[k _] e delta]
-    (when (counter/update-counter! e delta [k :duration])
+    (when (counter/update-counter! e delta [k :counter])
       (swap! e dissoc k)))
   (render-above [_ {:keys [body]} [x y]]
     (font/draw-text {:font media/font
@@ -151,13 +151,13 @@
 ; move to game/entities/string-effect
 ; TODO pass new color/string markup stuff [COLOR]STRING\n
 (defn show-string-effect [entity text]
-  (if-let [string-effect (:string-effect @entity)]
+  (if (:string-effect @entity)
     (->! entity
          (update-in [:string-effect :text] str "\n" text)
-         (update-in [:string-effect :duration] counter/reset))
+         (update-in [:string-effect :counter] counter/reset))
     (swap! entity assoc :string-effect
            {:text text
-            :duration (counter/make-counter 400)})))
+            :counter (counter/make-counter 400)})))
 
 (defn- hp-delta-color [delta]
   (cond (pos? delta) (color/rgb 0.2 1 0.2)

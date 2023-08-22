@@ -25,7 +25,7 @@
   `(add-listener ~event
                  (fn []
                    ; TODO !
-                   ;(println "On" (quote ~event) " exprs:" (quote ~exprs))
+                   (println "On" (quote ~event) " exprs:" (quote ~exprs))
                    ~@exprs)))
 
 (defn fire-event! [event]
@@ -41,7 +41,7 @@
 
     (let [var# (var ~symbol)]
       (on-create
-       (println "on-create " ~symbol " init: " '~init)
+       ;(println "on-create " var# " init: " '~init)
        (set-var-root var# ~init))
 
       (on-destroy
