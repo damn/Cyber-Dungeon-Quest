@@ -450,8 +450,7 @@
       (.addListener (proxy [ClickListener] []
                       (clicked [event x y]
                         (clicked-cell cell))))
-      (.add (doto (draw-rect-actor)
-              (.setName "rect")))
+      (.add (draw-rect-actor))
       (.add (doto (Image. (slot->background slot))
               (.setName "image"))))))
 
