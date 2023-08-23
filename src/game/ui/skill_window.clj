@@ -1,4 +1,4 @@
-(nsx game.ui.skill-menu
+(nsx game.ui.skill-window
   (:require clojure.set
             [game.components.skills :refer (assoc-skill has-skill? choose-skill)]
             [game.skills.core :as skills]
@@ -22,20 +22,20 @@
          (update :free-skill-points dec)
          (update :skills assoc-skill skill-id))))
 
-(app/on-create
- (def window (ui/window :title "Skills"))
-
- (doseq [id [:projectile
-             :meditation
-             :spawn]
-         :let [skill (skills/skills id)
-               button (ui/image-button (:image skill)
-                                            #(pressed-on-skill-in-menu id))]]
-   (.addListener button (ui/text-tooltip #(skills/text id player-entity)))
-   (.add window button))
- ; TODO render text label free-skill-points
- ; (str "Free points: " (:free-skill-points @player-entity))
- (.pack window))
+(defn create-window []
+  (let [window (ui/window :title "Skills")]
+    (doseq [id [:projectile
+                :meditation
+                :spawn]
+            :let [skill (skills/skills id)
+                  button (ui/image-button (:image skill)
+                                          #(pressed-on-skill-in-menu id))]]
+      (.addListener button (ui/text-tooltip #(skills/text id player-entity)))
+      (.add window button))
+    ; TODO render text label free-skill-points
+    ; (str "Free points: " (:free-skill-points @player-entity))
+    (.pack window)
+    window))
 
 #_(app/on-create
  ; TODO move to src/game/ingame_gui where all other buttons are

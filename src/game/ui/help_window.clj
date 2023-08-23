@@ -19,8 +19,8 @@
   * ESC - exit/close menu
   * P   - Pause the game")
 
-(app/on-create
- (def window (ui/window :title "Controls"))
- (def ^:private controls-label (ui/label controls-text))
- (.add window controls-label)
- (.pack window))
+(defn create-window []
+  (let [window (ui/window :title "Controls")]
+    (.add window (ui/label controls-text))
+    (.pack window)
+    window))

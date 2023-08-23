@@ -1,4 +1,4 @@
-(nsx game.ui.entity-info
+(nsx game.ui.entity-info-window
   (:require [game.ui.mouseover-entity :refer (get-mouseover-entity)]))
 
 ; I can create for every entity
@@ -38,16 +38,14 @@
                :skills
                (keys (:skills @entity))))))))
 
-(app/on-create
- (def window (ui/window :title "Info"))
-
- (def ^:private label (ui/label (entity-info-text)))
- (.expand (.add window label))
-
- ; TODO do not change window size ... -> no need to invalidate layout, set the whole stage up again
- ; => fix size somehow.
- (.add window (ui/actor
-               #(do
-                 (.setText label (entity-info-text))
-                 (.pack window)
-                 ))))
+(defn create-window []
+  (let [window (ui/window :title "Info")
+        label (ui/label (entity-info-text))]
+    (.expand (.add window label))
+    ; TODO do not change window size ... -> no need to invalidate layout, set the whole stage up again
+    ; => fix size somehow.
+    (.add window (ui/actor
+                  #(do
+                    (.setText label (entity-info-text))
+                    (.pack window))))
+    window))
