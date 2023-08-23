@@ -60,4 +60,4 @@
     (when (or (input/is-key-pressed? :TAB)
               (input/is-key-pressed? :ESCAPE))
       (set-zoom 1)
-      (gdl.app/set-screen :game.screens.ingame))))
+      (app/set-screen :game.screens.ingame))))

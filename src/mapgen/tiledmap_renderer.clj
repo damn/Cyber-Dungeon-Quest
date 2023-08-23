@@ -169,7 +169,7 @@
   (lc/tick [_ delta]
     (ui/update-stage stage delta)
     (when (input/is-key-pressed? :ESCAPE)
-      (gdl.app/set-screen :game.screens.main))
+      (app/set-screen :game.screens.main))
     (if (input/is-key-pressed? :L)
       (swap! show-grid-lines not))
     (if (input/is-key-pressed? :M)

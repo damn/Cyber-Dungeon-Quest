@@ -3,10 +3,9 @@
             (x [x       :refer :all]
                [db      :refer :all] ; TODO make :as db
                [systems :refer :all]
-               [temp        :as app]
                [session :as session]) ; TODO session also a system ! on db component !!!
             (gdl [lc :as lc]
-                 app
+                 [app :as app]
                  [input     :as input]
                  [audio     :as audio]
                  [geom      :as geom]

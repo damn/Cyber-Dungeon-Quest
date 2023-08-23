@@ -76,10 +76,14 @@
 ; then also description text for weapons has be default these stats, entity-description stats ?!
 ;
 
-(app/defmanaged items (properties/load-edn "items/properties.edn"
-                                           :transform
-                                           (comp handle-weapons
-                                                 prepare-item-properties)))
+(declare items)
+
+(defmodule _
+  (lc/create [_]
+    (.bindRoot #'items (properties/load-edn "items/properties.edn"
+                                            :transform
+                                            (comp handle-weapons
+                                                  prepare-item-properties)))))
 
 ; diablo2 unique gold rgb 144 136 88
 (color/defrgb ^:private gold-item-color 0.84 0.8 0.52)

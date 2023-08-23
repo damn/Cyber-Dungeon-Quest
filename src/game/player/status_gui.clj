@@ -1,4 +1,4 @@
-(nsx game.player.status-gui
+(nsx game.player.status-gui ; TODO use stage/scene2d
   (:require [game.player.entity :refer (player-entity)])
   (:use
     (game media)
@@ -11,14 +11,15 @@
                    :y (+ y 2)
                    :up? true}))
 
-(app/on-create
- (let [scale 2] ; TODO FIXME scale of the whole all game things can set somewhere (gui-scale) for all dists, etc.
-                ; ?? can play also sci-fi 24x24 ?
-   (def- rahmen (image/create "ui/rahmen.png"))
-   (def- rahmenw (first  (image/pixel-dimensions rahmen)))
-   (def- rahmenh (second (image/pixel-dimensions rahmen)))
-   (def- hpcontent   (image/create "ui/hp.png"))
-   (def- manacontent (image/create "ui/mana.png"))))
+(defmodule _
+  (lc/create [_]
+    (let [scale 2] ; TODO FIXME scale of the whole all game things can set somewhere (gui-scale) for all dists, etc.
+      ; ?? can play also sci-fi 24x24 ?
+      (def- rahmen (image/create "ui/rahmen.png"))
+      (def- rahmenw (first  (image/pixel-dimensions rahmen)))
+      (def- rahmenh (second (image/pixel-dimensions rahmen)))
+      (def- hpcontent   (image/create "ui/hp.png"))
+      (def- manacontent (image/create "ui/mana.png")))))
 
 (defn- render-hpmana-bar [x y contentimg minmaxval name]
   (image/draw rahmen x y)

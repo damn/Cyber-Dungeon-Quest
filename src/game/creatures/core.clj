@@ -11,8 +11,13 @@
             game.components.sleeping
             game.components.animation))
 
-(app/defmanaged creatures      (properties/load-edn "creatures/creatures.edn"))
-(app/defmanaged creature-types (properties/load-edn "creatures/creature-types.edn"))
+(declare creatures
+         creature-types)
+
+(defmodule _
+  (lc/create [_]
+    (.bindRoot #'creatures      (properties/load-edn "creatures/creatures.edn"))
+    (.bindRoot #'creature-types (properties/load-edn "creatures/creature-types.edn"))))
 
 (defn- create-images [creature-name]
   (map #(image/create

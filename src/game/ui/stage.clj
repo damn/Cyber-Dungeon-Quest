@@ -3,16 +3,18 @@
   (:require x.ns) ; one time require so clojure.tools.namespace knows the dependency order
   (:import com.badlogic.gdx.scenes.scene2d.Stage))
 
-; TODO move to screens/ingame, but also used at 1 place
-; => mouseover-entity ! (mouseover-gui?)
-; => pass stage as arg !
-(app/defmanaged ^:dispose ^Stage stage (ui/stage))
+(declare ^Stage stage
+         table)
 
-(app/defmanaged table (let [table (doto (ui/table)
-                                    (.setFillParent true))]
-                        (.addActor stage table)
-                        table))
+(defmodule _
+  (lc/create [_]
+    (.bindRoot #'stage (ui/stage))
+    (.bindRoot #'table (let [table (doto (ui/table)
+                                     (.setFillParent true))]
+                         (.addActor stage table)
+                         table)))
+  (lc/dispose [_]
+    (.dispose stage)))
 
 (defn mouseover-gui? []
-  (let [[x y] (gui/mouse-position)]
-    (.hit stage x y true)))
+  (ui/mouseover? stage))

@@ -8,7 +8,7 @@
 (defn- start-loading-game [character-name & {new-character :new-character}]
   (reset! is-loaded-character (not new-character))
   (reset! current-character-name character-name)
-  (gdl.app/set-screen :game.screens.load-session))
+  (app/set-screen :game.screens.load-session))
 
 (defn- try-create-character []
   (when-let [char-name "FOO BAR"]
@@ -24,9 +24,9 @@
     (.center table)
     (.setDebug table false)
     (let [new-game-button      (ui/text-button "New game" try-create-character)
-          editor-button        (ui/text-button "Map Editor"    #(gdl.app/set-screen :mapgen.tiledmap-renderer))
-          entity-editor-button (ui/text-button "Entity Editor" #(gdl.app/set-screen :entity-editor.screen))
-          exit-button          (ui/text-button "Exit" gdl.app/exit)
+          editor-button        (ui/text-button "Map Editor"    #(app/set-screen :mapgen.tiledmap-renderer))
+          entity-editor-button (ui/text-button "Entity Editor" #(app/set-screen :entity-editor.screen))
+          exit-button          (ui/text-button "Exit" app/exit)
           padding 25]
       (.padBottom (.add table new-game-button)      (float padding)) (.row table)
       (.padBottom (.add table editor-button)        (float padding)) (.row table)
@@ -55,6 +55,6 @@
   (lc/tick [_ delta]
     (ui/update-stage stage delta) ; act
     (when (input/is-key-pressed? :ESCAPE) ; no input/
-      (gdl.app/exit)) ; app/
+      (app/exit))
     (when skip-main-menu
       (try-create-character))))

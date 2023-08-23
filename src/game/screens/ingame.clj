@@ -14,63 +14,58 @@
             game.update-ingame
             game.render-ingame))
 
-; TODO private inside not top level def doesnt work.
-(app/on-create
- ; TODO maybe call functions here which create that -> no need to defmanage everything
- ; everywhere
- ; => 1 app/defmanaged gui-stage ?
+(defn- create-this []
+  (def debug-window       (game.ui.debug-window/create-window))
+  (def help-window        (game.ui.help-window/create-window))
+  (def entity-info-window (game.ui.entity-info-window/create-window))
+  (def skill-window       (game.ui.skill-window/create-window))
 
- (def debug-window       (game.ui.debug-window/create-window))
- (def help-window        (game.ui.help-window/create-window))
- (def entity-info-window (game.ui.entity-info-window/create-window))
- (def skill-window       (game.ui.skill-window/create-window))
+  (def ^:private windows [debug-window
+                          help-window
+                          entity-info-window
+                          inventory/window
+                          skill-window])
 
- (def ^:private windows [debug-window
-                         help-window
-                         entity-info-window
-                         inventory/window
-                         skill-window])
+  ; TODO skill-menu rebuild at new session
+  ; -> session lifecycle not create/destroy lifecycle
 
- ; TODO skill-menu rebuild at new session
- ; -> session lifecycle not create/destroy lifecycle
+  ; TODO put hotkey text in title
+  #_(.setText (.getTitleLabel skill-window)
+              "foo"
+              )
 
- ; TODO put hotkey text in title
- #_(.setText (.getTitleLabel skill-window)
-           "foo"
-           )
+  (.setPosition debug-window 0 (gui/viewport-height))
 
- (.setPosition debug-window 0 (gui/viewport-height))
+  (.setPosition help-window
+                (- (/ (gui/viewport-width) 2)
+                   (/ (.getWidth help-window) 2))
+                (gui/viewport-height))
 
- (.setPosition help-window
-               (- (/ (gui/viewport-width) 2)
-                  (/ (.getWidth help-window) 2))
-               (gui/viewport-height))
+  (.setPosition inventory/window
+                (gui/viewport-width)
+                (- (/ (gui/viewport-height) 2)
+                   (/ (.getHeight help-window) 2)))
 
- (.setPosition inventory/window
-               (gui/viewport-width)
-               (- (/ (gui/viewport-height) 2)
-                  (/ (.getHeight help-window) 2)))
+  (.setPosition inventory/window
+                (gui/viewport-width)
+                (- (/ (gui/viewport-height) 2)
+                   (/ (.getHeight help-window) 2)))
 
- (.setPosition inventory/window
-               (gui/viewport-width)
-               (- (/ (gui/viewport-height) 2)
-                  (/ (.getHeight help-window) 2)))
+  (.setPosition entity-info-window
+                (.getX inventory/window)
+                0)
 
- (.setPosition entity-info-window
-               (.getX inventory/window)
-               0)
+  (.setWidth  entity-info-window (.getWidth inventory/window)) ; 333, 208
+  (.setHeight entity-info-window (.getY inventory/window))
 
- (.setWidth  entity-info-window (.getWidth inventory/window)) ; 333, 208
- (.setHeight entity-info-window (.getY inventory/window))
+  (doseq [window windows]
+    (.addActor stage/stage window) ; -> ui/add -> Addable Interface ?!...
+    (.setVisible window true))
 
- (doseq [window windows]
-   (.addActor stage/stage window) ; -> ui/add -> Addable Interface ?!...
-   (.setVisible window true))
-
- (-> stage/table
-     (.add action-bar/horizontal-group)
-     .expand
-     .bottom))
+  (-> stage/table
+      (.add action-bar/horizontal-group)
+      .expand
+      .bottom))
 
 (defn- toggle-visible! [actor]
   (.setVisible actor (not (.isVisible actor))))
@@ -123,12 +118,12 @@
      (some (memfn isVisible) windows) (dorun (map #(.setVisible % false) windows))
 
      (dead? @player-entity) (if-not false ;#_(try-revive-player)
-                                 (gdl.app/set-screen :game.screens.main))
+                                 (app/set-screen :game.screens.main))
 
-     :else (gdl.app/set-screen :game.screens.options)))
+     :else (app/set-screen :game.screens.options)))
 
   (when (input/is-key-pressed? :TAB)
-    (gdl.app/set-screen :game.screens.minimap))
+    (app/set-screen :game.screens.minimap))
 
   ; TODO entity/skill info also
 
@@ -237,6 +232,8 @@
  )
 
 (defmodule _
+  (lc/create [_]
+    (create-this))
   (lc/show [_] (input/set-processor stage/stage))
   (lc/hide [_] (input/set-processor nil))
   (lc/render [_]

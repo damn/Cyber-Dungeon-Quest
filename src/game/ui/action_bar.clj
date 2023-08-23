@@ -70,11 +70,13 @@
 ; -> then check player-skills not in actionbar -> add at an index.
 ; keep index 1 for item ?
 
-(declare check-hotbar-actualize)
+(declare check-hotbar-actualize
+         horizontal-group)
 
-(app/on-create
- (def horizontal-group (com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup.))
- (.addActor horizontal-group (ui/actor check-hotbar-actualize)))
+(defmodule _
+  (lc/create [_]
+    (.bindRoot #'horizontal-group (com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup.))
+    (.addActor horizontal-group (ui/actor check-hotbar-actualize))))
 
 (defn- reset-buttons! []
   (.clearChildren horizontal-group)

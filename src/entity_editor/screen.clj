@@ -8,7 +8,7 @@
 
 (comment
 
- (gdl.app/with-context (set! *print-level* nil))
+ (app/with-context (set! *print-level* nil))
 
  (keys effects/effect-definitions)
  (:hp :mana :stun :damage :spawn :target-entity :restore-hp-mana :projectile)
@@ -263,4 +263,4 @@
   (lc/tick [_ delta]
     (ui/update-stage stage delta)
     (when (input/is-key-pressed? :ESCAPE)
-      (gdl.app/set-screen :game.screens.main))))
+      (app/set-screen :game.screens.main))))

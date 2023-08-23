@@ -22,7 +22,11 @@
     (assert (set/subset? property-keys keyset)
             (str "Skill properties are missing keys: " keyset))))
 
-(app/defmanaged skills (properties/load-edn "skills/properties.edn"))
+(declare skills)
+
+(defmodule _
+  (lc/create [_]
+    (.bindRoot #'skills (properties/load-edn "skills/properties.edn"))))
 
 (defn- ms->pprint-seconds [ms]
   (readable-number (/ ms 1000)))

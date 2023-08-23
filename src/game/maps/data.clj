@@ -42,9 +42,10 @@
 
 (defn get-current-map-data [] (get maps-data @current-map))
 
-(app/on-destroy
- (when (bound? #'maps-data)
-   (doseq [[mapkey mapdata] maps-data
-           :let [tiled-map (:tiled-map mapdata)]
-           :when tiled-map]
-     (tiled/dispose tiled-map))))
+(defmodule _
+  (lc/dispose [_]
+    (when (bound? #'maps-data)
+      (doseq [[mapkey mapdata] maps-data
+              :let [tiled-map (:tiled-map mapdata)]
+              :when tiled-map]
+        (tiled/dispose tiled-map)))))

@@ -22,5 +22,5 @@
       ;(log "Loading new session")
       (game.player.session-data/init @is-loaded-character)
       ;(log "Finished loading new session")
-      (gdl.app/set-screen :game.screens.ingame))))
+      (app/set-screen :game.screens.ingame))))
 

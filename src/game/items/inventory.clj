@@ -386,27 +386,36 @@
          (set-item entity cell @item-in-hand)
          (set-item-in-hand item)))))))
 
-(app/defmanaged ^:private slot->background
-  (let [sheet (image/spritesheet "items/images.png" 48 48)]
-    (->> {:weapon   0
-          :shield   1
-          :rings    2
-          :necklace 3
-          :helm     4
-          :cloak    5
-          :chest    6
-          :leg      7
-          :glove    8
-          :boot     9
-          :bag      10} ; transparent
-         (map (fn [[slot y]]
-                [slot
-                 (-> sheet
-                     (image/get-sprite [21 (+ y 2)])
-                     :texture
-                     TextureRegionDrawable.
-                     (.tint (color/rgb 1 1 1 0.4)))]))
-         (into {}))))
+(declare ^:private slot->background
+         ^:private table)
+
+(defmodule _
+  (lc/create [_]
+    (.bindRoot #'window (ui/window :title "Inventory"))
+    (.bindRoot #'table (ui/table))
+    (.pad table (float 2))
+    (.add window table)
+    (.bindRoot #'slot->background
+               (let [sheet (image/spritesheet "items/images.png" 48 48)]
+                 (->> {:weapon   0
+                       :shield   1
+                       :rings    2
+                       :necklace 3
+                       :helm     4
+                       :cloak    5
+                       :chest    6
+                       :leg      7
+                       :glove    8
+                       :boot     9
+                       :bag      10} ; transparent
+                      (map (fn [[slot y]]
+                             [slot
+                              (-> sheet
+                                  (image/get-sprite [21 (+ y 2)])
+                                  :texture
+                                  TextureRegionDrawable.
+                                  (.tint (color/rgb 1 1 1 0.4)))]))
+                      (into {}))))))
 
 (def ^:private cell-size 48)
 
@@ -454,12 +463,6 @@
       (.add (doto (Image. (slot->background slot))
               (.setName "image"))))))
 
-(app/on-create
- (def window (ui/window :title "Inventory"))
- (def ^:private table (ui/table)) ; TODO top level def, private doesnt work
- (.pad table (float 2))
- (.add window table))
-
 (defn- redo-table []
   (.clear table)
   (doto table .add .add
@@ -483,12 +486,6 @@
     (.row table)))
 
 ; TODO placed items are not serialized/loaded.
-
-#_(defcomponent :inventory-window
-  (session/load! [_c initial-data]
-    (redo-table)
-    (.pack window)))
-
 (def state (reify session/State
              (load! [_ _]
                (redo-table)

@@ -1,22 +1,24 @@
-; TODO move to gdl ?
-; defmedia ?
-; media/ ?
 (ns game.media
-  (:require [x.temp :as app :refer [set-var-root dispose]]
+  (:require [x.x :refer [defmodule]]
+            [gdl.lc :as lc]
             [gdl.files :as files]
             [gdl.graphics.image :as image]
             [gdl.graphics.animation :as animation]
             [gdl.graphics.freetype :as freetype]))
 
-(declare font)
+(declare font
+         ^:private fx
+         ^:private fx-impact)
 
-(app/on-create
- (set-var-root #'font
+(defmodule _
+  (lc/create [_]
+    (.bindRoot #'font
                (freetype/generate (files/internal "exocet/films.EXL_____.ttf")
-                                  16)))
-
-(app/on-destroy
- (dispose font))
+                                  16))
+    (.bindRoot #'fx        (image/spritesheet "fx/uf_FX.png"        24 24))
+    (.bindRoot #'fx-impact (image/spritesheet "fx/uf_FX_impact.png" 48 48)))
+  (lc/dispose [_]
+    (.dispose font)))
 
 ; spritesheet sprite position starts start top - left !
 
@@ -38,8 +40,6 @@
 ; for different games
 
 
-(app/defmanaged ^:private fx        (image/spritesheet "fx/uf_FX.png"        24 24))
-(app/defmanaged ^:private fx-impact (image/spritesheet "fx/uf_FX_impact.png" 48 48))
 
 ; TODO do I share animations in vars and use across different entities ?
 ; -> check !

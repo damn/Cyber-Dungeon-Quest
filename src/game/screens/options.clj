@@ -71,48 +71,47 @@
          (get-state status)]))
     (initial-data [_])))
 
-(def ^:private exit #(gdl.app/set-screen :game.screens.ingame))
+(def ^:private exit #(app/set-screen :game.screens.ingame))
 
-(app/defmanaged ^:dispose ^Stage stage (ui/stage))
+(defn- create-table []
+  (let [table (ui/table)
+        padding 25]
+    (.setFillParent table true)
+    (.center table)
+    (.setDebug table false)
+    (.padBottom (.add table (ui/text-button "Resume" exit)) (float padding))
+    (.row table)
+    (.padBottom (.add table (ui/text-button "Exit"   #(app/set-screen :game.screens.main))) (float padding))
+    (.row table)
+    (doseq [check-box @status-check-boxes
+            :let [cb (ui/check-box (get-text check-box)
+                                   #(set-state check-box %)
+                                   (boolean (get-state check-box)))]]
+      (.add table cb))
+    (.row table)
+    (doseq [check-box debug-flags
+            :let [cb (ui/check-box (get-text check-box)
+                                   #(set-state check-box %)
+                                   (boolean (get-state check-box)))]]
+      (.add table cb))
 
-(app/on-create
- (def table (ui/table))
- (.setFillParent table true)
- (.addActor stage table)
- (.center table)
- (.setDebug table false)
- (def resume-button   (ui/text-button "Resume" exit))
- (def exit-button     (ui/text-button "Exit"   #(gdl.app/set-screen :game.screens.main)))
- (def padding 25)
- (.padBottom (.add table resume-button) (float padding))
- (.row table)
- (.padBottom (.add table exit-button) (float padding))
- (.row table)
- (doseq [check-box @status-check-boxes
-         :let [cb (ui/check-box (get-text check-box)
-                                 #(set-state check-box %)
-                                 (boolean (get-state check-box)))]]
-   (.add table cb))
- (.row table)
- (doseq [check-box debug-flags
-         :let [cb (ui/check-box (get-text check-box)
-                                 #(set-state check-box %)
-                                 (boolean (get-state check-box)))]]
-   (.add table cb))
+    (def menu-bg-image (image/create "ui/moon_background.png"))
+    table))
 
- (def menu-bg-image (image/create "ui/moon_background.png")))
-
-(defn- render* []
-  (image/draw-centered menu-bg-image
-                       [(/ (gui/viewport-width)  2)
-                        (/ (gui/viewport-height) 2)])
-  (ui/draw-stage stage))
-
-(defmodule _
+(defmodule stage
+  (lc/create [_]
+    (let [stage (ui/stage)]
+      (.addActor stage (create-table))
+      stage))
   (lc/show [_] (input/set-processor stage))
   (lc/hide [_] (input/set-processor nil))
   (lc/render [_]
-    (gui/render render*))
+    (gui/render
+     (fn []
+       (image/draw-centered menu-bg-image
+                            [(/ (gui/viewport-width)  2)
+                             (/ (gui/viewport-height) 2)])
+       (ui/draw-stage stage))))
   (lc/tick [_ delta]
     (ui/update-stage stage delta)
     (when (input/is-key-pressed? :ESCAPE)
