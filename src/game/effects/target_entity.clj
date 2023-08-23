@@ -3,7 +3,7 @@
             [game.line-of-sight :refer (in-line-of-sight?)]
             [game.components.skills :refer (ai-should-use?)]
             [game.entities.animation :as animation-entity]
-            [game.components.render :refer (create-line-render-effect)]
+            [game.entities.line :as line-entity]
             [game.components.skills :refer (effect-info-render)]
             game.effects.damage))
 
@@ -50,11 +50,11 @@
   (let [{:keys [hit-effects maxrange]} value]
     (if (in-range? @source @target maxrange)
       (do
-       (create-line-render-effect :start (start-point @source @target)
-                                  :end (:position @target)
-                                  :duration 50
-                                  :color (color/rgb 1 0 0 0.75)
-                                  :thick? true)
+       (line-entity/create! :start (start-point @source @target)
+                            :end (:position @target)
+                            :duration 50
+                            :color (color/rgb 1 0 0 0.75)
+                            :thick? true)
        (effects/do-effects! {:source source :target target} hit-effects))
       (do
        ; * clicking on far away monster

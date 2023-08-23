@@ -37,6 +37,19 @@
                          (set-hp-to-max %) %)
                       (get-healable-monsters-around healer)))))
 
+(defcomponent :green-lines _
+  (render [_c {:keys [end-positions]}  position]
+    (doseq [end end-positions]
+      (shape-drawer/line position end color/green))))
+
+(defn create-lines-render-effect [healer healed-bodies duration]
+  (db/create-entity!
+   {:position (:position @healer)
+    :z-order :effect
+    :green-lines true
+    :end-positions (map #(:position @%) healed-bodies)
+    :delete-after-duration duration}))
+
 (defmethod do-effect :heal-around [_ entity]
   (audio/play "bfxr_healmonsters.wav")
   (let [healed-monsters (heal-nearby-monsters entity)]

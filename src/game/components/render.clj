@@ -59,52 +59,6 @@
   (doseq [m ms]
     (render-entity* render-debug m)))
 
-(defcomponent :circle-render {:keys [radius color]}
-  (render [c m position]
-    (shape-drawer/circle position radius color)))
-
-; TODO create-circle-render-entity
-; TODO unused, was used in psi-skills
-(defn create-circle-render-effect [position radius color duration]
-  (db/create-entity!
-   {:position position
-    :z-order :effect
-    :circle-render {:radius radius
-                    :color color}
-    :delete-after-duration duration}))
-
-; TICK of COUNTER !
-; => counter is a component which system should run througha
-
-(defcomponent :green-lines _
-  (render [_c {:keys [end-positions]}  position]
-    (doseq [end end-positions]
-      (shape-drawer/line position end color/green))))
-
-(defn create-lines-render-effect [healer healed-bodies duration]
-  (db/create-entity!
-   {:position (:position @healer)
-    :z-order :effect
-    :green-lines true
-    :end-positions (map #(:position @%) healed-bodies)
-    :delete-after-duration duration}))
-
-(defcomponent :line-render {:keys [thick? end color]}
-  (render [_c _m position]
-    (if thick?
-      (shape-drawer/with-line-width 4
-        (shape-drawer/line position end color))
-      (shape-drawer/line position end color))))
-
-(defn create-line-render-effect [& {:keys [start end duration color thick?]}]
-  (db/create-entity!
-   {:position start
-    :z-order :effect
-    :line-render {:thick? thick?
-                  :end end
-                  :color color}
-    :delete-after-duration duration}))
-
 ; => TODO just :text component ! !!! WTF
 ; TODO similar to components.clickable
 (defcomponent :string-effect {:keys [text]}
