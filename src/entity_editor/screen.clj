@@ -1,5 +1,5 @@
 (nsx entity-editor.screen
-  (:require [game.creatures.core :as creatures]
+  (:require [game.entities.creature :as creatures]
             [game.items.core :as items]
             [game.skills.core :as skills]
             [game.effects.core :as effects]

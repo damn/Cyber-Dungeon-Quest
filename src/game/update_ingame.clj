@@ -94,7 +94,7 @@
 (defn- update-game-systems [delta]
   ; destroy here not @ tick, because when game is paused
   ; for example pickup item, should be destroyed.
-  (destroy-to-be-removed-entities!)
+  (db/destroy-to-be-removed-entities!)
   (update-mouseover-entity) ; => a system
   (update-msg-to-player delta) ; => a system (but this is outside of pausing applicable) (should be part of update-stage !)
   (when @running

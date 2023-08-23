@@ -2,7 +2,7 @@
   (:require [game.utils.counter :as counter]))
 
 (defcomponent :glittering {:keys [animation active] :as v}
- (create [_]
+ (db/create [_]
   {:counter (counter/make-counter 1000)
    :active true
    :animation (g/create-animation :folder "effects/itemglitter/" :looping false :duration 150)})

@@ -1,7 +1,6 @@
 (nsx game.components.body
   (:require game.components.delete-after-duration
             game.components.body.rotation-angle
-            [game.components.render :refer (animation-entity)]
             ; TODO just make :as cell and cell/add, etc.
             [game.maps.cell-grid :refer (rectangle->occupied-cells
                                          rectangle->touched-cells
@@ -127,14 +126,14 @@
 (defcomponent :body {:keys [is-solid] :as body}
 
   ; TODO assert height is there
-  (create! [[k _] e]
+  (db/create! [[k _] e]
     (swap! e update k merge (body-props (:position @e) body))
     (swap! e assoc-left-bottom) ; TODO move in above fn
     (set-touched-cells e)
     (when is-solid
       (set-occupied-cells e)))
 
-  (destroy! [_ e]
+  (db/destroy! [_ e]
     (remove-from-touched-cells e)
     (when is-solid
       (remove-from-occupied-cells e)))
@@ -234,7 +233,7 @@
 ; and further above 'body' component
 (defcomponent :speed speed-in-seconds ; movement speed-in-seconds
 
-  (create! [[k _] e]
+  (db/create! [[k _] e]
     (swap! e assoc k {:speed (/ speed-in-seconds 1000)}))
                            ; :direction v !
 
@@ -262,49 +261,6 @@
 
 ; wait! can I apply 'moved!' systems also only on body or do I need full entity reference?
 
-(defn- plop [position]
-  (animation-entity
-    :position position
-    :animation (media/plop-animation)))
-
-; TODO maxrange ?
-; TODO make only common fields here
-(defn fire-projectile
-  [& {:keys [position
-             faction
-             size
-             animation
-             movement-vector
-             hit-effects
-             speed
-             maxtime
-             piercing]}]
-  (create-entity! ; -> entities/projectile
-   {:position position
-    :faction faction
-
-    :body {:width size
-           :height size
-           :is-solid false
-           :rotation-angle 0}
-
-    :z-order :effect ; body ?
-
-    ; movement
-    :speed speed
-    :movement-vector movement-vector
-
-    :animation animation
-
-    :delete-after-duration maxtime
-
-    :projectile-collision {:piercing piercing
-                           :hit-effects hit-effects
-                           :already-hit-bodies #{}
-                           ; TODO not necessary in the data
-                           :hits-wall-effect (fn [posi]
-                                               (audio/play "bfxr_projectile_wallhit.wav")
-                                               (plop posi))}}))
 
 ;; Teleporting
 

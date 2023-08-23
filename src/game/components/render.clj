@@ -59,14 +59,6 @@
   (doseq [m ms]
     (render-entity* render-debug m)))
 
-; TODO = effect
-(defn animation-entity [& {:keys [position animation]}]
-  (create-entity! ; -> entities/render
-   {:position position
-    :z-order :effect
-    :delete-after-animation-stopped? true
-    :animation animation}))
-
 (defcomponent :circle-render {:keys [radius color]}
   (render [c m position]
     (shape-drawer/circle position radius color)))
@@ -74,7 +66,7 @@
 ; TODO create-circle-render-entity
 ; TODO unused, was used in psi-skills
 (defn create-circle-render-effect [position radius color duration]
-  (create-entity!
+  (db/create-entity!
    {:position position
     :z-order :effect
     :circle-render {:radius radius
@@ -90,7 +82,7 @@
       (shape-drawer/line position end color/green))))
 
 (defn create-lines-render-effect [healer healed-bodies duration]
-  (create-entity!
+  (db/create-entity!
    {:position (:position @healer)
     :z-order :effect
     :green-lines true
@@ -105,7 +97,7 @@
       (shape-drawer/line position end color))))
 
 (defn create-line-render-effect [& {:keys [start end duration color thick?]}]
-  (create-entity!
+  (db/create-entity!
    {:position start
     :z-order :effect
     :line-render {:thick? thick?

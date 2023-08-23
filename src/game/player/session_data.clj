@@ -61,7 +61,7 @@
         #'game.player.session-data/state
 
         ; resets all entity data -> do it before addding entities
-        #'x.db/db-state
+        #'game.db/db-state
 
         ; reset cell-change-listeners before adding entities, because entities are listeners
         ; => TODO do @ map

@@ -1,7 +1,7 @@
 (nsx game.effects.projectile
   (:require [game.maps.cell-grid :as cell-grid]
             [game.components.skills :refer (ai-should-use?)]
-            [game.components.body :refer (fire-projectile)]
+            [game.entities.projectile :as projectile-entity]
             game.effects.stun))
 
 ; -> range needs to be smaller than potential field range
@@ -42,7 +42,7 @@
    ])
 
 (defn- do-effect! [{:keys [source direction]}]
-  (fire-projectile
+  (projectile-entity/create!
    :position (:position @source)
    :faction  (:faction  @source)
    :size size

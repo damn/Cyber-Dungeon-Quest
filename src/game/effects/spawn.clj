@@ -1,5 +1,5 @@
 (nsx game.effects.spawn
-  (:require [game.creatures.core :as creatures]))
+  (:require [game.entities.creature :as creature-entity]))
 
 ; TODO
 
@@ -21,9 +21,9 @@
 ; is it even possible ?
 
 (defn- do! [{:keys [source target-position value]}]
-  (creatures/try-spawn value
-                       target-position
-                       {:faction (:faction @source)}))
+  (creature-entity/create! value
+                           target-position
+                           {:faction (:faction @source)}))
 
 (comment
  ; keys: :faction(:source)/:target-position/:creature-id

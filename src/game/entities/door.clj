@@ -10,7 +10,7 @@
 ; but it had still a :body component which blocks mouseoverentities that lie below it because there is always only 1 mouseoverbody at each position
 ; ... or remove the :body component too?
 #_(defn ^:private make-open-door [p image]
-  (create-entity!
+  (db/create-entity!
    {:position p
     :z-order :ground
     :image image}))
@@ -25,7 +25,7 @@
     (cell-blocks-changed-update-listeners)))
 
 #_(defn make-door [p closed-image open-image] ; make-closed-door ?
-  (create-entity!
+  (db/create-entity!
    {:position p
     :body {:width 1
            :height 1

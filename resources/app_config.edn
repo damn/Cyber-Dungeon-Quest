@@ -7,8 +7,8 @@
           :full-screen false
           :fps nil} ; TODO fix is set to 60 @ gdl
  :tile-size 48
- :log-lc? true
- :modules [[:game.creatures.core]
+ :log-lc? false
+ :modules [[:game.entities.creature]
            [:game.skills.core]
            [:game.items.core]
            [:game.items.inventory]

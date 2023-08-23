@@ -25,7 +25,7 @@
   ; skillmanager does not exist yet
   ; so after create
   ; (it seems 'on-create-entity' is the component contructor)
-  (after-create! [_ entity]
+  (db/after-create! [_ entity]
     (modifiers/apply! entity modifiers))
 
   (render-above [_ {:keys [body]} [x y]]
@@ -64,7 +64,7 @@
         (wake-up! entity)))))
 
 (defn- shout [position faction]
-  (create-entity! ; entities ?
+  (db/create-entity! ; entities ?
    {:position position
     :faction faction
     :shout true

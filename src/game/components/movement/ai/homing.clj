@@ -3,7 +3,7 @@
 #_(defn- move-and-rotate-to-target-control
   [projectile {:keys [target-body current-angle rotationspeed]} delta]
   (v/vector-from-angle
-   (if-not (exists? target-body)
+   (if-not (db/exists? target-body)
      current-angle
      (let [angle-to-target (v/get-angle-to-position (:position @projectile)
                                                     (:position @target-body))

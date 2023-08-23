@@ -265,7 +265,7 @@
       (stop! entity (skill-id (:skills @entity))))))
 
 (defcomponent :skills _
-  (create! [[k v] entity]
+  (db/create! [[k v] entity]
     (->! entity
          (assoc :skillmanager {}) ; TODO remove skillmanager ? just 'skills' ? update skills ?
          ; all effect-params / action-counter into :active-skill? ??

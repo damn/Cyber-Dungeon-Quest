@@ -1,6 +1,8 @@
 (nsx game.effects.mana
   (:require [game.components.render :refer (mana-changed-effect)]))
 
+(println " REQUIRE GAME EFFECTS MANA ")
+
 (effects/defeffect :mana
   {:text (fn [{:keys [value]}]
            (str value " MP"))

@@ -1,8 +1,7 @@
 (ns x.ns
   (:require [clojure.string :as str]
             (x [x       :refer :all]
-               [db      :refer :all] ; TODO make :as db
-               [systems :refer :all]
+               [systems :refer :all] ; TODO move to their place?
                [session :as session]) ; TODO session also a system ! on db component !!!
             (gdl [lc :as lc]
                  [app :as app]
@@ -23,6 +22,7 @@
                           [font :as font])
             ;; TODO what to do with those ???
             [utils.core :refer :all]
+            [game.db :as db]
             [game.media :as media]
             [game.components.faction :as faction]
             [game.components.modifiers :as modifiers]

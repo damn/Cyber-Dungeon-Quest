@@ -11,7 +11,7 @@
     (create-rand-item (:position @entity) :max-lvl (:rand-item-max-lvl (get-current-map-data)))))
 
 #_(defn create-chest [position & {item-name :item-name}]
-  (create-entity!
+  (db/create-entity!
    {:position position
     :body {:width 1
            :height 1

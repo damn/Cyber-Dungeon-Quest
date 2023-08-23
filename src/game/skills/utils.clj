@@ -5,7 +5,7 @@
 ; required !?
 
 (defn ^:private cross [position image]
-  (create-entity!
+  (db/create-entity!
    {:position position
     :in-line-of-sight true ; because used where not in sight f.e.
     :z-order :info ; TODO :info not implemented
@@ -15,7 +15,7 @@
 (def ^:private old-cross (atom nil))
 
 (defn- not-allowed-position-effect [position]
-  (when (and @old-cross (exists? @old-cross))
+  (when (and @old-cross (db/exists? @old-cross))
     (swap! @old-cross assoc :destroyed? true))
   (reset! old-cross
           (cross position

@@ -1,7 +1,12 @@
-(ns x.db
-  (:require [x.x       :refer :all]
-            [x.systems :refer :all]
+(ns game.db
+  (:require [x.x :refer :all]
             [x.session :as session]))
+
+(defsystem create        [c])
+(defsystem create!       [c e])
+(defsystem after-create! [c e])
+(defsystem destroy       [c])
+(defsystem destroy!      [c e])
 
 (def ^:private ids->entities (atom nil))
 
@@ -33,9 +38,9 @@
     (swap! cnt inc)))
 
 (defcomponent :id id
-  (create [_c] (unique-number!)) ; TODO precondition (nil? id)
-  (create!  [_c e] (swap! ids->entities assoc  id e))
-  (destroy! [_c e] (swap! ids->entities dissoc id)))
+  (create [_] (unique-number!)) ; TODO precondition (nil? id)
+  (create!  [_ e] (swap! ids->entities assoc  id e))
+  (destroy! [_ e] (swap! ids->entities dissoc id)))
 
 (defn create-entity! [m]
   {:pre [(not (contains? m :id))]}
@@ -52,5 +57,3 @@
           :when (exists? e)] ; TODO why is this ?
     (swap! e update-map destroy)
     (doseq-entity e destroy!)))
-
-

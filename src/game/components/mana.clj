@@ -1,7 +1,7 @@
 (nsx game.components.mana)
 
 (defcomponent :mana max-mana
-  (create [_]
+  (db/create [_]
     (val-max max-mana)))
 
 (modifiers/defmodifier :mana

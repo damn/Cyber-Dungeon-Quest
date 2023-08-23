@@ -65,7 +65,7 @@
 
  (def max-iterations 1)
 
- (let [entities (map get-entity [140 110 91])
+ (let [entities (map db/get-entity [140 110 91])
        tl->es (:good (faction->tiles->entities-map* entities))
        ]
    tl->es

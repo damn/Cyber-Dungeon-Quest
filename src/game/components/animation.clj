@@ -7,7 +7,7 @@
 ; if animation itself would be a sub-component it could 'tick' itself.
 ; it would have a 'counter' ? or animation-is-a-counter ...
 (defcomponent :animation animation
-  (create! [_ e]
+  (db/create! [_ e]
     (assoc-frame! e))
   (tick! [c e _delta]
     (assoc-frame! e))

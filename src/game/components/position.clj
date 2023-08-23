@@ -12,8 +12,8 @@
 ; update-world-references!
 ; delete-world-references!
 (defcomponent :position p
-  (create!  [_ e] (put-entity-in-correct-content-field e))  ;cf/put
-  (destroy! [_ e] (remove-entity-from-content-field    e))  ;cf/remove
+  (db/create!  [_ e] (put-entity-in-correct-content-field e))  ;cf/put
+  (db/destroy! [_ e] (remove-entity-from-content-field    e))  ;cf/remove
   (moved!   [_ e] (put-entity-in-correct-content-field e))) ;cf/put
 
 ; TODO use mapv int :position ? clearer..

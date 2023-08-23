@@ -2,7 +2,7 @@
   (:require [data.grid2d :as grid]
             [gdl.graphics :as g]
             [gdl.tiled :as tiled]
-            [game.creatures.core :as creatures]
+            [game.entities.creature :as creatures]
             [mapgen.utils :as utils]
             [mapgen.transitions :as transitions]
             [mapgen.movement-property :refer (movement-property)]

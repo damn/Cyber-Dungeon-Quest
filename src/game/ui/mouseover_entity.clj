@@ -73,7 +73,7 @@
 
 (defn- keep-saved? [entity]
   (and (input/is-leftbutton-down?)
-       (exists? entity)
+       (db/exists? entity)
        (in-line-of-sight? @player-entity @entity)))
 
 (defn- save? [entity]

@@ -1,9 +1,10 @@
 
 #_(defn- teleport-animation [posi]
-  (animation-entity
-    :animation (create-animation (spritesheet-frames "effects/blue_teleport.png" 17 17)
-                                 :frame-duration 100)
-    :position posi))
+    (audio/play "bfxr_playerteleport.wav")
+    (animation-entity/create!
+     :animation (create-animation (spritesheet-frames "effects/blue_teleport.png" 17 17)
+                                  :frame-duration 100)
+     :position posi))
 
 (comment
   (deflearnable-skill teleport
@@ -13,7 +14,6 @@
                      (valid-position? (world/mouse-position)
                                       entity))
      :do-skill (fn [entity component]
-                 (audio/play "bfxr_playerteleport.wav")
                  (teleport-animation (get-skill-use-mouse-tile-pos))
                  (teleport entity (get-skill-use-mouse-tile-pos)))}))
 

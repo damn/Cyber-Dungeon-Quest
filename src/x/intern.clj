@@ -9,7 +9,7 @@
 (defn core* [nmspace]
   (def old-ns *ns*)
 
-  (println "\n>>> Interning to clojure.core : " nmspace)
+  ;(println "\n>>> Interning to clojure.core : " nmspace)
   (require nmspace)
   (in-ns 'clojure.core)
   (require 'potemkin.namespaces)
@@ -22,7 +22,7 @@
 
     (let [syms (map #(symbol (str nmspace) (name %))
                     publics)]
-      (println "import-vars: \n" syms)
+      ;(println "import-vars: \n" syms)
       (eval
        `(potemkin.namespaces/import-vars ~@syms))))
 

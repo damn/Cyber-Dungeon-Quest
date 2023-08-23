@@ -23,7 +23,7 @@
 ; this could be abstracted/automated , systems which connect different components
 ; query for them both ?
 (defcomponent :hp hp
-  (create [[_ max-hp]]
+  (db/create [[_ max-hp]]
     (val-max max-hp))
   (render-info [_ {:keys [body mouseover?]} [x y]]
     (let [{:keys [width half-width half-height]} body

@@ -70,7 +70,7 @@
 ; TODO leave nested counters as they are for now !
 ; can do later ! also performance !
 #_(defcomponent :counter ; shout
-  (create [_ duration]
+  (db/create [_ duration]
     (make-counter duration))
   (tick [_ v delta]
     (tick* v delta)))
@@ -102,7 +102,7 @@
  (defrecord Counter [a b c])
 
  (defcomponent :counter
-   (create [_ v] (->Counter v))
+   (db/create [_ v] (->Counter v))
    )
  ; but then we can also combine keywords with defrecords
  ; => then we could also combine them with protocols ?

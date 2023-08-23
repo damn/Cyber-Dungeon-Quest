@@ -16,7 +16,7 @@
 #_(defnks create-teleporter
   [:position :target-map :target-posi :animation
    :opt :do-after-use :save-game]
-  (create-entity!
+  (db/create-entity!
    {:position position
     :body {:width 1.25
            :height 0.6

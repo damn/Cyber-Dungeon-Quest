@@ -190,7 +190,7 @@
 ; -> entities ? w. creatures & projectiles
 ; TODO use image w. shadows spritesheet
 (defn ^:private item-entity [position item]
-  (create-entity!
+  (db/create-entity!
    {:position position
     :body {:width 0.5 ; TODO use item-body-dimensions
            :height 0.5
@@ -329,7 +329,7 @@
 
 ; after-create-entity because try-pickup-item applies modifiers (skillmanager has to be initialised)
 (defcomponent :items items
-  (after-create! [_ entity]
+  (db/after-create! [_ entity]
     (swap! entity assoc :inventory empty-inventory)
     ;(swap! entity dissoc :items)
     (doseq [id items]

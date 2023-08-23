@@ -12,6 +12,7 @@
   (let [effect (type effect-definitions)
         params (assoc params :value value)
         f (fn-k effect)]
+    (assert effect (str "Effect " type " not defined."))
     (f params)))
 
 ; TODO can effects also be entites w. components ?

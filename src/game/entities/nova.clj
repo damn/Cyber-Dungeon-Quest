@@ -51,7 +51,7 @@
       (swap! entity assoc :destroyed? true))))
 
 #_(defnks nova-effect [:position :duration :maxradius :affects-faction :opt :is-player-spell]
-  (create-entity!
+  (db/create-entity!
    ;(circle-debug-comp)
    {:position position
     ; because affects entities behind walls

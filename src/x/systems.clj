@@ -4,15 +4,6 @@
 ; TODO move systems where they are used !
 ; no HUGE BIG SYSTEMS NS
 
-; x.db
-
-(defsystem create        [c])
-(defsystem create!       [c e])
-(defsystem after-create! [c e])
-
-(defsystem destroy       [c])
-(defsystem destroy!      [c e])
-
 ; game.tick
 
 (defsystem tick          [c delta])

@@ -1,6 +1,7 @@
 (nsx game.effects.damage
   (:require [game.utils.random :as random]
             [game.components.render :refer :all]
+            [game.entities.animation :as animation-entity]
             [game.components.hp :refer (dead?)]))
 
 (defn- effect-modifiers [{:keys [source target]} effect-type]
@@ -65,7 +66,7 @@
                          :physical ["bfxr_normalhit.wav" [3 0]]
                          :magic    ["bfxr_curse.wav"     [6 1]])]
     (audio/play sound)
-    (animation-entity
+    (animation-entity/create!
      :position position
      :animation (media/fx-impact-animation fx-idx))))
 

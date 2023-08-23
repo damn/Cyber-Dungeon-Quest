@@ -1,10 +1,9 @@
-; TODO => game.entities.creature (s )
-(nsx game.creatures.core
+(nsx game.entities.creature
   (:require [game.properties :as properties]
             [game.utils.random :as rand]
             [game.media :refer (blood-animation)]
             [game.components.body :refer (assoc-left-bottom valid-position?)]
-            [game.components.render :refer (animation-entity)]
+            [game.entities.animation :as animation-entity]
             [game.items.inventory :refer (create-item-body #_create-rand-item)]
             [game.player.entity :refer (set-player-entity player-entity)]
             game.components.mana
@@ -57,7 +56,7 @@
 
 
 (defcomponent :is-player _
-  (create! [_ entity]
+  (db/create! [_ entity]
     (set-player-entity entity)
     (world/set-camera-position! (:position @player-entity)))
 
@@ -143,7 +142,8 @@
            extra-params)))
 
 (defn- monster-die-effect [entity]
-  (animation-entity
+  (audio/play "bfxr_defaultmonsterdeath.wav")
+  (animation-entity/create!
     :animation (blood-animation)
     :position (:position @entity)))
 
@@ -161,9 +161,8 @@
 ; * dead sound
 ; * loot
 (defcomponent :default-monster-death _
-  (destroy! [_ entity]
+  (db/destroy! [_ entity]
     (monster-die-effect entity) ; "effect" was ist das? sound/animation oder was
-    (audio/play "bfxr_defaultmonsterdeath.wav")
     #_(let [position (:position @entity)]
         (rand/if-chance 20
                         (let [item-name (-> monster-drop-table
@@ -197,7 +196,7 @@
 ; -> create entity and afterwards check if valid-position? of the entity !
 ; or is it asserted invalid position ?
 ; or try/catch error :invalid-position
-(defn try-spawn [creature-id position creature-params]
+(defn create! [creature-id position creature-params]
   ; calls create-entity! just for creature-id entity
   ; and checks for invalid-position error
   (let [entity* (-> creature-id
@@ -209,7 +208,7 @@
     ; or spawn @ left-bottom
     ; -> use mostly left-bottom & width / height and use less center-position and half-width / half-height
     (if (valid-position? entity*)
-      (create-entity! entity*)
+      (db/create-entity! entity*)
       (println "Not able to spawn" creature-id "at" position))))
 
 ; TODO

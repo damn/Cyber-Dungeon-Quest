@@ -2,7 +2,8 @@
   (:require [game.utils.counter :as counter]
             [game.line-of-sight :refer (in-line-of-sight?)]
             [game.components.skills :refer (ai-should-use?)]
-            [game.components.render :refer (animation-entity create-line-render-effect)]
+            [game.entities.animation :as animation-entity]
+            [game.components.render :refer (create-line-render-effect)]
             [game.components.skills :refer (effect-info-render)]
             game.effects.damage))
 
@@ -39,9 +40,11 @@
                                (:position target*))
                   maxrange)))
 
-(defn- hit-ground-animation! [position]
-  (animation-entity :position position
-                    :animation (game.media/fx-impact-animation [0 1])))
+(defn- hit-ground-effect [position]
+  (audio/play "bfxr_fisthit.wav")
+  (animation-entity/create!
+   :position position
+   :animation (game.media/fx-impact-animation [0 1])))
 
 (defn- do-effect! [{:keys [source target value]}]
   (let [{:keys [hit-effects maxrange]} value]
@@ -54,13 +57,11 @@
                                   :thick? true)
        (effects/do-effects! {:source source :target target} hit-effects))
       (do
-       (audio/play "bfxr_fisthit.wav")
-
        ; * clicking on far away monster
        ; * hitting ground in front of you ( there is another monster )
        ; * -> it doesn't get hit ! hmmm
        ; * either use 'MISS' or get enemy entities at end-point
-       (hit-ground-animation! (end-point @source @target maxrange))))))
+       (hit-ground-effect (end-point @source @target maxrange))))))
 
 (defmethod effect-info-render :target-entity [_ {:keys [source target value]}]
   (let [{:keys [maxrange]} value]
