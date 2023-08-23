@@ -1,4 +1,4 @@
-(nsx game.ui.stage
+(nsx game.ui.stage ; TODO just game.ui ??
   ; also change @ x.intern
   (:require x.ns) ; one time require so clojure.tools.namespace knows the dependency order
   (:import com.badlogic.gdx.scenes.scene2d.Stage))
@@ -16,5 +16,6 @@
   (lc/dispose [_]
     (.dispose stage)))
 
+; TODO remove this, this namespace is just a data-holder...
 (defn mouseover-gui? []
   (ui/mouseover? stage))

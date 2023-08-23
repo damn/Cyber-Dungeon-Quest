@@ -4,7 +4,6 @@
             [game.media :refer (blood-animation)]
             [game.components.body :refer (assoc-left-bottom valid-position?)]
             [game.entities.animation :as animation-entity]
-            [game.items.inventory :refer (create-item-body #_create-rand-item)]
             [game.player.entity :refer (set-player-entity player-entity)]
             game.components.mana
             game.components.sleeping
@@ -111,31 +110,21 @@
         [width height] (images->world-unit-dimensions images)
         ; TODO merge these speed/hp just into properties
         {:keys [speed hp]} (creature-type-properties (:creature-type properties))]
-
-
     ; (distinct (mapcat keys (vals creatures)))
     ; (:image :id :creature-type :items :level :skills)
     ; :image -> gets rendered in game => do not merge !
-
     (merge (dissoc properties :image)
            (if is-player ; ideally remove this -> entity-editor ability to add fields to specific entities (free-skill-points 3)
              player-components
              npc-components)
            {:body {:width width
                    :height height
-                   :is-solid true ; parameter ? how do non-solid entities move ? (:collides?)  ?
-                   }
-
+                   :is-solid true} ; parameter ? how do non-solid entities move ? (:collides?)  ?
             :speed speed
-
-            :hp   hp
-
+            :hp hp
             :mana 11
-
             :is-flying false ; TODO not used yet @ movement code (flying?) -> grep for 'is-' ...
-
             :animation (animation/create images :frame-duration 250 :looping true)
-
             :z-order (if (:is-flying properties) ; not existing, :flying?
                        :flying
                        :ground)}
@@ -168,7 +157,8 @@
                         (let [item-name (-> monster-drop-table
                                             rand/get-rand-weighted-item
                                             rand/get-rand-weighted-item)]
-                          (create-item-body position item-name)))
+                          ; TODO pass item instance
+                          (item-entity/create! position item-name)))
         (rand/if-chance 25
                         (create-rand-item position :max-lvl (:level @entity))))))
 

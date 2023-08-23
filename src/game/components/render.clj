@@ -36,13 +36,10 @@
     (try
      (system c m (:position m))
      (catch Throwable t
-       (println "ErROR FOR " [c (:id m) system])
+       (println "Render error for:" [c (:id m) system])
        (throw t)
        ; TODO I want to get multimethod
-       )
-     )
-
-    ))
+       ))))
 ; TODO throw/catch renderfn missing & pass body ?
 ; TODO position needed? entity* has it in keys, we might use bottom-left
 

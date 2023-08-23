@@ -4,7 +4,7 @@
             [game.utils.counter :refer :all]
             [game.player.entity :refer (player-entity)]
             [game.components.hp :refer (dead?)]
-            [game.items.inventory :as inventory]
+            [game.components.inventory :as inventory]
             [game.ui.mouseover-entity :refer (update-mouseover-entity)]
             game.components.update ; TODO namespace now only 2 modifiers.
             [game.utils.msg-to-player :refer [update-msg-to-player]]

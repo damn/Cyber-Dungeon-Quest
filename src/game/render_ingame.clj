@@ -7,7 +7,6 @@
             [game.maps.data :refer [get-current-map-data]]
 
             ; Ingame GUI render fns
-            [game.items.inventory :as inventory]
             [game.player.status-gui :refer [render-player-hp-mana]]
             [game.utils.msg-to-player :refer [render-message-to-player]]
             ; Ingame GUI render fns

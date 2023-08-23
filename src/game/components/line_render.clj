@@ -4,7 +4,7 @@
             [gdl.graphics.shape-drawer :as shape-drawer]))
 
 (defcomponent :line-render {:keys [thick? end color]}
-  (render [_ _ position]
+  (render [_c _ position]
     (if thick?
       (shape-drawer/with-line-width 4
         (shape-drawer/line position end color))

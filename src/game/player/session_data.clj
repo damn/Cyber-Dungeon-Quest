@@ -5,9 +5,10 @@
             game.maps.data
             game.maps.load
             (game.utils msg-to-player)
-            game.items.inventory
             game.screens.options
-            game.ui.action-bar)
+            game.ui.action-bar
+            game.ui.inventory-window
+            )
   (:use (game.maps add impl)))
 
 
@@ -67,8 +68,7 @@
         ; => TODO do @ map
         #'game.maps.cell-grid/state
 
-        #'game.items.inventory/state
-        ; :inventory-window
+        #'game.ui.inventory-window/state
 
         ; adding entities (including player-entity)
         #'game.maps.load/state

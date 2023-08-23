@@ -1,8 +1,10 @@
 (ns x.ns
   (:require [clojure.string :as str]
+
             (x [x       :refer :all]
                [systems :refer :all] ; TODO move to their place?
                [session :as session]) ; TODO session also a system ! on db component !!!
+
             (gdl [lc :as lc]
                  [app :as app]
                  [input     :as input]
@@ -20,6 +22,7 @@
                           [gui :as gui]
                           [world :as world]
                           [font :as font])
+
             ;; TODO what to do with those ???
             [utils.core :refer :all]
             [game.db :as db]

@@ -201,7 +201,7 @@
                    (animation-entity
                      :animation (create-animation boss-explosion)
                      :position (:position @body))
-                   (create-item-body (:position @body) "The Golden Banana")
+                   (item-entity/create! (:position @body) "The Golden Banana")
 
                    ; no lvl after this => no need to spawn an item!
                    ; (create-rand-item (:position @body) :max-lvl (:rand-item-max-lvl (get-current-map-data)))

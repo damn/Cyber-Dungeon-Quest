@@ -1,4 +1,4 @@
-(nsx game.entity.door
+(nsx game.entities.door
   (:require [game.components.clickable :as clickable])
   (:use
     (game.components position body render)

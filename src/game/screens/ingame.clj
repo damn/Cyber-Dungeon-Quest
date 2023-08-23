@@ -4,12 +4,13 @@
             game.ui.help-window
             game.ui.entity-info-window
             game.ui.skill-window
+            [game.ui.inventory-window :as inventory]
             [game.ui.action-bar :as action-bar]
             [game.ui.mouseover-entity :refer (saved-mouseover-entity)]
             [game.components.clickable :as clickable]
             [game.components.hp :refer (dead?)]
+            [game.components.inventory :refer [item-in-hand is-item-in-hand?]]
             [game.maps.data :as maps-data]
-            [game.items.inventory :as inventory]
             [game.player.entity :refer (player-entity)]
             game.update-ingame
             game.render-ingame))
@@ -113,7 +114,7 @@
      ; when game is paused and/or the player is dead, let player be able to drop item-in-hand?
      ; or drop it automatically when dead?
      ; need to drop it here else in options menu it is still item-in-hand at cursor!
-     (inventory/is-item-in-hand?) (inventory/put-item-on-ground)
+     (is-item-in-hand?) (inventory/put-item-on-ground)
 
      (some (memfn isVisible) windows) (dorun (map #(.setVisible % false) windows))
 
@@ -147,12 +148,12 @@
      (cond
       (and (input/is-leftm-pressed?)
            (not (stage/mouseover-gui?))
-           (inventory/is-item-in-hand?))
+           (is-item-in-hand?))
       (inventory/put-item-on-ground)
 
       ; running around w. item in hand -> how is d2 doing this?
       ; -> do not run the game in this case (no action)
-      ;(inventory/is-item-in-hand?)
+      ;(is-item-in-hand?)
       ;nil
 
       ; is-leftbutton-down? because hold & click on pressable -> move closer and in range click
@@ -240,7 +241,8 @@
     (game.render-ingame/render-game)
     (gui/render (fn []
                   (ui/draw-stage stage/stage)
-                  (inventory/render-item-in-hand-on-cursor))))
+                  (when @item-in-hand
+                    (image/draw-centered (:image @item-in-hand) (gui/mouse-position))))))
   (lc/tick [_ delta]
     (handle-key-input)
     (ui/update-stage stage/stage delta)

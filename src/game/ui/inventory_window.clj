@@ -1,220 +1,32 @@
-(nsx game.items.inventory
+(nsx game.ui.inventory-window
   (:require [data.grid2d :as grid]
             [game.utils.random :refer :all]
-            [x.session :as state]
             [game.properties :as properties]
             [game.utils.random :refer (get-rand-weighted-item)]
             [game.utils.msg-to-player :refer (show-msg-to-player)]
             [game.components.clickable :as clickable]
+            [game.components.inventory :as inventory :refer [item-in-hand]]
             [game.items.core :as items]
             [game.player.entity :refer (player-entity)]
+            [game.entities.item :as item-entity]
             ;game.components.glittering
-            game.components.image
-            )
+            game.components.image)
   (:import [com.badlogic.gdx.scenes.scene2d.ui Widget Image TextTooltip]
            [com.badlogic.gdx.scenes.scene2d.utils TextureRegionDrawable ClickListener]))
 
+; TODO it is just a grid ... if you look at it .. simplify? just hashmap ?
+; also empty inventory can  just be an empty hashmap??
+; think of serialization also save/load game...
+; also editor -> entities have in different slots items, not just :items
+; actually the data structure is ok because :bag we treat the others the same..
+
 ; TODO define inventory in 1 place -> slots, render-posi, background-image then take at diff. places !
-(def ^:private empty-inventory
-  (->> {:bag      [6 4]
-        :weapon   [1 1]
-        :shield   [1 1]
-        :helm     [1 1]
-        :chest    [1 1]
-        :leg      [1 1]
-        :glove    [1 1]
-        :boot     [1 1]
-        :cloak    [1 1]
-        :necklace [1 1]
-        :rings    [2 1]}
-       (map (fn [[slot [width height]]]
-              [slot
-               (grid/create-grid width height (constantly nil))]))
-       (into {})))
 
-(defn- cells-and-items [inventory slot]
-  (for [[position item] (slot inventory)]
-    [[slot position] item]))
-
-(defn- slot->items [inventory slot]
-  (-> inventory slot grid/cells))
-
-(defn- cell-exists? [inventory [slot position]]
-  (-> inventory slot (contains? position)))
-
-; TODO => valid-cell? allowed-to-put-in-cell?
-; => cell = :slot / :position / (later also widget?)
-; or widgets check if inventory-changed? then update all buttons ... hmm
-; call or observer
-; or change listener??
-; same for :skills
-(defn- valid-slot? [[slot _] item]
-  (or (= :bag slot)
-      (= (:slot item) slot)))
-
-(defn- two-handed-weapon-and-shield-together? [inventory {slot 0 :as cell} new-item]
-  (or (and (:two-handed new-item)
-           (= slot :weapon)
-           (first (slot->items inventory :shield)))
-      (and (= (:slot new-item) :shield)
-           (= slot :shield)
-           (if-let [weapon (first (slot->items inventory :weapon))]
-             (:two-handed weapon)))))
-
-(defn- assoc-inventory-cell! [entity cell item]
-  (assoc-in! entity (cons :inventory cell) item))
-
-(defn- applies-modifiers? [[slot _]]
-  (not= :bag slot))
-
-(declare set-item-image-in-widget)
-
-(defn- set-item [entity cell item]
-  {:pre [(nil? (get-in (:inventory @entity) cell))
-         (valid-slot? cell item)
-         (not (two-handed-weapon-and-shield-together? (:inventory @entity) cell item))]}
-  (when (:is-player @entity)
-    (set-item-image-in-widget cell item))
-  (assoc-inventory-cell! entity cell item)
-  (when (applies-modifiers? cell)
-    (modifiers/apply! entity (:modifiers item))))
-
-(declare remove-item-from-widget)
-
-(defn- remove-item [entity cell]
-  (let [item (get-in (:inventory @entity) cell)]
-    (assert item)
-    (when (:is-player @entity)
-      (remove-item-from-widget cell))
-    (assoc-inventory-cell! entity cell nil)
-    (when (applies-modifiers? cell)
-      (modifiers/reverse! entity (:modifiers item)))))
-
-(defn- cell-in-use? [entity* cell] ; TODO naming (includes is-active check) ->
-  (let [inventory (:inventory entity*)
-        item (get-in inventory cell)]
-    (and item
-         (applies-modifiers? cell)
-         (:active-skill? entity*))))
-
-(declare window)
-
-; TODO ui/visible?
-(defn- showing-player-inventory? []
-   (.isVisible window))
-
-; TODO also move in inventory ? 'item-on-cursor' -> gets saved/loaded with entitydata and reset.
-; but keys inventory have to correspond to slots -> at some code.
-(def ^:private item-in-hand (atom nil)) ; TODO -on-cursor not in hand
-; TODO state for this ??
-
-(defn is-item-in-hand? []
-  @item-in-hand)
-
-(defn- set-item-in-hand [item]
-  (reset! item-in-hand item))
-
-(defn- empty-item-in-hand []
-  (reset! item-in-hand nil))
-
-(defn render-item-in-hand-on-cursor []
-  (when @item-in-hand
-    (image/draw-centered (:image @item-in-hand) (gui/mouse-position))))
-
-(defn- stackable? [item-a item-b]
-  (and (:count item-a)
-       (:count item-b) ; TODO this is not required but can be asserted, all of one name should have count if others have count
-       (= (:name item-a) (:name item-b))))
-
-(defn- stack-item [entity cell item]
-  (let [cell-item (get-in (:inventory @entity) cell)]
-    (assert (stackable? item cell-item))
-    (remove-item entity cell)
-    (set-item entity cell (update cell-item :count + (:count item)))))
-
-(defn- remove-one-item [entity cell]
-  (let [item (get-in (:inventory @entity) cell)]
-    (if (and (:count item)
-             (> (:count item) 1))
-      (do
-       (remove-item entity cell)
-       (set-item entity cell (update item :count dec)))
-      (remove-item entity cell))))
-
-(defn- try-put-item-in
-  "returns true when the item was picked up"
-  [entity slot item]
-  (let [inventory (:inventory @entity)
-        cells-items (cells-and-items inventory slot)
-
-        [cell cell-item] (find-first (fn [[cell cell-item]] (stackable? item cell-item))
-                                cells-items)
-        picked-up (if cell
-                    (do (stack-item entity cell item)
-                        true)
-                    (when-let [[empty-cell] (find-first (fn [[cell item]] (nil? item))
-                                                     cells-items)]
-                      (when-not (two-handed-weapon-and-shield-together? inventory empty-cell item)
-                        (set-item entity empty-cell item)
-                        true)))]
-    picked-up))
-
-(defn try-pickup-item [entity item]
-  (let [slot (find-first #(= % (:slot item))
-                         (keys (:inventory @entity)))]
-    (or
-     (try-put-item-in entity slot item)
-     (try-put-item-in entity :bag item))))
-
-(defmethod clickable/on-clicked :item [entity]
-  (let [item (:item @entity)]
-    (when-not @item-in-hand
-      (cond
-       (showing-player-inventory?)
-       (do
-        (audio/play "bfxr_takeit.wav")
-        (swap! entity assoc :destroyed? true)
-        (set-item-in-hand item))
-
-       (try-pickup-item player-entity item)
-       (do
-        (audio/play "bfxr_pickup.wav")
-        (swap! entity assoc :destroyed? true))
-
-       :else
-       (do
-        (audio/play "bfxr_denied.wav")
-        ; (msg-to-player/show "Your inventory is full")
-        (show-msg-to-player "Your Inventory is full"))))))
-
-; -> entities ? w. creatures & projectiles
-; TODO use image w. shadows spritesheet
-(defn ^:private item-entity [position item]
-  (db/create-entity!
-   {:position position
-    :body {:width 0.5 ; TODO use item-body-dimensions
-           :height 0.5
-           :is-solid false ; solid? collides?
-           }
-    :z-order :on-ground
-    :image (:image item)
-    ;:glittering true ; no animation (deleted it) TODO ?? (didnt work with pausable)
-    :item item
-    ; :mouseover-text (:pretty-name item)
-    ; :clickable :item
-    :clickable {:type :item
-                :text (:pretty-name item)}})) ; TODO item-color also from text...? uniques/magic/...
-
-(defn create-item-body [position item]
-  (item-entity position
-               item
-               #_(if (string? item)
-                 #_(create-item-instance item) ; TODO item instance
-                 item)))
+(declare window) ; TODO just function and call @ screen
 
 ; TODO ! important ! animation & dont put exactly hiding under player
 (defn put-item-on-ground []
-  {:pre [(is-item-in-hand?)]}
+  {:pre [(inventory/is-item-in-hand?)]}
   (audio/play "bfxr_itemputground.wav")
   (let [{x 0 y 1 :as posi} (:position @player-entity)
        ; [w _] item-body-dimensions
@@ -226,8 +38,8 @@
         ;position (if-not blocked below-posi posi)
 
         ]
-    (create-item-body posi @item-in-hand))
-  (empty-item-in-hand))
+    (item-entity/create! posi @item-in-hand))
+  (inventory/empty-item-in-hand))
 
 (defn- complain-2h-weapon-and-shield! []
   ;(audio/play "error.wav")
@@ -258,7 +70,7 @@
 (defn- try-usable-item-effect [{:keys [effect use-sound] :as item} cell]
   (if (effect)
     (do
-      (remove-one-item cell)
+      (inventory/remove-one-item cell)
       (audio/play use-sound))
     (audio/play "bfxr_denied.wav")))
 
@@ -270,7 +82,7 @@
              (and (not (is-rightm-consumed?))
                   (try-consume-rightm-pressed))
              (= (:type mouseover-item) :usable)
-             (cell-in-use? entity* mouseover-cell))
+             (inventory/cell-in-use? entity* mouseover-cell))
         (try-usable-item-effect mouseover-item mouseover-cell))))
 
 ;; TODO this out of here, is not inventory but rand-items
@@ -324,16 +136,13 @@
           (assoc :color items/modifiers-text-color))))) ; TODO make @ somehere else ? or based on idk
 
 #_(defnks create-rand-item [position :max-lvl]
-  (create-item-body position
-                    (gen-rand-item max-lvl)))
+    (item-entity/create! position
+                         (gen-rand-item max-lvl)))
 
-; after-create-entity because try-pickup-item applies modifiers (skillmanager has to be initialised)
-(defcomponent :items items
-  (db/after-create! [_ entity]
-    (swap! entity assoc :inventory empty-inventory)
-    ;(swap! entity dissoc :items)
-    (doseq [id items]
-      (try-pickup-item entity (id items/items)))))
+; DEFCOMPONENT INVENTORY ! this all is !!
+; remove any GUI stuff => just a watcher or something....
+; => add item-on-cursor for player...
+
 
 ; -> make code like your comments
 (comment
@@ -348,56 +157,59 @@
         item (get-in inventory cell)]
     (cond
      ; TRY PICK FROM CELL
-     (and (not (is-item-in-hand?))
+     (and (not (inventory/is-item-in-hand?))
           item)
      (do
       (audio/play "bfxr_takeit.wav")
-      (set-item-in-hand item)
-      (remove-item entity cell))
+      (inventory/set-item-in-hand item)
+      (inventory/remove-item entity cell))
 
-     (is-item-in-hand?)
+     (inventory/is-item-in-hand?)
      (cond
       ; PUT ITEM IN
       (and (not item)
-           (valid-slot? cell @item-in-hand))
-      (if (two-handed-weapon-and-shield-together? inventory cell @item-in-hand)
+           (inventory/valid-slot? cell @item-in-hand))
+      (if (inventory/two-handed-weapon-and-shield-together? inventory cell @item-in-hand)
         (complain-2h-weapon-and-shield!)
         (do
          (audio/play "bfxr_itemput.wav")
-         (set-item entity cell @item-in-hand)
-         (empty-item-in-hand)))
+         (inventory/set-item entity cell @item-in-hand)
+         (inventory/empty-item-in-hand)))
 
       ; INCREMENT ITEM
       (and item
-           (stackable? item @item-in-hand))
+           (inventory/stackable? item @item-in-hand))
       (do
        (audio/play "bfxr_itemput.wav")
-       (stack-item entity cell @item-in-hand)
-       (empty-item-in-hand))
+       (inventory/stack-item entity cell @item-in-hand)
+       (inventory/empty-item-in-hand))
 
       ; SWAP ITEMS
       (and item
-           (valid-slot? cell @item-in-hand))
-      (if (two-handed-weapon-and-shield-together? inventory cell @item-in-hand)
+           (inventory/valid-slot? cell @item-in-hand))
+      (if (inventory/two-handed-weapon-and-shield-together? inventory cell @item-in-hand)
         (complain-2h-weapon-and-shield!)
         (do
          (audio/play "bfxr_itemput.wav")
-         (remove-item entity cell)
-         (set-item entity cell @item-in-hand)
-         (set-item-in-hand item)))))))
+         (inventory/remove-item entity cell)
+         (inventory/set-item entity cell @item-in-hand)
+         (inventory/set-item-in-hand item)))))))
 
 (declare ^:private slot->background
          ^:private table)
 
+; TODO game.ui.inventory !
+
 (defmodule _
   (lc/create [_]
     (.bindRoot #'window (ui/window :title "Inventory"))
+    (.setName window "inventory-window")
     (.bindRoot #'table (ui/table))
     (.pad table (float 2))
     (.add window table)
     (.bindRoot #'slot->background
                (let [sheet (image/spritesheet "items/images.png" 48 48)]
-                 (->> {:weapon   0
+                 (->> {:weapon   0 ; TODO use a vector?
                        :shield   1
                        :rings    2
                        :necklace 3
@@ -419,16 +231,16 @@
 
 (def ^:private cell-size 48)
 
-(def- droppable-color    (color/rgb 0   0.6 0 0.8))
-(def- two-h-shield-color (color/rgb 0.6 0.6 0 0.8))
-(def- not-allowed-color  (color/rgb 0.6 0   0 0.8))
+(def ^:private droppable-color    (color/rgb 0   0.6 0 0.8))
+(def ^:private two-h-shield-color (color/rgb 0.6 0.6 0 0.8))
+(def ^:private not-allowed-color  (color/rgb 0.6 0   0 0.8))
 
 (defn- draw-cell-rect [x y mouseover? cell]
   (shape-drawer/rectangle x y cell-size cell-size color/gray)
   (when (and @item-in-hand mouseover?)
-    (let [color (if (and (valid-slot? cell @item-in-hand)
-                         (not (cell-in-use? @player-entity cell))) ; TODO not player-entity but entity
-                  (if (two-handed-weapon-and-shield-together? (:inventory @player-entity) cell @item-in-hand)
+    (let [color (if (and (inventory/valid-slot? cell @item-in-hand)
+                         (not (inventory/cell-in-use? @player-entity cell))) ; TODO not player-entity but entity
+                  (if (inventory/two-handed-weapon-and-shield-together? (:inventory @player-entity) cell @item-in-hand)
                     two-h-shield-color
                     droppable-color)
                   not-allowed-color)]
@@ -480,8 +292,8 @@
     (.add (cell-widget :rings :position [0 0]))
     (.add (cell-widget :rings :position [1 0]))
     (.add (cell-widget :boot)) .row)
-  (doseq [y (range (grid/height (:bag empty-inventory)))]
-    (doseq [x (range (grid/width (:bag empty-inventory)))]
+  (doseq [y (range (grid/height (:bag inventory/empty-inventory)))]
+    (doseq [x (range (grid/width (:bag inventory/empty-inventory)))]
       (.add table (cell-widget :bag :position [x y])))
     (.row table)))
 
@@ -513,3 +325,6 @@
     (.setDrawable image-widget (slot->background (cell 0)))
     (.hide tooltip)
     (.removeListener cell-widget tooltip)))
+
+(intern 'game.components.inventory 'set-item-image-in-widget set-item-image-in-widget)
+(intern 'game.components.inventory 'remove-item-from-widget remove-item-from-widget)

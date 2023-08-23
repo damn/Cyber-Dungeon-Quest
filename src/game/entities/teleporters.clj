@@ -1,4 +1,4 @@
-(nsx game.entity.teleporters
+(nsx game.entities.teleporters
   (:require [game.components.clickable :as clickable])
   (:use
     (game media)

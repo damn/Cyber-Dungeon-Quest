@@ -1,5 +1,5 @@
 ; TODO 'effects'
-(nsx game.entity.nova
+(nsx game.entities.nova
   (:require [game.utils.counter :refer :all]
             [game.maps.cell-grid :as cell-grid])
   (:use clojure.set

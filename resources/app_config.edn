@@ -11,10 +11,10 @@
  :modules [[:game.entities.creature]
            [:game.skills.core]
            [:game.items.core]
-           [:game.items.inventory]
            [:game.maps.data]
            [:game.media]
            [:game.ui.stage]
+           [:game.ui.inventory-window]
            [:game.ui.action-bar]
            [:game.player.status-gui]
            [:game.screens.main {:bg-image "ui/moon_background.png"
