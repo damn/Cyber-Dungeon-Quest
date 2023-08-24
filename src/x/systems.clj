@@ -1,4 +1,4 @@
-(ns x.systems
+(ns x.systems ; TODO all x => game.
   (:require [x.x :refer [defsystem]]))
 
 ; TODO move systems where they are used !
@@ -13,7 +13,7 @@
 
 (comment
  ; two times underscore => the let does not work anymore ! shadowed...
- ; => bind with gensym over argvector and then let to user-supplied ??
+ ; => check if first element shadowed => warning...
  (clojure.core/defmethod
    render
    :line-render

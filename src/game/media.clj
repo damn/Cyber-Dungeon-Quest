@@ -4,9 +4,10 @@
             [gdl.files :as files]
             [gdl.graphics.image :as image]
             [gdl.graphics.animation :as animation]
-            [gdl.graphics.freetype :as freetype]))
+            [gdl.graphics.freetype :as freetype])
+  (:import com.badlogic.gdx.graphics.g2d.BitmapFont))
 
-(declare font
+(declare ^BitmapFont font
          ^:private fx
          ^:private fx-impact)
 

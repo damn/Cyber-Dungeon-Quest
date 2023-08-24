@@ -3,12 +3,10 @@
             [x.x :refer [defcomponent]]
             [utils.core :refer [assoc-in! find-first]]
             [game.db :as db]
-            [game.components.modifiers :as modifiers]
+            [game.components.modifiers :as modifiers] ; not a component? or is ?
             [game.items.core :as items]))
 
-; set-item-image-in-widget
-; remove-item-from-widget
-; skills/inventory == player atom watch observers...
+; skills added/removed => make also gui-callback fn and bind-root.
 
 (def empty-inventory
   (->> {:bag      [6 4]
@@ -56,6 +54,7 @@
 (defn- applies-modifiers? [[slot _]]
   (not= :bag slot))
 
+; call gui-callback and bind-root & add :is-player check
 (declare set-item-image-in-widget
          remove-item-from-widget)
 

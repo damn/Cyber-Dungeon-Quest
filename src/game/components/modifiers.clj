@@ -9,7 +9,8 @@
 (def modifier-definitions {})
 
 (defn defmodifier [k modifier]
-  (alter-var-root #'modifier-definitions assoc k modifier))
+  (alter-var-root #'modifier-definitions assoc k modifier)
+  k)
 
 ; Example:
 ; (call-modifier-fn :apply entity* [:mana 30])

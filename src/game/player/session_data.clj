@@ -1,4 +1,4 @@
-; TODO move to x.session
+; TODO move to game.session
 (nsx game.player.session-data
   (:require [clojure.walk :refer [postwalk]]
             game.maps.cell-grid
@@ -7,8 +7,7 @@
             (game.utils msg-to-player)
             game.screens.options
             game.ui.action-bar
-            game.ui.inventory-window
-            )
+            game.ui.inventory-window)
   (:use (game.maps add impl)))
 
 

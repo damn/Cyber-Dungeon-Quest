@@ -10,8 +10,11 @@
             [game.player.entity :refer (player-entity)]
             [game.entities.item :as item-entity]
             ;game.components.glittering
-            game.components.image)
-  (:import [com.badlogic.gdx.scenes.scene2d.ui Widget Image TextTooltip]
+            game.components.image
+            [game.ui.config :as ui-config])
+  (:import com.badlogic.gdx.graphics.g2d.TextureRegion
+           [com.badlogic.gdx.scenes.scene2d Actor Group]
+           [com.badlogic.gdx.scenes.scene2d.ui Widget Image TextTooltip Window Table]
            [com.badlogic.gdx.scenes.scene2d.utils TextureRegionDrawable ClickListener]))
 
 ; TODO it is just a grid ... if you look at it .. simplify? just hashmap ?
@@ -22,7 +25,9 @@
 
 ; TODO define inventory in 1 place -> slots, render-posi, background-image then take at diff. places !
 
-(declare window) ; TODO just function and call @ screen
+(declare ^Window window)
+; TODO just function and call @ screen (but used @ session !)
+; => session part of module ? internal state ?
 
 ; TODO ! important ! animation & dont put exactly hiding under player
 (defn put-item-on-ground []
@@ -196,14 +201,12 @@
          (inventory/set-item-in-hand item)))))))
 
 (declare ^:private slot->background
-         ^:private table)
-
-; TODO game.ui.inventory !
+         ^:private ^Table table)
 
 (defmodule _
   (lc/create [_]
     (.bindRoot #'window (ui/window :title "Inventory"))
-    (.setName window "inventory-window")
+    (.setName window ui-config/inventory-window-name)
     (.bindRoot #'table (ui/table))
     (.pad table (float 2))
     (.add window table)
@@ -224,7 +227,7 @@
                              [slot
                               (-> sheet
                                   (image/get-sprite [21 (+ y 2)])
-                                  :texture
+                                  :texture ; TODO image/texture-region type hinted ?
                                   TextureRegionDrawable.
                                   (.tint (color/rgb 1 1 1 0.4)))]))
                       (into {}))))))
@@ -256,15 +259,16 @@
 ; TODO why do I need to call getX ?
 ; is not layouted automatically to cell , use 0/0 ??
 ; (maybe (.setTransform stack true) ? , but docs say it should work anyway
-(defn- draw-rect-actor []
+(defn- draw-rect-actor ^Widget []
   (proxy [Widget] []
     (draw [batch parent-alpha]
-      (draw-cell-rect (.getX this)
-                      (.getY this)
-                      (mouseover? this)
-                      (read-string (.getName (.getParent this)))))))
+      (let [^Widget this this]
+        (draw-cell-rect (.getX this)
+                        (.getY this)
+                        (mouseover? this)
+                        (read-string (.getName (.getParent this))))))))
 
-(defn- cell-widget [slot & {:keys [position]}]
+(defn- cell-widget ^Group [slot & {:keys [position]}]
   (let [cell [slot (or position [0 0])]]
     (doto (ui/stack)
       (.setName (pr-str cell))
@@ -272,7 +276,7 @@
                       (clicked [event x y]
                         (clicked-cell cell))))
       (.add (draw-rect-actor))
-      (.add (doto (Image. (slot->background slot))
+      (.add (doto (ui/image (slot->background slot))
               (.setName "image"))))))
 
 (defn- redo-table []
@@ -305,23 +309,23 @@
              (serialize [_])
              (initial-data [_])))
 
-(defn- get-cell-widget [cell]
+(defn- get-cell-widget ^Group [cell]
   (.findActor table (pr-str cell)))
 
-(defn- get-image-widget [cell-widget]
-  (.findActor cell-widget "image"))
+(defn- get-image-widget ^Image [cell-widget]
+  (.findActor ^Group cell-widget "image"))
 
 (defn- set-item-image-in-widget [cell item]
   (let [cell-widget (get-cell-widget cell)
         image-widget (get-image-widget cell-widget)]
-    (.setDrawable image-widget (TextureRegionDrawable. (:texture (:image item))))
+    (.setDrawable image-widget (TextureRegionDrawable. ^TextureRegion (:texture (:image item))))
     (.addListener cell-widget (ui/text-tooltip #(items/text item)))))
 
 (defn- remove-item-from-widget [cell]
   (let [cell-widget (get-cell-widget cell)
         image-widget (get-image-widget cell-widget)
-        tooltip (first (filter #(instance? TextTooltip %)
-                               (.getListeners cell-widget)))]
+        ^TextTooltip tooltip (first (filter #(instance? TextTooltip %)
+                                            (.getListeners cell-widget)))]
     (.setDrawable image-widget (slot->background (cell 0)))
     (.hide tooltip)
     (.removeListener cell-widget tooltip)))

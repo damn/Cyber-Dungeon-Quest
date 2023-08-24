@@ -2,7 +2,8 @@
   (:require [clojure.edn :as edn]
             game.maps.impl
             [mapgen.movement-property :refer (movement-property movement-properties)]
-            [mapgen.module-gen :as module-gen]))
+            [mapgen.module-gen :as module-gen])
+  (:import com.badlogic.gdx.scenes.scene2d.ui.TextField))
 
 (def ^:private current-tiled-map (atom nil))
 (def ^:private current-area-level-grid (atom nil))
@@ -118,12 +119,13 @@
 ; TODO any key typed and not saved -> show 'unsaved' icon
 ; save => show saved icon.
 ; TODO validation/schema (malli/clojure.spec)
+; TODO see common stuff w. entity-editor/screen.
 (defn- edn-edit-form [edn-data-file]
   (let [properties (edn/read-string (slurp edn-data-file))
         table (ui/table)
         get-properties #(into {}
                               (for [k (keys properties)]
-                                [k (edn/read-string (.getText (.findActor table (str k))))]))]
+                                [k (edn/read-string (.getText ^TextField (.findActor table (str k))))]))]
     (.colspan (.add table (ui/label edn-data-file)) 2)
     (.row table)
     (doseq [[k v] properties]
@@ -142,7 +144,7 @@
 (defn- create-stage []
   (let [stage (ui/stage)
         window (ui/window :title "Properties")
-        [form get-properties] (edn-edit-form game.maps.impl/map-data-file) ]
+        [form get-properties] (edn-edit-form game.maps.impl/map-data-file)]
     (.addActor stage window)
     (.add window form)
     (.row window)

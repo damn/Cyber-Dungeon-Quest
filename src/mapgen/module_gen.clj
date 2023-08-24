@@ -9,6 +9,7 @@
             [mapgen.cave-gen :as cave-gen]
             [mapgen.nad :as nad])
   (:import java.util.Random
+           com.badlogic.gdx.graphics.g2d.TextureRegion
            [com.badlogic.gdx.maps.tiled TiledMap TiledMapTileLayer TiledMapTileLayer$Cell]
            [com.badlogic.gdx.maps.tiled.tiles StaticTiledMapTile]))
 
@@ -17,10 +18,10 @@
 ; No copied-tile for AnimatedTiledMapTile yet (there was no copy constructor/method)
 (def ^:private copy-tile
   (memoize
-   (fn [tile]
+   (fn [^StaticTiledMapTile tile]
      (StaticTiledMapTile. tile))))
 
-(defn- set-tile! [layer [x y] tile]
+(defn- set-tile! [^TiledMapTileLayer layer [x y] tile]
   (let [cell (TiledMapTileLayer$Cell.)]
     (.setTile cell tile)
     (.setCell layer x y cell)))
@@ -37,13 +38,13 @@
     (.add (tiled/layers tiled-map) layer)
     layer))
 
-(defn- make-tiled-map [grid modules-tiled-map]
+(defn- make-tiled-map [grid ^TiledMap modules-tiled-map]
   (let [tiled-map (TiledMap.)
         properties (.getProperties tiled-map)]
     (.putAll properties (.getProperties modules-tiled-map)) ; tilewidth/tileheight
     (.put properties "width"  (grid/width  grid))
     (.put properties "height" (grid/height grid))
-    (doseq [layer (tiled/layers modules-tiled-map)
+    (doseq [^TiledMapTileLayer layer (tiled/layers modules-tiled-map)
             :let [new-layer (add-layer! tiled-map
                                         :name (tiled/layer-name layer)
                                         :visible (.isVisible layer)
@@ -213,7 +214,7 @@
 (def ^:private creature->tile
   (memoize
    (fn [{:keys [id image]}]
-     (let [tile (StaticTiledMapTile. (-> image :texture))]
+     (let [tile (StaticTiledMapTile. ^TextureRegion (:texture image))]
        (.put (.getProperties tile) "id" id)
        tile))))
 

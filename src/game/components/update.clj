@@ -42,7 +42,7 @@
 
 (modifiers/defmodifier :update-speed
   {:values   [[8 20] [25 35] [40 50]]
-   :text     #(str (Math/signum (% 1)) (% 1) "% " (% 0))
+   :text     #(str (Math/signum (float (% 1))) (% 1) "% " (% 0))
    :apply    modify-update-speed
    :reverse  #(modify-update-speed %1 [(%2 0) (- (%2 1))])})
 

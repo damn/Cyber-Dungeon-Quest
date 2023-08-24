@@ -23,7 +23,7 @@
   (reify StatusCheckBox
     (get-text [this] (name (:name (meta avar))))
     (get-state [this] @avar)
-    (set-state [this is-selected] (.bindRoot avar is-selected))))
+    (set-state [this is-selected] (.bindRoot ^clojure.lang.Var avar is-selected))))
 
 ;(status-check-box
 ;  (get-text [this] "Music")

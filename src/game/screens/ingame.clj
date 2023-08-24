@@ -35,26 +35,26 @@
               "foo"
               )
 
-  (.setPosition debug-window 0 (gui/viewport-height))
+  (ui/set-position debug-window 0 (gui/viewport-height))
 
-  (.setPosition help-window
-                (- (/ (gui/viewport-width) 2)
-                   (/ (.getWidth help-window) 2))
-                (gui/viewport-height))
+  (ui/set-position help-window
+                   (- (/ (gui/viewport-width) 2)
+                      (/ (.getWidth help-window) 2))
+                   (gui/viewport-height))
 
-  (.setPosition inventory/window
-                (gui/viewport-width)
-                (- (/ (gui/viewport-height) 2)
-                   (/ (.getHeight help-window) 2)))
+  (ui/set-position inventory/window
+                   (gui/viewport-width)
+                   (- (/ (gui/viewport-height) 2)
+                      (/ (.getHeight help-window) 2)))
 
-  (.setPosition inventory/window
-                (gui/viewport-width)
-                (- (/ (gui/viewport-height) 2)
-                   (/ (.getHeight help-window) 2)))
+  (ui/set-position inventory/window
+                   (gui/viewport-width)
+                   (- (/ (gui/viewport-height) 2)
+                      (/ (.getHeight help-window) 2)))
 
-  (.setPosition entity-info-window
-                (.getX inventory/window)
-                0)
+  (ui/set-position entity-info-window
+                   (.getX inventory/window)
+                   0)
 
   (.setWidth  entity-info-window (.getWidth inventory/window)) ; 333, 208
   (.setHeight entity-info-window (.getY inventory/window))

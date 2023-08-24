@@ -3,8 +3,36 @@
             [game.items.core :as items]
             [game.skills.core :as skills]
             [game.effects.core :as effects]
-            [game.components.modifiers :as modifiers]))
+            [game.components.modifiers :as modifiers])
+  (:import (com.badlogic.gdx.scenes.scene2d Actor Stage)
+           (com.badlogic.gdx.scenes.scene2d.ui SplitPane Table)
+           (com.badlogic.gdx.scenes.scene2d.utils TextureRegionDrawable)))
 
+; also defined multiple times:
+; * skills/skills / 'Skills' => define entity-type only once.
+; where to get properties/where to save/title/etc.
+
+;  = > Ideally re-usable from swing if we ever change !
+
+; TODO
+; * define widgets per attribute, e.g. :id => just label, throw otherwise or default is just label or text?
+; => image/id we define only 1 row ? => define rows per attribute not label/widget ?
+; => but image is different for creature-types, shows all related (make w. buttons for linked ?)
+
+; * creature-type => button & hp/speed multiplier/base-value (also button)
+
+; * effects/modifiers => attributes/base-keys system => then define labels for them.
+; * maybe also UI description (do here only ?)
+
+; * define per-entity save/load edn stuff
+
+; * effect also sound / animation play on click & editable ?
+
+; * skills/items/add one of many => open window & select => should return that id somehow, test
+
+; * skills => show all icons ?
+
+; * weapons separate (read from EDN not from denormalized)
 
 (comment
 
@@ -16,7 +44,6 @@
  (keys modifiers/modifier-definitions)
  (:block :skill :mana-reg :shield :mana :hp-reg :cast-speed :damage :armor :update-speed :hp :attack-speed)
 
-
  ; items/modifiers
  ; * list with icon, add/remove
 
@@ -25,19 +52,8 @@
 ; TODO editing the 'loaded' stuff, not from edn ...
 
 
-(import '[com.badlogic.gdx.scenes.scene2d.ui Widget Image TextTooltip])
-(import '[com.badlogic.gdx.scenes.scene2d.utils TextureRegionDrawable ClickListener])
-
-(declare stage)
-(declare split-pane)
-; setFirstWidget
-; setSecondWidget
-
-
-
-
-(import 'com.badlogic.gdx.scenes.scene2d.Actor)
-(import 'com.badlogic.gdx.scenes.scene2d.ui.Table)
+(declare ^Stage stage)
+(declare ^SplitPane split-pane)
 
 (defn set-center [^Actor actor x y]
   (.setPosition actor
@@ -48,7 +64,6 @@
   (set-center actor
               (/ (gui/viewport-width)  2)
               (/ (gui/viewport-height) 2)))
-
 
 (defn add-rows [^Table table rows]
   (doseq [row rows]
@@ -96,7 +111,7 @@
      :image-widget
      (mk-table
       (map
-       #(map (fn [props] (Image. (TextureRegionDrawable. (:texture (:image props))))) %)
+       #(map (fn [props] (ui/image (TextureRegionDrawable. (:texture (:image props))))) %)
        (partition-all 5
                       (filter #(= (:creature-type %) creature-type-id)
                               (vals creatures/creatures)))))
@@ -121,20 +136,26 @@
     (editor-window
      :title "Creature"
      :id (:id props)
-     :image-widget (Image. (TextureRegionDrawable. (:texture (:image props))))
+     :image-widget (ui/image (TextureRegionDrawable. (:texture (:image props))))
      :props-widget-pairs
      [["type" (ui/text-button (name (:creature-type props)) (fn []
                                                               (.addActor
                                                                stage
                                                                (creature-type-editor (:creature-type props)))))]
       ["level"  (ui/text-field (str (:level props)))]
-      ["skills" (ui/text-field (str (:skills props)))]
+      ["skills" (let [table (ui/table)]
+                  (doseq [skill (:skills props)]
+                    (.add table (ui/image (TextureRegionDrawable. (:texture (:image (get skills/skills skill))))))
+                    (.add table (ui/text-button " - " (fn [] (println "Remove " ))))
+                    (.row table))
+                  (.add table (ui/text-button " + " (fn [] (println "Add "))))
+                  table)]
       ["items"  (let [table (ui/table)]
                   (doseq [item (:items props)]
-                    (.add table (Image. (TextureRegionDrawable. (:texture (:image (get items/items item))))))
-                    (.add table (ui/text-button "remove item" (fn [] (println "Remove " item))))
+                    (.add table (ui/image (TextureRegionDrawable. (:texture (:image (get items/items item))))))
+                    (.add table (ui/text-button " - " (fn [] (println "Remove " item))))
                     (.row table))
-                  (.add table (ui/text-button "add item" (fn [] (println "Add item"))))
+                  (.add table (ui/text-button " + " (fn [] (println "Add item"))))
                   table)]])))
 
 ; entity-type 'item'
@@ -148,7 +169,7 @@
     (editor-window
      :title "Item"
      :id (:id props)
-     :image-widget (Image. (TextureRegionDrawable. (:texture (:image props))))
+     :image-widget (ui/image (TextureRegionDrawable. (:texture (:image props))))
      :props-widget-pairs
      [["slot" (ui/label (name (:slot props)))]])))
 
@@ -161,7 +182,7 @@
     (editor-window
      :title "Skill"
      :id (:id props)
-     :image-widget (Image. (TextureRegionDrawable. (:texture (:image props))))
+     :image-widget (ui/image (TextureRegionDrawable. (:texture (:image props))))
      :props-widget-pairs
      [["action-time" (ui/text-field (str (:action-time props)))]
       ["cooldown"    (ui/text-field (str (:cooldown props)))]
@@ -186,8 +207,9 @@
     (add-rows table [[[(ui/label title) :colspan number-columns]]])
     (add-rows table (for [entities (partition-all number-columns entities)]
                       (for [props entities
-                            :let [button (ui/image-button (:image props) #(.addActor stage (entity-editor (:id props))))
-                                  top-widget (extra-infos-widget props)
+                            :let [button (ui/image-button (:image props)
+                                                          #(.addActor stage (entity-editor (:id props))))
+                                  ^Actor top-widget (extra-infos-widget props)
                                   stack (ui/stack)] ]
                         (do (.setTouchable top-widget com.badlogic.gdx.scenes.scene2d.Touchable/disabled)
                             (.add stack button)
@@ -224,15 +246,8 @@
                   :entity-editor skill-editor
                   :extra-infos-widget (fn [_] (ui/label ""))))
 
-(comment
- (.setFirstWidget split-pane (left-widget))
- (.setSecondWidget split-pane (creatures-table))
-
  ; TODO
  ; => non-toggle image-button
-
- )
-
 
 (defn- left-widget []
   (let [table (ui/table)]
@@ -254,7 +269,7 @@
     (.add table split-pane)
     stage))
 
-(defmodule stage
+(defmodule ^Stage stage
   (lc/create [_] (create-stage))
   (lc/dispose [_] (.dispose stage))
   (lc/show [_] (input/set-processor stage))

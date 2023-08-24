@@ -1,7 +1,8 @@
 (nsx game.ui.action-bar
   (:require [game.skills.core :as skills]
             [game.components.skills :refer (choose-skill)]
-            [game.player.entity :refer (player-entity)]))
+            [game.player.entity :refer (player-entity)])
+  (:import (com.badlogic.gdx.scenes.scene2d.ui HorizontalGroup ButtonGroup Button)))
 
 ; skill-bar?? -> maybe also potions or whatever actions could be included in the future ?!
 
@@ -71,18 +72,20 @@
 ; keep index 1 for item ?
 
 (declare check-hotbar-actualize
-         horizontal-group)
+         ^HorizontalGroup horizontal-group)
 
 (defmodule _
   (lc/create [_]
-    (.bindRoot #'horizontal-group (com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup.))
+    (.bindRoot #'horizontal-group (HorizontalGroup.))
     (.addActor horizontal-group (ui/actor check-hotbar-actualize))))
+
+(declare ^ButtonGroup button-group)
 
 (defn- reset-buttons! []
   (.clearChildren horizontal-group)
   (.addActor horizontal-group (ui/actor check-hotbar-actualize))
 
-  (def button-group (com.badlogic.gdx.scenes.scene2d.ui.ButtonGroup.))
+  (.bindRoot #'button-group (ButtonGroup.))
   (.setMaxCheckCount button-group 1)
   (.setMinCheckCount button-group 0)
   ;(.setUncheckLast button-group true) ? needed ?
@@ -117,7 +120,7 @@
           :let [skill-id (slot @slot->skill-id)]
           :when (and (input/is-key-pressed? slot)
                      skill-id)]
-    (.setChecked (.findActor horizontal-group (str skill-id)) true)))
+    (.setChecked ^Button (.findActor horizontal-group (str skill-id)) true)))
 
 ; TODO what if selected skill gets removed
 ; -> no more selected skill (no wait gets updated)
