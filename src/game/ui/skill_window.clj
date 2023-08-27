@@ -1,5 +1,7 @@
-(nsx game.ui.skill-window
+(ns game.ui.skill-window
   (:require clojure.set
+            [utils.core :refer [->!]]
+            [gdl.ui :as ui]
             [game.components.skills :refer (assoc-skill has-skill? choose-skill)]
             [game.skills.core :as skills]
             [game.player.entity :refer (player-entity)]
