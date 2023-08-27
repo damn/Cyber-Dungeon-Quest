@@ -1,9 +1,9 @@
 (nsx game.screens.ingame
   (:require [game.ui.stage :as stage]
-            game.ui.debug-window
-            game.ui.help-window
-            game.ui.entity-info-window
-            game.ui.skill-window
+            [game.ui.debug-window :as debug-window]
+            [game.ui.help-window :as help-window]
+            [game.ui.entity-info-window :as entity-info-window]
+            [game.ui.skill-window :as skill-window]
             [game.ui.inventory-window :as inventory]
             [game.ui.action-bar :as action-bar]
             [game.ui.mouseover-entity :refer (saved-mouseover-entity)]
@@ -16,10 +16,10 @@
             game.render-ingame))
 
 (defn- create-this []
-  (def debug-window       (game.ui.debug-window/create-window))
-  (def help-window        (game.ui.help-window/create-window))
-  (def entity-info-window (game.ui.entity-info-window/create-window))
-  (def skill-window       (game.ui.skill-window/create-window))
+  (def debug-window       (debug-window/create))
+  (def help-window        (help-window/create))
+  (def entity-info-window (entity-info-window/create))
+  (def skill-window       (skill-window/create))
 
   (def ^:private windows [debug-window
                           help-window

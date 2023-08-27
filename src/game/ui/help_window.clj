@@ -1,4 +1,5 @@
-(nsx game.ui.help-window)
+(ns game.ui.help-window
+  (:require [gdl.ui :as ui]))
 
 ; TODO -> only open for first starting of the game or for every character only one time and save with save-game
 ; TODO -> hotkey
@@ -19,7 +20,7 @@
   * ESC - exit/close menu
   * P   - Pause the game")
 
-(defn create-window []
+(defn create []
   (let [window (ui/window :title "Controls")]
     (.add window (ui/label controls-text))
     (.pack window)

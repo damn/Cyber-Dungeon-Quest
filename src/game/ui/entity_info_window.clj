@@ -1,5 +1,6 @@
-(nsx game.ui.entity-info-window
-  (:require [game.ui.mouseover-entity :refer (get-mouseover-entity)]))
+(ns game.ui.entity-info-window
+  (:require [gdl.ui :as ui]
+            [game.ui.mouseover-entity :refer (get-mouseover-entity)]))
 
 ; I can create for every entity
 ; skill-icons with tooltips
@@ -38,7 +39,7 @@
                :skills
                (keys (:skills @entity))))))))
 
-(defn create-window []
+(defn create []
   (let [window (ui/window :title "Info")
         label (ui/label (entity-info-text))]
     (.expand (.add window label))

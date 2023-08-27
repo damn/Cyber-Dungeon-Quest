@@ -22,7 +22,7 @@
          (update :free-skill-points dec)
          (update :skills assoc-skill skill-id))))
 
-(defn create-window []
+(defn create []
   (let [window (ui/window :title "Skills")]
     (doseq [id [:projectile
                 :meditation

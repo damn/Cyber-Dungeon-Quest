@@ -1,4 +1,9 @@
-(nsx game.ui.debug-window)
+(ns game.ui.debug-window
+  (:require [gdl.graphics :as g]
+            [gdl.graphics.world :as world]
+            [gdl.graphics.gui :as gui]
+            [gdl.ui :as ui]
+            game.running))
 
 (defn- debug-infos []
   (str "FPS: " (g/fps)  "\n"
@@ -13,7 +18,7 @@
 #_(when-let [error @thrown-error] ; TODO test with (/ 1 0)
     (str "\nError! See logs!\n " #_error))
 
-(defn create-window []
+(defn create []
   (let [window (ui/window :title "Debug")
         label (ui/label "")]
     (.add window label)
