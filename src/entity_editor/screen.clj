@@ -1,5 +1,11 @@
-(nsx entity-editor.screen
-  (:require [game.entities.creature :as creatures]
+(ns entity-editor.screen
+  (:require [x.x :refer [defmodule]]
+            [gdl.lc :as lc]
+            [gdl.app :as app]
+            [gdl.input :as input]
+            [gdl.ui :as ui]
+            [gdl.graphics.gui :as gui]
+            [game.entities.creature :as creatures]
             [game.items.core :as items]
             [game.skills.core :as skills]
             [game.effects.core :as effects]
@@ -8,62 +14,7 @@
            (com.badlogic.gdx.scenes.scene2d.ui SplitPane Table)
            (com.badlogic.gdx.scenes.scene2d.utils TextureRegionDrawable)))
 
-; also defined multiple times:
-; * skills/skills / 'Skills' => define entity-type only once.
-; where to get properties/where to save/title/etc.
-
-;  = > Ideally re-usable from swing if we ever change !
-
-; TODO
-; * define widgets per attribute, e.g. :id => just label, throw otherwise or default is just label or text?
-; => image/id we define only 1 row ? => define rows per attribute not label/widget ?
-; => but image is different for creature-types, shows all related (make w. buttons for linked ?)
-
-; * creature-type => button & hp/speed multiplier/base-value (also button)
-
-; * effects/modifiers => attributes/base-keys system => then define labels for them.
-; * maybe also UI description (do here only ?)
-
-; * define per-entity save/load edn stuff
-
-; * effect also sound / animation play on click & editable ?
-
-; * skills/items/add one of many => open window & select => should return that id somehow, test
-
-; * skills => show all icons ?
-
-; * weapons separate (read from EDN not from denormalized)
-
-(comment
-
- (app/with-context (set! *print-level* nil))
-
- (keys effects/effect-definitions)
- (:hp :mana :stun :damage :spawn :target-entity :restore-hp-mana :projectile)
-
- (keys modifiers/modifier-definitions)
- (:block :skill :mana-reg :shield :mana :hp-reg :cast-speed :damage :armor :update-speed :hp :attack-speed)
-
- ; items/modifiers
- ; * list with icon, add/remove
-
- )
-
-; TODO editing the 'loaded' stuff, not from edn ...
-
-
-(declare ^Stage stage)
-(declare ^SplitPane split-pane)
-
-(defn set-center [^Actor actor x y]
-  (.setPosition actor
-                (- x (/ (.getWidth  actor) 2))
-                (- y (/ (.getHeight actor) 2))))
-
-(defn set-center-screen [actor]
-  (set-center actor
-              (/ (gui/viewport-width)  2)
-              (/ (gui/viewport-height) 2)))
+; TODO editing the 'loaded' stuff, not from edn
 
 (defn add-rows [^Table table rows]
   (doseq [row rows]
@@ -100,7 +51,7 @@
                       [(ui/label label) value-widget]))
     (add-rows table [[nil (ui/text-button "Cancel" #(.remove table))]])
     (.pack table)
-    (set-center-screen table)
+    (ui/set-center-screen table)
     table))
 
 (defn creature-type-editor [creature-type-id]
@@ -131,6 +82,12 @@
 ; * what about links ? will become buttons ? schema? datomic?
 ; save/undo/redo => datomic?
 
+(defn- stage []
+  (:stage (app/current-screen-value)))
+
+(defn- split-pane ^SplitPane []
+  (:split-pane (app/current-screen-value)))
+
 (defn- creature-editor [id]
   (let [props (get creatures/creatures id)]
     (editor-window
@@ -140,7 +97,7 @@
      :props-widget-pairs
      [["type" (ui/text-button (name (:creature-type props)) (fn []
                                                               (.addActor
-                                                               stage
+                                                               (stage)
                                                                (creature-type-editor (:creature-type props)))))]
       ["level"  (ui/text-field (str (:level props)))]
       ["skills" (let [table (ui/table)]
@@ -208,7 +165,7 @@
     (add-rows table (for [entities (partition-all number-columns entities)]
                       (for [props entities
                             :let [button (ui/image-button (:image props)
-                                                          #(.addActor stage (entity-editor (:id props))))
+                                                          #(.addActor (stage) (entity-editor (:id props))))
                                   ^Actor top-widget (extra-infos-widget props)
                                   stack (ui/stack)] ]
                         (do (ui/set-touchable top-widget :disabled)
@@ -251,31 +208,28 @@
 
 (defn- left-widget []
   (let [table (ui/table)]
-    (.add table (ui/text-button "Creatures" #(.setSecondWidget split-pane (creatures-table)))) (.row table)
-    (.add table (ui/text-button "Items"     #(.setSecondWidget split-pane (items-table))))     (.row table)
-    (.add table (ui/text-button "Skills"    #(.setSecondWidget split-pane (skills-table))))    (.row table)
+    (.add table (ui/text-button "Creatures" #(.setSecondWidget (split-pane) (creatures-table)))) (.row table)
+    (.add table (ui/text-button "Items"     #(.setSecondWidget (split-pane) (items-table))))     (.row table)
+    (.add table (ui/text-button "Skills"    #(.setSecondWidget (split-pane) (skills-table))))    (.row table)
+    (.add table (ui/text-button "Back to Main Menu" #(app/set-screen :game.screens.main)))
     table))
 
-(defn- create-stage []
-  (let [stage (ui/stage)
-        table (ui/table)]
-    (.bindRoot #'stage stage)
-    (.setFillParent table true)
-    (.setDebug table true)
-    (.addActor stage table)
-    (.bindRoot #'split-pane (ui/split-pane (left-widget)
-                                           (ui/label "second widget")
-                                           false))
-    (.add table split-pane)
-    stage))
-
-(defmodule ^Stage stage
-  (lc/create [_] (create-stage))
+(defmodule {:keys [stage]}
+  (lc/create [_]
+    (let [stage (ui/stage)
+          table (ui/table)]
+      (.setFillParent table true)
+      (.setDebug table true)
+      (.addActor stage table)
+      (let [split-pane (ui/split-pane (left-widget)
+                                      (ui/label "second widget")
+                                      false)]
+        (.setUserObject split-pane :split-pane)
+        (.add table split-pane)
+        {:stage stage
+         :split-pane split-pane})))
   (lc/dispose [_] (.dispose stage))
   (lc/show [_] (input/set-processor stage))
   (lc/hide [_] (input/set-processor nil))
   (lc/render [_] (gui/render #(ui/draw-stage stage)))
-  (lc/tick [_ delta]
-    (ui/update-stage stage delta)
-    (when (input/is-key-pressed? :ESCAPE)
-      (app/set-screen :game.screens.main))))
+  (lc/tick [_ delta] (ui/update-stage stage delta)))

@@ -1,4 +1,5 @@
-(nsx game.player.status-gui ; TODO use stage/scene2d
+(nsx game.player.status-gui  ; ui.player-stats -> hp/mana bar
+  ; TODO use stage/scene2d
   (:require [game.player.entity :refer (player-entity)])
   (:use
     (game media)
@@ -22,6 +23,10 @@
       (def- manacontent (image/create "ui/mana.png")))))
 
 (defn- render-hpmana-bar [x y contentimg minmaxval name]
+  ; stack
+  ; * rahmen
+  ; * sub-image
+  ; * label
   (image/draw rahmen x y)
   (image/draw (image/get-sub-image contentimg 0 0 (* rahmenw (val-max-ratio minmaxval)) rahmenh) x y)
   (render-infostr-on-bar (str (readable-number (minmaxval 0)) "/" (minmaxval 1) " " name) y rahmenh))

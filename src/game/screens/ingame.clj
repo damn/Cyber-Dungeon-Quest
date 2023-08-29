@@ -12,7 +12,17 @@
             [game.maps.data :as maps-data]
             [game.player.entity :refer (player-entity)]
             game.update-ingame
-            game.render-ingame))
+            game.render-ingame)
+  (:import com.badlogic.gdx.scenes.scene2d.Actor))
+
+(defn- item-in-hand-render-actor []
+  (let [actor (proxy [Actor] []
+                (draw [_ _]
+                  (when @item-in-hand
+                    (.toFront this) ; windows keep changing z-index when selected, or put all windows in 1 group and this actor another group
+                    (image/draw-centered (:image @item-in-hand) (gui/mouse-position)))))]
+    (ui/set-id actor :item-in-hand)
+    actor))
 
 (defn- create-stage []
   (let [debug-window       (debug-window/create)
@@ -62,6 +72,7 @@
         (.add action-bar/horizontal-group) ; table/add
         .expand ; cell/expand
         .bottom) ; cell/bottom ?
+    (.addActor stage (item-in-hand-render-actor))
     stage))
 
 (defn- toggle-visible! [actor] ; TODO to ui/, no '!'
@@ -231,14 +242,12 @@
 
 (defmodule stage
   (lc/create [_] (create-stage))
+  ; TODO no dispose stage ? necessary ? no own batch? done at tiledmap renderer...
   (lc/show [_] (input/set-processor stage))
   (lc/hide [_] (input/set-processor nil))
   (lc/render [_]
     (game.render-ingame/render-game)
-    (gui/render (fn []
-                  (ui/draw-stage stage)
-                  (when @item-in-hand
-                    (image/draw-centered (:image @item-in-hand) (gui/mouse-position))))))
+    (gui/render #(ui/draw-stage stage)))
   (lc/tick [_ delta]
     (handle-key-input stage)
     (ui/update-stage stage delta)
