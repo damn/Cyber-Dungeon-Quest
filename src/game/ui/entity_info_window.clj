@@ -1,5 +1,5 @@
 (ns game.ui.entity-info-window
-  (:require [gdl.ui :as ui]
+  (:require [gdl.scene2d.ui :as ui]
             [game.ui.mouseover-entity :refer (get-mouseover-entity)]))
 
 ; I can create for every entity

@@ -1,7 +1,7 @@
 (ns game.entities.item
   (:require [gdl.audio :as audio]
             [gdl.scene2d.actor :as actor]
-            [gdl.ui :as ui]
+            [gdl.scene2d.ui :as ui]
             [game.db :as db]
             [game.components.clickable :as clickable]
             [game.components.inventory :as inventory]

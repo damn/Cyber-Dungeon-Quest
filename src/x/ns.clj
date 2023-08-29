@@ -11,10 +11,10 @@
                  [audio     :as audio]
                  [geom      :as geom]
                  [vector    :as v]
-                 [ui        :as ui]
                  [tiled     :as tiled]
                  [raycaster :as raycaster]
                  [graphics  :as g])
+            [gdl.scene2d.ui :as ui]
             (gdl.graphics [color        :as color]
                           [shape-drawer :as shape-drawer]
                           [image        :as image]

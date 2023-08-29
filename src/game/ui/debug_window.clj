@@ -2,7 +2,7 @@
   (:require [gdl.graphics :as g]
             [gdl.graphics.world :as world]
             [gdl.graphics.gui :as gui]
-            [gdl.ui :as ui]
+            [gdl.scene2d.ui :as ui]
             game.running))
 
 (defn- debug-infos []

@@ -1,5 +1,5 @@
 (ns game.ui.help-window
-  (:require [gdl.ui :as ui]))
+  (:require [gdl.scene2d.ui :as ui]))
 
 ; TODO -> only open for first starting of the game or for every character only one time and save with save-game
 ; TODO -> hotkey
