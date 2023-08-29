@@ -5,7 +5,7 @@
                  [potemkin "0.4.6"]
                  [com.github.damn/grid2d "1.0"]
                  ; release:
-                 [com.github.damn/gdl "0c743ca"]
+                 [com.github.damn/gdl "404f28b"]
                  ; checkouts folder:
                  ;[gdl "1.0-SNAPSHOT"]
                  [seesaw "1.5.0"]]
