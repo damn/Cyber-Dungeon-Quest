@@ -9,8 +9,7 @@
   :plugins [[jonase/eastwood "1.2.2"]
             [lein-ancient "1.0.0-RC3"]
             [lein-codox "0.10.8"]
-            [lein-hiera "2.0.0"]
-            ]
+            [lein-hiera "2.0.0"]]
   :injections [(do (require 'x.intern) (x.intern/intern-nsx))]
   :target-path "target/%s/" ; https://stackoverflow.com/questions/44246924/clojure-tools-namespace-refresh-fails-with-no-namespace-foo
   :uberjar-name "cdq_3.jar"
