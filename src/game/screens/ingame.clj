@@ -1,5 +1,6 @@
 (nsx game.screens.ingame
-  (:require [game.ui.debug-window :as debug-window]
+  (:require [gdl.scene2d.actor :as actor]
+            [game.ui.debug-window :as debug-window]
             [game.ui.help-window :as help-window]
             [game.ui.entity-info-window :as entity-info-window]
             [game.ui.skill-window :as skill-window]
@@ -21,7 +22,6 @@
                   (when @item-in-hand
                     (.toFront this) ; windows keep changing z-index when selected, or put all windows in 1 group and this actor another group
                     (image/draw-centered (:image @item-in-hand) (gui/mouse-position)))))]
-    (ui/set-id actor :item-in-hand)
     actor))
 
 (defn- create-stage []
@@ -38,22 +38,22 @@
         table (doto (ui/table)
                 (.setFillParent true))]
     (.addActor stage table) ; stage/add-actor
-    (ui/set-position debug-window 0 (gui/viewport-height))
-    (ui/set-position help-window
-                     (- (/ (gui/viewport-width) 2)
-                        (/ (.getWidth help-window) 2)) ; actor/width
-                     (gui/viewport-height))
-    (ui/set-position inventory/window
-                     (gui/viewport-width)
-                     (- (/ (gui/viewport-height) 2)
-                        (/ (.getHeight help-window) 2))) ; actor/height
-    (ui/set-position inventory/window
-                     (gui/viewport-width)
-                     (- (/ (gui/viewport-height) 2)
-                        (/ (.getHeight help-window) 2)))
-    (ui/set-position entity-info-window
-                     (.getX inventory/window) ; actor/x
-                     0)
+    (actor/set-position debug-window 0 (gui/viewport-height))
+    (actor/set-position help-window
+                        (- (/ (gui/viewport-width) 2)
+                           (/ (.getWidth help-window) 2)) ; actor/width
+                        (gui/viewport-height))
+    (actor/set-position inventory/window
+                        (gui/viewport-width)
+                        (- (/ (gui/viewport-height) 2)
+                           (/ (.getHeight help-window) 2))) ; actor/height
+    (actor/set-position inventory/window
+                        (gui/viewport-width)
+                        (- (/ (gui/viewport-height) 2)
+                           (/ (.getHeight help-window) 2)))
+    (actor/set-position entity-info-window
+                        (.getX inventory/window) ; actor/x
+                        0)
     ; actor/set-width ? or widget/?
     ; actor/set-height
     (.setWidth  entity-info-window (.getWidth inventory/window)) ; 333, 208
@@ -129,7 +129,7 @@
        ; or drop it automatically when dead?
        ; need to drop it here else in options menu it is still item-in-hand at cursor!
        (is-item-in-hand?) (inventory/put-item-on-ground)
-       (some ui/visible? windows) (run! ui/set-invisible windows)
+       (some actor/visible? windows) (run! actor/set-invisible windows)
        (dead? @player-entity) (if-not false ;#_(try-revive-player)
                                 (app/set-screen :game.screens.main))
        :else (app/set-screen :game.screens.options))))

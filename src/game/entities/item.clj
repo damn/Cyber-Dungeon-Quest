@@ -1,5 +1,6 @@
 (ns game.entities.item
   (:require [gdl.audio :as audio]
+            [gdl.scene2d.actor :as actor]
             [gdl.ui :as ui]
             [game.db :as db]
             [game.components.clickable :as clickable]
@@ -11,7 +12,7 @@
   (let [item (:item @entity)]
     (when-not @inventory/item-in-hand
       (cond
-       (ui/visible? (:inventory-window stage))
+       (actor/visible? (:inventory-window stage))
        (do
         (audio/play "bfxr_takeit.wav")
         (swap! entity assoc :destroyed? true)

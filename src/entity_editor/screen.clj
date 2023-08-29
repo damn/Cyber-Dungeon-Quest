@@ -5,6 +5,7 @@
             [gdl.input :as input]
             [gdl.ui :as ui]
             [gdl.graphics.gui :as gui]
+            [gdl.scene2d.actor :as actor]
             [game.entities.creature :as creatures]
             [game.items.core :as items]
             [game.skills.core :as skills]
@@ -51,7 +52,9 @@
                       [(ui/label label) value-widget]))
     (add-rows table [[nil (ui/text-button "Cancel" #(.remove table))]])
     (.pack table)
-    (ui/set-center-screen table)
+    (actor/set-center table
+                      (/ (gui/viewport-width)  2)
+                      (/ (gui/viewport-height) 2))
     table))
 
 (defn creature-type-editor [creature-type-id]
@@ -168,7 +171,7 @@
                                                           #(.addActor (stage) (entity-editor (:id props))))
                                   ^Actor top-widget (extra-infos-widget props)
                                   stack (ui/stack)] ]
-                        (do (ui/set-touchable top-widget :disabled)
+                        (do (actor/set-touchable top-widget :disabled)
                             (.add stack button)
                             (.add stack top-widget)
                             stack))))
