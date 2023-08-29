@@ -15,7 +15,7 @@
     :z-order :ground
     :image image}))
 
-#_(defmethod clickable/on-clicked :door [entity]
+#_(defmethod clickable/on-clicked :door [_ entity]
   (when-not (:is-clicked @entity)
     (swap! entity assoc :is-clicked true)
     (audio/play "ReversyH-Nick_Ros-105.wav")

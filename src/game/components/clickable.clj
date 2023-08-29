@@ -15,15 +15,15 @@
 
 (def ^:private click-distance-tiles 1.5)
 
-(defmulti on-clicked (fn [entity] (:type (:clickable @entity))))
+(defmulti on-clicked (fn [stage entity] (:type (:clickable @entity))))
 
 (defn check-clickable-mouseoverbody
   "Returns true if the click was processed."
-  []
+  [stage]
   (when-let [entity (get-mouseover-entity)]
     (when (and (:clickable @entity)
                (< (v/distance (:position @player-entity)
                               (:position @entity))
                   click-distance-tiles))
-      (on-clicked entity)
+      (on-clicked stage entity)
       true)))

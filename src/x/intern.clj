@@ -38,7 +38,7 @@
 
 (defmacro nsx [nsnm & nsbody] ; change with ns-decl?+
   `(nstools.ns/ns+ ~nsnm
-     (:like x.ns) ; also change @ game.ui.stage
+     (:like x.ns)
      ~@nsbody))
 
 ;(println "(clojure.tools.namespace.parse/ns-decl? '(nsx foo))" (clojure.tools.namespace.parse/ns-decl? '(nsx foo)))

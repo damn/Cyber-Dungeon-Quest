@@ -205,8 +205,8 @@
 
 (defmodule _
   (lc/create [_]
-    (.bindRoot #'window (ui/window :title "Inventory"))
-    (.setName window ui-config/inventory-window-name)
+    (.bindRoot #'window (ui/window :title "Inventory"
+                                   :id :inventory-window))
     (.bindRoot #'table (ui/table))
     (.pad table (float 2))
     (.add window table)
@@ -271,7 +271,7 @@
 (defn- cell-widget ^Group [slot & {:keys [position]}]
   (let [cell [slot (or position [0 0])]]
     (doto (ui/stack)
-      (.setName (pr-str cell))
+      (.setName (pr-str cell)) ; TODO ! .setUserObject
       (.addListener (proxy [ClickListener] []
                       (clicked [event x y]
                         (clicked-cell cell))))

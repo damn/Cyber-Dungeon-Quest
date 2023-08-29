@@ -91,11 +91,11 @@
 ; but thats extremely complicated for 1 use case only (tick ! ) , see more use cases first!
 
 ; FUNNY ! IT SAYS SYSTEMS HERE IN THE NAME ~
-(defn- update-game-systems [delta]
+(defn- update-game-systems [stage delta]
   ; destroy here not @ tick, because when game is paused
   ; for example pickup item, should be destroyed.
   (db/destroy-to-be-removed-entities!)
-  (update-mouseover-entity) ; => a system
+  (update-mouseover-entity stage) ; => a system
   (update-msg-to-player delta) ; => a system (but this is outside of pausing applicable) (should be part of update-stage !)
   (when @running
     (update-potential-fields))) ; => a system
@@ -120,7 +120,7 @@
 
 ; TODO stepping -> p is one step -> how to do ?
 
-(defn update-game [delta]
+(defn update-game [stage delta]
   ;(reset! running false)
 
   (when (input/is-key-pressed? :P)
@@ -151,7 +151,7 @@
     ; TODO all game systems must stop on pause
     ; if an error thrown there
     ; otherwise no need the wrap.
-    (try (update-game-systems delta)
+    (try (update-game-systems stage delta)
          (catch Throwable t
            (println "Catched throwable: ")
            (p/pretty-pst t)

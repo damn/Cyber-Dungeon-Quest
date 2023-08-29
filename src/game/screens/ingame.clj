@@ -1,6 +1,5 @@
 (nsx game.screens.ingame
-  (:require [game.ui.stage :as stage]
-            [game.ui.debug-window :as debug-window]
+  (:require [game.ui.debug-window :as debug-window]
             [game.ui.help-window :as help-window]
             [game.ui.entity-info-window :as entity-info-window]
             [game.ui.skill-window :as skill-window]
@@ -15,60 +14,57 @@
             game.update-ingame
             game.render-ingame))
 
-(defn- create-this []
-  (def debug-window       (debug-window/create))
-  (def help-window        (help-window/create))
-  (def entity-info-window (entity-info-window/create))
-  (def skill-window       (skill-window/create))
+(defn- create-stage []
+  (let [debug-window       (debug-window/create)
+        help-window        (help-window/create)
+        entity-info-window (entity-info-window/create)
+        skill-window       (skill-window/create)
+        windows [debug-window
+                 help-window
+                 entity-info-window
+                 inventory/window
+                 skill-window]
+        stage (ui/stage)
+        table (doto (ui/table)
+                (.setFillParent true))]
+    (.addActor stage table) ; stage/add-actor
+    (ui/set-position debug-window 0 (gui/viewport-height))
+    (ui/set-position help-window
+                     (- (/ (gui/viewport-width) 2)
+                        (/ (.getWidth help-window) 2)) ; actor/width
+                     (gui/viewport-height))
+    (ui/set-position inventory/window
+                     (gui/viewport-width)
+                     (- (/ (gui/viewport-height) 2)
+                        (/ (.getHeight help-window) 2))) ; actor/height
+    (ui/set-position inventory/window
+                     (gui/viewport-width)
+                     (- (/ (gui/viewport-height) 2)
+                        (/ (.getHeight help-window) 2)))
+    (ui/set-position entity-info-window
+                     (.getX inventory/window) ; actor/x
+                     0)
+    ; actor/set-width ? or widget/?
+    ; actor/set-height
+    (.setWidth  entity-info-window (.getWidth inventory/window)) ; 333, 208
+    (.setHeight entity-info-window (.getY inventory/window))
+    ; => instead of add just
+    ; add map
+    ; or vector with id
+    ; stage pass list of thingy?
+    (doseq [window windows]
+      (.addActor stage window)  ; move to positioning up
+      (.setVisible window true) ; already visible?
 
-  (def ^:private windows [debug-window
-                          help-window
-                          entity-info-window
-                          inventory/window
-                          skill-window])
+      )
+    ; TODO action-bar just place manually ?!
+    (-> table ; table constructor here?
+        (.add action-bar/horizontal-group) ; table/add
+        .expand ; cell/expand
+        .bottom) ; cell/bottom ?
+    stage))
 
-  ; TODO skill-menu rebuild at new session
-  ; -> session lifecycle not create/destroy lifecycle
-
-  ; TODO put hotkey text in title
-  #_(.setText (.getTitleLabel skill-window)
-              "foo"
-              )
-
-  (ui/set-position debug-window 0 (gui/viewport-height))
-
-  (ui/set-position help-window
-                   (- (/ (gui/viewport-width) 2)
-                      (/ (.getWidth help-window) 2))
-                   (gui/viewport-height))
-
-  (ui/set-position inventory/window
-                   (gui/viewport-width)
-                   (- (/ (gui/viewport-height) 2)
-                      (/ (.getHeight help-window) 2)))
-
-  (ui/set-position inventory/window
-                   (gui/viewport-width)
-                   (- (/ (gui/viewport-height) 2)
-                      (/ (.getHeight help-window) 2)))
-
-  (ui/set-position entity-info-window
-                   (.getX inventory/window)
-                   0)
-
-  (.setWidth  entity-info-window (.getWidth inventory/window)) ; 333, 208
-  (.setHeight entity-info-window (.getY inventory/window))
-
-  (doseq [window windows]
-    (.addActor stage/stage window) ; -> ui/add -> Addable Interface ?!...
-    (.setVisible window true))
-
-  (-> stage/table
-      (.add action-bar/horizontal-group)
-      .expand
-      .bottom))
-
-(defn- toggle-visible! [actor]
+(defn- toggle-visible! [actor] ; TODO to ui/, no '!'
   (.setVisible actor (not (.isVisible actor))))
 
 #_(def ^:private keybindings
@@ -105,31 +101,32 @@
 ; TODO walk towards item if too far / also for melee range / or clicked on ground
 ; -> target position & pathfinding & block if blocked ??
 
-(defn- handle-key-input []
-
+(defn- handle-key-input [{:keys [debug-window
+                                 inventory-window
+                                 entity-info-window
+                                 skill-window
+                                 help-window] :as stage}]
   (action-bar/up-skill-hotkeys)
-
-  (when (input/is-key-pressed? :ESCAPE)
-    (cond
-     ; when game is paused and/or the player is dead, let player be able to drop item-in-hand?
-     ; or drop it automatically when dead?
-     ; need to drop it here else in options menu it is still item-in-hand at cursor!
-     (is-item-in-hand?) (inventory/put-item-on-ground)
-
-     (some (memfn isVisible) windows) (dorun (map #(.setVisible % false) windows))
-
-     (dead? @player-entity) (if-not false ;#_(try-revive-player)
-                                 (app/set-screen :game.screens.main))
-
-     :else (app/set-screen :game.screens.options)))
-
+  (let [windows [debug-window
+                 help-window
+                 entity-info-window
+                 inventory-window
+                 skill-window]]
+    (when (input/is-key-pressed? :ESCAPE)
+      (cond
+       ; when game is paused and/or the player is dead, let player be able to drop item-in-hand?
+       ; or drop it automatically when dead?
+       ; need to drop it here else in options menu it is still item-in-hand at cursor!
+       (is-item-in-hand?) (inventory/put-item-on-ground)
+       (some ui/visible? windows) (run! ui/set-invisible windows)
+       (dead? @player-entity) (if-not false ;#_(try-revive-player)
+                                (app/set-screen :game.screens.main))
+       :else (app/set-screen :game.screens.options))))
   (when (input/is-key-pressed? :TAB)
-    (app/set-screen :game.screens.minimap))
-
+    (app/set-screen :game.screens.minimap)) ; TODO does set-screen do it immediately (cancel the current frame ) or finish this frame?
   ; TODO entity/skill info also
-
   (when (input/is-key-pressed? :I)
-    (toggle-visible! inventory/window)
+    (toggle-visible! inventory-window)
     (toggle-visible! entity-info-window)
     (toggle-visible! skill-window))
 
@@ -147,7 +144,7 @@
      (set-movement! (wasd-movement-vector))
      (cond
       (and (input/is-leftm-pressed?)
-           (not (stage/mouseover-gui?))
+           (not (ui/mouseover? stage))
            (is-item-in-hand?))
       (inventory/put-item-on-ground)
 
@@ -160,8 +157,8 @@
       ; TODO is it possible pressed and not down ?
       (and (or (input/is-leftm-pressed?)
                (input/is-leftbutton-down?))
-           (not (stage/mouseover-gui?))
-           (clickable/check-clickable-mouseoverbody))
+           (not (ui/mouseover? stage))
+           (clickable/check-clickable-mouseoverbody stage))
       nil
 
       (saved-mouseover-entity) ; saved=holding leftmouse down after clicking on mouseover entity
@@ -169,7 +166,7 @@
                                   (:position @(saved-mouseover-entity))))
 
       (and (input/is-leftbutton-down?)
-           (not (stage/mouseover-gui?)))
+           (not (ui/mouseover? stage)))
       (set-movement! (v/direction (:position @player-entity)
                                   (world/mouse-position)))))))
 
@@ -232,18 +229,17 @@
  ; Gdx.graphics.setCursor
  )
 
-(defmodule _
-  (lc/create [_]
-    (create-this))
-  (lc/show [_] (input/set-processor stage/stage))
+(defmodule stage
+  (lc/create [_] (create-stage))
+  (lc/show [_] (input/set-processor stage))
   (lc/hide [_] (input/set-processor nil))
   (lc/render [_]
     (game.render-ingame/render-game)
     (gui/render (fn []
-                  (ui/draw-stage stage/stage)
+                  (ui/draw-stage stage)
                   (when @item-in-hand
                     (image/draw-centered (:image @item-in-hand) (gui/mouse-position))))))
   (lc/tick [_ delta]
-    (handle-key-input)
-    (ui/update-stage stage/stage delta)
-    (game.update-ingame/update-game delta)))
+    (handle-key-input stage)
+    (ui/update-stage stage delta)
+    (game.update-ingame/update-game stage delta)))

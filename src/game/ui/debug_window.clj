@@ -11,15 +11,12 @@
        "X:" ((world/mouse-position) 0) "\n"
        "Y:" ((world/mouse-position) 1) "\n"
        "GUI: " (gui/mouse-position) "\n"
-       ;(game.ui.stage/mouseover-gui?)
        (when-not @game.running/running
          (str "\n~~ PAUSED ~~"))))
 
-#_(when-let [error @thrown-error] ; TODO test with (/ 1 0)
-    (str "\nError! See logs!\n " #_error))
-
 (defn create []
-  (let [window (ui/window :title "Debug")
+  (let [window (ui/window :title "Debug"
+                          :id :debug-window)
         label (ui/label "")]
     (.add window label)
     (.add window (ui/actor

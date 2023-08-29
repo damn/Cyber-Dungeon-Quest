@@ -7,7 +7,7 @@
       mapchange)
     (game.components position body render)))
 
-#_(defmethod clickable/on-clicked :teleporter [entity]
+#_(defmethod clickable/on-clicked :teleporter [_ entity]
   (audio/play "bfxr_teleport.wav")
   (queue-map-change target-posi target-map save-game)
   (when do-after-use

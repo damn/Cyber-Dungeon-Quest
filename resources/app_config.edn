@@ -13,7 +13,6 @@
            [:game.items.core]
            [:game.maps.data]
            [:game.media]
-           [:game.ui.stage]
            [:game.ui.inventory-window]
            [:game.ui.action-bar]
            [:game.player.status-gui]

@@ -40,7 +40,8 @@
                (keys (:skills @entity))))))))
 
 (defn create []
-  (let [window (ui/window :title "Info")
+  (let [window (ui/window :title "Info"
+                          :id :entity-info-window)
         label (ui/label (entity-info-text))]
     (.expand (.add window label))
     ; TODO do not change window size ... -> no need to invalidate layout, set the whole stage up again

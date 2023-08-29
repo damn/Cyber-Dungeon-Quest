@@ -25,7 +25,8 @@
          (update :skills assoc-skill skill-id))))
 
 (defn create []
-  (let [window (ui/window :title "Skills")]
+  (let [window (ui/window :title "Skills"
+                          :id :skill-window)]
     (doseq [id [:projectile
                 :meditation
                 :spawn]

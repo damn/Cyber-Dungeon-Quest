@@ -72,7 +72,7 @@
 ; keep index 1 for item ?
 
 (declare check-hotbar-actualize
-         ^HorizontalGroup horizontal-group)
+         ^HorizontalGroup horizontal-group) ; TODO == action-bar
 
 (defmodule _
   (lc/create [_]

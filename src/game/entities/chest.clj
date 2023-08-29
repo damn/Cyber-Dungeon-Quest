@@ -2,7 +2,7 @@
   (:require [game.components.clickable :as clickable]
             [game.maps.data :refer (get-current-map-data)]))
 
-#_(defmethod clickable/on-clicked :chest [entity]
+#_(defmethod clickable/on-clicked :chest [_ entity]
   (audio/play "bfxr_chestopen.wav")
   (swap! entity assoc :destroyed? true)
   (if-let [item-name (:item-name @entity)]

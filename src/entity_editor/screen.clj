@@ -211,7 +211,7 @@
                                                           #(.addActor stage (entity-editor (:id props))))
                                   ^Actor top-widget (extra-infos-widget props)
                                   stack (ui/stack)] ]
-                        (do (.setTouchable top-widget com.badlogic.gdx.scenes.scene2d.Touchable/disabled)
+                        (do (ui/set-touchable top-widget :disabled)
                             (.add stack button)
                             (.add stack top-widget)
                             stack))))

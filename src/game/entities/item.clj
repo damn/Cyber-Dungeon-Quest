@@ -4,22 +4,14 @@
             [game.db :as db]
             [game.components.clickable :as clickable]
             [game.components.inventory :as inventory]
-            [game.ui.stage :as stage]
             [game.utils.msg-to-player :refer [show-msg-to-player]]
-            [game.player.entity :refer [player-entity]]
-            [game.ui.config :as ui-config]))
+            [game.player.entity :refer [player-entity]]))
 
-; TODO move to game.gui ? or game.ui.stage?
-(defn- inventory-window []
-  (first (filter #(= ui-config/inventory-window-name (ui/name %))
-                 (.getActors stage/stage))))
-; TODO name defined in 1 places. -> ui.config or something?
-
-(defmethod clickable/on-clicked :item [entity]
+(defmethod clickable/on-clicked :item [stage entity]
   (let [item (:item @entity)]
     (when-not @inventory/item-in-hand
       (cond
-       (ui/visible? (inventory-window))
+       (ui/visible? (:inventory-window stage))
        (do
         (audio/play "bfxr_takeit.wav")
         (swap! entity assoc :destroyed? true)

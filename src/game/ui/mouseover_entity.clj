@@ -1,7 +1,6 @@
 ; TODO utils/
 (nsx game.ui.mouseover-entity
-  (:require [game.ui.stage :as stage]
-            [game.line-of-sight :refer (in-line-of-sight?)]
+  (:require [game.line-of-sight :refer (in-line-of-sight?)]
             [game.components.render :refer (render-on-map-order)]
             [game.maps.cell-grid :refer (get-bodies-at-position)]
             [game.player.entity :refer (player-entity)])
@@ -39,19 +38,18 @@
                               neutral-color)))))
 
 (defn- get-current-mouseover-entity []
-  (when-not (stage/mouseover-gui?)
-    (let [tile-posi (world/mouse-position)
-          hits (get-bodies-at-position tile-posi)]
-      ; TODO needs z-order ? what if 'shout' element or FX ?
-      (when hits
-        (->> render-on-map-order
-             ; TODO re-use render-ingame code to-be-rendered-entities-on-map
-             (sort-by-order hits #(:z-order @%))
-             ; topmost body selected first, reverse of render-order
-             reverse
-             ; = same code @ which entities should get rendered...
-             (filter #(in-line-of-sight? @player-entity @%))
-             first)))))
+  (let [tile-posi (world/mouse-position)
+        hits (get-bodies-at-position tile-posi)]
+    ; TODO needs z-order ? what if 'shout' element or FX ?
+    (when hits
+      (->> render-on-map-order
+           ; TODO re-use render-ingame code to-be-rendered-entities-on-map
+           (sort-by-order hits #(:z-order @%))
+           ; topmost body selected first, reverse of render-order
+           reverse
+           ; = same code @ which entities should get rendered...
+           (filter #(in-line-of-sight? @player-entity @%))
+           first))))
 
 (def ^:private cache (atom nil))
 (def ^:private is-saved (atom false))
@@ -81,12 +79,13 @@
        (input/is-leftbutton-down?)
        (not= entity player-entity))) ; movement follows this / targeting / ...
 
-(defn update-mouseover-entity []
+(defn update-mouseover-entity [stage]
   (when-not (and @is-saved
                  (keep-saved? @cache))
     (when-let [entity @cache]
       (swap! entity dissoc :mouseover?))
-    (if-let [entity (get-current-mouseover-entity)]
+    (if-let [entity (when-not (ui/mouseover? stage)
+                      (get-current-mouseover-entity))]
       (do
        (reset! cache entity)
        (reset! is-saved (save? entity))
