@@ -1,4 +1,4 @@
-(ns x.systems ; TODO all x => game.
+(ns game.systems
   (:require [x.x :refer [defsystem]]))
 
 ; TODO move systems where they are used !

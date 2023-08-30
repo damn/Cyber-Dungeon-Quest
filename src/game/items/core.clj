@@ -1,5 +1,10 @@
-(nsx game.items.core
-  (:require [game.properties :as properties]
+(ns game.items.core
+  (:require [clojure.string :as str]
+            [x.x :refer [defmodule]]
+            [gdl.lc :as lc]
+            [gdl.graphics.color :as color]
+            [game.properties :as properties]
+            [game.components.modifiers :as modifiers]
             [game.skills.core :as skills]
             [game.player.entity :refer (player-entity)]))
 

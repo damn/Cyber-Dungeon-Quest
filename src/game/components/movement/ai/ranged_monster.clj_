@@ -1,13 +1,9 @@
 ; TODO use potential field for running away !!
 ; game.components.movement-controls
-(nsx game.components.movement.ai.ranged-monster
+(ns game.components.movement.ai.ranged-monster
   (:require [game.utils.counter :refer :all]
             [game.components.skills :refer (is-usable?)]
-            [game.player.entity :refer (player-entity)])
-  (:use
-    (game.components core body)
-    (game.utils random)
-    game.maps.potential-field))
+            [game.player.entity :refer (player-entity)]))
 
 (defn- runaway [body component]
   (cond

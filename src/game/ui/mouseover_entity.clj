@@ -1,10 +1,18 @@
-; TODO utils/
-(nsx game.ui.mouseover-entity
-  (:require [game.line-of-sight :refer (in-line-of-sight?)]
+(ns game.ui.mouseover-entity
+  (:require [x.x :refer [defcomponent]]
+            [gdl.input :as input]
+            [gdl.graphics.color :as color]
+            [gdl.graphics.shape-drawer :as shape-drawer]
+            [gdl.graphics.world :as world]
+            [gdl.scene2d.ui :as ui]
+            [utils.core :refer [sort-by-order]]
+            [game.db :as db]
+            [game.systems :refer [render-below]]
+            [game.session :as session]
+            [game.line-of-sight :refer (in-line-of-sight?)]
             [game.components.render :refer (render-on-map-order)]
             [game.maps.cell-grid :refer (get-bodies-at-position)]
-            [game.player.entity :refer (player-entity)])
-  (:use (game.components body)))
+            [game.player.entity :refer (player-entity)]))
 
 (def show-entity-props-on-mouseover false)
 

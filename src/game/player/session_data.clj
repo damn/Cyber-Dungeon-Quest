@@ -1,14 +1,17 @@
 ; TODO move to game.session
-(nsx game.player.session-data
+(ns game.player.session-data
   (:require [clojure.walk :refer [postwalk]]
+            [utils.core :refer [distinct-seq?]]
+            [game.session :as session]
             game.maps.cell-grid
+            [game.maps.add :refer [add-maps-data]]
+            [game.maps.impl :refer [first-level]]
             game.maps.data
             game.maps.load
             (game.utils msg-to-player)
             game.screens.options
             game.ui.action-bar
-            game.ui.inventory-window)
-  (:use (game.maps add impl)))
+            game.ui.inventory-window))
 
 
 (def current-character-name (atom nil))

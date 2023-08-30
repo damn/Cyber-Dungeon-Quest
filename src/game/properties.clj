@@ -1,5 +1,6 @@
-(nsx game.properties
-  (:require [clojure.edn :as edn]))
+(ns game.properties
+  (:require [clojure.edn :as edn]
+            [gdl.graphics.image :as image]))
 
 ; TODO save properties return from module -> app/state -> function to get
 ; => move all state in app/state !

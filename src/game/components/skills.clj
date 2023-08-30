@@ -1,8 +1,21 @@
 ; TODO move to game.skills.core
-(nsx game.components.skills
-  (:require [game.ui.mouseover-entity :refer (saved-mouseover-entity get-mouseover-entity)]
+(ns game.components.skills
+  (:require [x.x :refer [defcomponent]]
+            [gdl.audio :as audio]
+            [gdl.graphics.image :as image]
+            [gdl.graphics.color :as color]
+            [gdl.graphics.shape-drawer :as shape-drawer]
+            [gdl.graphics.world :as world]
+            [gdl.vector :as v]
+            [utils.core :refer [assoc-in! ->! mapvals]]
+            [game.systems :refer [tick! stun! render-info]]
+            [game.db :as db]
+            [game.components.faction :as faction]
+            [game.components.modifiers :as modifiers]
+            [game.ui.mouseover-entity :refer (saved-mouseover-entity get-mouseover-entity)]
             [game.utils.counter :refer :all]
             [game.utils.msg-to-player :refer (show-msg-to-player)]
+            [game.effects.core :as effects]
             [game.effects.stun :as stun]
             [game.skills.core :as skills]
             [game.maps.potential-field :as potential-field]
@@ -253,13 +266,11 @@
       (start! entity skill))))
 
 (defcomponent :skillmanager _ ; remove
-
   (tick! [_ entity delta]
     (swap! entity update :skills update-cooldowns delta) ; make skillss component
     (if (:active-skill? @entity) ; TODO make this in its own component!
       (check-stop! entity delta) ; => active-skill? component & skills just updates its cooldown!!! :D
       (check-start! entity)))
-
   (stun! [_ entity]
     (when-let [skill-id (:active-skill? @entity)]
       (stop! entity (skill-id (:skills @entity))))))

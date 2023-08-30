@@ -1,10 +1,18 @@
-(nsx game.screens.options
-  (:require [game.ui.mouseover-entity :refer (show-entity-props-on-mouseover)]
+(ns game.screens.options
+  (:require [x.x :refer [defmodule]]
+            [gdl.lc :as lc]
+            [gdl.app :as app]
+            [gdl.graphics.gui :as gui]
+            [gdl.graphics.image :as image]
+            [gdl.input :as input]
+            [gdl.scene2d.ui :as ui]
+            [utils.core :refer [find-first]]
+            [game.session :as session]
+            [game.ui.mouseover-entity :refer (show-entity-props-on-mouseover)]
             ;[game.line-of-sight :refer (player-line-of-sight-checks)]
             [game.components.body :refer (show-body-bounds)]
             [game.components.skills :refer (show-skill-icon-on-active)])
-  (:import com.badlogic.gdx.scenes.scene2d.Stage)
-  )
+  (:import com.badlogic.gdx.scenes.scene2d.Stage))
 
 ; no protocol
 (defprotocol StatusCheckBox

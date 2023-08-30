@@ -1,12 +1,19 @@
 ; TODO should sleeping be an effect ? then how to do 'on-affect' if its not a component?
-(nsx game.components.sleeping
-  (:require [game.line-of-sight :refer (in-line-of-sight?)]
+(ns game.components.sleeping
+  (:require [x.x :refer [defcomponent]]
+            [gdl.graphics.font :as font]
+            [gdl.graphics.color :as color]
+            [gdl.graphics.shape-drawer :as shape-drawer]
+            [game.systems :refer [tick! render-info render-above affected!]]
+            [game.utils.counter :refer [update-counter! make-counter]]
+            [game.db :as db]
+            [game.media :as media]
+            [game.components.faction :as faction]
+            [game.components.modifiers :as modifiers]
+            [game.line-of-sight :refer (in-line-of-sight?)]
             [game.maps.cell-grid :as cell-grid]
-            [game.maps.potential-field :as potential-field])
-  (:use
-   game.utils.counter
-   (game.components render body)
-   (game.maps contentfields)))
+            [game.maps.potential-field :as potential-field]
+            [game.components.string-effect :as string-effect]))
 
 ; TODO wake up through walls => sounds are being generated?
 ; someone is behind a wall and lots of fighting and magic but no line of sight
@@ -49,7 +56,7 @@
 (defn- wake-up! [entity]
   (swap! entity dissoc :sleeping)
   (modifiers/reverse! entity modifiers)
-  (show-string-effect entity "!")
+  (string-effect/show-string-effect entity "!")
   (shout (:position @entity)
          (:faction  @entity)))
 

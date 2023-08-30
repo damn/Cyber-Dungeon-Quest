@@ -2,6 +2,8 @@
   (:require [gdl.audio :as audio]
             [game.db :as db]
             [game.media :as media]
+            game.components.body.rotation-angle
+            game.components.delete-after-duration
             [game.entities.animation :as animation-entity]))
 
 (defn- hit-wall-effect [position]

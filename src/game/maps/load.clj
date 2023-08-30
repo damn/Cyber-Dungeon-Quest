@@ -1,5 +1,8 @@
-(nsx game.maps.load
-  (:require [game.maps.data :as data]
+(ns game.maps.load
+  (:require [gdl.tiled :as tiled]
+            [utils.core :refer [translate-to-tile-middle]]
+            [game.session :as session]
+            [game.maps.data :as data]
             [game.entities.creature :as creature-entity]
             game.player.core))
 

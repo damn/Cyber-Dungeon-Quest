@@ -1,5 +1,12 @@
-(nsx game.effects.stun
-  (:require [game.utils.counter :as counter]))
+(ns game.effects.stun
+  (:require [x.x :refer [defcomponent doseq-entity]]
+            [gdl.graphics.shape-drawer :as shape-drawer]
+            [gdl.graphics.color :as color]
+            [utils.core :refer :all]
+            [game.systems :refer [tick! render-below stun!]]
+            [game.effects.core :as effects]
+            [game.components.modifiers :as modifiers]
+            [game.utils.counter :as counter]))
 
 (def ^:private stun-modifiers
   [[:block :speed]

@@ -1,12 +1,16 @@
-; nsx docstrings dont work yet.
   "Assumption: The map contains no not-allowed diagonal cells, diagonal wall cells where both
   adjacent cells are walls and blocked.
   (important for wavefront-expansion and field-following)"
-(nsx game.maps.potential-field
+(ns game.maps.potential-field
   ; * entities do not move to NADs (they remove them)
   ; * the potential field flows into diagonals, so they should be reachable too.
   ; TODO assert no NADs @ world creation
   (:require [data.grid2d :as grid]
+            [x.x :refer [defcomponent]]
+            [gdl.vector :as v]
+            [utils.core :refer :all]
+            [game.systems :refer [tick!]]
+            [game.components.faction :as faction]
             [game.components.position :refer (get-tile)]
             [game.maps.contentfields :refer (get-entities-in-active-content-fields)]
             [game.maps.cell-grid :refer (get-cell cached-get-adjacent-cells cell-blocked?

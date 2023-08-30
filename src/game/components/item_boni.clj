@@ -1,4 +1,4 @@
-(nsx game.components.item-boni)
+(ns game.components.item-boni)
 
 ; TODO those are all effect-modifiers
 ; not for damage
@@ -22,7 +22,7 @@
         (update-in! player-entity [:mana] inc-current value))
       )))
 
-(def ^:private defaults
+#_(def ^:private defaults
   {:hp-leech 0
    :mana-leech 0
 

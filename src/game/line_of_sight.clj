@@ -1,5 +1,6 @@
-(nsx game.line-of-sight
-  (:require [game.maps.cell-grid :as cell-grid]
+(ns game.line-of-sight
+  (:require [gdl.graphics.world :as world]
+            [game.maps.cell-grid :as cell-grid]
             [game.player.entity :refer (player-entity)]))
 
 ; TODO ! transparent entities shows 'zzz'

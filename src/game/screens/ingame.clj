@@ -1,5 +1,14 @@
-(nsx game.screens.ingame
-  (:require [gdl.scene2d.actor :as actor]
+(ns game.screens.ingame
+  (:require [x.x :refer [defmodule]]
+            [gdl.app :as app]
+            [gdl.lc :as lc]
+            [gdl.input :as input]
+            [gdl.vector :as v]
+            [gdl.scene2d.actor :as actor]
+            [gdl.scene2d.ui :as ui]
+            [gdl.graphics.image :as image]
+            [gdl.graphics.gui :as gui]
+            [gdl.graphics.world :as world]
             [game.ui.debug-window :as debug-window]
             [game.ui.help-window :as help-window]
             [game.ui.entity-info-window :as entity-info-window]

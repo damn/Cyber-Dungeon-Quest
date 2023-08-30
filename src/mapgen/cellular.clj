@@ -1,10 +1,10 @@
 (ns mapgen.cellular
-  (:require [gdl.graphics.color :as color]
-            [gdl.vector :as v])
-  (:use data.grid2d
-        utils.core
-        game.utils.random
-        mapgen.utils))
+  (:require [data.grid2d :as grid2d]
+            [gdl.graphics.color :as color]
+            [gdl.vector :as v]
+            [utils.core :refer [assoc-ks]]
+            [game.utils.random :as random]
+            [mapgen.utils :refer [border-position?]]))
 
 (comment
 "The basic idea is to fill the first map randomly, then repeatedly create new maps using the 4-5 rule:
@@ -16,12 +16,13 @@ and the amount of overall 'noise' is gradually reduced: ")
 ; http://roguebasin.roguelikedevelopment.org/index.php?title=Cellular_Automata_Method_for_Generating_Random_Cave-Like_Levels
 
 (defn- make-randmap [w h fillprob random]
-  (create-grid w h (fn [_] (if (percent-chance fillprob random) :wall :ground))))
+  (grid2d/create-grid w h
+                      (fn [_] (if (random/percent-chance fillprob random) :wall :ground))))
 
 (defn- cached-get-adjacent-cells [grid cell]
   (if-let [result (:adjacent-cells @cell)]
     result
-    (let [result (map grid (get-8-neighbour-positions (:position @cell)))]
+    (let [result (map grid (grid2d/get-8-neighbour-positions (:position @cell)))]
       (swap! cell assoc :adjacent-cells result)
       result)))
 
@@ -52,15 +53,15 @@ and the amount of overall 'noise' is gradually reduced: ")
         grid (if wall-borders
                (assoc-ks randmap (create-borders-positions randmap) :wall)
                randmap)
-        grid (transform grid (fn [position value]
-                               (atom {:type value
-                                      :position position})))]
+        grid (grid2d/transform grid (fn [position value]
+                                      (atom {:type value
+                                             :position position})))]
     (dotimes [n generations]
       (do-generation grid wall-borders n))
-    (transform grid (fn [p value] (let [v @value]
-                                    (or
-                                      (get v (dec generations))
-                                      (get v :type))))))) ; border posis dont have generation key
+    (grid2d/transform grid (fn [p value] (let [v @value]
+                                           (or
+                                            (get v (dec generations))
+                                            (get v :type))))))) ; border posis dont have generation key
 
 ;; regions/connecting TODO different ns. documentation
 
@@ -139,6 +140,3 @@ and the amount of overall 'noise' is gradually reduced: ")
     (reduce
       #(make-path %1 %2 :ground)
       grid pairs)))
-
-
-

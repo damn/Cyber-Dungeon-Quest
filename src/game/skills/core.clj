@@ -1,5 +1,10 @@
-(nsx game.skills.core
+(ns game.skills.core
   (:require [clojure.set :as set]
+            [clojure.string :as str]
+            [x.x :refer [defmodule]]
+            [gdl.lc :as lc]
+            [utils.core :refer [readable-number]]
+            [game.effects.core :as effects]
             [game.properties :as properties]))
 
 ; TODO  prepare-properties :skills

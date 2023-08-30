@@ -1,4 +1,4 @@
-(nsx game.components.shield
+(ns game.components.shield
   (:require [game.utils.counter :refer :all]))
 
 #_(def- rotation-speed (/ 360 2000)) ; 360 degrees in 2 seconds = 2000 ms

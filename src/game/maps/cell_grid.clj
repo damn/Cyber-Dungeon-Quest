@@ -1,7 +1,12 @@
-(nsx game.maps.cell-grid
+(ns game.maps.cell-grid
   (:require [clojure.set :as set]
+            [gdl.geom :as geom]
+            [gdl.vector :as v]
+            [gdl.tiled :as tiled]
+            [gdl.raycaster :as raycaster]
             [data.grid2d :as grid]
-            [x.session :as state]
+            [utils.core :refer [translate-to-tile-middle int-posi diagonal-direction?]]
+            [game.session :as session]
             [game.maps.data :refer (get-current-map-data)]
             [mapgen.movement-property :refer (movement-property)]))
 

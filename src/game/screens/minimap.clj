@@ -1,5 +1,13 @@
-(nsx game.screens.minimap
-  (:require [game.utils.lightning :refer [minimap-color-setter]]
+(ns game.screens.minimap
+  (:require [x.x :refer [defmodule]]
+            [gdl.app :as app]
+            [gdl.lc :as lc]
+            [gdl.input :as input]
+            [gdl.tiled :as tiled]
+            [gdl.graphics.color :as color]
+            [gdl.graphics.shape-drawer :as shape-drawer]
+            [gdl.graphics.world :as world]
+            [game.utils.lightning :refer [minimap-color-setter]]
             [game.maps.data :refer [get-current-map-data]]))
 
 ; 28.4 viewportwidth

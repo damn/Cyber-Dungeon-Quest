@@ -2,8 +2,9 @@
 
 ; TODO why not just check range to player for updating entities
 ; why make this fields ?
-(nsx game.maps.contentfields
+(ns game.maps.contentfields
   (:require [data.grid2d :as grid]
+            [utils.core :refer [assoc-in!]]
             [game.maps.data :refer (get-current-map-data)]
             [game.player.entity :refer (player-entity)]))
 

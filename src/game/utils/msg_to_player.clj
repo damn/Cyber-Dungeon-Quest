@@ -1,5 +1,7 @@
 ; MOVE TO UI !
-(nsx game.utils.msg-to-player)
+(ns game.utils.msg-to-player
+  (:require [utils.core :refer [assoc-in! update-in!]]
+            [game.session :as session]))
 
 ; TODO use game.utils.counter instead
 (defn- reset-counter! [counter]

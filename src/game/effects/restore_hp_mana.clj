@@ -1,5 +1,8 @@
-(nsx game.effects.restore-hp-mana
-  (:require [game.components.skills :refer (ai-should-use?)]
+(ns game.effects.restore-hp-mana
+  (:require [gdl.audio :as audio]
+            [utils.core :refer [lower-than-max? remainder-to-max]]
+            [game.effects.core :as effects]
+            [game.components.skills :refer (ai-should-use?)]
             game.effects.hp
             game.effects.mana))
 

@@ -1,7 +1,15 @@
-(nsx game.components.hp
-  (:require [game.ui.config :refer (hpbar-height-px)]))
+(ns game.components.hp
+  (:require [x.x :refer [defcomponent]]
+            [gdl.graphics.color :as color]
+            [gdl.graphics.world :as world]
+            [gdl.graphics.shape-drawer :as shape-drawer]
+            [utils.core :refer :all]
+            [game.db :as db]
+            [game.systems :refer [render-info]]
+            [game.components.modifiers :as modifiers]
+            [game.ui.config :refer (hpbar-height-px)]))
 
-(def- hpbar-colors
+(def ^:private hpbar-colors
   {:green     (color/rgb 0 0.8 0)
    :darkgreen (color/rgb 0 0.5 0)
    :yellow    (color/rgb 0.5 0.5 0)

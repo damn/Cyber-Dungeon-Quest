@@ -1,4 +1,4 @@
-(nsx game.components.movement.ai.homing)
+(ns game.components.movement.ai.homing)
 
 #_(defn- move-and-rotate-to-target-control
   [projectile {:keys [target-body current-angle rotationspeed]} delta]

@@ -1,12 +1,9 @@
-(nsx game.maps.mapchange  ; TODO just change
-  (:require [game.player.entity :refer (player-entity)]
-            [game.utils.msg-to-player :refer (show-msg-to-player)])
-  (:use
-    (game.components body)
-    game.maps.data
-    [game.player.session-data :only (save-game)]))
+(ns game.maps.mapchange  ; TODO just change
+  (:require [game.maps.data :refer [set-map! get-pretty-name]]
+            [game.player.entity :refer (player-entity)]
+            [game.utils.msg-to-player :refer (show-msg-to-player)]))
 
-(def- queued (atom nil))
+(def ^:private queued (atom nil))
 
 (defn queue-map-change
   "for calling @ update-components loop."
@@ -24,7 +21,7 @@
     (change-map new-map new-posi false))
   ([new-map new-posi save-game?]
     (set-map! new-map)
-    (teleport player-entity new-posi)
+    #_(teleport player-entity new-posi)
     (when save-game?
       #_(save-game) ; TODO FIXME
       (show-msg-to-player  (get-pretty-name new-map) "\nSaved progress..."))))

@@ -1,5 +1,6 @@
-(nsx game.components.glittering
-  (:require [game.utils.counter :as counter]))
+(ns game.components.glittering
+  (:require [x.x :refer [defcomponent]]
+  [game.utils.counter :as counter]))
 
 (defcomponent :glittering {:keys [animation active] :as v}
  (db/create [_]

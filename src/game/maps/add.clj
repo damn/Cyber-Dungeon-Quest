@@ -1,8 +1,8 @@
-(nsx game.maps.add
+(ns game.maps.add
   (:require [data.grid2d :as grid]
             [game.maps.data :as data]
-            [game.maps.cell-grid :refer (create-grid-from-tiledmap)])
-  (:use (game.maps cell-grid contentfields)))
+            [game.maps.cell-grid :as cell-grid]
+            [game.maps.contentfields :refer [create-mapcontentfields]]))
 
 (defn add-maps-data
   [{:keys [map-key
@@ -13,13 +13,13 @@
            rand-item-max-lvl
            spawn-monsters] :as argsmap}]
   {:pre [(not-any? #{map-key} (data/get-map-keys))]}
-  (let [cell-grid (create-grid-from-tiledmap tiled-map)
+  (let [cell-grid (cell-grid/create-grid-from-tiledmap tiled-map)
         w (grid/width  cell-grid)
         h (grid/height cell-grid)]
     (data/add-map map-key
                   (merge
                    (dissoc argsmap :map-key)
-                   {:cell-blocked-boolean-array (create-cell-blocked-boolean-array cell-grid)
+                   {:cell-blocked-boolean-array (cell-grid/create-cell-blocked-boolean-array cell-grid)
                     :contentfields (create-mapcontentfields w h)
                     :cell-grid cell-grid
                     :explored-tile-corners (atom (grid/create-grid w h (constantly false)))})))

@@ -1,6 +1,6 @@
 (ns game.effects.core
   (:require [x.x       :refer :all]
-            [x.systems :refer :all]))
+            [game.systems :refer :all]))
 
 (def effect-definitions {})
 

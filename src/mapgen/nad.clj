@@ -1,12 +1,11 @@
 (ns mapgen.nad
   " nad = 'not-alloweddiagonal's lead to problems:
- - melee attack goes through the wall because of range check only not wall-check
- - potential field generation must check for it; following must cut it
- - light shines through the edges"
-  (:use
-    [utils.core :only (def- assoc-ks)]
-    data.grid2d
-    mapgen.utils))
+  - melee attack goes through the wall because of range check only not wall-check
+  - potential field generation must check for it; following must cut it
+  - light shines through the edges"
+  (:require [utils.core :refer [def- assoc-ks]]
+            [data.grid2d :as grid2d]
+            [mapgen.utils :refer [wall-at?]]))
 
 (defn- nad-corner? [grid [fromx fromy] [tox toy]]
   (and
@@ -21,7 +20,7 @@
   (loop [checkposis (filter (fn [{y 1 :as posi}]
                               (and (even? y)
                                    (= :ground (get grid posi))))
-                            (posis grid))
+                            (grid2d/posis grid))
          result []]
     (if (seq checkposis)
       (let [position (first checkposis)
@@ -87,7 +86,3 @@
           (println "found!")
           (reset! found [grid fixed-grid]))))
     (println "found buggy nads? " @found)))
-
-
-
-

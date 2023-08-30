@@ -1,10 +1,17 @@
 ; TODO move to screens/ingame ( also update-ingame)
-(nsx game.render-ingame
-  (:require game.player.status-gui
+(ns game.render-ingame
+  (:require [gdl.graphics.world :as world]
+            [gdl.graphics.gui :as gui]
+            [gdl.graphics.shape-drawer :as shape-drawer]
+            [gdl.graphics.color :as color]
+            [gdl.tiled :as tiled]
+            game.player.status-gui
 
             [game.utils.lightning :refer [tile-color-setter]]
             [game.line-of-sight :refer (in-line-of-sight?)]
             [game.maps.data :refer [get-current-map-data]]
+
+            [game.components.render :refer [render-entities*]]
 
             ; Ingame GUI render fns
             [game.player.status-gui :refer [render-player-hp-mana]]
@@ -12,9 +19,8 @@
             ; Ingame GUI render fns
             [game.update-ingame :refer (thrown-error)]
             [game.player.entity :refer (player-entity)]
-            [game.maps.potential-field :as potential-field])
-  (:use (game.components body render)
-        (game.maps contentfields)))
+            [game.maps.contentfields :refer [get-entities-in-active-content-fields]]
+            [game.maps.potential-field :as potential-field]))
 
 (defn- geom-test []
   (let [position (world/mouse-position)

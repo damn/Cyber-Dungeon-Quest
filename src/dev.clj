@@ -12,8 +12,7 @@
          :let [value @avar]
          :when (not (or (fn? value)
                         (instance? clojure.lang.MultiFn value)
-                        (:method-map value)
-                        (instance? x.session.State value)))]
+                        (:method-map value)))]
      avar))
 
 (comment

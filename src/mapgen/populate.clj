@@ -2,11 +2,7 @@
 ; somehow looking for places far awa from player start position and placing treasure/?
 ; -> ns docs.
 (ns mapgen.populate
-  (:use
-    game.utils.random
-    (mapgen cellular
-            [utils :only (wall-at?)]
-            #_[findpath :only (find-path)])))
+  (:require [game.utils.random :refer :all]))
 
 #_(defn get-rand-end-posi [grid start]
   (let [[_ _ labeled-ordered] (flood-fill grid start)]

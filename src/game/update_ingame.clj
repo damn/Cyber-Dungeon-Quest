@@ -1,19 +1,22 @@
-(nsx game.update-ingame ; TODO game.tick
+(ns game.update-ingame ; TODO game.tick
   (:require [clj-commons.pretty.repl :as p]
+            [x.x :refer [update-map doseq-entity]]
+            [gdl.input :as input]
             [game.running :refer (running)]
+            [game.db :as db]
+            [game.systems :refer [tick tick!]]
             [game.utils.counter :refer :all]
             [game.player.entity :refer (player-entity)]
             [game.components.hp :refer (dead?)]
             [game.components.inventory :as inventory]
             [game.ui.mouseover-entity :refer (update-mouseover-entity)]
             game.components.update ; TODO namespace now only 2 modifiers.
+            [game.components.movement :as movement]
+            [game.player.core :refer [player-death]]
             [game.utils.msg-to-player :refer [update-msg-to-player]]
-            [game.maps.potential-field :refer (update-potential-fields)])
-  (:use (game.maps [data :only (get-current-map-data)]
-                   [mapchange :only (check-change-map)]
-                   [contentfields :only (get-entities-in-active-content-fields)])
-        [game.player.core :only (try-revive-player player-death)]))
-
+            [game.maps.mapchange :refer [check-change-map]]
+            [game.maps.contentfields :refer [get-entities-in-active-content-fields]]
+            [game.maps.potential-field :refer [update-potential-fields]]))
 
 ; # Why do we use a :blocks counter and not a boolean?
 ; Different effects can stun/block for example :movement component
@@ -112,7 +115,7 @@
 ; map component with tilemap
 
 (defn- limit-delta [delta]
-  (min delta game.components.body/max-delta))
+  (min delta movement/max-delta))
 
 (def thrown-error (atom nil))
 

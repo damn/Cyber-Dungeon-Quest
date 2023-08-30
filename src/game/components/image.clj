@@ -1,4 +1,7 @@
-(nsx game.components.image)
+(ns game.components.image
+  (:require [x.x :refer [defcomponent]]
+            [gdl.graphics.image :as image]
+            [game.systems :refer [render]]))
 
 (defcomponent :image image
   (render [_c {:keys [body]} position]

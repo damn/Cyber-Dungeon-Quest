@@ -1,5 +1,7 @@
-(nsx game.utils.lightning
-  (:require [game.maps.data :refer (get-current-map-data)]
+(ns game.utils.lightning
+  (:require [gdl.graphics.color :as color]
+            [gdl.graphics.world :as world]
+            [game.maps.data :refer (get-current-map-data)]
             [game.maps.cell-grid :as cell-grid]))
 
 #_(defprotocol LightSource

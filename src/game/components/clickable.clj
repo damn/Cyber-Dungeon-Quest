@@ -1,5 +1,10 @@
-(nsx game.components.clickable
-  (:require [game.ui.mouseover-entity :refer (get-mouseover-entity)]
+(ns game.components.clickable
+  (:require [x.x :refer [defcomponent]]
+            [gdl.graphics.font :as font]
+            [gdl.vector :as v]
+            [game.systems :refer [render]]
+            [game.media :as media]
+            [game.ui.mouseover-entity :refer (get-mouseover-entity)]
             [game.player.entity :refer (player-entity)]))
 
 ; TODO simpler if this would be ':mouseover-text' component simply.

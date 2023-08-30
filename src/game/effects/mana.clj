@@ -1,5 +1,7 @@
-(nsx game.effects.mana
-  (:require [game.components.render :refer (mana-changed-effect)]))
+(ns game.effects.mana
+  (:require [utils.core :refer [affect-val-max-stat!]]
+            [game.effects.core :as effects]
+            [game.components.string-effect :refer (mana-changed-effect)]))
 
 (effects/defeffect :mana
   {:text (fn [{:keys [value]}]

@@ -1,9 +1,7 @@
 ; TODO 'effects'
-(nsx game.entities.nova
+(ns game.entities.nova
   (:require [game.utils.counter :refer :all]
-            [game.maps.cell-grid :as cell-grid])
-  (:use clojure.set
-        (game.components render)))
+            [game.maps.cell-grid :as cell-grid]))
 
 ; TODO I can do this on a per-effect basis
 ; e.g. entity which does not have hitpoints (a spirit)

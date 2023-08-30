@@ -1,6 +1,8 @@
-(nsx game.effects.hp
-  (:require [game.components.hp :refer (dead?)]
-            [game.components.render :refer (hp-changed-effect)]))
+(ns game.effects.hp
+  (:require [utils.core :refer [affect-val-max-stat!]]
+            [game.effects.core :as effects]
+            [game.components.hp :refer (dead?)]
+            [game.components.string-effect :refer (hp-changed-effect)]))
 
 ; heal/mana effects
 ; value : [:hp [[:val :inc] 5]]

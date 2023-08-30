@@ -1,7 +1,7 @@
 (ns game.components.line-render
   (:require [x.x :refer [defcomponent]]
-            [x.systems :refer [render]]
-            [gdl.graphics.shape-drawer :as shape-drawer]))
+            [gdl.graphics.shape-drawer :as shape-drawer]
+            [game.systems :refer [render]]))
 
 (defcomponent :line-render {:keys [thick? end color]}
   (render [_c _ position] ; two times underscore will shadow the destructuring! TODO FIXME

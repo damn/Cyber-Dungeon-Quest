@@ -1,7 +1,7 @@
-(nsx game.player.core
-  (:require game.maps.data
+(ns game.player.core
+  (:require [gdl.audio :as audio]
+            game.maps.data
             [game.running :refer (running)]
-            [game.components.body :refer (teleport)]
             [game.components.skills :refer (reset-cooldowns)]
             [game.player.entity :refer :all]
             [game.utils.msg-to-player :refer (show-msg-to-player)]))
@@ -34,7 +34,7 @@
 
 
 ; TODO ctype-fns :on-revive -> restore everything to initial state?
-(defn- revive-player []
+#_(defn- revive-player []
   (show-msg-to-player "") ; removes the old msg
   (reset! running true)
   (teleport player-entity (:start-position (game.maps.data/get-current-map-data)))
@@ -47,7 +47,7 @@
        ; (switch-state :skillmanager :ready) ; TODO reset state
        (update :skills reset-cooldowns)))
 
-(defn try-revive-player []
+#_(defn try-revive-player []
   ; TODO make abstraction 'remove-from-inventory item-name'
   #_(when-seq [cells (get-inventory-cells-with-item-name "Restoration" :inventory)]
     (remove-item-from-cell (rand-nth cells))

@@ -1,4 +1,8 @@
-(nsx game.maps.data)
+(ns game.maps.data
+  (:require [x.x :refer [defmodule]]
+            [gdl.lc :as lc]
+            [gdl.tiled :as tiled]
+            [game.session :as session]))
 
 (def state (reify session/State
                (load! [_ _]

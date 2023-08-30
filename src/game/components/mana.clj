@@ -1,4 +1,8 @@
-(nsx game.components.mana)
+(ns game.components.mana
+  (:require [x.x :refer [defcomponent]]
+            [utils.core :refer [val-max apply-max]]
+            [game.db :as db]
+            [game.components.modifiers :as modifiers]))
 
 (defcomponent :mana max-mana
   (db/create [_]

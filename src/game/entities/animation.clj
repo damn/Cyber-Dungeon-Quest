@@ -1,5 +1,6 @@
 (ns game.entities.animation
-  (:require [game.db :as db]))
+  (:require [game.db :as db]
+            game.components.delete-after-animation-stopped?))
 
 (defn create! [& {:keys [position animation]}]
   (db/create-entity!

@@ -1,9 +1,13 @@
-(nsx game.player.status-gui  ; ui.player-stats -> hp/mana bar
+(ns game.player.status-gui  ; ui.player-stats -> hp/mana bar
   ; TODO use stage/scene2d
-  (:require [game.player.entity :refer (player-entity)])
-  (:use
-    (game media)
-    [game.player.session-data :only (current-character-name)]))
+  (:require [x.x :refer [defmodule]]
+            [gdl.lc :as lc]
+            [gdl.graphics.font :as font]
+            [gdl.graphics.image :as image]
+            [gdl.graphics.gui :as gui]
+            [utils.core :refer [def- val-max-ratio readable-number]]
+            [game.media :as media]
+            [game.player.entity :refer (player-entity)]))
 
 (defn- render-infostr-on-bar [infostr y h]
   (font/draw-text {:font media/font

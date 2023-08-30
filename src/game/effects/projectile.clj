@@ -1,5 +1,9 @@
-(nsx game.effects.projectile
-  (:require [game.maps.cell-grid :as cell-grid]
+(ns game.effects.projectile
+  (:require [clojure.string :as str]
+            [gdl.vector :as v]
+            [game.media :as media]
+            [game.effects.core :as effects]
+            [game.maps.cell-grid :as cell-grid]
             [game.components.skills :refer (ai-should-use?)]
             [game.entities.projectile :as projectile-entity]
             game.effects.stun))

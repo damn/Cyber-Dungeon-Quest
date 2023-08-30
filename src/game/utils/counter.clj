@@ -1,11 +1,5 @@
-; MOVE TO ENGINE
-; TODO :as counter counter/create counter/update-in!
-; ...
-
-
-;; MOVE TO x.components.counter
-
-(nsx game.utils.counter)
+(ns game.utils.counter
+  (:require [utils.core :refer [assoc-in!]]))
 
 ; FIXME probably counter should be on 0 after stopped not exceed count...
 ; string effect after stopped counter was set to low value/0 and suddenly the text appeared below

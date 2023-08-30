@@ -1,5 +1,8 @@
-(nsx game.components.delete-after-duration
-  (:require [game.utils.counter :as counter]))
+(ns game.components.delete-after-duration
+  (:require [x.x :refer [defcomponent]]
+            [game.db :as db]
+            [game.systems :refer [tick!]]
+            [game.utils.counter :as counter]))
 
 (defcomponent :delete-after-duration duration
   (db/create [_]

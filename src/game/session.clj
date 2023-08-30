@@ -1,4 +1,4 @@
-(ns x.session)
+(ns game.session)
 
 ; inventory-window component
 ; => game/ui/windows/inventory.clj ?

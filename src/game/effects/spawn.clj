@@ -1,5 +1,6 @@
-(nsx game.effects.spawn
-  (:require [game.entities.creature :as creature-entity]))
+(ns game.effects.spawn
+  (:require [game.effects.core :as effects]
+            [game.entities.creature :as creature-entity]))
 
 ; TODO
 

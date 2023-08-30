@@ -1,4 +1,4 @@
-(nsx game.entities.chest
+(ns game.entities.chest
   (:require [game.components.clickable :as clickable]
             [game.maps.data :refer (get-current-map-data)]))
 

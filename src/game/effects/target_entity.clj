@@ -1,10 +1,17 @@
-(nsx game.effects.target-entity
-  (:require [game.utils.counter :as counter]
+(ns game.effects.target-entity
+  (:require [clojure.string :as str]
+            [gdl.vector :as v]
+            [gdl.audio :as audio]
+            [gdl.graphics.color :as color]
+            [gdl.graphics.shape-drawer :as shape-drawer]
+            [game.media :as media]
+            [game.utils.counter :as counter]
             [game.line-of-sight :refer (in-line-of-sight?)]
             [game.components.skills :refer (ai-should-use?)]
             [game.entities.animation :as animation-entity]
             [game.entities.line :as line-entity]
             [game.components.skills :refer (effect-info-render)]
+            [game.effects.core :as effects]
             game.effects.damage))
 
 ; TODO target still exists ?! necessary ? what if disappears/dead?

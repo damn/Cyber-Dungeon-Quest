@@ -1,5 +1,13 @@
-(nsx game.entities.creature
-  (:require [game.properties :as properties]
+(ns game.entities.creature
+  (:require [x.x :refer [defmodule defcomponent]]
+            [gdl.lc :as lc]
+            [gdl.audio :as audio]
+            [gdl.graphics.image :as image]
+            [gdl.graphics.world :as world]
+            [gdl.graphics.animation :as animation]
+            [game.db :as db]
+            [game.systems :refer [tick!]]
+            [game.properties :as properties]
             [game.utils.random :as rand]
             [game.media :refer (blood-animation)]
             [game.components.body :refer (assoc-left-bottom valid-position?)]

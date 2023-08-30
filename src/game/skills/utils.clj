@@ -1,8 +1,7 @@
-(nsx game.skills.utils
-  (:use (game.components render)
-        (game.utils [msg-to-player :only (show-msg-to-player)])))
-
-; required !?
+(ns game.skills.utils
+  (:require [game.db :as db]
+            [gdl.graphics.image :as image]
+            [gdl.graphics.color :as color]))
 
 (defn ^:private cross [position image]
   (db/create-entity!

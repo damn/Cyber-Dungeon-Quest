@@ -1,6 +1,6 @@
 (ns game.db
   (:require [x.x :refer :all]
-            [x.session :as session]))
+            [game.session :as session]))
 
 (defsystem create        [c])
 (defsystem create!       [c e])

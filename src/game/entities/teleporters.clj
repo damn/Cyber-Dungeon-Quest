@@ -1,11 +1,5 @@
-(nsx game.entities.teleporters
-  (:require [game.components.clickable :as clickable])
-  (:use
-    (game media)
-    (game.maps
-      [data :only (do-in-map current-map get-pretty-name)]
-      mapchange)
-    (game.components position body render)))
+(ns game.entities.teleporters
+  (:require [game.components.clickable :as clickable]))
 
 #_(defmethod clickable/on-clicked :teleporter [_ entity]
   (audio/play "bfxr_teleport.wav")

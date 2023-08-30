@@ -1,6 +1,7 @@
-(nsx game.components.delete-after-animation-stopped?
-  (:require x.ns)) ; one time require so clojure.tools.namespace knows dependency order
-; (in the ns which loads after gdl first at refresn-all ...)
+(ns game.components.delete-after-animation-stopped?
+  (:require [x.x :refer [defcomponent]]
+            [gdl.graphics.animation :as animation]
+            [game.systems :refer [tick!]]))
 
 (defcomponent :delete-after-animation-stopped? _
   (tick! [_ e delta]

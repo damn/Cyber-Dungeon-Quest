@@ -1,8 +1,5 @@
-(nsx game.entities.door
-  (:require [game.components.clickable :as clickable])
-  (:use
-    (game.components position body render)
-    game.maps.cell-grid))
+(ns game.entities.door
+  (:require [game.components.clickable :as clickable]))
 
 ; TODO render on minimap
 

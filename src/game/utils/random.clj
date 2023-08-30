@@ -1,6 +1,5 @@
-; MOVE TO ENGINE
 (ns game.utils.random
-  (:use [utils.core :only (find-first)])
+  (:require [utils.core :refer [find-first]])
   (:import java.util.Random))
 
 ; TODO seed the whole game -> set thread bound var?

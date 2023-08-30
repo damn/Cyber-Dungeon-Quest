@@ -1,5 +1,9 @@
-(nsx game.screens.load-session
-  (:require game.player.session-data))
+(ns game.screens.load-session
+  (:require [x.x :refer [defmodule]]
+            [gdl.lc :as lc]
+            [gdl.graphics.gui :as gui]
+            [gdl.app :as app]
+            game.player.session-data))
 
 (def is-loaded-character (atom false))
 

@@ -1,5 +1,15 @@
-(nsx mapgen.tiledmap-renderer
+(ns mapgen.tiledmap-renderer
   (:require [clojure.edn :as edn]
+            [x.x :refer [defmodule]]
+            [gdl.app :as app]
+            [gdl.lc :as lc]
+            [gdl.input :as input]
+            [gdl.graphics.world :as world]
+            [gdl.graphics.gui :as gui]
+            [gdl.graphics.color :as color]
+            [gdl.graphics.shape-drawer :as shape-drawer]
+            [gdl.tiled :as tiled]
+            [gdl.scene2d.ui :as ui]
             game.maps.impl
             [mapgen.movement-property :refer (movement-property movement-properties)]
             [mapgen.module-gen :as module-gen])

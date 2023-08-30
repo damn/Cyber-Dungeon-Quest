@@ -1,6 +1,11 @@
-(nsx game.effects.damage
-  (:require [game.utils.random :as random]
-            [game.components.render :refer :all]
+(ns game.effects.damage
+  (:require [gdl.audio :as audio]
+            [utils.core :refer :all]
+            [game.media :as media]
+            [game.components.modifiers :as modifiers]
+            [game.effects.core :as effects]
+            [game.utils.random :as random]
+            [game.components.string-effect :refer [show-string-effect]]
             [game.entities.animation :as animation-entity]
             [game.components.hp :refer (dead?)]))
 
