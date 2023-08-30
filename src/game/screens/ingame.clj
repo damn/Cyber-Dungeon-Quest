@@ -35,8 +35,8 @@
                  inventory/window
                  skill-window]
         stage (ui/stage)
-        table (doto (ui/table)
-                (.setFillParent true))]
+        table (ui/table :rows [[{:actor action-bar/horizontal-group :expand? true :bottom? true}]]
+                        :fill-parent? true)]
     (.addActor stage table) ; stage/add-actor
     (actor/set-position debug-window 0 (gui/viewport-height))
     (actor/set-position help-window
@@ -67,11 +67,6 @@
       (.setVisible window true) ; already visible?
 
       )
-    ; TODO action-bar just place manually ?!
-    (-> table ; table constructor here?
-        (.add action-bar/horizontal-group) ; table/add
-        .expand ; cell/expand
-        .bottom) ; cell/bottom ?
     (.addActor stage (item-in-hand-render-actor))
     stage))
 

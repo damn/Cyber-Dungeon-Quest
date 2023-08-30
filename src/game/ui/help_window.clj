@@ -21,8 +21,7 @@
   * P   - Pause the game")
 
 (defn create []
-  (let [window (ui/window :title "Controls"
-                          :id :help-window)]
-    (.add window (ui/label controls-text))
-    (.pack window)
-    window))
+  (ui/window :id :help-window
+             :title "Controls"
+             :rows [[(ui/label controls-text)]]
+             :pack? true))

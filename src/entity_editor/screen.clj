@@ -15,47 +15,39 @@
            (com.badlogic.gdx.scenes.scene2d.ui SplitPane Table)
            (com.badlogic.gdx.scenes.scene2d.utils TextureRegionDrawable)))
 
+; TODO search for ui/table & ui/window (add rows,etc to window too)
+; => all widgets set-opts based on class & supers?
+; => just (-> (Constructor.) (set-opts opts))
+; => (ui/show-opts class)
+; but we dont want class but 'table' ??
+; also search for com.badlogic
+
 ; TODO editing the 'loaded' stuff, not from edn
 
-(defn add-rows [^Table table rows]
-  (doseq [row rows]
-    (doseq [props-or-actor row
-            :let [^Actor actor (if (vector? props-or-actor)
-                                 (first props-or-actor)
-                                 props-or-actor)
-                  cell (.add table actor)]]
-      (if (vector? props-or-actor)
-        (let [{:keys [colspan]} (rest props-or-actor)]
-          (doto cell
-            (.colspan colspan)))))
-    (.row table)))
-
-(defn mk-table [rows]
-  (let [table (ui/table)]
-    (add-rows table rows)
-    table))
-
-#_(defn mk-window [& {:keys [rows] :as opts}]
-  (let [window (apply ui/window opts)]
-    (add-rows window rows)
-    window))
+; abstraction -> properties/get :id / properties/save! :id
+; and properties/get-all :namespace
+; I dont want to know where/what
+; also for entity, for each attribute define widgets, etc.
 
 (defn- editor-window [& {:keys [title
                                 id
                                 image-widget
                                 props-widget-pairs]}]
-  (let [table (ui/window :title title
-                         :modal? true)]
-    (add-rows table [[[image-widget         :colspan 2]]
-                     [[(ui/label (name id)) :colspan 2]]])
-    (add-rows table (for [[label value-widget] props-widget-pairs]
-                      [(ui/label label) value-widget]))
-    (add-rows table [[nil (ui/text-button "Cancel" #(.remove table))]])
-    (.pack table)
-    (actor/set-center table
+  (let [window (ui/window :title title
+                          :modal? true)]
+    (ui/add-rows window
+                 (concat
+                  [[{:actor image-widget         :colspan 2}]
+                   [{:actor (ui/label (name id)) :colspan 2}]]
+                  (for [[label value-widget] props-widget-pairs]
+                    [(ui/label label) value-widget])
+                  [[(ui/text-button "Save" (fn [] ))
+                    (ui/text-button "Cancel" #(actor/remove window))]]))
+    (ui/pack window)
+    (actor/set-center window
                       (/ (gui/viewport-width)  2)
                       (/ (gui/viewport-height) 2))
-    table))
+    window))
 
 (defn creature-type-editor [creature-type-id]
   (let [props (get creatures/creature-types creature-type-id)]
@@ -63,12 +55,11 @@
      :title "Creature Type"
      :id (:id props)
      :image-widget
-     (mk-table
-      (map
-       #(map (fn [props] (ui/image (TextureRegionDrawable. (:texture (:image props))))) %)
-       (partition-all 5
-                      (filter #(= (:creature-type %) creature-type-id)
-                              (vals creatures/creatures)))))
+     (ui/table :rows (map
+                      #(map (fn [props] (ui/image (TextureRegionDrawable. (:texture (:image props))))) %)
+                      (partition-all 5
+                                     (filter #(= (:creature-type %) creature-type-id)
+                                             (vals creatures/creatures)))))
      :props-widget-pairs
      [["hp"    (ui/text-field (str (:hp props)))]
       ["speed" (ui/text-field (str (:speed props)))]])))
@@ -103,20 +94,16 @@
                                                                (stage)
                                                                (creature-type-editor (:creature-type props)))))]
       ["level"  (ui/text-field (str (:level props)))]
-      ["skills" (let [table (ui/table)]
-                  (doseq [skill (:skills props)]
-                    (.add table (ui/image (TextureRegionDrawable. (:texture (:image (get skills/skills skill))))))
-                    (.add table (ui/text-button " - " (fn [] (println "Remove " ))))
-                    (.row table))
-                  (.add table (ui/text-button " + " (fn [] (println "Add "))))
-                  table)]
-      ["items"  (let [table (ui/table)]
-                  (doseq [item (:items props)]
-                    (.add table (ui/image (TextureRegionDrawable. (:texture (:image (get items/items item))))))
-                    (.add table (ui/text-button " - " (fn [] (println "Remove " item))))
-                    (.row table))
-                  (.add table (ui/text-button " + " (fn [] (println "Add item"))))
-                  table)]])))
+      ["skills" (ui/table :rows (concat
+                                 (for [skill (:skills props)]
+                                   [(ui/image (TextureRegionDrawable. (:texture (:image (get skills/skills skill)))))
+                                    (ui/text-button " - " (fn [] (println "Remove " )))])
+                                 [[(ui/text-button " + " (fn [] (println "Add ")))]]))]
+      ["items"  (ui/table :rows (concat
+                                 (for [item (:items props)]
+                                   [(ui/image (TextureRegionDrawable. (:texture (:image (get items/items item)))))
+                                    (ui/text-button " - " (fn [] (println "Remove " )))])
+                                 [[(ui/text-button " + " (fn [] (println "Add ")))]]))]])))
 
 ; entity-type 'item'
 ; => edit entity with id
@@ -162,20 +149,18 @@
                                  entities
                                  entity-editor
                                  extra-infos-widget]}]
-  (let [table (ui/table)
-        number-columns 20]
-    (add-rows table [[[(ui/label title) :colspan number-columns]]])
-    (add-rows table (for [entities (partition-all number-columns entities)]
-                      (for [props entities
-                            :let [button (ui/image-button (:image props)
-                                                          #(.addActor (stage) (entity-editor (:id props))))
-                                  ^Actor top-widget (extra-infos-widget props)
-                                  stack (ui/stack)] ]
-                        (do (actor/set-touchable top-widget :disabled)
-                            (.add stack button)
-                            (.add stack top-widget)
-                            stack))))
-    table))
+  (let [number-columns 20]
+    (ui/table :rows (concat [[{:actor (ui/label title) :colspan number-columns}]]
+                            (for [entities (partition-all number-columns entities)]
+                              (for [props entities
+                                    :let [button (ui/image-button (:image props)
+                                                                  #(.addActor (stage) (entity-editor (:id props))))
+                                          ^Actor top-widget (extra-infos-widget props)
+                                          stack (ui/stack)] ]
+                                (do (actor/set-touchable top-widget :disabled)
+                                    (.add stack button)
+                                    (.add stack top-widget)
+                                    stack)))))))
 
 (defn- creatures-table []
   (entities-table :title "Creatures"
@@ -210,27 +195,23 @@
  ; => non-toggle image-button
 
 (defn- left-widget []
-  (let [table (ui/table)]
-    (.add table (ui/text-button "Creatures" #(.setSecondWidget (split-pane) (creatures-table)))) (.row table)
-    (.add table (ui/text-button "Items"     #(.setSecondWidget (split-pane) (items-table))))     (.row table)
-    (.add table (ui/text-button "Skills"    #(.setSecondWidget (split-pane) (skills-table))))    (.row table)
-    (.add table (ui/text-button "Back to Main Menu" #(app/set-screen :game.screens.main)))
-    table))
+  (ui/table :rows [[(ui/text-button "Creatures" #(.setSecondWidget (split-pane) (creatures-table)))]
+                   [(ui/text-button "Items"     #(.setSecondWidget (split-pane) (items-table)))]
+                   [(ui/text-button "Skills"    #(.setSecondWidget (split-pane) (skills-table)))]
+                   [(ui/text-button "Back to Main Menu" #(app/set-screen :game.screens.main))]]))
 
 (defmodule {:keys [stage]}
   (lc/create [_]
     (let [stage (ui/stage)
-          table (ui/table)]
-      (.setFillParent table true)
-      (.setDebug table true)
+          split-pane (ui/split-pane :first-widget (left-widget)
+                                    :second-widget (creatures-table)
+                                    :vertical? false
+                                    :id :split-pane)
+          table (ui/table :rows [[split-pane]]
+                          :fill-parent? true)]
       (.addActor stage table)
-      (let [split-pane (ui/split-pane (left-widget)
-                                      (ui/label "second widget")
-                                      false)]
-        (.setUserObject split-pane :split-pane)
-        (.add table split-pane)
-        {:stage stage
-         :split-pane split-pane})))
+      {:stage stage
+       :split-pane split-pane}))
   (lc/dispose [_] (.dispose stage))
   (lc/show [_] (input/set-processor stage))
   (lc/hide [_] (input/set-processor nil))
