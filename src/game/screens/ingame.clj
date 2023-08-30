@@ -6,6 +6,7 @@
             [gdl.vector :as v]
             [gdl.scene2d.actor :as actor]
             [gdl.scene2d.ui :as ui]
+            [gdl.graphics.batch :refer [batch]]
             [gdl.graphics.image :as image]
             [gdl.graphics.gui :as gui]
             [gdl.graphics.world :as world]
@@ -43,7 +44,7 @@
                  entity-info-window
                  inventory/window
                  skill-window]
-        stage (ui/stage)
+        stage (ui/stage gui/viewport batch)
         table (ui/table :rows [[{:actor action-bar/horizontal-group :expand? true :bottom? true}]]
                         :fill-parent? true)]
     (.addActor stage table) ; stage/add-actor
@@ -159,7 +160,7 @@
      (set-movement! (wasd-movement-vector))
      (cond
       (and (input/is-leftm-pressed?)
-           (not (ui/mouseover? stage))
+           (not (ui/mouseover? stage (gui/mouse-position)))
            (is-item-in-hand?))
       (inventory/put-item-on-ground)
 
@@ -172,7 +173,7 @@
       ; TODO is it possible pressed and not down ?
       (and (or (input/is-leftm-pressed?)
                (input/is-leftbutton-down?))
-           (not (ui/mouseover? stage))
+           (not (ui/mouseover? stage (gui/mouse-position)))
            (clickable/check-clickable-mouseoverbody stage))
       nil
 
@@ -181,7 +182,7 @@
                                   (:position @(saved-mouseover-entity))))
 
       (and (input/is-leftbutton-down?)
-           (not (ui/mouseover? stage)))
+           (not (ui/mouseover? stage (gui/mouse-position))))
       (set-movement! (v/direction (:position @player-entity)
                                   (world/mouse-position)))))))
 
@@ -251,7 +252,7 @@
   (lc/hide [_] (input/set-processor nil))
   (lc/render [_]
     (game.render-ingame/render-game)
-    (gui/render #(ui/draw-stage stage)))
+    (gui/render #(ui/draw-stage stage batch)))
   (lc/tick [_ delta]
     (handle-key-input stage)
     (ui/update-stage stage delta)

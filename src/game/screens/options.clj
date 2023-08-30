@@ -4,6 +4,7 @@
             [gdl.app :as app]
             [gdl.graphics.gui :as gui]
             [gdl.graphics.image :as image]
+            [gdl.graphics.batch :refer [batch]]
             [gdl.input :as input]
             [gdl.scene2d.ui :as ui]
             [utils.core :refer [find-first]]
@@ -102,7 +103,7 @@
 
 (defmodule stage
   (lc/create [_]
-    (let [stage (ui/stage)]
+    (let [stage (ui/stage gui/viewport batch)]
       (.addActor stage (create-table))
       stage))
   (lc/show [_] (input/set-processor stage))
@@ -113,7 +114,7 @@
        (image/draw-centered menu-bg-image
                             [(/ (gui/viewport-width)  2)
                              (/ (gui/viewport-height) 2)])
-       (ui/draw-stage stage))))
+       (ui/draw-stage stage batch))))
   (lc/tick [_ delta]
     (ui/update-stage stage delta)
     (when (input/is-key-pressed? :ESCAPE)

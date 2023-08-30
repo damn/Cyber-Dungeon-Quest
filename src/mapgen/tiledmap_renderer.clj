@@ -6,6 +6,7 @@
             [gdl.input :as input]
             [gdl.graphics.world :as world]
             [gdl.graphics.gui :as gui]
+            [gdl.graphics.batch :refer [batch]]
             [gdl.graphics.color :as color]
             [gdl.graphics.shape-drawer :as shape-drawer]
             [gdl.tiled :as tiled]
@@ -152,7 +153,7 @@
     [table get-properties]))
 
 (defn- create-stage []
-  (let [stage (ui/stage)
+  (let [stage (ui/stage gui/viewport batch)
         window (ui/window :title "Properties")
         [form get-properties] (edn-edit-form game.maps.impl/map-data-file)]
     (.addActor stage window)
@@ -177,7 +178,7 @@
   (lc/render [_]
     (tiled/render-map @current-tiled-map (constantly color/white)) ; TODO colorsetter optional.
     (world/render render-on-map)
-    (gui/render #(ui/draw-stage stage)))
+    (gui/render #(ui/draw-stage stage batch)))
   (lc/tick [_ delta]
     (ui/update-stage stage delta)
     (when (input/is-key-pressed? :ESCAPE)

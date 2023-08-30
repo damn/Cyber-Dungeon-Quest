@@ -4,6 +4,7 @@
             [gdl.app :as app]
             [gdl.input :as input]
             [gdl.graphics.gui :as gui]
+            [gdl.graphics.batch :refer [batch]]
             [gdl.scene2d.actor :as actor]
             [gdl.scene2d.ui :as ui]
             [game.entities.creature :as creatures]
@@ -202,7 +203,7 @@
 
 (defmodule {:keys [stage]}
   (lc/create [_]
-    (let [stage (ui/stage)
+    (let [stage (ui/stage gui/viewport batch)
           split-pane (ui/split-pane :first-widget (left-widget)
                                     :second-widget (creatures-table)
                                     :vertical? false
@@ -215,5 +216,5 @@
   (lc/dispose [_] (.dispose stage))
   (lc/show [_] (input/set-processor stage))
   (lc/hide [_] (input/set-processor nil))
-  (lc/render [_] (gui/render #(ui/draw-stage stage)))
+  (lc/render [_] (gui/render #(ui/draw-stage stage batch)))
   (lc/tick [_ delta] (ui/update-stage stage delta)))
