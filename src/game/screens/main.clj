@@ -17,14 +17,13 @@
 (declare ^Stage stage)
 
 (defn- create* []
-  (.bindRoot #'stage (ui/stage))
-  (let [padding (float 25)
-        table (ui/table :rows [[(ui/text-button "New game" try-create-character)]
+  (.bindRoot #'stage (ui/stage)) ; TODO remove all .bindRoot
+  (let [table (ui/table :rows [[(ui/text-button "New game" try-create-character)]
                                [(ui/text-button "Map Editor" #(app/set-screen :mapgen.tiledmap-renderer))]
                                [(ui/text-button "Entity Editor" #(app/set-screen :entity-editor.screen))]
                                [(ui/text-button "Exit" app/exit)]]
-                        :cell-defaults {:pad-bottom (float 25)})]
-    (.setFillParent table true)
+                        :cell-defaults {:pad-bottom 25}
+                        :fill-parent? true)]
     (.addActor stage table)
     (.center table)))
 

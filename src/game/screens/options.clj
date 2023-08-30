@@ -74,27 +74,21 @@
 (def ^:private exit #(app/set-screen :game.screens.ingame))
 
 (defn- create-table []
-  (let [table (ui/table)
+  (let [table (ui/table :rows (concat
+                               (for [check-box @status-check-boxes]
+                                 [(ui/check-box (get-text check-box)
+                                                #(set-state check-box %)
+                                                (boolean (get-state check-box)))])
+                               (for [check-box debug-flags]
+                                 [(ui/check-box (get-text check-box)
+                                                #(set-state check-box %)
+                                                (boolean (get-state check-box)))])
+                               [[(ui/text-button "Resume" exit)]
+                                [(ui/text-button "Exit" #(app/set-screen :game.screens.main))]])
+                        :fill-parent? true
+                        :cell-defaults {:pad-bottom 25})
         padding 25]
-    (.setFillParent table true)
-    (.center table)
-    (.setDebug table false)
-    (.padBottom (.add table (ui/text-button "Resume" exit)) (float padding))
-    (.row table)
-    (.padBottom (.add table (ui/text-button "Exit"   #(app/set-screen :game.screens.main))) (float padding))
-    (.row table)
-    (doseq [check-box @status-check-boxes
-            :let [cb (ui/check-box (get-text check-box)
-                                   #(set-state check-box %)
-                                   (boolean (get-state check-box)))]]
-      (.add table cb))
-    (.row table)
-    (doseq [check-box debug-flags
-            :let [cb (ui/check-box (get-text check-box)
-                                   #(set-state check-box %)
-                                   (boolean (get-state check-box)))]]
-      (.add table cb))
-
+    (.center table) ; ? TODO don't understand
     (def menu-bg-image (image/create "ui/moon_background.png"))
     table))
 

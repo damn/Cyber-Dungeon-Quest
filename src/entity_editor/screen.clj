@@ -211,7 +211,7 @@
                           :fill-parent? true)]
       (.addActor stage table)
       {:stage stage
-       :split-pane split-pane}))
+       :split-pane split-pane})) ; TODO only stage needed, can get split-pane through table
   (lc/dispose [_] (.dispose stage))
   (lc/show [_] (input/set-processor stage))
   (lc/hide [_] (input/set-processor nil))

@@ -1,6 +1,9 @@
 (nsx game.properties
   (:require [clojure.edn :as edn]))
 
+; TODO save properties return from module -> app/state -> function to get
+; => move all state in app/state !
+
 ; TODO schema assert (define in the edn file ?) -> can reuse @ editor ?
 ; => for all properties
 
