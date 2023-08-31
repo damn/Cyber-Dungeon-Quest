@@ -76,7 +76,7 @@
             r (+ r weight)]
         (if (> r result)
           item
-          (recur r (rest items)))))))
+          (recur (int r) (rest items)))))))
 
 (defn get-rand-weighted-items [n group]
   (repeatedly n #(get-rand-weighted-item group)))
