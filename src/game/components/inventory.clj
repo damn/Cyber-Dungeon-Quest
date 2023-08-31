@@ -103,7 +103,7 @@
 (defn stackable? [item-a item-b]
   (and (:count item-a)
        (:count item-b) ; TODO this is not required but can be asserted, all of one name should have count if others have count
-       (= (:name item-a) (:name item-b))))
+       (= (:id item-a) (:id item-b))))
 
 (defn stack-item [entity cell item]
   (let [cell-item (get-in (:inventory @entity) cell)]

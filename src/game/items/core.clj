@@ -31,7 +31,6 @@
 
 (defn- prepare-item-properties [{:keys [id modifiers] :as properties}]
   (assoc properties
-         :name id
          :pretty-name (pretty-name id)))
 
 ; TODO

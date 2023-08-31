@@ -75,11 +75,11 @@
 ; used only @ grenade(deleted) -> skill based items
 #_(defn remove-one-item-from-belt [item-name]
     {:pre [(some #{item-name}
-                 (map :name
+                 (map :id
                       (slot->items inventory :belt)))]}
     (remove-one-item
      (find-first
-      #(= item-name (:name %))
+      #(= item-name (:id %))
       (slot->items inventory :belt))))
 
 (defn- try-usable-item-effect [{:keys [effect use-sound] :as item} cell]
