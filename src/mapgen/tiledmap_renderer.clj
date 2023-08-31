@@ -127,6 +127,17 @@
     (reset! current-start-positions (set start-positions))
     (center-world-camera)))
 
+; for each key k and value v  define
+; -> form
+; and from table how to get the value
+
+(defn edit-form [[k v]]
+  (doto (ui/text-field (str v))
+    (.setName (str k))))
+
+(defn form-value [forms-table k]
+  (.getText ^TextField (.findActor forms-table (str k))))
+
 ; TODO any key typed and not saved -> show 'unsaved' icon
 ; save => show saved icon.
 ; TODO validation/schema (malli/clojure.spec)
@@ -136,13 +147,12 @@
         table (ui/table)
         get-properties #(into {}
                               (for [k (keys properties)]
-                                [k (edn/read-string (.getText ^TextField (.findActor table (str k))))]))]
+                                [k (edn/read-string (form-value table k))]))]
     (.colspan (.add table (ui/label edn-data-file)) 2)
     (.row table)
     (doseq [[k v] properties]
       (.add table (ui/label (name k)))
-      (.add table (doto (ui/text-field (str v))
-                    (.setName (str k))))
+      (.add table (edit-form [k v]))
       (.row table))
     (.colspan (.add table (ui/text-button (str "Save to file")
                                           #(spit edn-data-file

@@ -61,13 +61,23 @@
    properties))
 
 (defn- save-all-properties! []
-  (save-edn properties-file (->> properties
-                                 vals
-                                 sort-by-type
-                                 (map #(if (:image %)
-                                         (update % :image serialize-image)
-                                         %)))))
+  (->> properties
+       vals
+       sort-by-type
+       (map #(if (:image %)
+               (update % :image serialize-image)
+               %))
+       (save-edn properties-file)))
 
-(defn save! [id data]
-  (alter-var-root #'properties assoc id data)
+(defn save! [data]
+  {:pre [(contains? data :id)
+         (contains? properties (:id data))
+         (= (keys data) (keys (get (:id data)))) ]}
+  (alter-var-root #'properties assoc (:id data) data)
   (save-all-properties!))
+
+; TODO schema after load/before save
+; => which keys?
+; => also key properties
+; => what of the properties with are first (not slot yet) ?
+; => add resources/maps.edn

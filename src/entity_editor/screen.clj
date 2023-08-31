@@ -9,8 +9,13 @@
             [gdl.scene2d.ui :as ui]
             [game.properties :as properties])
   (:import (com.badlogic.gdx.scenes.scene2d Actor Stage)
-           (com.badlogic.gdx.scenes.scene2d.ui SplitPane Table)
            (com.badlogic.gdx.scenes.scene2d.utils TextureRegionDrawable)))
+
+(defn- stage []
+  (:stage (app/current-screen-value)))
+
+(defn- split-pane []
+  (:split-pane (app/current-screen-value)))
 
 ; TODO search for ui/table & ui/window (add rows,etc to window too)
 ; => all widgets set-opts based on class & supers?
@@ -26,20 +31,60 @@
 ; I dont want to know where/what
 ; also for entity, for each attribute define widgets, etc.
 
-(defn- editor-window [& {:keys [title
-                                id
-                                image-widget
-                                props-widget-pairs]}]
+
+; TODO for each key of entity-type
+; create for [k v] textfield with :id ...
+; and findActor and getText
+
+; what about undo? validation? etc. a label if changes? cancel warn on unsaved changes, etc. ?
+
+(defn- property-widget [k v]
+  (ui/text-field (pr-str v)))
+
+(defmulti property-widget (fn [k v] k))
+
+(defmethod property-widget :default [_ v]
+  (ui/text-field (pr-str v)))
+
+(defmethod property-widget :id [_ id]
+  (ui/label (pr-str id)))
+
+(defmethod property-widget :image [_ image]
+  (ui/image (TextureRegionDrawable. (:texture image))))
+
+(declare species-editor)
+
+(defmethod property-widget :species [_ species-id]
+  (ui/text-button (name species-id)
+                  #(.addActor (stage) (species-editor species-id))))
+
+; :id =>
+; setDisabled true
+
+(comment
+
+ ; TODO :image => (ui/image (TextureRegionDrawable. (:texture (:image props))))
+
+ :species
+
+
+ :items / :skills
+ (ui/table :rows (concat
+                  (for [skill (:skills props)]
+                    [(ui/image (TextureRegionDrawable. (:texture (:image (properties/get skill)))))
+                     (ui/text-button " - " (fn [] (println "Remove " )))])
+                  [[(ui/text-button " + " (fn [] (println "Add ")))]]))
+ )
+
+(defn- editor-window [& {:keys [title id property-keys]}]
   (let [window (ui/window :title title
-                          :modal? true)]
-    (ui/add-rows window
-                 (concat
-                  [[{:actor image-widget         :colspan 2}]
-                   [{:actor (ui/label (name id)) :colspan 2}]]
-                  (for [[label value-widget] props-widget-pairs]
-                    [(ui/label label) value-widget])
-                  [[(ui/text-button "Save" (fn [] ))
-                    (ui/text-button "Cancel" #(actor/remove window))]]))
+                          :modal? true
+                          :cell-defaults {:pad 5})
+        props (properties/get id)]
+    (ui/add-rows window (concat (for [k property-keys]
+                                  [(ui/label (name k)) (property-widget k (get props k))])
+                                [[(ui/text-button "Save" (fn [] ))
+                                  (ui/text-button "Cancel" #(actor/remove window))]]))
     (ui/pack window)
     (actor/set-center window
                       (/ (gui/viewport-width)  2)
@@ -47,19 +92,9 @@
     window))
 
 (defn species-editor [species-id]
-  (let [props (properties/get species-id)]
-    (editor-window
-     :title "Species"
-     :id (:id props)
-     :image-widget
-     (ui/table :rows (map
-                      #(map (fn [props] (ui/image (TextureRegionDrawable. (:texture (:image props))))) %)
-                      (partition-all 5
-                                     (filter #(= (:species %) species-id)
-                                             (properties/all-with-key :species)))))
-     :props-widget-pairs
-     [["hp"    (ui/text-field (str (:hp props)))]
-      ["speed" (ui/text-field (str (:speed props)))]])))
+  (editor-window :title "Species"
+                 :id species-id
+                 :property-keys [:id :hp :speed]))
 
 ; attributes of an entity
 ; * text-editor
@@ -73,34 +108,11 @@
 ; * what about links ? will become buttons ? schema? datomic?
 ; save/undo/redo => datomic?
 
-(defn- stage []
-  (:stage (app/current-screen-value)))
-
-(defn- split-pane ^SplitPane []
-  (:split-pane (app/current-screen-value)))
 
 (defn- creature-editor [id]
-  (let [props (properties/get id)]
-    (editor-window
-     :title "Creature"
-     :id (:id props)
-     :image-widget (ui/image (TextureRegionDrawable. (:texture (:image props))))
-     :props-widget-pairs
-     [["species" (ui/text-button (name (:species props)) (fn []
-                                                           (.addActor
-                                                            (stage)
-                                                            (species-editor (:species props)))))]
-      ["level"  (ui/text-field (str (:level props)))]
-      ["skills" (ui/table :rows (concat
-                                 (for [skill (:skills props)]
-                                   [(ui/image (TextureRegionDrawable. (:texture (:image (properties/get skill)))))
-                                    (ui/text-button " - " (fn [] (println "Remove " )))])
-                                 [[(ui/text-button " + " (fn [] (println "Add ")))]]))]
-      ["items"  (ui/table :rows (concat
-                                 (for [item (:items props)]
-                                   [(ui/image (TextureRegionDrawable. (:texture (:image (properties/get item)))))
-                                    (ui/text-button " - " (fn [] (println "Remove " )))])
-                                 [[(ui/text-button " + " (fn [] (println "Add ")))]]))]])))
+  (editor-window :title "Creature"
+                 :id id
+                 :property-keys [:id :image :species :level :skills :items]))
 
 ; entity-type 'item'
 ; => edit entity with id
@@ -108,15 +120,18 @@
 ; items => items/items
 ; 'image-widget' => :image property
 
+(comment
+ ; entity type
+ ; has keys/attributes.
+ ; e.g. id/image/this/that
+ ; for each attribute have edit-widget,editable or not,etc.
+ ; e.g. item => id,image,slot,pretty-name,modifiers
+ )
+
 (defn- item-editor [id]
-  (let [props (properties/get id)]
-    (editor-window
-     :title "Item"
-     :id (:id props)
-     :image-widget (ui/image (TextureRegionDrawable. (:texture (:image props))))
-     :props-widget-pairs
-     [["slot" (ui/label (name (:slot props)))]
-      ["pretty name" (ui/text-field (:pretty-name props))]])))
+  (editor-window :title "Item"
+                 :id id
+                 :property-keys [:id :image :slot :pretty-name :modifiers]))
 ; TODO crashes when no slot of item (unimplemented items, e.g. empty heart ) !
 ; => schema on edn/read validate and on save !!
 
@@ -125,16 +140,9 @@
 ; param types ... e.g. damage.
 
 (defn- skill-editor [id]
-  (let [props (properties/get id)]
-    (editor-window
-     :title "Skill"
-     :id (:id props)
-     :image-widget (ui/image (TextureRegionDrawable. (:texture (:image props))))
-     :props-widget-pairs
-     [["action-time" (ui/text-field (str (:action-time props)))]
-      ["cooldown"    (ui/text-field (str (:cooldown props)))]
-      ["cost"        (ui/text-field (str (:cost props)))]
-      ["effect"      (ui/text-field (str (:effect props)))]])))
+  (editor-window :title "Skill"
+                 :id id
+                 :property-keys [:id :image :action-time :cooldown :cost :effect]))
 
 ; TODO show hp/speed & with multipler for creatures too ?
 
@@ -154,6 +162,7 @@
                             (for [entities (partition-all number-columns entities)]
                               (for [props entities
                                     :let [button (ui/image-button (:image props)
+                                                                  ; TODO same code @ species link ...
                                                                   #(.addActor (stage) (entity-editor (:id props))))
                                           ^Actor top-widget (extra-infos-widget props)
                                           stack (ui/stack)] ]
