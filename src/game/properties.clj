@@ -17,6 +17,9 @@
                       [(int (/ sprite-x tilew))
                        (int (/ sprite-y tileh))])))
 
+(defn- serialize-image [image]
+  (select-keys image [:file :sub-image-bounds]))
+
 (defn- load-edn [file]
   (let [properties (-> file slurp edn/read-string)]
     (assert (apply distinct? (map :id properties)))
@@ -26,10 +29,12 @@
                  %))
          (#(zipmap (map :id %) %)))))
 
-(declare ^:private properties)
+(declare ^:private properties-file
+         ^:private properties)
 
 (defmodule file
   (lc/create [_]
+    (.bindRoot #'properties-file file)
     (.bindRoot #'properties (load-edn file))))
 
 (defn get [id]
@@ -37,3 +42,32 @@
 
 (defn all-with-key [k]
   (filter k (vals properties)))
+
+(defn- save-edn [file data]
+  (binding [*print-level* nil]
+    (spit file
+          (with-out-str
+           (clojure.pprint/pprint
+            data)))))
+
+(defn- sort-by-type [properties]
+  (sort-by
+   (fn [prop]
+     (cond
+      (:spell?  prop) 0
+      (:species prop) 1
+      (:hp      prop) 2
+      (:slot    prop) 3))
+   properties))
+
+(defn- save-all-properties! []
+  (save-edn properties-file (->> properties
+                                 vals
+                                 sort-by-type
+                                 (map #(if (:image %)
+                                         (update % :image serialize-image)
+                                         %)))))
+
+(defn save! [id data]
+  (alter-var-root #'properties assoc id data)
+  (save-all-properties!))
