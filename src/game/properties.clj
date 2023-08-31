@@ -1,17 +1,12 @@
 (ns game.properties
+  (:refer-clojure :exclude [get])
   (:require [clojure.edn :as edn]
+            [x.x :refer [defmodule]]
+            [gdl.lc :as lc]
             [gdl.graphics.image :as image]))
 
-; TODO save properties return from module -> app/state -> function to get
-; => move all state in app/state !
-
-; TODO schema assert (define in the edn file ?) -> can reuse @ editor ?
-; => for all properties
-
-; TODO assert distinct :id 's
-
-; TODO just use sprite-idx directly.
-(defn deserialize-image [{:keys [file sub-image-bounds]}]
+; could just use sprite-idx directly.
+(defn- deserialize-image [{:keys [file sub-image-bounds]}]
   {:pre [file sub-image-bounds]}
   (let [[sprite-x sprite-y] (take 2 sub-image-bounds)
         [tilew tileh]       (drop 2 sub-image-bounds)]
@@ -21,23 +16,38 @@
                       [(int (/ sprite-x tilew))
                        (int (/ sprite-y tileh))])))
 
-(defn load-edn [file & {:keys [transform]}]
-  (->> file
-       (str "resources/") ; TODO (.internal (Gdx/files) folder)
-       slurp
-       edn/read-string
-       (map #(if (:image %)
-               (update % :image deserialize-image)
-               %))
-       (map (or transform identity))
-       (#(zipmap (map :id %) %))))
+(defn- load-edn [file]
+  (let [properties (-> file slurp edn/read-string)]
+    (assert (apply distinct? (map :id properties)))
+    (->> properties
+         (map #(if (:image %)
+                 (update % :image deserialize-image)
+                 %))
+         (#(zipmap (map :id %) %)))))
 
-; properties are entities ?
-; * have :id
-; * have image 'create' system impl
-; (get-entity :sword) (get-entity :goblin)
-; (creature/spawn :goblin) => uses goblin entity as schema
+(declare ^:private properties)
 
-; weapons are in both items & skills => just :sword !
-; weapons are different entity type than items (how is text being generated ?)
-; (based on context or components ?)
+(defmodule file
+  (lc/create [_]
+    (.bindRoot #'properties (load-edn file))))
+
+(defn- safe-get [m k]
+  (let [result (clojure.core/get m k ::not-found)]
+    (if (= result ::not-found)
+      (throw (IllegalArgumentException. (str "Cannot find " k)))
+      result)))
+
+(defn get [id]
+  (safe-get properties id))
+
+(defn all-with-key [k]
+  (filter k (vals properties)))
+
+; TODO add :type ? but item/skill same for 'weapon' type
+; just keys?
+; creature/species?
+; also item/slot
+
+; use creature/id item/id skill/id ?
+; but what to do with weapons?
+; they are both skills and items ?

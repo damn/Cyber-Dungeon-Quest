@@ -10,6 +10,7 @@
             [utils.core :refer [assoc-in! ->! mapvals]]
             [game.systems :refer [tick! stun! render-info]]
             [game.db :as db]
+            [game.properties :as properties]
             [game.components.faction :as faction]
             [game.components.modifiers :as modifiers]
             [game.ui.mouseover-entity :refer (saved-mouseover-entity get-mouseover-entity)]
@@ -108,7 +109,7 @@
 
 (defn assoc-skill [skills id]
   {:pre [(not (contains? skills id))]}
-  (assoc skills id (id skills/skills)))
+  (assoc skills id (properties/get id)))
 
 (modifiers/defmodifier :skill
   {:text skills/text
@@ -280,4 +281,4 @@
     (->! entity
          (assoc :skillmanager {}) ; TODO remove skillmanager ? just 'skills' ? update skills ?
          ; all effect-params / action-counter into :active-skill? ??
-         (update k #(zipmap % (map skills/skills %))))))
+         (update k #(zipmap % (map properties/get %))))))

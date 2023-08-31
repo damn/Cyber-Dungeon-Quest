@@ -1,8 +1,6 @@
 (ns game.skills.core
   (:require [clojure.set :as set]
             [clojure.string :as str]
-            [x.x :refer [defmodule]]
-            [gdl.lc :as lc]
             [utils.core :refer [readable-number]]
             [game.effects.core :as effects]
             [game.properties :as properties]))
@@ -27,12 +25,6 @@
     (assert (set/subset? property-keys keyset)
             (str "Skill properties are missing keys: " keyset))))
 
-(declare skills)
-
-(defmodule _
-  (lc/create [_]
-    (.bindRoot #'skills (properties/load-edn "skills/properties.edn"))))
-
 (defn- ms->pprint-seconds [ms]
   (readable-number (/ ms 1000)))
 
@@ -41,7 +33,7 @@
                 action-time
                 cooldown
                 spell?
-                effect]} (skill-id skills)]
+                effect]} (properties/get skill-id )]
     (str (str/capitalize (name skill-id)) "\n"
          (if spell? "Spell" "Weapon") "\n"
          (when cost (str "Cost " cost  "\n"))

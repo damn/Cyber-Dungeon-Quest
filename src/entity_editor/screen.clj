@@ -7,11 +7,7 @@
             [gdl.graphics.batch :refer [batch]]
             [gdl.scene2d.actor :as actor]
             [gdl.scene2d.ui :as ui]
-            [game.entities.creature :as creatures]
-            [game.items.core :as items]
-            [game.skills.core :as skills]
-            [game.effects.core :as effects]
-            [game.components.modifiers :as modifiers])
+            [game.properties :as properties])
   (:import (com.badlogic.gdx.scenes.scene2d Actor Stage)
            (com.badlogic.gdx.scenes.scene2d.ui SplitPane Table)
            (com.badlogic.gdx.scenes.scene2d.utils TextureRegionDrawable)))
@@ -50,17 +46,17 @@
                       (/ (gui/viewport-height) 2))
     window))
 
-(defn creature-type-editor [creature-type-id]
-  (let [props (get creatures/creature-types creature-type-id)]
+(defn species-editor [species-id]
+  (let [props (properties/get species-id)]
     (editor-window
-     :title "Creature Type"
+     :title "Species"
      :id (:id props)
      :image-widget
      (ui/table :rows (map
                       #(map (fn [props] (ui/image (TextureRegionDrawable. (:texture (:image props))))) %)
                       (partition-all 5
-                                     (filter #(= (:creature-type %) creature-type-id)
-                                             (vals creatures/creatures)))))
+                                     (filter #(= (:species %) species-id)
+                                             (properties/all-with-key :species)))))
      :props-widget-pairs
      [["hp"    (ui/text-field (str (:hp props)))]
       ["speed" (ui/text-field (str (:speed props)))]])))
@@ -84,25 +80,25 @@
   (:split-pane (app/current-screen-value)))
 
 (defn- creature-editor [id]
-  (let [props (get creatures/creatures id)]
+  (let [props (properties/get id)]
     (editor-window
      :title "Creature"
      :id (:id props)
      :image-widget (ui/image (TextureRegionDrawable. (:texture (:image props))))
      :props-widget-pairs
-     [["type" (ui/text-button (name (:creature-type props)) (fn []
-                                                              (.addActor
-                                                               (stage)
-                                                               (creature-type-editor (:creature-type props)))))]
+     [["species" (ui/text-button (name (:species props)) (fn []
+                                                           (.addActor
+                                                            (stage)
+                                                            (species-editor (:species props)))))]
       ["level"  (ui/text-field (str (:level props)))]
       ["skills" (ui/table :rows (concat
                                  (for [skill (:skills props)]
-                                   [(ui/image (TextureRegionDrawable. (:texture (:image (get skills/skills skill)))))
+                                   [(ui/image (TextureRegionDrawable. (:texture (:image (properties/get skill)))))
                                     (ui/text-button " - " (fn [] (println "Remove " )))])
                                  [[(ui/text-button " + " (fn [] (println "Add ")))]]))]
       ["items"  (ui/table :rows (concat
                                  (for [item (:items props)]
-                                   [(ui/image (TextureRegionDrawable. (:texture (:image (get items/items item)))))
+                                   [(ui/image (TextureRegionDrawable. (:texture (:image (properties/get item)))))
                                     (ui/text-button " - " (fn [] (println "Remove " )))])
                                  [[(ui/text-button " + " (fn [] (println "Add ")))]]))]])))
 
@@ -113,20 +109,23 @@
 ; 'image-widget' => :image property
 
 (defn- item-editor [id]
-  (let [props (get items/items id)]
+  (let [props (properties/get id)]
     (editor-window
      :title "Item"
      :id (:id props)
      :image-widget (ui/image (TextureRegionDrawable. (:texture (:image props))))
      :props-widget-pairs
-     [["slot" (ui/label (name (:slot props)))]])))
+     [["slot" (ui/label (name (:slot props)))]
+      ["pretty name" (ui/text-field (:pretty-name props))]])))
+; TODO crashes when no slot of item (unimplemented items, e.g. empty heart ) !
+; => schema on edn/read validate and on save !!
 
 ; TODO effect, first choose from list which one
 ; then edit properties (different for each effect => depends on params !)
 ; param types ... e.g. damage.
 
 (defn- skill-editor [id]
-  (let [props (get skills/skills id)]
+  (let [props (properties/get id)]
     (editor-window
      :title "Skill"
      :id (:id props)
@@ -166,8 +165,8 @@
 (defn- creatures-table []
   (entities-table :title "Creatures"
                   :entities (sort-by #(vector (or (:level %) 9)
-                                              (name (:creature-type %)))
-                                     (vals creatures/creatures))
+                                              (name (:species %)))
+                                     (properties/all-with-key :species))
                   :entity-editor creature-editor
                   :extra-infos-widget #(ui/label (or (str (:level %) "-")))))
 
@@ -182,13 +181,13 @@
                                               )
 
                                        )
-                                     (vals items/items))
+                                     (properties/all-with-key :slot))
                   :entity-editor item-editor
                   :extra-infos-widget (fn [_] (ui/label ""))))
 
 (defn- skills-table []
   (entities-table :title "Skills"
-                  :entities (vals skills/skills)
+                  :entities (properties/all-with-key :spell?)
                   :entity-editor skill-editor
                   :extra-infos-widget (fn [_] (ui/label ""))))
 

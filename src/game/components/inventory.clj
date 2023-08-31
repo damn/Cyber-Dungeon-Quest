@@ -3,8 +3,8 @@
             [x.x :refer [defcomponent]]
             [utils.core :refer [assoc-in! find-first]]
             [game.db :as db]
-            [game.components.modifiers :as modifiers] ; not a component? or is ?
-            [game.items.core :as items]))
+            [game.properties :as properties]
+            [game.components.modifiers :as modifiers]))
 
 ; skills added/removed => make also gui-callback fn and bind-root.
 
@@ -151,4 +151,4 @@
     (swap! entity assoc :inventory empty-inventory)
     ;(swap! entity dissoc :items)
     (doseq [id items]
-      (try-pickup-item entity (id items/items)))))
+      (try-pickup-item entity (properties/get id)))))

@@ -2,7 +2,7 @@
   (:require [data.grid2d :as grid]
             [gdl.graphics :as g]
             [gdl.tiled :as tiled]
-            [game.entities.creature :as creatures]
+            [game.properties :as properties]
             [mapgen.utils :as utils]
             [mapgen.transitions :as transitions]
             [mapgen.movement-property :refer (movement-property)]
@@ -209,7 +209,7 @@
 
 (defn- creatures-with-level [level]
   (filter #(= level (:level %))
-          (vals creatures/creatures)))
+          (properties/all-with-key :species)))
 
 (def ^:private creature->tile
   (memoize

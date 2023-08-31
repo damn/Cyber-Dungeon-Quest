@@ -1,6 +1,5 @@
 (ns game.entities.creature
-  (:require [x.x :refer [defmodule defcomponent]]
-            [gdl.lc :as lc]
+  (:require [x.x :refer [defcomponent]]
             [gdl.audio :as audio]
             [gdl.graphics.image :as image]
             [gdl.graphics.world :as world]
@@ -16,14 +15,6 @@
             game.components.mana
             game.components.sleeping
             game.components.animation))
-
-(declare creatures
-         creature-types)
-
-(defmodule _
-  (lc/create [_]
-    (.bindRoot #'creatures      (properties/load-edn "creatures/creatures.edn"))
-    (.bindRoot #'creature-types (properties/load-edn "creatures/creature-types.edn"))))
 
 (defn- create-images [creature-name]
   (map #(image/create
@@ -92,9 +83,9 @@
    :choose-skill-type :npc
    :move-towards-enemy true}) ; -> different movement types as keywords & in entity-editor.
 
-(defn- creature-type-properties [creature-type]
-  (let [properties (creature-type creature-types)
-        multiplier {:id :creature-type/multiplier, ; TODO
+(defn- species-properties [species-id]
+  (let [properties (properties/get species-id)
+        multiplier {:id :species/multiplier, ; TODO
                     :speed 3,
                     :hp 10}]
     (-> properties
@@ -117,7 +108,7 @@
         images (create-images creature-name)
         [width height] (images->world-unit-dimensions images)
         ; TODO merge these speed/hp just into properties
-        {:keys [speed hp]} (creature-type-properties (:creature-type properties))]
+        {:keys [speed hp]} (species-properties (:species properties))]
     ; (distinct (mapcat keys (vals creatures)))
     ; (:image :id :creature-type :items :level :skills)
     ; :image -> gets rendered in game => do not merge !
@@ -198,7 +189,7 @@
   ; calls create-entity! just for creature-id entity
   ; and checks for invalid-position error
   (let [entity* (-> creature-id
-                    creatures
+                    properties/get
                     (create-creature-data creature-params)
                     (assoc :position position)
                     assoc-left-bottom)] ; TODO strange that it needs that , make case if left-bottom not available?
