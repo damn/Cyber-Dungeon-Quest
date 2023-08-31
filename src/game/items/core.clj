@@ -8,34 +8,6 @@
             [game.skills.core :as skills]
             [game.player.entity :refer (player-entity)]))
 
-; TODO
-; * shield-wood-buckler / rings not having modifiers anymore
-; * center sprites (staff not centered for example)
-; * :name used as :id => (look at this later, like skill-type)
-
-(defn- pretty-name [id]
-  (->> (str/split (name id) #"-")
-       (map str/capitalize)
-       reverse
-       (str/join " ")))
-
-; :modifiers [[:shield [:target :physical 0.2]]]
-;-    <property name="modifiers" value="[[:shield [:target :physical 0.2]]]"/>
-;-    <property name="name" value="shield-wood-buckler"/>
-;
-;-    <property name="modifiers" value="[[:damage [:source :physical [:val :inc] 5]]]"/>
-;-    <property name="name" value="ring-gold"/>
-;
-;-    <property name="modifiers" value="[[:damage [:source :magic [:max :mult] 0.5]]]"/>
-;-    <property name="name" value="ring-azure"/>
-
-(defn- prepare-item-properties [{:keys [id modifiers] :as properties}]
-  (assoc properties
-         :pretty-name (pretty-name id)))
-
-; TODO
-; {:id :weapon/defaults, :range 0.5, :action-time 500, :damage [5 10]}
-
 (defn- apply-weapon-defaults [{:keys [damage] :as properties}]
   (-> properties
       (update :action-time #(int (* 500 %)))
@@ -86,8 +58,7 @@
   (lc/create [_]
     (.bindRoot #'items (properties/load-edn "items/properties.edn"
                                             :transform
-                                            (comp handle-weapons
-                                                  prepare-item-properties)))))
+                                            handle-weapons))))
 
 ; diablo2 unique gold rgb 144 136 88
 (color/defrgb ^:private gold-item-color 0.84 0.8 0.52)

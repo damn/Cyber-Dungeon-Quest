@@ -4,797 +4,1020 @@
   :id :axe,
   :image {:file "items/images.png", :sub-image-bounds (336 96 48 48)},
   :range 1.0,
-  :two-handed? true}
+  :two-handed? true,
+  :pretty-name "Axe"}
  {:slot :weapon,
   :action-time nil,
   :damage nil,
   :id :axe-exotic1,
   :image {:file "items/images.png", :sub-image-bounds (720 144 48 48)},
   :range nil,
-  :two-handed? true}
+  :two-handed? true,
+  :pretty-name "Exotic1 Axe"}
  {:image {:file "items/images.png", :sub-image-bounds (336 624 48 48)},
   :slot :boot,
-  :id :blood-boot}
+  :id :blood-boot,
+  :pretty-name "Boot Blood"}
  {:image {:file "items/images.png", :sub-image-bounds (336 480 48 48)},
   :slot :chest,
-  :id :blood-chest}
+  :id :blood-chest,
+  :pretty-name "Chest Blood"}
  {:image {:file "items/images.png", :sub-image-bounds (336 576 48 48)},
   :slot :glove,
-  :id :blood-glove}
+  :id :blood-glove,
+  :pretty-name "Glove Blood"}
  {:image {:file "items/images.png", :sub-image-bounds (336 432 48 48)},
   :slot :helm,
-  :id :blood-helm}
+  :id :blood-helm,
+  :pretty-name "Helm Blood"}
  {:image {:file "items/images.png", :sub-image-bounds (336 528 48 48)},
   :slot :leg,
-  :id :blood-leg}
+  :id :blood-leg,
+  :pretty-name "Leg Blood"}
  {:image {:file "items/images.png", :sub-image-bounds (48 48 48 48)},
-  :id :book-black}
+  :id :book-black,
+  :pretty-name "Black Book"}
  {:image {:file "items/images.png", :sub-image-bounds (144 48 48 48)},
-  :id :book-blue}
+  :id :book-blue,
+  :pretty-name "Blue Book"}
  {:image {:file "items/images.png", :sub-image-bounds (0 48 48 48)},
-  :id :book-brown}
+  :id :book-brown,
+  :pretty-name "Brown Book"}
  {:image {:file "items/images.png", :sub-image-bounds (240 48 48 48)},
-  :id :book-evil}
+  :id :book-evil,
+  :pretty-name "Evil Book"}
  {:image {:file "items/images.png", :sub-image-bounds (192 48 48 48)},
-  :id :book-green}
+  :id :book-green,
+  :pretty-name "Green Book"}
  {:image {:file "items/images.png", :sub-image-bounds (288 48 48 48)},
-  :id :book-latch}
+  :id :book-latch,
+  :pretty-name "Latch Book"}
  {:image {:file "items/images.png", :sub-image-bounds (96 48 48 48)},
-  :id :book-red}
+  :id :book-red,
+  :pretty-name "Red Book"}
  {:slot :weapon,
   :action-time 1.2,
   :damage 1.2,
   :id :broadsword,
   :image {:file "items/images.png", :sub-image-bounds (240 96 48 48)},
   :range 1.0,
-  :two-handed? false}
+  :two-handed? false,
+  :pretty-name "Broadsword"}
  {:image {:file "items/images.png", :sub-image-bounds (144 624 48 48)},
   :slot :boot,
-  :id :chain-boot}
+  :id :chain-boot,
+  :pretty-name "Boot Chain"}
  {:image {:file "items/images.png", :sub-image-bounds (144 480 48 48)},
   :slot :chest,
-  :id :chain-chest}
+  :id :chain-chest,
+  :pretty-name "Chest Chain"}
  {:image {:file "items/images.png", :sub-image-bounds (144 576 48 48)},
   :slot :glove,
-  :id :chain-glove}
+  :id :chain-glove,
+  :pretty-name "Glove Chain"}
  {:image {:file "items/images.png", :sub-image-bounds (144 432 48 48)},
   :slot :helm,
-  :id :chain-helm}
+  :id :chain-helm,
+  :pretty-name "Helm Chain"}
  {:image {:file "items/images.png", :sub-image-bounds (144 528 48 48)},
   :slot :leg,
-  :id :chain-leg}
+  :id :chain-leg,
+  :pretty-name "Leg Chain"}
  {:image {:file "items/images.png", :sub-image-bounds (432 48 48 48)},
-  :id :chest-empty}
+  :id :chest-empty,
+  :pretty-name "Empty Chest"}
  {:image {:file "items/images.png", :sub-image-bounds (336 48 48 48)},
-  :id :chest-gold}
+  :id :chest-gold,
+  :pretty-name "Gold Chest"}
  {:image {:file "items/images.png", :sub-image-bounds (384 48 48 48)},
-  :id :chest-gold-open}
+  :id :chest-gold-open,
+  :pretty-name "Open Gold Chest"}
  {:image {:file "items/images.png", :sub-image-bounds (480 48 48 48)},
-  :id :chest-silver-}
+  :id :chest-silver-,
+  :pretty-name "Silver Chest"}
  {:image {:file "items/images.png", :sub-image-bounds (576 48 48 48)},
-  :id :chest-silver-empty}
+  :id :chest-silver-empty,
+  :pretty-name "Empty Silver Chest"}
  {:image {:file "items/images.png", :sub-image-bounds (528 48 48 48)},
-  :id :chest-silver-open}
+  :id :chest-silver-open,
+  :pretty-name "Open Silver Chest"}
  {:image {:file "items/images.png", :sub-image-bounds (480 624 48 48)},
   :slot :cloak,
-  :id :cloak-blood}
+  :id :cloak-blood,
+  :pretty-name "Blood Cloak"}
  {:image {:file "items/images.png", :sub-image-bounds (480 432 48 48)},
   :slot :cloak,
-  :id :cloak-cloth}
+  :id :cloak-cloth,
+  :pretty-name "Cloth Cloak"}
  {:image {:file "items/images.png", :sub-image-bounds (528 624 48 48)},
   :slot :cloak,
-  :id :cloak-eye}
+  :id :cloak-eye,
+  :pretty-name "Eye Cloak"}
  {:image {:file "items/images.png", :sub-image-bounds (480 576 48 48)},
   :slot :cloak,
-  :id :cloak-fur}
+  :id :cloak-fur,
+  :pretty-name "Fur Cloak"}
  {:image {:file "items/images.png", :sub-image-bounds (528 576 48 48)},
   :slot :cloak,
-  :id :cloak-glow}
+  :id :cloak-glow,
+  :pretty-name "Glow Cloak"}
  {:image {:file "items/images.png", :sub-image-bounds (528 432 48 48)},
   :slot :cloak,
-  :id :cloak-gold}
+  :id :cloak-gold,
+  :pretty-name "Gold Cloak"}
  {:image {:file "items/images.png", :sub-image-bounds (480 480 48 48)},
   :slot :cloak,
-  :id :cloak-leather}
+  :id :cloak-leather,
+  :pretty-name "Leather Cloak"}
  {:image {:file "items/images.png", :sub-image-bounds (528 528 48 48)},
   :slot :cloak,
-  :id :cloak-ornate}
+  :id :cloak-ornate,
+  :pretty-name "Ornate Cloak"}
  {:image {:file "items/images.png", :sub-image-bounds (480 528 48 48)},
   :slot :cloak,
-  :id :cloak-royal}
+  :id :cloak-royal,
+  :pretty-name "Royal Cloak"}
  {:image {:file "items/images.png", :sub-image-bounds (528 480 48 48)},
   :slot :cloak,
-  :id :cloak-tattered}
+  :id :cloak-tattered,
+  :pretty-name "Tattered Cloak"}
  {:image {:file "items/images.png", :sub-image-bounds (0 624 48 48)},
   :slot :boot,
-  :id :cloth-boot}
+  :id :cloth-boot,
+  :pretty-name "Boot Cloth"}
  {:image {:file "items/images.png", :sub-image-bounds (0 480 48 48)},
   :slot :chest,
-  :id :cloth-chest}
+  :id :cloth-chest,
+  :pretty-name "Chest Cloth"}
  {:image {:file "items/images.png", :sub-image-bounds (0 576 48 48)},
   :slot :glove,
-  :id :cloth-glove}
+  :id :cloth-glove,
+  :pretty-name "Glove Cloth"}
  {:image {:file "items/images.png", :sub-image-bounds (0 432 48 48)},
   :slot :helm,
-  :id :cloth-helm}
+  :id :cloth-helm,
+  :pretty-name "Helm Cloth"}
  {:image {:file "items/images.png", :sub-image-bounds (0 528 48 48)},
   :slot :leg,
-  :id :cloth-leg}
+  :id :cloth-leg,
+  :pretty-name "Leg Cloth"}
  {:slot :weapon,
   :action-time 1.4,
   :damage 1.4,
   :id :club,
   :image {:file "items/images.png", :sub-image-bounds (624 96 48 48)},
   :range 1.0,
-  :two-handed? false}
+  :two-handed? false,
+  :pretty-name "Club"}
  {:slot :weapon,
   :action-time nil,
   :damage nil,
   :id :club-spiked,
   :image {:file "items/images.png", :sub-image-bounds (672 96 48 48)},
   :range nil,
-  :two-handed? false}
+  :two-handed? false,
+  :pretty-name "Spiked Club"}
  {:image {:file "items/images.png", :sub-image-bounds (624 0 48 48)},
-  :id :coin-copper}
+  :id :coin-copper,
+  :pretty-name "Copper Coin"}
  {:image {:file "items/images.png", :sub-image-bounds (720 0 48 48)},
-  :id :coin-gold}
+  :id :coin-gold,
+  :pretty-name "Gold Coin"}
  {:image {:file "items/images.png", :sub-image-bounds (672 0 48 48)},
-  :id :coin-silver}
+  :id :coin-silver,
+  :pretty-name "Silver Coin"}
  {:slot :weapon,
   :action-time nil,
   :damage nil,
   :id :cross,
   :image {:file "items/images.png", :sub-image-bounds (432 144 48 48)},
   :range nil,
-  :two-handed? false}
+  :two-handed? false,
+  :pretty-name "Cross"}
  {:slot :weapon,
   :action-time nil,
   :damage nil,
   :id :crossbow,
   :image {:file "items/images.png", :sub-image-bounds (336 144 48 48)},
   :range nil,
-  :two-handed? true}
+  :two-handed? true,
+  :pretty-name "Crossbow"}
  {:image {:file "items/images.png", :sub-image-bounds (672 336 48 48)},
-  :id :crystal-blood}
+  :id :crystal-blood,
+  :pretty-name "Blood Crystal"}
  {:image {:file "items/images.png", :sub-image-bounds (720 336 48 48)},
-  :id :crystal-cloud}
+  :id :crystal-cloud,
+  :pretty-name "Cloud Crystal"}
  {:image {:file "items/images.png", :sub-image-bounds (816 336 48 48)},
-  :id :crystal-crimson}
+  :id :crystal-crimson,
+  :pretty-name "Crimson Crystal"}
  {:image {:file "items/images.png", :sub-image-bounds (624 336 48 48)},
-  :id :crystal-dragon}
+  :id :crystal-dragon,
+  :pretty-name "Dragon Crystal"}
  {:image {:file "items/images.png", :sub-image-bounds (768 336 48 48)},
-  :id :crystal-onyx}
+  :id :crystal-onyx,
+  :pretty-name "Onyx Crystal"}
  {:image {:file "items/images.png", :sub-image-bounds (576 336 48 48)},
-  :id :crystal-sky}
+  :id :crystal-sky,
+  :pretty-name "Sky Crystal"}
  {:image {:file "items/images.png", :sub-image-bounds (864 336 48 48)},
-  :id :crystal-sun}
+  :id :crystal-sun,
+  :pretty-name "Sun Crystal"}
  {:slot :weapon,
   :action-time 0.5,
   :damage 0.5,
   :id :dagger,
   :image {:file "items/images.png", :sub-image-bounds (48 96 48 48)},
   :range 1.0,
-  :two-handed? false}
+  :two-handed? false,
+  :pretty-name "Dagger"}
  {:slot :weapon,
   :action-time nil,
   :damage nil,
   :id :dirk,
   :image {:file "items/images.png", :sub-image-bounds (144 96 48 48)},
   :range nil,
-  :two-handed? false}
+  :two-handed? false,
+  :pretty-name "Dirk"}
  {:image {:file "items/images.png", :sub-image-bounds (768 48 48 48)},
-  :id :drumstick}
+  :id :drumstick,
+  :pretty-name "Drumstick"}
  {:slot :weapon,
   :action-time 0.75,
   :damage 0.75,
   :id :falchion,
   :image {:file "items/images.png", :sub-image-bounds (192 96 48 48)},
   :range 1.0,
-  :two-handed? false}
+  :two-handed? false,
+  :pretty-name "Falchion"}
  {:image {:file "items/images.png", :sub-image-bounds (864 48 48 48)},
-  :id :flask-blue}
+  :id :flask-blue,
+  :pretty-name "Blue Flask"}
  {:image {:file "items/images.png", :sub-image-bounds (912 48 48 48)},
-  :id :flask-green}
+  :id :flask-green,
+  :pretty-name "Green Flask"}
  {:image {:file "items/images.png", :sub-image-bounds (816 48 48 48)},
-  :id :flask-red}
+  :id :flask-red,
+  :pretty-name "Red Flask"}
  {:image {:file "items/images.png", :sub-image-bounds (432 384 48 48)},
-  :id :gem-amethyst}
+  :id :gem-amethyst,
+  :pretty-name "Amethyst Gem"}
  {:image {:file "items/images.png", :sub-image-bounds (288 384 48 48)},
-  :id :gem-emerald}
+  :id :gem-emerald,
+  :pretty-name "Emerald Gem"}
  {:image {:file "items/images.png", :sub-image-bounds (336 384 48 48)},
-  :id :gem-ruby}
+  :id :gem-ruby,
+  :pretty-name "Ruby Gem"}
  {:image {:file "items/images.png", :sub-image-bounds (384 384 48 48)},
-  :id :gem-sapphire}
+  :id :gem-sapphire,
+  :pretty-name "Sapphire Gem"}
  {:image {:file "items/images.png", :sub-image-bounds (240 384 48 48)},
-  :id :gem-tourmaline}
+  :id :gem-tourmaline,
+  :pretty-name "Tourmaline Gem"}
  {:image {:file "items/images.png", :sub-image-bounds (288 624 48 48)},
   :slot :boot,
-  :id :gold-boot}
+  :id :gold-boot,
+  :pretty-name "Boot Gold"}
  {:image {:file "items/images.png", :sub-image-bounds (288 480 48 48)},
   :slot :chest,
-  :id :gold-chest}
+  :id :gold-chest,
+  :pretty-name "Chest Gold"}
  {:image {:file "items/images.png", :sub-image-bounds (288 576 48 48)},
   :slot :glove,
-  :id :gold-glove}
+  :id :gold-glove,
+  :pretty-name "Glove Gold"}
  {:image {:file "items/images.png", :sub-image-bounds (288 432 48 48)},
   :slot :helm,
-  :id :gold-helm}
+  :id :gold-helm,
+  :pretty-name "Helm Gold"}
  {:image {:file "items/images.png", :sub-image-bounds (288 528 48 48)},
   :slot :leg,
-  :id :gold-leg}
+  :id :gold-leg,
+  :pretty-name "Leg Gold"}
  {:slot :weapon,
   :action-time nil,
   :damage nil,
   :id :greataxe,
   :image {:file "items/images.png", :sub-image-bounds (384 96 48 48)},
   :range nil,
-  :two-handed? true}
+  :two-handed? true,
+  :pretty-name "Greataxe"}
  {:slot :weapon,
   :action-time nil,
   :damage nil,
   :id :greatmace,
   :image {:file "items/images.png", :sub-image-bounds (480 96 48 48)},
   :range nil,
-  :two-handed? true}
+  :two-handed? true,
+  :pretty-name "Greatmace"}
  {:slot :weapon,
   :action-time 1.3,
   :damage 1.3,
   :id :greatspear,
   :image {:file "items/images.png", :sub-image-bounds (48 144 48 48)},
   :range 2.0,
-  :two-handed? true}
+  :two-handed? true,
+  :pretty-name "Greatspear"}
  {:slot :weapon,
   :action-time 1.3,
   :damage 1.3,
   :id :hammer,
   :image {:file "items/images.png", :sub-image-bounds (528 96 48 48)},
   :range 1.0,
-  :two-handed? false}
+  :two-handed? false,
+  :pretty-name "Hammer"}
  {:slot :weapon,
   :action-time nil,
   :damage nil,
   :id :hammer-exotic1,
   :image {:file "items/images.png", :sub-image-bounds (768 144 48 48)},
   :range nil,
-  :two-handed? true}
+  :two-handed? true,
+  :pretty-name "Exotic1 Hammer"}
  {:slot :weapon,
   :action-time nil,
   :damage nil,
   :id :handaxe,
   :image {:file "items/images.png", :sub-image-bounds (288 96 48 48)},
   :range nil,
-  :two-handed? false}
+  :two-handed? false,
+  :pretty-name "Handaxe"}
  {:image {:file "items/images.png", :sub-image-bounds (768 0 48 48)},
-  :id :heart-empty}
+  :id :heart-empty,
+  :pretty-name "Empty Heart"}
  {:image {:file "items/images.png", :sub-image-bounds (960 0 48 48)},
-  :id :heart-green-full}
+  :id :heart-green-full,
+  :pretty-name "Full Green Heart"}
  {:image {:file "items/images.png", :sub-image-bounds (912 0 48 48)},
-  :id :heart-green-half}
+  :id :heart-green-half,
+  :pretty-name "Half Green Heart"}
  {:image {:file "items/images.png", :sub-image-bounds (864 0 48 48)},
-  :id :heart-red-full}
+  :id :heart-red-full,
+  :pretty-name "Full Red Heart"}
  {:image {:file "items/images.png", :sub-image-bounds (816 0 48 48)},
-  :id :heart-red-half}
+  :id :heart-red-half,
+  :pretty-name "Half Red Heart"}
  {:image {:file "items/images.png", :sub-image-bounds (144 0 48 48)},
-  :id :key-blue}
+  :id :key-blue,
+  :pretty-name "Blue Key"}
  {:image {:file "items/images.png", :sub-image-bounds (240 0 48 48)},
-  :id :key-bone}
+  :id :key-bone,
+  :pretty-name "Bone Key"}
  {:image {:file "items/images.png", :sub-image-bounds (0 0 48 48)},
-  :id :key-gold}
+  :id :key-gold,
+  :pretty-name "Gold Key"}
  {:image {:file "items/images.png", :sub-image-bounds (192 0 48 48)},
-  :id :key-green}
+  :id :key-green,
+  :pretty-name "Green Key"}
  {:image {:file "items/images.png", :sub-image-bounds (288 0 48 48)},
-  :id :key-ornate}
+  :id :key-ornate,
+  :pretty-name "Ornate Key"}
  {:image {:file "items/images.png", :sub-image-bounds (96 0 48 48)},
-  :id :key-red}
+  :id :key-red,
+  :pretty-name "Red Key"}
  {:image {:file "items/images.png", :sub-image-bounds (48 0 48 48)},
-  :id :key-silver}
+  :id :key-silver,
+  :pretty-name "Silver Key"}
  {:slot :weapon,
   :action-time nil,
   :damage nil,
   :id :lance,
   :image {:file "items/images.png", :sub-image-bounds (144 144 48 48)},
   :range nil,
-  :two-handed? true}
+  :two-handed? true,
+  :pretty-name "Lance"}
  {:image {:file "items/images.png", :sub-image-bounds (48 624 48 48)},
   :slot :boot,
-  :id :leather-boot}
+  :id :leather-boot,
+  :pretty-name "Boot Leather"}
  {:image {:file "items/images.png", :sub-image-bounds (48 480 48 48)},
   :slot :chest,
-  :id :leather-chest}
+  :id :leather-chest,
+  :pretty-name "Chest Leather"}
  {:image {:file "items/images.png", :sub-image-bounds (48 576 48 48)},
   :slot :glove,
-  :id :leather-glove}
+  :id :leather-glove,
+  :pretty-name "Glove Leather"}
  {:image {:file "items/images.png", :sub-image-bounds (48 432 48 48)},
   :slot :helm,
-  :id :leather-helm}
+  :id :leather-helm,
+  :pretty-name "Helm Leather"}
  {:image {:file "items/images.png", :sub-image-bounds (48 528 48 48)},
   :slot :leg,
-  :id :leather-leg}
+  :id :leather-leg,
+  :pretty-name "Leg Leather"}
  {:slot :weapon,
   :action-time 3.0,
   :damage 3.0,
   :id :longbow,
   :image {:file "items/images.png", :sub-image-bounds (240 144 48 48)},
   :range 15.0,
-  :two-handed? true}
+  :two-handed? true,
+  :pretty-name "Longbow"}
  {:slot :weapon,
   :action-time nil,
   :damage nil,
   :id :mace,
   :image {:file "items/images.png", :sub-image-bounds (432 96 48 48)},
   :range nil,
-  :two-handed? false}
+  :two-handed? false,
+  :pretty-name "Mace"}
  {:slot :weapon,
   :action-time nil,
   :damage nil,
   :id :magic-axe-frost,
   :image {:file "items/images.png", :sub-image-bounds (144 192 48 48)},
   :range nil,
-  :two-handed? true}
+  :two-handed? true,
+  :pretty-name "Frost Axe Magic"}
  {:slot :weapon,
   :action-time nil,
   :damage nil,
   :id :magic-bow-horned,
   :image {:file "items/images.png", :sub-image-bounds (576 192 48 48)},
   :range nil,
-  :two-handed? true}
+  :two-handed? true,
+  :pretty-name "Horned Bow Magic"}
  {:slot :weapon,
   :action-time nil,
   :damage nil,
   :id :magic-hammer-sun,
   :image {:file "items/images.png", :sub-image-bounds (192 192 48 48)},
   :range nil,
-  :two-handed? true}
+  :two-handed? true,
+  :pretty-name "Sun Hammer Magic"}
  {:slot :weapon,
   :action-time nil,
   :damage nil,
   :id :magic-spear-blood,
   :image {:file "items/images.png", :sub-image-bounds (528 192 48 48)},
   :range nil,
-  :two-handed? true}
+  :two-handed? true,
+  :pretty-name "Blood Spear Magic"}
  {:slot :weapon,
   :action-time nil,
   :damage nil,
   :id :magic-staff-chaos,
   :image {:file "items/images.png", :sub-image-bounds (480 192 48 48)},
   :range nil,
-  :two-handed? true}
+  :two-handed? true,
+  :pretty-name "Chaos Staff Magic"}
  {:slot :weapon,
   :action-time nil,
   :damage nil,
   :id :magic-staff-venom,
   :image {:file "items/images.png", :sub-image-bounds (240 192 48 48)},
   :range nil,
-  :two-handed? true}
+  :two-handed? true,
+  :pretty-name "Venom Staff Magic"}
  {:image {:file "items/images.png", :sub-image-bounds (432 192 48 48)},
   :slot :weapon,
   :id :magic-staff-winged,
-  :two-handed? true}
+  :two-handed? true,
+  :pretty-name "Winged Staff Magic"}
  {:slot :weapon,
   :action-time nil,
   :damage nil,
   :id :magic-sword-acid,
   :image {:file "items/images.png", :sub-image-bounds (384 192 48 48)},
   :range nil,
-  :two-handed? false}
+  :two-handed? false,
+  :pretty-name "Acid Sword Magic"}
  {:slot :weapon,
   :action-time nil,
   :damage nil,
   :id :magic-sword-cold,
   :image {:file "items/images.png", :sub-image-bounds (336 192 48 48)},
   :range nil,
-  :two-handed? false}
+  :two-handed? false,
+  :pretty-name "Cold Sword Magic"}
  {:slot :weapon,
   :action-time nil,
   :damage nil,
   :id :magic-sword-flame,
   :image {:file "items/images.png", :sub-image-bounds (288 192 48 48)},
   :range nil,
-  :two-handed? false}
+  :two-handed? false,
+  :pretty-name "Flame Sword Magic"}
  {:slot :weapon,
   :action-time nil,
   :damage nil,
   :id :magic-sword-hellfire,
   :image {:file "items/images.png", :sub-image-bounds (48 192 48 48)},
   :range nil,
-  :two-handed? true}
+  :two-handed? true,
+  :pretty-name "Hellfire Sword Magic"}
  {:slot :weapon,
   :action-time nil,
   :damage nil,
   :id :magic-sword-lightning,
   :image {:file "items/images.png", :sub-image-bounds (96 192 48 48)},
   :range nil,
-  :two-handed? false}
+  :two-handed? false,
+  :pretty-name "Lightning Sword Magic"}
  {:slot :weapon,
   :action-time 1.0,
   :damage 1.0,
   :id :magic-sword-vorpal,
   :image {:file "items/images.png", :sub-image-bounds (0 192 48 48)},
   :range 1.0,
-  :two-handed? false}
+  :two-handed? false,
+  :pretty-name "Vorpal Sword Magic"}
  {:slot :weapon,
   :action-time nil,
   :damage nil,
   :id :maul,
   :image {:file "items/images.png", :sub-image-bounds (576 96 48 48)},
   :range nil,
-  :two-handed? true}
+  :two-handed? true,
+  :pretty-name "Maul"}
  {:image {:file "items/images.png", :sub-image-bounds (432 624 48 48)},
   :slot :boot,
-  :id :mystic-boot}
+  :id :mystic-boot,
+  :pretty-name "Boot Mystic"}
  {:image {:file "items/images.png", :sub-image-bounds (432 480 48 48)},
   :slot :chest,
-  :id :mystic-chest}
+  :id :mystic-chest,
+  :pretty-name "Chest Mystic"}
  {:image {:file "items/images.png", :sub-image-bounds (432 576 48 48)},
   :slot :glove,
-  :id :mystic-glove}
+  :id :mystic-glove,
+  :pretty-name "Glove Mystic"}
  {:image {:file "items/images.png", :sub-image-bounds (432 432 48 48)},
   :slot :helm,
-  :id :mystic-helm}
+  :id :mystic-helm,
+  :pretty-name "Helm Mystic"}
  {:image {:file "items/images.png", :sub-image-bounds (432 528 48 48)},
   :slot :leg,
-  :id :mystic-leg}
+  :id :mystic-leg,
+  :pretty-name "Leg Mystic"}
  {:image {:file "items/images.png", :sub-image-bounds (480 384 48 48)},
   :slot :necklace,
-  :id :necklace-amethyst}
+  :id :necklace-amethyst,
+  :pretty-name "Amethyst Necklace"}
  {:image {:file "items/images.png", :sub-image-bounds (720 384 48 48)},
   :slot :necklace,
-  :id :necklace-cross}
+  :id :necklace-cross,
+  :pretty-name "Cross Necklace"}
  {:image {:file "items/images.png", :sub-image-bounds (864 384 48 48)},
   :slot :necklace,
-  :id :necklace-dark}
+  :id :necklace-dark,
+  :pretty-name "Dark Necklace"}
  {:image {:file "items/images.png", :sub-image-bounds (624 384 48 48)},
   :slot :necklace,
-  :id :necklace-emerald}
+  :id :necklace-emerald,
+  :pretty-name "Emerald Necklace"}
  {:image {:file "items/images.png", :sub-image-bounds (768 384 48 48)},
   :slot :necklace,
-  :id :necklace-eye}
+  :id :necklace-eye,
+  :pretty-name "Eye Necklace"}
  {:image {:file "items/images.png", :sub-image-bounds (816 384 48 48)},
   :slot :necklace,
-  :id :necklace-mystic}
+  :id :necklace-mystic,
+  :pretty-name "Mystic Necklace"}
  {:image {:file "items/images.png", :sub-image-bounds (672 384 48 48)},
   :slot :necklace,
-  :id :necklace-ornate}
+  :id :necklace-ornate,
+  :pretty-name "Ornate Necklace"}
  {:image {:file "items/images.png", :sub-image-bounds (576 384 48 48)},
   :slot :necklace,
-  :id :necklace-ruby}
+  :id :necklace-ruby,
+  :pretty-name "Ruby Necklace"}
  {:image {:file "items/images.png", :sub-image-bounds (528 384 48 48)},
   :slot :necklace,
-  :id :necklace-tourmaline}
+  :id :necklace-tourmaline,
+  :pretty-name "Tourmaline Necklace"}
  {:image {:file "items/images.png", :sub-image-bounds (192 624 48 48)},
   :slot :boot,
-  :id :plate-boot}
+  :id :plate-boot,
+  :pretty-name "Boot Plate"}
  {:image {:file "items/images.png", :sub-image-bounds (192 480 48 48)},
   :slot :chest,
-  :id :plate-chest}
+  :id :plate-chest,
+  :pretty-name "Chest Plate"}
  {:image {:file "items/images.png", :sub-image-bounds (192 576 48 48)},
   :slot :glove,
-  :id :plate-glove}
+  :id :plate-glove,
+  :pretty-name "Glove Plate"}
  {:image {:file "items/images.png", :sub-image-bounds (192 432 48 48)},
   :slot :helm,
-  :id :plate-helm}
+  :id :plate-helm,
+  :pretty-name "Helm Plate"}
  {:image {:file "items/images.png", :sub-image-bounds (192 528 48 48)},
   :slot :leg,
-  :id :plate-leg}
+  :id :plate-leg,
+  :pretty-name "Leg Plate"}
  {:image {:file "items/images.png", :sub-image-bounds (576 0 48 48)},
-  :id :potion-black}
+  :id :potion-black,
+  :pretty-name "Black Potion"}
  {:image {:file "items/images.png", :sub-image-bounds (384 0 48 48)},
-  :id :potion-blue}
+  :id :potion-blue,
+  :pretty-name "Blue Potion"}
  {:image {:file "items/images.png", :sub-image-bounds (336 0 48 48)},
-  :id :potion-empty}
+  :id :potion-empty,
+  :pretty-name "Empty Potion"}
  {:image {:file "items/images.png", :sub-image-bounds (432 0 48 48)},
-  :id :potion-green}
+  :id :potion-green,
+  :pretty-name "Green Potion"}
  {:image {:file "items/images.png", :sub-image-bounds (480 0 48 48)},
-  :id :potion-red}
+  :id :potion-red,
+  :pretty-name "Red Potion"}
  {:image {:file "items/images.png", :sub-image-bounds (528 0 48 48)},
-  :id :potion-white}
+  :id :potion-white,
+  :pretty-name "White Potion"}
  {:slot :weapon,
   :action-time 0.9,
   :damage 0.7,
   :id :quarterstaff,
   :image {:file "items/images.png", :sub-image-bounds (192 144 48 48)},
   :range 1.5,
-  :two-handed? true}
+  :two-handed? true,
+  :pretty-name "Quarterstaff"}
  {:image {:file "items/images.png", :sub-image-bounds (240 336 48 48)},
   :slot :rings,
-  :id :ring-amethyst}
+  :id :ring-amethyst,
+  :pretty-name "Amethyst Ring"}
  {:image {:file "items/images.png", :sub-image-bounds (288 336 48 48)},
   :slot :rings,
-  :id :ring-azure}
+  :id :ring-azure,
+  :pretty-name "Azure Ring"}
  {:image {:file "items/images.png", :sub-image-bounds (528 336 48 48)},
   :slot :rings,
-  :id :ring-cold}
+  :id :ring-cold,
+  :pretty-name "Cold Ring"}
  {:image {:file "items/images.png", :sub-image-bounds (48 336 48 48)},
   :slot :rings,
-  :id :ring-copper}
+  :id :ring-copper,
+  :pretty-name "Copper Ring"}
  {:image {:file "items/images.png", :sub-image-bounds (480 336 48 48)},
   :slot :rings,
-  :id :ring-diamond}
+  :id :ring-diamond,
+  :pretty-name "Diamond Ring"}
  {:image {:file "items/images.png", :sub-image-bounds (192 336 48 48)},
   :slot :rings,
-  :id :ring-emerald}
+  :id :ring-emerald,
+  :pretty-name "Emerald Ring"}
  {:image {:file "items/images.png", :sub-image-bounds (384 336 48 48)},
   :slot :rings,
-  :id :ring-flame}
+  :id :ring-flame,
+  :pretty-name "Flame Ring"}
  {:image {:file "items/images.png", :sub-image-bounds (96 336 48 48)},
   :slot :rings,
-  :id :ring-gold}
+  :id :ring-gold,
+  :pretty-name "Gold Ring"}
  {:image {:file "items/images.png", :sub-image-bounds (432 336 48 48)},
   :slot :rings,
-  :id :ring-ornate}
+  :id :ring-ornate,
+  :pretty-name "Ornate Ring"}
  {:image {:file "items/images.png", :sub-image-bounds (336 336 48 48)},
   :slot :rings,
-  :id :ring-pearl}
+  :id :ring-pearl,
+  :pretty-name "Pearl Ring"}
  {:image {:file "items/images.png", :sub-image-bounds (144 336 48 48)},
   :slot :rings,
-  :id :ring-ruby}
+  :id :ring-ruby,
+  :pretty-name "Ruby Ring"}
  {:image {:file "items/images.png", :sub-image-bounds (0 336 48 48)},
   :slot :rings,
-  :id :ring-silver}
+  :id :ring-silver,
+  :pretty-name "Silver Ring"}
  {:image {:file "items/images.png", :sub-image-bounds (240 624 48 48)},
   :slot :boot,
-  :id :royal-boot}
+  :id :royal-boot,
+  :pretty-name "Boot Royal"}
  {:image {:file "items/images.png", :sub-image-bounds (240 480 48 48)},
   :slot :chest,
-  :id :royal-chest}
+  :id :royal-chest,
+  :pretty-name "Chest Royal"}
  {:image {:file "items/images.png", :sub-image-bounds (240 576 48 48)},
   :slot :glove,
-  :id :royal-glove}
+  :id :royal-glove,
+  :pretty-name "Glove Royal"}
  {:image {:file "items/images.png", :sub-image-bounds (240 432 48 48)},
   :slot :helm,
-  :id :royal-helm}
+  :id :royal-helm,
+  :pretty-name "Helm Royal"}
  {:image {:file "items/images.png", :sub-image-bounds (240 528 48 48)},
   :slot :leg,
-  :id :royal-leg}
+  :id :royal-leg,
+  :pretty-name "Leg Royal"}
  {:image {:file "items/images.png", :sub-image-bounds (720 48 48 48)},
-  :id :satchel}
+  :id :satchel,
+  :pretty-name "Satchel"}
  {:image {:file "items/images.png", :sub-image-bounds (576 288 48 48)},
   :slot :shield,
-  :id :shield-elven-buckler}
+  :id :shield-elven-buckler,
+  :pretty-name "Buckler Elven Shield"}
  {:image {:file "items/images.png", :sub-image-bounds (720 288 48 48)},
   :slot :shield,
-  :id :shield-elven-great}
+  :id :shield-elven-great,
+  :pretty-name "Great Elven Shield"}
  {:image {:file "items/images.png", :sub-image-bounds (624 288 48 48)},
   :slot :shield,
-  :id :shield-elven-heater}
+  :id :shield-elven-heater,
+  :pretty-name "Heater Elven Shield"}
  {:image {:file "items/images.png", :sub-image-bounds (672 288 48 48)},
   :slot :shield,
-  :id :shield-elven-kite}
+  :id :shield-elven-kite,
+  :pretty-name "Kite Elven Shield"}
  {:image {:file "items/images.png", :sub-image-bounds (0 288 48 48)},
   :slot :shield,
-  :id :shield-flame-buckler}
+  :id :shield-flame-buckler,
+  :pretty-name "Buckler Flame Shield"}
  {:image {:file "items/images.png", :sub-image-bounds (144 288 48 48)},
   :slot :shield,
-  :id :shield-flame-great}
+  :id :shield-flame-great,
+  :pretty-name "Great Flame Shield"}
  {:image {:file "items/images.png", :sub-image-bounds (48 288 48 48)},
   :slot :shield,
-  :id :shield-flame-heater}
+  :id :shield-flame-heater,
+  :pretty-name "Heater Flame Shield"}
  {:image {:file "items/images.png", :sub-image-bounds (96 288 48 48)},
   :slot :shield,
-  :id :shield-flame-kite}
+  :id :shield-flame-kite,
+  :pretty-name "Kite Flame Shield"}
  {:image {:file "items/images.png", :sub-image-bounds (576 240 48 48)},
   :slot :shield,
-  :id :shield-gold-buckler}
+  :id :shield-gold-buckler,
+  :pretty-name "Buckler Gold Shield"}
  {:image {:file "items/images.png", :sub-image-bounds (720 240 48 48)},
   :slot :shield,
-  :id :shield-gold-great}
+  :id :shield-gold-great,
+  :pretty-name "Great Gold Shield"}
  {:image {:file "items/images.png", :sub-image-bounds (624 240 48 48)},
   :slot :shield,
-  :id :shield-gold-heater}
+  :id :shield-gold-heater,
+  :pretty-name "Heater Gold Shield"}
  {:image {:file "items/images.png", :sub-image-bounds (672 240 48 48)},
   :slot :shield,
-  :id :shield-gold-kite}
+  :id :shield-gold-kite,
+  :pretty-name "Kite Gold Shield"}
  {:image {:file "items/images.png", :sub-image-bounds (192 288 48 48)},
   :slot :shield,
-  :id :shield-ice-buckler}
+  :id :shield-ice-buckler,
+  :pretty-name "Buckler Ice Shield"}
  {:image {:file "items/images.png", :sub-image-bounds (336 288 48 48)},
   :slot :shield,
-  :id :shield-ice-great}
+  :id :shield-ice-great,
+  :pretty-name "Great Ice Shield"}
  {:image {:file "items/images.png", :sub-image-bounds (240 288 48 48)},
   :slot :shield,
-  :id :shield-ice-heater}
+  :id :shield-ice-heater,
+  :pretty-name "Heater Ice Shield"}
  {:image {:file "items/images.png", :sub-image-bounds (288 288 48 48)},
   :slot :shield,
-  :id :shield-ice-kite}
+  :id :shield-ice-kite,
+  :pretty-name "Kite Ice Shield"}
  {:image {:file "items/images.png", :sub-image-bounds (192 240 48 48)},
   :slot :shield,
-  :id :shield-iron-buckler}
+  :id :shield-iron-buckler,
+  :pretty-name "Buckler Iron Shield"}
  {:image {:file "items/images.png", :sub-image-bounds (336 240 48 48)},
   :slot :shield,
-  :id :shield-iron-great}
+  :id :shield-iron-great,
+  :pretty-name "Great Iron Shield"}
  {:image {:file "items/images.png", :sub-image-bounds (240 240 48 48)},
   :slot :shield,
-  :id :shield-iron-heater}
+  :id :shield-iron-heater,
+  :pretty-name "Heater Iron Shield"}
  {:image {:file "items/images.png", :sub-image-bounds (288 240 48 48)},
   :slot :shield,
-  :id :shield-iron-kite}
+  :id :shield-iron-kite,
+  :pretty-name "Kite Iron Shield"}
  {:image {:file "items/images.png", :sub-image-bounds (768 240 48 48)},
   :slot :shield,
-  :id :shield-mystic-buckler}
+  :id :shield-mystic-buckler,
+  :pretty-name "Buckler Mystic Shield"}
  {:image {:file "items/images.png", :sub-image-bounds (912 240 48 48)},
   :slot :shield,
-  :id :shield-mystic-great}
+  :id :shield-mystic-great,
+  :pretty-name "Great Mystic Shield"}
  {:image {:file "items/images.png", :sub-image-bounds (816 240 48 48)},
   :slot :shield,
-  :id :shield-mystic-heater}
+  :id :shield-mystic-heater,
+  :pretty-name "Heater Mystic Shield"}
  {:image {:file "items/images.png", :sub-image-bounds (864 240 48 48)},
   :slot :shield,
-  :id :shield-mystic-kite}
+  :id :shield-mystic-kite,
+  :pretty-name "Kite Mystic Shield"}
  {:image {:file "items/images.png", :sub-image-bounds (384 240 48 48)},
   :slot :shield,
-  :id :shield-royal-buckler}
+  :id :shield-royal-buckler,
+  :pretty-name "Buckler Royal Shield"}
  {:image {:file "items/images.png", :sub-image-bounds (528 240 48 48)},
   :slot :shield,
-  :id :shield-royal-great}
+  :id :shield-royal-great,
+  :pretty-name "Great Royal Shield"}
  {:image {:file "items/images.png", :sub-image-bounds (432 240 48 48)},
   :slot :shield,
-  :id :shield-royal-heater}
+  :id :shield-royal-heater,
+  :pretty-name "Heater Royal Shield"}
  {:image {:file "items/images.png", :sub-image-bounds (480 240 48 48)},
   :slot :shield,
-  :id :shield-royal-kite}
+  :id :shield-royal-kite,
+  :pretty-name "Kite Royal Shield"}
  {:image {:file "items/images.png", :sub-image-bounds (384 288 48 48)},
   :slot :shield,
-  :id :shield-vorpal-buckler}
+  :id :shield-vorpal-buckler,
+  :pretty-name "Buckler Vorpal Shield"}
  {:image {:file "items/images.png", :sub-image-bounds (528 288 48 48)},
   :slot :shield,
-  :id :shield-vorpal-great}
+  :id :shield-vorpal-great,
+  :pretty-name "Great Vorpal Shield"}
  {:image {:file "items/images.png", :sub-image-bounds (432 288 48 48)},
   :slot :shield,
-  :id :shield-vorpal-heater}
+  :id :shield-vorpal-heater,
+  :pretty-name "Heater Vorpal Shield"}
  {:image {:file "items/images.png", :sub-image-bounds (480 288 48 48)},
   :slot :shield,
-  :id :shield-vorpal-kite}
+  :id :shield-vorpal-kite,
+  :pretty-name "Kite Vorpal Shield"}
  {:image {:file "items/images.png", :sub-image-bounds (0 240 48 48)},
   :slot :shield,
-  :id :shield-wood-buckler}
+  :id :shield-wood-buckler,
+  :pretty-name "Buckler Wood Shield"}
  {:image {:file "items/images.png", :sub-image-bounds (144 240 48 48)},
   :slot :shield,
-  :id :shield-wood-great}
+  :id :shield-wood-great,
+  :pretty-name "Great Wood Shield"}
  {:image {:file "items/images.png", :sub-image-bounds (48 240 48 48)},
   :slot :shield,
-  :id :shield-wood-heater}
+  :id :shield-wood-heater,
+  :pretty-name "Heater Wood Shield"}
  {:image {:file "items/images.png", :sub-image-bounds (96 240 48 48)},
   :slot :shield,
-  :id :shield-wood-kite}
+  :id :shield-wood-kite,
+  :pretty-name "Kite Wood Shield"}
  {:slot :weapon,
   :action-time nil,
   :damage nil,
   :id :shortbow,
   :image {:file "items/images.png", :sub-image-bounds (288 144 48 48)},
   :range nil,
-  :two-handed? true}
+  :two-handed? true,
+  :pretty-name "Shortbow"}
  {:image {:file "items/images.png", :sub-image-bounds (48 384 48 48)},
-  :id :skull-large-closed}
+  :id :skull-large-closed,
+  :pretty-name "Closed Large Skull"}
  {:image {:file "items/images.png", :sub-image-bounds (0 384 48 48)},
-  :id :skull-large-open}
+  :id :skull-large-open,
+  :pretty-name "Open Large Skull"}
  {:image {:file "items/images.png", :sub-image-bounds (96 384 48 48)},
-  :id :skull-small}
+  :id :skull-small,
+  :pretty-name "Small Skull"}
  {:image {:file "items/images.png", :sub-image-bounds (144 384 48 48)},
-  :id :skull-small-blood}
+  :id :skull-small-blood,
+  :pretty-name "Blood Small Skull"}
  {:image {:file "items/images.png", :sub-image-bounds (192 384 48 48)},
-  :id :skull-small-gold}
+  :id :skull-small-gold,
+  :pretty-name "Gold Small Skull"}
  {:slot :weapon,
   :action-time 2.0,
   :damage 2.0,
   :id :sling,
   :image {:file "items/images.png", :sub-image-bounds (384 144 48 48)},
   :range 10.0,
-  :two-handed? false}
+  :two-handed? false,
+  :pretty-name "Sling"}
  {:slot :weapon,
   :action-time nil,
   :damage nil,
   :id :spear,
   :image {:file "items/images.png", :sub-image-bounds (0 144 48 48)},
   :range nil,
-  :two-handed? true}
+  :two-handed? true,
+  :pretty-name "Spear"}
  {:slot :weapon,
   :action-time 1.0,
   :damage 0.6,
   :id :staff,
   :image {:file "items/images.png", :sub-image-bounds (528 144 48 48)},
   :range 1.2,
-  :two-handed? true}
+  :two-handed? true,
+  :pretty-name "Staff"}
  {:slot :weapon,
   :action-time 1.0,
   :damage 0.6,
   :id :staff-ankh,
   :image {:file "items/images.png", :sub-image-bounds (624 144 48 48)},
   :range 1.2,
-  :two-handed? true}
+  :two-handed? true,
+  :pretty-name "Ankh Staff"}
  {:slot :weapon,
   :action-time 1.0,
   :damage 0.6,
   :id :staff-branch,
   :image {:file "items/images.png", :sub-image-bounds (480 144 48 48)},
   :range 1.2,
-  :two-handed? true}
+  :two-handed? true,
+  :pretty-name "Branch Staff"}
  {:slot :weapon,
   :action-time 1.0,
   :damage 0.6,
   :id :staff-jeweled,
   :image {:file "items/images.png", :sub-image-bounds (576 144 48 48)},
   :range 1.2,
-  :two-handed? true}
+  :two-handed? true,
+  :pretty-name "Jeweled Staff"}
  {:slot :weapon,
   :action-time nil,
   :damage nil,
   :id :staff-winged,
   :image {:file "items/images.png", :sub-image-bounds (672 144 48 48)},
   :range nil,
-  :two-handed? true}
+  :two-handed? true,
+  :pretty-name "Winged Staff"}
  {:slot :weapon,
   :action-time nil,
   :damage nil,
   :id :stiletto,
   :image {:file "items/images.png", :sub-image-bounds (96 96 48 48)},
   :range nil,
-  :two-handed? false}
+  :two-handed? false,
+  :pretty-name "Stiletto"}
  {:image {:file "items/images.png", :sub-image-bounds (96 624 48 48)},
   :slot :boot,
-  :id :studded-boot}
+  :id :studded-boot,
+  :pretty-name "Boot Studded"}
  {:image {:file "items/images.png", :sub-image-bounds (96 480 48 48)},
   :slot :chest,
-  :id :studded-chest}
+  :id :studded-chest,
+  :pretty-name "Chest Studded"}
  {:image {:file "items/images.png", :sub-image-bounds (96 576 48 48)},
   :slot :glove,
-  :id :studded-glove}
+  :id :studded-glove,
+  :pretty-name "Glove Studded"}
  {:image {:file "items/images.png", :sub-image-bounds (96 432 48 48)},
   :slot :helm,
-  :id :studded-helm}
+  :id :studded-helm,
+  :pretty-name "Helm Studded"}
  {:image {:file "items/images.png", :sub-image-bounds (96 528 48 48)},
   :slot :leg,
-  :id :studded-leg}
+  :id :studded-leg,
+  :pretty-name "Leg Studded"}
  {:slot :weapon,
   :action-time 1.0,
   :damage 1.0,
   :id :sword,
   :image {:file "items/images.png", :sub-image-bounds (0 96 48 48)},
   :range 1.0,
-  :two-handed? false}
+  :two-handed? false,
+  :pretty-name "Sword"}
  {:slot :weapon,
   :action-time nil,
   :damage nil,
   :id :sword-exotic1,
   :image {:file "items/images.png", :sub-image-bounds (720 96 48 48)},
   :range nil,
-  :two-handed? true}
+  :two-handed? true,
+  :pretty-name "Exotic1 Sword"}
  {:slot :weapon,
   :action-time nil,
   :damage nil,
   :id :sword-exotic2,
   :image {:file "items/images.png", :sub-image-bounds (768 96 48 48)},
   :range nil,
-  :two-handed? true}
+  :two-handed? true,
+  :pretty-name "Exotic2 Sword"}
  {:slot :weapon,
   :action-time nil,
   :damage nil,
   :id :sword-exotic3,
   :image {:file "items/images.png", :sub-image-bounds (816 96 48 48)},
   :range nil,
-  :two-handed? false}
+  :two-handed? false,
+  :pretty-name "Exotic3 Sword"}
  {:image {:file "items/images.png", :sub-image-bounds (624 48 48 48)},
-  :id :torch}
+  :id :torch,
+  :pretty-name "Torch"}
  {:image {:file "items/images.png", :sub-image-bounds (672 48 48 48)},
-  :id :torch-lit}
+  :id :torch-lit,
+  :pretty-name "Lit Torch"}
  {:slot :weapon,
   :action-time 1.1,
   :damage 1.1,
   :id :trident,
   :image {:file "items/images.png", :sub-image-bounds (96 144 48 48)},
   :range 2.0,
-  :two-handed? false}
+  :two-handed? false,
+  :pretty-name "Trident"}
  {:image {:file "items/images.png", :sub-image-bounds (384 624 48 48)},
   :slot :boot,
-  :id :wild-boot}
+  :id :wild-boot,
+  :pretty-name "Boot Wild"}
  {:image {:file "items/images.png", :sub-image-bounds (384 480 48 48)},
   :slot :chest,
-  :id :wild-chest}
+  :id :wild-chest,
+  :pretty-name "Chest Wild"}
  {:image {:file "items/images.png", :sub-image-bounds (384 576 48 48)},
   :slot :glove,
-  :id :wild-glove}
+  :id :wild-glove,
+  :pretty-name "Glove Wild"}
  {:image {:file "items/images.png", :sub-image-bounds (384 432 48 48)},
   :slot :helm,
-  :id :wild-helm}
+  :id :wild-helm,
+  :pretty-name "Helm Wild"}
  {:image {:file "items/images.png", :sub-image-bounds (384 528 48 48)},
   :slot :leg,
-  :id :wild-leg})
+  :id :wild-leg,
+  :pretty-name "Leg Wild"})
