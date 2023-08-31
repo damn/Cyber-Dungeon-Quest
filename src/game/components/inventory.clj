@@ -40,13 +40,13 @@
       (= (:slot item) slot)))
 
 (defn two-handed-weapon-and-shield-together? [inventory {slot 0 :as cell} new-item]
-  (or (and (:two-handed new-item)
+  (or (and (:two-handed? new-item)
            (= slot :weapon)
            (first (slot->items inventory :shield)))
       (and (= (:slot new-item) :shield)
            (= slot :shield)
            (if-let [weapon (first (slot->items inventory :weapon))]
-             (:two-handed weapon)))))
+             (:two-handed? weapon)))))
 
 (defn- assoc-inventory-cell! [entity cell item]
   (assoc-in! entity (cons :inventory cell) item))
