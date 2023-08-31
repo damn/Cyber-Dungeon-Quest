@@ -3,7 +3,8 @@
   (:require [clojure.edn :as edn]
             [x.x :refer [defmodule]]
             [gdl.lc :as lc]
-            [gdl.graphics.image :as image]))
+            [gdl.graphics.image :as image]
+            [utils.core :refer [safe-get]]))
 
 ; could just use sprite-idx directly.
 (defn- deserialize-image [{:keys [file sub-image-bounds]}]
@@ -30,12 +31,6 @@
 (defmodule file
   (lc/create [_]
     (.bindRoot #'properties (load-edn file))))
-
-(defn- safe-get [m k]
-  (let [result (clojure.core/get m k ::not-found)]
-    (if (= result ::not-found)
-      (throw (IllegalArgumentException. (str "Cannot find " k)))
-      result)))
 
 (defn get [id]
   (safe-get properties id))

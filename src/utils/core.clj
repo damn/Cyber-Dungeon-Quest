@@ -305,3 +305,10 @@
   (if (empty? ks)
     m
     (apply assoc m (interleave ks (repeat v)))))
+
+(let [obj (Object.)]
+  (defn safe-get [m k]
+    (let [result (clojure.core/get m k obj)]
+      (if (= result obj)
+        (throw (IllegalArgumentException. (str "Cannot find " k)))
+        result))))
