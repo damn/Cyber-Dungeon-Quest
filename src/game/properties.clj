@@ -42,12 +42,3 @@
 
 (defn all-with-key [k]
   (filter k (vals properties)))
-
-; TODO add :type ? but item/skill same for 'weapon' type
-; just keys?
-; creature/species?
-; also item/slot
-
-; use creature/id item/id skill/id ?
-; but what to do with weapons?
-; they are both skills and items ?
