@@ -22,6 +22,6 @@
            [:game.screens.minimap]
            [:game.screens.options]
            [:mapgen.tiledmap-renderer]
-           [:entity-editor.screen]]
+           [:property-editor.screen]]
  :first-screen :game.screens.main}
 

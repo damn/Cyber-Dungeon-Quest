@@ -1,4 +1,4 @@
-(ns entity-editor.screen
+(ns property-editor.screen
   (:require [x.x :refer [defmodule]]
             [gdl.lc :as lc]
             [gdl.app :as app]
@@ -11,32 +11,17 @@
             [gdl.scene2d.ui :as ui]
             [game.properties :as properties]))
 
-(defn- stage []
-  (:stage (app/current-screen-value)))
+(defn- stage      [] (:stage      (app/current-screen-value)))
+(defn- split-pane [] (:split-pane (app/current-screen-value)))
 
-(defn- split-pane []
-  (:split-pane (app/current-screen-value)))
+(declare property-editor-window)
 
-; TODO search for ui/table & ui/window (add rows,etc to window too)
-; => all widgets set-opts based on class & supers?
-; => just (-> (Constructor.) (set-opts opts))
-; => (ui/show-opts class)
-; but we dont want class but 'table' ??
-; also search for com.badlogic
-
-; TODO editing the 'loaded' stuff, not from edn
-
-; abstraction -> properties/get :id / properties/save! :id
-; and properties/get-all :namespace
-; I dont want to know where/what
-; also for entity, for each attribute define widgets, etc.
-
-
-; TODO for each key of entity-type
-; create for [k v] textfield with :id ...
-; and findActor and getText
-
-; what about undo? validation? etc. a label if changes? cancel warn on unsaved changes, etc. ?
+(defn- open-property-editor-window [id property-type]
+  (let [window (property-editor-window id property-type)]
+    (stage/add-actor (stage) window)
+    (actor/set-center window
+                      (/ (gui/viewport-width)  2)
+                      (/ (gui/viewport-height) 2))))
 
 (defmulti property-widget (fn [k v] k))
 
@@ -49,15 +34,8 @@
 (defmethod property-widget :image [_ image]
   (ui/image (ui/texture-region-drawable (:texture image))))
 
-(declare species-editor)
-
-; == > link to another
-(defmethod property-widget :species [_ species-id]
-  (ui/text-button (name species-id)
-                  #(stage/add-actor (stage) (species-editor species-id))))
-
-; :id =>
-; setDisabled true
+(defmethod property-widget :species [_ id] ; == > link to another
+  (ui/text-button (name id) #(open-property-editor-window id :species)))
 
 (comment
 
@@ -70,8 +48,23 @@
                   [[(ui/text-button " + " (fn [] (println "Add ")))]]))
  )
 
-(defn- editor-window [& {:keys [title id property-keys]}]
-  (let [window (ui/window :title title
+; => move to game.properties  ?
+; can (properties/get-all property-type)  => (safe-get property-types property-type)
+; => save info for overview -> how to get all creature/etc
+; add :weapons (implemented or all slot=weapon ?)
+(def ^:private property-types
+  {:species  {:title "Species"  :property-keys [:id :hp :speed]}
+   :creature {:title "Creature" :property-keys [:id :image :species :level :skills :items]}
+   :item     {:title "Item"     :property-keys [:id :image :slot :pretty-name :modifiers]}
+   :skill    {:title "Skill"    :property-keys [:id :image :action-time :cooldown :cost :effect]}})
+
+; TODO check if property with id is of property-type ?
+; => schema
+; => validation before save/after load all props.
+; visvalidateabletextfield.
+(defn- property-editor-window [id property-type]
+  (let [{:keys [title property-keys]} (get property-types property-type)
+        window (ui/window :title title
                           :modal? true
                           :cell-defaults {:pad 5})
         props (properties/get id)]
@@ -80,84 +73,23 @@
                                 [[(ui/text-button "Save" (fn [] ))
                                   (ui/text-button "Cancel" #(actor/remove window))]]))
     (ui/pack window)
-    (actor/set-center window
-                      (/ (gui/viewport-width)  2)
-                      (/ (gui/viewport-height) 2))
     window))
 
-(defn species-editor [species-id]
-  (editor-window :title "Species"
-                 :id species-id
-                 :property-keys [:id :hp :speed]))
 
-; attributes of an entity
-; * text-editor
-; * 'link' => button to edit that connected entity (creature type)
-; * 'list' => items/skills/modifiers/etc.
-;  => define per entity base (but I do anyway through functions?)
-
-; TODO
-; * define widgets per attribute (e.g. id - not editable - label)
-; * => need to define entity-type-attribute-keysets
-; * what about links ? will become buttons ? schema? datomic?
-; save/undo/redo => datomic?
-
-
-(defn- creature-editor [id]
-  (editor-window :title "Creature"
-                 :id id
-                 :property-keys [:id :image :species :level :skills :items]))
-
-; entity-type 'item'
-; => edit entity with id
-; => where to read properties?
-; items => items/items
-; 'image-widget' => :image property
-
-(comment
- ; entity type
- ; has keys/attributes.
- ; e.g. id/image/this/that
- ; for each attribute have edit-widget,editable or not,etc.
- ; e.g. item => id,image,slot,pretty-name,modifiers
- )
-
-(defn- item-editor [id]
-  (editor-window :title "Item"
-                 :id id
-                 :property-keys [:id :image :slot :pretty-name :modifiers]))
-; TODO crashes when no slot of item (unimplemented items, e.g. empty heart ) !
-; => schema on edn/read validate and on save !!
-
-; TODO effect, first choose from list which one
-; then edit properties (different for each effect => depends on params !)
-; param types ... e.g. damage.
-
-(defn- skill-editor [id]
-  (editor-window :title "Skill"
-                 :id id
-                 :property-keys [:id :image :action-time :cooldown :cost :effect]))
-
-; TODO show hp/speed & with multipler for creatures too ?
-
-
-; creature-type -> button to the creature type editor itself
-; creature-types => also show?
-; level
-; skills
-; items
-
-(defn- entities-table [& {:keys [title
+ ; TODO
+ ; => non-toggle image-button (VisImageButton ?)
+(defn- overview-table [& {:keys [title
                                  entities
-                                 entity-editor
+                                 property-type
                                  extra-infos-widget]}]
   (let [number-columns 20]
     (ui/table :rows (concat [[{:actor (ui/label title) :colspan number-columns}]]
                             (for [entities (partition-all number-columns entities)]
                               (for [props entities
                                     :let [button (ui/image-button (:image props)
-                                                                  ; TODO same code @ species link ...
-                                                                  #(stage/add-actor (stage) (entity-editor (:id props))))
+                                                                  #(open-property-editor-window
+                                                                    (:id props)
+                                                                    property-type))
                                           top-widget (extra-infos-widget props)
                                           stack (ui/stack)] ]
                                 (do (actor/set-touchable top-widget :disabled)
@@ -166,36 +98,30 @@
                                     stack)))))))
 
 (defn- creatures-table []
-  (entities-table :title "Creatures"
+  (overview-table :title "Creatures"
                   :entities (sort-by #(vector (or (:level %) 9)
                                               (name (:species %)))
                                      (properties/all-with-key :species))
-                  :entity-editor creature-editor
+                  :property-type :creature
                   :extra-infos-widget #(ui/label (or (str (:level %) "-")))))
 
 
 (defn- items-table []
-  (entities-table :title "Items"
+  (overview-table :title "Items"
                   :entities (sort-by (fn [props]
                                        ;(str/join "-" (reverse (str/split (name (:id props)) #"-")))
                                        (if-let [slot (:slot props)]
                                               (name slot)
-                                              ""
-                                              )
-
-                                       )
+                                              ""))
                                      (properties/all-with-key :slot))
-                  :entity-editor item-editor
+                  :property-type :item
                   :extra-infos-widget (fn [_] (ui/label ""))))
 
 (defn- skills-table []
-  (entities-table :title "Skills"
+  (overview-table :title "Skills"
                   :entities (properties/all-with-key :spell?)
-                  :entity-editor skill-editor
+                  :property-type :skill
                   :extra-infos-widget (fn [_] (ui/label ""))))
-
- ; TODO
- ; => non-toggle image-button
 
 (defn- set-second-widget [widget]
   (.setSecondWidget ^com.kotcrab.vis.ui.widget.VisSplitPane (split-pane) widget))

@@ -29,7 +29,7 @@
   (.bindRoot #'stage (stage/create gui/viewport batch)) ; TODO remove all .bindRoot
   (let [table (ui/table :rows [[(ui/text-button "New game" try-create-character)]
                                [(ui/text-button "Map Editor" #(app/set-screen :mapgen.tiledmap-renderer))]
-                               [(ui/text-button "Entity Editor" #(app/set-screen :entity-editor.screen))]
+                               [(ui/text-button "Entity Editor" #(app/set-screen :property-editor.screen))]
                                [(ui/text-button "Exit" app/exit)]]
                         :cell-defaults {:pad-bottom 25}
                         :fill-parent? true)]
