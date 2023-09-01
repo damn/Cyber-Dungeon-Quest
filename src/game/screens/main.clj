@@ -5,6 +5,7 @@
             [gdl.input :as input]
             [gdl.lc :as lc]
             [gdl.scene2d.ui :as ui]
+            [gdl.scene2d.stage :as stage]
             [gdl.graphics.gui :as gui]
             [gdl.graphics.image :as image]
             [gdl.graphics.batch :refer [batch]]
@@ -25,14 +26,14 @@
 (declare stage)
 
 (defn- create* []
-  (.bindRoot #'stage (ui/stage gui/viewport batch)) ; TODO remove all .bindRoot
+  (.bindRoot #'stage (stage/create gui/viewport batch)) ; TODO remove all .bindRoot
   (let [table (ui/table :rows [[(ui/text-button "New game" try-create-character)]
                                [(ui/text-button "Map Editor" #(app/set-screen :mapgen.tiledmap-renderer))]
                                [(ui/text-button "Entity Editor" #(app/set-screen :entity-editor.screen))]
                                [(ui/text-button "Exit" app/exit)]]
                         :cell-defaults {:pad-bottom 25}
                         :fill-parent? true)]
-    (.addActor stage table)
+    (stage/add-actor stage table)
     (.center table)))
 
 (declare ^:private skip-main-menu
@@ -53,9 +54,9 @@
        (image/draw-centered bg-image
                             [(/ (gui/viewport-width)  2)
                              (/ (gui/viewport-height) 2)])
-       (ui/draw-stage stage batch))))
+       (stage/draw stage batch))))
   (lc/tick [_ delta]
-    (ui/update-stage stage delta) ; act
+    (stage/act stage delta)
     (when (input/is-key-pressed? :ESCAPE) ; no input/
       (app/exit))
     (when skip-main-menu

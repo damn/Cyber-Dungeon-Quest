@@ -8,6 +8,7 @@
             [gdl.graphics.batch :refer [batch]]
             [gdl.input :as input]
             [gdl.scene2d.ui :as ui]
+            [gdl.scene2d.stage :as stage]
             [utils.core :refer [find-first]]
             [game.session :as session]
             [game.ui.mouseover-entity :refer (show-entity-props-on-mouseover)]
@@ -103,8 +104,8 @@
 
 (defmodule stage
   (lc/create [_]
-    (let [stage (ui/stage gui/viewport batch)]
-      (.addActor stage (create-table))
+    (let [stage (stage/create gui/viewport batch)]
+      (stage/add-actor stage (create-table))
       stage))
   (lc/dispose [_]
     (dispose stage))
@@ -116,8 +117,8 @@
        (image/draw-centered menu-bg-image
                             [(/ (gui/viewport-width)  2)
                              (/ (gui/viewport-height) 2)])
-       (ui/draw-stage stage batch))))
+       (stage/draw stage batch))))
   (lc/tick [_ delta]
-    (ui/update-stage stage delta)
+    (stage/act stage delta)
     (when (input/is-key-pressed? :ESCAPE)
       (exit))))

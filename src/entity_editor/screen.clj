@@ -6,6 +6,7 @@
             [gdl.graphics.gui :as gui]
             [gdl.graphics.batch :refer [batch]]
             [gdl.scene2d.actor :as actor]
+            [gdl.scene2d.stage :as stage]
             [gdl.scene2d.ui :as ui]
             [game.properties :as properties]))
 
@@ -54,7 +55,7 @@
 ; == > link to another
 (defmethod property-widget :species [_ species-id]
   (ui/text-button (name species-id)
-                  #(.addActor (stage) (species-editor species-id))))
+                  #(stage/add-actor (stage) (species-editor species-id))))
 
 ; :id =>
 ; setDisabled true
@@ -157,7 +158,7 @@
                               (for [props entities
                                     :let [button (ui/image-button (:image props)
                                                                   ; TODO same code @ species link ...
-                                                                  #(.addActor (stage) (entity-editor (:id props))))
+                                                                  #(stage/add-actor (stage) (entity-editor (:id props))))
                                           top-widget (extra-infos-widget props)
                                           stack (ui/stack)] ]
                                 (do (actor/set-touchable top-widget :disabled)
@@ -205,18 +206,18 @@
 
 (defmodule {:keys [stage]}
   (lc/create [_]
-    (let [stage (ui/stage gui/viewport batch)
+    (let [stage (stage/create gui/viewport batch)
           split-pane (ui/split-pane :first-widget (left-widget)
                                     :second-widget (creatures-table)
                                     :vertical? false
                                     :id :split-pane)
           table (ui/table :rows [[split-pane]]
                           :fill-parent? true)]
-      (.addActor stage table)
+      (stage/add-actor stage table)
       {:stage stage
        :split-pane split-pane})) ; TODO only stage needed, can get split-pane through table
   (lc/dispose [_] (.dispose stage))
   (lc/show [_] (input/set-processor stage))
   (lc/hide [_] (input/set-processor nil))
-  (lc/render [_] (gui/render #(ui/draw-stage stage batch)))
-  (lc/tick [_ delta] (ui/update-stage stage delta)))
+  (lc/render [_] (gui/render #(stage/draw stage batch)))
+  (lc/tick [_ delta] (stage/act stage delta)))

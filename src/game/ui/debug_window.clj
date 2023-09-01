@@ -3,6 +3,7 @@
             [gdl.graphics.world :as world]
             [gdl.graphics.gui :as gui]
             [gdl.scene2d.ui :as ui]
+            [gdl.scene2d.actor :as actor]
             game.running))
 
 (defn- debug-infos []
@@ -19,8 +20,7 @@
                           :id :debug-window)
         label (ui/label "")]
     (.add window label)
-    (.add window (ui/actor
-                  #(do
-                    (.setText label (debug-infos))
-                    (.pack window))))
+    (.add window (actor/create :act (fn [_]
+                                      (.setText label (debug-infos))
+                                      (.pack window))))
     window))

@@ -3,6 +3,7 @@
             [gdl.lc :as lc]
             [gdl.input :as input]
             [gdl.scene2d.ui :as ui]
+            [gdl.scene2d.actor :as actor]
             [game.session :as session]
             [game.skills.core :as skills]
             [game.components.skills :refer (choose-skill)]
@@ -82,13 +83,13 @@
 (defmodule _
   (lc/create [_]
     (.bindRoot #'horizontal-group (HorizontalGroup.))
-    (.addActor horizontal-group (ui/actor check-hotbar-actualize))))
+    (stage/add-actor horizontal-group (actor/create :act (fn [_] (check-hotbar-actualize))))))
 
 (declare ^ButtonGroup button-group)
 
 (defn- reset-buttons! []
   (.clearChildren horizontal-group)
-  (.addActor horizontal-group (ui/actor check-hotbar-actualize))
+  (stage/add-actor horizontal-group (actor/create :act (fn [_] check-hotbar-actualize)))
 
   (.bindRoot #'button-group (ButtonGroup.))
   (.setMaxCheckCount button-group 1)
@@ -102,7 +103,7 @@
     (.addListener button (ui/text-tooltip
                           #(skills/text id player-entity)))
     ; TODO HOTKEY
-    (.addActor horizontal-group button)
+    (stage/add-actor horizontal-group button)
     (.add button-group button)))
 
 (comment

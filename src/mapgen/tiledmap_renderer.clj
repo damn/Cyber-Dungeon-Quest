@@ -11,6 +11,7 @@
             [gdl.graphics.shape-drawer :as shape-drawer]
             [gdl.tiled :as tiled]
             [gdl.scene2d.ui :as ui]
+            [gdl.scene2d.stage :as stage]
             game.maps.impl
             [mapgen.movement-property :refer (movement-property movement-properties)]
             [mapgen.module-gen :as module-gen])
@@ -164,10 +165,10 @@
     [table get-properties]))
 
 (defn- create-stage []
-  (let [stage (ui/stage gui/viewport batch)
+  (let [stage (stage/create gui/viewport batch)
         window (ui/window :title "Properties")
         [form get-properties] (edn-edit-form game.maps.impl/map-data-file)]
-    (.addActor stage window)
+    (stage/add-actor stage window)
     (.add window form)
     (.row window)
     (.add window (ui/text-button "Generate" #(generate (get-properties))))
@@ -189,9 +190,9 @@
   (lc/render [_]
     (tiled/render-map @current-tiled-map (constantly color/white)) ; TODO colorsetter optional.
     (world/render render-on-map)
-    (gui/render #(ui/draw-stage stage batch)))
+    (gui/render #(stage/draw stage batch)))
   (lc/tick [_ delta]
-    (ui/update-stage stage delta)
+    (stage/act stage delta)
     (when (input/is-key-pressed? :ESCAPE)
       (app/set-screen :game.screens.main))
     (if (input/is-key-pressed? :L)

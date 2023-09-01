@@ -5,6 +5,7 @@
             [gdl.input :as input]
             [gdl.vector :as v]
             [gdl.scene2d.actor :as actor]
+            [gdl.scene2d.stage :as stage]
             [gdl.scene2d.ui :as ui]
             [gdl.graphics.batch :refer [batch]]
             [gdl.graphics.image :as image]
@@ -23,15 +24,14 @@
             [game.maps.data :as maps-data]
             [game.player.entity :refer (player-entity)]
             game.update-ingame
-            game.render-ingame)
-  (:import com.badlogic.gdx.scenes.scene2d.Actor))
+            game.render-ingame))
 
 (defn- item-in-hand-render-actor []
-  (let [actor (proxy [Actor] []
-                (draw [_ _]
-                  (when @item-in-hand
-                    (.toFront this) ; windows keep changing z-index when selected, or put all windows in 1 group and this actor another group
-                    (image/draw-centered (:image @item-in-hand) (gui/mouse-position)))))]
+  (let [actor (actor/create :draw
+                            (fn [_ _]
+                              (when @item-in-hand
+                                (.toFront this) ; windows keep changing z-index when selected, or put all windows in 1 group and this actor another group
+                                (image/draw-centered (:image @item-in-hand) (gui/mouse-position)))))]
     actor))
 
 (defn- create-stage []
@@ -44,10 +44,10 @@
                  entity-info-window
                  inventory/window
                  skill-window]
-        stage (ui/stage gui/viewport batch)
+        stage (stage/create gui/viewport batch)
         table (ui/table :rows [[{:actor action-bar/horizontal-group :expand? true :bottom? true}]]
                         :fill-parent? true)]
-    (.addActor stage table) ; stage/add-actor
+    (stage/add-actor stage table)
     (actor/set-position debug-window 0 (gui/viewport-height))
     (actor/set-position help-window
                         (- (/ (gui/viewport-width) 2)
@@ -73,11 +73,11 @@
     ; or vector with id
     ; stage pass list of thingy?
     (doseq [window windows]
-      (.addActor stage window)  ; move to positioning up
+      (stage/add-actor stage window)  ; move to positioning up
       (.setVisible window true) ; already visible?
 
       )
-    (.addActor stage (item-in-hand-render-actor))
+    (stage/add-actor stage (item-in-hand-render-actor))
     stage))
 
 (defn- toggle-visible! [actor] ; TODO to ui/, no '!'
@@ -160,7 +160,7 @@
      (set-movement! (wasd-movement-vector))
      (cond
       (and (input/is-leftm-pressed?)
-           (not (ui/mouseover? stage (gui/mouse-position)))
+           (not (stage/hit stage (gui/mouse-position)))
            (is-item-in-hand?))
       (inventory/put-item-on-ground)
 
@@ -173,7 +173,7 @@
       ; TODO is it possible pressed and not down ?
       (and (or (input/is-leftm-pressed?)
                (input/is-leftbutton-down?))
-           (not (ui/mouseover? stage (gui/mouse-position)))
+           (not (stage/hit stage (gui/mouse-position)))
            (clickable/check-clickable-mouseoverbody stage))
       nil
 
@@ -182,7 +182,7 @@
                                   (:position @(saved-mouseover-entity))))
 
       (and (input/is-leftbutton-down?)
-           (not (ui/mouseover? stage (gui/mouse-position))))
+           (not (stage/hit stage (gui/mouse-position))))
       (set-movement! (v/direction (:position @player-entity)
                                   (world/mouse-position)))))))
 
@@ -252,8 +252,8 @@
   (lc/hide [_] (input/set-processor nil))
   (lc/render [_]
     (game.render-ingame/render-game)
-    (gui/render #(ui/draw-stage stage batch)))
+    (gui/render #(stage/draw stage batch)))
   (lc/tick [_ delta]
     (handle-key-input stage)
-    (ui/update-stage stage delta)
+    (stage/act stage delta)
     (game.update-ingame/update-game stage delta)))

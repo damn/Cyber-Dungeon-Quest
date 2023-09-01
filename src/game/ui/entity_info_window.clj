@@ -1,5 +1,6 @@
 (ns game.ui.entity-info-window
   (:require [gdl.scene2d.ui :as ui]
+            [gdl.scene2d.actor :as actor]
             [game.ui.mouseover-entity :refer (get-mouseover-entity)]))
 
 ; I can create for every entity
@@ -46,8 +47,7 @@
     (.expand (.add window label))
     ; TODO do not change window size ... -> no need to invalidate layout, set the whole stage up again
     ; => fix size somehow.
-    (.add window (ui/actor
-                  #(do
-                    (.setText label (entity-info-text))
-                    (.pack window))))
+    (.add window (actor/create :act (fn [_]
+                                      (.setText label (entity-info-text))
+                                      (.pack window))))
     window))

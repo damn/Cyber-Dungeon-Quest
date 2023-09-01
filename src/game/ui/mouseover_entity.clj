@@ -5,7 +5,7 @@
             [gdl.graphics.shape-drawer :as shape-drawer]
             [gdl.graphics.world :as world]
             [gdl.graphics.gui :as gui]
-            [gdl.scene2d.ui :as ui]
+            [gdl.scene2d.stage :as stage]
             [utils.core :refer [sort-by-order]]
             [game.db :as db]
             [game.systems :refer [render-below]]
@@ -93,7 +93,7 @@
                  (keep-saved? @cache))
     (when-let [entity @cache]
       (swap! entity dissoc :mouseover?))
-    (if-let [entity (when-not (ui/mouseover? stage (gui/mouse-position))
+    (if-let [entity (when-not (stage/hit stage (gui/mouse-position))
                       (get-current-mouseover-entity))]
       (do
        (reset! cache entity)
