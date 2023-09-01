@@ -44,8 +44,7 @@
     (.bindRoot #'skip-main-menu skip-main-menu)
     (.bindRoot #'bg-image (image/create bg-image))
     (create*))
-  (lc/dispose [_]
-    (dispose stage))
+  (lc/dispose [_] (dispose stage))
   (lc/show [_] (input/set-processor stage))
   (lc/hide [_] (input/set-processor nil))
   (lc/render [_]

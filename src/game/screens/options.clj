@@ -107,8 +107,7 @@
     (let [stage (stage/create gui/viewport batch)]
       (stage/add-actor stage (create-table))
       stage))
-  (lc/dispose [_]
-    (dispose stage))
+  (lc/dispose [_] (dispose stage))
   (lc/show [_] (input/set-processor stage))
   (lc/hide [_] (input/set-processor nil))
   (lc/render [_]

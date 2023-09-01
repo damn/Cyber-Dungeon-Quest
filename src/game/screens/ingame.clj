@@ -244,7 +244,7 @@
 
 (defmodule stage
   (lc/create [_] (create-stage))
-  ; TODO no dispose stage ? necessary ? no own batch? done at tiledmap renderer...
+  (lc/dispose [_] (dispose stage))
   (lc/show [_] (input/set-processor stage))
   (lc/hide [_] (input/set-processor nil))
   (lc/render [_]

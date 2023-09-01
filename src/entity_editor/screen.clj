@@ -11,8 +11,6 @@
             [gdl.scene2d.ui :as ui]
             [game.properties :as properties]))
 
-; TODO stage dispose necessary everywhere ??
-
 (defn- stage []
   (:stage (app/current-screen-value)))
 
