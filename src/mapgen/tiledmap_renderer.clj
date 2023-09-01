@@ -136,7 +136,8 @@
     (.setName (str k))))
 
 (defn form-value [forms-table k]
-  (.getText ^TextField (.findActor forms-table (str k))))
+  (.getText ^TextField (.findActor forms-table (str k)))) ; TODO broken with VisTextField -> move interop to gdl
+; => or reuse exactly entity-editor window
 
 ; TODO any key typed and not saved -> show 'unsaved' icon
 ; save => show saved icon.

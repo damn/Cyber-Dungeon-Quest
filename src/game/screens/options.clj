@@ -1,6 +1,7 @@
 (ns game.screens.options
   (:require [x.x :refer [defmodule]]
             [gdl.lc :as lc]
+            [gdl.utils :refer [dispose]]
             [gdl.app :as app]
             [gdl.graphics.gui :as gui]
             [gdl.graphics.image :as image]
@@ -12,8 +13,7 @@
             [game.ui.mouseover-entity :refer (show-entity-props-on-mouseover)]
             ;[game.line-of-sight :refer (player-line-of-sight-checks)]
             [game.components.body :refer (show-body-bounds)]
-            [game.components.skills :refer (show-skill-icon-on-active)])
-  (:import com.badlogic.gdx.scenes.scene2d.Stage))
+            [game.components.skills :refer (show-skill-icon-on-active)]))
 
 ; no protocol
 (defprotocol StatusCheckBox
@@ -106,6 +106,8 @@
     (let [stage (ui/stage gui/viewport batch)]
       (.addActor stage (create-table))
       stage))
+  (lc/dispose [_]
+    (dispose stage))
   (lc/show [_] (input/set-processor stage))
   (lc/hide [_] (input/set-processor nil))
   (lc/render [_]

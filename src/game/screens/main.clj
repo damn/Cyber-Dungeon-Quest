@@ -1,6 +1,7 @@
 (ns game.screens.main
   (:require [x.x :refer [defmodule]]
             [gdl.app :as app]
+            [gdl.utils :refer [dispose]]
             [gdl.input :as input]
             [gdl.lc :as lc]
             [gdl.scene2d.ui :as ui]
@@ -8,8 +9,7 @@
             [gdl.graphics.image :as image]
             [gdl.graphics.batch :refer [batch]]
             [game.screens.load-session :refer (is-loaded-character)]
-            [game.player.session-data :refer (current-character-name)])
-  (:import com.badlogic.gdx.scenes.scene2d.Stage))
+            [game.player.session-data :refer (current-character-name)]))
 
 ; TODO do all loading in 'loading' ns...
 
@@ -22,7 +22,7 @@
   (when-let [char-name "FOO BAR"]
     (start-loading-game (apply str char-name) :new-character true)))
 
-(declare ^Stage stage)
+(declare stage)
 
 (defn- create* []
   (.bindRoot #'stage (ui/stage gui/viewport batch)) ; TODO remove all .bindRoot
@@ -44,7 +44,7 @@
     (.bindRoot #'bg-image (image/create bg-image))
     (create*))
   (lc/dispose [_]
-    (.dispose stage))
+    (dispose stage))
   (lc/show [_] (input/set-processor stage))
   (lc/hide [_] (input/set-processor nil))
   (lc/render [_]

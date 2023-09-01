@@ -7,9 +7,9 @@
             [gdl.graphics.batch :refer [batch]]
             [gdl.scene2d.actor :as actor]
             [gdl.scene2d.ui :as ui]
-            [game.properties :as properties])
-  (:import (com.badlogic.gdx.scenes.scene2d Actor Stage)
-           (com.badlogic.gdx.scenes.scene2d.utils TextureRegionDrawable)))
+            [game.properties :as properties]))
+
+; TODO stage dispose necessary everywhere ??
 
 (defn- stage []
   (:stage (app/current-screen-value)))
@@ -38,22 +38,20 @@
 
 ; what about undo? validation? etc. a label if changes? cancel warn on unsaved changes, etc. ?
 
-(defn- property-widget [k v]
-  (ui/text-field (pr-str v)))
-
 (defmulti property-widget (fn [k v] k))
 
 (defmethod property-widget :default [_ v]
   (ui/text-field (pr-str v)))
 
-(defmethod property-widget :id [_ id]
+(defmethod property-widget :id [_ id] ; => not-editable => label.
   (ui/label (pr-str id)))
 
 (defmethod property-widget :image [_ image]
-  (ui/image (TextureRegionDrawable. (:texture image))))
+  (ui/image image))
 
 (declare species-editor)
 
+; == > link to another
 (defmethod property-widget :species [_ species-id]
   (ui/text-button (name species-id)
                   #(.addActor (stage) (species-editor species-id))))
@@ -63,15 +61,11 @@
 
 (comment
 
- ; TODO :image => (ui/image (TextureRegionDrawable. (:texture (:image props))))
-
- :species
-
-
- :items / :skills
+ :items / :skills ; ==> link to multiple others
+ ; also item needs to be in certain slot, each slot only once, etc. also max-items ...?
  (ui/table :rows (concat
                   (for [skill (:skills props)]
-                    [(ui/image (TextureRegionDrawable. (:texture (:image (properties/get skill)))))
+                    [(ui/image (:image (properties/get skill)))
                      (ui/text-button " - " (fn [] (println "Remove " )))])
                   [[(ui/text-button " + " (fn [] (println "Add ")))]]))
  )
@@ -164,7 +158,7 @@
                                     :let [button (ui/image-button (:image props)
                                                                   ; TODO same code @ species link ...
                                                                   #(.addActor (stage) (entity-editor (:id props))))
-                                          ^Actor top-widget (extra-infos-widget props)
+                                          top-widget (extra-infos-widget props)
                                           stack (ui/stack)] ]
                                 (do (actor/set-touchable top-widget :disabled)
                                     (.add stack button)

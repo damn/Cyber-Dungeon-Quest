@@ -1,13 +1,13 @@
 (ns game.media
   (:require [x.x :refer [defmodule]]
+            [gdl.utils :refer [dispose]]
             [gdl.lc :as lc]
             [gdl.files :as files]
             [gdl.graphics.image :as image]
             [gdl.graphics.animation :as animation]
-            [gdl.graphics.freetype :as freetype])
-  (:import com.badlogic.gdx.graphics.g2d.BitmapFont))
+            [gdl.graphics.freetype :as freetype]))
 
-(declare ^BitmapFont font
+(declare font
          ^:private fx
          ^:private fx-impact)
 
@@ -19,7 +19,7 @@
     (.bindRoot #'fx        (image/spritesheet "fx/uf_FX.png"        24 24))
     (.bindRoot #'fx-impact (image/spritesheet "fx/uf_FX_impact.png" 48 48)))
   (lc/dispose [_]
-    (.dispose font)))
+    (dispose font)))
 
 ; spritesheet sprite position starts start top - left !
 
