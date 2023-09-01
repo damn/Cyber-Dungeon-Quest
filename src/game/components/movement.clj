@@ -4,7 +4,8 @@
             [gdl.vector :as v]
             [utils.core :refer [find-first update-in!]]
             [game.db :as db]
-            [game.systems :refer [moved moved! tick!]]
+            [game.tick :refer [tick!]]
+            [game.systems :refer [moved moved!]]
             [game.components.body :as body]
             [game.effects.core :as effects]
             [game.maps.cell-grid :as grid]))

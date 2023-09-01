@@ -9,7 +9,7 @@
             [x.x :refer [defcomponent]]
             [gdl.vector :as v]
             [utils.core :refer :all]
-            [game.systems :refer [tick!]]
+            [game.tick :refer [tick!]]
             [game.components.faction :as faction]
             [game.components.position :refer (get-tile)]
             [game.maps.contentfields :refer (get-entities-in-active-content-fields)]

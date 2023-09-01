@@ -1,14 +1,6 @@
 (ns game.systems
   (:require [x.x :refer [defsystem]]))
 
-; TODO move systems where they are used !
-; no HUGE BIG SYSTEMS NS
-
-; game.tick
-
-(defsystem tick          [c delta])
-(defsystem tick!         [c e delta])
-
 ; game.render
 
 (comment

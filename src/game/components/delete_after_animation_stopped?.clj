@@ -1,7 +1,7 @@
 (ns game.components.delete-after-animation-stopped?
   (:require [x.x :refer [defcomponent]]
             [gdl.graphics.animation :as animation]
-            [game.systems :refer [tick!]]))
+            [game.tick :refer [tick!]]))
 
 (defcomponent :delete-after-animation-stopped? _
   (tick! [_ e delta]

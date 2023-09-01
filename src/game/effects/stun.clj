@@ -3,7 +3,8 @@
             [gdl.graphics.shape-drawer :as shape-drawer]
             [gdl.graphics.color :as color]
             [utils.core :refer :all]
-            [game.systems :refer [tick! render-below stun!]]
+            [game.tick :refer [tick!]]
+            [game.systems :refer [render-below stun!]]
             [game.effects.core :as effects]
             [game.components.modifiers :as modifiers]
             [game.utils.counter :as counter]))

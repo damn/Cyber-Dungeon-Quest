@@ -5,7 +5,7 @@
             [gdl.graphics.world :as world]
             [gdl.graphics.animation :as animation]
             [game.db :as db]
-            [game.systems :refer [tick!]]
+            [game.tick :refer [tick!]]
             [game.properties :as properties]
             [game.utils.random :as rand]
             [game.media :refer (blood-animation)]

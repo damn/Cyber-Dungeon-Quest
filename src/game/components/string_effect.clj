@@ -7,7 +7,8 @@
             [game.utils.counter :as counter]
             [game.ui.config :refer [hpbar-height-px]]
             [game.media :as media]
-            [game.systems :refer [tick! render-above]]))
+            [game.tick :refer [tick!]]
+            [game.systems :refer [render-above]]))
 
 ; TODO similar to components.clickable
 (defcomponent :string-effect {:keys [text]}

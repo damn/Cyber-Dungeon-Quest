@@ -1,7 +1,7 @@
 (ns game.components.animation
   (:require [x.x :refer [defcomponent]]
             [gdl.graphics.animation :as animation]
-            [game.systems :refer [tick tick!]]
+            [game.tick :refer [tick tick!]]
             [game.db :as db]))
 
 ; could be a (defsystem tick-e [c e delta]) ?? reintroduce ? pure function?
