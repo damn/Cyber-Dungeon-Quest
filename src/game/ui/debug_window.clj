@@ -21,6 +21,6 @@
         label (ui/label "")]
     (.add window label)
     (.add window (actor/create :act (fn [_]
-                                      (.setText label (debug-infos))
+                                      (ui/set-text label (debug-infos))
                                       (.pack window))))
     window))

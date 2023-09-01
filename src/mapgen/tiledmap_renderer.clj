@@ -137,7 +137,7 @@
   (doto (ui/text-field (str v))
     (.setName (str k))))
 
-(defn form-value [forms-table k]
+(defn form-value [^com.badlogic.gdx.scenes.scene2d.ui.Table forms-table k]
   (.getText ^TextField (.findActor forms-table (str k)))) ; TODO broken with VisTextField -> move interop to gdl
 ; => or reuse exactly entity-editor window
 
@@ -155,7 +155,7 @@
     (.row table)
     (doseq [[k v] properties]
       (.add table (ui/label (name k)))
-      (.add table (edit-form [k v]))
+      (.add table ^com.badlogic.gdx.scenes.scene2d.Actor (edit-form [k v]))
       (.row table))
     (.colspan (.add table (ui/text-button (str "Save to file")
                                           #(spit edn-data-file
@@ -170,7 +170,7 @@
         window (ui/window :title "Properties")
         [form get-properties] (edn-edit-form game.maps.impl/map-data-file)]
     (stage/add-actor stage window)
-    (.add window form)
+    (.add window ^com.badlogic.gdx.scenes.scene2d.Actor form)
     (.row window)
     (.add window (ui/text-button "Generate" #(generate (get-properties))))
     (.pack window)

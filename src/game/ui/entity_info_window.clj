@@ -48,6 +48,6 @@
     ; TODO do not change window size ... -> no need to invalidate layout, set the whole stage up again
     ; => fix size somehow.
     (.add window (actor/create :act (fn [_]
-                                      (.setText label (entity-info-text))
+                                      (ui/set-text label (entity-info-text))
                                       (.pack window))))
     window))

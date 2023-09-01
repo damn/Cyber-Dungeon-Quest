@@ -30,7 +30,7 @@
   (let [actor (actor/create :draw
                             (fn [this]
                               (when @item-in-hand
-                                (.toFront this) ; windows keep changing z-index when selected, or put all windows in 1 group and this actor another group
+                                (.toFront ^com.badlogic.gdx.scenes.scene2d.Actor this) ; windows keep changing z-index when selected, or put all windows in 1 group and this actor another group
                                 (image/draw-centered (:image @item-in-hand) (gui/mouse-position)))))]
     actor))
 
@@ -51,37 +51,34 @@
     (actor/set-position debug-window 0 (gui/viewport-height))
     (actor/set-position help-window
                         (- (/ (gui/viewport-width) 2)
-                           (/ (.getWidth help-window) 2)) ; actor/width
+                           (/ (actor/width help-window) 2)) ; actor/width
                         (gui/viewport-height))
     (actor/set-position inventory/window
                         (gui/viewport-width)
                         (- (/ (gui/viewport-height) 2)
-                           (/ (.getHeight help-window) 2))) ; actor/height
+                           (/ (actor/height help-window) 2))) ; actor/height
     (actor/set-position inventory/window
                         (gui/viewport-width)
                         (- (/ (gui/viewport-height) 2)
-                           (/ (.getHeight help-window) 2)))
+                           (/ (actor/height help-window) 2)))
     (actor/set-position entity-info-window
                         (.getX inventory/window) ; actor/x
                         0)
     ; actor/set-width ? or widget/?
     ; actor/set-height
-    (.setWidth  entity-info-window (.getWidth inventory/window)) ; 333, 208
-    (.setHeight entity-info-window (.getY inventory/window))
+    (actor/set-width  entity-info-window (actor/width inventory/window)) ; 333, 208
+    (actor/set-height entity-info-window (.getY inventory/window))
     ; => instead of add just
     ; add map
     ; or vector with id
     ; stage pass list of thingy?
     (doseq [window windows]
       (stage/add-actor stage window)  ; move to positioning up
-      (.setVisible window true) ; already visible?
+      (actor/set-visible window true) ; already visible?
 
       )
     (stage/add-actor stage (item-in-hand-render-actor))
     stage))
-
-(defn- toggle-visible! [actor] ; TODO to ui/, no '!'
-  (.setVisible actor (not (.isVisible actor))))
 
 #_(def ^:private keybindings
   {:exit :ESCAPE
@@ -142,15 +139,15 @@
     (app/set-screen :game.screens.minimap)) ; TODO does set-screen do it immediately (cancel the current frame ) or finish this frame?
   ; TODO entity/skill info also
   (when (input/is-key-pressed? :I)
-    (toggle-visible! inventory-window)
-    (toggle-visible! entity-info-window)
-    (toggle-visible! skill-window))
+    (actor/toggle-visible inventory-window)
+    (actor/toggle-visible entity-info-window)
+    (actor/toggle-visible skill-window))
 
   (when (input/is-key-pressed? :H)
-    (toggle-visible! help-window))
+    (actor/toggle-visible help-window))
 
   (when (input/is-key-pressed? :Z)
-    (toggle-visible! debug-window))
+    (actor/toggle-visible debug-window))
 
   ; we check left-mouse-pressed? and not left-mouse-down? because down may miss
   ; short taps between frames

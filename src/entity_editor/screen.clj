@@ -3,6 +3,7 @@
             [gdl.lc :as lc]
             [gdl.app :as app]
             [gdl.input :as input]
+            [gdl.utils :refer [dispose]]
             [gdl.graphics.gui :as gui]
             [gdl.graphics.batch :refer [batch]]
             [gdl.scene2d.actor :as actor]
@@ -198,10 +199,13 @@
  ; TODO
  ; => non-toggle image-button
 
+(defn- set-second-widget [widget]
+  (.setSecondWidget ^com.kotcrab.vis.ui.widget.VisSplitPane (split-pane) widget))
+
 (defn- left-widget []
-  (ui/table :rows [[(ui/text-button "Creatures" #(.setSecondWidget (split-pane) (creatures-table)))]
-                   [(ui/text-button "Items"     #(.setSecondWidget (split-pane) (items-table)))]
-                   [(ui/text-button "Skills"    #(.setSecondWidget (split-pane) (skills-table)))]
+  (ui/table :rows [[(ui/text-button "Creatures" #(set-second-widget (creatures-table)))]
+                   [(ui/text-button "Items"     #(set-second-widget (items-table)))]
+                   [(ui/text-button "Skills"    #(set-second-widget (skills-table)))]
                    [(ui/text-button "Back to Main Menu" #(app/set-screen :game.screens.main))]]))
 
 (defmodule {:keys [stage]}
@@ -216,7 +220,7 @@
       (stage/add-actor stage table)
       {:stage stage
        :split-pane split-pane})) ; TODO only stage needed, can get split-pane through table
-  (lc/dispose [_] (.dispose stage))
+  (lc/dispose [_] (dispose stage))
   (lc/show [_] (input/set-processor stage))
   (lc/hide [_] (input/set-processor nil))
   (lc/render [_] (gui/render #(stage/draw stage batch)))
