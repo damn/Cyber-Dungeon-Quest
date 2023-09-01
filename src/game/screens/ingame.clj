@@ -28,7 +28,7 @@
 
 (defn- item-in-hand-render-actor []
   (let [actor (actor/create :draw
-                            (fn [_ _]
+                            (fn [this]
                               (when @item-in-hand
                                 (.toFront this) ; windows keep changing z-index when selected, or put all windows in 1 group and this actor another group
                                 (image/draw-centered (:image @item-in-hand) (gui/mouse-position)))))]

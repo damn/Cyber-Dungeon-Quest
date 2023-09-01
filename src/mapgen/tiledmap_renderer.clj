@@ -2,6 +2,7 @@
   (:require [clojure.edn :as edn]
             [x.x :refer [defmodule]]
             [gdl.app :as app]
+            [gdl.utils :refer [dispose]]
             [gdl.lc :as lc]
             [gdl.input :as input]
             [gdl.graphics.world :as world]
@@ -122,7 +123,7 @@
   (let [{:keys [tiled-map
                 area-level-grid
                 start-positions]} (module-gen/generate properties)]
-    (.dispose @current-tiled-map)
+    (dispose @current-tiled-map)
     (reset! current-tiled-map tiled-map)
     (reset! current-area-level-grid area-level-grid)
     (reset! current-start-positions (set start-positions))
@@ -180,8 +181,8 @@
     (reset! current-tiled-map (tiled/load-map module-gen/modules-file))
     (create-stage))
   (lc/dispose [_]
-    (.dispose stage)
-    (.dispose @current-tiled-map))
+    (dispose stage)
+    (dispose @current-tiled-map))
   (lc/show [_]
     (input/set-processor stage)
     (center-world-camera))

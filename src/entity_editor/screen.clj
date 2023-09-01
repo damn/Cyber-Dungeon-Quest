@@ -44,11 +44,11 @@
 (defmethod property-widget :default [_ v]
   (ui/text-field (pr-str v)))
 
-(defmethod property-widget :id [_ id] ; => not-editable => label.
+(defmethod property-widget :id [_ id] ; => not-editable => label. (also :slot)
   (ui/label (pr-str id)))
 
 (defmethod property-widget :image [_ image]
-  (ui/image image))
+  (ui/image (ui/texture-region-drawable (:texture image))))
 
 (declare species-editor)
 
@@ -66,7 +66,7 @@
  ; also item needs to be in certain slot, each slot only once, etc. also max-items ...?
  (ui/table :rows (concat
                   (for [skill (:skills props)]
-                    [(ui/image (:image (properties/get skill)))
+                    [(ui/image (ui/texture-region-drawable (:texture (:image (properties/get skill)))))
                      (ui/text-button " - " (fn [] (println "Remove " )))])
                   [[(ui/text-button " + " (fn [] (println "Add ")))]]))
  )

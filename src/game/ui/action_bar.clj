@@ -83,13 +83,13 @@
 (defmodule _
   (lc/create [_]
     (.bindRoot #'horizontal-group (HorizontalGroup.))
-    (stage/add-actor horizontal-group (actor/create :act (fn [_] (check-hotbar-actualize))))))
+    (.addActor horizontal-group (actor/create :act (fn [_] (check-hotbar-actualize))))))
 
 (declare ^ButtonGroup button-group)
 
 (defn- reset-buttons! []
   (.clearChildren horizontal-group)
-  (stage/add-actor horizontal-group (actor/create :act (fn [_] check-hotbar-actualize)))
+  (.addActor horizontal-group (actor/create :act (fn [_] (check-hotbar-actualize))))
 
   (.bindRoot #'button-group (ButtonGroup.))
   (.setMaxCheckCount button-group 1)
@@ -103,7 +103,7 @@
     (.addListener button (ui/text-tooltip
                           #(skills/text id player-entity)))
     ; TODO HOTKEY
-    (stage/add-actor horizontal-group button)
+    (.addActor horizontal-group button)
     (.add button-group button)))
 
 (comment

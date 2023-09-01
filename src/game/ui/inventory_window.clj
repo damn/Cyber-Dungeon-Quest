@@ -25,7 +25,7 @@
   (:import com.badlogic.gdx.graphics.g2d.TextureRegion
            [com.badlogic.gdx.scenes.scene2d Actor Group]
            [com.badlogic.gdx.scenes.scene2d.ui Widget Image TextTooltip Window Table]
-           [com.badlogic.gdx.scenes.scene2d.utils TextureRegionDrawable ClickListener]))
+           [com.badlogic.gdx.scenes.scene2d.utils ClickListener]))
 
 ; TODO it is just a grid ... if you look at it .. simplify? just hashmap ?
 ; also empty inventory can  just be an empty hashmap??
@@ -237,8 +237,8 @@
                              [slot
                               (-> sheet
                                   (image/get-sprite [21 (+ y 2)])
-                                  :texture ; TODO image/texture-region type hinted ?
-                                  TextureRegionDrawable.
+                                  :texture
+                                  ui/texture-region-drawable
                                   (.tint (color/rgb 1 1 1 0.4)))]))
                       (into {}))))))
 
@@ -328,7 +328,7 @@
 (defn- set-item-image-in-widget [cell item]
   (let [cell-widget (get-cell-widget cell)
         image-widget (get-image-widget cell-widget)]
-    (.setDrawable image-widget (TextureRegionDrawable. ^TextureRegion (:texture (:image item))))
+    (.setDrawable image-widget (ui/texture-region-drawable (:texture (:image item))))
     (.addListener cell-widget (ui/text-tooltip #(items/text item)))))
 
 (defn- remove-item-from-widget [cell]
