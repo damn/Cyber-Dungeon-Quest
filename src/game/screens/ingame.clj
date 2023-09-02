@@ -31,7 +31,8 @@
   (let [actor (actor/create :draw
                             (fn [this]
                               (when @item-in-hand
-                                (.toFront ^com.badlogic.gdx.scenes.scene2d.Actor this) ; windows keep changing z-index when selected, or put all windows in 1 group and this actor another group
+                                ; windows keep changing z-index when selected, or put all windows in 1 group and this actor another group
+                                (.toFront ^com.badlogic.gdx.scenes.scene2d.Actor this)
                                 (image/draw-centered (:image @item-in-hand) (gui/mouse-position)))))]
     actor))
 

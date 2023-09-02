@@ -11,8 +11,7 @@
             [gdl.scene2d.ui :as ui]
             [game.properties :as properties]))
 
-(defn- stage      [] (:stage      (app/current-screen-value)))
-(defn- split-pane [] (:split-pane (app/current-screen-value)))
+(def ^:private stage app/current-screen-value)
 
 (declare property-editor-window)
 
@@ -60,13 +59,13 @@
    :creature {:title "Creature"
               :property-keys [:id :image :species :level :skills :items]
               :overview {:title "Creatures"
-                         :sort-by-fn #(vector (or (:level %) 9) (name (:species %)))
+                         :sort-by-fn #(vector (or (:level %) 9) (name (:species %)) (name (:id %)))
                          :extra-infos-widget #(ui/label (or (str (:level %) "-")))
                          :fetch-key :species}}
    :item {:title "Item"
           :property-keys [:id :image :slot :pretty-name :modifiers]
           :overview {:title "Items"
-                     :sort-by-fn #(if-let [slot (:slot %)] (name slot) "")
+                     :sort-by-fn #(vector (if-let [slot (:slot %)] (name slot) "") (name (:id %)))
                      :fetch-key :slot}}
    :skill {:title "Skill"
            :property-keys [:id :image :action-time :cooldown :cost :effect]
@@ -121,26 +120,26 @@
                                     stack)))))))
 
 (defn- set-second-widget [widget]
-  (.setSecondWidget ^com.kotcrab.vis.ui.widget.VisSplitPane (split-pane) widget))
+  (let [^com.badlogic.gdx.scenes.scene2d.ui.Table table (:main-table (stage))]
+    (.setActor ^com.badlogic.gdx.scenes.scene2d.ui.Cell
+               (second (.getCells table)) widget)
+    (ui/pack table)))
 
 (defn- left-widget []
-  (ui/table :rows (concat
+  (ui/table :cell-defaults {:pad 5}
+            :rows (concat
                    (for [[property-type {:keys [overview]}] property-types]
                      [(ui/text-button (:title overview) #(set-second-widget (overview-table property-type)))])
                    [[(ui/text-button "Back to Main Menu" #(app/set-screen :game.screens.main))]])))
 
-(defmodule {:keys [stage]}
+(defmodule stage
   (lc/create [_]
     (let [stage (stage/create gui/viewport batch)
-          split-pane (ui/split-pane :first-widget (left-widget)
-                                    :second-widget (ui/label "select property type left")
-                                    :vertical? false
-                                    :id :split-pane)
-          table (ui/table :rows [[split-pane]]
+          table (ui/table :id :main-table
+                          :rows [[(left-widget) nil]]
                           :fill-parent? true)]
       (stage/add-actor stage table)
-      {:stage stage
-       :split-pane split-pane})) ; TODO only stage needed, can get split-pane through table
+      stage))
   (lc/dispose [_] (dispose stage))
   (lc/show [_] (input/set-processor stage))
   (lc/hide [_] (input/set-processor nil))

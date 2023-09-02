@@ -40,7 +40,7 @@
 (defn get [id]
   (safe-get properties id))
 
-(defn all-with-key [k]
+(defn all-with-key [k] ; TODO? (properties/all-with-type :creature)
   (filter k (vals properties)))
 
 (defn- save-edn [file data]
