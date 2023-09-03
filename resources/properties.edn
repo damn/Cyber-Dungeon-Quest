@@ -516,7 +516,7 @@
   :skills #{},
   :items #{}}
  {:level 1,
-  :skills #{:projectile},
+  :skills #{:projectile :meditation},
   :id :wizard,
   :image {:file "creatures/images.png", :sub-image-bounds (0 0 48 48)},
   :species :species/human,
