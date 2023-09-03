@@ -89,7 +89,7 @@
 (defn save! [data]
   {:pre [(contains? data :id)
          (contains? properties (:id data))
-         (= (keys data) (keys (get (:id data))))]}
+         (= (set (keys data)) (set (keys (get (:id data)))))]}
   (alter-var-root #'properties update (:id data) merge data)
   (save-all-properties!))
 

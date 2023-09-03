@@ -116,6 +116,26 @@
        (keep actor/id)
        set))
 
+(comment
+
+ ; TODO schema !
+ ; cannot  save spider as it doesnt have :level ! ...
+
+
+ (let [window (first (filter #(instance? com.kotcrab.vis.ui.widget.VisWindow %) (.getActors (stage))))
+       props (properties/get :wizard)
+       new-props (into {}
+                       (for [k (:property-keys (get property-types :creature))
+                             :let [widget (get-child-with-id window k)]]
+                         [k (or (widget-data k widget)
+                                (get props k))]))
+       ]
+   (= (set (keys props))
+      (set (keys new-props)))
+
+   )
+ )
+
 (defn- property-editor-window [id]
   (let [props (properties/get id)
         {:keys [title property-keys]} (get property-types (properties/property-type props))
