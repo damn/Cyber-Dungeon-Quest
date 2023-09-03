@@ -540,7 +540,7 @@
   :skills #{},
   :items #{}}
  {:level 1,
-  :items #{:trident},
+  :items #{:shield-wood-buckler :trident},
   :image
   {:file "creatures/images.png", :sub-image-bounds (144 288 48 48)},
   :id :lizardman-green-spear,
