@@ -108,6 +108,8 @@
 (defn stack-item [entity cell item]
   (let [cell-item (get-in (:inventory @entity) cell)]
     (assert (stackable? item cell-item))
+    ; TODO this doesnt make sense with modifiers ! (triggered 2 times if available)
+    ; first remove and then place, just update directly  item ...
     (remove-item entity cell)
     (set-item entity cell (update cell-item :count + (:count item)))))
 
@@ -116,6 +118,8 @@
     (if (and (:count item)
              (> (:count item) 1))
       (do
+       ; TODO this doesnt make sense with modifiers ! (triggered 2 times if available)
+       ; first remove and then place, just update directly  item ...
        (remove-item entity cell)
        (set-item entity cell (update item :count dec)))
       (remove-item entity cell))))
