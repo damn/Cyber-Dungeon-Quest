@@ -74,38 +74,47 @@
    :items :one-to-many})
 
 (defmulti property-widget (fn [k v] (get attribute-widget k)))
+(defmulti widget-data (fn [k widget] (get attribute-widget k)))
 
 (defmethod property-widget :default [_ v]
-  (ui/label (pr-str v))) ; TODO print-level set to nil ! not showing all effect
+  (ui/label (pr-str v))) ; TODO print-level set to nil ! not showing all effect -> print-fn?
 
-(defmulti property-widget-data (fn [table k] (get attribute-widget k)))
-
-(defmethod property-widget-data :default [group k]
+(defmethod widget-data :default [_ _]
   nil)
 
 (defmethod property-widget :image [_ image]
   (ui/image (ui/texture-region-drawable (:texture image))))
 
-(defmethod property-widget :text-field [k v]
-  (ui/text-field (pr-str v) :id k))
+(defmethod property-widget :text-field [_ v]
+  (ui/text-field (pr-str v)))
 
-(defmethod property-widget-data :text-field [group k]
-  (-> (.getText ^com.kotcrab.vis.ui.widget.VisTextField (get-child-with-id group k))
-      edn/read-string))
+(defmethod widget-data :text-field [_ widget]
+  (edn/read-string
+   (.getText ^com.kotcrab.vis.ui.widget.VisTextField widget)))
 
 (defmethod property-widget :link-button [_ id]
   (ui/text-button (name id) #(open-property-editor-window id)))
 
-(defmethod property-widget :one-to-many [k v]
+(defn- add-one-to-many-rows [table property-ids]
+  (.addSeparator ^com.kotcrab.vis.ui.widget.VisTable table)
+  (ui/add-rows table (concat
+                      (for [prop-id property-ids]
+                        [(ui/image (ui/texture-region-drawable (:texture (:image (properties/get prop-id))))
+                                   :id prop-id)
+                         (ui/text-button " - " (fn []
+                                                 (.clearChildren ^com.badlogic.gdx.scenes.scene2d.ui.Table table)
+                                                 (add-one-to-many-rows table (disj (set property-ids) prop-id))))])
+                      [[(ui/text-button " + " (fn [] (println "Add ")))]])))
+
+(defmethod property-widget :one-to-many [_ property-ids]
   (let [table (ui/table)]
-    (.addSeparator ^com.kotcrab.vis.ui.widget.VisTable table)
-    (ui/add-rows table (concat
-                        (for [prop-id v]
-                          [(ui/image (ui/texture-region-drawable (:texture (:image (properties/get prop-id)))))
-                           (ui/text-button " - " (fn [] (println "Remove " )))])
-                        [[(ui/text-button " + " (fn [] (println "Add ")))]]))
-    (.addSeparator ^com.kotcrab.vis.ui.widget.VisTable table)
+    (add-one-to-many-rows table property-ids)
     table))
+
+(defmethod widget-data :one-to-many [_ widget]
+  (->> (.getChildren ^com.badlogic.gdx.scenes.scene2d.Group widget)
+       (keep actor/id)
+       set))
 
 (defn- property-editor-window [id]
   (let [props (properties/get id)
@@ -114,11 +123,15 @@
                           :modal? true
                           :cell-defaults {:pad 5})
         get-data #(into {}
-                        (for [k property-keys]
-                          [k (or (property-widget-data window k)
+                        (for [k property-keys
+                              :let [widget (get-child-with-id window k)]]
+                          [k (or (widget-data k widget)
                                  (get props k))]))]
-    (ui/add-rows window (concat (for [k property-keys]
-                                  [(ui/label (name k)) (property-widget k (get props k))])
+    (ui/add-rows window (concat (for [k property-keys
+                                      :let [widget (property-widget k (get props k))]]
+                                  (do
+                                   (actor/set-id widget k)
+                                   [(ui/label (name k)) widget]))
                                 [[(ui/text-button "Save" #(properties/save! (get-data)))
                                   (ui/text-button "Cancel" #(actor/remove window))]]))
     (ui/pack window)

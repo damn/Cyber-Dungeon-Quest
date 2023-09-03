@@ -90,7 +90,7 @@
   {:pre [(contains? data :id)
          (contains? properties (:id data))
          (= (keys data) (keys (get (:id data))))]}
-  (alter-var-root #'properties assoc (:id data) data)
+  (alter-var-root #'properties update (:id data) merge data)
   (save-all-properties!))
 
 ; TODO schema after load/before save
