@@ -68,12 +68,13 @@
   (sort-by
    (fn [prop]
      (let [ptype (property-type prop)]
-       (cond
-        :skill 0 ; TODO and here
+       (case ptype
+        :skill 0
         :creature 1
         :species 2
         :item 3
-        :weapon 4)))
+        :weapon 4
+        9)))
    properties))
 
 (defn- save-all-properties! []

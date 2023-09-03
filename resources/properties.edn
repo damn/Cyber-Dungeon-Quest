@@ -1,178 +1,4 @@
-({:image {:file "items/images.png", :sub-image-bounds (192 384 48 48)},
-  :id :skull-small-gold,
-  :pretty-name "Gold Small Skull"}
- {:image {:file "items/images.png", :sub-image-bounds (624 336 48 48)},
-  :id :crystal-dragon,
-  :pretty-name "Dragon Crystal"}
- {:image {:file "items/images.png", :sub-image-bounds (336 384 48 48)},
-  :id :gem-ruby,
-  :pretty-name "Ruby Gem"}
- {:image {:file "items/images.png", :sub-image-bounds (624 0 48 48)},
-  :id :coin-copper,
-  :pretty-name "Copper Coin"}
- {:image {:file "items/images.png", :sub-image-bounds (672 336 48 48)},
-  :id :crystal-blood,
-  :pretty-name "Blood Crystal"}
- {:image {:file "items/images.png", :sub-image-bounds (0 384 48 48)},
-  :id :skull-large-open,
-  :pretty-name "Open Large Skull"}
- {:image {:file "items/images.png", :sub-image-bounds (816 48 48 48)},
-  :id :flask-red,
-  :pretty-name "Red Flask"}
- {:image {:file "items/images.png", :sub-image-bounds (144 0 48 48)},
-  :id :key-blue,
-  :pretty-name "Blue Key"}
- {:image {:file "items/images.png", :sub-image-bounds (720 0 48 48)},
-  :id :coin-gold,
-  :pretty-name "Gold Coin"}
- {:image {:file "items/images.png", :sub-image-bounds (144 384 48 48)},
-  :id :skull-small-blood,
-  :pretty-name "Blood Small Skull"}
- {:image {:file "items/images.png", :sub-image-bounds (576 0 48 48)},
-  :id :potion-black,
-  :pretty-name "Black Potion"}
- {:image {:file "items/images.png", :sub-image-bounds (384 384 48 48)},
-  :id :gem-sapphire,
-  :pretty-name "Sapphire Gem"}
- {:image {:file "items/images.png", :sub-image-bounds (480 0 48 48)},
-  :id :potion-red,
-  :pretty-name "Red Potion"}
- {:image {:file "items/images.png", :sub-image-bounds (48 0 48 48)},
-  :id :key-silver,
-  :pretty-name "Silver Key"}
- {:image {:file "items/images.png", :sub-image-bounds (816 0 48 48)},
-  :id :heart-red-half,
-  :pretty-name "Half Red Heart"}
- {:image {:file "items/images.png", :sub-image-bounds (432 48 48 48)},
-  :id :chest-empty,
-  :pretty-name "Empty Chest"}
- {:image {:file "items/images.png", :sub-image-bounds (384 48 48 48)},
-  :id :chest-gold-open,
-  :pretty-name "Open Gold Chest"}
- {:image {:file "items/images.png", :sub-image-bounds (432 384 48 48)},
-  :id :gem-amethyst,
-  :pretty-name "Amethyst Gem"}
- {:image {:file "items/images.png", :sub-image-bounds (96 0 48 48)},
-  :id :key-red,
-  :pretty-name "Red Key"}
- {:image {:file "items/images.png", :sub-image-bounds (288 48 48 48)},
-  :id :book-latch,
-  :pretty-name "Latch Book"}
- {:image {:file "items/images.png", :sub-image-bounds (240 0 48 48)},
-  :id :key-bone,
-  :pretty-name "Bone Key"}
- {:image {:file "items/images.png", :sub-image-bounds (672 48 48 48)},
-  :id :torch-lit,
-  :pretty-name "Lit Torch"}
- {:image {:file "items/images.png", :sub-image-bounds (0 48 48 48)},
-  :id :book-brown,
-  :pretty-name "Brown Book"}
- {:image {:file "items/images.png", :sub-image-bounds (0 0 48 48)},
-  :id :key-gold,
-  :pretty-name "Gold Key"}
- {:image {:file "items/images.png", :sub-image-bounds (864 48 48 48)},
-  :id :flask-blue,
-  :pretty-name "Blue Flask"}
- {:image {:file "items/images.png", :sub-image-bounds (240 48 48 48)},
-  :id :book-evil,
-  :pretty-name "Evil Book"}
- {:image {:file "items/images.png", :sub-image-bounds (480 48 48 48)},
-  :id :chest-silver-,
-  :pretty-name "Silver Chest"}
- {:image {:file "items/images.png", :sub-image-bounds (720 336 48 48)},
-  :id :crystal-cloud,
-  :pretty-name "Cloud Crystal"}
- {:image {:file "items/images.png", :sub-image-bounds (768 0 48 48)},
-  :id :heart-empty,
-  :pretty-name "Empty Heart"}
- {:image {:file "items/images.png", :sub-image-bounds (96 384 48 48)},
-  :id :skull-small,
-  :pretty-name "Small Skull"}
- {:image {:file "items/images.png", :sub-image-bounds (432 0 48 48)},
-  :id :potion-green,
-  :pretty-name "Green Potion"}
- {:image {:file "items/images.png", :sub-image-bounds (528 48 48 48)},
-  :id :chest-silver-open,
-  :pretty-name "Open Silver Chest"}
- {:image {:file "items/images.png", :sub-image-bounds (336 48 48 48)},
-  :id :chest-gold,
-  :pretty-name "Gold Chest"}
- {:image {:file "items/images.png", :sub-image-bounds (528 0 48 48)},
-  :id :potion-white,
-  :pretty-name "White Potion"}
- {:image {:file "items/images.png", :sub-image-bounds (48 384 48 48)},
-  :id :skull-large-closed,
-  :pretty-name "Closed Large Skull"}
- {:image {:file "items/images.png", :sub-image-bounds (768 48 48 48)},
-  :id :drumstick,
-  :pretty-name "Drumstick"}
- {:image {:file "items/images.png", :sub-image-bounds (912 48 48 48)},
-  :id :flask-green,
-  :pretty-name "Green Flask"}
- {:image {:file "items/images.png", :sub-image-bounds (816 336 48 48)},
-  :id :crystal-crimson,
-  :pretty-name "Crimson Crystal"}
- {:image {:file "items/images.png", :sub-image-bounds (864 336 48 48)},
-  :id :crystal-sun,
-  :pretty-name "Sun Crystal"}
- {:image {:file "items/images.png", :sub-image-bounds (288 384 48 48)},
-  :id :gem-emerald,
-  :pretty-name "Emerald Gem"}
- {:image {:file "items/images.png", :sub-image-bounds (96 48 48 48)},
-  :id :book-red,
-  :pretty-name "Red Book"}
- {:image {:file "items/images.png", :sub-image-bounds (144 48 48 48)},
-  :id :book-blue,
-  :pretty-name "Blue Book"}
- {:image {:file "items/images.png", :sub-image-bounds (672 0 48 48)},
-  :id :coin-silver,
-  :pretty-name "Silver Coin"}
- {:image {:file "items/images.png", :sub-image-bounds (48 48 48 48)},
-  :id :book-black,
-  :pretty-name "Black Book"}
- {:image {:file "items/images.png", :sub-image-bounds (384 0 48 48)},
-  :id :potion-blue,
-  :pretty-name "Blue Potion"}
- {:image {:file "items/images.png", :sub-image-bounds (336 0 48 48)},
-  :id :potion-empty,
-  :pretty-name "Empty Potion"}
- {:image {:file "items/images.png", :sub-image-bounds (912 0 48 48)},
-  :id :heart-green-half,
-  :pretty-name "Half Green Heart"}
- {:image {:file "items/images.png", :sub-image-bounds (576 336 48 48)},
-  :id :crystal-sky,
-  :pretty-name "Sky Crystal"}
- {:image {:file "items/images.png", :sub-image-bounds (960 0 48 48)},
-  :id :heart-green-full,
-  :pretty-name "Full Green Heart"}
- {:image {:file "items/images.png", :sub-image-bounds (768 336 48 48)},
-  :id :crystal-onyx,
-  :pretty-name "Onyx Crystal"}
- {:image {:file "items/images.png", :sub-image-bounds (864 0 48 48)},
-  :id :heart-red-full,
-  :pretty-name "Full Red Heart"}
- {:image {:file "items/images.png", :sub-image-bounds (240 384 48 48)},
-  :id :gem-tourmaline,
-  :pretty-name "Tourmaline Gem"}
- {:image {:file "items/images.png", :sub-image-bounds (192 48 48 48)},
-  :id :book-green,
-  :pretty-name "Green Book"}
- {:image {:file "items/images.png", :sub-image-bounds (576 48 48 48)},
-  :id :chest-silver-empty,
-  :pretty-name "Empty Silver Chest"}
- {:image {:file "items/images.png", :sub-image-bounds (624 48 48 48)},
-  :id :torch,
-  :pretty-name "Torch"}
- {:image {:file "items/images.png", :sub-image-bounds (720 48 48 48)},
-  :id :satchel,
-  :pretty-name "Satchel"}
- {:image {:file "items/images.png", :sub-image-bounds (192 0 48 48)},
-  :id :key-green,
-  :pretty-name "Green Key"}
- {:image {:file "items/images.png", :sub-image-bounds (288 0 48 48)},
-  :id :key-ornate,
-  :pretty-name "Ornate Key"}
- {:id :spawn,
+({:id :spawn,
   :spell? true,
   :action-time 400,
   :cooldown 0,
@@ -1665,4 +1491,178 @@
  {:image {:file "items/images.png", :sub-image-bounds (816 240 48 48)},
   :slot :shield,
   :id :shield-mystic-heater,
-  :pretty-name "Heater Mystic Shield"})
+  :pretty-name "Heater Mystic Shield"}
+ {:image {:file "items/images.png", :sub-image-bounds (192 384 48 48)},
+  :id :skull-small-gold,
+  :pretty-name "Gold Small Skull"}
+ {:image {:file "items/images.png", :sub-image-bounds (624 336 48 48)},
+  :id :crystal-dragon,
+  :pretty-name "Dragon Crystal"}
+ {:image {:file "items/images.png", :sub-image-bounds (336 384 48 48)},
+  :id :gem-ruby,
+  :pretty-name "Ruby Gem"}
+ {:image {:file "items/images.png", :sub-image-bounds (624 0 48 48)},
+  :id :coin-copper,
+  :pretty-name "Copper Coin"}
+ {:image {:file "items/images.png", :sub-image-bounds (672 336 48 48)},
+  :id :crystal-blood,
+  :pretty-name "Blood Crystal"}
+ {:image {:file "items/images.png", :sub-image-bounds (0 384 48 48)},
+  :id :skull-large-open,
+  :pretty-name "Open Large Skull"}
+ {:image {:file "items/images.png", :sub-image-bounds (816 48 48 48)},
+  :id :flask-red,
+  :pretty-name "Red Flask"}
+ {:image {:file "items/images.png", :sub-image-bounds (144 0 48 48)},
+  :id :key-blue,
+  :pretty-name "Blue Key"}
+ {:image {:file "items/images.png", :sub-image-bounds (720 0 48 48)},
+  :id :coin-gold,
+  :pretty-name "Gold Coin"}
+ {:image {:file "items/images.png", :sub-image-bounds (144 384 48 48)},
+  :id :skull-small-blood,
+  :pretty-name "Blood Small Skull"}
+ {:image {:file "items/images.png", :sub-image-bounds (576 0 48 48)},
+  :id :potion-black,
+  :pretty-name "Black Potion"}
+ {:image {:file "items/images.png", :sub-image-bounds (384 384 48 48)},
+  :id :gem-sapphire,
+  :pretty-name "Sapphire Gem"}
+ {:image {:file "items/images.png", :sub-image-bounds (480 0 48 48)},
+  :id :potion-red,
+  :pretty-name "Red Potion"}
+ {:image {:file "items/images.png", :sub-image-bounds (48 0 48 48)},
+  :id :key-silver,
+  :pretty-name "Silver Key"}
+ {:image {:file "items/images.png", :sub-image-bounds (816 0 48 48)},
+  :id :heart-red-half,
+  :pretty-name "Half Red Heart"}
+ {:image {:file "items/images.png", :sub-image-bounds (432 48 48 48)},
+  :id :chest-empty,
+  :pretty-name "Empty Chest"}
+ {:image {:file "items/images.png", :sub-image-bounds (384 48 48 48)},
+  :id :chest-gold-open,
+  :pretty-name "Open Gold Chest"}
+ {:image {:file "items/images.png", :sub-image-bounds (432 384 48 48)},
+  :id :gem-amethyst,
+  :pretty-name "Amethyst Gem"}
+ {:image {:file "items/images.png", :sub-image-bounds (96 0 48 48)},
+  :id :key-red,
+  :pretty-name "Red Key"}
+ {:image {:file "items/images.png", :sub-image-bounds (288 48 48 48)},
+  :id :book-latch,
+  :pretty-name "Latch Book"}
+ {:image {:file "items/images.png", :sub-image-bounds (240 0 48 48)},
+  :id :key-bone,
+  :pretty-name "Bone Key"}
+ {:image {:file "items/images.png", :sub-image-bounds (672 48 48 48)},
+  :id :torch-lit,
+  :pretty-name "Lit Torch"}
+ {:image {:file "items/images.png", :sub-image-bounds (0 48 48 48)},
+  :id :book-brown,
+  :pretty-name "Brown Book"}
+ {:image {:file "items/images.png", :sub-image-bounds (0 0 48 48)},
+  :id :key-gold,
+  :pretty-name "Gold Key"}
+ {:image {:file "items/images.png", :sub-image-bounds (864 48 48 48)},
+  :id :flask-blue,
+  :pretty-name "Blue Flask"}
+ {:image {:file "items/images.png", :sub-image-bounds (240 48 48 48)},
+  :id :book-evil,
+  :pretty-name "Evil Book"}
+ {:image {:file "items/images.png", :sub-image-bounds (480 48 48 48)},
+  :id :chest-silver-,
+  :pretty-name "Silver Chest"}
+ {:image {:file "items/images.png", :sub-image-bounds (720 336 48 48)},
+  :id :crystal-cloud,
+  :pretty-name "Cloud Crystal"}
+ {:image {:file "items/images.png", :sub-image-bounds (768 0 48 48)},
+  :id :heart-empty,
+  :pretty-name "Empty Heart"}
+ {:image {:file "items/images.png", :sub-image-bounds (96 384 48 48)},
+  :id :skull-small,
+  :pretty-name "Small Skull"}
+ {:image {:file "items/images.png", :sub-image-bounds (432 0 48 48)},
+  :id :potion-green,
+  :pretty-name "Green Potion"}
+ {:image {:file "items/images.png", :sub-image-bounds (528 48 48 48)},
+  :id :chest-silver-open,
+  :pretty-name "Open Silver Chest"}
+ {:image {:file "items/images.png", :sub-image-bounds (336 48 48 48)},
+  :id :chest-gold,
+  :pretty-name "Gold Chest"}
+ {:image {:file "items/images.png", :sub-image-bounds (528 0 48 48)},
+  :id :potion-white,
+  :pretty-name "White Potion"}
+ {:image {:file "items/images.png", :sub-image-bounds (48 384 48 48)},
+  :id :skull-large-closed,
+  :pretty-name "Closed Large Skull"}
+ {:image {:file "items/images.png", :sub-image-bounds (768 48 48 48)},
+  :id :drumstick,
+  :pretty-name "Drumstick"}
+ {:image {:file "items/images.png", :sub-image-bounds (912 48 48 48)},
+  :id :flask-green,
+  :pretty-name "Green Flask"}
+ {:image {:file "items/images.png", :sub-image-bounds (816 336 48 48)},
+  :id :crystal-crimson,
+  :pretty-name "Crimson Crystal"}
+ {:image {:file "items/images.png", :sub-image-bounds (864 336 48 48)},
+  :id :crystal-sun,
+  :pretty-name "Sun Crystal"}
+ {:image {:file "items/images.png", :sub-image-bounds (288 384 48 48)},
+  :id :gem-emerald,
+  :pretty-name "Emerald Gem"}
+ {:image {:file "items/images.png", :sub-image-bounds (96 48 48 48)},
+  :id :book-red,
+  :pretty-name "Red Book"}
+ {:image {:file "items/images.png", :sub-image-bounds (144 48 48 48)},
+  :id :book-blue,
+  :pretty-name "Blue Book"}
+ {:image {:file "items/images.png", :sub-image-bounds (672 0 48 48)},
+  :id :coin-silver,
+  :pretty-name "Silver Coin"}
+ {:image {:file "items/images.png", :sub-image-bounds (48 48 48 48)},
+  :id :book-black,
+  :pretty-name "Black Book"}
+ {:image {:file "items/images.png", :sub-image-bounds (384 0 48 48)},
+  :id :potion-blue,
+  :pretty-name "Blue Potion"}
+ {:image {:file "items/images.png", :sub-image-bounds (336 0 48 48)},
+  :id :potion-empty,
+  :pretty-name "Empty Potion"}
+ {:image {:file "items/images.png", :sub-image-bounds (912 0 48 48)},
+  :id :heart-green-half,
+  :pretty-name "Half Green Heart"}
+ {:image {:file "items/images.png", :sub-image-bounds (576 336 48 48)},
+  :id :crystal-sky,
+  :pretty-name "Sky Crystal"}
+ {:image {:file "items/images.png", :sub-image-bounds (960 0 48 48)},
+  :id :heart-green-full,
+  :pretty-name "Full Green Heart"}
+ {:image {:file "items/images.png", :sub-image-bounds (768 336 48 48)},
+  :id :crystal-onyx,
+  :pretty-name "Onyx Crystal"}
+ {:image {:file "items/images.png", :sub-image-bounds (864 0 48 48)},
+  :id :heart-red-full,
+  :pretty-name "Full Red Heart"}
+ {:image {:file "items/images.png", :sub-image-bounds (240 384 48 48)},
+  :id :gem-tourmaline,
+  :pretty-name "Tourmaline Gem"}
+ {:image {:file "items/images.png", :sub-image-bounds (192 48 48 48)},
+  :id :book-green,
+  :pretty-name "Green Book"}
+ {:image {:file "items/images.png", :sub-image-bounds (576 48 48 48)},
+  :id :chest-silver-empty,
+  :pretty-name "Empty Silver Chest"}
+ {:image {:file "items/images.png", :sub-image-bounds (624 48 48 48)},
+  :id :torch,
+  :pretty-name "Torch"}
+ {:image {:file "items/images.png", :sub-image-bounds (720 48 48 48)},
+  :id :satchel,
+  :pretty-name "Satchel"}
+ {:image {:file "items/images.png", :sub-image-bounds (192 0 48 48)},
+  :id :key-green,
+  :pretty-name "Green Key"}
+ {:image {:file "items/images.png", :sub-image-bounds (288 0 48 48)},
+  :id :key-ornate,
+  :pretty-name "Ornate Key"})
