@@ -28,547 +28,772 @@
  {:image
   {:file "creatures/images.png", :sub-image-bounds (336 48 48 48)},
   :id :templar,
-  :species :species/human}
+  :species :species/human,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (192 432 48 48)},
   :id :mummy-pharao,
-  :species :species/mummy}
+  :species :species/mummy,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (384 336 48 48)},
   :id :valkyrie-a,
-  :species :species/valkyrie}
+  :species :species/valkyrie,
+  :skills #{},
+  :items #{}}
  {:id :vampire,
   :image
   {:file "creatures/images.png", :sub-image-bounds (336 240 48 48)},
-  :items (:sword),
-  :species :species/vampire}
+  :items #{:sword},
+  :species :species/vampire,
+  :skills #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (96 576 48 48)},
   :id :moth-black,
-  :species :species/moth}
+  :species :species/moth,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (432 48 48 48)},
   :id :monk,
-  :species :species/human}
+  :species :species/human,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (384 384 48 48)},
   :id :dragon-blue,
-  :species :species/dragon}
+  :species :species/dragon,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (0 96 48 48)},
   :id :warden,
-  :species :species/human}
+  :species :species/human,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (432 192 48 48)},
   :id :spider-black,
-  :species :species/spider}
- {:items (:sword),
+  :species :species/spider,
+  :skills #{},
+  :items #{}}
+ {:items #{:sword},
   :image
   {:file "creatures/images.png", :sub-image-bounds (192 96 48 48)},
   :id :elf,
-  :species :species/elf}
+  :species :species/elf,
+  :skills #{}}
  {:level 3,
-  :items (:sling),
+  :items #{:sling},
   :image
   {:file "creatures/images.png", :sub-image-bounds (48 384 48 48)},
   :id :halfling-sling,
-  :species :species/halfling}
+  :species :species/halfling,
+  :skills #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (240 528 48 48)},
   :id :worm,
-  :species :species/worm}
+  :species :species/worm,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (96 144 48 48)},
   :id :skeleton-mage,
-  :species :species/skeleton}
+  :species :species/skeleton,
+  :skills #{},
+  :items #{}}
  {:level 3,
-  :items (:dagger),
+  :items #{:dagger},
   :image
   {:file "creatures/images.png", :sub-image-bounds (96 384 48 48)},
   :id :halfling-fighter,
-  :species :species/halfling}
+  :species :species/halfling,
+  :skills #{}}
  {:level 3,
-  :items (:falchion),
+  :items #{:falchion},
   :image
   {:file "creatures/images.png", :sub-image-bounds (240 144 48 48)},
   :id :goblin-warrior,
-  :species :species/goblin}
- {:items (:dagger),
+  :species :species/goblin,
+  :skills #{}}
+ {:items #{:dagger},
   :image
   {:file "creatures/images.png", :sub-image-bounds (0 384 48 48)},
   :id :halfling-thief,
-  :species :species/halfling}
+  :species :species/halfling,
+  :skills #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (336 288 48 48)},
   :id :lizardman-blue-shaman,
-  :species :species/lizardman-blue}
- {:items (:axe),
+  :species :species/lizardman-blue,
+  :skills #{},
+  :items #{}}
+ {:items #{:axe},
   :image
   {:file "creatures/images.png", :sub-image-bounds (288 0 48 48)},
   :id :barbarian-f,
-  :species :species/barbarian}
+  :species :species/barbarian,
+  :skills #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (144 192 48 48)},
   :id :banshee,
-  :species :species/banshee}
+  :species :species/banshee,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (192 192 48 48)},
   :id :bat-giant,
-  :species :species/bat}
+  :species :species/bat,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (192 576 48 48)},
   :id :toad-blue,
-  :species :species/toad}
+  :species :species/toad,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (240 576 48 48)},
   :id :toad-horned,
-  :species :species/toad}
+  :species :species/toad,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (144 336 48 48)},
   :id :pixie-a,
-  :species :species/pixie}
- {:items (:sword),
+  :species :species/pixie,
+  :skills #{},
+  :items #{}}
+ {:items #{:sword},
   :image
   {:file "creatures/images.png", :sub-image-bounds (48 48 48 48)},
   :id :warrior-m,
-  :species :species/human}
+  :species :species/human,
+  :skills #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (0 48 48 48)},
   :id :necromancer,
-  :species :species/human}
+  :species :species/human,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (0 480 48 48)},
   :id :lord-a,
-  :species :species/human}
+  :species :species/human,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (48 336 48 48)},
   :id :wraith-red,
-  :species :species/wraith}
+  :species :species/wraith,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (384 192 48 48)},
   :id :spider-black-giant,
-  :species :species/spider}
+  :species :species/spider,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (432 336 48 48)},
   :id :valkyrie-b,
-  :species :species/valkyrie}
+  :species :species/valkyrie,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (192 384 48 48)},
   :id :wisp-ancient,
-  :species :species/wisp}
+  :species :species/wisp,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (0 432 48 48)},
   :id :bird-dove,
-  :species :species/bird}
- {:items (:falchion),
+  :species :species/bird,
+  :skills #{},
+  :items #{}}
+ {:items #{:falchion},
   :image
   {:file "creatures/images.png", :sub-image-bounds (240 288 48 48)},
   :id :lizardman-blue,
-  :species :species/lizardman-blue}
+  :species :species/lizardman-blue,
+  :skills #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (240 192 48 48)},
   :id :bat,
-  :species :species/bat}
+  :species :species/bat,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (240 240 48 48)},
   :id :snake,
-  :species :species/snake}
+  :species :species/snake,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (336 384 48 48)},
   :id :dragon-red,
-  :species :species/dragon}
+  :species :species/dragon,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (384 480 48 48)},
   :id :spirit,
-  :species :species/spirit}
+  :species :species/spirit,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (288 576 48 48)},
   :id :flies,
-  :species :species/flies}
+  :species :species/flies,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (432 432 48 48)},
   :id :golem-metal,
-  :species :species/golem}
+  :species :species/golem,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (96 528 48 48)},
   :id :elemental-fire,
-  :species :species/elemental}
+  :species :species/elemental,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (144 96 48 48)},
   :id :prisoner-c,
-  :species :species/human}
+  :species :species/human,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (288 240 48 48)},
   :id :minotaur,
-  :species :species/minotaur}
+  :species :species/minotaur,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (48 576 48 48)},
   :id :moth-red,
-  :species :species/moth}
+  :species :species/moth,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (240 384 48 48)},
   :id :wisp,
-  :species :species/wisp}
+  :species :species/wisp,
+  :skills #{},
+  :items #{}}
  {:id :cultist,
   :image
   {:file "creatures/images.png", :sub-image-bounds (48 0 48 48)},
-  :items (:dagger),
-  :species :species/human}
+  :items #{:dagger},
+  :species :species/human,
+  :skills #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (144 576 48 48)},
   :id :toad-green,
-  :species :species/toad}
+  :species :species/toad,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (144 384 48 48)},
   :id :halfling-wizard,
-  :species :species/halfling}
- {:items (:longbow),
+  :species :species/halfling,
+  :skills #{},
+  :items #{}}
+ {:items #{:longbow},
   :image
   {:file "creatures/images.png", :sub-image-bounds (432 96 48 48)},
   :id :drow-bowman,
-  :species :species/drow}
+  :species :species/drow,
+  :skills #{}}
  {:level 3,
   :image
   {:file "creatures/images.png", :sub-image-bounds (288 144 48 48)},
   :id :goblin-shaman,
-  :species :species/goblin}
+  :species :species/goblin,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (96 480 48 48)},
   :id :lord-b,
-  :species :species/human}
+  :species :species/human,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (384 0 48 48)},
   :id :druid,
-  :species :species/human}
+  :species :species/human,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (48 480 48 48)},
   :id :lady-a,
-  :species :species/human}
+  :species :species/human,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (240 96 48 48)},
   :id :elf-wizard,
-  :species :species/elf}
+  :species :species/elf,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (384 432 48 48)},
   :id :golem-ice,
-  :species :species/golem}
- {:items (:sword),
+  :species :species/golem,
+  :skills #{},
+  :items #{}}
+ {:items #{:sword},
   :image
   {:file "creatures/images.png", :sub-image-bounds (48 144 48 48)},
   :id :skeleton-warrior,
-  :species :species/skeleton}
- {:items (:axe),
+  :species :species/skeleton,
+  :skills #{}}
+ {:items #{:axe},
   :image
   {:file "creatures/images.png", :sub-image-bounds (240 0 48 48)},
   :id :barbarian-m,
-  :species :species/barbarian}
+  :species :species/barbarian,
+  :skills #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (96 432 48 48)},
   :id :bird-crow,
-  :species :species/bird}
+  :species :species/bird,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (144 432 48 48)},
   :id :mummy,
-  :species :species/mummy}
+  :species :species/mummy,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (288 480 48 48)},
   :id :beetle,
-  :species :species/beetle}
+  :species :species/beetle,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (192 0 48 48)},
   :id :priest,
-  :species :species/human}
+  :species :species/human,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (0 576 48 48)},
   :id :moth-white,
-  :species :species/moth}
+  :species :species/moth,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (192 288 48 48)},
   :id :lizardman-green-shaman,
-  :species :species/lizardman-green}
+  :species :species/lizardman-green,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (384 288 48 48)},
   :id :beholder,
-  :species :species/beholder}
+  :species :species/beholder,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (48 96 48 48)},
   :id :prisoner-a,
-  :species :species/human}
- {:items (:longbow),
+  :species :species/human,
+  :skills #{},
+  :items #{}}
+ {:items #{:longbow},
   :image
   {:file "creatures/images.png", :sub-image-bounds (144 144 48 48)},
   :id :skeleton-archer,
-  :species :species/skeleton}
+  :species :species/skeleton,
+  :skills #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (432 288 48 48)},
   :id :beholder-deep,
-  :species :species/beholder}
+  :species :species/beholder,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (336 480 48 48)},
   :id :beetle-fire,
-  :species :species/beetle}
+  :species :species/beetle,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (0 144 48 48)},
   :id :skeleton,
-  :species :species/skeleton}
+  :species :species/skeleton,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (48 528 48 48)},
   :id :elemental-water,
-  :species :species/elemental}
+  :species :species/elemental,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (192 240 48 48)},
   :id :snake-giant,
-  :species :species/snake}
- {:items (:sword),
+  :species :species/snake,
+  :skills #{},
+  :items #{}}
+ {:items #{:sword},
   :image
   {:file "creatures/images.png", :sub-image-bounds (144 48 48 48)},
   :id :minstrel-m,
-  :species :species/human}
+  :species :species/human,
+  :skills #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (144 240 48 48)},
   :id :zombie-b,
-  :species :species/zombie}
+  :species :species/zombie,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (432 384 48 48)},
   :id :dragon-green,
-  :species :species/dragon}
+  :species :species/dragon,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (384 96 48 48)},
   :id :drow-wizard,
-  :species :species/drow}
+  :species :species/drow,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (96 240 48 48)},
   :id :zombie-a,
-  :species :species/zombie}
+  :species :species/zombie,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (288 528 48 48)},
   :id :worm-giant,
-  :species :species/worm}
+  :species :species/worm,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (192 480 48 48)},
   :id :beetle-giant,
-  :species :species/beetle}
+  :species :species/beetle,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (192 336 48 48)},
   :id :pixie-b,
-  :species :species/pixie}
+  :species :species/pixie,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (384 576 48 48)},
   :id :merchant-m,
-  :species :species/human}
+  :species :species/human,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (432 144 48 48)},
   :id :ogre,
-  :species :species/ogre}
+  :species :species/ogre,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (96 192 48 48)},
   :id :dwarf-mage,
-  :species :species/dwarf}
+  :species :species/dwarf,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (96 96 48 48)},
   :id :prisoner-b,
-  :species :species/human}
+  :species :species/human,
+  :skills #{},
+  :items #{}}
  {:level 1,
-  :skills (:projectile :meditation),
+  :skills #{:projectile},
   :id :wizard,
   :image {:file "creatures/images.png", :sub-image-bounds (0 0 48 48)},
-  :species :species/human}
- {:items (:sword),
+  :species :species/human,
+  :items #{}}
+ {:items #{:sword},
   :image
   {:file "creatures/images.png", :sub-image-bounds (336 96 48 48)},
   :id :drow,
-  :species :species/drow}
+  :species :species/drow,
+  :skills #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (0 288 48 48)},
   :id :wolf-black,
-  :species :species/wolf}
+  :species :species/wolf,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (240 432 48 48)},
   :id :golem-stone,
-  :species :species/golem}
+  :species :species/golem,
+  :skills #{},
+  :items #{}}
  {:level 1,
-  :items (:trident :shield-wood-buckler),
+  :items #{:trident},
   :image
   {:file "creatures/images.png", :sub-image-bounds (144 288 48 48)},
   :id :lizardman-green-spear,
-  :species :species/lizardman-green}
- {:items (:longbow),
+  :species :species/lizardman-green,
+  :skills #{}}
+ {:items #{:longbow},
   :image
   {:file "creatures/images.png", :sub-image-bounds (144 0 48 48)},
   :id :archer,
-  :species :species/human}
- {:items (:dagger),
+  :species :species/human,
+  :skills #{}}
+ {:items #{:dagger},
   :image
   {:file "creatures/images.png", :sub-image-bounds (336 0 48 48)},
   :id :thief,
-  :species :species/human}
+  :species :species/human,
+  :skills #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (288 432 48 48)},
   :id :golem-fire,
-  :species :species/golem}
+  :species :species/golem,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (336 192 48 48)},
   :id :spider-brown,
-  :species :species/spider}
+  :species :species/spider,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (384 48 48 48)},
   :id :witch,
-  :species :species/human}
- {:items (:sword),
+  :species :species/human,
+  :skills #{},
+  :items #{}}
+ {:items #{:sword},
   :image
   {:file "creatures/images.png", :sub-image-bounds (192 48 48 48)},
   :id :minstrel-f,
-  :species :species/human}
+  :species :species/human,
+  :skills #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (0 336 48 48)},
   :id :wraith-blue,
-  :species :species/wraith}
+  :species :species/wraith,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (144 480 48 48)},
   :id :lady-b,
-  :species :species/human}
- {:items (:hammer),
+  :species :species/human,
+  :skills #{},
+  :items #{}}
+ {:items #{:hammer},
   :image
   {:file "creatures/images.png", :sub-image-bounds (0 192 48 48)},
   :id :dwarf,
-  :species :species/dwarf}
+  :species :species/dwarf,
+  :skills #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (336 432 48 48)},
   :id :golem-mud,
-  :species :species/golem}
+  :species :species/golem,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (432 576 48 48)},
   :id :merchant-f,
-  :species :species/human}
+  :species :species/human,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (432 480 48 48)},
   :id :spirit-greater,
-  :species :species/spirit}
+  :species :species/spirit,
+  :skills #{},
+  :items #{}}
  {:level 2,
-  :items (:sword),
+  :items #{:sword},
   :image
   {:file "creatures/images.png", :sub-image-bounds (96 0 48 48)},
   :id :knight,
-  :species :species/human}
+  :species :species/human,
+  :skills #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (336 576 48 48)},
   :id :mimic,
-  :species :species/mimic}
- {:items (:falchion),
+  :species :species/mimic,
+  :skills #{},
+  :items #{}}
+ {:items #{:falchion},
   :image
   {:file "creatures/images.png", :sub-image-bounds (96 288 48 48)},
   :id :lizardman-green,
-  :species :species/lizardman-green}
+  :species :species/lizardman-green,
+  :skills #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (240 48 48 48)},
   :id :paladin,
-  :species :species/human}
+  :species :species/human,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (0 240 48 48)},
   :id :rat,
-  :species :species/rat}
+  :species :species/rat,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (336 336 48 48)},
   :id :demon-green,
-  :species :species/demon}
+  :species :species/demon,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (0 528 48 48)},
   :id :elemental-vorpal,
-  :species :species/elemental}
+  :species :species/elemental,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (48 432 48 48)},
   :id :bird-hawk,
-  :species :species/bird}
+  :species :species/bird,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (192 528 48 48)},
   :id :elemental-earth,
-  :species :species/elemental}
+  :species :species/elemental,
+  :skills #{},
+  :items #{}}
  {:level 3,
-  :items (:falchion),
+  :items #{:falchion},
   :image
   {:file "creatures/images.png", :sub-image-bounds (192 144 48 48)},
   :id :goblin,
-  :species :species/goblin}
+  :species :species/goblin,
+  :skills #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (288 384 48 48)},
   :id :dragon-shadow,
-  :species :species/dragon}
- {:items (:longbow),
+  :species :species/dragon,
+  :skills #{},
+  :items #{}}
+ {:items #{:longbow},
   :image
   {:file "creatures/images.png", :sub-image-bounds (288 96 48 48)},
   :id :elf-bowman,
-  :species :species/elf}
+  :species :species/elf,
+  :skills #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (240 336 48 48)},
   :id :demon-red,
-  :species :species/demon}
+  :species :species/demon,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (432 0 48 48)},
   :id :helion,
-  :species :species/human}
+  :species :species/human,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (48 240 48 48)},
   :id :rat-giant,
-  :species :species/rat}
- {:items (:hammer),
+  :species :species/rat,
+  :skills #{},
+  :items #{}}
+ {:items #{:hammer},
   :image
   {:file "creatures/images.png", :sub-image-bounds (48 192 48 48)},
   :id :dwarf-cleric,
-  :species :species/dwarf}
+  :species :species/dwarf,
+  :skills #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (96 336 48 48)},
   :id :wraith-black,
-  :species :species/wraith}
+  :species :species/wraith,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (432 240 48 48)},
   :id :lich,
-  :species :species/lich}
+  :species :species/lich,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (336 144 48 48)},
   :id :troll,
-  :species :species/troll}
+  :species :species/troll,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (288 192 48 48)},
   :id :spider-brown-giant,
-  :species :species/spider}
+  :species :species/spider,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (240 480 48 48)},
   :id :beetle-fire-giant,
-  :species :species/beetle}
- {:items (:trident),
+  :species :species/beetle,
+  :skills #{},
+  :items #{}}
+ {:items #{:trident},
   :image
   {:file "creatures/images.png", :sub-image-bounds (288 288 48 48)},
   :id :lizardman-blue-spear,
-  :species :species/lizardman-blue}
+  :species :species/lizardman-blue,
+  :skills #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (384 240 48 48)},
   :id :vampire-lord,
-  :species :species/vampire}
+  :species :species/vampire,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (288 48 48 48)},
   :id :dark-knight,
-  :species :species/human}
+  :species :species/human,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (144 528 48 48)},
   :id :elemental-air,
-  :species :species/elemental}
+  :species :species/elemental,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (48 288 48 48)},
   :id :wolf-brown,
-  :species :species/wolf}
+  :species :species/wolf,
+  :skills #{},
+  :items #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (384 144 48 48)},
   :id :ogre-mystic,
-  :species :species/ogre}
- {:items (:sword),
+  :species :species/ogre,
+  :skills #{},
+  :items #{}}
+ {:items #{:sword},
   :image
   {:file "creatures/images.png", :sub-image-bounds (96 48 48 48)},
   :id :warrior-f,
-  :species :species/human}
+  :species :species/human,
+  :skills #{}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (288 336 48 48)},
   :id :demon-blue,
-  :species :species/demon}
+  :species :species/demon,
+  :skills #{},
+  :items #{}}
  {:id :species/flies, :hp 0.5, :speed 1.5}
  {:id :species/bat, :hp 0.5, :speed 1.5}
  {:id :species/troll, :hp 3.5, :speed 0.5}
