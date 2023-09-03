@@ -40,11 +40,15 @@
 (defn get [id]
   (safe-get properties id))
 
+; TODO new type => add data here
 (def ^:private prop-type-unique-key
   {:species :hp
    :creature :species
    :item :slot
-   :skill :effect})
+   :skill :effect
+   ; TODO spells => only part skills with spell? ....
+   ; its more like 'views' not fixed exclusive types
+   :weapon (fn [{:keys [slot]}] (and slot (= slot :weapon)))})
 
 (defn property-type [props]
   (some (fn [[prop-type k]] (when (k props) prop-type))
@@ -63,11 +67,13 @@
 (defn- sort-by-type [properties]
   (sort-by
    (fn [prop]
-     (cond
-      (:spell?  prop) 0
-      (:species prop) 1
-      (:hp      prop) 2
-      (:slot    prop) 3))
+     (let [ptype (property-type prop)]
+       (cond
+        :skill 0 ; TODO and here
+        :creature 1
+        :species 2
+        :item 3
+        :weapon 4)))
    properties))
 
 (defn- save-all-properties! []

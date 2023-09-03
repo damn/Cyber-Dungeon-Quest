@@ -12,12 +12,19 @@
             [gdl.scene2d.ui :as ui]
             [game.properties :as properties]))
 
-(comment
- ; for property-map 'pm' with :id
- ; we need property-type
- ; also for validation
- ; => :property-type key ?
- )
+; TODO:
+
+; weapons are both items & skills ... how to edit ? or extra category ?
+; => not assoc data but update data merge new-data
+; => and keys is just minimum keys check...
+
+; * validation on load all properties / save property/properties
+; => spec => key spec
+; * items => skill & item both , duplicate pretty-name & image hmmm ....
+; or special case for weapon?
+; * also item needs to be in certain slot, each slot only once, etc. also max-items ...?
+; * non-toggle image-button at overview => VisImageButton
+; * missing widgets for keys / one-to-many not implemented
 
 (def ^:private stage app/current-screen-value)
 
@@ -35,18 +42,7 @@
        (filter #(= id (actor/id %)))
        first))
 
-(comment
- ; add :property-type to each property
- ; and assert key @ load/save of all props
-
- ; also weapons -> item & skill with :spell? false and :weapon? true?
- ; but same pretty-name,etc. ?
- )
-
-; => move to game.properties  ?
-; can (properties/get-all property-type)  => (safe-get property-types property-type)
-; => save info for overview -> how to get all creature/etc
-; add :weapons (implemented or all slot=weapon ?)
+; TODO and here
 (def ^:private property-types
   {:species {:title "Species"
              :property-keys [:id :hp :speed]
@@ -62,9 +58,11 @@
                      :sort-by-fn #(vector (if-let [slot (:slot %)] (name slot) "") (name (:id %)))}}
    :skill {:title "Skill"
            :property-keys [:id :image :action-time :cooldown :cost :effect]
-           :overview {:title "Skills"}}})
+           :overview {:title "Skills"}}
+   :weapon {:title "Weapon"
+            :property-keys [:id :image :pretty-name :action-time :effect]
+            :overview {:title "Weapons"}}})
 
-; TODO modifiers, pretty-name as str, action-time, cooldown, cost, effect...
 (def ^:private attribute-widget
   {:id :label
    :image :image
@@ -78,7 +76,7 @@
 (defmulti property-widget (fn [k v] (get attribute-widget k)))
 
 (defmethod property-widget :default [_ v]
-  (ui/label (pr-str v)))
+  (ui/label (pr-str v))) ; TODO print-level set to nil ! not showing all effect
 
 (defmulti property-widget-data (fn [table k] (get attribute-widget k)))
 
@@ -109,17 +107,6 @@
     (.addSeparator ^com.kotcrab.vis.ui.widget.VisTable table)
     table))
 
-; => minus -> remove same with id prop-id
-; =. add -> chekc if not there already (make set?)
-; => add to the table
-; => select from overview-table of property type.
-
-; TODO check if property with id is of property-type ? -> infer from id !
-; => schema
-; => validation before save/after load all props.
-; visvalidateabletextfield
-; TODO save ! & validation ! ... ?
- ; also item needs to be in certain slot, each slot only once, etc. also max-items ...?
 (defn- property-editor-window [id]
   (let [props (properties/get id)
         {:keys [title property-keys]} (get property-types (properties/property-type props))
@@ -137,8 +124,6 @@
     (ui/pack window)
     window))
 
-; TODO
-; => non-toggle image-button (VisImageButton ?)
 (defn- overview-table [property-type]
   (let [{:keys [title
                 sort-by-fn
@@ -173,7 +158,8 @@
 (defn- left-widget []
   (ui/table :cell-defaults {:pad 5}
             :rows (concat
-                   (for [[property-type {:keys [overview]}] (select-keys property-types [:creature :item :skill])]
+                   ; TODO and here
+                   (for [[property-type {:keys [overview]}] (select-keys property-types [:creature :item :skill :weapon])]
                      [(ui/text-button (:title overview) #(set-second-widget (overview-table property-type)))])
                    [[(ui/text-button "Back to Main Menu" #(app/set-screen :game.screens.main))]])))
 
