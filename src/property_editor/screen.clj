@@ -1,5 +1,6 @@
 (ns property-editor.screen
-  (:require [x.x :refer [defmodule]]
+  (:require [clojure.edn :as edn]
+            [x.x :refer [defmodule]]
             [gdl.lc :as lc]
             [gdl.app :as app]
             [gdl.input :as input]
@@ -22,30 +23,10 @@
                       (/ (gui/viewport-width)  2)
                       (/ (gui/viewport-height) 2))))
 
-(defmulti property-widget (fn [k v] k))
-
-(defmethod property-widget :default [_ v]
-  (ui/text-field (pr-str v)))
-
-(defmethod property-widget :id [_ id] ; => not-editable => label. (also :slot)
-  (ui/label (pr-str id)))
-
-(defmethod property-widget :image [_ image]
-  (ui/image (ui/texture-region-drawable (:texture image))))
-
-(defmethod property-widget :species [_ id] ; == > link to another
-  (ui/text-button (name id) #(open-property-editor-window id :species)))
-
-(comment
-
- :items / :skills ; ==> link to multiple others
- ; also item needs to be in certain slot, each slot only once, etc. also max-items ...?
- (ui/table :rows (concat
-                  (for [skill (:skills props)]
-                    [(ui/image (ui/texture-region-drawable (:texture (:image (properties/get skill)))))
-                     (ui/text-button " - " (fn [] (println "Remove " )))])
-                  [[(ui/text-button " + " (fn [] (println "Add ")))]]))
- )
+(defn- get-child-with-id [group id]
+  (->> (.getChildren ^com.badlogic.gdx.scenes.scene2d.Group group)
+       (filter #(= id (actor/id %)))
+       first))
 
 ; => move to game.properties  ?
 ; can (properties/get-all property-type)  => (safe-get property-types property-type)
@@ -72,19 +53,68 @@
            :overview {:title "Skills"
                       :fetch-key :spell?}}})
 
+(def ^:private attribute-widget
+  {:id :label
+   :image :image
+   :level :text-field
+   :skills :text-field
+   :items :text-field
+   :species :link-button
+   :hp :text-field
+   :speed :text-field})
+
+(defmulti property-widget (fn [k v] (get attribute-widget k)))
+
+(defmethod property-widget :default [_ v]
+  (ui/label (pr-str v)))
+
+(defmulti property-widget-data (fn [table k v] (get attribute-widget k)))
+
+(defmethod property-widget-data :default [group k v]
+  v)
+
+(defmethod property-widget :image [_ image]
+  (ui/image (ui/texture-region-drawable (:texture image))))
+
+(defmethod property-widget :text-field [k v]
+  (ui/text-field (pr-str v) :id k))
+
+(defmethod property-widget-data :text-field [group k v]
+  (-> (.getText ^com.kotcrab.vis.ui.widget.VisTextField (get-child-with-id group k))
+      edn/read-string))
+
+(defmethod property-widget :link-button [k id]
+  (ui/text-button (name id) #(open-property-editor-window id k)))
+
+(comment
+
+ :items / :skills ; ==> link to multiple others ; -> :one-to-many ? set ?
+ ; also item needs to be in certain slot, each slot only once, etc. also max-items ...?
+ (ui/table :rows (concat
+                  (for [skill (:skills props)]
+                    [(ui/image (ui/texture-region-drawable (:texture (:image (properties/get skill)))))
+                     (ui/text-button " - " (fn [] (println "Remove " )))])
+                  [[(ui/text-button " + " (fn [] (println "Add ")))]]))
+ )
+
+
 ; TODO check if property with id is of property-type ?
 ; => schema
 ; => validation before save/after load all props.
 ; visvalidateabletextfield
+; TODO save ! & validation ! ... ?
 (defn- property-editor-window [id property-type]
   (let [{:keys [title property-keys]} (get property-types property-type)
         window (ui/window :title title
                           :modal? true
                           :cell-defaults {:pad 5})
+        get-data #(into {}
+                       (for [k property-keys]
+                         [k (property-widget-data window k (get props k))]))
         props (properties/get id)]
     (ui/add-rows window (concat (for [k property-keys]
                                   [(ui/label (name k)) (property-widget k (get props k))])
-                                [[(ui/text-button "Save" (fn [] ))
+                                [[(ui/text-button "Save" #(properties/save! (get-data)))
                                   (ui/text-button "Cancel" #(actor/remove window))]]))
     (ui/pack window)
     window))
@@ -123,12 +153,12 @@
   (let [^com.badlogic.gdx.scenes.scene2d.ui.Table table (:main-table (stage))]
     (.setActor ^com.badlogic.gdx.scenes.scene2d.ui.Cell
                (second (.getCells table)) widget)
-    (ui/pack table)))
+    (.pack table)))
 
 (defn- left-widget []
   (ui/table :cell-defaults {:pad 5}
             :rows (concat
-                   (for [[property-type {:keys [overview]}] property-types]
+                   (for [[property-type {:keys [overview]}] (select-keys property-types [:creature :item :skill])]
                      [(ui/text-button (:title overview) #(set-second-widget (overview-table property-type)))])
                    [[(ui/text-button "Back to Main Menu" #(app/set-screen :game.screens.main))]])))
 
