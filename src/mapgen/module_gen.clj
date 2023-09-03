@@ -209,7 +209,7 @@
 
 (defn- creatures-with-level [level]
   (filter #(= level (:level %))
-          (properties/all-with-key :species)))
+          (properties/get-all :creature)))
 
 (def ^:private creature->tile
   (memoize

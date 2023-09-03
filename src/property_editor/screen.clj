@@ -12,12 +12,19 @@
             [gdl.scene2d.ui :as ui]
             [game.properties :as properties]))
 
+(comment
+ ; for property-map 'pm' with :id
+ ; we need property-type
+ ; also for validation
+ ; => :property-type key ?
+ )
+
 (def ^:private stage app/current-screen-value)
 
 (declare property-editor-window)
 
-(defn- open-property-editor-window [id property-type]
-  (let [window (property-editor-window id property-type)]
+(defn- open-property-editor-window [id]
+  (let [window (property-editor-window id)]
     (stage/add-actor (stage) window)
     (actor/set-center window
                       (/ (gui/viewport-width)  2)
@@ -28,6 +35,14 @@
        (filter #(= id (actor/id %)))
        first))
 
+(comment
+ ; add :property-type to each property
+ ; and assert key @ load/save of all props
+
+ ; also weapons -> item & skill with :spell? false and :weapon? true?
+ ; but same pretty-name,etc. ?
+ )
+
 ; => move to game.properties  ?
 ; can (properties/get-all property-type)  => (safe-get property-types property-type)
 ; => save info for overview -> how to get all creature/etc
@@ -35,43 +50,40 @@
 (def ^:private property-types
   {:species {:title "Species"
              :property-keys [:id :hp :speed]
-             :overview {:title "Species"
-                        :fetch-key :hp}}
+             :overview {:title "Species"}}
    :creature {:title "Creature"
               :property-keys [:id :image :species :level :skills :items]
               :overview {:title "Creatures"
                          :sort-by-fn #(vector (or (:level %) 9) (name (:species %)) (name (:id %)))
-                         :extra-infos-widget #(ui/label (or (str (:level %) "-")))
-                         :fetch-key :species}}
+                         :extra-infos-widget #(ui/label (or (str (:level %) "-")))}}
    :item {:title "Item"
           :property-keys [:id :image :slot :pretty-name :modifiers]
           :overview {:title "Items"
-                     :sort-by-fn #(vector (if-let [slot (:slot %)] (name slot) "") (name (:id %)))
-                     :fetch-key :slot}}
+                     :sort-by-fn #(vector (if-let [slot (:slot %)] (name slot) "") (name (:id %)))}}
    :skill {:title "Skill"
            :property-keys [:id :image :action-time :cooldown :cost :effect]
-           :overview {:title "Skills"
-                      :fetch-key :spell?}}})
+           :overview {:title "Skills"}}})
 
+; TODO modifiers, pretty-name as str, action-time, cooldown, cost, effect...
 (def ^:private attribute-widget
   {:id :label
    :image :image
    :level :text-field
-   :skills :text-field
-   :items :text-field
    :species :link-button
    :hp :text-field
-   :speed :text-field})
+   :speed :text-field
+   :skills :one-to-many
+   :items :one-to-many})
 
 (defmulti property-widget (fn [k v] (get attribute-widget k)))
 
 (defmethod property-widget :default [_ v]
   (ui/label (pr-str v)))
 
-(defmulti property-widget-data (fn [table k v] (get attribute-widget k)))
+(defmulti property-widget-data (fn [table k] (get attribute-widget k)))
 
-(defmethod property-widget-data :default [group k v]
-  v)
+(defmethod property-widget-data :default [group k]
+  nil)
 
 (defmethod property-widget :image [_ image]
   (ui/image (ui/texture-region-drawable (:texture image))))
@@ -79,39 +91,45 @@
 (defmethod property-widget :text-field [k v]
   (ui/text-field (pr-str v) :id k))
 
-(defmethod property-widget-data :text-field [group k v]
+(defmethod property-widget-data :text-field [group k]
   (-> (.getText ^com.kotcrab.vis.ui.widget.VisTextField (get-child-with-id group k))
       edn/read-string))
 
-(defmethod property-widget :link-button [k id]
-  (ui/text-button (name id) #(open-property-editor-window id k)))
+(defmethod property-widget :link-button [_ id]
+  (ui/text-button (name id) #(open-property-editor-window id)))
 
-(comment
+(defmethod property-widget :one-to-many [k v]
+  (let [table (ui/table)]
+    (.addSeparator ^com.kotcrab.vis.ui.widget.VisTable table)
+    (ui/add-rows table (concat
+                        (for [prop-id v]
+                          [(ui/image (ui/texture-region-drawable (:texture (:image (properties/get prop-id)))))
+                           (ui/text-button " - " (fn [] (println "Remove " )))])
+                        [[(ui/text-button " + " (fn [] (println "Add ")))]]))
+    (.addSeparator ^com.kotcrab.vis.ui.widget.VisTable table)
+    table))
 
- :items / :skills ; ==> link to multiple others ; -> :one-to-many ? set ?
- ; also item needs to be in certain slot, each slot only once, etc. also max-items ...?
- (ui/table :rows (concat
-                  (for [skill (:skills props)]
-                    [(ui/image (ui/texture-region-drawable (:texture (:image (properties/get skill)))))
-                     (ui/text-button " - " (fn [] (println "Remove " )))])
-                  [[(ui/text-button " + " (fn [] (println "Add ")))]]))
- )
+; => minus -> remove same with id prop-id
+; =. add -> chekc if not there already (make set?)
+; => add to the table
+; => select from overview-table of property type.
 
-
-; TODO check if property with id is of property-type ?
+; TODO check if property with id is of property-type ? -> infer from id !
 ; => schema
 ; => validation before save/after load all props.
 ; visvalidateabletextfield
 ; TODO save ! & validation ! ... ?
-(defn- property-editor-window [id property-type]
-  (let [{:keys [title property-keys]} (get property-types property-type)
+ ; also item needs to be in certain slot, each slot only once, etc. also max-items ...?
+(defn- property-editor-window [id]
+  (let [props (properties/get id)
+        {:keys [title property-keys]} (get property-types (properties/property-type props))
         window (ui/window :title title
                           :modal? true
                           :cell-defaults {:pad 5})
         get-data #(into {}
-                       (for [k property-keys]
-                         [k (property-widget-data window k (get props k))]))
-        props (properties/get id)]
+                        (for [k property-keys]
+                          [k (or (property-widget-data window k)
+                                 (get props k))]))]
     (ui/add-rows window (concat (for [k property-keys]
                                   [(ui/label (name k)) (property-widget k (get props k))])
                                 [[(ui/text-button "Save" #(properties/save! (get-data)))
@@ -124,22 +142,19 @@
 (defn- overview-table [property-type]
   (let [{:keys [title
                 sort-by-fn
-                extra-infos-widget
-                fetch-key]} (:overview (get property-types property-type))
-        entities (properties/all-with-key fetch-key)
+                extra-infos-widget]} (:overview (get property-types property-type))
+        entities (properties/get-all property-type)
         entities (if sort-by-fn
                    (sort-by sort-by-fn entities)
                    entities)
         number-columns 20]
     (ui/table :rows (concat [[{:actor (ui/label title) :colspan number-columns}]]
                             (for [entities (partition-all number-columns entities)]
-                              (for [props entities
-                                    :let [open-editor-fn #(open-property-editor-window
-                                                           (:id props)
-                                                           property-type)
+                              (for [{:keys [id] :as props} entities
+                                    :let [open-editor-fn #(open-property-editor-window id)
                                           button (if (:image props)
                                                    (ui/image-button (:image props) open-editor-fn)
-                                                   (ui/text-button (name (:id props)) open-editor-fn))
+                                                   (ui/text-button (name id) open-editor-fn))
                                           top-widget (or (and extra-infos-widget
                                                               (extra-infos-widget props))
                                                          (ui/label ""))

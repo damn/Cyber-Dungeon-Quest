@@ -40,8 +40,18 @@
 (defn get [id]
   (safe-get properties id))
 
-(defn all-with-key [k] ; TODO? (properties/all-with-type :creature)
-  (filter k (vals properties)))
+(def ^:private prop-type-unique-key
+  {:species :hp
+   :creature :species
+   :item :slot
+   :skill :effect})
+
+(defn property-type [props]
+  (some (fn [[prop-type k]] (when (k props) prop-type))
+        prop-type-unique-key))
+
+(defn get-all [property-type]
+  (filter (prop-type-unique-key property-type) (vals properties)))
 
 (defn- save-edn [file data]
   (binding [*print-level* nil]
