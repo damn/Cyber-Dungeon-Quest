@@ -33,7 +33,7 @@
                 action-time
                 cooldown
                 spell?
-                effect]} (properties/get skill-id )]
+                effect]} (properties/get skill-id)]
     (str (str/capitalize (name skill-id)) "\n"
          (if spell? "Spell" "Weapon") "\n"
          (when cost (str "Cost " cost  "\n"))

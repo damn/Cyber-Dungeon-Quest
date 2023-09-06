@@ -26,10 +26,6 @@
 
 (def ^:private borders-px 1)
 
-; TODO this is only hp for if also body component is there
-; => connection :hp = :body => pass :body to :hp
-; this could be abstracted/automated , systems which connect different components
-; query for them both ?
 (defcomponent :hp hp
   (db/create [[_ max-hp]]
     (val-max max-hp))
