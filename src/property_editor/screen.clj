@@ -63,6 +63,11 @@
             :property-keys [:id :image :pretty-name :action-time :effect]
             :overview {:title "Weapons"}}})
 
+(defn- attribute->property-type [k]
+  (case k
+    :skills :skill
+    :items :item))
+
 (def ^:private attribute-widget
   {:id :label
    :image :image
@@ -95,20 +100,62 @@
 (defmethod property-widget :link-button [_ id]
   (ui/text-button (name id) #(open-property-editor-window id)))
 
-(defn- add-one-to-many-rows [table property-ids]
-  (.addSeparator ^com.kotcrab.vis.ui.widget.VisTable table)
-  (ui/add-rows table (concat
-                      (for [prop-id property-ids]
-                        [(ui/image (ui/texture-region-drawable (:texture (:image (properties/get prop-id))))
-                                   :id prop-id)
-                         (ui/text-button " - " (fn []
-                                                 (.clearChildren ^com.badlogic.gdx.scenes.scene2d.ui.Table table)
-                                                 (add-one-to-many-rows table (disj (set property-ids) prop-id))))])
-                      [[(ui/text-button " + " (fn [] (println "Add ")))]])))
+(defn- overview-table [property-type clicked-id-fn]
+  (let [{:keys [title
+                sort-by-fn
+                extra-infos-widget]} (:overview (get property-types property-type))
+        entities (properties/get-all property-type)
+        entities (if sort-by-fn
+                   (sort-by sort-by-fn entities)
+                   entities)
+        number-columns 20]
+    (ui/table :rows (concat [[{:actor (ui/label title) :colspan number-columns}]]
+                            (for [entities (partition-all number-columns entities)]
+                              (for [{:keys [id] :as props} entities
+                                    :let [on-clicked #(clicked-id-fn id)
+                                          button (if (:image props)
+                                                   (ui/image-button (:image props) on-clicked)
+                                                   (ui/text-button (name id) on-clicked))
+                                          top-widget (or (and extra-infos-widget
+                                                              (extra-infos-widget props))
+                                                         (ui/label ""))
+                                          stack (ui/stack)]]
+                                (do (actor/set-touchable top-widget :disabled)
+                                    (.add stack button)
+                                    (.add stack top-widget)
+                                    stack)))))))
 
-(defmethod property-widget :one-to-many [_ property-ids]
+
+(defn- add-one-to-many-rows [table property-type property-ids]
+  (.addSeparator ^com.kotcrab.vis.ui.widget.VisTable table)
+  (let [redo-rows (fn [property-ids]
+                    (.clearChildren ^com.badlogic.gdx.scenes.scene2d.ui.Table table)
+                    (add-one-to-many-rows table property-type property-ids))]
+    (ui/add-rows table (concat
+                        (for [prop-id property-ids]
+                          [(ui/image (ui/texture-region-drawable (:texture (:image (properties/get prop-id))))
+                                     :id prop-id)
+                           (ui/text-button " - " #(redo-rows (disj (set property-ids) prop-id)))])
+                        [[(ui/text-button " + "
+                                          (fn []
+                                            (let [window (ui/window :title "Choose"
+                                                                    :modal? true)
+                                                  clicked-id-fn (fn [id]
+                                                                  (actor/remove window)
+                                                                  (redo-rows (conj (set property-ids) id)))]
+                                              (.add window (overview-table property-type clicked-id-fn))
+                                              (.pack window)
+                                              ; TODO fn above -> open in center .. ?
+                                              (stage/add-actor (stage) window)
+                                              (actor/set-center window
+                                                                (/ (gui/viewport-width)  2)
+                                                                (/ (gui/viewport-height) 2)))))]])))
+  (when-let [parent (.getParent table)]
+    (.pack parent)))
+
+(defmethod property-widget :one-to-many [attribute property-ids]
   (let [table (ui/table)]
-    (add-one-to-many-rows table property-ids)
+    (add-one-to-many-rows table (attribute->property-type attribute) property-ids)
     table))
 
 (defmethod widget-data :one-to-many [_ widget]
@@ -121,6 +168,11 @@
  ; TODO schema !
  ; cannot  save spider as it doesnt have :level ! ...
 
+ (def win (first (filter #(instance? com.kotcrab.vis.ui.widget.VisWindow %) (.getActors (stage)))))
+
+ (.layout (get-child-with-id win :skills))
+
+ (.pack (.getParent (get-child-with-id win :skills)))
 
  (let [window (first (filter #(instance? com.kotcrab.vis.ui.widget.VisWindow %) (.getActors (stage))))
        props (properties/get :wizard)
@@ -157,30 +209,6 @@
     (ui/pack window)
     window))
 
-(defn- overview-table [property-type]
-  (let [{:keys [title
-                sort-by-fn
-                extra-infos-widget]} (:overview (get property-types property-type))
-        entities (properties/get-all property-type)
-        entities (if sort-by-fn
-                   (sort-by sort-by-fn entities)
-                   entities)
-        number-columns 20]
-    (ui/table :rows (concat [[{:actor (ui/label title) :colspan number-columns}]]
-                            (for [entities (partition-all number-columns entities)]
-                              (for [{:keys [id] :as props} entities
-                                    :let [open-editor-fn #(open-property-editor-window id)
-                                          button (if (:image props)
-                                                   (ui/image-button (:image props) open-editor-fn)
-                                                   (ui/text-button (name id) open-editor-fn))
-                                          top-widget (or (and extra-infos-widget
-                                                              (extra-infos-widget props))
-                                                         (ui/label ""))
-                                          stack (ui/stack)]]
-                                (do (actor/set-touchable top-widget :disabled)
-                                    (.add stack button)
-                                    (.add stack top-widget)
-                                    stack)))))))
 
 (defn- set-second-widget [widget]
   (let [^com.badlogic.gdx.scenes.scene2d.ui.Table table (:main-table (stage))]
@@ -193,7 +221,7 @@
             :rows (concat
                    ; TODO and here
                    (for [[property-type {:keys [overview]}] (select-keys property-types [:creature :item :skill :weapon])]
-                     [(ui/text-button (:title overview) #(set-second-widget (overview-table property-type)))])
+                     [(ui/text-button (:title overview) #(set-second-widget (overview-table property-type open-property-editor-window)))])
                    [[(ui/text-button "Back to Main Menu" #(app/set-screen :game.screens.main))]])))
 
 (defmodule stage
