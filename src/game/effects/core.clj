@@ -1,6 +1,5 @@
 (ns game.effects.core
-  (:require [x.x       :refer :all]
-            [game.systems :refer :all]))
+  (:require [x.x :refer :all]))
 
 (def effect-definitions {})
 
@@ -38,6 +37,8 @@
 (defn- do-effect!* [params effect]
   {:pre [(valid-params? params effect)]}
   (do! params effect))
+
+(defsystem affected! [c e])
 
 (defn- trigger-affected! [target]
   (when target

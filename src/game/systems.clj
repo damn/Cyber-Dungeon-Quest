@@ -29,10 +29,6 @@
 
 (defsystem render-debug  [c m position]) ; body-bounds, mouseover entity info
 
-; game.effects.core
-
-(defsystem affected!     [c e])
-
 ; game.effects.stun
 
 (defsystem stun!         [c e])
