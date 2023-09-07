@@ -5,7 +5,8 @@
 
 (comment
  ; two times underscore => the let does not work anymore ! shadowed...
- ; => check if first element shadowed => warning...
+ ; => check if first element shadowed
+ ; => warning on shadow first arg which I am let-ting over.
  (clojure.core/defmethod
    render
    :line-render
@@ -27,11 +28,6 @@
 (defsystem render-info   [c m position]) ; hp-bar, attacking-arc
 
 (defsystem render-debug  [c m position]) ; body-bounds, mouseover entity info
-
-; game.components.movement
-
-(defsystem moved         [c direction-vector])
-(defsystem moved!        [c e])
 
 ; game.effects.core
 

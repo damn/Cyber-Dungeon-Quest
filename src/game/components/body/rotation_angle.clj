@@ -1,8 +1,8 @@
 (ns game.components.body.rotation-angle
   (:require [x.x :refer [defcomponent]]
             [gdl.vector :as v]
-            [game.systems :refer [moved]]))
+            [game.components.body :as body]))
 
 (defcomponent :rotation-angle _
-  (moved [c direction-vector]
+  (body/moved [c direction-vector]
     (v/get-angle-from-vector direction-vector)))

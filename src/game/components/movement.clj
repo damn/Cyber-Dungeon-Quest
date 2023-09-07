@@ -5,7 +5,6 @@
             [utils.core :refer [find-first update-in!]]
             [game.db :as db]
             [game.tick :refer [tick!]]
-            [game.systems :refer [moved moved!]]
             [game.components.body :as body]
             [game.effects.core :as effects]
             [game.maps.cell-grid :as grid]))
@@ -86,11 +85,6 @@
 ; TODO check if speed > max speed, then make multiple smaller updates
 ; -> any kind of speed possible (fast arrows)
 
-(defn apply-moved-systems! [e direction-vector]
-  ; systems could apply to sub-components , specified in systems definition
-  (swap! e update :body update-map moved direction-vector)
-  (doseq-entity e moved!))
-
 ; TODO put movement-vector here also, make 'movement' component
 ; and further above 'body' component
 (defcomponent :speed speed-in-seconds ; movement speed-in-seconds
@@ -114,7 +108,7 @@
                        (update-position-projectile e delta v)
                        (update-position-solid      e delta v))]
           (when moved?
-            (apply-moved-systems! e v)))))))
+            (body/apply-moved-systems! e v)))))))
 
 ; solid or projectile ?
 ; two types of bodies ???

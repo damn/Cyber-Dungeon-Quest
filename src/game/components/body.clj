@@ -1,10 +1,10 @@
 (ns game.components.body
-  (:require [x.x :refer [defcomponent]]
+  (:require [x.x :refer [defsystem defcomponent update-map doseq-entity]]
             [gdl.graphics.shape-drawer :as shape-drawer]
             [gdl.graphics.color :as color]
             [gdl.geom :as geom]
             [game.db :as db]
-            [game.systems :refer [moved! render-debug]]
+            [game.systems :refer [render-debug]]
             [game.maps.cell-grid :as grid]))
 
 (defn- remove-from-occupied-cells [r]
@@ -78,6 +78,13 @@
              (not-any? #(and (not= (:id @%) (:id entity*))
                              (:is-solid (:body @%))
                              (geom/collides? (:body @%) (:body entity*)))))))))
+
+(defsystem moved  [c direction-vector]) ; ! applied to body sub-components !
+(defsystem moved! [c e])
+
+(defn apply-moved-systems! [e direction-vector]
+  (swap! e update :body update-map moved direction-vector)
+  (doseq-entity e moved!))
 
 (defcomponent :body {:keys [is-solid] :as body}
   ; TODO assert height is there

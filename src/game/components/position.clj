@@ -2,13 +2,13 @@
   (:require [x.x :refer [defcomponent]]
             [utils.core :refer [int-posi]]
             [game.db :as db]
-            [game.systems :refer [moved!]]
+            [game.components.body :as body]
             [game.maps.contentfields :refer (put-entity-in-correct-content-field
                                              remove-entity-from-content-field)]))
 
 (defcomponent :position p
   (db/create!  [_ e] (put-entity-in-correct-content-field e))
   (db/destroy! [_ e] (remove-entity-from-content-field    e))
-  (moved!      [_ e] (put-entity-in-correct-content-field e)))
+  (body/moved! [_ e] (put-entity-in-correct-content-field e)))
 
 (def get-tile (comp int-posi :position))
