@@ -30,15 +30,15 @@
     (tick c delta)
     v))
 
-(defn- tick-entity* [{v 1 :as c} e delta]
+(defn- tick-entity! [{v 1 :as c} e delta]
   (if-let [delta (delta? v delta)]
     (tick! c e delta)
     nil))
 
-(defn- tick-entity! [e delta]
+(defn- apply-tick-systems! [e delta]
   (swap! e update-map tick-component delta)
-  (doseq-entity e tick-entity* delta))
+  (doseq-entity e tick-entity! delta))
 
-(defn tick-entities! [rs delta]
-  (doseq [r rs]
-    (tick-entity! r delta)))
+(defn tick-entities! [es delta]
+  (doseq [e es]
+    (apply-tick-systems! e delta)))
