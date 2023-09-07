@@ -2,7 +2,7 @@
   (:require [x.x :refer [defcomponent]]
             [gdl.graphics.font :as font]
             [gdl.vector :as v]
-            [game.systems :refer [render]]
+            [game.render :as render]
             [game.media :as media]
             [game.ui.mouseover-entity :refer (get-mouseover-entity)]
             [game.player.entity :refer (player-entity)]))
@@ -10,7 +10,7 @@
 ; TODO simpler if this would be ':mouseover-text' component simply.
 ; TODO similar to show-string-effect
 (defcomponent :clickable {:keys [text]}
-  (render [_ {:keys [mouseover? body]} [x y]]
+  (render/default [_ {:keys [mouseover? body]} [x y]]
     (when (and mouseover? text)
       (font/draw-text {:font media/font
                        :text text

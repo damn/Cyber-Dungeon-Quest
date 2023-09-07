@@ -8,14 +8,14 @@
             [game.ui.config :refer [hpbar-height-px]]
             [game.media :as media]
             [game.tick :refer [tick!]]
-            [game.systems :refer [render-above]]))
+            [game.render :as render]))
 
 ; TODO similar to components.clickable
 (defcomponent :string-effect {:keys [text]}
   (tick! [[k _] e delta]
     (when (counter/update-counter! e delta [k :counter])
       (swap! e dissoc k)))
-  (render-above [_ {:keys [body]} [x y]]
+  (render/above [_ {:keys [body]} [x y]]
     (font/draw-text {:font media/font
                      :text text
                      :x x

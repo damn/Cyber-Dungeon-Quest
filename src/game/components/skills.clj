@@ -9,7 +9,7 @@
             [gdl.vector :as v]
             [utils.core :refer [assoc-in! ->! mapvals]]
             [game.tick :refer [tick!]]
-            [game.systems :refer [stun! render-info]]
+            [game.render :as render]
             [game.db :as db]
             [game.properties :as properties]
             [game.components.faction :as faction]
@@ -76,7 +76,7 @@
 (def show-skill-icon-on-active true)
 
 (defcomponent :skills skills
-  (render-info [_ m position]
+  (render/info [_ m position]
     (doseq [{:keys [id image effect]} (vals skills)
             :when (= id (:active-skill? m))]
       (when show-skill-icon-on-active
@@ -273,7 +273,7 @@
     (if (:active-skill? @entity) ; TODO make this in its own component!
       (check-stop! entity delta) ; => active-skill? component & skills just updates its cooldown!!! :D
       (check-start! entity)))
-  (stun! [_ entity]
+  (stun/stun! [_ entity]
     (when-let [skill-id (:active-skill? @entity)]
       (stop! entity (skill-id (:skills @entity))))))
 

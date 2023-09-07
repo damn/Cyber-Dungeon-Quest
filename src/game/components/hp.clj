@@ -5,7 +5,7 @@
             [gdl.graphics.shape-drawer :as shape-drawer]
             [utils.core :refer :all]
             [game.db :as db]
-            [game.systems :refer [render-info]]
+            [game.render :as render]
             [game.components.modifiers :as modifiers]
             [game.ui.config :refer (hpbar-height-px)]))
 
@@ -29,7 +29,7 @@
 (defcomponent :hp hp
   (db/create [[_ max-hp]]
     (val-max max-hp))
-  (render-info [_ {:keys [body mouseover?]} [x y]]
+  (render/info [_ {:keys [body mouseover?]} [x y]]
     (let [{:keys [width half-width half-height]} body
           ratio (val-max-ratio hp)]
       (when (or (< ratio 1) mouseover?)

@@ -1,10 +1,10 @@
 (ns game.effects.stun
-  (:require [x.x :refer [defcomponent doseq-entity]]
+  (:require [x.x :refer [defsystem defcomponent doseq-entity]]
             [gdl.graphics.shape-drawer :as shape-drawer]
             [gdl.graphics.color :as color]
             [utils.core :refer :all]
             [game.tick :refer [tick!]]
-            [game.systems :refer [render-below stun!]]
+            [game.render :as render]
             [game.effects.core :as effects]
             [game.components.modifiers :as modifiers]
             [game.utils.counter :as counter]))
@@ -20,8 +20,10 @@
     (when (counter/update-counter! e delta [k :counter])
       (modifiers/reverse! e stun-modifiers)
       (swap! e dissoc k)))
-  (render-below [_ entity* position]
+  (render/below [_ entity* position]
     (shape-drawer/circle position 0.5 (color/rgb 1 1 1 0.6))))
+
+(defsystem stun! [c e])
 
 (effects/defeffect :stun
   {:text (fn [{:keys [value]}]

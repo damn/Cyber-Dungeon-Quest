@@ -4,7 +4,7 @@
             [gdl.graphics.color :as color]
             [gdl.geom :as geom]
             [game.db :as db]
-            [game.systems :refer [render-debug]]
+            [game.render :as render]
             [game.maps.cell-grid :as grid]))
 
 (defn- remove-from-occupied-cells [r]
@@ -103,5 +103,5 @@
     ; TODO update-touched-cells done manually @ update-position (FIXME)
     (when is-solid
       (update-occupied-cells e)))
-  (render-debug [c m p]
+  (render/debug [c m p]
     (render-body-bounds body)))

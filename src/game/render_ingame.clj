@@ -11,7 +11,7 @@
             [game.line-of-sight :refer (in-line-of-sight?)]
             [game.maps.data :refer [get-current-map-data]]
 
-            [game.components.render :refer [render-entities*]]
+            [game.render :as render]
 
             ; Ingame GUI render fns
             [game.player.status-gui :refer [render-player-hp-mana]]
@@ -76,7 +76,7 @@
 (defn- render-map-content []
   #_(tile-debug) ; TODO make debug options for everything. (dear-imgui ?)
 
-  (render-entities* (visible-entities*))
+  (render/render-entities* (visible-entities*))
 
   #_(geom-test)
 

@@ -5,7 +5,7 @@
             [gdl.graphics.color :as color]
             [gdl.graphics.shape-drawer :as shape-drawer]
             [game.tick :refer [tick!]]
-            [game.systems :refer [render-info render-above]]
+            [game.render :as render]
             [game.utils.counter :refer [update-counter! make-counter]]
             [game.db :as db]
             [game.media :as media]
@@ -37,14 +37,14 @@
   (db/after-create! [_ entity]
     (modifiers/apply! entity modifiers))
 
-  (render-above [_ {:keys [body]} [x y]]
+  (render/above [_ {:keys [body]} [x y]]
     (font/draw-text {:font media/font
                      :text "zzz"
                      :x x
                      :y (+ y (:half-height body))
                      :up? true}))
 
-  (render-info [_ entity* position]
+  (render/info [_ entity* position]
     (when (:mouseover? entity*)
       (shape-drawer/circle position aggro-range color/yellow))))
 

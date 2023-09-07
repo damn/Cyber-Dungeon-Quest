@@ -1,11 +1,17 @@
-(ns game.components.render ; TODO 'systems/render' not components
-  (:require [gdl.graphics.font :as font]
-            [utils.core :refer [define-order sort-by-order]]
-            [game.systems :refer [render-below render render-above render-debug render-info]]))
+(ns game.render
+  (:require [x.x :refer [defsystem]]
+            [gdl.graphics.font :as font]
+            [utils.core :refer [define-order sort-by-order]]))
+
+(defsystem below   [c m position]) ; entity effects, mouseover-outline
+(defsystem default [c m position]) ; image, animation
+(defsystem above   [c m position]) ; psi-charges, glittering, shield ( == 'effects' ?)
+(defsystem info    [c m position]) ; hp-bar, attacking-arc
+(defsystem debug   [c m position]) ; body-bounds, mouseover entity info
 
 ; TODO render-order make vars so on compile time checked ?
 
-(def render-on-map-order ; TODO could make vars with this, => no typos, compile-time check.
+(def render-on-map-order
   (define-order
     [:on-ground ; items
      :ground    ; creatures, player
@@ -43,15 +49,12 @@
 ; TODO throw/catch renderfn missing & pass body ?
 ; TODO position needed? entity* has it in keys, we might use bottom-left
 
-(defn render-entities* [ms] ; TODO move to game.render, only called there
-  (doseq [[_ ms] (sort-by-order (group-by :z-order ms)
+(defn render-entities* [entities*]
+  (doseq [[_ entities*] (sort-by-order (group-by :z-order entities*)
                                 first
                                 render-on-map-order)
-          system [#'render-below
-                  #'render
-                  #'render-above
-                  #'render-info]
-          m ms]
-    (render-entity* system m))
-  (doseq [m ms]
-    (render-entity* render-debug m)))
+          system [below default above info]
+          entity* entities*]
+    (render-entity* system entity*))
+  (doseq [entity* entities*]
+    (render-entity* debug entity*)))
