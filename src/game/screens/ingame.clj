@@ -58,10 +58,6 @@
                         (gui/viewport-width)
                         (- (/ (gui/viewport-height) 2)
                            (/ (actor/height help-window) 2)))
-    (actor/set-position inventory/window
-                        (gui/viewport-width)
-                        (- (/ (gui/viewport-height) 2)
-                           (/ (actor/height help-window) 2)))
     (actor/set-position entity-info-window
                         (.getX inventory/window) ; actor/x
                         0)
