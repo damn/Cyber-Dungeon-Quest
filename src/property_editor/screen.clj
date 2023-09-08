@@ -100,7 +100,7 @@
 (defmethod property-widget :link-button [_ id]
   (ui/text-button (name id) #(open-property-editor-window id)))
 
-(defn- overview-table [property-type clicked-id-fn]
+(defn- overview-table ^com.badlogic.gdx.scenes.scene2d.ui.Table [property-type clicked-id-fn]
   (let [{:keys [title
                 sort-by-fn
                 extra-infos-widget]} (:overview (get property-types property-type))
@@ -126,8 +126,8 @@
                                     stack)))))))
 
 
-(defn- add-one-to-many-rows [table property-type property-ids]
-  (.addSeparator ^com.kotcrab.vis.ui.widget.VisTable table)
+(defn- add-one-to-many-rows [^com.kotcrab.vis.ui.widget.VisTable table property-type property-ids]
+  (.addSeparator table)
   (let [redo-rows (fn [property-ids]
                     (.clearChildren ^com.badlogic.gdx.scenes.scene2d.ui.Table table)
                     (add-one-to-many-rows table property-type property-ids))]
@@ -144,14 +144,14 @@
                                                                   (actor/remove window)
                                                                   (redo-rows (conj (set property-ids) id)))]
                                               (.add window (overview-table property-type clicked-id-fn))
-                                              (.pack window)
+                                              (ui/pack window)
                                               ; TODO fn above -> open in center .. ?
                                               (stage/add-actor (stage) window)
                                               (actor/set-center window
                                                                 (/ (gui/viewport-width)  2)
                                                                 (/ (gui/viewport-height) 2)))))]])))
   (when-let [parent (.getParent table)]
-    (.pack parent)))
+    (ui/pack parent)))
 
 (defmethod property-widget :one-to-many [attribute property-ids]
   (let [table (ui/table)]
