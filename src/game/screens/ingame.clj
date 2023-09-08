@@ -28,13 +28,12 @@
             game.render-ingame))
 
 (defn- item-in-hand-render-actor []
-  (let [actor (actor/create :draw
-                            (fn [this]
-                              (when @item-in-hand
-                                ; windows keep changing z-index when selected, or put all windows in 1 group and this actor another group
-                                (.toFront ^com.badlogic.gdx.scenes.scene2d.Actor this)
-                                (image/draw-centered (:image @item-in-hand) (gui/mouse-position)))))]
-    actor))
+  (actor/create :draw
+                (fn [this]
+                  (when @item-in-hand
+                    ; windows keep changing z-index when selected, or put all windows in 1 group and this actor another group
+                    (.toFront ^com.badlogic.gdx.scenes.scene2d.Actor this)
+                    (image/draw-centered (:image @item-in-hand) (gui/mouse-position))))))
 
 (defn- create-stage []
   (let [debug-window       (debug-window/create)
