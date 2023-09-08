@@ -53,12 +53,12 @@
     (actor/set-position debug-window 0 (gui/viewport-height))
     (actor/set-position help-window
                         (- (/ (gui/viewport-width) 2)
-                           (/ (actor/width help-window) 2)) ; actor/width
+                           (/ (actor/width help-window) 2))
                         (gui/viewport-height))
     (actor/set-position inventory/window
                         (gui/viewport-width)
                         (- (/ (gui/viewport-height) 2)
-                           (/ (actor/height help-window) 2))) ; actor/height
+                           (/ (actor/height help-window) 2)))
     (actor/set-position inventory/window
                         (gui/viewport-width)
                         (- (/ (gui/viewport-height) 2)
@@ -66,29 +66,12 @@
     (actor/set-position entity-info-window
                         (.getX inventory/window) ; actor/x
                         0)
-    ; actor/set-width ? or widget/?
-    ; actor/set-height
-    (actor/set-width  entity-info-window (actor/width inventory/window)) ; 333, 208
+    (actor/set-width  entity-info-window (actor/width inventory/window))
     (actor/set-height entity-info-window (.getY inventory/window))
-    ; => instead of add just
-    ; add map
-    ; or vector with id
-    ; stage pass list of thingy?
     (doseq [window windows]
-      (stage/add-actor stage window)  ; move to positioning up
-      (actor/set-visible window true) ; already visible?
-
-      )
+      (stage/add-actor stage window))
     (stage/add-actor stage (item-in-hand-render-actor))
     stage))
-
-#_(def ^:private keybindings
-  {:exit :ESCAPE
-   :move-left :A
-   :move-right :D
-
-   }
-  )
 
 (defn- add-vs [vs]
   (v/normalise (reduce v/add [0 0] vs)))
@@ -105,16 +88,6 @@
 
 (defn- set-movement! [v]
   (swap! player-entity assoc :movement-vector v))
-
-; TODO
-; * show mouse cursor move/attack/etc depending on mouseoverentity or not
-; (or in gui, then normal cursor)
-; -> use same code ?? 'decide-action' => action -> cursor
-; action -> function & curso
-; if 'would press'
-
-; TODO walk towards item if too far / also for melee range / or clicked on ground
-; -> target position & pathfinding & block if blocked ??
 
 (defn- handle-key-input [{:keys [debug-window
                                  inventory-window
@@ -184,65 +157,6 @@
            (not (stage/hit stage (gui/mouse-position))))
       (set-movement! (v/direction (:position @player-entity)
                                   (world/mouse-position)))))))
-
-(import 'com.badlogic.gdx.graphics.Pixmap)
-(import 'com.badlogic.gdx.Gdx)
-
-; cursors ->
-; * active-skill -> sanduhr
-; * wasd movement -> ?
-; * drop item
-; * clickable (in range)
-; * targeted movement
-; * move (mouse outside GUI)  (highlight blocked tiles)
-; * skill target/etc. (depends on selected skill)
-; * inside GUI ?
-; *  inventory take/etc. over cell
-
-; TODO on window titlebar where you can move it !
-
-; on entities where entity-info-window is available ?
-
-; https://deburger.itch.io/fantasy-rpg-cursors-copper
-; walk / etc / nice icons
-
-; TODO active-skill should not allow interacting with GUI ?? how 2 do that.
-; deactivate input?
-; remove the inputprocessor/add it again ?
-; but then there are also other actors non-gui related (update entity info etc. ?)
-; just an extra input processor for only mouseclicks ...
-
-
-; TODO items pickup as cursors !?
-
-;(def ^:private cursors
-;  {:drop-item
-;   :clickable
-;   :saved-mouseover-entity
-;   :move
-;   :inside-gui
-;
-;   }
-;  )
-
-; https://deburger.itch.io/fantasy-rpg-cursors-gold
-#_(app/on-create
- (def cursor (Pixmap. (.internal (Gdx/files) "ui/cursors/001/0_red.png")))
- ; TODO do not forget to dispose
- ; https://libgdx.com/wiki/input/cursor-visibility-and-catching
- ; system cursors
-
- (def c (.newCursor g/graphics
-                    cursor
-                    0 0
-                    ))
-
- (.setCursor (Gdx/graphics)
-             c)
-
- ; Gdx.graphics.newCursor(pm,0,0,)
- ; Gdx.graphics.setCursor
- )
 
 (defmodule stage
   (lc/create [_] (create-stage))
