@@ -13,7 +13,6 @@
             game.ui.action-bar
             game.ui.inventory-window))
 
-
 (def current-character-name (atom nil))
 
 ;; TODO read/write/load/get -> move to x.session ?
@@ -98,6 +97,6 @@
     (doseq [[component stype] (session-components)]
       ;(println "Load state: " stype)
       (session/load! component
-                   (if is-loaded-character
-                     (get session-file-data stype)
-                     (session/initial-data component))))))
+                     (if is-loaded-character
+                       (get session-file-data stype)
+                       (session/initial-data component))))))

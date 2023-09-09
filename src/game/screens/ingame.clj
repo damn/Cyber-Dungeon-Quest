@@ -27,6 +27,16 @@
             game.update-ingame
             game.render-ingame))
 
+(comment
+ ; TODO => close button for windows
+ (let [window (:inventory-window (gdl.app/current-screen-value))
+       top (first (seq (.getChildren window)))
+       ]
+   (.add top (gdl.scene2d.ui/text-button "x" #(.setVisible window false)))
+   )
+
+ )
+
 (defn- item-in-hand-render-actor []
   (actor/create :draw
                 (fn [this]

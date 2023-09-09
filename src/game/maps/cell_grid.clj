@@ -10,11 +10,11 @@
             [game.maps.data :refer (get-current-map-data)]
             [mapgen.movement-property :refer (movement-property)]))
 
-(defn get-cell-grid []
+(defn- get-cell-grid []
   (:cell-grid (get-current-map-data)))
 
-(defn world-width  [] (grid/width  (get-cell-grid)))
-(defn world-height [] (grid/height (get-cell-grid)))
+(defn- world-width  [] (grid/width  (get-cell-grid)))
+(defn- world-height [] (grid/height (get-cell-grid)))
 
 (defn- get-cell-blocked-boolean-array []
   (:cell-blocked-boolean-array (get-current-map-data)))

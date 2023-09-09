@@ -15,11 +15,14 @@
   (alter-var-root #'maps-data assoc k data)
   (alter-var-root #'added-map-order conj k))
 
-(defn get-map-keys [] (keys maps-data))
+(defn get-map-keys []
+  (keys maps-data))
 
-(defn get-map-data [map-name] (get maps-data map-name))
+(defn get-map-data [map-name]
+  (get maps-data map-name))
 
-(defn get-pretty-name [map-key] (:pretty-name (get-map-data map-key)))
+(defn get-pretty-name [map-key]
+  (:pretty-name (get-map-data map-key)))
 
 ; TODO faster access when current-map references maps-data and not the key?
 ; test get-cells for example ...
@@ -44,7 +47,8 @@
      (reset! current-map old#)
      retrn#))
 
-(defn get-current-map-data [] (get maps-data @current-map))
+(defn get-current-map-data []
+  (get maps-data @current-map))
 
 (defmodule _
   (lc/dispose [_]

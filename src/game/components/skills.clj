@@ -37,7 +37,7 @@
              {:target target
               :target-position target-position
               :direction (v/direction (:position @entity)
-                                        target-position)})
+                                      target-position)})
            (let [faction (faction/enemy (:faction @entity))
                  target (-> @entity
                             :position
