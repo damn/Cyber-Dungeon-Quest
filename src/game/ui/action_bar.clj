@@ -10,29 +10,32 @@
             [game.player.entity :refer (player-entity)])
   (:import (com.badlogic.gdx.scenes.scene2d.ui HorizontalGroup ButtonGroup Button)))
 
-; skill-bar?? -> maybe also potions or whatever actions could be included in the future ?!
-
-; use text color codes and newlines working?
-; -> no need for custom render-readable-text (mostly @ gui ?)
-; anyway dont use textseq -> only newlines !
-; because of colors ...
-; add them in the text ...
-; -> use libgdx font thing
-
-; => game.ui.actionbar
-; -=> not skills but actions? actiontime?
-; => look properly!
-; -> icon for action 'attack with weapon' -> like in D2
-; or greyscale the weapon
-
 ; TODO when no selected-skill & new skill assoce'd (sword at start)
 ; => set selected
 ; actualizer doesnt do that ?
+; TODO actually only weapon skill can be dissoc'ed
+; so no need to redo all and can keep idx. 1.
+; all get re-shuffled.
+; -> first check any skills in actionbar not has-skill? anymore -> just remove them at that index
+; -> then check player-skills not in actionbar -> add at an index.
+; keep index 1 for item ?
+; TODO what if selected skill gets removed
+; -> no more selected skill (no wait gets updated)
 
-; TODO I could move all this state into player entity
-; even the widgets themself and/or add-watch to player-entity
-; look at other state which you could move into player-entity
-; model/view together is fine,
+; if 1 gets removed, keep 2,3,4
+; now everything gets re-shuffled
+; only remove the one which is removed
+; keep empty slot ?
+; TODO
+; * add imageChecked to style ( for cooldown / selected ) -> make red cooldown / otherwise diff. color
+; * or even sector circling for cooldown like in WoW (clipped !)
+
+; * tooltips ! with hotkey-number !
+;  ( (skills/text skill-id player-entity))
+
+
+; * TODO add hotkey number to tooltips
+; * TODO hotkeys => select button
 
 (def ^:private selected-skill-id (atom nil))
 
@@ -58,7 +61,6 @@
                {:selected-skill nil
                 :actionbar (empty-slot->skill-id)})))
 
-
 (defn- player-skills []
   (:skills @player-entity))
 
@@ -67,15 +69,6 @@
                                     slot-keys))]
     (assert unused-index)
     (swap! slot->skill-id assoc unused-index skill-id)))
-
-; TODO actually only weapon skill can be dissoc'ed
-; so no need to redo all and can keep idx. 1.
-; all get re-shuffled.
-
-
-; -> first check any skills in actionbar not has-skill? anymore -> just remove them at that index
-; -> then check player-skills not in actionbar -> add at an index.
-; keep index 1 for item ?
 
 (declare check-hotbar-actualize
          ^HorizontalGroup horizontal-group) ; TODO == action-bar
@@ -128,29 +121,8 @@
                      skill-id)]
     (.setChecked ^Button (.findActor horizontal-group (str skill-id)) true)))
 
-; TODO what if selected skill gets removed
-; -> no more selected skill (no wait gets updated)
-
-; if 1 gets removed, keep 2,3,4
-; now everything gets re-shuffled
-; only remove the one which is removed
-; keep empty slot ?
-
 (comment
  (.getChildren horizontal-group)
  ;#object[com.badlogic.gdx.utils.SnapshotArray 0x5d081309 "[Actor$ff19274a, :sword, :projectile, :meditation, :spawn]"]
 
-
  )
-
-
-; TODO
-; * add imageChecked to style ( for cooldown / selected ) -> make red cooldown / otherwise diff. color
-; * or even sector circling for cooldown like in WoW (clipped !)
-
-; * tooltips ! with hotkey-number !
-;  ( (skills/text skill-id player-entity))
-
-
-; * TODO add hotkey number to tooltips
-; * TODO hotkeys => select button
