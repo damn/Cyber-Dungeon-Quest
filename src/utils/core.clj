@@ -4,7 +4,7 @@
             [clojure.java.io :as io]
             [clojure.string :as str]))
 
-(defn indexed ; from clojure.contrib.seq-utils (discontinued in 1.3)
+(defn- indexed ; from clojure.contrib.seq-utils (discontinued in 1.3)
   "Returns a lazy sequence of [index, item] pairs, where items come
  from 's' and indexes count up from zero.
 
