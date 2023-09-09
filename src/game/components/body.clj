@@ -7,48 +7,50 @@
             [game.render :as render]
             [game.maps.cell-grid :as grid]))
 
-(defn- remove-from-occupied-cells [r]
-  (doseq [cell (:occupied-cells @r)]
-    (swap! cell update :occupied disj r)))
+(defn- remove-from-occupied-cells [e]
+  (doseq [cell (:occupied-cells @e)]
+    (swap! cell update :occupied disj e)))
 
-(defn- set-occupied-cells [r]
-  (let [cells (grid/rectangle->occupied-cells (:body @r))]
+(defn- set-occupied-cells [e]
+  (let [cells (grid/rectangle->occupied-cells (:body @e))]
     (doseq [cell cells]
-      (swap! cell update :occupied conj r))
-    (swap! r assoc :occupied-cells cells)))
+      (swap! cell update :occupied conj e))
+    (swap! e assoc :occupied-cells cells)))
 
-(defn- update-occupied-cells [r]
-  (remove-from-occupied-cells r)
-  (set-occupied-cells         r))
+(defn- update-occupied-cells [e]
+  (remove-from-occupied-cells e)
+  (set-occupied-cells         e))
 
 (defn- set-touched-cells
-  ([r]
-   (set-touched-cells r (grid/rectangle->touched-cells (:body @r))))
-  ([r new-cells]
+  ([e]
+   (set-touched-cells e (grid/rectangle->touched-cells (:body @e))))
+  ([e new-cells]
    {:pre [(not-any? nil? new-cells)]}
-   (swap! r assoc :touched-cells new-cells)
+   (swap! e assoc :touched-cells new-cells)
    (doseq [cell new-cells]
-     (grid/add-entity cell r))))
+     (grid/add-entity cell e))))
 
-(defn- remove-from-touched-cells [r]
-  (doseq [cell (:touched-cells @r)]
-    (grid/remove-entity cell r)))
+(defn- remove-from-touched-cells [e]
+  (doseq [cell (:touched-cells @e)]
+    (grid/remove-entity cell e)))
 
-(defn update-touched-cells [r touched-cells]
-  (when-not (= touched-cells (:touched-cells @r))
-    (remove-from-touched-cells r)
-    (set-touched-cells r touched-cells)))
+(defn update-touched-cells [e touched-cells]
+  (when-not (= touched-cells (:touched-cells @e))
+    (remove-from-touched-cells e)
+    (set-touched-cells e touched-cells)))
 
 ; setting a min-size for colliding bodies so movement can set a max-speed for not
 ; skipping bodies at too fast movement
 (def min-solid-body-size 0.3)
 
-(def show-body-bounds false)
+#_(defn left-bottom [{[x y] :position {:keys [half-width half-height]} :body}]
+  [(- x half-width)
+   (- y half-height)])
 
-(defn- render-body-bounds [{[x y] :left-bottom :keys [width height is-solid]}]
-  (when show-body-bounds
-    (shape-drawer/rectangle x y width height (if is-solid color/white color/gray))))
+(defn- draw-bounds [{[x y] :left-bottom :keys [width height is-solid]}]
+  (shape-drawer/rectangle x y width height (if is-solid color/white color/gray)))
 
+; TODO DELETE LEFT BOTTOM !
 (defn assoc-left-bottom [{:keys [body] [x y] :position :as entity*}]
   (assoc-in entity* [:body :left-bottom] [(- x (/ (:width body)  2))
                                           (- y (/ (:height body) 2))]))
@@ -86,6 +88,8 @@
   (swap! e update :body update-map moved direction-vector)
   (doseq-entity e moved!))
 
+(def show-body-bounds false)
+
 (defcomponent :body {:keys [is-solid] :as body}
   ; TODO assert height is there
   (db/create! [[k _] e]
@@ -104,4 +108,5 @@
     (when is-solid
       (update-occupied-cells e)))
   (render/debug [c m p]
-    (render-body-bounds body)))
+    (when show-body-bounds
+      (draw-bounds body))))
