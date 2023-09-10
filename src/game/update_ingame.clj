@@ -9,7 +9,6 @@
             [game.components.hp :refer (dead?)]
             [game.components.inventory :as inventory]
             [game.ui.mouseover-entity :refer (update-mouseover-entity)]
-            game.components.update ; TODO namespace now only 2 modifiers.
             [game.components.movement :as movement]
             [game.player.core :refer [player-death]]
             [game.utils.msg-to-player :refer [update-msg-to-player]]

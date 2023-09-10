@@ -219,14 +219,14 @@
 (defn set-to-max [[_ max]] ; only used @ player revive, not sure if necessary
   [max max])
 
-(defn- apply* [f value]
+(defn- apply* [f value] ; TODO naming!
   (-> value f int (max 0)))
 
 (defn apply-val [f [val max]]
   [(min (apply* f val) max)
    max])
 
-(defn apply-max [f [val max]]
+(defn apply-max [f [val max]] ; TODO value & max-value, or 'v' and 'mv'
   (let [max (apply* f max)]
     [(min val max)
      max]))

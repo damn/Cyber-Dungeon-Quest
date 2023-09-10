@@ -100,7 +100,8 @@
              (inventory/cell-in-use? entity* mouseover-cell))
         (try-usable-item-effect mouseover-item mouseover-cell))))
 
-;; TODO this out of here, is not inventory but rand-items
+;; TODO this out of here, is not inventory but rand-items ; !!!
+; maybe do this organizational stuff first ??!
 
 ; TODO out of date (move-speed )
 (def ^:private item-type-boni
@@ -109,6 +110,7 @@
             :melee-chance-reduce-armor :melee-chance-slow :melee-chance-stun :perc-dmg-spell]
    "Ring" [:armor :mana-reg :attack-speed :move-speed :hp-leech :mana-leech :melee-crit :spell-crit]})
 
+; TODO remove code like this in wrong place ...
 (defn- level->modifier-value
   [level modifier-type]
   {:pre [(#{0 1 2} level)

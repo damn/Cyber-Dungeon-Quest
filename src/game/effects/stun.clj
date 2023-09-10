@@ -10,8 +10,8 @@
             [game.utils.counter :as counter]))
 
 (def ^:private stun-modifiers
-  [[:block :speed]
-   [:block :skillmanager]])
+  [[:modifiers/block :speed]
+   [:modifiers/block :skillmanager]])
 
 ; TODO counter-stuff duplicated (see string effects )... sub-components create/tick/lifecycle???
 ; but wouldn't work with assoc??

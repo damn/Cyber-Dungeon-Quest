@@ -27,8 +27,8 @@
 ; :movement/:skillmanager, basically not sleeping can patrol but not 'hostile' to player
 ; -> later just :hostile switch state
 (def ^:private modifiers
-  [[:block :speed]
-   [:block :skillmanager]])
+  [[:modifiers/block :speed]
+   [:modifiers/block :skillmanager]])
 
 (defcomponent :sleeping _ ; TODO destructuring optional ? keep code working as is? if-not list ?
   ; skillmanager does not exist yet

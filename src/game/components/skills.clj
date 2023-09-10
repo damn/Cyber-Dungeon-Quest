@@ -112,12 +112,6 @@
   {:pre [(not (contains? skills id))]}
   (assoc skills id (properties/get id)))
 
-(modifier/defmodifier :skill
-  {:text skills/text
-   :keys [:skills]
-   :apply assoc-skill
-   :reverse dissoc})
-
 ; TODO move denied (player-centric) code to
 ; game.player.controls
 
@@ -185,24 +179,6 @@
                      (ai-should-use? (:effect %) entity))) ; TODO pass (effect-params @entity)
        first
        :id))
-
-; :skillmanager => :skill-modifiers ?
-; TODO make generic apply/reverse for numbers w. default-values
-; no need to write :apply :reverse, just use + or - or (partial apply-max +)
-; apply-val +
-(modifier/defmodifier :cast-speed
-  {:values  [[15 25] [35 45] [50 60]]
-   :text    #(str "+" % "% Casting-Speed")
-   :keys    [:skillmanager :cast-speed]
-   :apply   #(+ (or %1 1) (/ %2 100))
-   :reverse #(- %1 (/ %2 100))}) ; TODO dissoc again if value == default value -> into modifier logic
-
-(modifier/defmodifier :attack-speed
-  {:values  [[15 25] [35 45] [50 60]]
-   :text    #(str "+" % "% Attack-Speed")
-   :keys    [:skillmanager :attack-speed]
-   :apply   #(+ (or %1 1) (/ %2 100))
-   :reverse #(- %1 (/ %2 100))})
 
 (defn- apply-speed-multipliers [entity* skill delta]
   (let [{:keys [cast-speed attack-speed]} (:skillmanager entity*)

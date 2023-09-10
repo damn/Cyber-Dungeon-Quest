@@ -1,4 +1,6 @@
 ; TODO all modifier-fns broken, need entity arg ( only skill has)
+; TODO parse valid modifiers @ read properties !
+; schema .. !
 (ns game.modifier)
 
 (def modifier-definitions {})
