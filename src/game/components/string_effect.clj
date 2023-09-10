@@ -29,7 +29,7 @@
 ; TODO I dont like separate of folders into /entities or /components
 ; entities or components should be part of the language like 'float', 'byte' or fn
 ; => how can I put the things?
-; map/ items/ skills/ creatures/ effects/o
+; map/ items/ skills/ creatures/ effect/o
 
 ; is it possible to analyze the ns structure and from there decide coupling/cohesion?
 

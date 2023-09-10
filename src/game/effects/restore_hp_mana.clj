@@ -1,7 +1,7 @@
 (ns game.effects.restore-hp-mana
   (:require [gdl.audio :as audio]
             [utils.core :refer [lower-than-max? remainder-to-max]]
-            [game.effects.core :as effects]
+            [game.effect :as effect]
             [game.components.skills :refer (ai-should-use?)]
             game.effects.hp
             game.effects.mana))
@@ -11,14 +11,14 @@
       (lower-than-max? (:hp   @entity))))
 
 ; TODO make with 'target' then can use as hit-effect too !
-(effects/defeffect :restore-hp-mana
+(effect/defeffect :restore-hp-mana
   {:text (fn [_] "Restores full hp and mana.")
    :valid-params? (fn [{:keys [source]}]
                     source)
    :do! (fn [{:keys [source]}]
           (audio/play "bfxr_drugsuse.wav")
           ; TODO only use effects where we need text/pass them around -> use directly apply-min-max-val
-          (effects/do-effects!
+          (effect/do-effects!
            {:target source}
            [[:hp   [[:val :inc] (remainder-to-max (:hp   @source))]]
             [:mana [[:val :inc] (remainder-to-max (:mana @source))]]]))})
@@ -27,7 +27,7 @@
 ; TODO create components with symbols as name
 ; when they have to refer to a special thing??
 ; compile time checking of symbol-components ?
-; :hit-effects [effects/damage 3] ; ???
+; :hit-effects [effect/damage 3] ; ???
 ; or on-create will get checked ???
 ; data based !
 #_(defcomponent effect/restoration

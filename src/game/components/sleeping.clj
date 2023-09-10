@@ -9,7 +9,7 @@
             [game.utils.counter :refer [update-counter! make-counter]]
             [game.db :as db]
             [game.media :as media]
-            [game.effects.core :as effects]
+            [game.effect :as effect]
             [game.components.faction :as faction]
             [game.components.modifiers :as modifiers]
             [game.line-of-sight :refer (in-line-of-sight?)]
@@ -97,5 +97,5 @@
         (when (<= distance (* aggro-range 10)) ; potential field store as 10  TODO necessary ?
           (wake-up! entity)))))
 
-  (effects/affected! [_ entity]
+  (effect/affected! [_ entity]
     (wake-up! entity)))

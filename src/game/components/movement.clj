@@ -5,8 +5,8 @@
             [utils.core :refer [find-first update-in!]]
             [game.db :as db]
             [game.tick :refer [tick!]]
+            [game.effect :as effect]
             [game.components.body :as body]
-            [game.effects.core :as effects]
             [game.maps.cell-grid :as grid]))
 
 (defn- apply-delta-v [entity* delta v]
@@ -40,7 +40,7 @@
         blocked (cond hit-entity
                       (do
                        (update-in! projectile [:projectile-collision :already-hit-bodies] conj hit-entity)
-                       (effects/do-effects! {:source projectile
+                       (effect/do-effects! {:source projectile
                                              :target hit-entity}
                                             hit-effects)
                        (not piercing))

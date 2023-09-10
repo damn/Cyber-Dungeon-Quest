@@ -1,6 +1,6 @@
 (ns game.effects.hp
   (:require [utils.core :refer [affect-val-max-stat!]]
-            [game.effects.core :as effects]
+            [game.effect :as effect]
             [game.components.hp :refer (dead?)]
             [game.components.string-effect :refer (hp-changed-effect)]))
 
@@ -8,7 +8,7 @@
 ; value : [:hp [[:val :inc] 5]]
 ; * leech ->      [[:val :inc] x]
 ; * regenerate -> [[:val :inc] (percent of max)]
-(effects/defeffect :hp
+(effect/defeffect :hp
   {:text (fn [{:keys [value]}]
            (str value " HP"))
    :valid-params? (fn [{:keys [target]}]

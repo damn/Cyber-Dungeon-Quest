@@ -40,7 +40,7 @@
                       {:position position :radius radius}
                       affects-faction))]
     (doseq [target hits]
-      (effects/do-effects! {:source entity :target target} hit-effects))
+      (effect/do-effects! {:source entity :target target} hit-effects))
     (update-in! entity [:nova]
                 #(-> %
                      (assoc :radius radius)

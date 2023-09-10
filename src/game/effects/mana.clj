@@ -1,9 +1,9 @@
 (ns game.effects.mana
   (:require [utils.core :refer [affect-val-max-stat!]]
-            [game.effects.core :as effects]
+            [game.effect :as effect]
             [game.components.string-effect :refer (mana-changed-effect)]))
 
-(effects/defeffect :mana
+(effect/defeffect :mana
   {:text (fn [{:keys [value]}]
            (str value " MP"))
    :valid-params? (fn [{:keys [target]}]

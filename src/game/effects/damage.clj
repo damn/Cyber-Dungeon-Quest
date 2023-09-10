@@ -3,7 +3,7 @@
             [utils.core :refer :all]
             [game.media :as media]
             [game.components.modifiers :as modifiers]
-            [game.effects.core :as effects]
+            [game.effect :as effect]
             [game.utils.random :as random]
             [game.components.string-effect :refer [show-string-effect]]
             [game.entities.animation :as animation-entity]
@@ -86,7 +86,7 @@
        (damage-type->hit-effect! damage-type
                                  (:position @target))
        ; TODO only use effects where we need text/pass them around -> use directly apply-min-max-val
-       (effects/do-effect! {:target target}
+       (effect/do-effect! {:target target}
                            [:hp [[:val :inc] (- damage)]])))))
 
 #_(defn- get-dps [[mi mx] seconds]
@@ -122,7 +122,7 @@
  ; TODO => val-max-data as schema!
  ; two >=0 integers and val<=max.
  )
-(effects/defeffect :damage
+(effect/defeffect :damage
   {:text damage-infotext
    :valid-params? (fn [{:keys [source target]}]
                     (and source

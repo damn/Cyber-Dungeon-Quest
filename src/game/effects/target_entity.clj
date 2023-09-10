@@ -11,7 +11,7 @@
             [game.entities.animation :as animation-entity]
             [game.entities.line :as line-entity]
             [game.components.skills :refer (effect-info-render)]
-            [game.effects.core :as effects]
+            [game.effect :as effect]
             game.effects.damage))
 
 ; TODO target still exists ?! necessary ? what if disappears/dead?
@@ -62,7 +62,7 @@
                             :duration 50
                             :color (color/rgb 1 0 0 0.75)
                             :thick? true)
-       (effects/do-effects! {:source source :target target} hit-effects))
+       (effect/do-effects! {:source source :target target} hit-effects))
       (do
        ; * clicking on far away monster
        ; * hitting ground in front of you ( there is another monster )
@@ -78,11 +78,11 @@
                          (color/rgb 1 0 0 0.5)
                          (color/rgb 1 1 0 0.5)))))
 
-(effects/defeffect :target-entity
+(effect/defeffect :target-entity
   {:text (fn [{:keys [value] :as params}]
            (str "Range " (:maxrange value) " meters\n"
                 (str/join "\n"
                           (for [effect (:hit-effects value)]
-                            (effects/text params effect)))))
+                            (effect/text params effect)))))
    :valid-params? valid-params?
    :do! do-effect!})

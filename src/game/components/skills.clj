@@ -17,13 +17,13 @@
             [game.ui.mouseover-entity :refer (saved-mouseover-entity get-mouseover-entity)]
             [game.utils.counter :refer :all]
             [game.utils.msg-to-player :refer (show-msg-to-player)]
-            [game.effects.core :as effects]
+            [game.effect :as effect]
             [game.effects.stun :as stun]
             [game.skills.core :as skills]
             [game.maps.potential-field :as potential-field]
             [game.maps.cell-grid :as cell-grid]))
 
-; TODO move to effects/
+; TODO move to effect/
 (defmulti effect-info-render (fn [effect-id effect-params] effect-id))
 (defmethod effect-info-render :default [_ _])
 
@@ -146,7 +146,7 @@
     enough))
 
 (defn- check-valid-params [entity* skill]
-  (let [valid-params (effects/valid-params? (effect-params entity*)
+  (let [valid-params (effect/valid-params? (effect-params entity*)
                                             (:effect skill))]
     (when (and (not valid-params) (:is-player entity*))
       (denied "Invalid skill params."))
@@ -164,7 +164,7 @@
 ; error with reason: cooldown,not-enough-mana,invalid-params: list of params invalid
 ; => no need to manually call the 3 fns from player-controls
 
-; TODO move to effects/
+; TODO move to effect/
 (defmulti ai-should-use? (fn [[effect-id effect-value] entity] effect-id))
 (defmethod ai-should-use? :default [_ entity]
   true)
@@ -232,11 +232,11 @@
         delta (apply-speed-multipliers @entity skill delta)
         effect-params (effect-params @entity)
         effect (:effect skill)]
-    (if-not (effects/valid-params? effect-params effect)
+    (if-not (effect/valid-params? effect-params effect)
       (stop! entity skill)
       (when (update-counter! entity delta [:skillmanager :action-counter])
         (stop! entity skill)
-        (effects/do-effect! effect-params effect)))))
+        (effect/do-effect! effect-params effect)))))
 
 ; action-counter => is a sort of counter w. on-stop? implemented ?
 ; needs to say is-a counter & implement on-stopped?
@@ -259,7 +259,7 @@
         ; TODO this is overengineered ... just decrement the val-max ??
         ; -> use effects only where I need the text also!
         ; => call directly the affect-mana! fn at :do!
-        (effects/do-effect! {:target entity}
+        (effect/do-effect! {:target entity}
                             [:mana [[:val :inc] (- (:cost skill))]]))
       ; spread out speed of cast-sound over action-time ? wooooooooosh
       ; woosh

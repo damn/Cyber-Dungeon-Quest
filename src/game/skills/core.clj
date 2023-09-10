@@ -2,7 +2,7 @@
   (:require [clojure.set :as set]
             [clojure.string :as str]
             [utils.core :refer [readable-number]]
-            [game.effects.core :as effects]
+            [game.effect :as effect]
             [game.properties :as properties]))
 
 ; TODO  prepare-properties :skills
@@ -39,4 +39,4 @@
          (when cost (str "Cost " cost  "\n"))
          (if spell?  "Cast-Time " "Attack-time ") (ms->pprint-seconds action-time) " seconds\n"
          (when cooldown (str "Cooldown " (ms->pprint-seconds cooldown) "\n"))
-         (effects/text {:source entity} effect))))
+         (effect/text {:source entity} effect))))

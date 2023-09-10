@@ -2,7 +2,7 @@
   (:require [clojure.string :as str]
             [gdl.vector :as v]
             [game.media :as media]
-            [game.effects.core :as effects]
+            [game.effect :as effect]
             [game.maps.cell-grid :as cell-grid]
             [game.components.skills :refer (ai-should-use?)]
             [game.entities.projectile :as projectile-entity]
@@ -57,11 +57,11 @@
    :piercing false
    :hit-effects hit-effects))
 
-(effects/defeffect :projectile
+(effect/defeffect :projectile
   {:text (fn [params]
            (str/join "\n"
                      (for [effect hit-effects]
-                       (effects/text params effect))))
+                       (effect/text params effect))))
    ; TODO source,direction
    :valid-params? (fn [{:keys [target]}]
                     target)

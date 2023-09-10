@@ -5,7 +5,7 @@
             [utils.core :refer :all]
             [game.tick :refer [tick!]]
             [game.render :as render]
-            [game.effects.core :as effects]
+            [game.effect :as effect]
             [game.components.modifiers :as modifiers]
             [game.utils.counter :as counter]))
 
@@ -25,7 +25,7 @@
 
 (defsystem stun! [c e])
 
-(effects/defeffect :stun
+(effect/defeffect :stun
   {:text (fn [{:keys [value]}]
            (str "Stuns for " (readable-number (/ value 1000)) " seconds"))
    :valid-params? (fn [{:keys [source target]}]

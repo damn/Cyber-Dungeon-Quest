@@ -1,7 +1,17 @@
-(ns game.effects.core
+; TODO effect = has effect COMPONENTS
+; => one 'effect' consists of multiple effect-components
+; use modules/namespaced keywords?
+; make module e.g. ns effect/restoration.clj => not effects.restoration but
+; :effect/restoration
+; => remove game folder => just 'effect' ns ?
+; TODO delete do-effects! / do-effect! => effect has always multiple components?
+; => just do-effect => one effect has multiple effect-components (always?)
+; => wrap in one more vector wherevr or in map
+; => do-effect-component internal function
+(ns game.effect
   (:require [x.x :refer :all]))
 
-(def effect-definitions {})
+(def ^:private effect-definitions {})
 
 (defn defeffect [effect-type effect-def]
   (alter-var-root #'effect-definitions assoc effect-type effect-def)
@@ -14,22 +24,6 @@
     (assert effect (str "Effect " type " not defined."))
     (f params)))
 
-; TODO can effects also be entites w. components ?
-; ??
-;; where we have sytems 'text', 'do!', 'valid-params?' ??
-
-; different params are also different how they throw errors etc.
-; they can also be components again ??
-; just connect w. data
-; e.g. 'line-of-sight' param condition -> is a keyword & behaviour .. ??
-
-; modifier also [k v] ...
-; so modifier are component
-; and modifiers == just coll of  components
-; modifier calls apply/reverse only
-; modifier system
-
-; protocols/systems/? many things have 'text', even entities
 (def text          (partial call-effect-fn :text))
 (def valid-params? (partial call-effect-fn :valid-params?))
 (def ^:private do! (partial call-effect-fn :do!))

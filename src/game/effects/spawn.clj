@@ -1,5 +1,5 @@
 (ns game.effects.spawn
-  (:require [game.effects.core :as effects]
+  (:require [game.effect :as effect]
             [game.entities.creature :as creature-entity]))
 
 ; TODO
@@ -30,7 +30,7 @@
  ; keys: :faction(:source)/:target-position/:creature-id
  )
 
-(effects/defeffect :spawn
+(effect/defeffect :spawn
   {:text (fn [{:keys [value]}]
            (str "Spawns a " value)) ; pretty name
    :valid-params? (fn [{:keys [source target-position]}]
