@@ -2,7 +2,7 @@
   (:require [gdl.audio :as audio]
             [utils.core :refer :all]
             [game.media :as media]
-            [game.components.modifiers :as modifiers]
+            [game.modifier :as modifier]
             [game.effect :as effect]
             [game.utils.random :as random]
             [game.components.string-effect :refer [show-string-effect]]
@@ -150,10 +150,10 @@
               (update-in component (drop-last value) - (last value)))})
 
 ; Example: [:shield [:target :physical 0.3]]
-(modifiers/defmodifier :shield
+(modifier/defmodifier :shield
   (shield_armor-modifier :shield))
 
-(modifiers/defmodifier :armor
+(modifier/defmodifier :armor
   (shield_armor-modifier :armor))
 
 (defn- check-damage-modifier-value [[source-or-target
@@ -186,7 +186,7 @@
 
 ; example: [:damage [:source :physical [:max :mult] 3]]
 ; TODO => effect-modifier-modifier
-(modifiers/defmodifier :damage
+(modifier/defmodifier :damage
   {:text (fn [value _]
            (assert (check-damage-modifier-value value)
                    (str "Wrong value for damage modifier: " value))

@@ -1,7 +1,7 @@
 (ns game.items.core
   (:require [clojure.string :as str]
             [gdl.graphics.color :as color]
-            [game.components.modifiers :as modifiers]
+            [game.modifier :as modifier]
             [game.player.entity :refer (player-entity)]))
 
 ; diablo2 unique gold rgb 144 136 88
@@ -25,4 +25,4 @@
        ; no need for this here ?
        (str/join "\n"
                  (for [modifier (:modifiers item)]
-                   (modifiers/text player-entity modifier)))))
+                   (modifier/text player-entity modifier)))))

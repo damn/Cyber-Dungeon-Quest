@@ -11,7 +11,7 @@
             [game.media :as media]
             [game.effect :as effect]
             [game.components.faction :as faction]
-            [game.components.modifiers :as modifiers]
+            [game.modifier :as modifier]
             [game.line-of-sight :refer (in-line-of-sight?)]
             [game.maps.cell-grid :as cell-grid]
             [game.maps.potential-field :as potential-field]
@@ -35,7 +35,7 @@
   ; so after create
   ; (it seems 'on-create-entity' is the component contructor)
   (db/after-create! [_ entity]
-    (modifiers/apply! entity modifiers))
+    (modifier/apply! entity modifiers))
 
   (render/above [_ {:keys [body]} [x y]]
     (font/draw-text {:font media/font
@@ -57,7 +57,7 @@
 
 (defn- wake-up! [entity]
   (swap! entity dissoc :sleeping)
-  (modifiers/reverse! entity modifiers)
+  (modifier/reverse! entity modifiers)
   (string-effect/show-string-effect entity "!")
   (create-shout-entity! (:position @entity)
                         (:faction  @entity)))

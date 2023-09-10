@@ -13,7 +13,7 @@
             [game.db :as db]
             [game.properties :as properties]
             [game.components.faction :as faction]
-            [game.components.modifiers :as modifiers]
+            [game.modifier :as modifier]
             [game.ui.mouseover-entity :refer (saved-mouseover-entity get-mouseover-entity)]
             [game.utils.counter :refer :all]
             [game.utils.msg-to-player :refer (show-msg-to-player)]
@@ -112,7 +112,7 @@
   {:pre [(not (contains? skills id))]}
   (assoc skills id (properties/get id)))
 
-(modifiers/defmodifier :skill
+(modifier/defmodifier :skill
   {:text skills/text
    :keys [:skills]
    :apply assoc-skill
@@ -190,14 +190,14 @@
 ; TODO make generic apply/reverse for numbers w. default-values
 ; no need to write :apply :reverse, just use + or - or (partial apply-max +)
 ; apply-val +
-(modifiers/defmodifier :cast-speed
+(modifier/defmodifier :cast-speed
   {:values  [[15 25] [35 45] [50 60]]
    :text    #(str "+" % "% Casting-Speed")
    :keys    [:skillmanager :cast-speed]
    :apply   #(+ (or %1 1) (/ %2 100))
    :reverse #(- %1 (/ %2 100))}) ; TODO dissoc again if value == default value -> into modifier logic
 
-(modifiers/defmodifier :attack-speed
+(modifier/defmodifier :attack-speed
   {:values  [[15 25] [35 45] [50 60]]
    :text    #(str "+" % "% Attack-Speed")
    :keys    [:skillmanager :attack-speed]

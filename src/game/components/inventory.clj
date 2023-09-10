@@ -4,7 +4,7 @@
             [utils.core :refer [assoc-in! find-first]]
             [game.db :as db]
             [game.properties :as properties]
-            [game.components.modifiers :as modifiers]))
+            [game.modifier :as modifier]))
 
 ; skills added/removed => make also gui-callback fn and bind-root.
 
@@ -68,7 +68,7 @@
     (set-item-image-in-widget cell item))
   (assoc-inventory-cell! entity cell item)
   (when (applies-modifiers? cell)
-    (modifiers/apply! entity (:modifiers item))))
+    (modifier/apply! entity (:modifiers item))))
 
 (defn remove-item [entity cell]
   (let [item (get-in (:inventory @entity) cell)]
@@ -77,7 +77,7 @@
       (remove-item-from-widget cell))
     (assoc-inventory-cell! entity cell nil)
     (when (applies-modifiers? cell)
-      (modifiers/reverse! entity (:modifiers item)))))
+      (modifier/reverse! entity (:modifiers item)))))
 
 (defn cell-in-use? [entity* cell] ; TODO naming (includes is-active check) ->
   (let [inventory (:inventory entity*)

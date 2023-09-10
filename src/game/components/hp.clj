@@ -6,7 +6,7 @@
             [utils.core :refer :all]
             [game.db :as db]
             [game.render :as render]
-            [game.components.modifiers :as modifiers]
+            [game.modifier :as modifier]
             [game.ui.config :refer (hpbar-height-px)]))
 
 (def ^:private hpbar-colors
@@ -47,7 +47,7 @@
 (defn dead? [{:keys [hp]}]
   (zero? (hp 0)))
 
-(modifiers/defmodifier :hp
+(modifier/defmodifier :hp
   {:values  [[15 25] [35 45] [55 65]]
    :text    #(str "+" % " HP")
    :keys    [:hp]
@@ -109,14 +109,14 @@
   {:mana-regen
    {:reg-per-second percent-reg-per-second}})
 
-(modifiers/defmodifier :hp-reg
+(modifier/defmodifier :hp-reg
   {:values  [[5 15] [16 25] [26 35]]
    :text    #(str "+" (readable-number (/ % 10)) "% HP-Reg-per-second")
    :keys    [:hp-regen :reg-per-second] ; -> just :hp-reg / :mana-reg ?
    :apply   #(+ %1 (/ %2 10))
    :reverse #(- %1 (/ %2 10))})
 
-(modifiers/defmodifier :mana-reg
+(modifier/defmodifier :mana-reg
   {:values  [[10 30] [31 50] [51 75]]
    :text    #(str "+" (readable-number (/ % 10)) "% MP-Reg-per-second")
    :keys    [:mana-regen :reg-per-second]

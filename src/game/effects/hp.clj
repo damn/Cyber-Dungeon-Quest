@@ -16,9 +16,6 @@
    :do! (fn [{:keys [target] :as params}]
           (let [delta (affect-val-max-stat! :hp params)]
             (hp-changed-effect target delta))
-          ; TODO this can be a system somewhere which checks
-          ; rule system ?
-          ; not even mark destroyed ?
           (when (and (dead? @target)
                      (not (:is-player @target)))
             (swap! target assoc :destroyed? true)))})

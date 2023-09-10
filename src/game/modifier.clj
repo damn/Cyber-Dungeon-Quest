@@ -1,11 +1,6 @@
-; TODO everywhere we use modifier-definitions we ASSERT that the type was found
-; otherwise throw an error -> same with skills/items/creatures/whatever
 ; TODO all modifier-fns broken, need entity arg ( only skill has)
-(ns game.components.modifiers)
+(ns game.modifier)
 
-; TODO modifiers are also systems? (apply/reverse systems) / reversable transformer systems
-; but modifier require 2 functions to be implemented .... hmm ?
-; updating component/entity*/entity! ? ...
 (def modifier-definitions {})
 
 (defn defmodifier [k modifier]
@@ -28,7 +23,6 @@
           entity*
           modifiers))
 
-; TODO make apply and reverse pure ?
 (defn apply! [entity modifiers]
   (swap! entity call-modifier-fns :apply modifiers))
 

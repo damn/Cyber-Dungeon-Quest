@@ -13,7 +13,7 @@
             [game.properties :as properties]
             [game.utils.random :refer (get-rand-weighted-item)]
             [game.utils.msg-to-player :refer (show-msg-to-player)]
-            [game.components.modifiers :as modifiers]
+            [game.modifier :as modifier]
             [game.components.clickable :as clickable]
             [game.components.inventory :as inventory :refer [item-in-hand]]
             [game.items.core :as items]
@@ -112,8 +112,8 @@
 (defn- level->modifier-value
   [level modifier-type]
   {:pre [(#{0 1 2} level)
-         (contains? modifiers/modifier-definitions modifier-type)]}
-  (if-let [values (-> modifiers/modifier-definitions
+         (contains? modifier/modifier-definitions modifier-type)]}
+  (if-let [values (-> modifier/modifier-definitions
                       modifier-type
                       :values)]
     (-> values
