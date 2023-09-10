@@ -238,16 +238,6 @@
         (stop! entity skill)
         (effect/do-effect! effect-params effect)))))
 
-; action-counter => is a sort of counter w. on-stop? implemented ?
-; needs to say is-a counter & implement on-stopped?
-; and then it calls stop! entity skill and do-effect! ?
-
-; effects are themself just data / w. parameters / also entity/component ?
-
-#_(defcomponent :spell? _
-  (start-action-counter [_] "shoot.wav")
-  )
-
 (defn- check-start! [entity]
   (set-effect-params! entity) ; => do @ choose-skill ?!
   (let [skill (when-let [id (choose-skill entity)]
@@ -256,14 +246,8 @@
       (assert (is-usable? skill entity))
       (when-not (or (nil? (:cost skill))
                     (zero? (:cost skill)))
-        ; TODO this is overengineered ... just decrement the val-max ??
-        ; -> use effects only where I need the text also!
-        ; => call directly the affect-mana! fn at :do!
         (effect/do-effect! {:target entity}
                             [:mana [[:val :inc] (- (:cost skill))]]))
-      ; spread out speed of cast-sound over action-time ? wooooooooosh
-      ; woosh
-      ; -> but doesnt work in paused gamestate (pause sounds??)
       (audio/play (if (:spell? skill) "shoot.wav" "slash.wav"))
       (start! entity skill))))
 

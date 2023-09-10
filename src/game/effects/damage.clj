@@ -85,7 +85,6 @@
            damage (random/rand-int-between damage)]
        (damage-type->hit-effect! damage-type
                                  (:position @target))
-       ; TODO only use effects where we need text/pass them around -> use directly apply-min-max-val
        (effect/do-effect! {:target target}
                            [:hp [[:val :inc] (- damage)]])))))
 
