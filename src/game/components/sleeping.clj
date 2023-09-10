@@ -53,14 +53,14 @@
           (cell-grid/circle->touched-entities {:position (:position entity*)
                                                :radius radius})))
 
-(declare shout)
+(declare create-shout-entity!)
 
 (defn- wake-up! [entity]
   (swap! entity dissoc :sleeping)
   (modifiers/reverse! entity modifiers)
   (string-effect/show-string-effect entity "!")
-  (shout (:position @entity)
-         (:faction  @entity)))
+  (create-shout-entity! (:position @entity)
+                        (:faction  @entity)))
 
 (defcomponent :shout _
   (tick! [_ entity delta]
@@ -72,7 +72,7 @@
                                         (:sleeping @%))))]
         (wake-up! entity)))))
 
-(defn- shout [position faction]
+(defn- create-shout-entity! [position faction]
   (db/create-entity! ; entities ?
    {:position position
     :faction faction
