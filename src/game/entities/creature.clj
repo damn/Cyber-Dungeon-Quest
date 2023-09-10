@@ -56,10 +56,10 @@
 (defcomponent :is-player _
   (db/create! [_ entity]
     (set-player-entity entity)
-    (world/set-camera-position! (:position @player-entity)))
+    (world/set-camera-position! (:position @entity)))
 
   (tick! [_ entity delta]
-    (world/set-camera-position! (:position @player-entity))))
+    (world/set-camera-position! (:position @entity))))
 
 ; Factions -> set factions for creatures @ creatures.edn
 ; -> add levels
