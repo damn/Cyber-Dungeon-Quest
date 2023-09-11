@@ -1,8 +1,6 @@
 (ns utils.core
   (:require (clojure [pprint :refer (pprint)]
-                     set)
-            [clojure.java.io :as io]
-            [clojure.string :as str]))
+                     set)))
 
 (defn- indexed ; from clojure.contrib.seq-utils (discontinued in 1.3)
   "Returns a lazy sequence of [index, item] pairs, where items come

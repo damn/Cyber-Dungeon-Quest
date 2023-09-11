@@ -8,22 +8,17 @@
             [gdl.graphics.gui :as gui]
             [gdl.audio :as audio]
             [gdl.scene2d.ui :as ui]
-            [game.utils.random :refer :all]
             [game.session :as session]
-            [game.properties :as properties]
             [game.utils.random :refer (get-rand-weighted-item)]
             [game.utils.msg-to-player :refer (show-msg-to-player)]
             [game.modifier :as modifier]
-            [game.components.clickable :as clickable]
             [game.components.inventory :as inventory :refer [item-in-hand]]
             [game.items.core :as items]
             [game.player.entity :refer (player-entity)]
             [game.entities.item :as item-entity]
             ;game.components.glittering
-            game.components.image
-            [game.ui.config :as ui-config])
-  (:import com.badlogic.gdx.graphics.g2d.TextureRegion
-           [com.badlogic.gdx.scenes.scene2d Actor Group]
+            game.components.image)
+  (:import [com.badlogic.gdx.scenes.scene2d Actor Group]
            [com.badlogic.gdx.scenes.scene2d.ui Widget Image TextTooltip Window Table]
            [com.badlogic.gdx.scenes.scene2d.utils ClickListener]))
 

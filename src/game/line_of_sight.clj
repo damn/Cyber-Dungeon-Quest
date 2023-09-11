@@ -1,7 +1,6 @@
 (ns game.line-of-sight
   (:require [gdl.graphics.world :as world]
-            [game.maps.cell-grid :as cell-grid]
-            [game.player.entity :refer (player-entity)]))
+            [game.maps.cell-grid :as cell-grid]))
 
 ; TODO ! transparent entities shows 'zzz'
 ; -> make them either visible or not ... ? not inbetween ?

@@ -2,7 +2,6 @@
   (:require [gdl.audio :as audio]
             [utils.core :refer :all]
             [game.media :as media]
-            [game.modifier :as modifier]
             [game.effect :as effect]
             [game.utils.random :as random]
             [game.components.string-effect :refer [show-string-effect]]

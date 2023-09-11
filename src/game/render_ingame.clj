@@ -5,14 +5,10 @@
             [gdl.graphics.shape-drawer :as shape-drawer]
             [gdl.graphics.color :as color]
             [gdl.tiled :as tiled]
-            game.player.status-gui
-
             [game.utils.lightning :refer [tile-color-setter]]
             [game.line-of-sight :refer (in-line-of-sight?)]
             [game.maps.data :refer [get-current-map-data]]
-
             [game.render :as render]
-
             ; Ingame GUI render fns
             [game.player.status-gui :refer [render-player-hp-mana]]
             [game.utils.msg-to-player :refer [render-message-to-player]]

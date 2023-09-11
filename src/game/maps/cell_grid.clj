@@ -1,6 +1,5 @@
 (ns game.maps.cell-grid
-  (:require [clojure.set :as set]
-            [gdl.geom :as geom]
+  (:require [gdl.geom :as geom]
             [gdl.vector :as v]
             [gdl.tiled :as tiled]
             [gdl.raycaster :as raycaster]

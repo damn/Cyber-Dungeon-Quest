@@ -5,7 +5,6 @@
             [gdl.graphics.color :as color]
             [gdl.graphics.shape-drawer :as shape-drawer]
             [game.media :as media]
-            [game.utils.counter :as counter]
             [game.line-of-sight :refer (in-line-of-sight?)]
             [game.components.skills :refer (ai-should-use?)]
             [game.entities.animation :as animation-entity]
