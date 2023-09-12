@@ -99,14 +99,14 @@
 ; maybe do this organizational stuff first ??!
 
 ; TODO out of date (move-speed )
-(def ^:private item-type-boni
+#_(def ^:private item-type-boni
   {"Armor" [:mana :hp :move-speed :cast-speed :spell-crit :perc-dmg-spell]
    "Sword" [:perc-dmg :min-dmg :max-dmg :attack-speed :hp-leech :mana-leech :melee-crit :spell-crit
             :melee-chance-reduce-armor :melee-chance-slow :melee-chance-stun :perc-dmg-spell]
    "Ring" [:armor :mana-reg :attack-speed :move-speed :hp-leech :mana-leech :melee-crit :spell-crit]})
 
 ; TODO remove code like this in wrong place ...
-(defn- level->modifier-value
+#_(defn- level->modifier-value
   [level modifier-type]
   {:pre [(#{0 1 2} level)
          (contains? modifier/modifier-definitions modifier-type)]}
@@ -117,7 +117,7 @@
         (nth level)
         rand-int-between)))
 
-(defn- random-modifiers
+#_(defn- random-modifiers
   [itemname cnt & {max-level :max-level :or {max-level 3}}] ; TODO 3 hardcoded
   (map
    #(vector %
@@ -126,7 +126,7 @@
          (shuffle
           (get item-type-boni itemname)))))
 
-(let [item-names {"Ring"  1,
+#_(let [item-names {"Ring"  1,
                   ;"Sword" 1,
                   "Armor" 1}
       boni-counts {1 80,
