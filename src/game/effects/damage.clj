@@ -1,6 +1,6 @@
 (ns game.effects.damage
   (:require [gdl.audio :as audio]
-            [utils.core :refer :all]
+            [data.val-max :refer [apply-val-max-modifiers]]
             [game.media :as media]
             [game.effect :as effect]
             [game.utils.random :as random]

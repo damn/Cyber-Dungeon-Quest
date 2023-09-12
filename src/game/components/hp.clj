@@ -3,7 +3,7 @@
             [gdl.graphics.color :as color]
             [gdl.graphics.world :as world]
             [gdl.graphics.shape-drawer :as shape-drawer]
-            [utils.core :refer :all]
+            [data.val-max :refer [val-max val-max-ratio]]
             [game.db :as db]
             [game.render :as render]
             [game.ui.config :refer (hpbar-height-px)]))

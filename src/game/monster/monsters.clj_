@@ -206,7 +206,7 @@
                    ; no lvl after this => no need to spawn an item!
                    ; (create-rand-item (:position @body) :max-lvl (:rand-item-max-lvl (get-current-map-data)))
 
-                   (runmap #(swap! % assoc :destroyed? true) (:projectiles (:boss-ranged @body)))))
+                   (run! #(swap! % assoc :destroyed? true) (:projectiles (:boss-ranged @body)))))
   {:skill-type :monster-spawner
    :cooldown 2000
    :action-time 500

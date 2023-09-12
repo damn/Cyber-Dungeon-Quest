@@ -1,6 +1,6 @@
 (ns game.components.mana
   (:require [x.x :refer [defcomponent]]
-            [utils.core :refer [val-max]]
+            [data.val-max :refer [val-max]]
             [game.db :as db]))
 
 (defcomponent :mana max-mana

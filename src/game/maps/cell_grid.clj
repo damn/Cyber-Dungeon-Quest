@@ -112,7 +112,7 @@
   (swap! listeners conj f))
 
 #_(defn cell-blocks-changed-update-listeners []
-  (runmap #(%) @listeners)) ; TODO doseq
+  (run! #(%) @listeners)) ; TODO doseq
 
 #_(defn change-cell-blocks
   "do not change to blocking while game running or bodies may be walled in. (( ; TODO why ? ))

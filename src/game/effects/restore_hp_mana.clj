@@ -1,6 +1,6 @@
 (ns game.effects.restore-hp-mana
   (:require [gdl.audio :as audio]
-            [utils.core :refer [lower-than-max? remainder-to-max]]
+            [data.val-max :refer [lower-than-max? remainder-to-max]]
             [game.effect :as effect]
             [game.components.skills :refer (ai-should-use?)]
             game.effects.hp

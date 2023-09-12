@@ -5,7 +5,8 @@
             [gdl.graphics.font :as font]
             [gdl.graphics.image :as image]
             [gdl.graphics.gui :as gui]
-            [utils.core :refer [def- val-max-ratio readable-number]]
+            [utils.core :refer [readable-number]]
+            [data.val-max :refer [val-max-ratio]]
             [game.media :as media]
             [game.player.entity :refer (player-entity)]))
 
@@ -20,11 +21,11 @@
   (lc/create [_]
     (let [scale 2] ; TODO FIXME scale of the whole all game things can set somewhere (gui-scale) for all dists, etc.
       ; ?? can play also sci-fi 24x24 ?
-      (def- rahmen (image/create "ui/rahmen.png"))
-      (def- rahmenw (first  (image/pixel-dimensions rahmen)))
-      (def- rahmenh (second (image/pixel-dimensions rahmen)))
-      (def- hpcontent   (image/create "ui/hp.png"))
-      (def- manacontent (image/create "ui/mana.png")))))
+      (def ^:private rahmen (image/create "ui/rahmen.png"))
+      (def ^:private rahmenw (first  (image/pixel-dimensions rahmen)))
+      (def ^:private rahmenh (second (image/pixel-dimensions rahmen)))
+      (def ^:private hpcontent   (image/create "ui/hp.png"))
+      (def ^:private manacontent (image/create "ui/mana.png")))))
 
 (defn- render-hpmana-bar [x y contentimg minmaxval name]
   ; stack

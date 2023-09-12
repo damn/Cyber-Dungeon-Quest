@@ -1,5 +1,5 @@
 (ns game.effects.hp
-  (:require [utils.core :refer [affect-val-max-stat!]]
+  (:require [data.val-max :refer [affect-val-max-stat!]]
             [game.effect :as effect]
             [game.components.hp :refer (dead?)]
             [game.components.string-effect :refer (hp-changed-effect)]))
