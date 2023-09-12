@@ -9,9 +9,7 @@
             [gdl.audio :as audio]
             [gdl.scene2d.ui :as ui]
             [game.session :as session]
-            [game.utils.random :refer (get-rand-weighted-item)]
             [game.utils.msg-to-player :refer (show-msg-to-player)]
-            [game.modifier :as modifier]
             [game.components.inventory :as inventory :refer [item-in-hand]]
             [game.items.core :as items]
             [game.player.entity :refer (player-entity)]
@@ -44,114 +42,6 @@
   ;(audio/play "error.wav")
   (show-msg-to-player "Two-handed weapon and shield is not possible."))
 
-; TODO usable items -> no 'belt' but add to action-bar with skill/action-modifier
-; & remove AFTER used
-
-#_(defmacro def-usable-item [namestr & {:keys [effect info image use-sound]}]
-  `(defitem ~namestr [{cnt# :count}]
-     {:effect ~effect
-      :use-sound ~use-sound
-      :info (str "Use: Rightclick or in belt with hotkeys.\n" ~info)
-      :type :usable
-      :image ~image
-      :count (or cnt# 1)}))
-
-; used only @ grenade(deleted) -> skill based items
-#_(defn remove-one-item-from-belt [item-name]
-    {:pre [(some #{item-name}
-                 (map :id
-                      (slot->items inventory :belt)))]}
-    (remove-one-item
-     (find-first
-      #(= item-name (:id %))
-      (slot->items inventory :belt))))
-
-(defn- try-usable-item-effect [{:keys [effect use-sound] :as item} cell]
-  (if (effect)
-    (do
-      (inventory/remove-one-item cell)
-      (audio/play use-sound))
-    (audio/play "bfxr_denied.wav")))
-
-#_(defn update-items []
-  #_(let [mouseover-cell (get-mouseover-cell)
-          mouseover-item mouseover-cell]
-      (when
-        (and mouseover-cell
-             (and (not (is-rightm-consumed?))
-                  (try-consume-rightm-pressed))
-             (= (:type mouseover-item) :usable)
-             (inventory/cell-in-use? entity* mouseover-cell))
-        (try-usable-item-effect mouseover-item mouseover-cell))))
-
-;; TODO this out of here, is not inventory but rand-items ; !!!
-; maybe do this organizational stuff first ??!
-
-; TODO out of date (move-speed )
-#_(def ^:private item-type-boni
-  {"Armor" [:mana :hp :move-speed :cast-speed :spell-crit :perc-dmg-spell]
-   "Sword" [:perc-dmg :min-dmg :max-dmg :attack-speed :hp-leech :mana-leech :melee-crit :spell-crit
-            :melee-chance-reduce-armor :melee-chance-slow :melee-chance-stun :perc-dmg-spell]
-   "Ring" [:armor :mana-reg :attack-speed :move-speed :hp-leech :mana-leech :melee-crit :spell-crit]})
-
-; TODO remove code like this in wrong place ...
-#_(defn- level->modifier-value
-  [level modifier-type]
-  {:pre [(#{0 1 2} level)
-         (contains? modifier/modifier-definitions modifier-type)]}
-  (if-let [values (-> modifier/modifier-definitions
-                      modifier-type
-                      :values)]
-    (-> values
-        (nth level)
-        rand-int-between)))
-
-#_(defn- random-modifiers
-  [itemname cnt & {max-level :max-level :or {max-level 3}}] ; TODO 3 hardcoded
-  (map
-   #(vector %
-            (level->modifier-value (rand-int max-level) %))
-   (take cnt
-         (shuffle
-          (get item-type-boni itemname)))))
-
-#_(let [item-names {"Ring"  1,
-                  ;"Sword" 1,
-                  "Armor" 1}
-      boni-counts {1 80,
-                   2 15,
-                   3 5}]
-
-  (defn- gen-rand-item [max-lvl]
-    (let [itemname (get-rand-weighted-item item-names)
-          #_item #_(create-item-instance
-                itemname
-                {:lvl (rand-int max-lvl)})
-          item {}
-          extra-modifiers (random-modifiers
-                           itemname
-                           (get-rand-weighted-item boni-counts)
-                           :max-level max-lvl)]
-      (-> item
-          (update :modifiers concat extra-modifiers)
-          (assoc :color items/modifiers-text-color))))) ; TODO make @ somehere else ? or based on idk
-
-#_(defnks create-rand-item [position :max-lvl]
-    (item-entity/create! position
-                         (gen-rand-item max-lvl)))
-
-; DEFCOMPONENT INVENTORY ! this all is !!
-; remove any GUI stuff => just a watcher or something....
-; => add item-on-cursor for player...
-
-
-; -> make code like your comments
-(comment
- (or (check-pick-item)
-     (check-put-item)
-     (check-increment-item)
-     (check-swap-item))
- )
 (defn- clicked-cell [cell]
   (let [entity player-entity
         inventory (:inventory @entity)
