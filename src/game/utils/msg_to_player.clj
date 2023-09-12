@@ -1,4 +1,5 @@
 ; MOVE TO UI !
+; TODO broken! not displaying anything...
 (ns game.utils.msg-to-player
   (:require [utils.core :refer [assoc-in! update-in!]]
             [game.session :as session]))

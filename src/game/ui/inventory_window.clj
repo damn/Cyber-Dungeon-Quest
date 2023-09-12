@@ -22,17 +22,7 @@
            [com.badlogic.gdx.scenes.scene2d.ui Widget Image TextTooltip Window Table]
            [com.badlogic.gdx.scenes.scene2d.utils ClickListener]))
 
-; TODO it is just a grid ... if you look at it .. simplify? just hashmap ?
-; also empty inventory can  just be an empty hashmap??
-; think of serialization also save/load game...
-; also editor -> entities have in different slots items, not just :items
-; actually the data structure is ok because :bag we treat the others the same..
-
-; TODO define inventory in 1 place -> slots, render-posi, background-image then take at diff. places !
-
 (declare ^Window window)
-; TODO just function and call @ screen (but used @ session !)
-; => session part of module ? internal state ?
 
 ; TODO ! important ! animation & dont put exactly hiding under player
 (defn put-item-on-ground []
@@ -46,7 +36,6 @@
         ; blocked location checks if other solid bodies ... if put under player would block from player
         ;_ (println "BLOCKED? " (boolean blocked))
         ;position (if-not blocked below-posi posi)
-
         ]
     (item-entity/create! posi @item-in-hand))
   (inventory/empty-item-in-hand))

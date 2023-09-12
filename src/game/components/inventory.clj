@@ -6,8 +6,6 @@
             [game.properties :as properties]
             [game.modifier :as modifier]))
 
-; skills added/removed => make also gui-callback fn and bind-root.
-
 (def empty-inventory
   (->> {:bag      [6 4]
         :weapon   [1 1]
@@ -48,34 +46,34 @@
            (if-let [weapon (first (slot->items inventory :weapon))]
              (:two-handed? weapon)))))
 
-(defn- assoc-inventory-cell! [entity cell item]
-  (assoc-in! entity (cons :inventory cell) item))
-
 (defn- applies-modifiers? [[slot _]]
   (not= :bag slot))
 
-; call gui-callback and bind-root & add :is-player check
+(defn- inv-set-item [inventory cell item]
+  {:pre [(nil? (get-in inventory cell))
+         (valid-slot? cell item)
+         (not (two-handed-weapon-and-shield-together? inventory cell item))]}
+  (assoc-in inventory cell item))
+
+(defn- inv-remove-item [inventory cell]
+  {:pre [(get-in inventory cell)]}
+  (assoc-in inventory cell nil))
+
 (declare set-item-image-in-widget
          remove-item-from-widget)
 
-; TODO make entity* / functional ?? move side effects outside !!
-
 (defn set-item [entity cell item]
-  {:pre [(nil? (get-in (:inventory @entity) cell))
-         (valid-slot? cell item)
-         (not (two-handed-weapon-and-shield-together? (:inventory @entity) cell item))]}
+  (swap! entity update :inventory inv-set-item cell item)
   (when (:is-player @entity)
     (set-item-image-in-widget cell item))
-  (assoc-inventory-cell! entity cell item)
   (when (applies-modifiers? cell)
     (modifier/apply! entity (:modifiers item))))
 
 (defn remove-item [entity cell]
   (let [item (get-in (:inventory @entity) cell)]
-    (assert item)
+    (swap! entity update :inventory inv-remove-item cell)
     (when (:is-player @entity)
       (remove-item-from-widget cell))
-    (assoc-inventory-cell! entity cell nil)
     (when (applies-modifiers? cell)
       (modifier/reverse! entity (:modifiers item)))))
 
