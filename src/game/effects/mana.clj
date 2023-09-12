@@ -8,7 +8,7 @@
            (str value " MP"))
    :valid-params? (fn [{:keys [target]}]
                     target)
-   :do! (fn [{:keys [target value] :as params}]
+   :do! (fn [{:keys [target value]}]
           (let [modifier value
                 delta (affect-val-max-stat! :at-key :mana
                                             :entity target
