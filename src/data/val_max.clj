@@ -1,8 +1,7 @@
 (ns data.val-max)
 
-; TODO unused / spec?
 ; TODO assert hitpoints/mana positive integer ?
-; => @ val-max ... => specs ?
+; specs ?
 #_(defn- val-max-valid? [{val 0 max 1 :as val-max}]
   (and (vector? val-max)
        (= (count val-max) 2)
@@ -50,7 +49,6 @@
      mx]))
 
 (comment
- ; TODO deftests ?!
  (apply-val (partial * 5) [3 5])
  [5 5]
  (apply-val (partial * -5) [3 5])
