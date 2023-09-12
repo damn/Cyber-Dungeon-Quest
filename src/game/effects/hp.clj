@@ -13,8 +13,11 @@
            (str value " HP"))
    :valid-params? (fn [{:keys [target]}]
                     target)
-   :do! (fn [{:keys [target] :as params}]
-          (let [delta (affect-val-max-stat! :hp params)]
+   :do! (fn [{:keys [target value] :as params}]
+          (let [modifier value
+                delta (affect-val-max-stat! :at-key :hp
+                                            :entity target
+                                            :modifier modifier)]
             (hp-changed-effect target delta))
           (when (and (dead? @target)
                      (not (:is-player @target)))

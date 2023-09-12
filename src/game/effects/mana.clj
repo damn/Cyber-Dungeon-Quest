@@ -8,6 +8,9 @@
            (str value " MP"))
    :valid-params? (fn [{:keys [target]}]
                     target)
-   :do! (fn [{:keys [target] :as params}]
-          (let [delta (affect-val-max-stat! :mana params)]
+   :do! (fn [{:keys [target value] :as params}]
+          (let [modifier value
+                delta (affect-val-max-stat! :at-key :mana
+                                            :entity target
+                                            :modifier modifier)]
             (mana-changed-effect target delta)))})

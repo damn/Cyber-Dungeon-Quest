@@ -79,9 +79,7 @@
   [val-max modifiers]
   (reduce apply-val-max-modifier
           val-max
-          (sort-by
-           inc<mult
-           modifiers)))
+          (sort-by inc<mult modifiers)))
 
 (comment
  (apply-val-max-modifiers
@@ -101,10 +99,8 @@
  ; -> [7 15]
  )
 
-; TODO do not use 'value' outside of defeffect -> use proper minimal names at other functions
-(defn affect-val-max-stat! [k {:keys [target value]}]
-  (let [modifier value
-        {val-old 0 :as val-max-old} (k @target)
+(defn affect-val-max-stat! [& {:keys [entity modifier at-key]}]
+  (let [{val-old 0 :as val-max-old} (at-key @entity)
         {val-new 0 :as val-max-new} (apply-val-max-modifier val-max-old modifier)]
-    (swap! target assoc k val-max-new)
+    (swap! entity assoc at-key val-max-new)
     (- val-new val-old)))
