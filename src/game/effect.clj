@@ -1,13 +1,3 @@
-; TODO effect = has effect COMPONENTS
-; => one 'effect' consists of multiple effect-components
-; use modules/namespaced keywords?
-; make module e.g. ns effect/restoration.clj => not effects.restoration but
-; :effect/restoration
-; => remove game folder => just 'effect' ns ?
-; TODO delete do-effects! / do-effect! => effect has always multiple components?
-; => just do-effect => one effect has multiple effect-components (always?)
-; => wrap in one more vector wherevr or in map
-; => do-effect-component internal function
 (ns game.effect
   (:require [x.x :refer :all]))
 
