@@ -40,9 +40,9 @@
         blocked (cond hit-entity
                       (do
                        (update-in! projectile [:projectile-collision :already-hit-bodies] conj hit-entity)
-                       (effect/do-effects! {:source projectile
-                                             :target hit-entity}
-                                            hit-effects)
+                       (effect/do-all! {:source projectile
+                                        :target hit-entity}
+                                       hit-effects)
                        (not piercing))
                       (some #(grid/cell-blocked? % @projectile) touched-cells)
                       (do

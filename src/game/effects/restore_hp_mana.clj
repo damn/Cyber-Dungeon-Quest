@@ -17,8 +17,7 @@
                     source)
    :do! (fn [{:keys [source]}]
           (audio/play "bfxr_drugsuse.wav")
-          ; TODO only use effects where we need text/pass them around -> use directly apply-min-max-val
-          (effect/do-effects!
+          (effect/do-all!
            {:target source}
            [[:hp   [[:val :inc] (remainder-to-max (:hp   @source))]]
             [:mana [[:val :inc] (remainder-to-max (:mana @source))]]]))})

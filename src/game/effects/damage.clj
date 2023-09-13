@@ -84,8 +84,8 @@
            damage (random/rand-int-between damage)]
        (damage-type->hit-effect! damage-type
                                  (:position @target))
-       (effect/do-effect! {:target target}
-                           [:hp [[:val :inc] (- damage)]])))))
+       (effect/do! {:target target}
+                   [:hp [[:val :inc] (- damage)]])))))
 
 #_(defn- get-dps [[mi mx] seconds]
   (round-n-decimals (/ (+ mi mx) 2 seconds) 2))

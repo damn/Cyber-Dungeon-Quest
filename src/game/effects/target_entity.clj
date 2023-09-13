@@ -61,7 +61,7 @@
                             :duration 50
                             :color (color/rgb 1 0 0 0.75)
                             :thick? true)
-       (effect/do-effects! {:source source :target target} hit-effects))
+       (effect/do-all! {:source source :target target} hit-effects))
       (do
        ; * clicking on far away monster
        ; * hitting ground in front of you ( there is another monster )

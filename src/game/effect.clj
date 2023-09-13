@@ -26,11 +26,10 @@
 
 (def text          (partial call-effect-fn :text))
 (def valid-params? (partial call-effect-fn :valid-params?))
-(def ^:private do! (partial call-effect-fn :do!))
 
 (defn- do-effect!* [params effect]
   {:pre [(valid-params? params effect)]}
-  (do! params effect))
+  (call-effect-fn :do! params effect))
 
 (defsystem affected! [c e])
 
@@ -38,11 +37,11 @@
   (when target
     (doseq-entity target affected!)))
 
-(defn do-effect! [params effect]
+(defn do! [params effect]
   (do-effect!* params effect)
   (trigger-affected! (:target params)))
 
-(defn do-effects! [params effects]
+(defn do-all! [params effects]
   (doseq [effect effects]
     (do-effect!* params effect))
   (trigger-affected! (:target params)))

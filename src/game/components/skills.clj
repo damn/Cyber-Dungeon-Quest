@@ -212,7 +212,7 @@
       (stop! entity skill)
       (when (update-counter! entity delta [:skillmanager :action-counter])
         (stop! entity skill)
-        (effect/do-effect! effect-params effect)))))
+        (effect/do! effect-params effect)))))
 
 (defn- check-start! [entity]
   (set-effect-params! entity) ; => do @ choose-skill ?!
@@ -222,8 +222,8 @@
       (assert (is-usable? skill entity))
       (when-not (or (nil? (:cost skill))
                     (zero? (:cost skill)))
-        (effect/do-effect! {:target entity}
-                            [:mana [[:val :inc] (- (:cost skill))]]))
+        (effect/do! {:target entity}
+                    [:mana [[:val :inc] (- (:cost skill))]]))
       (audio/play (if (:spell? skill) "shoot.wav" "slash.wav"))
       (start! entity skill))))
 
