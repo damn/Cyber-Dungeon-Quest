@@ -1,4 +1,4 @@
-(ns game.effects.damage
+(ns game.effects.damage ; TODO definitely needs tests !! start with val-max ..
   (:require [gdl.audio :as audio]
             [data.val-max :refer [apply-val-max-modifiers]]
             [game.media :as media]

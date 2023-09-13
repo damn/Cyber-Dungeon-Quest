@@ -1,6 +1,44 @@
 (ns game.start
-  (:require [clojure.edn :as edn]
-            [gdl.app :as app]))
+  (:require [gdl.app :as app]
+            game.modifiers.all
+            game.properties
+            game.maps.data
+            game.media
+            game.ui.inventory-window
+            game.ui.action-bar
+            game.player.status-gui
+            game.screens.main
+            game.screens.load-session
+            game.screens.ingame
+            game.screens.minimap
+            game.screens.options
+            mapgen.tiledmap-renderer
+            property-editor.screen))
+
+(def app-config
+  {:window {:title "Cyber Dungeon Quest"
+            :width  1440 ; TODO when setting full screen, uses the window size not full w/h, this is MBP full screen w/h
+            :height 900
+            :full-screen false
+            :fps nil} ; TODO fix is set to 60 @ gdl
+   :tile-size 48
+   :log-lc? false
+   :modules [[:game.modifiers.all]
+             [:game.properties "resources/properties.edn"]
+             [:game.maps.data]
+             [:game.media]
+             [:game.ui.inventory-window]
+             [:game.ui.action-bar]
+             [:game.player.status-gui]
+             [:game.screens.main {:bg-image "ui/moon_background.png"
+                                  :skip-main-menu false}]
+             [:game.screens.load-session]
+             [:game.screens.ingame]
+             [:game.screens.minimap]
+             [:game.screens.options]
+             [:mapgen.tiledmap-renderer]
+             [:property-editor.screen]]
+   :first-screen :game.screens.main})
 
 (defn app []
-  (app/start (edn/read-string (slurp "resources/app_config.edn"))))
+  (app/start app-config))
