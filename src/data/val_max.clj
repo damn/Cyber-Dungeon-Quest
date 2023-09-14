@@ -61,9 +61,10 @@
  [2 2]
  )
 
+; [operant operation]
 (defn apply-val-max-modifier [val-max [[val-or-max inc-or-mult] value]]
   (let [f (case inc-or-mult
-            :inc  (partial + value)
+            :inc  (partial + value) ; TODO use operation op => :+ :- :*
             :mult (partial * value))]
     (case val-or-max
       :val (apply-val f val-max)

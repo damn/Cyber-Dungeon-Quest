@@ -140,8 +140,8 @@
     enough))
 
 (defn- check-valid-params [entity* skill]
-  (let [valid-params (effect/valid-params? (effect-params entity*)
-                                            (:effect skill))]
+  (let [valid-params (effect/valid-params? (:effect skill)
+                                           (effect-params entity*))]
     (when (and (not valid-params) (:is-player entity*))
       (denied "Invalid skill params."))
     ; => need a system for each param 'key' or whatever a separate message etc. ... !
@@ -208,11 +208,11 @@
         delta (apply-speed-multipliers @entity skill delta)
         effect-params (effect-params @entity)
         effect (:effect skill)]
-    (if-not (effect/valid-params? effect-params effect)
+    (if-not (effect/valid-params? effect effect-params)
       (stop! entity skill)
       (when (update-counter! entity delta [:skillmanager :action-counter])
         (stop! entity skill)
-        (effect/do! effect-params effect)))))
+        (effect/do! effect effect-params)))))
 
 (defn- check-start! [entity]
   (set-effect-params! entity) ; => do @ choose-skill ?!
@@ -222,8 +222,8 @@
       (assert (is-usable? skill entity))
       (when-not (or (nil? (:cost skill))
                     (zero? (:cost skill)))
-        (effect/do! {:target entity}
-                    [:mana [[:val :inc] (- (:cost skill))]]))
+        (effect/do! [:mana [[:val :inc] (- (:cost skill))]]
+                    {:target entity}))
       (audio/play (if (:spell? skill) "shoot.wav" "slash.wav"))
       (start! entity skill))))
 

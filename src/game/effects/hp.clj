@@ -9,13 +9,12 @@
 ; * leech ->      [[:val :inc] x]
 ; * regenerate -> [[:val :inc] (percent of max)]
 (effect/defeffect :hp
-  {:text (fn [{:keys [value]}]
-           (str value " HP"))
-   :valid-params? (fn [{:keys [target]}]
+  {:text (fn [modifier _]
+           (str modifier " HP"))
+   :valid-params? (fn [_ {:keys [target]}]
                     target)
-   :do! (fn [{:keys [target value]}]
-          (let [modifier value
-                delta (affect-val-max-stat! :at-key :hp
+   :do! (fn [modifier {:keys [target]}]
+          (let [delta (affect-val-max-stat! :at-key :hp
                                             :entity target
                                             :modifier modifier)]
             (hp-changed-effect target delta))

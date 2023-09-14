@@ -21,6 +21,9 @@
     ; or can be mouseover-ed...
     (binding [*print-level* nil]
       (with-out-str
+       ; TODO make tree, scrollable in window possible ?
+       ; debug windows mark
+       ; not always mouseover? can type in id or select entity ?
        (clojure.pprint/pprint
         (assoc (select-keys
                 @entity
@@ -34,7 +37,7 @@
                  :level
                  :is-flying
                  :active-skill?
-                 :effect-modifiers
+                 :modifiers ; TODO
                  :items
                  ])
                :skills

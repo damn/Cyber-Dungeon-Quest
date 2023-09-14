@@ -4,13 +4,12 @@
             [game.components.string-effect :refer (mana-changed-effect)]))
 
 (effect/defeffect :mana
-  {:text (fn [{:keys [value]}]
-           (str value " MP"))
-   :valid-params? (fn [{:keys [target]}]
+  {:text (fn [modifier _]
+           (str modifier " MP"))
+   :valid-params? (fn [_ {:keys [target]}]
                     target)
-   :do! (fn [{:keys [target value]}]
-          (let [modifier value
-                delta (affect-val-max-stat! :at-key :mana
+   :do! (fn [modifier {:keys [target]}]
+          (let [delta (affect-val-max-stat! :at-key :mana
                                             :entity target
                                             :modifier modifier)]
             (mana-changed-effect target delta)))})

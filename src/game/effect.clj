@@ -1,25 +1,34 @@
 (ns game.effect
   (:require [x.x :refer :all]))
 
+(comment
+ ; todo first step change value/params/effect param order
+ ; and 2. make effects/ namespaced kw. => resources/properties.edn has effects
+ ; 3. also required-params ? just data ?
+ ; 4. system as protocol -> defsystems -> all required to implement possible?
+ ; why not defsystems just defines multiple , but then need a name for it?
+ (defsystem component-text [_ params])
+ (defsystem valid-params? [_ params]) ; can also check component value itself ?
+ ; => spec / malli spec fn also ?
+ (defsystem component-do [_ params]))
+
 (def ^:private effect-definitions {})
 
 (defn defeffect [effect-type effect-def]
   (alter-var-root #'effect-definitions assoc effect-type effect-def)
   effect-type)
 
-(defn- call-effect-fn [fn-k params [type value]]
-  (let [effect (type effect-definitions)
-        params (assoc params :value value)
-        f (fn-k effect)]
-    (assert effect (str "Effect " type " not defined."))
-    (f params)))
+(defn- call-effect-fn [fn-k [effect-type effect-value] params]
+  (let [effect-def (effect-type effect-definitions)]
+    (assert effect-def (str "Effect " effect-type " not defined."))
+    ((fn-k effect-def) effect-value params)))
 
 (def text          (partial call-effect-fn :text))
 (def valid-params? (partial call-effect-fn :valid-params?))
 
-(defn- do-effect!* [params effect]
-  {:pre [(valid-params? params effect)]}
-  (call-effect-fn :do! params effect))
+(defn- do-effect!* [effect params]
+  {:pre [(valid-params? effect params)]}
+  (call-effect-fn :do! effect params))
 
 (defsystem affected! [c e])
 
@@ -27,11 +36,11 @@
   (when target
     (doseq-entity target affected!)))
 
-(defn do! [params effect]
-  (do-effect!* params effect)
+(defn do! [effect params]
+  (do-effect!* effect params)
   (trigger-affected! (:target params)))
 
-(defn do-all! [params effects]
+(defn do-all! [effects params]
   (doseq [effect effects]
-    (do-effect!* params effect))
+    (do-effect!* effect params))
   (trigger-affected! (:target params)))

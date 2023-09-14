@@ -14,7 +14,7 @@
             game.effects.damage))
 
 ; TODO target still exists ?! necessary ? what if disappears/dead?
-(defn- valid-params? [{:keys [source target]}]
+(defn- valid-params? [_ {:keys [source target]}]
   (and source
        target
        (in-line-of-sight? @source @target)
@@ -52,22 +52,21 @@
    :position position
    :animation (game.media/fx-impact-animation [0 1])))
 
-(defn- do-effect! [{:keys [source target value]}]
-  (let [{:keys [hit-effects maxrange]} value]
-    (if (in-range? @source @target maxrange)
-      (do
-       (line-entity/create! :start (start-point @source @target)
-                            :end (:position @target)
-                            :duration 50
-                            :color (color/rgb 1 0 0 0.75)
-                            :thick? true)
-       (effect/do-all! {:source source :target target} hit-effects))
-      (do
-       ; * clicking on far away monster
-       ; * hitting ground in front of you ( there is another monster )
-       ; * -> it doesn't get hit ! hmmm
-       ; * either use 'MISS' or get enemy entities at end-point
-       (hit-ground-effect (end-point @source @target maxrange))))))
+(defn- do-effect! [{:keys [hit-effects maxrange]} {:keys [source target]}]
+  (if (in-range? @source @target maxrange)
+    (do
+     (line-entity/create! :start (start-point @source @target)
+                          :end (:position @target)
+                          :duration 50
+                          :color (color/rgb 1 0 0 0.75)
+                          :thick? true)
+     (effect/do-all! hit-effects {:source source :target target}))
+    (do
+     ; * clicking on far away monster
+     ; * hitting ground in front of you ( there is another monster )
+     ; * -> it doesn't get hit ! hmmm
+     ; * either use 'MISS' or get enemy entities at end-point
+     (hit-ground-effect (end-point @source @target maxrange)))))
 
 (defmethod effect-info-render :target-entity [_ {:keys [source target value]}]
   (let [{:keys [maxrange]} value]
@@ -78,10 +77,10 @@
                          (color/rgb 1 1 0 0.5)))))
 
 (effect/defeffect :target-entity
-  {:text (fn [{:keys [value] :as params}]
-           (str "Range " (:maxrange value) " meters\n"
-                (str/join "\n"
-                          (for [effect (:hit-effects value)]
-                            (effect/text params effect)))))
+  {:text (fn [{:keys [maxrange hit-effects]} params]
+           (str "Range " maxrange " meters\n"
+                (str/join "\n" ; TODO same as other effect multiple text -> effect/effects-text?
+                          (for [effect hit-effects]
+                            (effect/text effect params)))))
    :valid-params? valid-params?
    :do! do-effect!})

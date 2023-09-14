@@ -39,4 +39,4 @@
          (when cost (str "Cost " cost  "\n"))
          (if spell?  "Cast-Time " "Attack-time ") (ms->pprint-seconds action-time) " seconds\n"
          (when cooldown (str "Cooldown " (ms->pprint-seconds cooldown) "\n"))
-         (effect/text {:source entity} effect))))
+         (effect/text effect {:source entity}))))

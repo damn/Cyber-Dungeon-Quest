@@ -26,11 +26,11 @@
 (defsystem stun! [c e])
 
 (effect/defeffect :stun
-  {:text (fn [{:keys [value]}]
-           (str "Stuns for " (readable-number (/ value 1000)) " seconds"))
-   :valid-params? (fn [{:keys [source target]}]
+  {:text (fn [duration _]
+           (str "Stuns for " (readable-number (/ duration 1000)) " seconds"))
+   :valid-params? (fn [_ {:keys [source target]}]
                     (and target)) ; TODO needs :speed/:skillmanager ?!
-   :do! (fn [{:keys [target] duration :value}]
+   :do! (fn [duration {:keys [target]}]
           (if (:stunned? @target)
             (update-in! target [:stunned? :counter :maxcnt] + duration)
             (do (doseq-entity target stun!) ; TODO interrupt? (as sepearte ability also ? )

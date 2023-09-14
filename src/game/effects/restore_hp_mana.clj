@@ -12,15 +12,14 @@
 
 ; TODO make with 'target' then can use as hit-effect too !
 (effect/defeffect :restore-hp-mana
-  {:text (fn [_] "Restores full hp and mana.")
-   :valid-params? (fn [{:keys [source]}]
+  {:text (fn [_ _] "Restores full hp and mana.")
+   :valid-params? (fn [_ {:keys [source]}]
                     source)
-   :do! (fn [{:keys [source]}]
+   :do! (fn [_ {:keys [source]}]
           (audio/play "bfxr_drugsuse.wav")
-          (effect/do-all!
-           {:target source}
-           [[:hp   [[:val :inc] (remainder-to-max (:hp   @source))]]
-            [:mana [[:val :inc] (remainder-to-max (:mana @source))]]]))})
+          (effect/do-all! [[:hp   [[:val :inc] (remainder-to-max (:hp   @source))]]
+                           [:mana [[:val :inc] (remainder-to-max (:mana @source))]]]
+                          {:target source}))})
 
 
 ; TODO create components with symbols as name

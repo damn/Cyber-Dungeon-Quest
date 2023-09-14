@@ -45,7 +45,7 @@
    ;[:stun {:duration 200} {:chance 100}]
    ])
 
-(defn- do-effect! [{:keys [source direction]}]
+(defn- do-effect! [_ {:keys [source direction]}]
   (projectile-entity/create!
    :position (:position @source)
    :faction  (:faction  @source)
@@ -58,11 +58,11 @@
    :hit-effects hit-effects))
 
 (effect/defeffect :projectile
-  {:text (fn [params]
+  {:text (fn [_ params]
            (str/join "\n"
-                     (for [effect hit-effects]
-                       (effect/text params effect))))
+                     (for [effect hit-effects] ; TODO make fn in effect/ for multiple text?
+                       (effect/text effect params))))
    ; TODO source,direction
-   :valid-params? (fn [{:keys [target]}]
+   :valid-params? (fn [_ {:keys [target]}]
                     target)
    :do! do-effect!})

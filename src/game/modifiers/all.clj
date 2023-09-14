@@ -80,21 +80,22 @@
    :reverse #(- %1 (/ %2 100))})
 
 
-(defn- check-shield_armor-value [[source-or-target
-                                  damage-type
-                                  value-delta]]
+(defn- check-damage-block-modifier-value [[source-or-target
+                                           damage-type
+                                           value-delta]]
   (and (#{:source :target} source-or-target)
        (#{:physical :magic} damage-type)))
 
-; TODO == effect-modifier-modifier O.O
-(defn- shield_armor-modifier [shield_armor]
+; TODO make shield or armor part of the modifier data ...
+; -> only 1 modifier then with :shield or :armor as first value.
+(defn- damage-block-modifier [block-type]
   {:text (fn [value _]
-           (assert (check-shield_armor-value value)
+           (assert (check-damage-block-modifier-value value)
                    (str "Wrong value for modifier: " value))
            (str value))
-   :keys [:effect-modifiers shield_armor]
+   :keys [:modifiers block-type]
    :apply (fn [component value]
-            (assert (check-shield_armor-value value)
+            (assert (check-damage-block-modifier-value value)
                     (str "Wrong value for shield/armor modifier: " value))
             (update-in component (drop-last value) #(+ (or % 0) (last value))))
    :reverse (fn [component value]
@@ -102,22 +103,26 @@
 
 ; Example: [:shield [:target :physical 0.3]]
 (modifier/defmodifier :modifiers/shield
-  (shield_armor-modifier :shield))
+  (damage-block-modifier :shield))
 
 (modifier/defmodifier :modifiers/armor
-  (shield_armor-modifier :armor))
+  (damage-block-modifier :armor))
 
+; TODO just use a spec  !
+; or malli
+; => I also want to edit it later @ property-editor
+; hmm
 (defn- check-damage-modifier-value [[source-or-target
                                      damage-type
                                      application-type
                                      value-delta]]
   (and (#{:source :target} source-or-target)
        (#{:physical :magic} damage-type)
-       (let [[val-or-max inc-or-mult] application-type]
+       (let [[val-or-max inc-or-mult] application-type] ; TODO this is schema for val-max-modifiers !
          (and (#{:val :max} val-or-max)
               (#{:inc :mult} inc-or-mult)))))
 
-(defn- default-value [application-type]
+(defn- default-value [application-type] ; TODO here too !
   (let [[val-or-max inc-or-mult] application-type]
     (case inc-or-mult
       :inc 0
@@ -138,7 +143,7 @@
            (assert (check-damage-modifier-value value)
                    (str "Wrong value for damage modifier: " value))
            (damage-modifier-text value))
-   :keys [:effect-modifiers :damage]
+   :keys [:modifiers :damage] ; :components/modifiers & :effects/damage
    :apply (fn [component value]
             (assert (check-damage-modifier-value value)
                     (str "Wrong value for damage modifier: " value))

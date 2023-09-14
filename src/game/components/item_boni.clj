@@ -1,10 +1,5 @@
 (ns game.components.item-boni)
 
-; TODO those are all effect-modifiers
-; not for damage
-; but on damage dealt?
-; [:effect-modifier [:damage :hp-leech] ] ?
-
 #_(defn- try-leech [dmg-dealt]
   (let [{:keys [hp-leech mana-leech]} (:item-boni @player-entity)]
 

@@ -21,8 +21,8 @@
 ; Also: to make a complete game takes so many creatures, items, skills, balance, ui changes, testing
 ; is it even possible ?
 
-(defn- do! [{:keys [source target-position value]}]
-  (creature-entity/create! value
+(defn- do! [creature-id {:keys [source target-position]}]
+  (creature-entity/create! creature-id
                            target-position
                            {:faction (:faction @source)}))
 
@@ -31,9 +31,9 @@
  )
 
 (effect/defeffect :spawn
-  {:text (fn [{:keys [value]}]
-           (str "Spawns a " value)) ; pretty name
-   :valid-params? (fn [{:keys [source target-position]}]
+  {:text (fn [creature-id _]
+           (str "Spawns a " creature-id)) ; pretty name
+   :valid-params? (fn [_ {:keys [source target-position]}]
                     ; TODO line of sight ? / not blocked ..
                     (and source
                          (:faction @source)
