@@ -1,4 +1,3 @@
-; TODO move to game.skills.core
 (ns game.components.skills
   (:require [x.x :refer [defcomponent]]
             [gdl.audio :as audio]
@@ -13,14 +12,11 @@
             [game.db :as db]
             [game.properties :as properties]
             [game.components.faction :as faction]
-            [game.modifier :as modifier]
             [game.ui.mouseover-entity :refer (saved-mouseover-entity get-mouseover-entity)]
-            [game.utils.counter :refer :all]
+            [game.utils.counter :as counter]
             [game.utils.msg-to-player :refer (show-msg-to-player)]
             [game.effect :as effect]
             [game.effects.stun :as stun]
-            [game.skills.core :as skills]
-            [game.maps.potential-field :as potential-field]
             [game.maps.cell-grid :as cell-grid]))
 
 ; TODO move to effect/
@@ -69,7 +65,7 @@
     (shape-drawer/sector center
                          radius
                          0 ; start-angle
-                         (* (ratio action-counter) 360) ; degree
+                         (* (counter/ratio action-counter) 360) ; degree
                          (color/rgb 1 1 1 0.5))
     (image/draw icon [(- x radius) y])))
 
@@ -90,10 +86,10 @@
 
 (defn- update-cooldown [skill delta]
   (if (:cooling-down? skill)
-    (update-finally-merge skill
-                          :cooling-down?
-                          delta
-                          {:cooling-down? false})
+    (counter/update-finally-merge skill
+                                  :cooling-down?
+                                  delta
+                                  {:cooling-down? false})
     skill))
 
 (defn- update-cooldowns [skills delta]
@@ -192,7 +188,7 @@
 (defn- start! [entity skill]
   (->! entity
        (assoc :active-skill? (:id skill))
-       (assoc-in [:skillmanager :action-counter] (make-counter (:action-time skill)))))
+       (assoc-in [:skillmanager :action-counter] (counter/make-counter (:action-time skill)))))
 
 (defn- stop! [entity skill]
   (->! entity
@@ -200,7 +196,7 @@
        (update :skillmanager dissoc :action-counter)
        (assoc-in [:skillmanager :effect-params] nil)
        (assoc-in [:skills (:active-skill? @entity) :cooling-down?] (when (:cooldown skill)
-                                                                         (make-counter (:cooldown skill))))))
+                                                                         (counter/make-counter (:cooldown skill))))))
 
 (defn- check-stop! [entity delta]
   (let [id (:active-skill? @entity)
@@ -210,7 +206,7 @@
         effect (:effect skill)]
     (if-not (effect/valid-params? effect effect-params)
       (stop! entity skill)
-      (when (update-counter! entity delta [:skillmanager :action-counter])
+      (when (counter/update-counter! entity delta [:skillmanager :action-counter])
         (stop! entity skill)
         (effect/do! effect effect-params)))))
 
