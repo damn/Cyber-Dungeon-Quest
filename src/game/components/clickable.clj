@@ -4,7 +4,6 @@
             [gdl.vector :as v]
             [game.render :as render]
             [game.media :as media]
-            [game.ui.mouseover-entity :refer (get-mouseover-entity)]
             [game.player.entity :refer (player-entity)]))
 
 ; TODO simpler if this would be ':mouseover-text' component simply.
@@ -22,13 +21,9 @@
 
 (defmulti on-clicked (fn [stage entity] (:type (:clickable @entity))))
 
-(defn check-clickable-mouseoverbody
-  "Returns true if the click was processed."
-  [stage]
-  (when-let [entity (get-mouseover-entity)]
-    (when (and (:clickable @entity)
-               (< (v/distance (:position @player-entity)
-                              (:position @entity))
-                  click-distance-tiles))
-      (on-clicked stage entity)
-      true)))
+(defn clickable-mouseover-entity? [entity]
+  (and entity
+       (:clickable @entity)
+       (< (v/distance (:position @player-entity)
+                      (:position @entity))
+          click-distance-tiles)))

@@ -137,7 +137,7 @@
 ; TODO no need to check twice for creatures
 ; and for player do it seperately somehow
 ; where each failure will be notified (cooldown, not enough mana, effect invalid params error)
-(defn- is-usable? [skill entity]
+(defn is-usable? [skill entity]
   (and (check-cooldown     @entity skill)
        (check-enough-mana  @entity skill)
        (check-valid-params @entity skill)))
@@ -146,15 +146,11 @@
 ; => no need to manually call the 3 fns from player-controls
 
 ; TODO move to effect/
-(defmulti ai-should-use? (fn [[effect-id effect-value] entity] effect-id))
+(defmulti ai-should-use? (fn [[effect-type effect-value] entity] effect-type))
 (defmethod ai-should-use? :default [_ entity]
   true)
 
-; TODO no need for multimethod
 (defmulti choose-skill (fn [entity] (:choose-skill-type @entity)))
-
-(defmethod choose-skill :player [entity]
-  (:chosen-skill-id @entity))
 
 (defmethod choose-skill :npc [entity]
   (->> @entity
@@ -188,7 +184,6 @@
        (assoc-in [:skillmanager :effect-params] nil)
        (assoc-in [:skills (:active-skill? @entity) :cooling-down?] (when (:cooldown skill)
                                                                          (counter/make-counter (:cooldown skill))))))
-
 (defn- check-stop! [entity delta]
   (let [id (:active-skill? @entity)
         skill (-> @entity :skills id)
@@ -202,7 +197,7 @@
         (effect/do! effect effect-params)))))
 
 (defn- check-start! [entity]
-  (set-effect-params! entity) ; => do @ choose-skill ?!
+  (set-effect-params! entity)
   (let [skill (when-let [id (choose-skill entity)]
                 (id (:skills @entity)))]
     (when skill

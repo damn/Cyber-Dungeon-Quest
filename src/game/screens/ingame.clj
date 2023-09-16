@@ -12,16 +12,18 @@
             [gdl.graphics.image :as image]
             [gdl.graphics.gui :as gui]
             [gdl.graphics.world :as world]
+            [game.properties :as properties]
             [game.ui.debug-window :as debug-window]
             [game.ui.help-window :as help-window]
             [game.ui.entity-info-window :as entity-info-window]
             [game.ui.skill-window :as skill-window]
             [game.ui.inventory-window :as inventory]
             [game.ui.action-bar :as action-bar]
-            [game.ui.mouseover-entity :refer (saved-mouseover-entity)]
+            [game.ui.mouseover-entity :refer (get-mouseover-entity saved-mouseover-entity)]
             [game.components.clickable :as clickable]
             [game.components.hp :refer (dead?)]
             [game.components.inventory :refer [item-in-hand is-item-in-hand?]]
+            [game.components.skills :as skill-component]
             [game.maps.data :as maps-data]
             [game.player.entity :refer (player-entity)]
             game.update-ingame
@@ -151,8 +153,8 @@
       (and (or (input/is-leftm-pressed?)
                (input/is-leftbutton-down?))
            (not (stage/hit stage (gui/mouse-position)))
-           (clickable/check-clickable-mouseoverbody stage))
-      nil
+           (clickable/clickable-mouseover-entity? (get-mouseover-entity)))
+      (clickable/on-clicked stage (get-mouseover-entity))
 
       (saved-mouseover-entity) ; saved=holding leftmouse down after clicking on mouseover entity
       (set-movement! (v/direction (:position @player-entity)
@@ -162,6 +164,27 @@
            (not (stage/hit stage (gui/mouse-position))))
       (set-movement! (v/direction (:position @player-entity)
                                   (world/mouse-position)))))))
+
+(defmethod skill-component/choose-skill :player [entity]
+  (when-let [skill-id @action-bar/selected-skill-id]
+    (when (and skill-id
+               (not (is-item-in-hand?))
+               (not (clickable/clickable-mouseover-entity? (get-mouseover-entity)))
+               (or (input/is-leftm-pressed?)
+                   (input/is-leftbutton-down?)))
+      (let [usable? (skill-component/is-usable? (properties/get skill-id) player-entity)]
+        (when usable?
+          skill-id)))))
+
+; TODO not enough mana/etc. show
+; melee out of range shouldnt fire ...
+; no move & shoot?
+; TODO projectile needs target ...
+; bat & meditation works
+; melee does out of range already
+
+(comment
+ (skill-component/is-usable? (properties/get :projectile) player-entity))
 
 (defmodule stage
   (lc/create [_] (create-stage))

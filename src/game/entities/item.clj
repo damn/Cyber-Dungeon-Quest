@@ -10,7 +10,7 @@
 
 (defmethod clickable/on-clicked :item [stage entity]
   (let [item (:item @entity)]
-    (when-not @inventory/item-in-hand
+    (when-not @inventory/item-in-hand ; TODO not active skill ? move to handle-input for player ?
       (cond
        (actor/visible? (:inventory-window stage))
        (do

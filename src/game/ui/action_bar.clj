@@ -37,7 +37,7 @@
 ; * TODO add hotkey number to tooltips
 ; * TODO hotkeys => select button
 
-(def ^:private selected-skill-id (atom nil))
+(def selected-skill-id (atom nil))
 
 (def ^:private slot->skill-id (atom nil))
 
@@ -90,8 +90,7 @@
   ;(.setUncheckLast button-group true) ? needed ?
 
   (doseq [[id {:keys [image]}] (player-skills)
-          :let [button (ui/image-button image
-                                             #(reset! selected-skill-id id))]]
+          :let [button (ui/image-button image #(reset! selected-skill-id id))]]
     (.setName button (pr-str id))
     (.addListener button (ui/text-tooltip
                           #(skills/text id player-entity)))
