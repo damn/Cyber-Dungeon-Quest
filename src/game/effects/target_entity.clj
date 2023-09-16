@@ -1,4 +1,4 @@
-(ns game.effects.target-entity
+(ns game.effects.target-entity ; TODO naming
   (:require [clojure.string :as str]
             [gdl.vector :as v]
             [gdl.audio :as audio]
@@ -9,7 +9,6 @@
             [game.components.skills :refer (ai-should-use?)]
             [game.entities.animation :as animation-entity]
             [game.entities.line :as line-entity]
-            [game.components.skills :refer (effect-info-render)]
             [game.effect :as effect]
             game.effects.damage))
 
@@ -68,13 +67,12 @@
      ; * either use 'MISS' or get enemy entities at end-point
      (hit-ground-effect (end-point @source @target maxrange)))))
 
-(defmethod effect-info-render :target-entity [_ {:keys [source target value]}]
-  (let [{:keys [maxrange]} value]
-    (shape-drawer/line (start-point @source @target)
-                       (end-point   @source @target maxrange)
-                       (if (in-range? @source @target maxrange)
-                         (color/rgb 1 0 0 0.5)
-                         (color/rgb 1 1 0 0.5)))))
+(defmethod effect/render-info :target-entity [[_ {:keys [maxrange]}] {:keys [source target]}]
+  (shape-drawer/line (start-point @source @target)
+                     (end-point   @source @target maxrange)
+                     (if (in-range? @source @target maxrange)
+                       (color/rgb 1 0 0 0.5)
+                       (color/rgb 1 1 0 0.5))))
 
 (effect/defeffect :target-entity
   {:text (fn [{:keys [maxrange hit-effects]} params]

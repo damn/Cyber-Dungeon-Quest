@@ -44,3 +44,6 @@
   (doseq [effect effects]
     (do-effect!* effect params))
   (trigger-affected! (:target params)))
+
+(defmulti render-info (fn [[effect-type effect-value] effect-params] effect-type))
+(defmethod render-info :default [_ _])

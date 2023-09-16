@@ -19,10 +19,6 @@
             [game.effects.stun :as stun]
             [game.maps.cell-grid :as cell-grid]))
 
-; TODO move to effect/
-(defmulti effect-info-render (fn [effect-id effect-params] effect-id))
-(defmethod effect-info-render :default [_ _])
-
 (defn- make-effect-params [entity]
   (merge {:source entity}
          (if (:is-player @entity)
@@ -77,12 +73,7 @@
             :when (= id (:active-skill? m))]
       (when show-skill-icon-on-active
         (draw-skill-icon image m position)) ; separate component, can deactivate w. component manager tool
-      (let [[effect-id effect-value] effect]
-        (effect-info-render effect-id
-                            ; value is only assoc'ed automatically at effect fns defined in effects/
-                            (assoc (effect-params m)
-                                   :value
-                                   effect-value))))))
+      (effect/render-info effect (effect-params m)))))
 
 (defn- update-cooldown [skill delta]
   (if (:cooling-down? skill)
