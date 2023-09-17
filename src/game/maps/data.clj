@@ -4,10 +4,13 @@
             [gdl.tiled :as tiled]
             [game.session :as session]))
 
+(declare ^:private maps-data
+         added-map-order)
+
 (def state (reify session/State
                (load! [_ _]
-                 (def ^:private maps-data {})
-                 (def added-map-order []))
+                 (.bindRoot #'maps-data {})
+                 (.bindRoot #'added-map-order []))
                (serialize [_])
                (initial-data [_])))
 
