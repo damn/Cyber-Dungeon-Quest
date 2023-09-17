@@ -204,6 +204,8 @@
       (assert (is-usable? skill entity))
       (when-not (or (nil? (:cost skill))
                     (zero? (:cost skill)))
+        ; TODO just swap! .. no need effect
+        ; also delete hp/mana effects and do animation/sound @ restoration/damage/etc.
         (effect/do! [:mana [[:val :inc] (- (:cost skill))]]
                     {:target entity}))
       (audio/play (if (:spell? skill) "shoot.wav" "slash.wav"))

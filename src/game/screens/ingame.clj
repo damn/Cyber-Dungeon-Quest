@@ -167,11 +167,12 @@
 
 (defmethod skill-component/choose-skill :player [entity]
   (when-let [skill-id @action-bar/selected-skill-id]
-    (when (and skill-id
+    (when (and skill-id ; not necessary !
                (not (is-item-in-hand?))
                (not (clickable/clickable-mouseover-entity? (get-mouseover-entity)))
                (or (input/is-leftm-pressed?)
                    (input/is-leftbutton-down?)))
+      ; TODO directly pass skill here ...
       (let [usable? (skill-component/is-usable? (properties/get skill-id) player-entity)]
         (when usable?
           skill-id)))))
@@ -182,6 +183,10 @@
 ; TODO projectile needs target ...
 ; bat & meditation works
 ; melee does out of range already
+; => ai-should-use? also passt for player ! checks in range or sth... hmm
+; maybe better copy controls of another game, but I want the pause feature?
+; TODO maybe no need 'skill-id' always ?
+; copies are just pointers at immutable data structures...
 
 (comment
  (skill-component/is-usable? (properties/get :projectile) player-entity))
