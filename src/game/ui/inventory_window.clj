@@ -10,7 +10,7 @@
             [gdl.scene2d.ui :as ui]
             [game.session :as session]
             [game.utils.msg-to-player :refer (show-msg-to-player)]
-            [game.components.inventory :as inventory :refer [item-in-hand]]
+            [game.components.inventory :as inventory]
             [game.items.core :as items]
             [game.player.entity :refer (player-entity)]
             [game.entities.item :as item-entity]
@@ -24,7 +24,7 @@
 
 ; TODO ! important ! animation & dont put exactly hiding under player
 (defn put-item-on-ground []
-  {:pre [(inventory/is-item-in-hand?)]}
+  {:pre [(:item-on-cursor @player-entity)]}
   (audio/play "bfxr_itemputground.wav")
   (let [{x 0 y 1 :as posi} (:position @player-entity)
        ; [w _] item-body-dimensions
@@ -35,8 +35,8 @@
         ;_ (println "BLOCKED? " (boolean blocked))
         ;position (if-not blocked below-posi posi)
         ]
-    (item-entity/create! posi @item-in-hand))
-  (inventory/empty-item-in-hand))
+    (item-entity/create! posi (:item-on-cursor @player-entity)))
+  (swap! player-entity dissoc :item-on-cursor))
 
 (defn- complain-2h-weapon-and-shield! []
   ;(audio/play "error.wav")
@@ -45,46 +45,47 @@
 (defn- clicked-cell [cell]
   (let [entity player-entity
         inventory (:inventory @entity)
-        item (get-in inventory cell)]
+        item (get-in inventory cell)
+        item-on-cursor (:item-on-cursor @entity)]
     (cond
      ; TRY PICK FROM CELL
-     (and (not (inventory/is-item-in-hand?))
+     (and (not item-on-cursor)
           item)
      (do
       (audio/play "bfxr_takeit.wav")
-      (inventory/set-item-in-hand item)
+      (swap! entity assoc :item-on-cursor item)
       (inventory/remove-item entity cell))
 
-     (inventory/is-item-in-hand?)
+     item-on-cursor
      (cond
       ; PUT ITEM IN
       (and (not item)
-           (inventory/valid-slot? cell @item-in-hand))
-      (if (inventory/two-handed-weapon-and-shield-together? inventory cell @item-in-hand)
+           (inventory/valid-slot? cell item-on-cursor))
+      (if (inventory/two-handed-weapon-and-shield-together? inventory cell item-on-cursor)
         (complain-2h-weapon-and-shield!)
         (do
          (audio/play "bfxr_itemput.wav")
-         (inventory/set-item entity cell @item-in-hand)
-         (inventory/empty-item-in-hand)))
+         (inventory/set-item entity cell item-on-cursor)
+         (swap! entity dissoc :item-on-cursor)))
 
       ; INCREMENT ITEM
       (and item
-           (inventory/stackable? item @item-in-hand))
+           (inventory/stackable? item item-on-cursor))
       (do
        (audio/play "bfxr_itemput.wav")
-       (inventory/stack-item entity cell @item-in-hand)
-       (inventory/empty-item-in-hand))
+       (inventory/stack-item entity cell item-on-cursor)
+       (swap! entity dissoc :item-on-cursor))
 
       ; SWAP ITEMS
       (and item
-           (inventory/valid-slot? cell @item-in-hand))
-      (if (inventory/two-handed-weapon-and-shield-together? inventory cell @item-in-hand)
+           (inventory/valid-slot? cell item-on-cursor))
+      (if (inventory/two-handed-weapon-and-shield-together? inventory cell item-on-cursor)
         (complain-2h-weapon-and-shield!)
         (do
          (audio/play "bfxr_itemput.wav")
          (inventory/remove-item entity cell)
-         (inventory/set-item entity cell @item-in-hand)
-         (inventory/set-item-in-hand item)))))))
+         (inventory/set-item entity cell item-on-cursor)
+         (swap! entity assoc :item-on-cursor item)))))))
 
 (declare ^:private slot->background
          ^:private ^Table table)
@@ -126,14 +127,15 @@
 
 (defn- draw-cell-rect [x y mouseover? cell]
   (shape-drawer/rectangle x y cell-size cell-size color/gray)
-  (when (and @item-in-hand mouseover?)
-    (let [color (if (and (inventory/valid-slot? cell @item-in-hand)
-                         (not (inventory/cell-in-use? @player-entity cell))) ; TODO not player-entity but entity
-                  (if (inventory/two-handed-weapon-and-shield-together? (:inventory @player-entity) cell @item-in-hand)
-                    two-h-shield-color
-                    droppable-color)
-                  not-allowed-color)]
-      (shape-drawer/filled-rectangle (inc x) (inc y) (- cell-size 2) (- cell-size 2) color))))
+  (when-let [item (:item-on-cursor @player-entity)]
+    (when mouseover?
+      (let [color (if (and (inventory/valid-slot? cell item)
+                           (not (inventory/cell-in-use? @player-entity cell))) ; TODO not player-entity but entity
+                    (if (inventory/two-handed-weapon-and-shield-together? (:inventory @player-entity) cell item)
+                      two-h-shield-color
+                      droppable-color)
+                    not-allowed-color)]
+        (shape-drawer/filled-rectangle (inc x) (inc y) (- cell-size 2) (- cell-size 2) color)))))
 
 (import 'com.badlogic.gdx.math.Vector2)
 

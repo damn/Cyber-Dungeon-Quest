@@ -48,7 +48,7 @@
   (when pausing
     (if (and (not @thrown-error)
              (not (dead? @player-entity))
-             (not (inventory/is-item-in-hand?)) ; do not run around w. item in hand
+             (not (:item-on-cursor @player-entity)) ; do not run around w. item in hand
 
              ; TODO animation/game runs when moving UI window around ....
 

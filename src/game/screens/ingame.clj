@@ -22,7 +22,6 @@
             [game.ui.mouseover-entity :refer (get-mouseover-entity saved-mouseover-entity)]
             [game.components.clickable :as clickable]
             [game.components.hp :refer (dead?)]
-            [game.components.inventory :refer [item-in-hand is-item-in-hand?]]
             [game.components.skills :as skill-component]
             [game.maps.data :as maps-data]
             [game.player.entity :refer (player-entity)]
@@ -39,13 +38,13 @@
 
  )
 
-(defn- item-in-hand-render-actor []
+(defn- item-on-cursor-render-actor []
   (actor/create :draw
                 (fn [this]
-                  (when @item-in-hand
+                  (when-let [item (:item-on-cursor @player-entity)]
                     ; windows keep changing z-index when selected, or put all windows in 1 group and this actor another group
                     (.toFront ^com.badlogic.gdx.scenes.scene2d.Actor this)
-                    (image/draw-centered (:image @item-in-hand) (gui/mouse-position))))))
+                    (image/draw-centered (:image item) (gui/mouse-position))))))
 
 (defn- create-stage []
   (let [debug-window       (debug-window/create)
@@ -77,7 +76,7 @@
     (actor/set-height entity-info-window (.getY inventory/window))
     (doseq [window windows]
       (stage/add-actor stage window))
-    (stage/add-actor stage (item-in-hand-render-actor))
+    (stage/add-actor stage (item-on-cursor-render-actor))
     stage))
 
 (defn- add-vs [vs]
@@ -109,10 +108,9 @@
                  skill-window]]
     (when (input/is-key-pressed? :ESCAPE)
       (cond
-       ; when game is paused and/or the player is dead, let player be able to drop item-in-hand?
+       ; when game is paused and/or the player is dead, let player be able to drop item-on-cursor?
        ; or drop it automatically when dead?
-       ; need to drop it here else in options menu it is still item-in-hand at cursor!
-       (is-item-in-hand?) (inventory/put-item-on-ground)
+       (:item-on-cursor @player-entity) (inventory/put-item-on-ground)
        (some actor/visible? windows) (run! actor/set-invisible windows)
        (dead? @player-entity) (if-not false ;#_(try-revive-player)
                                 (app/set-screen :game.screens.main))
@@ -140,12 +138,12 @@
      (cond
       (and (input/is-leftm-pressed?)
            (not (stage/hit stage (gui/mouse-position)))
-           (is-item-in-hand?))
+           (:item-on-cursor @player-entity))
       (inventory/put-item-on-ground)
 
       ; running around w. item in hand -> how is d2 doing this?
       ; -> do not run the game in this case (no action)
-      ;(is-item-in-hand?)
+      ;(:item-on-cursor @player-entity)
       ;nil
 
       ; is-leftbutton-down? because hold & click on pressable -> move closer and in range click
@@ -168,7 +166,7 @@
 (defmethod skill-component/choose-skill :player [entity]
   (when-let [skill-id @action-bar/selected-skill-id]
     (when (and skill-id ; not necessary !
-               (not (is-item-in-hand?))
+               (not (:item-on-cursor @player-entity))
                (not (clickable/clickable-mouseover-entity? (get-mouseover-entity)))
                (or (input/is-leftm-pressed?)
                    (input/is-leftbutton-down?)))

@@ -10,13 +10,13 @@
 
 (defmethod clickable/on-clicked :item [stage entity]
   (let [item (:item @entity)]
-    (when-not @inventory/item-in-hand ; TODO not active skill ? move to handle-input for player ?
+    (when-not (:item-on-cursor @player-entity)
       (cond
        (actor/visible? (:inventory-window stage))
        (do
         (audio/play "bfxr_takeit.wav")
         (swap! entity assoc :destroyed? true)
-        (inventory/set-item-in-hand item))
+        (swap! player-entity assoc :item-on-cursor item))
 
        (inventory/try-pickup-item player-entity item)
        (do
@@ -26,7 +26,6 @@
        :else
        (do
         (audio/play "bfxr_denied.wav")
-        ; (msg-to-player/show "Your inventory is full")
         (show-msg-to-player "Your Inventory is full"))))))
 
 ; TODO use image w. shadows spritesheet

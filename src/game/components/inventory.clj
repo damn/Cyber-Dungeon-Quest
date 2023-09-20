@@ -84,20 +84,6 @@
          (applies-modifiers? cell)
          (:active-skill? entity*))))
 
-; TODO also move in inventory ? 'item-on-cursor' -> gets saved/loaded with entitydata and reset.
-; but keys inventory have to correspond to slots -> at some code.
-(def item-in-hand (atom nil)) ; TODO -on-cursor not in hand
-; TODO state for this ??
-
-(defn is-item-in-hand? []
-  @item-in-hand)
-
-(defn set-item-in-hand [item]
-  (reset! item-in-hand item))
-
-(defn empty-item-in-hand []
-  (reset! item-in-hand nil))
-
 (defn stackable? [item-a item-b]
   (and (:count item-a)
        (:count item-b) ; TODO this is not required but can be asserted, all of one name should have count if others have count
