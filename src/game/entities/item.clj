@@ -1,7 +1,6 @@
 (ns game.entities.item
   (:require [gdl.audio :as audio]
             [gdl.scene2d.actor :as actor]
-            [gdl.scene2d.ui :as ui]
             [game.db :as db]
             [game.components.clickable :as clickable]
             [game.components.inventory :as inventory]
@@ -10,23 +9,25 @@
 
 (defmethod clickable/on-clicked :item [stage entity]
   (let [item (:item @entity)]
-    (when-not (:item-on-cursor @player-entity)
-      (cond
-       (actor/visible? (:inventory-window stage))
-       (do
-        (audio/play "bfxr_takeit.wav")
-        (swap! entity assoc :destroyed? true)
-        (swap! player-entity assoc :item-on-cursor item))
+    (cond
+     (:item-on-cursor @player-entity)
+     nil
 
-       (inventory/try-pickup-item player-entity item)
-       (do
-        (audio/play "bfxr_pickup.wav")
-        (swap! entity assoc :destroyed? true))
+     (actor/visible? (:inventory-window stage))
+     (do
+      (audio/play "bfxr_takeit.wav")
+      (swap! entity assoc :destroyed? true)
+      (swap! player-entity assoc :item-on-cursor item))
 
-       :else
-       (do
-        (audio/play "bfxr_denied.wav")
-        (show-msg-to-player "Your Inventory is full"))))))
+     (inventory/try-pickup-item player-entity item)
+     (do
+      (audio/play "bfxr_pickup.wav")
+      (swap! entity assoc :destroyed? true))
+
+     :else
+     (do
+      (audio/play "bfxr_denied.wav")
+      (show-msg-to-player "Your Inventory is full")))))
 
 ; TODO use image w. shadows spritesheet
 (defn create! [position item]
