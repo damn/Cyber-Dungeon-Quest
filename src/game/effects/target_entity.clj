@@ -4,6 +4,7 @@
             [gdl.audio :as audio]
             [gdl.graphics.color :as color]
             [gdl.graphics.shape-drawer :as shape-drawer]
+            [game.db :as db]
             [game.media :as media]
             [game.line-of-sight :refer (in-line-of-sight?)]
             [game.components.skills :refer (ai-should-use?)]
@@ -47,9 +48,10 @@
 
 (defn- hit-ground-effect [position]
   (audio/play "bfxr_fisthit.wav")
-  (animation-entity/create!
-   :position position
-   :animation (game.media/fx-impact-animation [0 1])))
+  (db/create-entity!
+   (animation-entity/create
+    :position position
+    :animation (game.media/fx-impact-animation [0 1]))))
 
 (defn- do-effect! [{:keys [hit-effects maxrange]} {:keys [source target]}]
   (if (in-range? @source @target maxrange)

@@ -1,10 +1,11 @@
 
 #_(defn- teleport-animation [posi]
     (audio/play "bfxr_playerteleport.wav")
-    (animation-entity/create!
-     :animation (create-animation (spritesheet-frames "effects/blue_teleport.png" 17 17)
-                                  :frame-duration 100)
-     :position posi))
+    (db/create-entity!
+     (animation-entity/create
+      :animation (create-animation (spritesheet-frames "effects/blue_teleport.png" 17 17)
+                                   :frame-duration 100)
+      :position posi)))
 
 (comment
   (deflearnable-skill teleport

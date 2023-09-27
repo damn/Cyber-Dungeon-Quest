@@ -2,6 +2,7 @@
 (ns game.effects.damage
   (:require [gdl.audio :as audio]
             [data.val-max :refer [apply-val-max-modifiers]]
+            [game.db :as db]
             [game.utils.random :as random]
             [game.effect :as effect]
             [game.media :as media]
@@ -120,9 +121,10 @@
                          :physical ["bfxr_normalhit.wav" [3 0]]
                          :magic    ["bfxr_curse.wav"     [6 1]])]
     (audio/play sound)
-    (animation-entity/create!
-     :position position
-     :animation (media/fx-impact-animation fx-idx))))
+    (db/create-entity!
+     (animation-entity/create
+      :position position
+      :animation (media/fx-impact-animation fx-idx)))))
 
 (defn- blocks? [block-rate] ; TODO pass rand-number here ? ? or seeded with clojure.data.generators
   (< (rand) block-rate))

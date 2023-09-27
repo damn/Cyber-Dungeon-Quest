@@ -128,9 +128,10 @@
 
 (defn- monster-die-effect [entity]
   (audio/play "bfxr_defaultmonsterdeath.wav")
-  (animation-entity/create!
+  (db/create-entity!
+   (animation-entity/create
     :animation (blood-animation)
-    :position (:position @entity)))
+    :position (:position @entity))))
 
 (def ^:private monster-drop-table
   {{"Battle-Drugs" 1} 1

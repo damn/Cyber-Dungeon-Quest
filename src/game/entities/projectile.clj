@@ -6,9 +6,10 @@
 
 (defn- hit-wall-effect [position]
   (audio/play "bfxr_projectile_wallhit.wav")
-  (animation-entity/create!
-   :position position
-   :animation (media/plop-animation)))
+  (db/create-entity!
+   (animation-entity/create
+    :position position
+    :animation (media/plop-animation))))
 
 ; TODO maxrange ?
 ; TODO make only common fields here
