@@ -23,29 +23,6 @@
                            (world/pixels->world-units hpbar-height-px))
                      :up? true})))
 
-; TODO (destroy! => create a separate string entity which loves on for another some time
-; otherwise suddenly dissappears
-
-; TODO I dont like separate of folders into /entities or /components
-; entities or components should be part of the language like 'float', 'byte' or fn
-; => how can I put the things?
-; map/ items/ skills/ creatures/ effect/o
-
-; is it possible to analyze the ns structure and from there decide coupling/cohesion?
-
-; ... what CHANGES together put together ...
-
-; => only then possible to see patterns ^ evolve
-
-; components & modifiers change together -> got the idea for a modiiable attribute
-; thats basically what defmodifier is doing, defining (on top of  , orthogonally)
-; modifiable attributes
-
-; separate by logic 'effects' _> render at effect level, dont really do anything
-; (visual,ui effects, audiovisual ???)
-
-; move to game/entities/string-effect
-; TODO pass new color/string markup stuff [COLOR]STRING\n
 (defn show-string-effect [entity text]
   (if (:string-effect @entity)
     (->! entity
@@ -72,5 +49,4 @@
   ; not readable the blue color, also not interesting for enemies
   #_(show-string-effect entity
                       ; (color/rgb 0.2 0.5 1); TODO add new colors ! & TAG
-
                        (check-add-plus-sign delta)))
