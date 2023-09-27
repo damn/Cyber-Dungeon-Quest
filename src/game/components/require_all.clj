@@ -1,6 +1,5 @@
-(ns
+(ns game.components.require-all
   "Requires all components not required anywhere"
-  game.components.require-all
   (:require game.components.body.rotation-angle
             game.components.animation
             game.components.delete-after-animation-stopped?
