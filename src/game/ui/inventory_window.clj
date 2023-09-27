@@ -13,9 +13,7 @@
             [game.components.inventory :as inventory]
             [game.items.core :as items]
             [game.player.entity :refer (player-entity)]
-            [game.entities.item :as item-entity]
-            ;game.components.glittering
-            game.components.image)
+            [game.entities.item :as item-entity])
   (:import [com.badlogic.gdx.scenes.scene2d Actor Group]
            [com.badlogic.gdx.scenes.scene2d.ui Widget Image TextTooltip Window Table]
            [com.badlogic.gdx.scenes.scene2d.utils ClickListener]))

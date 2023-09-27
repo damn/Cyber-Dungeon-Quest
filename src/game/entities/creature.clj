@@ -11,10 +11,7 @@
             [game.media :refer (blood-animation)]
             [game.components.body :refer (assoc-left-bottom valid-position?)]
             [game.entities.animation :as animation-entity]
-            [game.player.entity :refer (set-player-entity player-entity)]
-            game.components.mana
-            game.components.sleeping
-            game.components.animation))
+            [game.player.entity :refer (set-player-entity player-entity)]))
 
 (defn- create-images [creature-name]
   (map #(image/create

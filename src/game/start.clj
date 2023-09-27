@@ -13,7 +13,8 @@
             game.screens.minimap
             game.screens.options
             mapgen.tiledmap-renderer
-            property-editor.screen))
+            property-editor.screen
+            game.components.require-all))
 
 (def app-config
   {:window {:title "Cyber Dungeon Quest"

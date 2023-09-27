@@ -1,6 +1,5 @@
 (ns game.entities.line
-  (:require [game.db :as db]
-            game.components.line-render))
+  (:require [game.db :as db]))
 
 (defn create! [& {:keys [start end duration color thick?]}]
   (db/create-entity!
