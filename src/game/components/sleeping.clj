@@ -53,15 +53,20 @@
           (cell-grid/circle->touched-entities {:position (:position entity*)
                                                :radius radius})))
 
-(declare create-shout-entity!)
+(defn- create-shout-entity [position faction]
+  {:position position
+   :faction faction
+   :shout true
+   :counter (make-counter 200)})
 
 (defn- wake-up! [entity]
   (swap! entity #(-> %
                      (dissoc :sleeping)
                      (modifier/reverse-modifiers modifiers)
                      (string-effect/add "!")))
-  (create-shout-entity! (:position @entity)
-                        (:faction  @entity)))
+  (db/create-entity!
+   (create-shout-entity (:position @entity)
+                        (:faction  @entity))))
 
 (defcomponent :shout _
   (tick! [_ entity delta]
@@ -73,17 +78,8 @@
                                         (:sleeping @%))))]
         (wake-up! entity)))))
 
-(defn- create-shout-entity! [position faction]
-  (db/create-entity! ; entities ?
-   {:position position
-    :faction faction
-    :shout true
-    :counter (make-counter 200)})) ; TODO delete-after-duration & on-destroy -> check-wakeup-entities
-
 ; could use potential field nearest enemy entity also because we only need 1 (faster)
-
 ; also do not need to check every frame !
-
 (defcomponent :sleeping _
   (tick! [_ entity delta]
     ; was performance problem. - or do not check every frame ! -
