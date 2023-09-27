@@ -10,7 +10,6 @@
             [game.tick :refer [tick!]]
             [game.render :as render]))
 
-; TODO similar to components.clickable
 (defcomponent :string-effect {:keys [text]}
   (tick! [[k _] e delta]
     (when (counter/update-counter! e delta [k :counter])
@@ -23,14 +22,13 @@
                            (world/pixels->world-units hpbar-height-px))
                      :up? true})))
 
-(defn show-string-effect [entity text]
-  (if (:string-effect @entity)
-    (->! entity
-         (update-in [:string-effect :text] str "\n" text)
-         (update-in [:string-effect :counter] counter/reset))
-    (swap! entity assoc :string-effect
-           {:text text
-            :counter (counter/make-counter 400)})))
+(defn add [entity* text]
+  (if (:string-effect entity*)
+    (update entity* :string-effect #(-> %
+                                        (update :text str "\n" text)
+                                        (update :counter counter/reset)))
+    (assoc entity* :string-effect {:text text
+                                   :counter (counter/make-counter 400)})))
 
 (defn- hp-delta-color [delta]
   (cond (pos? delta) (color/rgb 0.2 1 0.2)
@@ -41,12 +39,12 @@
   (str (when (pos? delta) "+") delta))
 
 (defn hp-changed-effect [entity delta]
-  (show-string-effect entity
-                      ;(hp-delta-color delta) ; TODO add new colors ! & TAG & with border & bigger size for damage/hp/...
-                      (check-add-plus-sign delta)))
+  (swap! entity add
+         ;(hp-delta-color delta) ; TODO add new colors ! & TAG & with border & bigger size for damage/hp/...
+         (check-add-plus-sign delta)))
 
 (defn mana-changed-effect [entity delta]
   ; not readable the blue color, also not interesting for enemies
-  #_(show-string-effect entity
-                      ; (color/rgb 0.2 0.5 1); TODO add new colors ! & TAG
-                       (check-add-plus-sign delta)))
+  #_(swap! entity add
+           ; (color/rgb 0.2 0.5 1); TODO add new colors ! & TAG
+           (check-add-plus-sign delta)))

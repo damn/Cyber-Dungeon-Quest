@@ -56,9 +56,10 @@
 (declare create-shout-entity!)
 
 (defn- wake-up! [entity]
-  (swap! entity dissoc :sleeping)
-  (swap! entity modifier/reverse-modifiers modifiers)
-  (string-effect/show-string-effect entity "!")
+  (swap! entity #(-> %
+                     (dissoc :sleeping)
+                     (modifier/reverse-modifiers modifiers)
+                     (string-effect/add "!")))
   (create-shout-entity! (:position @entity)
                         (:faction  @entity)))
 

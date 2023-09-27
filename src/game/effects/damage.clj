@@ -7,7 +7,7 @@
             [game.media :as media]
             [game.components.hp :refer [dead?]]
             [game.components.modifiers :refer [effect-source-modifiers effect-target-modifiers]]
-            [game.components.string-effect :refer [show-string-effect]]
+            [game.components.string-effect :as string-effect]
             [game.entities.animation :as animation-entity]))
 
 ; example:
@@ -109,11 +109,11 @@
  )
 
 (defn- shield-blocked-effect [entity]
-  (show-string-effect entity "SHIELD"))
+  (swap! entity string-effect/add "SHIELD"))
 
 (defn- armor-blocked-effect [entity]
   ; (audio/play "bfxr_armorhit.wav")
-  (show-string-effect entity "ARMOR"))
+  (swap! entity string-effect/add "ARMOR"))
 
 (defn- dmg-type->hit-effect! [dmg-type position]
   (let [[sound fx-idx] (case dmg-type
