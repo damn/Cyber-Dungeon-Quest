@@ -71,7 +71,6 @@
         (try-move entity delta [xdir 0])
         (try-move entity delta [0 ydir]))))
 
-; TODO probably put somewhere else
 ; das spiel soll bei 20fps noch "schnell" sein,d.h. net langsamer werden (max-delta wirkt -> game wird langsamer)
 ; 1000/20 = 50
 (def max-delta 50)

@@ -10,7 +10,7 @@
 
   (tick [_  delta]
     (if active
-      (let [animation (animation/update animation delta)] ; -> counter updates itself (what about nested 'blocks' , wouldnt work anymore )
+      (let [animation (animation/update animation delta)]
         (if (animation/stopped? animation)
           (assoc v
                  :active false

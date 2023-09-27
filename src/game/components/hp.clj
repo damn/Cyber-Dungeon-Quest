@@ -46,8 +46,6 @@
 (defn dead? [{:keys [hp]}]
   (zero? (hp 0)))
 
-;; Regeneration
-
 (defn- regenerate [val-max delta percent-reg-per-second]
   #_(apply-val val-max
                (->
@@ -58,44 +56,17 @@
                 (/ 1000)        ; in 1 ms
                 (* delta))))
 
-; TODO move into skillmanager / destructible
-; hp/mana regen value (default 0)
-
-; TODO check destructible/hp is there !
-
 #_(defcomponent :hp-regen
   (tick [_ {{:keys [reg-per-second]} :hp-regen :as entity*} delta]
     (update-in entity* [:hp] regenerate delta reg-per-second)))
 
-; hp-regeneration can even be a separate component which regenerates hp (assert HP is there )
-; or doesnt even need to be there ? a door with high HP regen but no hp
-; -> make alive -> regens it fast
-
-; TODO move to hitpoints ns
 (defn hp-regen-component [percent-reg-per-second]
   {:hp-regen
    {:reg-per-second percent-reg-per-second}})
 
-; TODO entities with mana but no skillmanager ?
-; -> why not ? butterflys who have mana which you can steal or take when died
-; -> but they cannot cast skills
-; -> how about when an entity dies you can collect its mana ? no mana potions ?
-; it disappears after a while
-; and hitpoints ? you can steal life also ?
-; -> no mana/hit potions and verteilung needed ?
-; -> you can get more if you one-hit monsters, (full HP)
-; if you deal slowly damage you dont get any hitpoints ? weird...
-; -> with autopickup (also gold and items ? unlimited inventory ? 'weight')
-
-; TODO check :skillmanager / :mana is there !
-
 #_(defcomponent :mana-regen
   (tick [_ {{:keys [reg-per-second]} :mana-regen :as entity*} delta]
     (update entity* :mana regenerate delta reg-per-second)))
-
-; hp-regeneration can even be a separate component which regenerates hp (assert HP is there )
-; or doesnt even need to be there ? a door with high HP regen but no hp
-; -> make alive -> regens it fast
 
 (defn mana-regen-component [percent-reg-per-second]
   {:mana-regen

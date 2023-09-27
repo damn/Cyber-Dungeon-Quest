@@ -43,14 +43,9 @@
 ; skipping bodies at too fast movement
 (def min-solid-body-size 0.3)
 
-#_(defn left-bottom [{[x y] :position {:keys [half-width half-height]} :body}]
-  [(- x half-width)
-   (- y half-height)])
-
 (defn- draw-bounds [{[x y] :left-bottom :keys [width height is-solid]}]
   (shape-drawer/rectangle x y width height (if is-solid color/white color/gray)))
 
-; TODO DELETE LEFT BOTTOM !
 (defn assoc-left-bottom [{:keys [body] [x y] :position :as entity*}]
   (assoc-in entity* [:body :left-bottom] [(- x (/ (:width body)  2))
                                           (- y (/ (:height body) 2))]))
@@ -61,13 +56,11 @@
          height
          (>= width  (if is-solid min-solid-body-size 0))
          (>= height (if is-solid min-solid-body-size 0))]}
-  {:half-width  (/ width  2) ; TODO float?
+  {:half-width  (/ width  2)
    :half-height (/ height 2)
    :radius (max (/ width  2)
                 (/ height 2))})
 
-; comparing entity-id, but would be enough body-id also!
-; if body would have an id (with datomic would have !)
 (defn valid-position?
   ([entity*]
    (valid-position? entity* (grid/rectangle->touched-cells (:body entity*))))
@@ -91,7 +84,6 @@
 (def show-body-bounds false)
 
 (defcomponent :body {:keys [is-solid] :as body}
-  ; TODO assert height is there
   (db/create! [[k _] e]
     (swap! e update k merge (body-props (:position @e) body))
     (swap! e assoc-left-bottom)
@@ -104,7 +96,7 @@
       (remove-from-occupied-cells e)))
   (moved! [_ e]
     (assert (valid-position? @e))
-    ; TODO update-touched-cells done manually @ update-position (FIXME)
+    ; update-touched-cells done manually @ update-position
     (when is-solid
       (update-occupied-cells e)))
   (render/debug [c m p]

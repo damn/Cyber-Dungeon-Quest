@@ -6,8 +6,6 @@
             [game.media :as media]
             [game.player.entity :refer (player-entity)]))
 
-; TODO simpler if this would be ':mouseover-text' component simply.
-; TODO similar to show-string-effect
 (defcomponent :clickable {:keys [text]}
   (render/default [_ {:keys [mouseover? body]} [x y]]
     (when (and mouseover? text)
