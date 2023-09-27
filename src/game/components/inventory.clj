@@ -67,7 +67,7 @@
   (when (:is-player @entity)
     (set-item-image-in-widget cell item))
   (when (applies-modifiers? cell)
-    (modifier/apply! entity (:modifiers item))))
+    (swap! entity modifier/apply-modifiers (:modifiers item))))
 
 (defn remove-item [entity cell]
   (let [item (get-in (:inventory @entity) cell)]
@@ -75,7 +75,7 @@
     (when (:is-player @entity)
       (remove-item-from-widget cell))
     (when (applies-modifiers? cell)
-      (modifier/reverse! entity (:modifiers item)))))
+      (swap! entity modifier/reverse-modifiers (:modifiers item)))))
 
 (defn cell-in-use? [entity* cell] ; TODO naming (includes is-active check) ->
   (let [inventory (:inventory entity*)

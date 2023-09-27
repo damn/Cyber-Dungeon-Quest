@@ -25,11 +25,11 @@
           entity*
           modifiers))
 
-(defn apply! [entity modifiers]
-  (swap! entity call-modifier-fns :apply modifiers))
+(defn apply-modifiers [entity* modifiers]
+  (call-modifier-fns entity* :apply modifiers))
 
-(defn reverse! [entity modifiers]
-  (swap! entity call-modifier-fns :reverse modifiers))
+(defn reverse-modifiers [entity* modifiers]
+  (call-modifier-fns entity* :reverse modifiers))
 
 (defn text [entity [modifier-type value]]
   ((:text (modifier-type modifier-definitions))

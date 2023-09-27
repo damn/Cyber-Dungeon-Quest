@@ -35,7 +35,7 @@
   ; so after create
   ; (it seems 'on-create-entity' is the component contructor)
   (db/after-create! [_ entity]
-    (modifier/apply! entity modifiers))
+    (swap! entity modifier/apply-modifiers modifiers))
 
   (render/above [_ {:keys [body]} [x y]]
     (font/draw-text {:font media/font
@@ -57,7 +57,7 @@
 
 (defn- wake-up! [entity]
   (swap! entity dissoc :sleeping)
-  (modifier/reverse! entity modifiers)
+  (swap! entity modifier/reverse-modifiers modifiers)
   (string-effect/show-string-effect entity "!")
   (create-shout-entity! (:position @entity)
                         (:faction  @entity)))
