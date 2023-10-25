@@ -5,7 +5,7 @@
 
 (defsystem below   [c m position]) ; entity effects, mouseover-outline
 (defsystem default [c m position]) ; image, animation
-(defsystem above   [c m position]) ; psi-charges, glittering, shield ( == 'effects' ?)
+(defsystem above   [c m position]) ; psi-charges, shield ( == 'effects' ?)
 (defsystem info    [c m position]) ; hp-bar, attacking-arc
 (defsystem debug   [c m position]) ; body-bounds, mouseover entity info
 

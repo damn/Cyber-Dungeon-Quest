@@ -38,7 +38,6 @@
            :is-solid false} ; solid? collides?
     :z-order :on-ground
     :image (:image item)
-    ;:glittering true ; no animation (deleted it) TODO ?? (didnt work with pausable)
     :item item
     ; :mouseover-text (:pretty-name item)
     ; :clickable :item
