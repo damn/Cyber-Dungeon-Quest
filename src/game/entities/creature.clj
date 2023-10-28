@@ -18,7 +18,6 @@
          (str "creatures/animations/" creature-name "-" % ".png"))
        (range 1 5)))
 
-; TODO call images->max-dimensions
 (defn- images->world-unit-dimensions [images]
   (let [dimensions (map image/world-unit-dimensions images)
         max-width  (apply max (map first  dimensions))
@@ -26,46 +25,17 @@
     [max-width
      max-height]))
 
-; TODO :player?
-; * separate NS
-; * add-watch for e.g. action-bar/inventory/etc.
-
-; => :npc? :player?
-
-
-; creature modifiers: e.g. wizard -30% move speed, 10 mana, -100% cast speed etc.
-; or move out of creature-types and directly into creatures
-; see how to create variety
-
-; start with simple enemies you can slash with sword
-; add spawners
-; add healers
-; and interrupt
-; add this
-; add that
-; rock paper scissor???
-
-; wait I do not want to create rock paper scissor game
-; i want to create a CHAOS ENGINE OF VARIETY
-; call game 'HARMONY OF CHAOS' ?
-
-
 (defcomponent :is-player _
   (db/create! [_ entity]
     (set-player-entity entity)
     (world/set-camera-position! (:position @entity)))
-
   (tick! [_ entity delta]
     (world/set-camera-position! (:position @entity))))
 
-; Factions -> set factions for creatures @ creatures.edn
-; -> add levels
-; -> for starting character fight against specific creatures, others are allies ?
-
 (def ^:private player-components
-  {:is-player true ; is set @ map load!
+  {:is-player true ; TODO is set @ map load!
    ; TODO death animation
-   :faction :evil
+   :faction :evil ; TODO set factions for creatures @ creatures.edn
    :mana 100 ; ??? if is-player true ?! or base mana for each creature ?!
    ; These all make player? true/false instead :npc/etc.
    ; or :npc/:player
@@ -75,7 +45,7 @@
    :free-skill-points 3})
 
 (def ^:private npc-components
-  {:faction :good
+  {:faction :good ; TODO set factions for creatures @ creatures.edn
    :default-monster-death true
    :choose-skill-type :npc
    :move-towards-enemy true}) ; -> different movement types as keywords & in entity-editor.
