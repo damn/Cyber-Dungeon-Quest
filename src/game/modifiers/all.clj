@@ -35,15 +35,15 @@
   {:values  [[15 25] [35 45] [55 65]]
    :text    #(str "+" % " HP")
    :keys    [:hp]
-   :apply   (partial apply-max +)
+   :apply   (partial apply-max +) ; TODO broken, do like max-mana, all texts also broken.
    :reverse (partial apply-max -)})
 
 (modifier/defmodifier :modifiers/max-mana
   {:values  [[15 25] [35 45] [55 65]]
    :text    (fn [v entity] (str "+" v " Mana"))
    :keys    [:mana]
-   :apply   (fn [mana v] (apply-max #(+ % v) mana))
-   :reverse (fn [mana v] (apply-max #(- % v) mana))})
+   :apply   (fn [mana v] (apply-max mana #(+ % v)))
+   :reverse (fn [mana v] (apply-max mana #(- % v)))})
 
 (modifier/defmodifier :modifiers/hp-reg
   {:values  [[5 15] [16 25] [26 35]]

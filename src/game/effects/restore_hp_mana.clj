@@ -1,10 +1,8 @@
 (ns game.effects.restore-hp-mana
   (:require [gdl.audio :as audio]
-            [data.val-max :refer [lower-than-max? remainder-to-max]]
+            [data.val-max :refer [lower-than-max? set-to-max]]
             [game.effect :as effect]
-            [game.components.skills :refer (ai-should-use?)]
-            game.effects.hp
-            game.effects.mana))
+            [game.components.skills :refer (ai-should-use?)]))
 
 (defmethod ai-should-use? :restore-hp-mana [_ entity]
   (or (lower-than-max? (:mana @entity))
@@ -17,26 +15,6 @@
                     source)
    :do! (fn [_ {:keys [source]}]
           (audio/play "bfxr_drugsuse.wav")
-          (effect/do-all! [[:hp   [[:val :inc] (remainder-to-max (:hp   @source))]]
-                           [:mana [[:val :inc] (remainder-to-max (:mana @source))]]]
-                          {:target source}))})
-
-
-; TODO create components with symbols as name
-; when they have to refer to a special thing??
-; compile time checking of symbol-components ?
-; :hit-effects [effect/damage 3] ; ???
-; or on-create will get checked ???
-; data based !
-#_(defcomponent effect/restoration
-    (ai-should-use? [entity*]
-      ; ...
-      )
-    (text [_ v]
-      "Restores full hp and mana.")
-    (valid-params? [_ {:keys [source]}]
-      source)
-    (do! [_ {:keys [source]}]
-      ; ...
-      )
-    )
+          (swap! source #(-> %
+                             (update :hp set-to-max)
+                             (update :mana set-to-max))))})

@@ -5,7 +5,7 @@
 
 (def modifier-definitions {})
 
-(defn defmodifier [k modifier]
+(defn defmodifier [k modifier] ; TODO just 'def'
   (alter-var-root #'modifier-definitions assoc k modifier)
   k)
 

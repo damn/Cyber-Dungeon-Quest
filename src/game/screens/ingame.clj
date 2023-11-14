@@ -181,7 +181,7 @@
 ; TODO projectile needs target ...
 ; bat & meditation works
 ; melee does out of range already
-; => ai-should-use? also passt for player ! checks in range or sth... hmm
+; => ai-should-use? also passt for player ! checks in range or sth... hmm (maybe 'useful?')
 ; maybe better copy controls of another game, but I want the pause feature?
 ; TODO maybe no need 'skill-id' always ?
 ; copies are just pointers at immutable data structures...

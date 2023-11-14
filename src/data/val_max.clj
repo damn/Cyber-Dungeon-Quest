@@ -1,28 +1,14 @@
-(ns data.val-max)
-
-; TODO assert hitpoints/mana positive integer ?
-; specs ?
-#_(defn- val-max-valid? [{val 0 max 1 :as val-max}]
-  (and (vector? val-max)
-       (= (count val-max) 2)
-       (int? val) (>= val 0)
-       (int? max) (>= max 0)
-       (>= max val)))
-
-(comment
- ; malli:
- (def my-schema
-   [:and
-    [:tuple pos-int? pos-int?]
-    [:fn (fn [[vl mx]] (<= vl mx))]])
- ; TODO but pos-int? doesnt allow 0.
- )
-
-(defn val-max
-  ([v]
-   [v v])
-  ([v mx]
-   [v mx]))
+(ns data.val-max
+  "val-max is a vector of 2 positive or zero integers  [value max-value]
+  used for example as hitpoints [current max] or manapoints or damage
+  [minimum maximum] in games
+  there are 2 main functions:
+  apply-val and apply-max
+  which applies a function to value or max-value
+  those functions make sure that val always remains smaller or equal than maximum
+  for example damage [5 10] and we apply-val * 3
+  will result in [10 10] damage
+  where as apply-max / 3 => [3 3] damage.")
 
 (defn val-max-ratio [[v mx]]
   (/ v mx))
@@ -30,34 +16,30 @@
 (defn lower-than-max? [[v mx]]
   (< v mx))
 
-(defn remainder-to-max [[v mx]]
-  (- mx v))
-
 (defn set-to-max [[_ mx]]
   [mx mx])
 
-(defn- ->pos-int [value]
+(defn- zero-or-pos-int [value]
   (-> value int (max 0)))
 
-(defn apply-val [f [v mx]]
-  [(min (->pos-int (f v)) mx)
-   mx])
+(defn apply-val [[v mx] f]
+  (let [v (zero-or-pos-int (f v))]
+    [(min v mx) mx]))
 
-(defn apply-max [f [v mx]]
-  (let [mx (->pos-int (f mx))]
-    [(min v mx)
-     mx]))
+(defn apply-max [[v mx] f]
+  (let [mx (zero-or-pos-int (f mx))]
+    [(min v mx) mx]))
 
 (comment
- (apply-val (partial * 5) [3 5])
+ (apply-val [3 5] (partial * 5))
  [5 5]
- (apply-val (partial * -5) [3 5])
+ (apply-val [3 5] (partial * -5))
  [0 5]
- (apply-max (partial * -5) [3 5])
+ (apply-max [3 5] (partial * -5))
  [0 0]
- (apply-max (partial * 1.5) [3 5])
+ (apply-max [3 5] (partial * 1.5))
  [3 7]
- (apply-max (partial * 0.5) [3 5])
+ (apply-max [3 5] (partial * 0.5))
  [2 2]
  )
 
@@ -66,9 +48,10 @@
   (let [f (case inc-or-mult
             :inc  (partial + value) ; TODO use operation op => :+ :- :*
             :mult (partial * value))]
-    (case val-or-max
-      :val (apply-val f val-max)
-      :max (apply-max f val-max))))
+    ((case val-or-max
+       :val apply-val
+       :max apply-max)
+     val-max f)))
 
 (defn- inc<mult [[[val-or-max inc-or-mult] value]]
   (case inc-or-mult
@@ -99,9 +82,3 @@
    [:max :inc] 0})
  ; -> [7 15]
  )
-
-(defn affect-val-max-stat! [& {:keys [entity modifier at-key]}]
-  (let [{val-old 0 :as val-max-old} (at-key @entity)
-        {val-new 0 :as val-max-new} (apply-val-max-modifier val-max-old modifier)]
-    (swap! entity assoc at-key val-max-new)
-    (- val-new val-old)))

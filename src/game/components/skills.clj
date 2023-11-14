@@ -1,5 +1,6 @@
 (ns game.components.skills
   (:require [x.x :refer [defcomponent]]
+            [data.val-max :refer [apply-val]]
             [gdl.audio :as audio]
             [gdl.graphics.image :as image]
             [gdl.graphics.color :as color]
@@ -173,6 +174,10 @@
 
 ; TODO move action-counter into :active-skill?
 (defn- start! [entity skill]
+  (when-not (or (nil? (:cost skill))
+                (zero? (:cost skill)))
+    (swap! entity update :mana apply-val #(- % (:cost skill))))
+  (audio/play (if (:spell? skill) "shoot.wav" "slash.wav"))
   (->! entity
        (assoc :active-skill? (:id skill))
        (assoc-in [:skillmanager :action-counter] (counter/make-counter (:action-time skill)))))
@@ -202,13 +207,6 @@
                 (id (:skills @entity)))]
     (when skill
       (assert (is-usable? skill entity))
-      (when-not (or (nil? (:cost skill))
-                    (zero? (:cost skill)))
-        ; TODO just swap! .. no need effect
-        ; also delete hp/mana effects and do animation/sound @ restoration/damage/etc.
-        (effect/do! [:mana [[:val :inc] (- (:cost skill))]]
-                    {:target entity}))
-      (audio/play (if (:spell? skill) "shoot.wav" "slash.wav"))
       (start! entity skill))))
 
 (defcomponent :skillmanager _ ; remove

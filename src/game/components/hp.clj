@@ -3,7 +3,7 @@
             [gdl.graphics.color :as color]
             [gdl.graphics.world :as world]
             [gdl.graphics.shape-drawer :as shape-drawer]
-            [data.val-max :refer [val-max val-max-ratio]]
+            [data.val-max :refer [val-max-ratio]]
             [game.db :as db]
             [game.render :as render]
             [game.ui.config :refer (hpbar-height-px)]))
@@ -27,7 +27,7 @@
 
 (defcomponent :hp hp
   (db/create [[_ max-hp]]
-    (val-max max-hp))
+    [max-hp max-hp])
   (render/info [_ {:keys [body mouseover?]} [x y]]
     (let [{:keys [width half-width half-height]} body
           ratio (val-max-ratio hp)]

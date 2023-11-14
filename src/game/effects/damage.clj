@@ -1,7 +1,7 @@
 ; TODO tests?
 (ns game.effects.damage
   (:require [gdl.audio :as audio]
-            [data.val-max :refer [apply-val-max-modifiers]]
+            [data.val-max :refer [apply-val apply-val-max-modifiers]]
             [game.db :as db]
             [game.utils.random :as random]
             [game.effect :as effect]
@@ -137,10 +137,14 @@
      (blocks? (effective-block-rate @source @target :armor dmg-type))
      (armor-blocked-effect target)
      :else
-     (let [[dmg-type min-max-dmg] (effective-damage damage @source @target)]
+     (let [[dmg-type min-max-dmg] (effective-damage damage @source @target)
+           dmg-amount (random/rand-int-between min-max-dmg)]
        (dmg-type->hit-effect! dmg-type (:position @target))
-       (effect/do! [:hp [[:val :inc] (- (random/rand-int-between min-max-dmg))]]
-                   {:target target})))))
+       (swap! target update :hp apply-val #(- % dmg-amount))
+       (swap! target string-effect/add (str "[RED]" dmg-amount))
+       (when (and (dead? @target)
+                  (not (:is-player @target)))
+         (swap! target assoc :destroyed? true))))))
 
 (defn- damage->text [[dmg-type [min-dmg max-dmg]]]
   (str min-dmg "-" max-dmg " " (name dmg-type) " damage"))
