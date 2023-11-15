@@ -165,8 +165,7 @@
 
 (defmethod skill-component/choose-skill :player [entity]
   (when-let [skill-id @action-bar/selected-skill-id]
-    (when (and skill-id ; not necessary !
-               (not (:item-on-cursor @player-entity))
+    (when (and (not (:item-on-cursor @player-entity))
                (not (clickable/clickable-mouseover-entity? (get-mouseover-entity)))
                (or (input/is-leftm-pressed?)
                    (input/is-leftbutton-down?)))
