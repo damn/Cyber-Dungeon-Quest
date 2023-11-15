@@ -140,11 +140,14 @@
      (let [[dmg-type min-max-dmg] (effective-damage damage @source @target)
            dmg-amount (random/rand-int-between min-max-dmg)]
        (dmg-type->hit-effect! dmg-type (:position @target))
-       (swap! target update :hp apply-val #(- % dmg-amount))
-       (swap! target string-effect/add (str "[RED]" dmg-amount))
-       (when (and (dead? @target)
-                  (not (:is-player @target)))
-         (swap! target assoc :destroyed? true))))))
+       (swap! target (fn [target*]
+                       (let [target* (-> target*
+                                         (update :hp apply-val #(- % dmg-amount))
+                                         (string-effect/add (str "[RED]" dmg-amount)))]
+                         (if (and (dead? target*)
+                                  (not (:is-player target*)))
+                           (assoc target* :destroyed? true)
+                           target*))))))))
 
 (defn- damage->text [[dmg-type [min-dmg max-dmg]]]
   (str min-dmg "-" max-dmg " " (name dmg-type) " damage"))
