@@ -1,7 +1,7 @@
 (ns game.components.inventory
   (:require [data.grid2d :as grid]
             [x.x :refer [defcomponent]]
-            [utils.core :refer [assoc-in! find-first]]
+            [utils.core :refer [find-first]]
             [game.db :as db]
             [game.properties :as properties]
             [game.modifier :as modifier]))
