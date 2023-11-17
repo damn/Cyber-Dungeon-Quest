@@ -6,7 +6,7 @@
             [gdl.graphics.shape-drawer :as shape-drawer]
             [game.tick :refer [tick!]]
             [game.render :as render]
-            [game.utils.counter :refer [update-counter! make-counter]]
+            [game.utils.counter :refer [update-counter! make-counter]] ; as counter
             [game.db :as db]
             [game.media :as media]
             [game.effect :as effect]

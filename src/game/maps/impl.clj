@@ -13,7 +13,7 @@
   (let [{:keys [tiled-map start-positions]} (mapgen.module-gen/generate
                                              (edn/read-string (slurp map-data-file)))
         ;{:keys [end stuff-posis]} (get-populated-grid-posis grid start-posi 3)
-        start-position (translate-to-tile-middle
+        start-position (translate-to-tile-middle ; TODO do @ map load
                         (rand-nth (filter #(= "all" (movement-property tiled-map %))
                                           start-positions)))]
     {:map-key :first-level ; necessary ? ->

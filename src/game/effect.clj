@@ -14,7 +14,7 @@
 
 (def ^:private effect-definitions {})
 
-(defn defeffect [effect-type effect-def]
+(defn defeffect [effect-type effect-def] ; TODO just 'def'
   (alter-var-root #'effect-definitions assoc effect-type effect-def)
   effect-type)
 

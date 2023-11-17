@@ -146,6 +146,11 @@
 ; error with reason: cooldown,not-enough-mana,invalid-params: list of params invalid
 ; => no need to manually call the 3 fns from player-controls
 
+; => usable-state = :usable
+; or :on-cooldown
+; or :not-enough-mana
+; or [:invalid-params {params-info}]
+
 ; TODO move to effect/
 (defmulti ai-should-use? (fn [[effect-type effect-value] entity] effect-type))
 (defmethod ai-should-use? :default [_ entity]
@@ -172,12 +177,16 @@
     ; can be slowed down too, too much slowdown may make 0
     (max 0 (int modified-delta)))) ; TODO same code @ update-speed / tick-entities!
 
+; TODO why active-skill? just at entity* and action-counter in skillmanager?
+; => ?
 ; TODO move action-counter into :active-skill?
+; effect-params also @ active-skill?
+; what skillmanager remove idea was?
 (defn- start! [entity skill]
+  (audio/play (if (:spell? skill) "shoot.wav" "slash.wav"))
   (when-not (or (nil? (:cost skill))
                 (zero? (:cost skill)))
     (swap! entity update :mana apply-val #(- % (:cost skill))))
-  (audio/play (if (:spell? skill) "shoot.wav" "slash.wav"))
   (->! entity
        (assoc :active-skill? (:id skill))
        (assoc-in [:skillmanager :action-counter] (counter/make-counter (:action-time skill)))))
@@ -188,7 +197,8 @@
        (update :skillmanager dissoc :action-counter)
        (assoc-in [:skillmanager :effect-params] nil)
        (assoc-in [:skills (:active-skill? @entity) :cooling-down?] (when (:cooldown skill)
-                                                                         (counter/make-counter (:cooldown skill))))))
+                                                                     (counter/make-counter (:cooldown skill))))))
+
 (defn- check-stop! [entity delta]
   (let [id (:active-skill? @entity)
         skill (-> @entity :skills id)

@@ -15,9 +15,11 @@
 
 (defrecord ImmutableCounter [cnt maxcnt stopped?])
 
+; TODO create
 (defn make-counter [maxcnt]
   (ImmutableCounter. 0 maxcnt false))
 
+; TODO just tick (tick -  protocol ?)
 (defn tick* [{:keys [cnt maxcnt stopped?] :as counter} delta]
   (let [newcnt (+ cnt delta)
         stopped? (>= newcnt maxcnt)]
@@ -25,6 +27,7 @@
            :cnt (if stopped? (- newcnt maxcnt) newcnt)
            :stopped? stopped?)))
 
+; TODO no this swap here ...
 (defn update-counter! [entity delta ks]
   (let [counter (tick* (get-in @entity ks) delta)]
     (assoc-in! entity ks counter)

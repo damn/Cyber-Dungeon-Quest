@@ -174,7 +174,7 @@
         (when usable?
           skill-id)))))
 
-; TODO not enough mana/etc. show
+; TODO not enough mana/etc. show REASON for skill not usable ! (or not useful !)
 ; melee out of range shouldnt fire ...
 ; no move & shoot?
 ; TODO projectile needs target ...

@@ -209,7 +209,7 @@
                           (some #(viable-cell? distance-to own-dist entity %) cells)
                           own-cell)))}))))
 
-(defn potential-field-follow-to-enemy [entity]
+(defn potential-field-follow-to-enemy [entity] ; TODO work with entity* !? occupied-by-other? works with entity not entity* ... not with ids ... hmmm
   (let [position (:position @entity)
         own-cell (get-cell position)
         {:keys [target-entity target-cell]} (find-next-cell entity own-cell)]
@@ -231,7 +231,8 @@
     (swap! entity
            assoc
            :movement-vector
-           (when-not (:active-skill? @entity)
+           (if (:active-skill? @entity)
+             nil
              (potential-field-follow-to-enemy entity)))))
 
 ;; DEBUG RENDER TODO not working in old map debug game.maps.render_
