@@ -4,9 +4,9 @@
             [gdl.graphics.font :as font]
             [gdl.graphics.color :as color]
             [gdl.graphics.shape-drawer :as shape-drawer]
-            [game.tick :refer [tick!]]
+            [game.tick :refer [tick tick!]]
             [game.render :as render]
-            [game.utils.counter :refer [update-counter! make-counter]] ; as counter
+            [game.utils.counter :as counter]
             [game.db :as db]
             [game.media :as media]
             [game.effect :as effect]
@@ -56,8 +56,7 @@
 (defn- create-shout-entity [position faction]
   {:position position
    :faction faction
-   :shout true
-   :counter (make-counter 200)})
+   :shout (counter/create 200)})
 
 (defn- wake-up! [entity]
   (swap! entity #(-> %
@@ -68,9 +67,11 @@
    (create-shout-entity (:position @entity)
                         (:faction  @entity))))
 
-(defcomponent :shout _
+(defcomponent :shout counter
+  (tick [_ delta]
+    (counter/tick counter delta))
   (tick! [_ entity delta]
-    (when (update-counter! entity delta [:counter])
+    (when (counter/stopped? counter)
       (swap! entity assoc :destroyed? true)
       ; TODO why a shout checks for ray-blocked? ... sounds logic .... ?!
       (doseq [entity (->> (get-visible-entities @entity aggro-range)

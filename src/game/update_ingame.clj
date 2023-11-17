@@ -4,7 +4,6 @@
             [game.running :refer (running)]
             [game.tick :as tick]
             [game.db :as db]
-            [game.utils.counter :refer :all]
             [game.player.entity :refer (player-entity)]
             [game.components.hp :refer (dead?)]
             [game.components.inventory :as inventory]

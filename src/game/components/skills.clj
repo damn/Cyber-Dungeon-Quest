@@ -78,10 +78,11 @@
 
 (defn- update-cooldown [skill delta]
   (if (:cooling-down? skill)
-    (counter/update-finally-merge skill
-                                  :cooling-down?
-                                  delta
-                                  {:cooling-down? false})
+    (update skill :cooling-down?
+            #(let [counter (counter/tick % delta)]
+               (if (counter/stopped? counter)
+                 false
+                 counter)))
     skill))
 
 (defn- update-cooldowns [skills delta]
@@ -177,11 +178,12 @@
     ; can be slowed down too, too much slowdown may make 0
     (max 0 (int modified-delta)))) ; TODO same code @ update-speed / tick-entities!
 
-; TODO why active-skill? just at entity* and action-counter in skillmanager?
-; => ?
-; TODO move action-counter into :active-skill?
-; effect-params also @ active-skill?
-; what skillmanager remove idea was?
+; TODO move action-counter & effect-params into :active-skill? component
+; -> remove skillmanager
+; => but grep skillmanager, there is cast-speed/attack-speed (:modifiers component ?)
+; and :blocks ( blocks skills and active-skill both ? )
+; or move everything into 'skills' ?
+; just :active-skill without question mark?
 (defn- start! [entity skill]
   (audio/play (if (:spell? skill) "shoot.wav" "slash.wav"))
   (when-not (or (nil? (:cost skill))
@@ -189,7 +191,7 @@
     (swap! entity update :mana apply-val #(- % (:cost skill))))
   (->! entity
        (assoc :active-skill? (:id skill))
-       (assoc-in [:skillmanager :action-counter] (counter/make-counter (:action-time skill)))))
+       (assoc-in [:skillmanager :action-counter] (counter/create (:action-time skill)))))
 
 (defn- stop! [entity skill]
   (->! entity
@@ -197,7 +199,7 @@
        (update :skillmanager dissoc :action-counter)
        (assoc-in [:skillmanager :effect-params] nil)
        (assoc-in [:skills (:active-skill? @entity) :cooling-down?] (when (:cooldown skill)
-                                                                     (counter/make-counter (:cooldown skill))))))
+                                                                     (counter/create (:cooldown skill))))))
 
 (defn- check-stop! [entity delta]
   (let [id (:active-skill? @entity)
@@ -207,9 +209,11 @@
         effect (:effect skill)]
     (if-not (effect/valid-params? effect effect-params)
       (stop! entity skill)
-      (when (counter/update-counter! entity delta [:skillmanager :action-counter])
-        (stop! entity skill)
-        (effect/do! effect effect-params)))))
+      (do
+       (swap! entity update-in [:skillmanager :action-counter] counter/tick delta)
+       (when (counter/stopped? (get-in @entity [:skillmanager :action-counter]))
+         (stop! entity skill)
+         (effect/do! effect effect-params))))))
 
 (defn- check-start! [entity]
   (set-effect-params! entity)
@@ -219,11 +223,11 @@
       (assert (is-usable? skill entity))
       (start! entity skill))))
 
-(defcomponent :skillmanager _ ; remove
+(defcomponent :skillmanager _
   (tick! [_ entity delta]
-    (swap! entity update :skills update-cooldowns delta) ; make skillss component
-    (if (:active-skill? @entity) ; TODO make this in its own component!
-      (check-stop! entity delta) ; => active-skill? component & skills just updates its cooldown!!! :D
+    (swap! entity update :skills update-cooldowns delta)
+    (if (:active-skill? @entity)
+      (check-stop! entity delta)
       (check-start! entity)))
   (stun/stun! [_ entity]
     (when-let [skill-id (:active-skill? @entity)]
@@ -232,6 +236,5 @@
 (defcomponent :skills _
   (db/create! [[k v] entity]
     (->! entity
-         (assoc :skillmanager {}) ; TODO remove skillmanager ? just 'skills' ? update skills ?
-         ; all effect-params / action-counter into :active-skill? ??
+         (assoc :skillmanager {})
          (update k #(zipmap % (map properties/get %))))))

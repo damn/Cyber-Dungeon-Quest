@@ -1,6 +1,6 @@
 ; TODO 'effects'
 (ns game.entities.nova
-  (:require [game.utils.counter :refer :all] ; as counter
+  (:require [game.utils.counter :as counter]
             [game.maps.cell-grid :as cell-grid]))
 
 ; TODO I can do this on a per-effect basis
@@ -34,7 +34,7 @@
                 hit-effects
                 affects-faction
                 is-player-spell]} (:nova @entity)
-        radius (* (ratio counter) maxradius) ; erst ratio danach update-counter, sonst beim letzten update => ratio=0
+        radius (* (counter/ratio counter) maxradius) ; erst ratio danach update-counter, sonst beim letzten update => ratio=0
         hits (remove #(contains? already-hit %)
                      (get-destructible-bodies
                       {:position position :radius radius}
@@ -45,7 +45,8 @@
                 #(-> %
                      (assoc :radius radius)
                      (update-in [:already-hit] union (set hits))))
-    (when (update-counter! entity delta [:nova :counter])
+    (swap! entity update-in [:nova :counter] counter/tick delta)
+    (when (counter/stopped? (get-in @entity [:nova :counter]))
       (swap! entity assoc :destroyed? true))))
 
 #_(defnks nova-effect [:position :duration :maxradius :affects-faction :opt :is-player-spell]
@@ -60,7 +61,7 @@
            :maxradius maxradius
            :radius 0
            :already-hit #{}
-           :counter (make-counter duration) ; TODO move inside nova can you counter component.
+           :counter (counter/create duration) ; TODO move inside nova can you counter component.
            :hit-effects [[:damage [:magic [5 10]]]]
            :affects-faction affects-faction
            :is-player-spell is-player-spell}}))

@@ -3,7 +3,7 @@
             [gdl.graphics.shape-drawer :as shape-drawer]
             [gdl.graphics.color :as color]
             [utils.core :refer :all]
-            [game.tick :refer [tick!]]
+            [game.tick :refer [tick tick!]]
             [game.render :as render]
             [game.effect :as effect]
             [game.modifier :as modifier]
@@ -13,11 +13,11 @@
   [[:modifiers/block :speed]
    [:modifiers/block :skillmanager]])
 
-; TODO counter-stuff duplicated (see string effects )... sub-components create/tick/lifecycle???
-; but wouldn't work with assoc??
-(defcomponent :stunned? _
+(defcomponent :stunned? counter
+  (tick [_ delta]
+    (counter/tick counter delta))
   (tick! [[k _] e delta]
-    (when (counter/update-counter! e delta [k :counter])
+    (when (counter/stopped? counter)
       (swap! e modifier/reverse-modifiers stun-modifiers)
       (swap! e dissoc k)))
   (render/below [_ entity* position]
@@ -32,7 +32,7 @@
                     (and target)) ; TODO needs :speed/:skillmanager ?!
    :do! (fn [duration {:keys [target]}]
           (if (:stunned? @target)
-            (update-in! target [:stunned? :counter :maxcnt] + duration)
+            (update-in! target [:stunned? :maxcnt] + duration)
             (do (doseq-entity target stun!) ; TODO interrupt? (as sepearte ability also ? )
                 (swap! target modifier/apply-modifiers stun-modifiers)
-                (swap! target assoc :stunned? {:counter (counter/make-counter duration)}))))})
+                (swap! target assoc :stunned? (counter/create duration)))))})
