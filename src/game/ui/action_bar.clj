@@ -11,7 +11,7 @@
   (:import (com.badlogic.gdx.scenes.scene2d.ui HorizontalGroup ButtonGroup Button)))
 
 ; TODO when no selected-skill & new skill assoce'd (sword at start)
-; => set selected
+; => set selected (or : on click  and no skill selected -> show error / sound ' no skill selected'
 ; actualizer doesnt do that ?
 ; TODO actually only weapon skill can be dissoc'ed
 ; so no need to redo all and can keep idx. 1.

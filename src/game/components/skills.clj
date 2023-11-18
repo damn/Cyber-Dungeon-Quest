@@ -15,7 +15,6 @@
             [game.components.faction :as faction]
             [game.ui.mouseover-entity :refer (saved-mouseover-entity get-mouseover-entity)]
             [game.utils.counter :as counter]
-            [game.utils.msg-to-player :refer (show-msg-to-player)]
             [game.effect :as effect]
             [game.effects.stun :as stun]
             [game.maps.cell-grid :as cell-grid]))
@@ -101,56 +100,26 @@
   {:pre [(not (contains? skills id))]}
   (assoc skills id (properties/get id)))
 
-; TODO move denied (player-centric) code to
-; game.player.controls
-
-(defn- denied [text]
-  ;(audio/play "bfxr_denied.wav")
-  ; TODO play once only -> need to use Music class internally for isPlaying()
-  ; annoying when you hold mouse for the skill
-  ; only when not hold mouse...
-  (show-msg-to-player text))
-
-(defn- check-cooldown [entity* skill]
-  (let [cooling-down? (:cooling-down? skill)]
-    (when (and cooling-down? (:is-player entity*))
-      (denied "Skill is on cooldown."))
-    (not cooling-down?)))
-
 (defn- enough-mana? [entity* {:keys [cost] :as skill}]
   (or (nil? cost)
-      (zero? cost) ; TODO zero cost means entity doesnt need mana?? no structure!
+      (zero? cost) ; TODO zero cost means entity doesnt need mana?? no structure!, next condition includes this.
       (<= cost ((:mana entity*) 0))))
-
-(defn- check-enough-mana [entity* skill]
-  (let [enough (enough-mana? entity* skill)]
-    (when (and (not enough) (:is-player entity*))
-      (denied "Not enough mana."))
-    enough))
-
-(defn- check-valid-params [entity* skill]
-  (let [valid-params (effect/valid-params? (:effect skill)
-                                           (effect-params entity*))]
-    (when (and (not valid-params) (:is-player entity*))
-      (denied "Invalid skill params."))
-    ; => need a system for each param 'key' or whatever a separate message etc. ... !
-    valid-params))
 
 ; TODO no need to check twice for creatures
 ; and for player do it seperately somehow
 ; where each failure will be notified (cooldown, not enough mana, effect invalid params error)
-(defn is-usable? [skill entity]
-  (and (check-cooldown     @entity skill)
-       (check-enough-mana  @entity skill)
-       (check-valid-params @entity skill)))
-; -> return either true or
-; error with reason: cooldown,not-enough-mana,invalid-params: list of params invalid
-; => no need to manually call the 3 fns from player-controls
+(defn usable-state [entity* skill]
+  (cond
+   (:cooling-down? skill)
+   :cooldown
+   (not (enough-mana? entity* skill))
+   :not-enough-mana
+   (not (effect/valid-params? (:effect skill)
+                              (effect-params entity*)))
+   :invalid-params
+   :else
+   :usable))
 
-; => usable-state = :usable
-; or :on-cooldown
-; or :not-enough-mana
-; or [:invalid-params {params-info}]
 
 ; TODO move to effect/
 (defmulti ai-should-use? (fn [[effect-type effect-value] entity] effect-type))
@@ -165,7 +134,7 @@
        vals
        (sort-by #(or (:cost %) 0))
        reverse
-       (filter #(and (is-usable? % entity)
+       (filter #(and (= :usable (usable-state @entity %))
                      (ai-should-use? (:effect %) entity))) ; TODO pass (effect-params @entity)
        first
        :id))
@@ -220,7 +189,7 @@
   (let [skill (when-let [id (choose-skill entity)]
                 (id (:skills @entity)))]
     (when skill
-      (assert (is-usable? skill entity))
+      (assert (= :usable (usable-state @entity skill)))
       (start! entity skill))))
 
 (defcomponent :skillmanager _

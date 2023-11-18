@@ -165,14 +165,28 @@
 
 (defmethod skill-component/choose-skill :player [entity]
   (when-let [skill-id @action-bar/selected-skill-id]
-    (when (and (not (:item-on-cursor @player-entity))
+    ; TODO no skill selected and leftmouse -> also show msg to player/sound
+    (when (and (not (:item-on-cursor @entity))
                (not (clickable/clickable-mouseover-entity? (get-mouseover-entity)))
                (or (input/is-leftm-pressed?)
                    (input/is-leftbutton-down?)))
       ; TODO directly pass skill here ...
-      (let [usable? (skill-component/is-usable? (properties/get skill-id) player-entity)]
-        (when usable?
-          skill-id)))))
+      ; TODO should get from entity :skills ! not properties ... ?
+      (let [state (skill-component/usable-state @entity (properties/get skill-id))]
+        (if (= state :usable)
+          skill-id
+          (println (str "Skill usable state not usable: " state)))))))
+
+(comment
+ [game.utils.msg-to-player :refer (show-msg-to-player)]
+
+ (defn- denied [text]
+  ; (audio/play (assets/get-sound asset-manager "bfxr_denied.wav"))
+  ; deactivated because on mouse down sound gets played again every frame
+  ; would need to use Music class instead of Sound for checking isPlaying already
+  ; and playing only once
+  ; -> could make a timer if message is the same, dont send sound( /msg to player )
+  (show-msg-to-player text)))
 
 ; TODO not enough mana/etc. show REASON for skill not usable ! (or not useful !)
 ; melee out of range shouldnt fire ...
@@ -185,8 +199,6 @@
 ; TODO maybe no need 'skill-id' always ?
 ; copies are just pointers at immutable data structures...
 
-(comment
- (skill-component/is-usable? (properties/get :projectile) player-entity))
 
 (defmodule stage
   (lc/create [_] (create-stage))

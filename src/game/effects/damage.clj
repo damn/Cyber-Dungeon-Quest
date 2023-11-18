@@ -1,4 +1,3 @@
-; TODO tests?
 (ns game.effects.damage
   (:require [gdl.audio :as audio]
             [data.val-max :refer [apply-val apply-val-max-modifiers]]
@@ -126,7 +125,7 @@
       :position position
       :animation (media/fx-impact-animation fx-idx)))))
 
-(defn- blocks? [block-rate] ; TODO pass rand-number here ? ? or seeded with clojure.data.generators
+(defn- blocks? [block-rate]
   (< (rand) block-rate))
 
 (defn- deal-damage! [{dmg-type 0 :as damage} {:keys [source target]}]
