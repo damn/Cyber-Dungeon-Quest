@@ -24,8 +24,7 @@
             :fps nil} ; TODO fix is set to 60 @ gdl
    :tile-size 48
    :log-lc? false
-   :modules [[:game.modifiers.all]
-             [:game.properties "resources/properties.edn"]
+   :modules [[:game.properties "resources/properties.edn"]
              [:game.maps.data]
              [:game.media]
              [:game.ui.inventory-window]
