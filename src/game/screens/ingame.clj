@@ -23,7 +23,6 @@
             [game.components.clickable :as clickable]
             [game.components.hp :refer (dead?)]
             [game.components.skills :as skill-component]
-            [game.maps.data :as maps-data]
             [game.player.entity :refer (player-entity)]
             game.update-ingame
             game.render-ingame))

@@ -51,8 +51,8 @@
 
 (defn render-entities* [entities*]
   (doseq [[_ entities*] (sort-by-order (group-by :z-order entities*)
-                                first
-                                render-on-map-order)
+                                       first
+                                       render-on-map-order)
           system [below default above info]
           entity* entities*]
     (render-entity* system entity*))
