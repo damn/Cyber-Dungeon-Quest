@@ -5,11 +5,7 @@
             [game.properties :as properties]
             [game.components.skills :refer (assoc-skill has-skill? choose-skill)]
             [game.skills.core :as skills]
-            [game.player.entity :refer (player-entity)]
-            game.effects.spawn ; => creatures.core
-            game.effects.restore-hp-mana ; -> components.hp-mana
-            game.effects.projectile ; -> entity.projectile ns ?
-            game.effects.target-entity))  ; ? refer from items.core ?
+            [game.player.entity :refer (player-entity)]))
 
 (def ^:privat skill-icon-size 48)
 

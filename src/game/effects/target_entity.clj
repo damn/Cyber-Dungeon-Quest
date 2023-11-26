@@ -7,8 +7,7 @@
             [game.components.skills :refer (ai-should-use?)]
             [game.entities.audiovisual :as audiovisual]
             [game.entities.line :as line-entity]
-            [game.effect :as effect]
-            game.effects.damage)) ; TODO load all like modifiers/components
+            [game.effect :as effect]))
 
 ; TODO target still exists ?! necessary ? what if disappears/dead?
 (defn- valid-params? [_ {:keys [source target]}]

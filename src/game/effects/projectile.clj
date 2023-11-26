@@ -5,8 +5,7 @@
             [game.effect :as effect]
             [game.maps.cell-grid :as cell-grid]
             [game.components.skills :refer (ai-should-use?)]
-            [game.entities.projectile :as projectile-entity]
-            game.effects.stun))
+            [game.entities.projectile :as projectile-entity]))
 
 ; -> range needs to be smaller than potential field range
 ; -> first range check then ray ! otherwise somewhere in contentfield out of sight
