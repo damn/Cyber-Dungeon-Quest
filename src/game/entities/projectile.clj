@@ -1,15 +1,5 @@
 (ns game.entities.projectile
-  (:require [gdl.audio :as audio]
-            [game.db :as db]
-            [game.media :as media]
-            [game.entities.animation :as animation-entity]))
-
-(defn- hit-wall-effect [position]
-  (audio/play "bfxr_projectile_wallhit.wav")
-  (db/create-entity!
-   (animation-entity/create
-    :position position
-    :animation (media/plop-animation))))
+  (:require [game.db :as db]))
 
 ; TODO maxrange ?
 ; TODO make only common fields here
@@ -37,5 +27,4 @@
     :delete-after-duration maxtime
     :projectile-collision {:piercing piercing
                            :hit-effects hit-effects
-                           :already-hit-bodies #{}
-                           :hits-wall-effect hit-wall-effect}}))
+                           :already-hit-bodies #{}}}))

@@ -1,6 +1,5 @@
 (ns game.entities.creature
   (:require [x.x :refer [defcomponent]]
-            [gdl.audio :as audio]
             [gdl.graphics.image :as image]
             [gdl.graphics.world :as world]
             [gdl.graphics.animation :as animation]
@@ -8,9 +7,8 @@
             [game.tick :refer [tick!]]
             [game.properties :as properties]
             [game.utils.random :as rand]
-            [game.media :refer (blood-animation)]
             [game.components.body :refer (assoc-left-bottom valid-position?)]
-            [game.entities.animation :as animation-entity]
+            [game.entities.audiovisual :as audiovisual]
             [game.player.entity :refer (set-player-entity player-entity)]))
 
 (defn- create-images [creature-name]
@@ -96,13 +94,6 @@
                        :ground)}
            extra-params)))
 
-(defn- monster-die-effect [entity]
-  (audio/play "bfxr_defaultmonsterdeath.wav")
-  (db/create-entity!
-   (animation-entity/create
-    :animation (blood-animation)
-    :position (:position @entity))))
-
 (def ^:private monster-drop-table
   {{"Battle-Drugs" 1} 1
    {"Mana-Potion" 3
@@ -112,13 +103,10 @@
     ;"Big-Heal-Potion" 1
     } 10})
 
-; TODO this is 3 things
-; * death animation ( blood)
-; * dead sound
-; * loot
 (defcomponent :default-monster-death _
   (db/destroy! [_ entity]
-    (monster-die-effect entity) ; "effect" was ist das? sound/animation oder was
+    (audiovisual/create! (:position @entity)
+                         :creature/die-effect)
     #_(let [position (:position @entity)]
         (rand/if-chance 20
                         (let [item-name (-> monster-drop-table

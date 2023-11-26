@@ -20,6 +20,16 @@
 (defn- serialize-image [image]
   (select-keys image [:file :sub-image-bounds]))
 
+(comment
+ (clojure.pprint/pprint
+  (media/fx-impact-animation [3 0]))
+
+ ; select-keys and map serialize-image frames / frame-duration
+ ; or map deserialize image / ...
+ ; for :animation key ....
+
+ )
+
 (defn- load-edn [file]
   (let [properties (-> file slurp edn/read-string)]
     (assert (apply distinct? (map :id properties)))

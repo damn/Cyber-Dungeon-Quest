@@ -25,7 +25,7 @@
 (defn plop-animation []
   (animation/create (map #(image/get-sprite fx [% 7]) (range 6)) :frame-duration 25))
 
-(defn black-projectile []
+(defn black-projectile [] ; todo why animation ? only 1 frame
   (animation/create [(image/get-sprite fx [1 12])] :frame-duration 500))
 
 #_(defn red-explosion-animation []

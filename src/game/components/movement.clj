@@ -7,6 +7,7 @@
             [game.tick :refer [tick!]]
             [game.effect :as effect]
             [game.components.body :as body]
+            [game.entities.audiovisual :as audiovisual]
             [game.maps.cell-grid :as grid]))
 
 (defn- apply-delta-v [entity* delta v]
@@ -26,8 +27,7 @@
   (swap! projectile apply-delta-v delta v)
   (let [{:keys [hit-effects
                 already-hit-bodies
-                piercing
-                hits-wall-effect]} (:projectile-collision @projectile)
+                piercing]} (:projectile-collision @projectile)
         touched-cells (grid/rectangle->touched-cells (:body @projectile))
         ; valid-position? for solid entity check
         ; on invalid returns {:hit-entities, :or :touched-cells}'
@@ -46,7 +46,8 @@
                        (not piercing))
                       (some #(grid/cell-blocked? % @projectile) touched-cells)
                       (do
-                       (hits-wall-effect (:position @projectile))
+                       (audiovisual/create! (:position @projectile)
+                                            :projectile/hit-wall-effect)
                        true))]
     (if blocked
       (do

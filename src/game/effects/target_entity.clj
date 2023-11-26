@@ -1,17 +1,14 @@
 (ns game.effects.target-entity ; TODO naming
   (:require [clojure.string :as str]
             [gdl.vector :as v]
-            [gdl.audio :as audio]
             [gdl.graphics.color :as color]
             [gdl.graphics.shape-drawer :as shape-drawer]
-            [game.db :as db]
-            [game.media :as media]
             [game.line-of-sight :refer (in-line-of-sight?)]
             [game.components.skills :refer (ai-should-use?)]
-            [game.entities.animation :as animation-entity]
+            [game.entities.audiovisual :as audiovisual]
             [game.entities.line :as line-entity]
             [game.effect :as effect]
-            game.effects.damage))
+            game.effects.damage)) ; TODO load all like modifiers/components
 
 ; TODO target still exists ?! necessary ? what if disappears/dead?
 (defn- valid-params? [_ {:keys [source target]}]
@@ -46,13 +43,6 @@
                                (:position target*))
                   maxrange)))
 
-(defn- hit-ground-effect [position]
-  (audio/play "bfxr_fisthit.wav")
-  (db/create-entity!
-   (animation-entity/create
-    :position position
-    :animation (game.media/fx-impact-animation [0 1]))))
-
 (defn- do-effect! [{:keys [hit-effects maxrange]} {:keys [source target]}]
   (if (in-range? @source @target maxrange)
     (do
@@ -67,7 +57,8 @@
      ; * hitting ground in front of you ( there is another monster )
      ; * -> it doesn't get hit ! hmmm
      ; * either use 'MISS' or get enemy entities at end-point
-     (hit-ground-effect (end-point @source @target maxrange)))))
+     (audiovisual/create! (end-point @source @target maxrange)
+                          :effects.target-entity/hit-ground-effect))))
 
 (defmethod effect/render-info :target-entity [[_ {:keys [maxrange]}] {:keys [source target]}]
   (shape-drawer/line (start-point @source @target)

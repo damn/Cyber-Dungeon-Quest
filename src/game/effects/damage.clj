@@ -1,14 +1,11 @@
 (ns game.effects.damage
-  (:require [gdl.audio :as audio]
-            [data.val-max :refer [apply-val apply-val-max-modifiers]]
-            [game.db :as db]
+  (:require [data.val-max :refer [apply-val apply-val-max-modifiers]]
             [game.utils.random :as random]
             [game.effect :as effect]
-            [game.media :as media]
             [game.components.hp :refer [dead?]]
             [game.components.modifiers :refer [effect-source-modifiers effect-target-modifiers]]
             [game.components.string-effect :as string-effect]
-            [game.entities.animation :as animation-entity]))
+            [game.entities.audiovisual :as audiovisual]))
 
 ; example:
 ; [:damage [:physical [5 6]]]
@@ -115,16 +112,6 @@
   ; (audio/play "bfxr_armorhit.wav")
   (swap! entity string-effect/add "ARMOR"))
 
-(defn- dmg-type->hit-effect! [dmg-type position]
-  (let [[sound fx-idx] (case dmg-type
-                         :physical ["bfxr_normalhit.wav" [3 0]]
-                         :magic    ["bfxr_curse.wav"     [6 1]])]
-    (audio/play sound)
-    (db/create-entity!
-     (animation-entity/create
-      :position position
-      :animation (media/fx-impact-animation fx-idx)))))
-
 (defn- blocks? [block-rate]
   (< (rand) block-rate))
 
@@ -138,7 +125,9 @@
      :else
      (let [[dmg-type min-max-dmg] (effective-damage damage @source @target)
            dmg-amount (random/rand-int-between min-max-dmg)]
-       (dmg-type->hit-effect! dmg-type (:position @target))
+       (audiovisual/create! (:position @target)
+                            (keyword (str "effects.damage." (name dmg-type))
+                                     "hit-effect"))
        (swap! target (fn [target*]
                        (let [target* (-> target*
                                          (update :hp apply-val #(- % dmg-amount))
