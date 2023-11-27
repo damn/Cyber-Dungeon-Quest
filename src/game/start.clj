@@ -1,21 +1,15 @@
 (ns game.start
   (:require [gdl.app :as app]
             game.modifiers.all
-            game.properties
-            game.maps.data
-            game.media
-            game.ui.inventory-window
-            game.ui.action-bar
-            game.player.status-gui
+            game.components.require-all
+            game.effects.require-all
             game.screens.main
             game.screens.load-session
             game.screens.ingame
             game.screens.minimap
             game.screens.options
             mapgen.tiledmap-renderer
-            property-editor.screen
-            game.components.require-all
-            game.effects.require-all))
+            property-editor.screen))
 
 (def app-config
   {:window {:title "Cyber Dungeon Quest"
