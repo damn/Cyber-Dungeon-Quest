@@ -1282,7 +1282,7 @@
  {:image {:file "items/images.png", :sub-image-bounds (480 624 48 48)},
   :slot :cloak,
   :id :cloak-blood,
-  :modifiers #:modifiers {:max-mana 100}
+  :modifiers #:modifiers{:max-mana 100},
   :pretty-name "Blood Cloak"}
  {:image {:file "items/images.png", :sub-image-bounds (0 240 48 48)},
   :slot :shield,
@@ -1784,6 +1784,15 @@
  {:image {:file "items/images.png", :sub-image-bounds (672 48 48 48)},
   :id :torch-lit,
   :pretty-name "Lit Torch"}
+ {:sound "bfxr_fisthit.wav",
+  :animation
+  {:frames
+   ({:file "fx/uf_FX_impact.png", :sub-image-bounds (0 48 48 48)}
+    {:file "fx/uf_FX_impact.png", :sub-image-bounds (48 48 48 48)}
+    {:file "fx/uf_FX_impact.png", :sub-image-bounds (96 48 48 48)}),
+   :frame-duration 50,
+   :looping nil},
+  :id :effects.target-entity/hit-ground-effect}
  {:image {:file "items/images.png", :sub-image-bounds (0 48 48 48)},
   :id :book-brown,
   :pretty-name "Brown Book"}
@@ -1799,6 +1808,15 @@
  {:image {:file "items/images.png", :sub-image-bounds (480 48 48 48)},
   :id :chest-silver-,
   :pretty-name "Silver Chest"}
+ {:sound "bfxr_normalhit.wav",
+  :animation
+  {:frames
+   ({:file "fx/uf_FX_impact.png", :sub-image-bounds (144 0 48 48)}
+    {:file "fx/uf_FX_impact.png", :sub-image-bounds (192 0 48 48)}
+    {:file "fx/uf_FX_impact.png", :sub-image-bounds (240 0 48 48)}),
+   :frame-duration 50,
+   :looping nil},
+  :id :effects.damage.physical/hit-effect}
  {:image {:file "items/images.png", :sub-image-bounds (720 336 48 48)},
   :id :crystal-cloud,
   :pretty-name "Cloud Crystal"}
@@ -1817,6 +1835,18 @@
  {:image {:file "items/images.png", :sub-image-bounds (336 48 48 48)},
   :id :chest-gold,
   :pretty-name "Gold Chest"}
+ {:sound "bfxr_projectile_wallhit.wav",
+  :animation
+  {:frames
+   ({:file "fx/uf_FX.png", :sub-image-bounds (0 168 24 24)}
+    {:file "fx/uf_FX.png", :sub-image-bounds (24 168 24 24)}
+    {:file "fx/uf_FX.png", :sub-image-bounds (48 168 24 24)}
+    {:file "fx/uf_FX.png", :sub-image-bounds (72 168 24 24)}
+    {:file "fx/uf_FX.png", :sub-image-bounds (96 168 24 24)}
+    {:file "fx/uf_FX.png", :sub-image-bounds (120 168 24 24)}),
+   :frame-duration 25,
+   :looping nil},
+  :id :projectile/hit-wall-effect}
  {:image {:file "items/images.png", :sub-image-bounds (528 0 48 48)},
   :id :potion-white,
   :pretty-name "White Potion"}
@@ -1826,6 +1856,18 @@
  {:image {:file "items/images.png", :sub-image-bounds (768 48 48 48)},
   :id :drumstick,
   :pretty-name "Drumstick"}
+ {:sound "bfxr_defaultmonsterdeath.wav",
+  :animation
+  {:frames
+   ({:file "fx/uf_FX.png", :sub-image-bounds (96 144 24 24)}
+    {:file "fx/uf_FX.png", :sub-image-bounds (120 144 24 24)}
+    {:file "fx/uf_FX.png", :sub-image-bounds (144 144 24 24)}
+    {:file "fx/uf_FX.png", :sub-image-bounds (168 144 24 24)}
+    {:file "fx/uf_FX.png", :sub-image-bounds (192 144 24 24)}
+    {:file "fx/uf_FX.png", :sub-image-bounds (216 144 24 24)}),
+   :frame-duration 50,
+   :looping nil},
+  :id :creature/die-effect}
  {:image {:file "items/images.png", :sub-image-bounds (912 48 48 48)},
   :id :flask-green,
   :pretty-name "Green Flask"}
@@ -1891,4 +1933,13 @@
   :pretty-name "Green Key"}
  {:image {:file "items/images.png", :sub-image-bounds (288 0 48 48)},
   :id :key-ornate,
-  :pretty-name "Ornate Key"})
+  :pretty-name "Ornate Key"}
+ {:sound "bfxr_curse.wav",
+  :animation
+  {:frames
+   ({:file "fx/uf_FX_impact.png", :sub-image-bounds (288 48 48 48)}
+    {:file "fx/uf_FX_impact.png", :sub-image-bounds (336 48 48 48)}
+    {:file "fx/uf_FX_impact.png", :sub-image-bounds (384 48 48 48)}),
+   :frame-duration 50,
+   :looping nil},
+  :id :effects.damage.magic/hit-effect})

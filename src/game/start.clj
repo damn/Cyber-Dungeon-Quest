@@ -25,7 +25,6 @@
              [:game.ui.inventory-window]
              [:game.ui.action-bar]
              [:game.player.status-gui]
-             [:game.entities.audiovisual]
              [:game.screens.main {:bg-image "ui/moon_background.png"
                                   :skip-main-menu false}]
              [:game.screens.load-session]

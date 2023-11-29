@@ -3,14 +3,28 @@
   (:require [clojure.edn :as edn]
             [x.x :refer [defmodule]]
             [gdl.lc :as lc]
+            [gdl.graphics.animation :as animation]
             [gdl.graphics.image :as image]
             [utils.core :refer [safe-get]]))
 
-; could just use sprite-idx directly.
+; Other approaches :
+; multimethod & postwalk like cdq & use records ... or metadata hmmm , but then have these records there with nil fields etc.
+; print-dup prints weird stuff like #Float 0.5
+; print-method fucks up console printing, would have to add methods and remove methods during save/load
+; => simplest way: just define keys which are assets (which are all the same anyway at the moment)
+
+; TODO
+; 1. simply add for :sound / :animation serialization/deserializeation like image
+; 2. add :property/type required attribute which leads to clearly defined schema/specs which are checked etc..
+; 3. add spec validation on load, save, change, make it work .
+; 4. add other hardcoded stuff like projectiles, etc.
+
+; could just use sprite-idx directly?
 (defn- deserialize-image [{:keys [file sub-image-bounds]}]
   {:pre [file sub-image-bounds]}
   (let [[sprite-x sprite-y] (take 2 sub-image-bounds)
         [tilew tileh]       (drop 2 sub-image-bounds)]
+    ; TODO is not the record itself, check how to do @ image itself.
     (image/get-sprite {:file file
                        :tilew tileh
                        :tileh tilew}
@@ -20,23 +34,31 @@
 (defn- serialize-image [image]
   (select-keys image [:file :sub-image-bounds]))
 
-(comment
- (clojure.pprint/pprint
-  (media/fx-impact-animation [3 0]))
+(defn- deserialize-animation [{:keys [frames frame-duration looping]}]
+  (animation/create (map deserialize-image frames)
+                    :frame-duration frame-duration
+                    :looping looping))
 
- ; select-keys and map serialize-image frames / frame-duration
- ; or map deserialize image / ...
- ; for :animation key ....
+(defn- serialize-animation [animation]
+  (-> animation
+      (update :frames #(map serialize-image %))
+      (select-keys [:frames :frame-duration :looping])))
 
- )
+(defn- deserialize [data]
+  (->> data
+       (#(if (:image     %) (update % :image     deserialize-image)     %))
+       (#(if (:animation %) (update % :animation deserialize-animation) %))))
+
+(defn- serialize [data]
+  (->> data
+       (#(if (:image     %) (update % :image     serialize-image)     %))
+       (#(if (:animation %) (update % :animation serialize-animation) %))))
 
 (defn- load-edn [file]
   (let [properties (-> file slurp edn/read-string)]
     (assert (apply distinct? (map :id properties)))
     (->> properties
-         (map #(if (:image %)
-                 (update % :image deserialize-image)
-                 %))
+         (map deserialize)
          (#(zipmap (map :id %) %)))))
 
 (declare ^:private properties-file
@@ -91,20 +113,15 @@
   (->> properties
        vals
        sort-by-type
-       (map #(if (:image %)
-               (update % :image serialize-image)
-               %))
+       (map serialize)
        (save-edn properties-file)))
 
 (defn save! [data]
   {:pre [(contains? data :id)
+         ; comment next 2 lines to add new properties with a new id
          (contains? properties (:id data))
-         (= (set (keys data)) (set (keys (get (:id data)))))]}
+         ; TODO this get uses defined properties.get, unclear
+         (= (set (keys data)) (set (keys (get (:id data)))))
+         ]}
   (alter-var-root #'properties update (:id data) merge data)
   (save-all-properties!))
-
-; TODO schema after load/before save
-; => which keys?
-; => also key properties
-; => what of the properties with are first (not slot yet) ?
-; => add resources/maps.edn
