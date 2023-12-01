@@ -54,7 +54,7 @@
        (swap! projectile assoc :destroyed? true)
        false) ; not moved
       (do
-       (body/update-touched-cells projectile touched-cells)
+       (body/update-touched-cells! projectile touched-cells)
        true)))) ; moved
 
 (defn- try-move [entity delta v]
@@ -62,7 +62,7 @@
         touched-cells (grid/rectangle->touched-cells (:body entity*))]
     (when (body/valid-position? entity* touched-cells)
       (reset! entity entity*)
-      (body/update-touched-cells entity touched-cells)
+      (body/update-touched-cells! entity touched-cells)
       true)))
 
 (defn- update-position-solid [entity delta {vx 0 vy 1 :as v}]

@@ -7,37 +7,33 @@
             [game.render :as render]
             [game.maps.cell-grid :as grid]))
 
-(defn- remove-from-occupied-cells [e]
+(defn- remove-from-occupied-cells! [e]
   (doseq [cell (:occupied-cells @e)]
     (swap! cell update :occupied disj e)))
 
-(defn- set-occupied-cells [e]
+(defn- set-occupied-cells! [e]
   (let [cells (grid/rectangle->occupied-cells (:body @e))]
     (doseq [cell cells]
       (swap! cell update :occupied conj e))
     (swap! e assoc :occupied-cells cells)))
 
-(defn- update-occupied-cells [e]
-  (remove-from-occupied-cells e)
-  (set-occupied-cells         e))
-
-(defn- set-touched-cells
+(defn- set-touched-cells!
   ([e]
-   (set-touched-cells e (grid/rectangle->touched-cells (:body @e))))
+   (set-touched-cells! e (grid/rectangle->touched-cells (:body @e))))
   ([e new-cells]
    {:pre [(not-any? nil? new-cells)]}
    (swap! e assoc :touched-cells new-cells)
    (doseq [cell new-cells]
      (grid/add-entity cell e))))
 
-(defn- remove-from-touched-cells [e]
+(defn- remove-from-touched-cells! [e]
   (doseq [cell (:touched-cells @e)]
     (grid/remove-entity cell e)))
 
-(defn update-touched-cells [e touched-cells]
+(defn update-touched-cells! [e touched-cells]
   (when-not (= touched-cells (:touched-cells @e))
-    (remove-from-touched-cells e)
-    (set-touched-cells e touched-cells)))
+    (remove-from-touched-cells! e)
+    (set-touched-cells! e touched-cells)))
 
 ; setting a min-size for colliding bodies so movement can set a max-speed for not
 ; skipping bodies at too fast movement
@@ -49,17 +45,6 @@
 (defn assoc-left-bottom [{:keys [body] [x y] :position :as entity*}]
   (assoc-in entity* [:body :left-bottom] [(- x (/ (:width body)  2))
                                           (- y (/ (:height body) 2))]))
-
-(defn- body-props [position {:keys [width height is-solid]}]
-  {:pre [position
-         width
-         height
-         (>= width  (if is-solid min-solid-body-size 0))
-         (>= height (if is-solid min-solid-body-size 0))]}
-  {:half-width  (/ width  2)
-   :half-height (/ height 2)
-   :radius (max (/ width  2)
-                (/ height 2))})
 
 (defn valid-position?
   ([entity*]
@@ -74,7 +59,7 @@
                              (:is-solid (:body @%))
                              (geom/collides? (:body @%) (:body entity*)))))))))
 
-(defsystem moved  [c direction-vector]) ; ! applied to body sub-components !
+(defsystem moved  [c direction-vector]) ; ! applied to body sub-components (e.g. :rotation-angle ) !
 (defsystem moved! [c e])
 
 (defn apply-moved-systems! [e direction-vector]
@@ -83,22 +68,37 @@
 
 (def show-body-bounds false)
 
-(defcomponent :body {:keys [is-solid] :as body}
+(defcomponent :body {:keys [width height is-solid rotation-angle] :as body}
+  (db/create [_]
+    (assert (and width height
+                 (>= width  (if is-solid min-solid-body-size 0))
+                 (>= height (if is-solid min-solid-body-size 0))
+                 (boolean? is-solid)))
+    (let [body {:is-solid is-solid
+                :width width
+                :height height
+                :half-width  (/ width  2)
+                :half-height (/ height 2)
+                :radius (max (/ width  2)
+                             (/ height 2))}]
+      (if rotation-angle
+        (assoc body :rotation-angle rotation-angle)
+        body)))
   (db/create! [[k _] e]
-    (swap! e update k merge (body-props (:position @e) body))
     (swap! e assoc-left-bottom)
-    (set-touched-cells e)
+    (set-touched-cells! e)
     (when is-solid
-      (set-occupied-cells e)))
+      (set-occupied-cells! e)))
   (db/destroy! [_ e]
-    (remove-from-touched-cells e)
+    (remove-from-touched-cells! e)
     (when is-solid
-      (remove-from-occupied-cells e)))
+      (remove-from-occupied-cells! e)))
   (moved! [_ e]
     (assert (valid-position? @e))
     ; update-touched-cells done manually @ update-position
     (when is-solid
-      (update-occupied-cells e)))
+      (remove-from-occupied-cells! e)
+      (set-occupied-cells! e)))
   (render/debug [c m p]
     (when show-body-bounds
       (draw-bounds body))))
