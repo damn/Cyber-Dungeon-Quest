@@ -1,8 +1,9 @@
 (ns game.components.body
-  (:require [x.x :refer [defsystem defcomponent update-map doseq-entity]]
+  (:require [x.x :refer [defsystem defcomponent]]
             [gdl.graphics.shape-drawer :as shape-drawer]
             [gdl.graphics.color :as color]
             [gdl.geom :as geom]
+            [gdl.vector :as v]
             [game.db :as db]
             [game.render :as render]
             [game.maps.cell-grid :as grid]))
@@ -42,6 +43,8 @@
 (defn- draw-bounds [{[x y] :left-bottom :keys [width height is-solid]}]
   (shape-drawer/rectangle x y width height (if is-solid color/white color/gray)))
 
+; TODO DELETE NOW !!! fucks up everything & confusing as fuck,
+; make into function idk ?
 (defn assoc-left-bottom [{:keys [body] [x y] :position :as entity*}]
   (assoc-in entity* [:body :left-bottom] [(- x (/ (:width body)  2))
                                           (- y (/ (:height body) 2))]))
@@ -59,32 +62,41 @@
                              (:is-solid (:body @%))
                              (geom/collides? (:body @%) (:body entity*)))))))))
 
-(defsystem moved  [c direction-vector]) ; ! applied to body sub-components (e.g. :rotation-angle ) !
-(defsystem moved! [c e])
-
-(defn apply-moved-systems! [e direction-vector]
-  (swap! e update :body update-map moved direction-vector)
-  (doseq-entity e moved!))
-
 (def show-body-bounds false)
 
-(defcomponent :body {:keys [width height is-solid rotation-angle] :as body}
+(defsystem moved! [c e direction-vector])
+
+(defrecord Body [width
+                 height
+                 half-width
+                 half-height
+                 radius
+                 is-solid
+                 rotation-angle
+                 rotate-in-movement-direction?])
+
+(defcomponent :body {:keys [left-bottom width height is-solid rotation-angle rotate-in-movement-direction?] :as body}
   (db/create [_]
     (assert (and width height
                  (>= width  (if is-solid min-solid-body-size 0))
                  (>= height (if is-solid min-solid-body-size 0))
-                 (boolean? is-solid)))
-    (let [body {:is-solid is-solid
-                :width width
-                :height height
-                :half-width  (/ width  2)
-                :half-height (/ height 2)
-                :radius (max (/ width  2)
-                             (/ height 2))}]
-      (if rotation-angle
-        (assoc body :rotation-angle rotation-angle)
-        body)))
-  (db/create! [[k _] e]
+                 (boolean? is-solid)
+                 (or (nil? rotation-angle)
+                     (<= 0 rotation-angle 360))))
+    (map->Body
+     {:left-bottom left-bottom
+      :width width
+      :height height
+      :half-width  (/ width  2)
+      :half-height (/ height 2)
+      :radius (max (/ width  2)
+                   (/ height 2))
+      :is-solid is-solid
+      :rotation-angle (or rotation-angle 0)
+      :rotate-in-movement-direction? rotate-in-movement-direction?}))
+  (db/create! [_ e]
+    (assert (:position @e))
+    ;(assert (valid-position? @e)) ; TODO error because projectiles do not have left-bottom !
     (swap! e assoc-left-bottom)
     (set-touched-cells! e)
     (when is-solid
@@ -93,8 +105,10 @@
     (remove-from-touched-cells! e)
     (when is-solid
       (remove-from-occupied-cells! e)))
-  (moved! [_ e]
+  (moved! [_ e direction-vector]
     (assert (valid-position? @e))
+    (when rotate-in-movement-direction?
+      (swap! e assoc-in [:body :rotation-angle] (v/get-angle-from-vector direction-vector)))
     ; update-touched-cells done manually @ update-position
     (when is-solid
       (remove-from-occupied-cells! e)

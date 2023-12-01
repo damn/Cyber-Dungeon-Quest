@@ -1,5 +1,5 @@
 (ns game.components.movement
-  (:require [x.x :refer [defcomponent update-map doseq-entity]]
+  (:require [x.x :refer [defcomponent doseq-entity]]
             [gdl.geom :as geom]
             [gdl.vector :as v]
             [utils.core :refer [find-first update-in!]]
@@ -88,12 +88,10 @@
 ; TODO put movement-vector here also, make 'movement' component
 ; and further above 'body' component
 (defcomponent :speed speed-in-seconds ; movement speed-in-seconds
-
   (db/create! [[k _] e]
+    (assert (and (:body @e)
+                 (:position @e)))
     (swap! e assoc k {:speed (/ speed-in-seconds 1000)}))
-                           ; :direction v !
-
-
   ; TODO make update w. movement-vector (add-component :movement-vector?)
   ; all assoc key to entity main map == add/remove component ?!
   ; how to do this with assoc/dissoc ?
@@ -103,20 +101,11 @@
       (assert (or (zero? (v/length v)) ; TODO what is the point of zero length vectors?
                   (v/normalised? v)))
       (when-not (zero? (v/length v))
-        (let [moved? (if (:projectile-collision @e)
-                       ; => move! called on body itself ???
-                       (update-position-projectile e delta v)
-                       (update-position-solid      e delta v))]
-          (when moved?
-            (body/apply-moved-systems! e v)))))))
-
-; solid or projectile ?
-; two types of bodies ???
-; what does is-solid mean ?
-; projectiles also hitting walls
-
-; wait! can I apply 'moved!' systems also only on body or do I need full entity reference?
-
+        (when-let [moved? (if (:projectile-collision @e)
+                            ; => move! called on body itself ???
+                            (update-position-projectile e delta v)
+                            (update-position-solid      e delta v))]
+          (doseq-entity e body/moved! v))))))
 
 ;; Teleporting
 

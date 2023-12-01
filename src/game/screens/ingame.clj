@@ -174,7 +174,8 @@
       (let [state (skill-component/usable-state @entity (properties/get skill-id))]
         (if (= state :usable)
           skill-id
-          (println (str "Skill usable state not usable: " state)))))))
+          #_(println (str "Skill usable state not usable: " state))
+          )))))
 
 (comment
  [game.utils.msg-to-player :refer (show-msg-to-player)]

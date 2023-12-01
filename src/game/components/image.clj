@@ -4,7 +4,9 @@
             [game.render :as render]))
 
 (defcomponent :image image
-  (render/default [_c {:keys [body]} position]
+  (render/default [_ {:keys [body]} position]
     (image/draw-rotated-centered image
-                                 (or (:rotation-angle body) 0)
+                                 (if body
+                                   (:rotation-angle body)
+                                   0)
                                  position)))

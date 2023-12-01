@@ -19,7 +19,8 @@
     :body {:width size
            :height size
            :is-solid false
-           :rotation-angle 0}
+           :rotation-angle 0
+           :rotate-in-movement-direction? true}
     :z-order :effect
     :speed speed
     :movement-vector movement-vector

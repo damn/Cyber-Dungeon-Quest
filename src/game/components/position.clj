@@ -9,6 +9,8 @@
 (defcomponent :position p
   (db/create!  [_ e] (put-entity-in-correct-content-field e))
   (db/destroy! [_ e] (remove-entity-from-content-field    e))
-  (body/moved! [_ e] (put-entity-in-correct-content-field e)))
+  (body/moved! [_ e direction-vector]
+    (put-entity-in-correct-content-field e)))
 
+; TODO not here ... ?
 (def get-tile (comp int-posi :position))
