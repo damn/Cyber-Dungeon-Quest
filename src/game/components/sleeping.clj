@@ -35,15 +35,15 @@
   (entity/after-create! [_ entity]
     (swap! entity modifier/apply-modifiers modifiers))
 
-  (entity/render-above [_ {:keys [body]} [x y]]
+  (entity/render-above [_ {[x y] :position :keys [body]}]
     (font/draw-text {:font media/font
                      :text "zzz"
                      :x x
                      :y (+ y (:half-height body))
                      :up? true}))
 
-  (entity/render-info [_ entity* position]
-    (when (:mouseover? entity*)
+  (entity/render-info [_ {:keys [position mouseover?]}]
+    (when mouseover?
       (shape-drawer/circle position aggro-range color/yellow))))
 
 (defn- get-visible-entities [entity* radius]

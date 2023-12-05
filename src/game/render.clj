@@ -31,12 +31,12 @@
 ; if lightning => pass render-on-map argument 'colorsetter' by default
 ; on all render-systems , has to be handled & everything has to have body then?
 ; so all have line of sight check & colors applied as of position ?
-(defn- render-entity* [system m]
-  (doseq [c m]
+(defn- render-entity* [system entity*]
+  (doseq [component entity*]
     (try
-     (system c m (:position m))
+     (system component entity*)
      (catch Throwable t
-       (println "Render error for:" [c (:id m) system])
+       (println "Render error for:" [component (:id entity*) system])
        (throw t)
        ; TODO I want to get multimethod
        ))))

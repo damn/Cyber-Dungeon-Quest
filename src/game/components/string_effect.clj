@@ -13,7 +13,7 @@
   (entity/tick! [[k _] e delta]
     (when (counter/stopped? counter)
       (swap! e dissoc k)))
-  (entity/render-above [_ {:keys [body]} [x y]]
+  (entity/render-above [_ {[x y] :position :keys [body]}]
     (font/draw-text {:font media/font
                      :text text
                      :x x

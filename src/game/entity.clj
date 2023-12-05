@@ -15,8 +15,8 @@
 (defsystem affected! [_ e])
 (defsystem stun! [_ e])
 
-(defsystem render-below   [_ e* position])
-(defsystem render-default [_ e* position])
-(defsystem render-above   [_ e* position])
-(defsystem render-info    [_ e* position])
-(defsystem render-debug   [_ e* position])
+(defsystem render-below   [_ e*])
+(defsystem render-default [_ e*])
+(defsystem render-above   [_ e*])
+(defsystem render-info    [_ e*])
+(defsystem render-debug   [_ e*])

@@ -7,7 +7,7 @@
             [game.player.entity :refer (player-entity)]))
 
 (defcomponent :clickable {:keys [text]}
-  (entity/render-default [_ {:keys [mouseover? body]} [x y]]
+  (entity/render-default [_ {[x y] :position :keys [mouseover? body]}]
     (when (and mouseover? text)
       (font/draw-text {:font media/font
                        :text text

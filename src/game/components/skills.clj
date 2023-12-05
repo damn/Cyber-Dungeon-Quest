@@ -65,12 +65,12 @@
 (def show-skill-icon-on-active true)
 
 (defcomponent :skills skills
-  (entity/render-info [_ m position]
+  (entity/render-info [_ {:keys [position active-skill?] :as entity*}]
     (doseq [{:keys [id image effect]} (vals skills)
-            :when (= id (:active-skill? m))]
+            :when (= id active-skill?)]
       (when show-skill-icon-on-active
-        (draw-skill-icon image m position)) ; separate component, can deactivate w. component manager tool
-      (effect/render-info effect (effect-params m)))))
+        (draw-skill-icon image entity* position)) ; separate component, can deactivate w. component manager tool
+      (effect/render-info effect (effect-params entity*)))))
 
 (defn- update-cooldown [skill delta]
   (if (:cooling-down? skill)

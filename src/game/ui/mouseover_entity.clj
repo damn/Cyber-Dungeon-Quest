@@ -36,9 +36,9 @@
 (color/defrgb ^:private neutral-color  1 1 1 outline-alpha)
 
 (defcomponent :mouseover? _
-  (entity/render-below [_ {:keys [body faction]} [x y]]
+  (entity/render-below [_ {:keys [position body faction]}]
     (shape-drawer/with-line-width 3
-      (shape-drawer/ellipse [x y]
+      (shape-drawer/ellipse position
                             (:half-width body)
                             (:half-height body)
                             (case faction ; TODO enemy faction of player

@@ -2,6 +2,10 @@
   (:require [x.x :refer [update-map doseq-entity]]
             [game.entity :as entity]))
 
+; TODO blocks/update-speed /attack-speed/etc. into :modifiers component ?
+; namespaced keywords for everything effect-params, components, etc. ...
+; => easier to find
+
 ; # Why do we use a :blocks counter and not a boolean?
 ; Different effects can stun/block for example :movement component
 ; and if we remove the effect, other effects still need to be there
