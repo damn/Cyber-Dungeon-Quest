@@ -15,18 +15,18 @@
 
      (actor/visible? (:inventory-window stage))
      (do
-      (audio/play "bfxr_takeit.wav")
+      (audio/play "sounds/bfxr_takeit.wav")
       (swap! entity assoc :destroyed? true)
       (swap! player-entity assoc :item-on-cursor item))
 
      (inventory/try-pickup-item player-entity item)
      (do
-      (audio/play "bfxr_pickup.wav")
+      (audio/play "sounds/bfxr_pickup.wav")
       (swap! entity assoc :destroyed? true))
 
      :else
      (do
-      (audio/play "bfxr_denied.wav")
+      (audio/play "sounds/bfxr_denied.wav")
       (show-msg-to-player "Your Inventory is full")))))
 
 ; TODO use image w. shadows spritesheet

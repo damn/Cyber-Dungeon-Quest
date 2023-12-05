@@ -23,7 +23,7 @@
 ; TODO ! important ! animation & dont put exactly hiding under player
 (defn put-item-on-ground []
   {:pre [(:item-on-cursor @player-entity)]}
-  (audio/play "bfxr_itemputground.wav")
+  (audio/play "sounds/bfxr_itemputground.wav")
   (let [{x 0 y 1 :as posi} (:position @player-entity)
        ; [w _] item-body-dimensions
        ; half-size (/ w tile-width 2)
@@ -50,7 +50,7 @@
      (and (not item-on-cursor)
           item)
      (do
-      (audio/play "bfxr_takeit.wav")
+      (audio/play "sounds/bfxr_takeit.wav")
       (swap! entity assoc :item-on-cursor item)
       (inventory/remove-item entity cell))
 
@@ -62,7 +62,7 @@
       (if (inventory/two-handed-weapon-and-shield-together? inventory cell item-on-cursor)
         (complain-2h-weapon-and-shield!)
         (do
-         (audio/play "bfxr_itemput.wav")
+         (audio/play "sounds/bfxr_itemput.wav")
          (inventory/set-item entity cell item-on-cursor)
          (swap! entity dissoc :item-on-cursor)))
 
@@ -70,7 +70,7 @@
       (and item
            (inventory/stackable? item item-on-cursor))
       (do
-       (audio/play "bfxr_itemput.wav")
+       (audio/play "sounds/bfxr_itemput.wav")
        (inventory/stack-item entity cell item-on-cursor)
        (swap! entity dissoc :item-on-cursor))
 
@@ -80,7 +80,7 @@
       (if (inventory/two-handed-weapon-and-shield-together? inventory cell item-on-cursor)
         (complain-2h-weapon-and-shield!)
         (do
-         (audio/play "bfxr_itemput.wav")
+         (audio/play "sounds/bfxr_itemput.wav")
          (inventory/remove-item entity cell)
          (inventory/set-item entity cell item-on-cursor)
          (swap! entity assoc :item-on-cursor item)))))))

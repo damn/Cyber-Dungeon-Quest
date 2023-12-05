@@ -28,7 +28,7 @@
                                "exit the game."))))
   (let [entity player-entity]
     (reset! running false) ; TODO remove references to 'running' into update-ingame not here.
-    (audio/play "bfxr_playerdeath.wav")
+    (audio/play "sounds/bfxr_playerdeath.wav")
     ;(remove-body-effects player-entity) not implemented
     #_(assoc-in! player-entity [:hp :current] 0)))
 

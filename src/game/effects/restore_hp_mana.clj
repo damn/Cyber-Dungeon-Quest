@@ -14,7 +14,7 @@
    :valid-params? (fn [_ {:keys [source]}]
                     source)
    :do! (fn [_ {:keys [source]}]
-          (audio/play "bfxr_drugsuse.wav")
+          (audio/play "sounds/bfxr_drugsuse.wav")
           (swap! source #(-> %
                              (update :hp set-to-max)
                              (update :mana set-to-max))))})

@@ -1784,7 +1784,7 @@
  {:image {:file "items/images.png", :sub-image-bounds (672 48 48 48)},
   :id :torch-lit,
   :pretty-name "Lit Torch"}
- {:sound "bfxr_fisthit.wav",
+ {:sound "sounds/bfxr_fisthit.wav",
   :animation
   {:frames
    ({:file "fx/uf_FX_impact.png", :sub-image-bounds (0 48 48 48)}
@@ -1808,7 +1808,7 @@
  {:image {:file "items/images.png", :sub-image-bounds (480 48 48 48)},
   :id :chest-silver-,
   :pretty-name "Silver Chest"}
- {:sound "bfxr_normalhit.wav",
+ {:sound "sounds/bfxr_normalhit.wav",
   :animation
   {:frames
    ({:file "fx/uf_FX_impact.png", :sub-image-bounds (144 0 48 48)}
@@ -1835,7 +1835,7 @@
  {:image {:file "items/images.png", :sub-image-bounds (336 48 48 48)},
   :id :chest-gold,
   :pretty-name "Gold Chest"}
- {:sound "bfxr_projectile_wallhit.wav",
+ {:sound "sounds/bfxr_projectile_wallhit.wav",
   :animation
   {:frames
    ({:file "fx/uf_FX.png", :sub-image-bounds (0 168 24 24)}
@@ -1856,7 +1856,7 @@
  {:image {:file "items/images.png", :sub-image-bounds (768 48 48 48)},
   :id :drumstick,
   :pretty-name "Drumstick"}
- {:sound "bfxr_defaultmonsterdeath.wav",
+ {:sound "sounds/bfxr_defaultmonsterdeath.wav",
   :animation
   {:frames
    ({:file "fx/uf_FX.png", :sub-image-bounds (96 144 24 24)}
@@ -1934,7 +1934,7 @@
  {:image {:file "items/images.png", :sub-image-bounds (288 0 48 48)},
   :id :key-ornate,
   :pretty-name "Ornate Key"}
- {:sound "bfxr_curse.wav",
+ {:sound "sounds/bfxr_curse.wav",
   :animation
   {:frames
    ({:file "fx/uf_FX_impact.png", :sub-image-bounds (288 48 48 48)}

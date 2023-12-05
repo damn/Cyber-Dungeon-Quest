@@ -109,7 +109,7 @@
   (swap! entity string-effect/add "SHIELD"))
 
 (defn- armor-blocked-effect [entity]
-  ; (audio/play "bfxr_armorhit.wav")
+  ; (audio/play "sounds/bfxr_armorhit.wav")
   (swap! entity string-effect/add "ARMOR"))
 
 (defn- blocks? [block-rate]

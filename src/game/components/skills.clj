@@ -151,7 +151,7 @@
 ; or move everything into 'skills' ?
 ; just :active-skill without question mark?
 (defn- start! [entity skill]
-  (audio/play (if (:spell? skill) "shoot.wav" "slash.wav"))
+  (audio/play (str "sounds/" (if (:spell? skill) "shoot.wav" "slash.wav")))
   (when-not (or (nil? (:cost skill))
                 (zero? (:cost skill)))
     (swap! entity update :mana apply-val #(- % (:cost skill))))
