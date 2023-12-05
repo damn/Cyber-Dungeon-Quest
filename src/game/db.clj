@@ -8,11 +8,11 @@
 (defn get-entity [id] (get @ids->entities id))
 (defn exists? [e] (get-entity (:id @e)))
 
-(session/defstate state
-  (load!  [_ data]
-    (reset! ids->entities {}))
-  (serialize [_])
-  (initial-data [_]))
+(def state (reify session/State
+             (load!  [_ data]
+               (reset! ids->entities {}))
+             (serialize [_])
+             (initial-data [_])))
 
 (let [cnt (atom 0)] ; TODO reset cnt every session ?
   (defn- unique-number! []
