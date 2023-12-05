@@ -8,15 +8,12 @@
             [gdl.graphics.world :as world]
             [gdl.vector :as v]
             [utils.core :refer [assoc-in! ->! mapvals]]
-            [game.tick :refer [tick!]]
-            [game.render :as render]
-            [game.db :as db]
             [game.properties :as properties]
             [game.components.faction :as faction]
             [game.ui.mouseover-entity :refer (saved-mouseover-entity get-mouseover-entity)]
             [game.utils.counter :as counter]
             [game.effect :as effect]
-            [game.effects.stun :as stun]
+            [game.entity :as entity]
             [game.maps.cell-grid :as cell-grid]))
 
 (defn- make-effect-params [entity]
@@ -68,7 +65,7 @@
 (def show-skill-icon-on-active true)
 
 (defcomponent :skills skills
-  (render/info [_ m position]
+  (entity/render-info [_ m position]
     (doseq [{:keys [id image effect]} (vals skills)
             :when (= id (:active-skill? m))]
       (when show-skill-icon-on-active
@@ -193,17 +190,17 @@
       (start! entity skill))))
 
 (defcomponent :skillmanager _
-  (tick! [_ entity delta]
+  (entity/tick! [_ entity delta]
     (swap! entity update :skills update-cooldowns delta)
     (if (:active-skill? @entity)
       (check-stop! entity delta)
       (check-start! entity)))
-  (stun/stun! [_ entity]
+  (entity/stun! [_ entity]
     (when-let [skill-id (:active-skill? @entity)]
       (stop! entity (skill-id (:skills @entity))))))
 
 (defcomponent :skills _
-  (db/create! [[k v] entity]
+  (entity/create! [[k v] entity]
     (->! entity
          (assoc :skillmanager {})
          (update k #(zipmap % (map properties/get %))))))

@@ -1,6 +1,5 @@
 (ns game.modifiers.all
-  (:require [x.x :refer [defcomponent]]
-            [utils.core :refer [readable-number]]
+  (:require [utils.core :refer [readable-number]]
             [data.val-max :refer [apply-max]]
             [game.modifier :as modifier]
             [game.skills.core :as skills]

@@ -1,8 +1,6 @@
 (ns game.tick
-  (:require [x.x :refer [defsystem update-map doseq-entity]]))
-
-(defsystem tick  [c delta])
-(defsystem tick! [c e delta])
+  (:require [x.x :refer [update-map doseq-entity]]
+            [game.entity :as entity]))
 
 ; # Why do we use a :blocks counter and not a boolean?
 ; Different effects can stun/block for example :movement component
@@ -27,12 +25,12 @@
 
 (defn- tick-component [{v 1 :as c} delta]
   (if-let [delta (delta? v delta)]
-    (tick c delta)
+    (entity/tick c delta)
     v))
 
 (defn- tick-entity! [{v 1 :as c} e delta]
   (if-let [delta (delta? v delta)]
-    (tick! c e delta)
+    (entity/tick! c e delta)
     nil))
 
 (defn- apply-tick-systems! [e delta]

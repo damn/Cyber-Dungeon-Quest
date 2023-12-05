@@ -1,12 +1,7 @@
 (ns game.db
-  (:require [x.x :refer [defsystem defcomponent update-map doseq-entity]]
+  (:require [x.x :refer [defcomponent update-map doseq-entity]]
+            [game.entity :as entity]
             [game.session :as session]))
-
-(defsystem create        [c])
-(defsystem create!       [c e])
-(defsystem after-create! [c e])
-(defsystem destroy       [c])
-(defsystem destroy!      [c e])
 
 (def ^:private ids->entities (atom nil))
 
@@ -24,20 +19,20 @@
     (swap! cnt inc)))
 
 (defcomponent :id id
-  (create [_] (unique-number!)) ; TODO precondition (nil? id)
-  (create!  [_ e] (swap! ids->entities assoc  id e))
-  (destroy! [_ e] (swap! ids->entities dissoc id)))
+  (entity/create [_] (unique-number!)) ; TODO precondition (nil? id)
+  (entity/create!  [_ e] (swap! ids->entities assoc  id e))
+  (entity/destroy! [_ e] (swap! ids->entities dissoc id)))
 
 (defn create-entity! [m]
   {:pre [(not (contains? m :id))]}
   (-> (assoc m :id nil)
-      (update-map create)
+      (update-map entity/create)
       atom
-      (doseq-entity create!)
-      (doseq-entity after-create!)))
+      (doseq-entity entity/create!)
+      (doseq-entity entity/after-create!)))
 
 (defn destroy-to-be-removed-entities! []
   (doseq [e (filter (comp :destroyed? deref) (vals @ids->entities))
           :when (exists? e)] ; TODO why is this ?
-    (swap! e update-map destroy)
-    (doseq-entity e destroy!)))
+    (swap! e update-map entity/destroy)
+    (doseq-entity e entity/destroy!)))

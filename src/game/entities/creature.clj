@@ -4,7 +4,7 @@
             [gdl.graphics.world :as world]
             [gdl.graphics.animation :as animation]
             [game.db :as db]
-            [game.tick :refer [tick!]]
+            [game.entity :as entity]
             [game.properties :as properties]
             [game.utils.random :as rand]
             [game.components.body :refer (assoc-left-bottom valid-position?)]
@@ -24,10 +24,10 @@
      max-height]))
 
 (defcomponent :is-player _
-  (db/create! [_ entity]
+  (entity/create! [_ entity]
     (set-player-entity entity)
     (world/set-camera-position! (:position @entity)))
-  (tick! [_ entity delta]
+  (entity/tick! [_ entity delta]
     (world/set-camera-position! (:position @entity))))
 
 (def ^:private player-components
@@ -104,7 +104,7 @@
     } 10})
 
 (defcomponent :default-monster-death _
-  (db/destroy! [_ entity]
+  (entity/destroy! [_ entity]
     (audiovisual/create! (:position @entity)
                          :creature/die-effect)
     #_(let [position (:position @entity)]

@@ -9,7 +9,7 @@
             [x.x :refer [defcomponent]]
             [gdl.vector :as v]
             [utils.core :refer :all]
-            [game.tick :refer [tick!]]
+            [game.entity :as entity]
             [game.components.faction :as faction]
             [game.components.position :refer (get-tile)]
             [game.maps.contentfields :refer (get-entities-in-active-content-fields)]
@@ -227,7 +227,7 @@
           (v/direction position (:middle @target-cell)))))))
 
 (defcomponent :move-towards-enemy _
-  (tick! [_c entity _delta]
+  (entity/tick! [_ entity _delta]
     (swap! entity
            assoc
            :movement-vector

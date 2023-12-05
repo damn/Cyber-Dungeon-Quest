@@ -2,7 +2,7 @@
   (:require [data.grid2d :as grid]
             [x.x :refer [defcomponent]]
             [utils.core :refer [find-first]]
-            [game.db :as db]
+            [game.entity :as entity]
             [game.properties :as properties]
             [game.modifier :as modifier]))
 
@@ -135,7 +135,7 @@
 
 ; after-create-entity because try-pickup-item applies modifiers (skillmanager has to be initialised)
 (defcomponent :items items
-  (db/after-create! [_ entity]
+  (entity/after-create! [_ entity]
     (swap! entity assoc :inventory empty-inventory)
     ;(swap! entity dissoc :items)
     (doseq [id items]

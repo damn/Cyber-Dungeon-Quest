@@ -4,12 +4,10 @@
             [gdl.graphics.font :as font]
             [gdl.graphics.color :as color]
             [gdl.graphics.shape-drawer :as shape-drawer]
-            [game.tick :refer [tick tick!]]
-            [game.render :as render]
             [game.utils.counter :as counter]
-            [game.db :as db]
             [game.media :as media]
-            [game.effect :as effect]
+            [game.db :as db]
+            [game.entity :as entity]
             [game.components.faction :as faction]
             [game.modifier :as modifier]
             [game.line-of-sight :refer (in-line-of-sight?)]
@@ -34,17 +32,17 @@
   ; skillmanager does not exist yet
   ; so after create
   ; (it seems 'on-create-entity' is the component contructor)
-  (db/after-create! [_ entity]
+  (entity/after-create! [_ entity]
     (swap! entity modifier/apply-modifiers modifiers))
 
-  (render/above [_ {:keys [body]} [x y]]
+  (entity/render-above [_ {:keys [body]} [x y]]
     (font/draw-text {:font media/font
                      :text "zzz"
                      :x x
                      :y (+ y (:half-height body))
                      :up? true}))
 
-  (render/info [_ entity* position]
+  (entity/render-info [_ entity* position]
     (when (:mouseover? entity*)
       (shape-drawer/circle position aggro-range color/yellow))))
 
@@ -68,9 +66,9 @@
                         (:faction  @entity))))
 
 (defcomponent :shout counter
-  (tick [_ delta]
+  (entity/tick [_ delta]
     (counter/tick counter delta))
-  (tick! [_ entity delta]
+  (entity/tick! [_ entity delta]
     (when (counter/stopped? counter)
       (swap! entity assoc :destroyed? true)
       ; TODO why a shout checks for ray-blocked? ... sounds logic .... ?!
@@ -82,7 +80,7 @@
 ; could use potential field nearest enemy entity also because we only need 1 (faster)
 ; also do not need to check every frame !
 (defcomponent :sleeping _
-  (tick! [_ entity delta]
+  (entity/tick! [_ entity delta]
     ; was performance problem. - or do not check every frame ! -
     #_(when (seq (filter #(not= (:faction @%) (:faction @entity))
                          (get-visible-entities @entity aggro-range)))
@@ -95,5 +93,5 @@
         (when (<= distance (* aggro-range 10)) ; potential field store as 10  TODO necessary ?
           (wake-up! entity)))))
 
-  (effect/affected! [_ entity]
+  (entity/affected! [_ entity]
     (wake-up! entity)))

@@ -1,13 +1,7 @@
 (ns game.render
-  (:require [x.x :refer [defsystem]]
-            [gdl.graphics.font :as font]
-            [utils.core :refer [define-order sort-by-order]]))
-
-(defsystem below   [c m position]) ; entity effects, mouseover-outline
-(defsystem default [c m position]) ; image, animation
-(defsystem above   [c m position]) ; psi-charges, shield ( == 'effects' ?)
-(defsystem info    [c m position]) ; hp-bar, attacking-arc
-(defsystem debug   [c m position]) ; body-bounds, mouseover entity info
+  (:require [gdl.graphics.font :as font]
+            [utils.core :refer [define-order sort-by-order]]
+            [game.entity :as entity]))
 
 ; TODO render-order make vars so on compile time checked ?
 
@@ -53,8 +47,11 @@
   (doseq [[_ entities*] (sort-by-order (group-by :z-order entities*)
                                        first
                                        render-on-map-order)
-          system [below default above info]
+          system [entity/render-below
+                  entity/render-default
+                  entity/render-above
+                  entity/render-info]
           entity* entities*]
     (render-entity* system entity*))
   (doseq [entity* entities*]
-    (render-entity* debug entity*)))
+    (render-entity* entity/render-debug entity*)))

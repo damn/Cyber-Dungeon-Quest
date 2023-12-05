@@ -1,11 +1,10 @@
 (ns game.components.body
-  (:require [x.x :refer [defsystem defcomponent]]
+  (:require [x.x :refer [defcomponent]]
             [gdl.graphics.shape-drawer :as shape-drawer]
             [gdl.graphics.color :as color]
             [gdl.geom :as geom]
             [gdl.vector :as v]
-            [game.db :as db]
-            [game.render :as render]
+            [game.entity :as entity]
             [game.maps.cell-grid :as grid]))
 
 (defn- remove-from-occupied-cells! [e]
@@ -64,8 +63,6 @@
 
 (def show-body-bounds false)
 
-(defsystem moved! [c e direction-vector])
-
 (defrecord Body [width
                  height
                  half-width
@@ -76,7 +73,7 @@
                  rotate-in-movement-direction?])
 
 (defcomponent :body {:keys [left-bottom width height is-solid rotation-angle rotate-in-movement-direction?] :as body}
-  (db/create [_]
+  (entity/create [_]
     (assert (and width height
                  (>= width  (if is-solid min-solid-body-size 0))
                  (>= height (if is-solid min-solid-body-size 0))
@@ -94,18 +91,18 @@
       :is-solid is-solid
       :rotation-angle (or rotation-angle 0)
       :rotate-in-movement-direction? rotate-in-movement-direction?}))
-  (db/create! [_ e]
+  (entity/create! [_ e]
     (assert (:position @e))
     ;(assert (valid-position? @e)) ; TODO error because projectiles do not have left-bottom !
     (swap! e assoc-left-bottom)
     (set-touched-cells! e)
     (when is-solid
       (set-occupied-cells! e)))
-  (db/destroy! [_ e]
+  (entity/destroy! [_ e]
     (remove-from-touched-cells! e)
     (when is-solid
       (remove-from-occupied-cells! e)))
-  (moved! [_ e direction-vector]
+  (entity/moved! [_ e direction-vector]
     (assert (valid-position? @e))
     (when rotate-in-movement-direction?
       (swap! e assoc-in [:body :rotation-angle] (v/get-angle-from-vector direction-vector)))
@@ -113,6 +110,6 @@
     (when is-solid
       (remove-from-occupied-cells! e)
       (set-occupied-cells! e)))
-  (render/debug [c m p]
+  (entity/render-debug [_ m p]
     (when show-body-bounds
       (draw-bounds body))))

@@ -5,16 +5,15 @@
             [game.utils.counter :as counter]
             [game.ui.config :refer [hpbar-height-px]]
             [game.media :as media]
-            [game.tick :refer [tick tick!]]
-            [game.render :as render]))
+            [game.entity :as entity]))
 
 (defcomponent :string-effect {:keys [text counter] :as this}
-  (tick [_ delta]
+  (entity/tick [_ delta]
     (update this :counter counter/tick delta))
-  (tick! [[k _] e delta]
+  (entity/tick! [[k _] e delta]
     (when (counter/stopped? counter)
       (swap! e dissoc k)))
-  (render/above [_ {:keys [body]} [x y]]
+  (entity/render-above [_ {:keys [body]} [x y]]
     (font/draw-text {:font media/font
                      :text text
                      :x x

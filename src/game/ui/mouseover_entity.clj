@@ -8,7 +8,8 @@
             [gdl.scene2d.stage :as stage]
             [utils.core :refer [sort-by-order]]
             [game.db :as db]
-            [game.render :as render]
+            [game.entity :as entity]
+            game.render
             [game.session :as session]
             [game.line-of-sight :refer (in-line-of-sight?)]
             [game.maps.cell-grid :refer (get-bodies-at-position)]
@@ -35,7 +36,7 @@
 (color/defrgb ^:private neutral-color  1 1 1 outline-alpha)
 
 (defcomponent :mouseover? _
-  (render/below [_ {:keys [body faction]} [x y]]
+  (entity/render-below [_ {:keys [body faction]} [x y]]
     (shape-drawer/with-line-width 3
       (shape-drawer/ellipse [x y]
                             (:half-width body)
@@ -50,7 +51,7 @@
         hits (get-bodies-at-position tile-posi)]
     ; TODO needs z-order ? what if 'shout' element or FX ?
     (when hits
-      (->> render/render-on-map-order
+      (->> game.render/render-on-map-order
            ; TODO re-use render-ingame code to-be-rendered-entities-on-map
            (sort-by-order hits #(:z-order @%))
            ; topmost body selected first, reverse of render-order

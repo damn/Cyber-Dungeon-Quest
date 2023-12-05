@@ -1,16 +1,15 @@
 (ns game.components.animation
   (:require [x.x :refer [defcomponent]]
             [gdl.graphics.animation :as animation]
-            [game.tick :refer [tick tick!]]
-            [game.db :as db]))
+            [game.entity :as entity]))
 
-(defn- assoc-frame! [r]
-  (swap! r #(assoc % :image (animation/get-frame (:animation %)))))
+(defn- assoc-frame! [e]
+  (swap! e #(assoc % :image (animation/get-frame (:animation %)))))
 
 (defcomponent :animation animation
-  (db/create! [_ e]
+  (entity/create! [_ e]
     (assoc-frame! e))
-  (tick! [c e _delta]
+  (entity/tick! [_ e _delta]
     (assoc-frame! e))
-  (tick [_c delta]
+  (entity/tick [_ delta]
     (animation/update animation delta)))

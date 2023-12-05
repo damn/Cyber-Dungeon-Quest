@@ -1,15 +1,16 @@
 (ns game.components.position
   (:require [x.x :refer [defcomponent]]
             [utils.core :refer [int-posi]]
-            [game.db :as db]
-            [game.components.body :as body]
+            [game.entity :as entity]
             [game.maps.contentfields :refer (put-entity-in-correct-content-field
                                              remove-entity-from-content-field)]))
 
 (defcomponent :position p
-  (db/create!  [_ e] (put-entity-in-correct-content-field e))
-  (db/destroy! [_ e] (remove-entity-from-content-field    e))
-  (body/moved! [_ e direction-vector]
+  (entity/create! [_ e]
+    (put-entity-in-correct-content-field e))
+  (entity/destroy! [_ e]
+    (remove-entity-from-content-field e))
+  (entity/moved! [_ e direction-vector]
     (put-entity-in-correct-content-field e)))
 
 ; TODO not here ... ?

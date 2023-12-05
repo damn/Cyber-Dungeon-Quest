@@ -1,5 +1,6 @@
 (ns game.effect
-  (:require [x.x :refer :all]))
+  (:require [x.x :refer [doseq-entity]]
+            [game.entity :as entity]))
 
 (comment
  ; todo first step change value/params/effect param order
@@ -30,11 +31,9 @@
   {:pre [(valid-params? effect params)]}
   (call-effect-fn :do! effect params))
 
-(defsystem affected! [c e])
-
 (defn- trigger-affected! [target]
   (when target
-    (doseq-entity target affected!)))
+    (doseq-entity target entity/affected!)))
 
 (defn do! [effect params]
   (do-effect!* effect params)

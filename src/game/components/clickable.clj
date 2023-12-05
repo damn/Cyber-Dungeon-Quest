@@ -2,12 +2,12 @@
   (:require [x.x :refer [defcomponent]]
             [gdl.graphics.font :as font]
             [gdl.vector :as v]
-            [game.render :as render]
+            [game.entity :as entity]
             [game.media :as media]
             [game.player.entity :refer (player-entity)]))
 
 (defcomponent :clickable {:keys [text]}
-  (render/default [_ {:keys [mouseover? body]} [x y]]
+  (entity/render-default [_ {:keys [mouseover? body]} [x y]]
     (when (and mouseover? text)
       (font/draw-text {:font media/font
                        :text text

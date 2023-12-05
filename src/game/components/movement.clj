@@ -3,8 +3,7 @@
             [gdl.geom :as geom]
             [gdl.vector :as v]
             [utils.core :refer [find-first update-in!]]
-            [game.db :as db]
-            [game.tick :refer [tick!]]
+            [game.entity :as entity]
             [game.effect :as effect]
             [game.components.body :as body]
             [game.entities.audiovisual :as audiovisual]
@@ -88,14 +87,14 @@
 ; TODO put movement-vector here also, make 'movement' component
 ; and further above 'body' component
 (defcomponent :speed speed-in-seconds ; movement speed-in-seconds
-  (db/create! [[k _] e]
+  (entity/create! [[k _] e]
     (assert (and (:body @e)
                  (:position @e)))
     (swap! e assoc k {:speed (/ speed-in-seconds 1000)}))
   ; TODO make update w. movement-vector (add-component :movement-vector?)
   ; all assoc key to entity main map == add/remove component ?!
   ; how to do this with assoc/dissoc ?
-  (tick! [_ e delta]
+  (entity/tick! [_ e delta]
     ; TODO direction-vector not 'v' , 'v' is value
     (when-let [v (:movement-vector @e)]
       (assert (or (zero? (v/length v)) ; TODO what is the point of zero length vectors?
@@ -105,7 +104,7 @@
                             ; => move! called on body itself ???
                             (update-position-projectile e delta v)
                             (update-position-solid      e delta v))]
-          (doseq-entity e body/moved! v))))))
+          (doseq-entity e entity/moved! v))))))
 
 ;; Teleporting
 

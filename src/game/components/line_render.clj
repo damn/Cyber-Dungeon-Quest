@@ -1,10 +1,10 @@
 (ns game.components.line-render
   (:require [x.x :refer [defcomponent]]
             [gdl.graphics.shape-drawer :as shape-drawer]
-            [game.render :as render]))
+            [game.entity :as entity]))
 
 (defcomponent :line-render {:keys [thick? end color]}
-  (render/default [_c _ position] ; two times underscore will shadow the destructuring! TODO FIXME
+  (entity/render-default [_c _ position]
     (if thick?
       (shape-drawer/with-line-width 4
         (shape-drawer/line position end color))
