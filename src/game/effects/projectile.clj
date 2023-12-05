@@ -15,8 +15,8 @@
 (def ^:private speed 10)
 (def ^:private maxtime (/ maxrange (/ speed 1000)))
 
-(defn- projectile-path-blocked? [[sx sy] [tx ty]]
-  (cell-grid/is-path-blocked? sx sy tx ty size))
+(defn- projectile-path-blocked? [start target]
+  (cell-grid/is-path-blocked? start target size))
 
 ; TODO valid params direction has to be  non-nil (entities not los player ) ?
 

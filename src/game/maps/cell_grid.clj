@@ -223,7 +223,7 @@
 
 (defn- create-double-ray-endpositions
   "path-w in tiles."
-  [start-x,start-y,target-x,target-y,path-w]
+  [[start-x start-y] [target-x target-y] path-w]
   {:pre [(< path-w 0.98)]} ; wieso 0.98??
   (let [path-w (+ path-w 0.02) ;etwas gr�sser damit z.b. projektil nicht an ecken anst�sst
         v (v/direction [start-x start-y]
@@ -239,10 +239,8 @@
 
 (defn is-path-blocked?
   "path-w in tiles. casts two rays."
-  ([start-x,start-y,target-x,target-y,path-w]
-    (let [[start1,target1,start2,target2] (create-double-ray-endpositions start-x start-y target-x target-y path-w)]
-      (is-path-blocked? start1 target1 start2 target2)))
-  ([start1,target1,start2,target2]
+  [start target path-w]
+  (let [[start1,target1,start2,target2] (create-double-ray-endpositions start target path-w)]
     (or
-      (ray-blocked? start1 target1)
-      (ray-blocked? start2 target2))))
+     (ray-blocked? start1 target1)
+     (ray-blocked? start2 target2))))
