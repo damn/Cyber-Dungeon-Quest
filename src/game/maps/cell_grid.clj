@@ -100,29 +100,6 @@
 (defn inside-map? [tile]
   (get-cell tile))
 
-(def ^:private listeners (atom []))
-
-(def state (reify session/State
-             (load! [_ data]
-               (reset! listeners []))
-             (serialize [_])
-             (initial-data [_])))
-
-#_(defn add-cell-blocks-changed-listener [f]
-  (swap! listeners conj f))
-
-#_(defn cell-blocks-changed-update-listeners []
-  (run! #(%) @listeners)) ; TODO doseq
-
-#_(defn change-cell-blocks
-  "do not change to blocking while game running or bodies may be walled in. (( ; TODO why ? ))
-  after changing update the listeners!!" ; vlt cell-seq �bergeben und danach wird hier update-listeners gecallt.
-  [cell new-blocks]
-  (swap! cell assoc :blocks new-blocks)
-  (set-cell-blocked-boolean-array (get-cell-blocked-boolean-array)
-                                  cell))
-
-
 ; many entities
 ; performance bottleneck #1 is dereffing cells !!
 ; => read more often than write?
@@ -131,7 +108,6 @@
 ; but potential field
 ; => also 'maps.grid' / grid/get , etc.
 ; => grid is 1 atom !
-
 (defn get-entities [cell]
   (if cell
     (:entities @cell)
@@ -219,7 +195,6 @@
   (comp rectangle->touched-cells
         geom/circle->outer-rectangle))
 
-; unused
 #_(defn rectangle->touched-entities [rectangle]
   (->> rectangle
        rectangle->touched-cells

@@ -1,9 +1,6 @@
-; TODO move to game.session
 (ns game.player.session-data
-  (:require [clojure.walk :refer [postwalk]]
-            [utils.core :refer [distinct-seq?]]
+  (:require [utils.core :refer [distinct-seq?]]
             [game.session :as session]
-            game.maps.cell-grid
             [game.maps.add :refer [add-maps-data]]
             [game.maps.impl :refer [first-level]]
             game.maps.data
@@ -15,10 +12,7 @@
 
 (def current-character-name (atom nil))
 
-;; TODO read/write/load/get -> move to x.session ?
-;; different character name -> separate file ?
-
-(def ^:private file (str "cdq_savegame.clj")) ; .edn ?
+(def ^:private file (str "cdq_savegame.clj"))
 
 (defn- read-session-file []
   (try (read-string (slurp file))
@@ -29,7 +23,7 @@
     (pr-str x)))
 
 (defn- write-session-file [data]
-  (->> (postwalk session/write-to-disk data)
+  (->> data
        (assoc (read-session-file) @current-character-name)
        pr-str-with-meta
        (spit file)))
@@ -38,10 +32,7 @@
   (keys (read-session-file)))
 
 (defn get-session-file-data []
-  (->> (get (read-session-file) @current-character-name)
-       (postwalk session/load-from-disk)))
-
-;;
+  (get (read-session-file) @current-character-name))
 
 (defn- make-type [v] ; ??? => var-namespaced-name-str
   (.replace (str (ns-name (:ns (meta v))) "/" (:name (meta v))) "game." ""))
@@ -52,28 +43,17 @@
              (serialize [_])
              (initial-data [_])))
 
-
-; TODO dont need vars here, because this is a function? why is it a function anyway?
 (defn- session-components []
   (map #(vector @% (make-type %))
        [; resets all map data -> do it before creating maps => TODO put both in one maps-session-component?
         #'game.maps.data/state
-
         ; create maps before putting entities in them
         #'game.player.session-data/state
-
         ; resets all entity data -> do it before addding entities
         #'game.db/state
-
-        ; reset cell-change-listeners before adding entities, because entities are listeners
-        ; => TODO do @ map
-        #'game.maps.cell-grid/state
-
         #'game.ui.inventory-window/state
-
         ; adding entities (including player-entity)
         #'game.maps.load/state
-
         ; now the order of initialisation does not matter anymore
         #'game.ui.action-bar/state
         #'game.screens.options/state

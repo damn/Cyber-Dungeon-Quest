@@ -15,21 +15,6 @@
             [game.maps.cell-grid :refer (get-bodies-at-position)]
             [game.player.entity :refer (player-entity)]))
 
-(def show-entity-props-on-mouseover false)
-
-; * clickable text
-; * hp bar
-; * sleeping aggro range
-; * debug show id
-; * show selection outline
-
-#_(db/defctypefn :render-debug :mouseover? [entity* [x y]]
-  (when show-entity-props-on-mouseover
-    (g/render-readable-text x y
-                            {:centerx true :centery true}
-                            ^{:scale 1.5}
-                            [(str "id " (:id entity*))])))
-
 (def ^:private outline-alpha 0.4)
 (color/defrgb ^:private enemy-color    1 0 0 outline-alpha)
 (color/defrgb ^:private friendly-color 0 1 0 outline-alpha)

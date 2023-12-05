@@ -20,12 +20,6 @@
      :pretty-name "First Level"
      :tiled-map tiled-map
      :start-position start-position
-     :load-content (fn []
-                     #_(doseq [p stuff-posis]
-                         (create-chest p)))
+     :load-content (fn [])
      :rand-item-max-lvl 1
-     :spawn-monsters (fn []
-                       #_(spawn-monsters
-                          techgy-groups
-                          :maxno 4
-                          :champions false))}))
+     :spawn-monsters (fn [])}))

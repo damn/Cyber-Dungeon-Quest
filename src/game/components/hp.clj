@@ -44,29 +44,3 @@
 
 (defn dead? [{:keys [hp]}]
   (zero? (hp 0)))
-
-(defn- regenerate [val-max delta percent-reg-per-second]
-  #_(apply-val val-max
-               (->
-                percent-reg-per-second
-                (/ 100)         ; percent -> multiplier
-                ; TODO no :max, its vector now
-                (* (:max data)) ; in 1 second
-                (/ 1000)        ; in 1 ms
-                (* delta))))
-
-#_(defcomponent :hp-regen
-  (tick [_ {{:keys [reg-per-second]} :hp-regen :as entity*} delta]
-    (update-in entity* [:hp] regenerate delta reg-per-second)))
-
-(defn hp-regen-component [percent-reg-per-second]
-  {:hp-regen
-   {:reg-per-second percent-reg-per-second}})
-
-#_(defcomponent :mana-regen
-  (tick [_ {{:keys [reg-per-second]} :mana-regen :as entity*} delta]
-    (update entity* :mana regenerate delta reg-per-second)))
-
-(defn mana-regen-component [percent-reg-per-second]
-  {:mana-regen
-   {:reg-per-second percent-reg-per-second}})

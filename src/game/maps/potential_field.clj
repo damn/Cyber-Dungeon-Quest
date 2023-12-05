@@ -126,12 +126,6 @@
       (update-faction-potential-field faction
                                       entities))))
 
-; TODO for doors -> regenerate field on cell blocks change
-#_(add-cell-blocks-changed-listener
-   (fn []
-     (assoc-in! entity [:potential-field :last-tile] nil)
-     (try-generate entity)))
-
 ;; MOVEMENT AI
 
 (let [order (grid/get-8-neighbour-positions [0 0])]
@@ -240,14 +234,6 @@
 ; -> render on-screen tile stuff
 ; -> I just use render-on-map and use tile coords
 ; -> I need the current viewed tiles x,y,w,h
-
-#_(defn render-potential-field-info [leftx topy xrect yrect cell]
-    (when-let [dist (distance-to cell)]
-      (comment
-       (let [ratio (/ dist max-iterations)]
-         (shape-drawer/filled-rectangle leftx topy 1 1 ; FIXME scale ok for map rendering?
-                                        (color/rgb (- 1 ratio) 0 0 0.5))))
-      #_(g/draw-string xrect yrect (int dist))))
 
 #_(let [a 0.5]
   (color/defrgb transp-red 1 0 0 a)

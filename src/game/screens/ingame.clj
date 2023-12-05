@@ -101,7 +101,7 @@
        ; or drop it automatically when dead?
        (:item-on-cursor @player-entity) (inventory/put-item-on-ground)
        (some actor/visible? windows) (run! actor/set-invisible windows)
-       (dead? @player-entity) (if-not false ;#_(try-revive-player)
+       (dead? @player-entity) (if-not false
                                 (app/set-screen :game.screens.main))
        :else (app/set-screen :game.screens.options))))
   (when (input/is-key-pressed? :TAB)

@@ -106,36 +106,7 @@
 (defcomponent :default-monster-death _
   (entity/destroy! [_ entity]
     (audiovisual/create! (:position @entity)
-                         :creature/die-effect)
-    #_(let [position (:position @entity)]
-        (rand/if-chance 20
-                        (let [item-name (-> monster-drop-table
-                                            rand/get-rand-weighted-item
-                                            rand/get-rand-weighted-item)]
-                          ; TODO pass item instance
-                          (item-entity/create! position item-name)))
-        (rand/if-chance 25
-                        (create-rand-item position :max-lvl (:level @entity))))))
-
-; TODO use defrecord pass
-; can be done automatically @ x.db ?
-#_(defrecord Entity [id
-                     is-player
-                     position
-
-                     ; body:
-                     width
-                     height
-                     half-width
-                     half-height
-                     is-solid
-
-                     speed
-
-                     hp
-                     mana
-                     z-order])
-
+                         :creature/die-effect)))
 
 ; TODO do n ot assoc left-bottom and position
 ; -> create entity and afterwards check if valid-position? of the entity !

@@ -105,31 +105,3 @@
                             (update-position-projectile e delta v)
                             (update-position-solid      e delta v))]
           (doseq-entity e entity/moved! v))))))
-
-;; Teleporting
-
-; TODO adjacent-cells could be nil -> :middle @cell -> NPE
-#_(defn- find-nearby-valid-location [entity posi]
-    ; todo left-bottom is in body now.
-  (when-let [cell (find-first #(valid-position? (assoc-in @entity [:body :left-bottom] (:position @%)))
-                              (cached-get-adjacent-cells (get-cell posi)))]
-    (:middle @cell)))
-
-(defn teleport
-  "searches nearby positions for a free one if target is blocked
-   if none exists -> just teleports to the blocked position."
-  [entity posi]
-  ; annoying I have to calculate left-bottom ... is there a shortcut to add
-  ; left-bottom & position to entity* ?
-  ;
-
-  #_(change-position! entity
-                    (if (valid-position? entity) ; TODO assoc entity* positions
-                      posi
-                      (if-let [valid (find-nearby-valid-location entity posi)]
-                        valid
-                        posi)))
-
-  ; TODO here also ! 3 times called ! DRY
-  ; (call-on-position-changed-triggers entity)
-  )

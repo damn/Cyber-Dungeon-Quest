@@ -11,7 +11,6 @@
             [gdl.scene2d.stage :as stage]
             [utils.core :refer [find-first]]
             [game.session :as session]
-            [game.ui.mouseover-entity :refer (show-entity-props-on-mouseover)]
             ;[game.line-of-sight :refer (player-line-of-sight-checks)]
             [game.components.body :refer (show-body-bounds)]
             [game.components.skills :refer (show-skill-icon-on-active)]))
@@ -44,7 +43,6 @@
 ; * add: potential field (monster, player)
 ; * make separate DEBUG 'd' state , do not show this on options state
 (def ^:private debug-flags [;(debug-flag #'player-line-of-sight-checks)
-                            (debug-flag #'show-entity-props-on-mouseover)
                             (debug-flag #'show-body-bounds)
                             (debug-flag #'show-skill-icon-on-active)
                             ])
