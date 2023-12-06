@@ -10,9 +10,6 @@
 (defmethod clickable/on-clicked :item [stage entity]
   (let [item (:item @entity)]
     (cond
-     (:item-on-cursor @player-entity)
-     nil
-
      (actor/visible? (:inventory-window stage))
      (do
       (audio/play "sounds/bfxr_takeit.wav")
