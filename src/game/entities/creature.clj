@@ -88,7 +88,7 @@
             :hp hp
             :mana 11
             :is-flying false ; TODO not used yet @ movement code (flying?) -> grep for 'is-' ...
-            :animation (animation/create images :frame-duration 250 :looping true)
+            :animation (animation/create images :frame-duration 250 :looping? true)
             :z-order (if (:is-flying properties) ; not existing, :flying?
                        :flying
                        :ground)}

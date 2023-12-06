@@ -34,15 +34,15 @@
 (defn- serialize-image [image]
   (select-keys image [:file :sub-image-bounds]))
 
-(defn- deserialize-animation [{:keys [frames frame-duration looping]}]
+(defn- deserialize-animation [{:keys [frames frame-duration looping?]}]
   (animation/create (map deserialize-image frames)
                     :frame-duration frame-duration
-                    :looping looping))
+                    :looping? looping?))
 
 (defn- serialize-animation [animation]
   (-> animation
       (update :frames #(map serialize-image %))
-      (select-keys [:frames :frame-duration :looping])))
+      (select-keys [:frames :frame-duration :looping?])))
 
 (defn- deserialize [data]
   (->> data

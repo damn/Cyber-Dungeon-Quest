@@ -4,7 +4,7 @@
             [game.entity :as entity]))
 
 (defn- assoc-frame! [e]
-  (swap! e #(assoc % :image (animation/get-frame (:animation %)))))
+  (swap! e #(assoc % :image (animation/current-frame (:animation %)))))
 
 (defcomponent :animation animation
   (entity/create! [_ e]
@@ -12,4 +12,4 @@
   (entity/tick! [_ e _delta]
     (assoc-frame! e))
   (entity/tick [_ delta]
-    (animation/update animation delta)))
+    (animation/tick animation delta)))
