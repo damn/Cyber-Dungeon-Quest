@@ -26,15 +26,15 @@
     ; default font or game font ?
     ; or just highlight that entity somehow
     ; or ignore @ normal game , at debug highlight and stop game.
-    (font/draw-text {:font media/font :x x,:y y,:text (str "[RED]" info)})))
+    (font/draw-text context {:x x,:y y,:text (str "[RED]" info)})))
 
 ; if lightning => pass render-on-map argument 'colorsetter' by default
 ; on all render-systems , has to be handled & everything has to have body then?
 ; so all have line of sight check & colors applied as of position ?
-(defn- render-entity* [system entity*]
+(defn- render-entity* [system context entity*]
   (doseq [component entity*]
     (try
-     (system component entity*)
+     (system component context entity*)
      (catch Throwable t
        (println "Render error for:" [component (:id entity*) system])
        (throw t)
@@ -43,7 +43,7 @@
 ; TODO throw/catch renderfn missing & pass body ?
 ; TODO position needed? entity* has it in keys, we might use bottom-left
 
-(defn render-entities* [entities*]
+(defn render-entities* [context entities*]
   (doseq [[_ entities*] (sort-by-order (group-by :z-order entities*)
                                        first
                                        render-on-map-order)
@@ -52,6 +52,6 @@
                   entity/render-above
                   entity/render-info]
           entity* entities*]
-    (render-entity* system entity*))
+    (render-entity* system context entity*))
   (doseq [entity* entities*]
-    (render-entity* entity/render-debug entity*)))
+    (render-entity* entity/render-debug context entity*)))

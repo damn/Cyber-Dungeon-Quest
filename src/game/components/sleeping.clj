@@ -5,7 +5,6 @@
             [gdl.graphics.color :as color]
             [gdl.graphics.shape-drawer :as shape-drawer]
             [game.utils.counter :as counter]
-            [game.media :as media]
             [game.db :as db]
             [game.entity :as entity]
             [game.components.faction :as faction]
@@ -35,14 +34,14 @@
   (entity/after-create! [_ entity]
     (swap! entity modifier/apply-modifiers modifiers))
 
-  (entity/render-above [_ {[x y] :position :keys [body]}]
-    (font/draw-text {:font media/font
-                     :text "zzz"
+  (entity/render-above [_ context {[x y] :position :keys [body]}]
+    (font/draw-text context
+                    {:text "zzz"
                      :x x
                      :y (+ y (:half-height body))
                      :up? true}))
 
-  (entity/render-info [_ {:keys [position mouseover?]}]
+  (entity/render-info [_ context {:keys [position mouseover?]}]
     (when mouseover?
       (shape-drawer/circle position aggro-range color/yellow))))
 

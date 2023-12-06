@@ -3,14 +3,13 @@
             [gdl.graphics.font :as font]
             [gdl.vector :as v]
             [game.entity :as entity]
-            [game.media :as media]
             [game.player.entity :refer (player-entity)]))
 
 (defcomponent :clickable {:keys [text]}
-  (entity/render-default [_ {[x y] :position :keys [mouseover? body]}]
+  (entity/render-default [_ context {[x y] :position :keys [mouseover? body]}]
     (when (and mouseover? text)
-      (font/draw-text {:font media/font
-                       :text text
+      (font/draw-text context
+                      {:text text
                        :x x
                        :y (+ y (:half-height body))
                        :up? true}))))

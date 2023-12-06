@@ -7,6 +7,7 @@
             [game.utils.lightning :refer [tile-color-setter]]
             [game.line-of-sight :refer (in-line-of-sight?)]
             [game.maps.data :refer [get-current-map-data]]
+            [game.media :as media]
             [game.render :as render]
             [game.player.status-gui :refer [render-player-hp-mana]]
             [game.utils.msg-to-player :refer [render-message-to-player]]
@@ -60,9 +61,15 @@
       #_(when (:monster @cell)
           (@#'g/draw-string x y (str (:id @(:monster @cell))) 1)))))
 
+(defn- create-graphics-context []
+  {:default-font media/font
+   :unit-scale gdl.graphics.unit-scale/*unit-scale*
+   :batch gdl.graphics.batch/batch})
+
 (defn- render-map-content []
   #_(tile-debug)
-  (render/render-entities* (visible-entities*))
+  (render/render-entities* (create-graphics-context)
+                           (visible-entities*))
   #_(geom-test)
   ; highlight current mouseover-tile
   #_(let [[x y] (mapv int (world/mouse-position))
@@ -80,7 +87,7 @@
 
 ; TODO use scene2d
 (defn- render-gui []
-  (render-player-hp-mana)
+  (render-player-hp-mana (create-graphics-context))
   (render-message-to-player))
 
 (defn render-game []

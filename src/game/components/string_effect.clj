@@ -4,7 +4,6 @@
             [gdl.graphics.world :as world]
             [game.utils.counter :as counter]
             [game.ui.config :refer [hpbar-height-px]]
-            [game.media :as media]
             [game.entity :as entity]))
 
 (defcomponent :string-effect {:keys [text counter] :as this}
@@ -13,9 +12,9 @@
   (entity/tick! [[k _] e delta]
     (when (counter/stopped? counter)
       (swap! e dissoc k)))
-  (entity/render-above [_ {[x y] :position :keys [body]}]
-    (font/draw-text {:font media/font
-                     :text text
+  (entity/render-above [_ context {[x y] :position :keys [body]}]
+    (font/draw-text context
+                    {:text text
                      :x x
                      :y (+ y (:half-height body)
                            (world/pixels->world-units hpbar-height-px))

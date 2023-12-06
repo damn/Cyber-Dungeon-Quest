@@ -110,6 +110,6 @@
     (when is-solid
       (remove-from-occupied-cells! e)
       (set-occupied-cells! e)))
-  (entity/render-debug [_ e*]
+  (entity/render-debug [_ context e*]
     (when show-body-bounds
       (draw-bounds body))))

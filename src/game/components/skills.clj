@@ -65,7 +65,7 @@
 (def show-skill-icon-on-active true)
 
 (defcomponent :skills skills
-  (entity/render-info [_ {:keys [position active-skill?] :as entity*}]
+  (entity/render-info [_ context {:keys [position active-skill?] :as entity*}]
     (doseq [{:keys [id image effect]} (vals skills)
             :when (= id active-skill?)]
       (when show-skill-icon-on-active

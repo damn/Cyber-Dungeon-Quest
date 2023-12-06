@@ -4,7 +4,7 @@
             [game.entity :as entity]))
 
 (defcomponent :line-render {:keys [thick? end color]}
-  (entity/render-default [_ {:keys [position]}]
+  (entity/render-default [_ context {:keys [position]}]
     (if thick?
       (shape-drawer/with-line-width 4
         (shape-drawer/line position end color))
