@@ -21,12 +21,12 @@
 ; TODO valid params direction has to be  non-nil (entities not los player ) ?
 
 ; TODO pass effect params (target ..)
-(defmethod ai-should-use? :projectile [_ entity]
-  (let [target (:target (:effect-params (:skillmanager @entity)))]
-    (and (not (projectile-path-blocked? (:position @entity) ; TODO test
+(defmethod ai-should-use? :projectile [_ entity*]
+  (let [target (:target (:effect-params (:skillmanager entity*)))]
+    (and (not (projectile-path-blocked? (:position entity*) ; TODO test
                                         (:position @target)))
          ; TODO not taking into account body sizes
-         (< (v/distance (:position @entity)
+         (< (v/distance (:position entity*)
                         (:position @target))
             maxrange))))
 

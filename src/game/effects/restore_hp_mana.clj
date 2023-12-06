@@ -4,9 +4,9 @@
             [game.effect :as effect]
             [game.components.skills :refer (ai-should-use?)]))
 
-(defmethod ai-should-use? :restore-hp-mana [_ entity]
-  (or (lower-than-max? (:mana @entity))
-      (lower-than-max? (:hp   @entity))))
+(defmethod ai-should-use? :restore-hp-mana [_ entity*]
+  (or (lower-than-max? (:mana entity*))
+      (lower-than-max? (:hp   entity*))))
 
 ; TODO make with 'target' then can use as hit-effect too !
 (effect/defeffect :restore-hp-mana

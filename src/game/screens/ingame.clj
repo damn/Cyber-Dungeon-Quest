@@ -153,16 +153,16 @@
       (set-movement! (v/direction (:position @player-entity)
                                   (world/mouse-position)))))))
 
-(defmethod skill-component/choose-skill :player [entity]
+(defmethod skill-component/choose-skill :player [entity*]
   (when-let [skill-id @action-bar/selected-skill-id]
     ; TODO no skill selected and leftmouse -> also show msg to player/sound
-    (when (and (not (:item-on-cursor @entity))
+    (when (and (not (:item-on-cursor entity*))
                (not (clickable/clickable-mouseover-entity? (get-mouseover-entity)))
                (or (input/is-leftm-pressed?)
                    (input/is-leftbutton-down?)))
       ; TODO directly pass skill here ...
       ; TODO should get from entity :skills ! not properties ... ?
-      (let [state (skill-component/usable-state @entity (properties/get skill-id))]
+      (let [state (skill-component/usable-state entity* (properties/get skill-id))]
         (if (= state :usable)
           skill-id
           #_(println (str "Skill usable state not usable: " state))

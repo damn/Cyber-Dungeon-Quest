@@ -24,9 +24,9 @@
      maxrange))
 
 ; TODO pass effect-params here.
-(defmethod ai-should-use? :target-entity [[effect-id effect-value] entity]
-  (in-range? @entity
-             @(:target (:effect-params (:skillmanager @entity)))
+(defmethod ai-should-use? :target-entity [[effect-id effect-value] entity*]
+  (in-range? entity*
+             @(:target (:effect-params (:skillmanager entity*)))
              (:maxrange effect-value)))
 
 ; TODO use at projectile & also adjust rotation

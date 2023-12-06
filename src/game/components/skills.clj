@@ -119,20 +119,20 @@
 
 
 ; TODO move to effect/
-(defmulti ai-should-use? (fn [[effect-type effect-value] entity] effect-type))
-(defmethod ai-should-use? :default [_ entity]
+(defmulti ai-should-use? (fn [[effect-type effect-value] entity*] effect-type))
+(defmethod ai-should-use? :default [_ entity*]
   true)
 
-(defmulti choose-skill (fn [entity] (:choose-skill-type @entity)))
+(defmulti choose-skill :choose-skill-type)
 
-(defmethod choose-skill :npc [entity]
-  (->> @entity
+(defmethod choose-skill :npc [entity*]
+  (->> entity*
        :skills
        vals
        (sort-by #(or (:cost %) 0))
        reverse
-       (filter #(and (= :usable (usable-state @entity %))
-                     (ai-should-use? (:effect %) entity))) ; TODO pass (effect-params @entity)
+       (filter #(and (= :usable (usable-state entity* %))
+                     (ai-should-use? (:effect %) entity*))) ; TODO pass (effect-params @entity)
        first
        :id))
 
@@ -183,7 +183,7 @@
 
 (defn- check-start! [entity]
   (set-effect-params! entity)
-  (let [skill (when-let [id (choose-skill entity)]
+  (let [skill (when-let [id (choose-skill @entity)]
                 (id (:skills @entity)))]
     (when skill
       (assert (= :usable (usable-state @entity skill)))

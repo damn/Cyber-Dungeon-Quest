@@ -6,7 +6,6 @@
             [gdl.scene2d.actor :as actor]
             [game.session :as session]
             [game.skills.core :as skills]
-            [game.components.skills :refer (choose-skill)]
             [game.player.entity :refer (player-entity)])
   (:import (com.badlogic.gdx.scenes.scene2d.ui HorizontalGroup ButtonGroup Button)))
 
