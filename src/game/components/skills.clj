@@ -46,7 +46,7 @@
   (:effect-params (:skillmanager entity*)))
 
 ; TODO draw one frame more in red after effect was done ...
-(defn- draw-skill-icon [icon entity* [x y]]
+(defn- draw-skill-icon [context icon entity* [x y]]
   (let [[width height] (image/world-unit-dimensions icon)
         _ (assert (= width height))
         radius (/ width 2)
@@ -60,7 +60,7 @@
                          0 ; start-angle
                          (* (counter/ratio action-counter) 360) ; degree
                          (color/rgb 1 1 1 0.5))
-    (image/draw icon [(- x radius) y])))
+    (image/draw context icon [(- x radius) y])))
 
 (def show-skill-icon-on-active true)
 
@@ -69,7 +69,7 @@
     (doseq [{:keys [id image effect]} (vals skills)
             :when (= id active-skill?)]
       (when show-skill-icon-on-active
-        (draw-skill-icon image entity* position)) ; separate component, can deactivate w. component manager tool
+        (draw-skill-icon context image entity* position)) ; separate component, can deactivate w. component manager tool
       (effect/render-info effect (effect-params entity*)))))
 
 (defn- update-cooldown [skill delta]

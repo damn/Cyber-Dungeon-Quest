@@ -11,6 +11,7 @@
             [gdl.scene2d.stage :as stage]
             [utils.core :refer [find-first]]
             [game.session :as session]
+            [game.context :as context]
             ;[game.line-of-sight :refer (player-line-of-sight-checks)]
             [game.components.body :refer (show-body-bounds)]
             [game.components.skills :refer (show-skill-icon-on-active)]))
@@ -111,7 +112,8 @@
   (lc/render [_]
     (gui/render
      (fn []
-       (image/draw-centered menu-bg-image
+       (image/draw-centered (context/get-context)
+                            menu-bg-image
                             [(/ (gui/viewport-width)  2)
                              (/ (gui/viewport-height) 2)])
        (stage/draw stage batch))))

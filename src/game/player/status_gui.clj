@@ -31,8 +31,8 @@
   ; * rahmen
   ; * sub-image
   ; * label
-  (image/draw rahmen x y)
-  (image/draw (image/get-sub-image contentimg 0 0 (* rahmenw (val-max-ratio minmaxval)) rahmenh) x y)
+  (image/draw context rahmen x y)
+  (image/draw context (image/get-sub-image contentimg 0 0 (* rahmenw (val-max-ratio minmaxval)) rahmenh) x y)
   (render-infostr-on-bar context (str (readable-number (minmaxval 0)) "/" (minmaxval 1) " " name) y rahmenh))
 
 (defn- render-player-stats [context]

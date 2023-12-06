@@ -9,6 +9,7 @@
             [gdl.graphics.gui :as gui]
             [gdl.graphics.image :as image]
             [gdl.graphics.batch :refer [batch]]
+            [game.context :as context]
             [game.screens.load-session :refer (is-loaded-character)]
             [game.player.session-data :refer (current-character-name)]))
 
@@ -50,7 +51,8 @@
   (lc/render [_]
     (gui/render
      (fn []
-       (image/draw-centered bg-image
+       (image/draw-centered (context/get-context)
+                            bg-image
                             [(/ (gui/viewport-width)  2)
                              (/ (gui/viewport-height) 2)])
        (stage/draw stage batch))))

@@ -23,6 +23,7 @@
             [game.components.clickable :as clickable]
             [game.components.hp :refer (dead?)]
             [game.components.skills :as skill-component]
+            [game.context :as context]
             [game.player.entity :refer (player-entity)]
             game.update-ingame
             game.render-ingame))
@@ -33,7 +34,7 @@
                   (when-let [item (:item-on-cursor @player-entity)]
                     ; windows keep changing z-index when selected, or put all windows in 1 group and this actor another group
                     (.toFront ^com.badlogic.gdx.scenes.scene2d.Actor this)
-                    (image/draw-centered (:image item) (gui/mouse-position))))))
+                    (image/draw-centered (context/get-context) (:image item) (gui/mouse-position))))))
 
 (defn- create-stage []
   (let [debug-window       (debug-window/create)
