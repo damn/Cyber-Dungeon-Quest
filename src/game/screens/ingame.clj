@@ -198,7 +198,8 @@
   (lc/hide [_] (input/set-processor nil))
   (lc/render [_]
     (game.render-ingame/render-game batch)
-    (gui/render (fn [_unit-scale]
+    (gui/render batch
+                (fn [_unit-scale]
                   (stage/draw stage batch))))
   (lc/tick [_ delta]
     (handle-key-input stage)

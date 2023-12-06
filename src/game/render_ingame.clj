@@ -89,5 +89,5 @@
   (tiled/render-map batch
                     (:tiled-map (get-current-map-data))
                     #'tile-color-setter)
-  (world/render render-map-content)
-  (gui/render render-gui))
+  (world/render batch render-map-content)
+  (gui/render batch render-gui))

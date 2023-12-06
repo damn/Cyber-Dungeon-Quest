@@ -65,7 +65,7 @@
     (set-zoom @zoom-setting))
   (lc/render [_]
     (render-minimap batch)
-    (world/render render-map-level))
+    (world/render batch render-map-level))
   (lc/tick [_ delta]
     (when (or (input/is-key-pressed? :TAB)
               (input/is-key-pressed? :ESCAPE))

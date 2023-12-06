@@ -192,8 +192,10 @@
     (tiled/render-map batch
                       @current-tiled-map
                       (constantly color/white)) ; TODO colorsetter optional.
-    (world/render render-on-map)
-    (gui/render (fn [_unit-scale]
+    (world/render batch
+                  render-on-map)
+    (gui/render batch
+                (fn [_unit-scale]
                   (stage/draw stage batch))))
   (lc/tick [_ delta]
     (stage/act stage delta)

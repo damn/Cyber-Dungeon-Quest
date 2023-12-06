@@ -110,13 +110,13 @@
   (lc/show [_] (input/set-processor stage))
   (lc/hide [_] (input/set-processor nil))
   (lc/render [_]
-    (gui/render
-     (fn [unit-scale]
-       (image/draw-centered (context/get-context unit-scale)
-                            menu-bg-image
-                            [(/ (gui/viewport-width)  2)
-                             (/ (gui/viewport-height) 2)])
-       (stage/draw stage batch))))
+    (gui/render batch
+                (fn [unit-scale]
+                  (image/draw-centered (context/get-context unit-scale)
+                                       menu-bg-image
+                                       [(/ (gui/viewport-width)  2)
+                                        (/ (gui/viewport-height) 2)])
+                  (stage/draw stage batch))))
   (lc/tick [_ delta]
     (stage/act stage delta)
     (when (input/is-key-pressed? :ESCAPE)

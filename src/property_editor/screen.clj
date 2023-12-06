@@ -235,6 +235,7 @@
   (lc/dispose [_] (dispose stage))
   (lc/show [_] (input/set-processor stage))
   (lc/hide [_] (input/set-processor nil))
-  (lc/render [_] (gui/render (fn [_unit-scale]
+  (lc/render [_] (gui/render batch
+                             (fn [_unit-scale]
                                (stage/draw stage batch))))
   (lc/tick [_ delta] (stage/act stage delta)))
