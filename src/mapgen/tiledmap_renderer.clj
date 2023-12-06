@@ -189,7 +189,9 @@
   (lc/hide [_]
     (input/set-processor nil))
   (lc/render [_]
-    (tiled/render-map @current-tiled-map (constantly color/white)) ; TODO colorsetter optional.
+    (tiled/render-map batch
+                      @current-tiled-map
+                      (constantly color/white)) ; TODO colorsetter optional.
     (world/render render-on-map)
     (gui/render (fn [_unit-scale]
                   (stage/draw stage batch))))

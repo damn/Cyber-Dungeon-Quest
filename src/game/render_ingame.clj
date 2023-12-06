@@ -85,8 +85,9 @@
   (render-player-hp-mana (context/get-context unit-scale))
   (render-message-to-player))
 
-(defn render-game []
-  (tiled/render-map (:tiled-map (get-current-map-data))
+(defn render-game [batch]
+  (tiled/render-map batch
+                    (:tiled-map (get-current-map-data))
                     #'tile-color-setter)
   (world/render render-map-content)
   (gui/render render-gui))

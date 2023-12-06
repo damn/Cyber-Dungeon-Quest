@@ -197,7 +197,7 @@
   (lc/show [_] (input/set-processor stage))
   (lc/hide [_] (input/set-processor nil))
   (lc/render [_]
-    (game.render-ingame/render-game)
+    (game.render-ingame/render-game batch)
     (gui/render (fn [_unit-scale]
                   (stage/draw stage batch))))
   (lc/tick [_ delta]

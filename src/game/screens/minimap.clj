@@ -4,6 +4,7 @@
             [gdl.lc :as lc]
             [gdl.input :as input]
             [gdl.tiled :as tiled]
+            [gdl.graphics.batch :refer [batch]]
             [gdl.graphics.color :as color]
             [gdl.graphics.shape-drawer :as shape-drawer]
             [gdl.graphics.world :as world]
@@ -50,8 +51,9 @@
 ; TODO for debugging I want to zoom -> InputAdapter scroll/touch/gestures ??
 ; (set! (.zoom @#'gdl.graphics/world-camera) 0.5)
 
-(defn- render-minimap []
-  (tiled/render-map (:tiled-map (get-current-map-data))
+(defn- render-minimap [batch]
+  (tiled/render-map batch
+                    (:tiled-map (get-current-map-data))
                     minimap-color-setter))
 
 (defn- render-map-level [unit-scale]
@@ -62,7 +64,7 @@
     (reset! zoom-setting (calculate-zoom))
     (set-zoom @zoom-setting))
   (lc/render [_]
-    (render-minimap)
+    (render-minimap batch)
     (world/render render-map-level))
   (lc/tick [_ delta]
     (when (or (input/is-key-pressed? :TAB)
