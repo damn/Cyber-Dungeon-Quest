@@ -7,7 +7,5 @@
   (entity/render-default [_ context {:keys [position body]}]
     (image/draw-rotated-centered context
                                  image
-                                 (if body
-                                   (:rotation-angle body)
-                                   0)
+                                 (if body (:rotation-angle body) 0)
                                  position)))
