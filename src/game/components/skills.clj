@@ -7,7 +7,7 @@
             [gdl.graphics.shape-drawer :as shape-drawer]
             [gdl.graphics.world :as world]
             [gdl.vector :as v]
-            [utils.core :refer [assoc-in! ->! mapvals]]
+            [utils.core :refer [mapvals]]
             [game.properties :as properties]
             [game.components.faction :as faction]
             [game.ui.mouseover-entity :refer (saved-mouseover-entity get-mouseover-entity)]
@@ -40,7 +40,7 @@
                                         (:position @target)))}))))
 
 (defn- set-effect-params! [entity]
-  (assoc-in! entity [:skillmanager :effect-params] (make-effect-params entity)))
+  (swap! entity assoc-in [:skillmanager :effect-params] (make-effect-params entity)))
 
 (defn- effect-params [entity*]
   (:effect-params (:skillmanager entity*)))
@@ -155,17 +155,19 @@
   (when-not (or (nil? (:cost skill))
                 (zero? (:cost skill)))
     (swap! entity update :mana apply-val #(- % (:cost skill))))
-  (->! entity
-       (assoc :active-skill? (:id skill))
-       (assoc-in [:skillmanager :action-counter] (counter/create (:action-time skill)))))
+  (swap! entity
+         #(-> %
+              (assoc :active-skill? (:id skill))
+              (assoc-in [:skillmanager :action-counter] (counter/create (:action-time skill))))))
 
-(defn- stop! [entity skill]
-  (->! entity
-       (dissoc :active-skill?)
-       (update :skillmanager dissoc :action-counter)
-       (assoc-in [:skillmanager :effect-params] nil)
-       (assoc-in [:skills (:active-skill? @entity) :cooling-down?] (when (:cooldown skill)
-                                                                     (counter/create (:cooldown skill))))))
+; TODO why need skill arg, stopping always active-skill ...
+(defn- stop [entity* skill]
+  (-> entity*
+      (dissoc :active-skill?)
+      (update :skillmanager dissoc :action-counter)
+      (assoc-in [:skillmanager :effect-params] nil)
+      (assoc-in [:skills (:active-skill? entity*) :cooling-down?] (when (:cooldown skill)
+                                                                    (counter/create (:cooldown skill))))))
 
 (defn- check-stop! [entity delta]
   (let [id (:active-skill? @entity)
@@ -174,11 +176,11 @@
         effect-params (effect-params @entity)
         effect (:effect skill)]
     (if-not (effect/valid-params? effect effect-params)
-      (stop! entity skill)
+      (swap! entity stop skill)
       (do
        (swap! entity update-in [:skillmanager :action-counter] counter/tick delta)
        (when (counter/stopped? (get-in @entity [:skillmanager :action-counter]))
-         (stop! entity skill)
+         (swap! entity stop skill)
          (effect/do! effect effect-params))))))
 
 (defn- check-start! [entity]
@@ -197,10 +199,10 @@
       (check-start! entity)))
   (entity/stun! [_ entity]
     (when-let [skill-id (:active-skill? @entity)]
-      (stop! entity (skill-id (:skills @entity))))))
+      (swap! entity stop (skill-id (:skills @entity))))))
 
 (defcomponent :skills _
   (entity/create! [[k v] entity]
-    (->! entity
-         (assoc :skillmanager {})
-         (update k #(zipmap % (map properties/get %))))))
+    (swap! entity (fn [e*] (-> e*
+                               (assoc :skillmanager {})
+                               (update k #(zipmap % (map properties/get %))))))))

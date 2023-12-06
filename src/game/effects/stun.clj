@@ -29,7 +29,7 @@
                     (and target)) ; TODO needs :speed/:skillmanager ?!
    :do! (fn [duration {:keys [target]}]
           (if (:stunned? @target)
-            (update-in! target [:stunned? :maxcnt] + duration)
+            (swap! target update-in [:stunned? :maxcnt] + duration)
             (do (doseq-entity target entity/stun!) ; TODO interrupt? (as sepearte ability also ? )
                 (swap! target modifier/apply-modifiers stun-modifiers)
                 (swap! target assoc :stunned? (counter/create duration)))))})

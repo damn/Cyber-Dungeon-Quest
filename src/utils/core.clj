@@ -37,12 +37,6 @@
     (assert (distinct-seq? ks) (str "not distinct keys: " (apply str (interpose "," ks)))))
   (apply merge maps))
 
-(defn assoc-in!  [a & args] (apply swap! a assoc-in  args))
-(defn update-in! [a & args] (apply swap! a update-in args))
-
-(defmacro ->! [a & forms]
-  `(swap! ~a #(-> % ~@forms)))
-
 (defn mapvals [f m]; in core !
   (into {} (for [[k v] m]
              [k (f v)])))

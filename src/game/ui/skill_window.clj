@@ -1,6 +1,5 @@
 (ns game.ui.skill-window
   (:require clojure.set
-            [utils.core :refer [->!]]
             [gdl.scene2d.ui :as ui]
             [game.properties :as properties]
             [game.components.skills :refer (assoc-skill has-skill?)]
@@ -17,9 +16,9 @@
 (defn- pressed-on-skill-in-menu [skill-id]
   (when (and (pos? (:free-skill-points @player-entity))
              (not (has-skill? @player-entity skill-id)))
-    (->! player-entity
-         (update :free-skill-points dec)
-         (update :skills assoc-skill skill-id))))
+    (swap! player-entity #(-> %
+                              (update :free-skill-points dec)
+                              (update :skills assoc-skill skill-id)))))
 
 (defn create []
   (let [window (ui/window :title "Skills"

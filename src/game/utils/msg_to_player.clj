@@ -1,18 +1,17 @@
 ; MOVE TO UI !
 ; TODO broken! not displaying anything...
 (ns game.utils.msg-to-player
-  (:require [utils.core :refer [assoc-in! update-in!]]
-            [game.session :as session]))
+  (:require [game.session :as session]))
 
 ; TODO use game.utils.counter instead
 (defn- reset-counter! [counter]
-  (assoc-in! counter [:current] 0))
+  (swap! counter assoc-in [:current] 0))
 
 (defn- update-counter
   "updates counter. if maxtime reached, resets current to 0 and returns the last current value,
    else returns nil."
   [counter delta]
-  (update-in! counter [:current] + delta)
+  (swap! counter update-in [:current] + delta)
   (let [{current :current maxtime :max} @counter]
     (when (and maxtime (>= current maxtime))
       (let [last-current current]

@@ -113,12 +113,12 @@
         last-state   [faction :tiles->entities]
         marked-cells [faction :marked-cells]]
     (when-not (= (get-in @cache last-state) tiles->entities)
-      (assoc-in! cache last-state tiles->entities)
+      (swap! cache assoc-in last-state tiles->entities)
       (doseq [cell (get-in @cache marked-cells)]
         (swap! cell dissoc faction))
-      (assoc-in! cache marked-cells (generate-potential-field
-                                     faction
-                                     tiles->entities)))))
+      (swap! cache assoc-in marked-cells (generate-potential-field
+                                          faction
+                                          tiles->entities)))))
 
 (defn update-potential-fields []
   (let [entities (get-entities-in-active-content-fields)]

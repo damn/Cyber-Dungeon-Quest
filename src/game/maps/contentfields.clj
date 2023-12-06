@@ -4,7 +4,6 @@
 ; why make this fields ?
 (ns game.maps.contentfields
   (:require [data.grid2d :as grid]
-            [utils.core :refer [assoc-in!]]
             [game.maps.data :refer (get-current-map-data)]
             [game.player.entity :refer (player-entity)]))
 
@@ -41,7 +40,7 @@
                        (get-field-idx-of-position (:position @entity)))]
     (when-not (= old-field new-field)
       (swap! (:entities new-field) conj entity)
-      (assoc-in! entity [:content-field] new-field)
+      (swap! entity assoc-in [:content-field] new-field)
       (when old-field
         (swap! (:entities old-field) disj entity)))))
 
