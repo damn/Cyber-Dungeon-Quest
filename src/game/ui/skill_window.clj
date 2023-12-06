@@ -3,7 +3,7 @@
             [utils.core :refer [->!]]
             [gdl.scene2d.ui :as ui]
             [game.properties :as properties]
-            [game.components.skills :refer (assoc-skill has-skill? choose-skill)]
+            [game.components.skills :refer (assoc-skill has-skill?)]
             [game.skills.core :as skills]
             [game.player.entity :refer (player-entity)]))
 
