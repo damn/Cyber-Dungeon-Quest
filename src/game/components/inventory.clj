@@ -59,23 +59,23 @@
   {:pre [(get-in inventory cell)]}
   (assoc-in inventory cell nil))
 
-(declare set-item-image-in-widget
-         remove-item-from-widget)
+(declare set-item-image-in-widget!
+         remove-item-from-widget!)
 
-(defn set-item [entity cell item]
+(defn set-item! [entity cell item]
   (swap! entity update :inventory inv-set-item cell item)
-  (when (:is-player @entity)
-    (set-item-image-in-widget cell item))
   (when (applies-modifiers? cell)
-    (swap! entity modifier/apply-modifiers (:modifiers item))))
+    (swap! entity modifier/apply-modifiers (:modifiers item)))
+  (when (:is-player @entity)
+    (set-item-image-in-widget! cell item)))
 
-(defn remove-item [entity cell]
+(defn remove-item! [entity cell]
   (let [item (get-in (:inventory @entity) cell)]
     (swap! entity update :inventory inv-remove-item cell)
-    (when (:is-player @entity)
-      (remove-item-from-widget cell))
     (when (applies-modifiers? cell)
-      (swap! entity modifier/reverse-modifiers (:modifiers item)))))
+      (swap! entity modifier/reverse-modifiers (:modifiers item)))
+    (when (:is-player @entity)
+      (remove-item-from-widget! cell))))
 
 (defn cell-in-use? [entity* cell] ; TODO naming (includes is-active check) ->
   (let [inventory (:inventory entity*)
@@ -89,26 +89,28 @@
        (:count item-b) ; TODO this is not required but can be asserted, all of one name should have count if others have count
        (= (:id item-a) (:id item-b))))
 
-(defn stack-item [entity cell item]
+; TODO no items which stack are available
+(defn stack-item! [entity cell item]
   (let [cell-item (get-in (:inventory @entity) cell)]
     (assert (stackable? item cell-item))
     ; TODO this doesnt make sense with modifiers ! (triggered 2 times if available)
     ; first remove and then place, just update directly  item ...
-    (remove-item entity cell)
-    (set-item entity cell (update cell-item :count + (:count item)))))
+    (remove-item! entity cell)
+    (set-item! entity cell (update cell-item :count + (:count item)))))
 
-(defn remove-one-item [entity cell]
+; TODO doesnt exist, stackable, usable items with action/skillbar thingy
+#_(defn remove-one-item [entity cell]
   (let [item (get-in (:inventory @entity) cell)]
     (if (and (:count item)
              (> (:count item) 1))
       (do
        ; TODO this doesnt make sense with modifiers ! (triggered 2 times if available)
        ; first remove and then place, just update directly  item ...
-       (remove-item entity cell)
-       (set-item entity cell (update item :count dec)))
-      (remove-item entity cell))))
+       (remove-item! entity cell)
+       (set-item! entity cell (update item :count dec)))
+      (remove-item! entity cell))))
 
-(defn- try-put-item-in
+(defn- try-put-item-in!
   "returns true when the item was picked up"
   [entity slot item]
   (let [inventory (:inventory @entity)
@@ -117,21 +119,21 @@
         [cell cell-item] (find-first (fn [[cell cell-item]] (stackable? item cell-item))
                                 cells-items)
         picked-up (if cell
-                    (do (stack-item entity cell item)
+                    (do (stack-item! entity cell item)
                         true)
                     (when-let [[empty-cell] (find-first (fn [[cell item]] (nil? item))
                                                      cells-items)]
                       (when-not (two-handed-weapon-and-shield-together? inventory empty-cell item)
-                        (set-item entity empty-cell item)
+                        (set-item! entity empty-cell item)
                         true)))]
     picked-up))
 
-(defn try-pickup-item [entity item]
+(defn try-pickup-item! [entity item]
   (let [slot (find-first #(= % (:slot item))
                          (keys (:inventory @entity)))]
     (or
-     (try-put-item-in entity slot item)
-     (try-put-item-in entity :bag item))))
+     (try-put-item-in! entity slot item)
+     (try-put-item-in! entity :bag item))))
 
 ; after-create-entity because try-pickup-item applies modifiers (skillmanager has to be initialised)
 (defcomponent :items items
@@ -139,4 +141,4 @@
     (swap! entity assoc :inventory empty-inventory)
     ;(swap! entity dissoc :items)
     (doseq [id items]
-      (try-pickup-item entity (properties/get id)))))
+      (try-pickup-item! entity (properties/get id)))))

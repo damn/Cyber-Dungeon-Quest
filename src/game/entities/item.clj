@@ -16,7 +16,7 @@
       (swap! entity assoc :destroyed? true)
       (swap! player-entity assoc :item-on-cursor item))
 
-     (inventory/try-pickup-item player-entity item)
+     (inventory/try-pickup-item! player-entity item)
      (do
       (audio/play "sounds/bfxr_pickup.wav")
       (swap! entity assoc :destroyed? true))

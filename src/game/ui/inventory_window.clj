@@ -52,7 +52,7 @@
      (do
       (audio/play "sounds/bfxr_takeit.wav")
       (swap! entity assoc :item-on-cursor item)
-      (inventory/remove-item entity cell))
+      (inventory/remove-item! entity cell))
 
      item-on-cursor
      (cond
@@ -63,7 +63,7 @@
         (complain-2h-weapon-and-shield!)
         (do
          (audio/play "sounds/bfxr_itemput.wav")
-         (inventory/set-item entity cell item-on-cursor)
+         (inventory/set-item! entity cell item-on-cursor)
          (swap! entity dissoc :item-on-cursor)))
 
       ; INCREMENT ITEM
@@ -71,7 +71,7 @@
            (inventory/stackable? item item-on-cursor))
       (do
        (audio/play "sounds/bfxr_itemput.wav")
-       (inventory/stack-item entity cell item-on-cursor)
+       (inventory/stack-item! entity cell item-on-cursor)
        (swap! entity dissoc :item-on-cursor))
 
       ; SWAP ITEMS
@@ -81,8 +81,8 @@
         (complain-2h-weapon-and-shield!)
         (do
          (audio/play "sounds/bfxr_itemput.wav")
-         (inventory/remove-item entity cell)
-         (inventory/set-item entity cell item-on-cursor)
+         (inventory/remove-item! entity cell)
+         (inventory/set-item! entity cell item-on-cursor)
          (swap! entity assoc :item-on-cursor item)))))))
 
 (declare ^:private slot->background
@@ -201,13 +201,13 @@
 (defn- get-image-widget ^Image [cell-widget]
   (.findActor ^Group cell-widget "image"))
 
-(defn- set-item-image-in-widget [cell item]
+(defn- set-item-image-in-widget! [cell item]
   (let [cell-widget (get-cell-widget cell)
         image-widget (get-image-widget cell-widget)]
     (.setDrawable image-widget (ui/texture-region-drawable (:texture (:image item))))
     (.addListener cell-widget (ui/text-tooltip #(items/text item)))))
 
-(defn- remove-item-from-widget [cell]
+(defn- remove-item-from-widget! [cell]
   (let [cell-widget (get-cell-widget cell)
         image-widget (get-image-widget cell-widget)
         ^TextTooltip tooltip (first (filter #(instance? TextTooltip %)
@@ -216,5 +216,5 @@
     (.hide tooltip)
     (.removeListener cell-widget tooltip)))
 
-(intern 'game.components.inventory 'set-item-image-in-widget set-item-image-in-widget)
-(intern 'game.components.inventory 'remove-item-from-widget remove-item-from-widget)
+(intern 'game.components.inventory 'set-item-image-in-widget! set-item-image-in-widget!)
+(intern 'game.components.inventory 'remove-item-from-widget! remove-item-from-widget!)

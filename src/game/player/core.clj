@@ -7,8 +7,6 @@
             [game.utils.msg-to-player :refer (show-msg-to-player)]))
 
 ; TODO player death & revive -> just create a new player entity ??
-
-
 ; TODO new session -> reset running state. (its paused)
 
 (defn player-death
