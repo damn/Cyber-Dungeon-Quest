@@ -34,7 +34,7 @@
                   (when-let [item (:item-on-cursor @player-entity)]
                     ; windows keep changing z-index when selected, or put all windows in 1 group and this actor another group
                     (.toFront ^com.badlogic.gdx.scenes.scene2d.Actor this)
-                    (image/draw-centered (context/get-context) (:image item) (gui/mouse-position))))))
+                    (image/draw-centered (context/get-context gui/unit-scale) (:image item) (gui/mouse-position))))))
 
 (defn- create-stage []
   (let [debug-window       (debug-window/create)
@@ -198,7 +198,8 @@
   (lc/hide [_] (input/set-processor nil))
   (lc/render [_]
     (game.render-ingame/render-game)
-    (gui/render #(stage/draw stage batch)))
+    (gui/render (fn [_unit-scale]
+                  (stage/draw stage batch))))
   (lc/tick [_ delta]
     (handle-key-input stage)
     (stage/act stage delta)

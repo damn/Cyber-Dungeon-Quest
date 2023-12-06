@@ -111,8 +111,8 @@
   (lc/hide [_] (input/set-processor nil))
   (lc/render [_]
     (gui/render
-     (fn []
-       (image/draw-centered (context/get-context)
+     (fn [unit-scale]
+       (image/draw-centered (context/get-context unit-scale)
                             menu-bg-image
                             [(/ (gui/viewport-width)  2)
                              (/ (gui/viewport-height) 2)])

@@ -14,7 +14,7 @@
   (lc/show [_]
     (reset! render-once false))
   (lc/render [_]
-    (gui/render (fn []
+    (gui/render (fn [_unit-scale]
                   (reset! render-once true)
                   #_(font/draw-text "Loading..."
                                     (/ (gui/viewport-width) 2)

@@ -54,7 +54,7 @@
   (tiled/render-map (:tiled-map (get-current-map-data))
                     minimap-color-setter))
 
-(defn- render-map-level []
+(defn- render-map-level [unit-scale]
   (shape-drawer/filled-circle (world/camera-position) 0.5 color/green)) ; render player..
 
 (defmodule _

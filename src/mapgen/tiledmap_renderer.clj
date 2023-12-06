@@ -77,7 +77,7 @@
 
 (def ^:private show-area-level-colors true)
 
-(defn- render-on-map []
+(defn- render-on-map [_unit-scale]
   (let [visible-tiles (world/visible-tiles)]
     (when show-area-level-colors
       (if @current-start-positions
@@ -191,7 +191,8 @@
   (lc/render [_]
     (tiled/render-map @current-tiled-map (constantly color/white)) ; TODO colorsetter optional.
     (world/render render-on-map)
-    (gui/render #(stage/draw stage batch)))
+    (gui/render (fn [_unit-scale]
+                  (stage/draw stage batch))))
   (lc/tick [_ delta]
     (stage/act stage delta)
     (when (input/is-key-pressed? :ESCAPE)

@@ -61,9 +61,9 @@
       #_(when (:monster @cell)
           (@#'g/draw-string x y (str (:id @(:monster @cell))) 1)))))
 
-(defn- render-map-content []
+(defn- render-map-content [unit-scale]
   #_(tile-debug)
-  (render/render-entities* (context/get-context)
+  (render/render-entities* (context/get-context unit-scale)
                            (visible-entities*))
   #_(geom-test)
   ; highlight current mouseover-tile
@@ -81,8 +81,8 @@
     (str (float tile-x) " " (float tile-y))))
 
 ; TODO use scene2d
-(defn- render-gui []
-  (render-player-hp-mana (context/get-context))
+(defn- render-gui [unit-scale]
+  (render-player-hp-mana (context/get-context unit-scale))
   (render-message-to-player))
 
 (defn render-game []
