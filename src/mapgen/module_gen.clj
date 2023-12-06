@@ -1,6 +1,5 @@
 (ns mapgen.module-gen
   (:require [data.grid2d :as grid]
-            [gdl.graphics :as g]
             [gdl.tiled :as tiled]
             [game.properties :as properties]
             [mapgen.utils :as utils]
