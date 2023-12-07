@@ -115,14 +115,13 @@
   [entity slot item]
   (let [inventory (:inventory @entity)
         cells-items (cells-and-items inventory slot)
-
         [cell cell-item] (find-first (fn [[cell cell-item]] (stackable? item cell-item))
-                                cells-items)
+                                     cells-items)
         picked-up (if cell
                     (do (stack-item! entity cell item)
                         true)
                     (when-let [[empty-cell] (find-first (fn [[cell item]] (nil? item))
-                                                     cells-items)]
+                                                        cells-items)]
                       (when-not (two-handed-weapon-and-shield-together? inventory empty-cell item)
                         (set-item! entity empty-cell item)
                         true)))]
