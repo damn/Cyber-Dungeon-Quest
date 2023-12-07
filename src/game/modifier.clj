@@ -16,9 +16,7 @@
   (let [modifier-def (get modifier-definitions modifier-key)
         modify (fn-k modifier-def)]
     (assert modifier-def (str "Could not find modifier: " modifier-key))
-    (if-let [ks (:keys modifier-def)]
-      (update-in entity* ks modify modifier-value)
-      (modify entity* modifier-value))))
+    (update-in entity* (:keys modifier-def) modify modifier-value)))
 
 (defn- call-modifier-fns [entity* fn-k modifiers]
   (reduce (partial call-modifier-fn fn-k)

@@ -5,28 +5,30 @@
             [game.skills.core :as skills]
             [game.components.skills :as skills-component]))
 
-; TODO dissoc again if value == default value -> into modifier logic
+; TODO dissoc again if value == default value -> into modifier logic, e.g. modifiers blocks 0 , just dissoc then ?
 ; TODO common modifiers add/decrement or multiplier, etc.
 ; TODO fix max-hp like max-mana
 
-(defn- add-block [entity* ctype]
-  (update-in entity* [ctype :blocks] #(inc (or % 0))))
+(defn- add-block [blocks ctype]
+  (update blocks ctype #(inc (or % 0))))
 
-(defn- remove-block [entity* ctype]
-  {:pre  [(> (get-in entity* [ctype :blocks]) 0)]}
-  (update-in entity* [ctype :blocks] dec))
+(defn- remove-block [blocks ctype]
+  {:pre  [(> (get blocks ctype) 0)]}
+  (update blocks ctype dec))
 
 (modifier/defmodifier :modifiers/block
   {:text     #(str "Stops " (name %))
+   :keys     [:modifiers :blocks]
    :apply    add-block
    :reverse  remove-block})
 
-(defn- modify-update-speed [entity* [ctype value]]
-  (update-in entity* [ctype :update-speed] #(+ (or % 1) value)))
+(defn- modify-update-speed [update-speeds [ctype value]]
+  (update update-speeds ctype #(+ (or % 1) value)))
 
 (modifier/defmodifier :modifiers/update-speed
   {:values   [[8 20] [25 35] [40 50]]
    :text     #(str (Math/signum (float (% 1))) (% 1) "% " (% 0))
+   :keys     [:modifiers :update-speed]
    :apply    modify-update-speed
    :reverse  #(modify-update-speed %1 [(%2 0) (- (%2 1))])})
 

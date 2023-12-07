@@ -75,8 +75,8 @@
            ))
 
     (when @running
-      (try (tick/tick-entities! (get-entities-in-active-content-fields)
-                                delta)
+      (try (doseq [entity (get-entities-in-active-content-fields)]
+             (tick/tick-entity! entity delta))
            (catch Throwable t
              (println "Catched throwable: ")
              (p/pretty-pst t)
