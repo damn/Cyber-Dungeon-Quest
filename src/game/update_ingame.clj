@@ -9,7 +9,6 @@
             [game.components.inventory :as inventory]
             [game.ui.mouseover-entity :refer (update-mouseover-entity)]
             [game.components.movement :as movement]
-            [game.player.core :refer [player-death]]
             [game.utils.msg-to-player :refer [update-msg-to-player]]
             [game.maps.mapchange :refer [check-change-map]]
             [game.maps.contentfields :refer [get-entities-in-active-content-fields]]
@@ -35,22 +34,17 @@
 
 (defn update-game [stage delta]
   ;(reset! running false)
-
   (when (input/is-key-pressed? :P)
     (swap! running not))
-
   ; TODO do not set running to true in case of a throwable ('ERROR')
   ; TODO for deploying can run it anyway and just skip errors (only report 1 error per error not every update call)
   ; those updates/renders will then just not get rendered but the game will continue?
-
   ; TODO leftbutton in GUI handle ! all mouse presses / down handle check not processed by gui-stage
   (when pausing
     (if (and (not @thrown-error)
              (not (dead? @player-entity))
              (not (:item-on-cursor @player-entity)) ; do not run around w. item in hand
-
              ; TODO animation/game runs when moving UI window around ....
-
              ; == TODO =
              ; or active-skill?
              ; player-action?
@@ -60,9 +54,7 @@
                  (:movement-vector @player-entity))) ; == WASD movement
       (reset! running true)
       (reset! running false)))
-
   (let [delta (limit-delta delta)]
-
     ; TODO all game systems must stop on pause
     ; if an error thrown there
     ; otherwise no need the wrap.
@@ -73,7 +65,6 @@
            (reset! running false)
            (reset! thrown-error t) ; TODO show that an error appeared ! / or is paused without open debug window
            ))
-
     (when @running
       (try (doseq [entity (get-entities-in-active-content-fields)]
              (tick/tick-entity! entity delta))
@@ -82,10 +73,7 @@
              (p/pretty-pst t)
              (reset! running false)
              (reset! thrown-error t)))))
-
-  (if (and @running
-           (dead? @player-entity))
-    ; TODO here reset-running false not @ player-death
-    (player-death))
-
+  (if (and @running (dead? @player-entity))
+    (reset! running false)
+    (audio/play "sounds/bfxr_playerdeath.wav"))
   (check-change-map))

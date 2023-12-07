@@ -3,8 +3,7 @@
             [utils.core :refer [translate-to-tile-middle]]
             [game.session :as session]
             [game.maps.data :as data]
-            [game.entities.creature :as creature-entity]
-            game.player.core))
+            [game.entities.creature :as creature-entity]))
 
 ; looping through all tiles of the map 3 times. but dont do it in 1 loop because player needs to be initialized before all monsters!
 (defn- place-entities [tiled-map]

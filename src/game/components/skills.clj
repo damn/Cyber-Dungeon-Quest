@@ -45,7 +45,6 @@
 (defn- effect-params [entity*]
   (:effect-params (:skillmanager entity*)))
 
-; TODO draw one frame more in red after effect was done ...
 (defn- draw-skill-icon [context icon entity* [x y]]
   (let [[width height] (image/world-unit-dimensions icon)
         _ (assert (= width height))
@@ -54,7 +53,6 @@
         action-counter (get-in entity* [:skillmanager :action-counter])
         center [x (+ y radius)]]
     (shape-drawer/filled-circle center radius (color/rgb 1 1 1 0.125))
-    ; TODO clockwise ?
     (shape-drawer/sector center
                          radius
                          0 ; start-angle
@@ -69,7 +67,7 @@
     (doseq [{:keys [id image effect]} (vals skills)
             :when (= id active-skill?)]
       (when show-skill-icon-on-active
-        (draw-skill-icon context image entity* position)) ; separate component, can deactivate w. component manager tool
+        (draw-skill-icon context image entity* position))
       (effect/render-info effect (effect-params entity*)))))
 
 (defn- update-cooldown [skill delta]
@@ -85,11 +83,6 @@
   (mapvals #(update-cooldown % delta)
            skills))
 
-; only used @ revive.
-(defn reset-cooldowns [skills]
-  (mapvals #(assoc % :cooling-down? false)
-           skills))
-
 (defn has-skill? [entity* id]
   (contains? (:skills entity*) id))
 
@@ -99,12 +92,9 @@
 
 (defn- enough-mana? [entity* {:keys [cost] :as skill}]
   (or (nil? cost)
-      (zero? cost) ; TODO zero cost means entity doesnt need mana?? no structure!, next condition includes this.
+      (zero? cost)
       (<= cost ((:mana entity*) 0))))
 
-; TODO no need to check twice for creatures
-; and for player do it seperately somehow
-; where each failure will be notified (cooldown, not enough mana, effect invalid params error)
 (defn usable-state [entity* skill]
   (cond
    (:cooling-down? skill)
@@ -117,7 +107,6 @@
    :else
    :usable))
 
-; TODO move to effect/
 (defmulti ai-should-use? (fn [[effect-type effect-value] entity*] effect-type))
 (defmethod ai-should-use? :default [_ entity*]
   true)
@@ -131,7 +120,7 @@
        (sort-by #(or (:cost %) 0))
        reverse
        (filter #(and (= :usable (usable-state entity* %))
-                     (ai-should-use? (:effect %) entity*))) ; TODO pass (effect-params @entity)
+                     (ai-should-use? (:effect %) entity*)))
        first
        :id))
 
@@ -140,15 +129,8 @@
         modified-delta (if (:spell? skill)
                          (* delta (or cast-speed   1))
                          (* delta (or attack-speed 1)))]
-    ; can be slowed down too, too much slowdown may make 0
-    (max 0 (int modified-delta)))) ; TODO same code @ update-speed / tick-entities!
+    (max 0 (int modified-delta))))
 
-; TODO move action-counter & effect-params into :active-skill? component
-; -> remove skillmanager
-; => but grep skillmanager, there is cast-speed/attack-speed (:modifiers component ?)
-; and :blocks ( blocks skills and active-skill both ? )
-; or move everything into 'skills' ?
-; just :active-skill without question mark?
 (defn- start! [entity skill]
   (audio/play (str "sounds/" (if (:spell? skill) "shoot.wav" "slash.wav")))
   (when-not (or (nil? (:cost skill))
@@ -159,7 +141,6 @@
               (assoc :active-skill? (:id skill))
               (assoc-in [:skillmanager :action-counter] (counter/create (:action-time skill))))))
 
-; TODO why need skill arg, stopping always active-skill ...
 (defn- stop [entity* skill]
   (-> entity*
       (dissoc :active-skill?)
