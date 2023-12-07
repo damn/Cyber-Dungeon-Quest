@@ -134,9 +134,8 @@
      (try-put-item-in! entity slot item)
      (try-put-item-in! entity :bag item))))
 
-; after-create-entity because try-pickup-item applies modifiers (skillmanager has to be initialised)
 (defcomponent :items items
-  (entity/after-create! [_ entity]
+  (entity/create! [_ entity]
     (swap! entity assoc :inventory empty-inventory)
     ;(swap! entity dissoc :items)
     (doseq [id items]

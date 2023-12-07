@@ -3,7 +3,6 @@
 
 (defsystem create [_])
 (defsystem create! [_ e])
-(defsystem after-create! [_ e])
 
 (defsystem destroy [_])
 (defsystem destroy! [c e])

@@ -27,20 +27,15 @@
   [[:modifiers/block :speed]
    [:modifiers/block :skillmanager]])
 
-(defcomponent :sleeping _ ; TODO destructuring optional ? keep code working as is? if-not list ?
-  ; skillmanager does not exist yet
-  ; so after create
-  ; (it seems 'on-create-entity' is the component contructor)
-  (entity/after-create! [_ entity]
+(defcomponent :sleeping _
+  (entity/create! [_ entity]
     (swap! entity modifier/apply-modifiers modifiers))
-
   (entity/render-above [_ context {[x y] :position :keys [body]}]
     (font/draw-text context
                     {:text "zzz"
                      :x x
                      :y (+ y (:half-height body))
                      :up? true}))
-
   (entity/render-info [_ context {:keys [position mouseover?]}]
     (when mouseover?
       (shape-drawer/circle position aggro-range color/yellow))))

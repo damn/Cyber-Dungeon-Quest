@@ -28,8 +28,7 @@
   (-> (assoc m :id nil)
       (update-map entity/create)
       atom
-      (doseq-entity entity/create!)
-      (doseq-entity entity/after-create!)))
+      (doseq-entity entity/create!)))
 
 (defn destroy-to-be-removed-entities! []
   (doseq [e (filter (comp :destroyed? deref) (vals @ids->entities))
