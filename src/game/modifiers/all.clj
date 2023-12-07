@@ -66,18 +66,17 @@
 
 (modifier/defmodifier :modifiers/cast-speed
   {:values  [[15 25] [35 45] [50 60]]
-   :text    #(str "+" % "% Casting-Speed")
-   :keys    [:skillmanager :cast-speed]
+   :text    (fn [v entity] (str "+" v "% Casting-Speed"))
+   :keys    [:modifiers :cast-speed]
    :apply   #(+ (or %1 1) (/ %2 100))
    :reverse #(- %1 (/ %2 100))})
 
 (modifier/defmodifier :modifiers/attack-speed
   {:values  [[15 25] [35 45] [50 60]]
-   :text    #(str "+" % "% Attack-Speed")
-   :keys    [:skillmanager :attack-speed]
+   :text    (fn [v entity] (str "+" v "% Attack-Speed"))
+   :keys    [:modifiers :attack-speed]
    :apply   #(+ (or %1 1) (/ %2 100))
    :reverse #(- %1 (/ %2 100))})
-
 
 (defn- check-damage-block-modifier-value [[source-or-target
                                            damage-type

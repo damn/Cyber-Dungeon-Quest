@@ -117,7 +117,6 @@
    :else
    :usable))
 
-
 ; TODO move to effect/
 (defmulti ai-should-use? (fn [[effect-type effect-value] entity*] effect-type))
 (defmethod ai-should-use? :default [_ entity*]
@@ -137,7 +136,7 @@
        :id))
 
 (defn- apply-speed-multipliers [entity* skill delta]
-  (let [{:keys [cast-speed attack-speed]} (:skillmanager entity*)
+  (let [{:keys [cast-speed attack-speed]} (:modifiers entity*)
         modified-delta (if (:spell? skill)
                          (* delta (or cast-speed   1))
                          (* delta (or attack-speed 1)))]
