@@ -1,5 +1,6 @@
 (ns game.update-ingame
   (:require [clj-commons.pretty.repl :as p]
+            [gdl.audio :as audio]
             [gdl.input :as input]
             [game.running :refer (running)]
             [game.tick :as tick]
@@ -73,7 +74,8 @@
              (p/pretty-pst t)
              (reset! running false)
              (reset! thrown-error t)))))
-  (if (and @running (dead? @player-entity))
+  (when (and @running
+             (dead? @player-entity))
     (reset! running false)
     (audio/play "sounds/bfxr_playerdeath.wav"))
   (check-change-map))

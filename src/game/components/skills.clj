@@ -17,12 +17,13 @@
             [game.maps.cell-grid :as cell-grid]))
 
 (defn- nearest-enemy-entity [entity*]
-  (-> entity*
-      :position
-      cell-grid/get-cell
-      deref
-      (faction/enemy (:faction entity*))
-      :entity))
+  (let [enemy-faction (faction/enemy (:faction entity*))]
+    (-> entity*
+        :position
+        cell-grid/get-cell
+        deref
+        enemy-faction
+        :entity)))
 
 (defn- make-effect-params [entity]
   (merge {:source entity}
