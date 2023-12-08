@@ -16,6 +16,14 @@
             [game.entity :as entity]
             [game.maps.cell-grid :as cell-grid]))
 
+(defn- nearest-enemy-entity [entity*]
+  (-> entity*
+      :position
+      cell-grid/get-cell
+      deref
+      (faction/enemy (:faction entity*))
+      :entity))
+
 (defn- make-effect-params [entity]
   (merge {:source entity}
          (if (:is-player @entity)
@@ -27,13 +35,7 @@
               :target-position target-position
               :direction (v/direction (:position @entity)
                                       target-position)})
-           (let [faction (faction/enemy (:faction @entity))
-                 target (-> @entity
-                            :position
-                            cell-grid/get-cell
-                            deref
-                            faction
-                            :entity)]
+           (let [target (nearest-enemy-entity @entity)]
              {:target target
               :direction (when target
                            (v/direction (:position @entity)
