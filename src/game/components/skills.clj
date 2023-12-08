@@ -134,17 +134,16 @@
                          (* delta (or attack-speed 1)))]
     (max 0 (int modified-delta))))
 
-(defn- start! [entity skill]
-  (audio/play (str "sounds/" (if (:spell? skill) "shoot.wav" "slash.wav")))
-  (when-not (or (nil? (:cost skill))
-                (zero? (:cost skill)))
-    (swap! entity update :mana apply-val #(- % (:cost skill))))
-  (swap! entity
-         #(-> %
-              (assoc :active-skill? (:id skill))
-              (assoc-in [:skillmanager :action-counter] (counter/create (:action-time skill))))))
+(defn- start-skill [entity* skill]
+  (let [entity* (if-not (or (nil? (:cost skill))
+                            (zero? (:cost skill)))
+                  (update entity* :mana apply-val #(- % (:cost skill)))
+                  entity*)]
+    (-> entity*
+        (assoc :active-skill? (:id skill))
+        (assoc-in [:skillmanager :action-counter] (counter/create (:action-time skill))))))
 
-(defn- stop [entity* skill]
+(defn- stop-skill [entity* skill]
   (-> entity*
       (dissoc :active-skill?)
       (update :skillmanager dissoc :action-counter)
@@ -159,11 +158,11 @@
         effect-params (effect-params @entity)
         effect (:effect skill)]
     (if-not (effect/valid-params? effect effect-params)
-      (swap! entity stop skill)
+      (swap! entity stop-skill skill)
       (do
        (swap! entity update-in [:skillmanager :action-counter] counter/tick delta)
        (when (counter/stopped? (get-in @entity [:skillmanager :action-counter]))
-         (swap! entity stop skill)
+         (swap! entity stop-skill skill)
          (effect/do! effect effect-params))))))
 
 (defn- check-start! [entity]
@@ -172,7 +171,8 @@
                 (id (:skills @entity)))]
     (when skill
       (assert (= :usable (usable-state @entity skill)))
-      (start! entity skill))))
+      (audio/play (str "sounds/" (if (:spell? skill) "shoot.wav" "slash.wav")))
+      (swap! entity start-skill skill))))
 
 (defcomponent :skillmanager _
   (entity/tick! [_ entity delta]
@@ -182,7 +182,7 @@
       (check-start! entity)))
   (entity/stun! [_ entity]
     (when-let [skill-id (:active-skill? @entity)]
-      (swap! entity stop (skill-id (:skills @entity))))))
+      (swap! entity stop-skill (skill-id (:skills @entity))))))
 
 (defcomponent :skills _
   (entity/create! [[k v] entity]
