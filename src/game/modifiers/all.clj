@@ -46,20 +46,6 @@
    :apply   (fn [mana v] (apply-max mana #(+ % v)))
    :reverse (fn [mana v] (apply-max mana #(- % v)))})
 
-(modifier/defmodifier :modifiers/hp-reg
-  {:values  [[5 15] [16 25] [26 35]]
-   :text    #(str "+" (readable-number (/ % 10)) "% HP-Reg-per-second")
-   :keys    [:hp-regen :reg-per-second] ; -> just :hp-reg / :mana-reg ?
-   :apply   #(+ %1 (/ %2 10))
-   :reverse #(- %1 (/ %2 10))})
-
-(modifier/defmodifier :modifiers/mana-reg
-  {:values  [[10 30] [31 50] [51 75]]
-   :text    #(str "+" (readable-number (/ % 10)) "% MP-Reg-per-second")
-   :keys    [:mana-regen :reg-per-second]
-   :apply   #(+ %1 (/ %2 10))
-   :reverse #(- %1 (/ %2 10))})
-
 (modifier/defmodifier :modifiers/skill
   {:text skills/text
    :keys [:skills]
