@@ -42,8 +42,6 @@
                            (v/direction (:position @entity)
                                         (:position @target)))}))))
 
-(defn- set-effect-params! [entity]
-  (swap! entity assoc-in [:skillmanager :effect-params] (make-effect-params entity)))
 
 (defn- effect-params [entity*]
   (:effect-params (:skillmanager entity*)))
@@ -166,7 +164,7 @@
          (effect/do! effect effect-params))))))
 
 (defn- check-start! [entity]
-  (set-effect-params! entity)
+  (swap! entity assoc-in [:skillmanager :effect-params] (make-effect-params entity))
   (let [skill (when-let [id (choose-skill @entity)]
                 (id (:skills @entity)))]
     (when skill
