@@ -110,11 +110,11 @@
 (defn- in-cell? [cell entity]
   (get (get-entities cell) entity))
 
-(defn add-entity [cell entity]
+(defn add-entity! [cell entity]
   {:pre [(not (in-cell? cell entity))]}
   (swap! cell update :entities conj entity))
 
-(defn remove-entity [cell entity]
+(defn remove-entity! [cell entity]
   {:pre [(in-cell? cell entity)]}
   (swap! cell update :entities disj entity))
 

@@ -24,11 +24,11 @@
    {:pre [(not-any? nil? new-cells)]}
    (swap! e assoc :touched-cells new-cells)
    (doseq [cell new-cells]
-     (grid/add-entity cell e))))
+     (grid/add-entity! cell e))))
 
 (defn- remove-from-touched-cells! [e]
   (doseq [cell (:touched-cells @e)]
-    (grid/remove-entity cell e)))
+    (grid/remove-entity! cell e)))
 
 (defn update-touched-cells! [e touched-cells]
   (when-not (= touched-cells (:touched-cells @e))
