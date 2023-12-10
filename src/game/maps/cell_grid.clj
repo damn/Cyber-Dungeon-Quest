@@ -91,9 +91,6 @@
       (set-cell-blocked-boolean-array arr cell))
     arr))
 
-(defn inside-map? [tile]
-  (get-cell tile))
-
 ; many entities
 ; performance bottleneck #1 is dereffing cells !!
 ; => read more often than write?
