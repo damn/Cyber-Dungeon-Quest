@@ -19,7 +19,9 @@
     (data/add-map map-key
                   (merge
                    (dissoc argsmap :map-key)
-                   {:cell-blocked-boolean-array (cell-grid/create-cell-blocked-boolean-array cell-grid)
+                   {:width w
+                    :height h
+                    :cell-blocked-boolean-array (cell-grid/create-cell-blocked-boolean-array cell-grid)
                     :contentfields (create-mapcontentfields w h)
                     :cell-grid cell-grid
                     :explored-tile-corners (atom (grid/create-grid w h (constantly false)))})))

@@ -12,12 +12,6 @@
 (defn- get-cell-grid []
   (:cell-grid (get-current-map-data)))
 
-(defn- world-width  [] (grid/width  (get-cell-grid)))
-(defn- world-height [] (grid/height (get-cell-grid)))
-
-(defn- get-cell-blocked-boolean-array []
-  (:cell-blocked-boolean-array (get-current-map-data)))
-
 (defrecord Cell [position
                  middle
                  movement
@@ -214,12 +208,8 @@
     (filter #(geom/point-in-rect? position (:body @%))
             (get-entities cell))))
 
-(defn ray-blocked? [start target]
-  (raycaster/ray-blocked? (get-cell-blocked-boolean-array)
-                          (world-width)
-                          (world-height)
-                          start
-                          target))
+(defn ray-blocked? [{:keys [cell-blocked-boolean-array width height]} start target]
+  (raycaster/ray-blocked? cell-blocked-boolean-array width height start target))
 
 (defn- create-double-ray-endpositions
   "path-w in tiles."
@@ -239,8 +229,8 @@
 
 (defn is-path-blocked?
   "path-w in tiles. casts two rays."
-  [start target path-w]
+  [world-map start target path-w]
   (let [[start1,target1,start2,target2] (create-double-ray-endpositions start target path-w)]
     (or
-     (ray-blocked? start1 target1)
-     (ray-blocked? start2 target2))))
+     (ray-blocked? world-map start1 target1)
+     (ray-blocked? world-map start2 target2))))

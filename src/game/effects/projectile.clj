@@ -3,6 +3,7 @@
             [gdl.vector :as v]
             [game.media :as media]
             [game.effect :as effect]
+            [game.maps.data :refer (get-current-map-data)]
             [game.maps.cell-grid :as cell-grid]
             [game.components.skills :refer (ai-should-use?)]
             [game.entities.projectile :as projectile-entity]))
@@ -16,7 +17,7 @@
 (def ^:private maxtime (/ maxrange (/ speed 1000)))
 
 (defn- projectile-path-blocked? [start target]
-  (cell-grid/is-path-blocked? start target size))
+  (cell-grid/is-path-blocked? (get-current-map-data) start target size))
 
 ; TODO valid params direction has to be  non-nil (entities not los player ) ?
 

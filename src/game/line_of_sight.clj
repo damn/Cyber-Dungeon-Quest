@@ -1,5 +1,6 @@
 (ns game.line-of-sight
   (:require [gdl.graphics.world :as world]
+            [game.maps.data :refer (get-current-map-data)]
             [game.maps.cell-grid :as cell-grid]))
 
 ; TODO ! transparent entities shows 'zzz'
@@ -51,7 +52,8 @@
   (and (:z-order target*)  ; is even an entity which renders something
        (or (not (:is-player source*))
            (on-screen? target*))
-       (not (cell-grid/ray-blocked? (:position source*)
+       (not (cell-grid/ray-blocked? (get-current-map-data)
+                                    (:position source*)
                                     (:position target*)))))
 
 ; TODO very slow do not use this for normal line-of-sight-checks

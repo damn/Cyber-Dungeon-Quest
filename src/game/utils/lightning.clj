@@ -129,7 +129,7 @@
         base-color (if explored?
                      explored-tile-color
                      color/black)
-        blocked? (cell-grid/ray-blocked? light-position position)]
+        blocked? (cell-grid/ray-blocked? (get-current-map-data) light-position position)]
     (if blocked?
       base-color
       (do
