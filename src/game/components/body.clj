@@ -5,26 +5,24 @@
             [gdl.geom :as geom]
             [gdl.vector :as v]
             [game.entity :as entity]
+            [game.maps.data :refer (get-current-map-data)]
             [game.maps.cell-grid :as grid]))
 
 (defn- remove-from-occupied-cells! [e]
   (doseq [cell (:occupied-cells @e)]
     (swap! cell update :occupied disj e)))
 
-(defn- set-occupied-cells! [e]
-  (let [cells (grid/rectangle->occupied-cells (:body @e))]
+(defn- set-occupied-cells! [cell-grid e]
+  (let [cells (grid/rectangle->occupied-cells cell-grid (:body @e))]
     (doseq [cell cells]
       (swap! cell update :occupied conj e))
     (swap! e assoc :occupied-cells cells)))
 
-(defn- set-touched-cells!
-  ([e]
-   (set-touched-cells! e (grid/rectangle->touched-cells (:body @e))))
-  ([e new-cells]
-   {:pre [(not-any? nil? new-cells)]}
-   (swap! e assoc :touched-cells new-cells)
-   (doseq [cell new-cells]
-     (grid/add-entity! cell e))))
+(defn- set-touched-cells! [e new-cells]
+  {:pre [(not-any? nil? new-cells)]}
+  (swap! e assoc :touched-cells new-cells)
+  (doseq [cell new-cells]
+    (grid/add-entity! cell e)))
 
 (defn- remove-from-touched-cells! [e]
   (doseq [cell (:touched-cells @e)]
@@ -50,7 +48,8 @@
 
 (defn valid-position?
   ([entity*]
-   (valid-position? entity* (grid/rectangle->touched-cells (:body entity*))))
+   (valid-position? entity* (grid/rectangle->touched-cells (:cell-grid (get-current-map-data))
+                                                           (:body entity*))))
   ([entity* touched-cells]
    (and
     (not-any? #(grid/cell-blocked? % entity*) touched-cells)
@@ -95,9 +94,10 @@
     (assert (:position @e))
     ;(assert (valid-position? @e)) ; TODO error because projectiles do not have left-bottom !
     (swap! e assoc-left-bottom)
-    (set-touched-cells! e)
-    (when is-solid
-      (set-occupied-cells! e)))
+    (let [cell-grid (:cell-grid (get-current-map-data))]
+      (set-touched-cells! e (grid/rectangle->touched-cells cell-grid (:body @e)))
+      (when is-solid
+        (set-occupied-cells! cell-grid e))))
   (entity/destroy! [_ e]
     (remove-from-touched-cells! e)
     (when is-solid
@@ -109,7 +109,7 @@
     ; update-touched-cells done manually @ update-position
     (when is-solid
       (remove-from-occupied-cells! e)
-      (set-occupied-cells! e)))
+      (set-occupied-cells! (:cell-grid (get-current-map-data)) e)))
   (entity/render-debug [_ context e*]
     (when show-body-bounds
       (draw-bounds body))))

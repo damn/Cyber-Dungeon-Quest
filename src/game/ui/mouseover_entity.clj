@@ -12,6 +12,7 @@
             game.render
             [game.session :as session]
             [game.line-of-sight :refer (in-line-of-sight?)]
+            [game.maps.data :refer (get-current-map-data)]
             [game.maps.cell-grid :refer (get-bodies-at-position)]
             [game.player.entity :refer (player-entity)]))
 
@@ -33,7 +34,8 @@
 
 (defn- get-current-mouseover-entity []
   (let [tile-posi (world/mouse-position)
-        hits (get-bodies-at-position tile-posi)]
+        cell-grid (:cell-grid (get-current-map-data))
+        hits (get-bodies-at-position cell-grid tile-posi)]
     ; TODO needs z-order ? what if 'shout' element or FX ?
     (when hits
       (->> game.render/render-on-map-order

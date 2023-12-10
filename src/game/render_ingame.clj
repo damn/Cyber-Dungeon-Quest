@@ -7,6 +7,7 @@
             [game.utils.lightning :refer [tile-color-setter]]
             [game.line-of-sight :refer (in-line-of-sight?)]
             [game.maps.data :refer [get-current-map-data]]
+            [game.maps.cell-grid :as cell-grid]
             [game.context :as context]
             [game.render :as render]
             [game.player.status-gui :refer [render-player-hp-mana]]
@@ -18,11 +19,12 @@
 
 (defn- geom-test []
   (let [position (world/mouse-position)
+        cell-grid (:cell-grid (get-current-map-data))
         radius 0.8
         circle {:position position :radius radius}]
     (shape-drawer/circle position radius (color/rgb 1 0 0 0.5))
     (doseq [[x y] (map #(:position @%)
-                       (@#'game.maps.cell-grid/circle->touched-cells circle))]
+                       (cell-grid/circle->touched-cells cell-grid circle))]
       (shape-drawer/rectangle x y 1 1 (color/rgb 1 0 0 0.5)))
     (let [{[x y] :left-bottom :keys [width height]} (gdl.geom/circle->outer-rectangle circle)]
       (shape-drawer/rectangle x y width height (color/rgb 0 0 1 1)))))
@@ -37,7 +39,8 @@
        (filter #(in-line-of-sight? @player-entity %))))
 
 (defn- tile-debug []
-  (let [[left-x right-x bottom-y top-y] (world/camera-frustum)]
+  (let [cell-grid (:cell-grid (get-current-map-data))
+        [left-x right-x bottom-y top-y] (world/camera-frustum)]
     (shape-drawer/grid (int left-x)
                        (int bottom-y)
                        (inc (int (world/viewport-width)))
@@ -46,7 +49,7 @@
                        1
                        (color/rgb 0.5 0.5 0.5 0.5))
     (doseq [[x y] (world/visible-tiles)
-            :let [cell (game.maps.cell-grid/get-cell [x y])
+            :let [cell (get cell-grid [x y])
                   faction :good
                   {:keys [distance entity]} (get-in @cell [faction])]
             :when distance]
@@ -68,13 +71,14 @@
   #_(geom-test)
   ; highlight current mouseover-tile
   #_(let [[x y] (mapv int (world/mouse-position))
-          cell (game.maps.cell-grid/get-cell [x y])]
-      (shape-drawer/rectangle x y 1 1 (color/rgb 0 1 0 0.5))
-      (g/render-readable-text x y {:shift false}
-                              [color/white
-                               (str [x y])
-                               color/gray
-                               (pr-str (:potential-field @cell))])))
+        cell-grid (:cell-grid (get-current-map-data))
+        cell (get cell-grid [x y])]
+    (shape-drawer/rectangle x y 1 1 (color/rgb 0 1 0 0.5))
+    #_(g/render-readable-text x y {:shift false}
+                            [color/white
+                             (str [x y])
+                             color/gray
+                             (pr-str (:potential-field @cell))])))
 
 (defn- print-mouse-tile-position []
   (let [[tile-x tile-y] (world/mouse-position)]

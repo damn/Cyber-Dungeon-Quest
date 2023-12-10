@@ -1,4 +1,3 @@
-; TODO should sleeping be an effect ? then how to do 'on-affect' if its not a component?
 (ns game.components.sleeping
   (:require [x.x :refer [defcomponent]]
             [gdl.graphics.font :as font]
@@ -10,6 +9,7 @@
             [game.components.faction :as faction]
             [game.modifier :as modifier]
             [game.line-of-sight :refer (in-line-of-sight?)]
+            [game.maps.data :refer (get-current-map-data)]
             [game.maps.cell-grid :as cell-grid]
             [game.maps.potential-field :as potential-field]
             [game.components.string-effect :as string-effect]))
@@ -40,9 +40,10 @@
     (when mouseover?
       (shape-drawer/circle position aggro-range color/yellow))))
 
-(defn- get-visible-entities [entity* radius]
+(defn- get-visible-entities [cell-grid entity* radius]
   (filter #(in-line-of-sight? entity* @%)
-          (cell-grid/circle->touched-entities {:position (:position entity*)
+          (cell-grid/circle->touched-entities cell-grid
+                                              {:position (:position entity*)
                                                :radius radius})))
 
 (defn- create-shout-entity [position faction]
@@ -66,7 +67,9 @@
     (when (counter/stopped? counter)
       (swap! entity assoc :destroyed? true)
       ; TODO why a shout checks for ray-blocked? ... sounds logic .... ?!
-      (doseq [entity (->> (get-visible-entities @entity aggro-range)
+      (doseq [entity (->> (get-visible-entities (:cell-grid (get-current-map-data))
+                                                @entity
+                                                aggro-range)
                           (filter #(and (= (:faction @%) (:faction @entity))
                                         (:sleeping @%))))]
         (wake-up! entity)))))
@@ -79,7 +82,8 @@
     #_(when (seq (filter #(not= (:faction @%) (:faction @entity))
                          (get-visible-entities @entity aggro-range)))
         (wake-up! entity))
-    (let [cell* @(cell-grid/get-cell (:position @entity))
+    (let [cell-grid (:cell-grid (get-current-map-data))
+          cell* @(get cell-grid (mapv int (:position @entity)))
           faction (faction/enemy (:faction @entity))]
       (when-let [distance (-> cell*
                               faction

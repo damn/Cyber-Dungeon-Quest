@@ -9,19 +9,17 @@
             [gdl.vector :as v]
             [utils.core :refer [mapvals]]
             [game.properties :as properties]
+            [game.components.position :as position]
             [game.components.faction :as faction]
             [game.ui.mouseover-entity :refer (saved-mouseover-entity get-mouseover-entity)]
             [game.utils.counter :as counter]
             [game.effect :as effect]
             [game.entity :as entity]
-            [game.maps.cell-grid :as cell-grid]))
+            [game.maps.data :refer (get-current-map-data)]))
 
-(defn- nearest-enemy-entity [entity*]
+(defn- nearest-enemy-entity [cell-grid entity*]
   (let [enemy-faction (faction/enemy (:faction entity*))]
-    (-> entity*
-        :position
-        cell-grid/get-cell
-        deref
+    (-> @(get cell-grid (position/get-tile entity*))
         enemy-faction
         :entity)))
 
@@ -36,7 +34,8 @@
               :target-position target-position
               :direction (v/direction (:position @entity)
                                       target-position)})
-           (let [target (nearest-enemy-entity @entity)]
+           (let [target (nearest-enemy-entity (:cell-grid (get-current-map-data))
+                                              @entity)]
              {:target target
               :direction (when target
                            (v/direction (:position @entity)

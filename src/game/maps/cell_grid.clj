@@ -6,14 +6,11 @@
             [data.grid2d :as grid]
             [utils.core :refer [translate-to-tile-middle int-posi diagonal-direction?]]
             [game.session :as session]
-            [game.maps.data :refer (get-current-map-data)]
             [mapgen.movement-property :refer (movement-property)]))
-
-(defn- get-cell-grid []
-  (:cell-grid (get-current-map-data)))
 
 (defrecord Cell [position
                  middle
+                 adjacent-cells
                  movement
                  entities
                  occupied
@@ -28,15 +25,13 @@
      :middle (translate-to-tile-middle position)
      :movement movement
      :entities #{}
-     :occupied #{}}))) ; only :is-solid entities in occupied  (assert?)
+     :occupied #{}})))
 
 (defn occupied-by-other?
   "returns true if there is some solid body with center-tile = this cell
    or a multiple-cell-size body which touches this cell."
   [cell entity]
   (seq (disj (:occupied @cell) entity)))
-
-; use cell* ? but is more convenient like this
 
 (defn cell-blocked?
   ([cell]
@@ -55,24 +50,12 @@
         :air true
         :all false)))
 
-(defn get-cell
-  "returns nil when not existing cell (outside map bounds or undefined area (behind walls))"
-  [posi]
-  (get (get-cell-grid) (int-posi posi))) ; TODO mapv int ...
-
-(defn get-cells
-  "see (doc get-cell). Use int-posis for this! Faster than (map get-cell posis)"
-  [posis]
-  (map (get-cell-grid) posis))
-
-;TODO just use a delay/force?
-(defn cached-get-adjacent-cells [cell]
+(defn cached-get-adjacent-cells [cell-grid cell]
   (if-let [result (:adjacent-cells @cell)]
     result
-    (let [result (-> @cell
-                     :position
-                     grid/get-8-neighbour-positions
-                     get-cells)]
+    (let [result (map cell-grid (-> @cell
+                                    :position
+                                    grid/get-8-neighbour-positions))]
       (swap! cell assoc :adjacent-cells result)
       result)))
 
@@ -91,14 +74,6 @@
       (set-cell-blocked-boolean-array arr cell))
     arr))
 
-; many entities
-; performance bottleneck #1 is dereffing cells !!
-; => read more often than write?
-; => all grid as 1 atom ??
-; simple lookup
-; but potential field
-; => also 'maps.grid' / grid/get , etc.
-; => grid is 1 atom !
 (defn get-entities [cell]
   (if cell
     (:entities @cell)
@@ -118,9 +93,6 @@
   {:pre [(in-cell? cell entity)]}
   (swap! cell update :entities disj entity))
 
-;;
-
-; TODO use mapgen.nad code?
 (defn is-diagonal? [from to]
   (let [[fx fy] (:position @from)
         [tx ty] (:position @to)
@@ -138,12 +110,6 @@
                                      "air"  :air
                                      "all"  :all)))))
 
-; TODO nil cells behind walls is just a memory optimization (maybe not necessary ?)
-; do not make code in mapgen more complicated because of that -> do it here only
-
-
-; TODO all this pass body & not entity*
-
 (defn- rectangle->touched-tiles
   [{[x y] :left-bottom :keys [left-bottom width height]}]
   {:pre [left-bottom width height]}
@@ -160,48 +126,39 @@
        (for [x (range l (inc r))
              y (range b (inc t))]
          [x y])
-       (list [l b] [l t] [r b] [r t])))))
+       [[l b] [l t] [r b] [r t]]))))
 
-(def rectangle->touched-cells
-  (comp get-cells
-        rectangle->touched-tiles))
+(defn rectangle->touched-cells [cell-grid rectangle]
+  (->> rectangle
+       rectangle->touched-tiles
+       (map cell-grid)))
 
-; TODO give :center / :left-bottom / :width / :height / :radius
-; :half-width / :half-height ...
-; can also be a defrecord ...
-; funny so now it has a type ?
-(defn rectangle->occupied-cells [{:keys [left-bottom width height] :as rectangle}]
+; could use inside tiles only for >1 tile bodies (for example size 4.5 use 4x4 tiles for occupied)
+; => only now there are no >1 tile entities anyway
+(defn rectangle->occupied-cells [cell-grid {:keys [left-bottom width height] :as rectangle}]
   (if (or (> width 1) (> height 1))
-    (rectangle->touched-cells rectangle) ; TODO use inside tiles (size 4.5 use 4x4 ? )
-    [(get-cell [(+ (left-bottom 0) (/ width 2))
-                (+ (left-bottom 1) (/ height 2))
-                ])]))
+    (rectangle->touched-cells cell-grid rectangle)
+    [(get cell-grid
+          [(int (+ (left-bottom 0) (/ width 2)))
+           (int (+ (left-bottom 1) (/ height 2)))])]))
 
-(defn inside-cell? [entity* cell] ; TODO rectangle, not entity*
-  (let [touched-cells (rectangle->touched-cells (:body entity*))]
+(defn inside-cell? [cell-grid entity* cell]
+  (let [touched-cells (rectangle->touched-cells cell-grid (:body entity*))]
     (and (= 1 (count touched-cells))
          (= cell (first touched-cells)))))
 
-(def ^:private circle->touched-cells
-  (comp rectangle->touched-cells
-        geom/circle->outer-rectangle))
-
-#_(defn rectangle->touched-entities [rectangle]
-  (->> rectangle
-       rectangle->touched-cells
-       get-entities-from-cells
-       (filter #(geom/collides? rectangle @%))))
-
-(defn circle->touched-entities [circle]
+(defn circle->touched-cells [cell-grid circle]
   (->> circle
-       circle->touched-cells
+       geom/circle->outer-rectangle
+       (rectangle->touched-cells cell-grid)))
+
+(defn circle->touched-entities [cell-grid circle]
+  (->> (circle->touched-cells cell-grid circle)
        get-entities-from-cells
        (filter #(geom/collides? circle (:body @%)))))
 
-; get-entities-at-point
-; entities-at-position or float-position->entities, entities-at-float-position
-(defn get-bodies-at-position [position]
-  (when-let [cell (get-cell position)]
+(defn get-bodies-at-position [cell-grid position]
+  (when-let [cell (get cell-grid (mapv int position))]
     (filter #(geom/point-in-rect? position (:body @%))
             (get-entities cell))))
 

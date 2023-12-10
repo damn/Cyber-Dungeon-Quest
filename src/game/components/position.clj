@@ -5,7 +5,7 @@
             [game.maps.contentfields :refer (put-entity-in-correct-content-field
                                              remove-entity-from-content-field)]))
 
-(defcomponent :position p
+(defcomponent :position _
   (entity/create! [_ e]
     (put-entity-in-correct-content-field e))
   (entity/destroy! [_ e]
@@ -13,5 +13,4 @@
   (entity/moved! [_ e direction-vector]
     (put-entity-in-correct-content-field e)))
 
-; TODO not here ... ?
 (def get-tile (comp int-posi :position))

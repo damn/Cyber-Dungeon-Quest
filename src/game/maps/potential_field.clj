@@ -13,9 +13,10 @@
             [game.components.faction :as faction]
             [game.components.position :refer (get-tile)]
             [game.maps.contentfields :refer (get-entities-in-active-content-fields)]
-            [game.maps.cell-grid :refer (get-cell cached-get-adjacent-cells cell-blocked?
-                                                  is-diagonal? occupied-by-other? inside-cell?
-                                                  fast-cell-blocked?)]))
+            [game.maps.data :refer (get-current-map-data)]
+            [game.maps.cell-grid :refer (cached-get-adjacent-cells cell-blocked?
+                                                                   is-diagonal? occupied-by-other? inside-cell?
+                                                                   fast-cell-blocked?)]))
 
 (def ^:private max-iterations 15)
 
@@ -30,14 +31,14 @@
 ; * sorted-set-by ?
 ; * do not refresh the potential-fields EVERY frame, maybe very 100ms & check for exists? target if they died inbetween.
 ; (or teleported?)
-(defn- step [faction last-marked-cells]
+(defn- step [cell-grid faction last-marked-cells]
   (let [marked-cells (transient [])
         distance       #(get-in % [faction :distance])
         nearest-entity #(get-in % [faction :entity])
         marked? faction]
     ; sorting important because of diagonal-cell values, flow from lower dist first for correct distance
     (doseq [cell (sort-by #(distance @%) last-marked-cells)
-            adjacent-cell (cached-get-adjacent-cells cell)
+            adjacent-cell (cached-get-adjacent-cells cell-grid cell)
             :let [cell* @cell
                   adjacent-cell* @adjacent-cell]
             :when (not (or (fast-cell-blocked? adjacent-cell*) ; filters nil cells
@@ -83,9 +84,9 @@
 
 (defn- generate-potential-field
   "returns the marked-cells"
-  [faction tiles->entities]
+  [cell-grid faction tiles->entities]
   (let [entity-cell-seq (for [[tile entity] tiles->entities]
-                          [entity (get-cell tile)])
+                          [entity (get cell-grid tile)])
         marked (map second entity-cell-seq)]
     (doseq [[entity cell] entity-cell-seq]
       (swap! cell assoc faction {:distance 0
@@ -95,7 +96,7 @@
            iterations 0]
       (if (= iterations max-iterations)
         marked-cells
-        (let [new-marked (step faction new-marked-cells)]
+        (let [new-marked (step cell-grid faction new-marked-cells)]
           (recur (concat marked-cells new-marked)
                  new-marked
                  (inc iterations)))))))
@@ -108,7 +109,7 @@
 
 (def ^:private cache (atom nil))
 
-(defn- update-faction-potential-field [faction entities]
+(defn- update-faction-potential-field [cell-grid faction entities]
   (let [tiles->entities (tiles->entities entities faction)
         last-state   [faction :tiles->entities]
         marked-cells [faction :marked-cells]]
@@ -117,13 +118,16 @@
       (doseq [cell (get-in @cache marked-cells)]
         (swap! cell dissoc faction))
       (swap! cache assoc-in marked-cells (generate-potential-field
+                                          cell-grid
                                           faction
                                           tiles->entities)))))
 
 (defn update-potential-fields []
-  (let [entities (get-entities-in-active-content-fields)]
+  (let [entities (get-entities-in-active-content-fields)
+        cell-grid (:cell-grid (get-current-map-data))]
     (doseq [faction [:good :evil]]
-      (update-faction-potential-field faction
+      (update-faction-potential-field cell-grid
+                                      faction
                                       entities))))
 
 ;; MOVEMENT AI
@@ -162,21 +166,21 @@
     (apply min-key distance-to cells)))
 
 ; rarely called -> no performance bottleneck
-(defn- viable-cell? [distance-to own-dist entity cell]
+(defn- viable-cell? [cell-grid distance-to own-dist entity cell]
   (when-let [best-cell (get-min-dist-cell
                         distance-to
-                        (filter-viable-cells entity (cached-get-adjacent-cells cell)))]
+                        (filter-viable-cells entity (cached-get-adjacent-cells cell-grid cell)))]
     (when (< (distance-to best-cell) own-dist)
       cell)))
 
 (defn- find-next-cell
   "returns {:target-entity entity} or {:target-cell cell}. Cell can be nil."
-  [entity own-cell]
+  [cell-grid entity own-cell]
   (let [faction (faction/enemy (:faction @entity))
         distance-to    #(get-in @% [faction :distance])
         nearest-entity #(get-in @% [faction :entity])
         own-dist (distance-to own-cell)
-        adjacent-cells (cached-get-adjacent-cells own-cell)]
+        adjacent-cells (cached-get-adjacent-cells cell-grid own-cell)]
     (if (and own-dist (zero? own-dist))
       {:target-entity (nearest-entity own-cell)}
       (if-let [adjacent-cell (first (filter #(and (distance-to %)
@@ -200,13 +204,14 @@
 
                          (= (distance-to min-key-cell) own-dist) ; yellow
                          (or
-                          (some #(viable-cell? distance-to own-dist entity %) cells)
+                          (some #(viable-cell? cell-grid distance-to own-dist entity %) cells)
                           own-cell)))}))))
 
-(defn potential-field-follow-to-enemy [entity] ; TODO work with entity* !? occupied-by-other? works with entity not entity* ... not with ids ... hmmm
+; TODO work with entity* !? occupied-by-other? works with entity not entity* ... not with ids ... hmmm
+(defn potential-field-follow-to-enemy [cell-grid entity]
   (let [position (:position @entity)
-        own-cell (get-cell position)
-        {:keys [target-entity target-cell]} (find-next-cell entity own-cell)]
+        own-cell (get cell-grid (mapv int position))
+        {:keys [target-entity target-cell]} (find-next-cell cell-grid entity own-cell)]
     (cond
       target-entity
       (v/direction position (:position @target-entity))
@@ -217,7 +222,7 @@
       :else
       (when-not (and (= target-cell own-cell)
                      (occupied-by-other? own-cell entity)) ; prevent friction 2 move to center
-        (when-not (inside-cell? @entity target-cell)
+        (when-not (inside-cell? cell-grid @entity target-cell)
           (v/direction position (:middle @target-cell)))))))
 
 (defcomponent :move-towards-enemy _
@@ -227,7 +232,7 @@
            :movement-vector
            (if (:active-skill? @entity)
              nil
-             (potential-field-follow-to-enemy entity)))))
+             (potential-field-follow-to-enemy (:cell-grid (get-current-map-data)) entity)))))
 
 ;; DEBUG RENDER TODO not working in old map debug game.maps.render_
 
@@ -245,9 +250,9 @@
 
 #_(defn calculate-mouseover-body-colors [mouseoverbody]
   (when-let [body mouseoverbody]
-    (let [occupied-cell (get-cell (:position @body))
+    (let [occupied-cell (get cell-grid (mapv int (:position @body)))
           own-dist (distance-to occupied-cell)
-          adj-cells (cached-get-adjacent-cells occupied-cell)
+          adj-cells (cached-get-adjacent-cells cell-grid occupied-cell)
           potential-cells (filter distance-to
                                   (filter-viable-cells body adj-cells))
           adj-cells (remove nil? adj-cells)]
