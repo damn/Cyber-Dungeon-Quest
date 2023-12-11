@@ -1,6 +1,5 @@
 (ns game.media
   (:require [x.x :refer [defmodule]]
-            [gdl.utils :refer [dispose]]
             [gdl.lc :as lc]
             [gdl.files :as files]
             [gdl.graphics.image :as image]
@@ -15,7 +14,7 @@
     (.bindRoot #'font (freetype/generate (files/internal "exocet/films.EXL_____.ttf") 16))
     (.bindRoot #'fx (image/spritesheet assets "fx/uf_FX.png" 24 24)))
   (lc/dispose [_]
-    (dispose font)))
+    (dispose ^com.badlogic.gdx.graphics.g2d.BitmapFont font)))
 
 ; TODO do projectiles why animation ? only 1 frame
 (defn black-projectile [assets]

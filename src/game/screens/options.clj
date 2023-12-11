@@ -1,7 +1,6 @@
 (ns game.screens.options
   (:require [x.x :refer [defmodule]]
             [gdl.lc :as lc]
-            [gdl.utils :refer [dispose]]
             [gdl.app :as app]
             [gdl.graphics.gui :as gui]
             [gdl.graphics.image :as image]
@@ -105,7 +104,7 @@
     (let [stage (stage/create gui/viewport batch)]
       (stage/add-actor stage (create-table assets))
       stage))
-  (lc/dispose [_] (dispose stage))
+  (lc/dispose [_] (.dispose ^com.badlogic.gdx.scenes.scene2d.Stage stage))
   (lc/show [_] (input/set-processor stage))
   (lc/hide [_] (input/set-processor nil))
   (lc/render [_ {:keys [batch]}]

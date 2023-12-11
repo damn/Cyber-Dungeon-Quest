@@ -1,7 +1,6 @@
 (ns game.screens.main
   (:require [x.x :refer [defmodule]]
             [gdl.app :as app]
-            [gdl.utils :refer [dispose]]
             [gdl.input :as input]
             [gdl.lc :as lc]
             [gdl.scene2d.ui :as ui]
@@ -40,7 +39,7 @@
                           :fill-parent? true)]
       (stage/add-actor stage table)
       (.center table)))
-  (lc/dispose [_] (dispose stage))
+  (lc/dispose [_] (.dispose ^com.badlogic.gdx.scenes.scene2d.Stage stage))
   (lc/show [_] (input/set-processor stage))
   (lc/hide [_] (input/set-processor nil))
   (lc/render [_ {:keys [batch]}]

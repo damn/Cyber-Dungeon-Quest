@@ -2,7 +2,6 @@
   (:require [clojure.edn :as edn]
             [x.x :refer [defmodule]]
             [gdl.app :as app]
-            [gdl.utils :refer [dispose]]
             [gdl.lc :as lc]
             [gdl.input :as input]
             [gdl.graphics.world :as world]
@@ -15,7 +14,8 @@
             game.maps.impl
             [mapgen.movement-property :refer (movement-property movement-properties)]
             [mapgen.module-gen :as module-gen])
-  (:import com.badlogic.gdx.scenes.scene2d.ui.TextField))
+  (:import com.badlogic.gdx.maps.tiled.TiledMap
+           com.badlogic.gdx.scenes.scene2d.ui.TextField))
 
 (def ^:private current-tiled-map (atom nil))
 (def ^:private current-area-level-grid (atom nil))
@@ -122,7 +122,7 @@
   (let [{:keys [tiled-map
                 area-level-grid
                 start-positions]} (module-gen/generate properties)]
-    (dispose @current-tiled-map)
+    (.dispose ^TiledMap @current-tiled-map)
     (reset! current-tiled-map tiled-map)
     (reset! current-area-level-grid area-level-grid)
     (reset! current-start-positions (set start-positions))
@@ -180,8 +180,8 @@
     (reset! current-tiled-map (tiled/load-map module-gen/modules-file))
     (create-stage batch))
   (lc/dispose [_]
-    (dispose stage)
-    (dispose @current-tiled-map))
+    (.dispose ^com.badlogic.gdx.scenes.scene2d.Stage stage)
+    (.dispose ^TiledMap @current-tiled-map))
   (lc/show [_]
     (input/set-processor stage)
     (center-world-camera))

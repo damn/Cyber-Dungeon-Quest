@@ -2,7 +2,6 @@
   (:require [x.x :refer [defmodule]]
             [gdl.app :as app]
             [gdl.lc :as lc]
-            [gdl.utils :refer [dispose]]
             [gdl.input :as input]
             [gdl.vector :as v]
             [gdl.scene2d.actor :as actor]
@@ -196,7 +195,7 @@
 (defmodule stage
   (lc/create [_ {:keys [batch]}]
     (create-stage batch))
-  (lc/dispose [_] (dispose stage))
+  (lc/dispose [_] (.dispose ^com.badlogic.gdx.scenes.scene2d.Stage stage))
   (lc/show [_] (input/set-processor stage))
   (lc/hide [_] (input/set-processor nil))
   (lc/render [_ {:keys [batch]}]

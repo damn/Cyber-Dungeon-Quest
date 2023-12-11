@@ -4,7 +4,6 @@
             [gdl.lc :as lc]
             [gdl.app :as app]
             [gdl.input :as input]
-            [gdl.utils :refer [dispose]]
             [gdl.graphics.gui :as gui]
             [gdl.scene2d.actor :as actor]
             [gdl.scene2d.stage :as stage]
@@ -231,7 +230,7 @@
                           :fill-parent? true)]
       (stage/add-actor stage table)
       stage))
-  (lc/dispose [_] (dispose stage))
+  (lc/dispose [_] (.dispose ^com.badlogic.gdx.scenes.scene2d.Stage stage))
   (lc/show [_] (input/set-processor stage))
   (lc/hide [_] (input/set-processor nil))
   (lc/render [_ {:keys [batch]}]
