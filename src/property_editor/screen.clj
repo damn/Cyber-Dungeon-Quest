@@ -139,7 +139,7 @@
                                             (let [window (ui/window :title "Choose"
                                                                     :modal? true)
                                                   clicked-id-fn (fn [id]
-                                                                  (actor/remove window)
+                                                                  (.remove window)
                                                                   (redo-rows (conj (set property-ids) id)))]
                                               (.add window (overview-table property-type clicked-id-fn))
                                               (ui/pack window)
@@ -203,7 +203,7 @@
                                    (actor/set-id widget k)
                                    [(ui/label (name k)) widget]))
                                 [[(ui/text-button "Save" #(properties/save! (get-data)))
-                                  (ui/text-button "Cancel" #(actor/remove window))]]))
+                                  (ui/text-button "Cancel" #(.remove window))]]))
     (ui/pack window)
     window))
 

@@ -4,7 +4,6 @@
             [gdl.lc :as lc]
             [gdl.input :as input]
             [gdl.vector :as v]
-            [gdl.scene2d.actor :as actor]
             [gdl.scene2d.stage :as stage]
             [gdl.scene2d.ui :as ui]
             [gdl.graphics.image :as image]
@@ -24,21 +23,24 @@
             [game.context :as context]
             [game.player.entity :refer (player-entity)]
             game.update-ingame
-            game.render-ingame))
+            game.render-ingame)
+  (:import (com.badlogic.gdx.scenes.scene2d Actor Stage)))
 
 (defn- item-on-cursor-render-actor []
-  (actor/create :draw
-                (fn [this]
-                  (when-let [item (:item-on-cursor @player-entity)]
-                    ; windows keep changing z-index when selected, or put all windows in 1 group and this actor another group
-                    (.toFront ^com.badlogic.gdx.scenes.scene2d.Actor this)
-                    (image/draw-centered (context/get-context gui/unit-scale) (:image item) (gui/mouse-position))))))
+  (proxy [Actor] []
+    (draw [_batch _parent-alpha]
+      (when-let [item (:item-on-cursor @player-entity)]
+        ; windows keep changing z-index when selected, or put all windows in 1 group and this actor another group
+        (.toFront ^Actor this)
+        (image/draw-centered (context/get-context gui/unit-scale)
+                             (:image item)
+                             (gui/mouse-position))))))
 
 (defn- create-stage [batch]
-  (let [debug-window       (debug-window/create)
-        help-window        (help-window/create)
-        entity-info-window (entity-info-window/create)
-        skill-window       (skill-window/create)
+  (let [^Actor debug-window (debug-window/create)
+        ^Actor help-window (help-window/create)
+        ^Actor entity-info-window (entity-info-window/create)
+        skill-window (skill-window/create)
         windows [debug-window
                  help-window
                  entity-info-window
@@ -47,24 +49,22 @@
         stage (stage/create gui/viewport batch)
         table (ui/table :rows [[{:actor action-bar/horizontal-group :expand? true :bottom? true}]]
                         :fill-parent? true)]
-    (stage/add-actor stage table)
-    (actor/set-position debug-window 0 (gui/viewport-height))
-    (actor/set-position help-window
-                        (- (/ (gui/viewport-width) 2)
-                           (/ (actor/width help-window) 2))
-                        (gui/viewport-height))
-    (actor/set-position inventory/window
-                        (gui/viewport-width)
-                        (- (/ (gui/viewport-height) 2)
-                           (/ (actor/height help-window) 2)))
-    (actor/set-position entity-info-window
-                        (.getX inventory/window) ; actor/x
-                        0)
-    (actor/set-width  entity-info-window (actor/width inventory/window))
-    (actor/set-height entity-info-window (.getY inventory/window))
+    (.addActor stage table)
+    (.setPosition debug-window 0 (gui/viewport-height))
+    (.setPosition help-window
+                  (- (/ (gui/viewport-width) 2)
+                     (/ (.getWidth help-window) 2))
+                  (gui/viewport-height))
+    (.setPosition inventory/window
+                  (gui/viewport-width)
+                  (- (/ (gui/viewport-height) 2)
+                     (/ (.getHeight help-window) 2)))
+    (.setPosition entity-info-window (.getX inventory/window) 0)
+    (.setWidth entity-info-window (.getWidth inventory/window))
+    (.setHeight entity-info-window (.getY inventory/window))
     (doseq [window windows]
-      (stage/add-actor stage window))
-    (stage/add-actor stage (item-on-cursor-render-actor))
+      (.addActor stage window))
+    (.addActor stage (item-on-cursor-render-actor))
     stage))
 
 (defn- add-vs [vs]
@@ -83,6 +83,9 @@
 (defn- set-movement! [v]
   (swap! player-entity assoc :movement-vector v))
 
+(defn- toggle-visible [^Actor actor]
+  (.setVisible actor (not (.isVisible actor))))
+
 (defn- handle-key-input [{:keys [debug-window
                                  inventory-window
                                  entity-info-window
@@ -100,7 +103,7 @@
        ; when game is paused and/or the player is dead, let player be able to drop item-on-cursor?
        ; or drop it automatically when dead?
        (:item-on-cursor @player-entity) (inventory/put-item-on-ground {:assets assets})
-       (some actor/visible? windows) (run! actor/set-invisible windows)
+       (some #(.isVisible ^Actor %) windows) (run! #(.setVisible ^Actor % false) windows)
        (dead? @player-entity) (if-not false
                                 (app/set-screen :game.screens.main))
        :else (app/set-screen :game.screens.options))))
@@ -108,15 +111,15 @@
     (app/set-screen :game.screens.minimap)) ; TODO does set-screen do it immediately (cancel the current frame ) or finish this frame?
   ; TODO entity/skill info also
   (when (input/is-key-pressed? :I)
-    (actor/toggle-visible inventory-window)
-    (actor/toggle-visible entity-info-window)
-    (actor/toggle-visible skill-window))
+    (toggle-visible inventory-window)
+    (toggle-visible entity-info-window)
+    (toggle-visible skill-window))
 
   (when (input/is-key-pressed? :H)
-    (actor/toggle-visible help-window))
+    (toggle-visible help-window))
 
   (when (input/is-key-pressed? :Z)
-    (actor/toggle-visible debug-window))
+    (toggle-visible debug-window))
 
   ; we check left-mouse-pressed? and not left-mouse-down? because down may miss
   ; short taps between frames
@@ -192,12 +195,15 @@
 ; copies are just pointers at immutable data structures...
 
 
-(defmodule stage
+(defmodule ^Stage stage
   (lc/create [_ {:keys [batch]}]
     (create-stage batch))
-  (lc/dispose [_] (.dispose ^com.badlogic.gdx.scenes.scene2d.Stage stage))
-  (lc/show [_] (input/set-processor stage))
-  (lc/hide [_] (input/set-processor nil))
+  (lc/dispose [_]
+    (.dispose stage))
+  (lc/show [_]
+    (input/set-processor stage))
+  (lc/hide [_]
+    (input/set-processor nil))
   (lc/render [_ {:keys [batch]}]
     (game.render-ingame/render-game batch)
     (gui/render batch
@@ -205,5 +211,5 @@
                   (stage/draw stage batch))))
   (lc/tick [_ {:keys [assets]} delta]
     (handle-key-input stage assets)
-    (stage/act stage delta)
+    (.act stage delta)
     (game.update-ingame/update-game assets stage delta)))

@@ -3,11 +3,11 @@
             [gdl.lc :as lc]
             [gdl.input :as input]
             [gdl.scene2d.ui :as ui]
-            [gdl.scene2d.actor :as actor]
             [game.session :as session]
             [game.skills.core :as skills]
             [game.player.entity :refer (player-entity)])
-  (:import (com.badlogic.gdx.scenes.scene2d.ui HorizontalGroup ButtonGroup Button)))
+  (:import com.badlogic.gdx.scenes.scene2d.Actor
+           (com.badlogic.gdx.scenes.scene2d.ui HorizontalGroup ButtonGroup Button)))
 
 ; TODO when no selected-skill & new skill assoce'd (sword at start)
 ; => set selected (or : on click  and no skill selected -> show error / sound ' no skill selected'
@@ -75,13 +75,17 @@
 (defmodule _
   (lc/create [_ _ctx]
     (.bindRoot #'horizontal-group (HorizontalGroup.))
-    (.addActor horizontal-group (actor/create :act (fn [_] (check-hotbar-actualize))))))
+    (.addActor horizontal-group (proxy [Actor] []
+                                  (act [_delta]
+                                    (check-hotbar-actualize))))))
 
 (declare ^ButtonGroup button-group)
 
 (defn- reset-buttons! []
   (.clearChildren horizontal-group)
-  (.addActor horizontal-group (actor/create :act (fn [_] (check-hotbar-actualize))))
+  (.addActor horizontal-group (proxy [Actor] []
+                                (act [_delta]
+                                  (check-hotbar-actualize))))
 
   (.bindRoot #'button-group (ButtonGroup.))
   (.setMaxCheckCount button-group 1)

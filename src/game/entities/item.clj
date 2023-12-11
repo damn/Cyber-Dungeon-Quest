@@ -1,16 +1,16 @@
 (ns game.entities.item
-  (:require [gdl.scene2d.actor :as actor]
-            [game.db :as db]
+  (:require [game.db :as db]
             [game.components.clickable :as clickable]
             [game.components.inventory :as inventory]
             [game.utils.msg-to-player :refer [show-msg-to-player]]
             [game.player.entity :refer [player-entity]])
-  (:import com.badlogic.gdx.audio.Sound))
+  (:import com.badlogic.gdx.audio.Sound
+           com.badlogic.gdx.scenes.scene2d.Actor))
 
 (defmethod clickable/on-clicked :item [{:keys [stage assets]} entity]
   (let [item (:item @entity)]
     (cond
-     (actor/visible? (:inventory-window stage))
+     (.isVisible ^Actor (:inventory-window stage))
      (do
       (.play ^Sound (get assets "sounds/bfxr_takeit.wav"))
       (swap! entity assoc :destroyed? true)

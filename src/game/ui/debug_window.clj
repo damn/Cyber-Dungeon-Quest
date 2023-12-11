@@ -2,9 +2,9 @@
   (:require [gdl.graphics.world :as world]
             [gdl.graphics.gui :as gui]
             [gdl.scene2d.ui :as ui]
-            [gdl.scene2d.actor :as actor]
             game.running)
-  (:import com.badlogic.gdx.Gdx))
+  (:import com.badlogic.gdx.Gdx
+           com.badlogic.gdx.scenes.scene2d.Actor))
 
 (defn- debug-infos []
   (str "FPS: " (.getFramesPerSecond Gdx/graphics)  "\n"
@@ -20,7 +20,8 @@
                           :id :debug-window)
         label (ui/label "")]
     (.add window label)
-    (.add window (actor/create :act (fn [_]
-                                      (ui/set-text label (debug-infos))
-                                      (.pack window))))
+    (.add window (proxy [Actor] []
+                   (act [_delta]
+                     (ui/set-text label (debug-infos))
+                     (.pack window))))
     window))
