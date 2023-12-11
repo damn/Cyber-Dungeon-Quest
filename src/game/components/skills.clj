@@ -1,7 +1,7 @@
 (ns game.components.skills
   (:require [x.x :refer [defcomponent]]
             [data.val-max :refer [apply-val]]
-            [gdl.audio :as audio]
+            [gdl.assets :as assets]
             [gdl.graphics.image :as image]
             [gdl.graphics.color :as color]
             [gdl.graphics.shape-drawer :as shape-drawer]
@@ -168,7 +168,7 @@
                 (id (:skills @entity)))]
     (when skill
       (assert (= :usable (usable-state @entity skill)))
-      (audio/play (str "sounds/" (if (:spell? skill) "shoot.wav" "slash.wav")))
+      (.play (assets/get-sound (str "sounds/" (if (:spell? skill) "shoot.wav" "slash.wav"))))
       (swap! entity start-skill skill))))
 
 (defcomponent :skillmanager _

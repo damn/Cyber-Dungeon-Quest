@@ -171,7 +171,7 @@
  [game.utils.msg-to-player :refer (show-msg-to-player)]
 
  (defn- denied [text]
-  ; (audio/play (assets/get-sound asset-manager "bfxr_denied.wav"))
+  ; (.play (assets/get-sound asset-manager "bfxr_denied.wav"))
   ; deactivated because on mouse down sound gets played again every frame
   ; would need to use Music class instead of Sound for checking isPlaying already
   ; and playing only once

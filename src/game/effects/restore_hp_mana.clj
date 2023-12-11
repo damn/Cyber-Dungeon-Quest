@@ -1,5 +1,5 @@
 (ns game.effects.restore-hp-mana
-  (:require [gdl.audio :as audio]
+  (:require [gdl.assets :as assets]
             [data.val-max :refer [lower-than-max? set-to-max]]
             [game.effect :as effect]
             [game.components.skills :refer (ai-should-use?)]))
@@ -14,7 +14,7 @@
    :valid-params? (fn [_ {:keys [source]}]
                     source)
    :do! (fn [_ {:keys [source]}]
-          (audio/play "sounds/bfxr_drugsuse.wav")
+          (.play (assets/get-sound "sounds/bfxr_drugsuse.wav"))
           (swap! source #(-> %
                              (update :hp set-to-max)
                              (update :mana set-to-max))))})

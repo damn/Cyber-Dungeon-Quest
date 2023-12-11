@@ -6,7 +6,7 @@
             [gdl.graphics.shape-drawer :as shape-drawer]
             [gdl.graphics.image :as image]
             [gdl.graphics.gui :as gui]
-            [gdl.audio :as audio]
+            [gdl.assets :as assets]
             [gdl.scene2d.ui :as ui]
             [game.session :as session]
             [game.utils.msg-to-player :refer (show-msg-to-player)]
@@ -23,7 +23,7 @@
 ; TODO ! important ! animation & dont put exactly hiding under player
 (defn put-item-on-ground []
   {:pre [(:item-on-cursor @player-entity)]}
-  (audio/play "sounds/bfxr_itemputground.wav")
+  (.play (assets/get-sound "sounds/bfxr_itemputground.wav"))
   (let [{x 0 y 1 :as posi} (:position @player-entity)
        ; [w _] item-body-dimensions
        ; half-size (/ w tile-width 2)
@@ -37,7 +37,7 @@
   (swap! player-entity dissoc :item-on-cursor))
 
 (defn- complain-2h-weapon-and-shield! []
-  ;(audio/play "error.wav")
+  ;(.play (assets/get-sound "error.wav"))
   (show-msg-to-player "Two-handed weapon and shield is not possible."))
 
 (defn- clicked-cell [cell]
@@ -50,7 +50,7 @@
      (and (not item-on-cursor)
           item)
      (do
-      (audio/play "sounds/bfxr_takeit.wav")
+      (.play (assets/get-sound "sounds/bfxr_takeit.wav"))
       (swap! entity assoc :item-on-cursor item)
       (inventory/remove-item! entity cell))
 
@@ -62,7 +62,7 @@
       (if (inventory/two-handed-weapon-and-shield-together? inventory cell item-on-cursor)
         (complain-2h-weapon-and-shield!)
         (do
-         (audio/play "sounds/bfxr_itemput.wav")
+         (.play (assets/get-sound "sounds/bfxr_itemput.wav"))
          (inventory/set-item! entity cell item-on-cursor)
          (swap! entity dissoc :item-on-cursor)))
 
@@ -70,7 +70,7 @@
       (and item
            (inventory/stackable? item item-on-cursor))
       (do
-       (audio/play "sounds/bfxr_itemput.wav")
+       (.play (assets/get-sound "sounds/bfxr_itemput.wav"))
        (inventory/stack-item! entity cell item-on-cursor)
        (swap! entity dissoc :item-on-cursor))
 
@@ -80,7 +80,7 @@
       (if (inventory/two-handed-weapon-and-shield-together? inventory cell item-on-cursor)
         (complain-2h-weapon-and-shield!)
         (do
-         (audio/play "sounds/bfxr_itemput.wav")
+         (.play (assets/get-sound "sounds/bfxr_itemput.wav"))
          (inventory/remove-item! entity cell)
          (inventory/set-item! entity cell item-on-cursor)
          (swap! entity assoc :item-on-cursor item)))))))
