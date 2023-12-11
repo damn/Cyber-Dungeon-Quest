@@ -10,7 +10,8 @@
             [game.context :as context]
             [game.screens.load-session :refer (is-loaded-character)]
             [game.player.session-data :refer (current-character-name)])
-  (:import com.badlogic.gdx.Gdx))
+  (:import com.badlogic.gdx.Gdx
+           com.badlogic.gdx.scenes.scene2d.Stage))
 
 ; TODO do all loading in 'loading' ns...
 
@@ -23,7 +24,7 @@
   (when-let [char-name "FOO BAR"]
     (start-loading-game (apply str char-name) :new-character true)))
 
-(declare stage
+(declare ^Stage stage
          ^:private skip-main-menu
          ^:private bg-image)
 
@@ -38,11 +39,14 @@
                                  [(ui/text-button "Exit" #(.exit Gdx/app))]]
                           :cell-defaults {:pad-bottom 25}
                           :fill-parent? true)]
-      (stage/add-actor stage table)
+      (.addActor stage table)
       (.center table)))
-  (lc/dispose [_] (.dispose ^com.badlogic.gdx.scenes.scene2d.Stage stage))
-  (lc/show [_] (input/set-processor stage))
-  (lc/hide [_] (input/set-processor nil))
+  (lc/dispose [_]
+    (.dispose stage))
+  (lc/show [_]
+    (.setInputProcessor Gdx/input stage))
+  (lc/hide [_]
+    (.setInputProcessor Gdx/input nil))
   (lc/render [_ {:keys [batch]}]
     (gui/render batch
                 (fn [unit-scale]
@@ -52,7 +56,7 @@
                                         (/ (gui/viewport-height) 2)])
                   (stage/draw stage batch))))
   (lc/tick [_ _state delta]
-    (stage/act stage delta)
+    (.act stage delta)
     (when (input/is-key-pressed? :ESCAPE) ; no input/
       (.exit Gdx/app))
     (when skip-main-menu

@@ -12,7 +12,9 @@
             [game.context :as context]
             ;[game.line-of-sight :refer (player-line-of-sight-checks)]
             [game.components.body :refer (show-body-bounds)]
-            [game.components.skills :refer (show-skill-icon-on-active)]))
+            [game.components.skills :refer (show-skill-icon-on-active)])
+  (:import com.badlogic.gdx.Gdx
+           com.badlogic.gdx.scenes.scene2d.Stage))
 
 ; no protocol
 (defprotocol StatusCheckBox
@@ -99,14 +101,17 @@
     (def menu-bg-image (image/create assets "ui/moon_background.png"))
     table))
 
-(defmodule stage
+(defmodule ^Stage stage
   (lc/create [_ {:keys [assets batch]}]
     (let [stage (stage/create gui/viewport batch)]
-      (stage/add-actor stage (create-table assets))
+      (.addActor stage (create-table assets))
       stage))
-  (lc/dispose [_] (.dispose ^com.badlogic.gdx.scenes.scene2d.Stage stage))
-  (lc/show [_] (input/set-processor stage))
-  (lc/hide [_] (input/set-processor nil))
+  (lc/dispose [_]
+    (.dispose stage))
+  (lc/show [_]
+    (.setInputProcessor Gdx/input stage))
+  (lc/hide [_]
+    (.setInputProcessor Gdx/input nil))
   (lc/render [_ {:keys [batch]}]
     (gui/render batch
                 (fn [unit-scale]
@@ -116,6 +121,6 @@
                                         (/ (gui/viewport-height) 2)])
                   (stage/draw stage batch))))
   (lc/tick [_ _state delta]
-    (stage/act stage delta)
+    (.act stage delta)
     (when (input/is-key-pressed? :ESCAPE)
       (exit))))

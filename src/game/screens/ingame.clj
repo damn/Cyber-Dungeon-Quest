@@ -24,7 +24,8 @@
             [game.player.entity :refer (player-entity)]
             game.update-ingame
             game.render-ingame)
-  (:import (com.badlogic.gdx.scenes.scene2d Actor Stage)))
+  (:import com.badlogic.gdx.Gdx
+           (com.badlogic.gdx.scenes.scene2d Actor Stage)))
 
 (defn- item-on-cursor-render-actor []
   (proxy [Actor] []
@@ -201,9 +202,9 @@
   (lc/dispose [_]
     (.dispose stage))
   (lc/show [_]
-    (input/set-processor stage))
+    (.setInputProcessor Gdx/input stage))
   (lc/hide [_]
-    (input/set-processor nil))
+    (.setInputProcessor Gdx/input nil))
   (lc/render [_ {:keys [batch]}]
     (game.render-ingame/render-game batch)
     (gui/render batch

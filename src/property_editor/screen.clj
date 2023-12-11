@@ -8,13 +8,9 @@
             [gdl.scene2d.actor :as actor]
             [gdl.scene2d.stage :as stage]
             [gdl.scene2d.ui :as ui]
-            [game.properties :as properties]))
-
-; TODO:
-
-; weapons are both items & skills ... how to edit ? or extra category ?
-; => not assoc data but update data merge new-data
-; => and keys is just minimum keys check...
+            [game.properties :as properties])
+  (:import com.badlogic.gdx.Gdx
+           com.badlogic.gdx.scenes.scene2d.Stage))
 
 ; * validation on load all properties / save property/properties
 ; => spec => key spec
@@ -24,13 +20,14 @@
 ; * non-toggle image-button at overview => VisImageButton
 ; * missing widgets for keys / one-to-many not implemented
 
-(def ^:private stage app/current-screen-value)
+(defn- stage ^Stage []
+  (app/current-screen-value))
 
 (declare property-editor-window)
 
 (defn- open-property-editor-window [id]
   (let [window (property-editor-window id)]
-    (stage/add-actor (stage) window)
+    (.addActor (stage) window)
     (actor/set-center window
                       (/ (gui/viewport-width)  2)
                       (/ (gui/viewport-height) 2))))
@@ -144,7 +141,7 @@
                                               (.add window (overview-table property-type clicked-id-fn))
                                               (ui/pack window)
                                               ; TODO fn above -> open in center .. ?
-                                              (stage/add-actor (stage) window)
+                                              (.addActor (stage) window)
                                               (actor/set-center window
                                                                 (/ (gui/viewport-width)  2)
                                                                 (/ (gui/viewport-height) 2)))))]])))
@@ -222,20 +219,23 @@
                      [(ui/text-button (:title overview) #(set-second-widget (overview-table property-type open-property-editor-window)))])
                    [[(ui/text-button "Back to Main Menu" #(app/set-screen :game.screens.main))]])))
 
-(defmodule stage
+(defmodule ^Stage stage
   (lc/create [_ {:keys [batch]}]
     (let [stage (stage/create gui/viewport batch)
           table (ui/table :id :main-table
                           :rows [[(left-widget) nil]]
                           :fill-parent? true)]
-      (stage/add-actor stage table)
+      (.addActor stage table)
       stage))
-  (lc/dispose [_] (.dispose ^com.badlogic.gdx.scenes.scene2d.Stage stage))
-  (lc/show [_] (input/set-processor stage))
-  (lc/hide [_] (input/set-processor nil))
+  (lc/dispose [_]
+    (.dispose stage))
+  (lc/show [_]
+    (.setInputProcessor Gdx/input stage))
+  (lc/hide [_]
+    (.setInputProcessor Gdx/input nil))
   (lc/render [_ {:keys [batch]}]
     (gui/render batch
                 (fn [_unit-scale]
                   (stage/draw stage batch))))
   (lc/tick [_ _state delta]
-    (stage/act stage delta)))
+    (.act stage delta)))

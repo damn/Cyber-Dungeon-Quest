@@ -14,7 +14,9 @@
             game.maps.impl
             [mapgen.movement-property :refer (movement-property movement-properties)]
             [mapgen.module-gen :as module-gen])
-  (:import com.badlogic.gdx.maps.tiled.TiledMap
+  (:import com.badlogic.gdx.Gdx
+           com.badlogic.gdx.maps.tiled.TiledMap
+           com.badlogic.gdx.scenes.scene2d.Stage
            com.badlogic.gdx.scenes.scene2d.ui.TextField))
 
 (def ^:private current-tiled-map (atom nil))
@@ -168,25 +170,25 @@
   (let [stage (stage/create gui/viewport batch)
         window (ui/window :title "Properties")
         [form get-properties] (edn-edit-form game.maps.impl/map-data-file)]
-    (stage/add-actor stage window)
+    (.addActor stage window)
     (.add window ^com.badlogic.gdx.scenes.scene2d.Actor form)
     (.row window)
     (.add window (ui/text-button "Generate" #(generate (get-properties))))
     (.pack window)
     stage))
 
-(defmodule stage
+(defmodule ^Stage stage
   (lc/create [_ {:keys [batch]}]
     (reset! current-tiled-map (tiled/load-map module-gen/modules-file))
     (create-stage batch))
   (lc/dispose [_]
-    (.dispose ^com.badlogic.gdx.scenes.scene2d.Stage stage)
+    (.dispose stage)
     (.dispose ^TiledMap @current-tiled-map))
   (lc/show [_]
-    (input/set-processor stage)
+    (.setInputProcessor Gdx/input stage)
     (center-world-camera))
   (lc/hide [_]
-    (input/set-processor nil))
+    (.setInputProcessor Gdx/input nil))
   (lc/render [_ {:keys [batch]}]
     (tiled/render-map batch
                       @current-tiled-map
@@ -197,7 +199,7 @@
                 (fn [_unit-scale]
                   (stage/draw stage batch))))
   (lc/tick [_ _state delta]
-    (stage/act stage delta)
+    (.act stage delta)
     (when (input/is-key-pressed? :ESCAPE)
       (app/set-screen :game.screens.main))
     (if (input/is-key-pressed? :L)
