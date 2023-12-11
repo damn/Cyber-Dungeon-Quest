@@ -6,7 +6,6 @@
             [gdl.input :as input]
             [gdl.utils :refer [dispose]]
             [gdl.graphics.gui :as gui]
-            [gdl.graphics.batch :refer [batch]]
             [gdl.scene2d.actor :as actor]
             [gdl.scene2d.stage :as stage]
             [gdl.scene2d.ui :as ui]
@@ -225,7 +224,7 @@
                    [[(ui/text-button "Back to Main Menu" #(app/set-screen :game.screens.main))]])))
 
 (defmodule stage
-  (lc/create [_ _ctx]
+  (lc/create [_ {:keys [batch]}]
     (let [stage (stage/create gui/viewport batch)
           table (ui/table :id :main-table
                           :rows [[(left-widget) nil]]
@@ -235,7 +234,9 @@
   (lc/dispose [_] (dispose stage))
   (lc/show [_] (input/set-processor stage))
   (lc/hide [_] (input/set-processor nil))
-  (lc/render [_] (gui/render batch
-                             (fn [_unit-scale]
-                               (stage/draw stage batch))))
-  (lc/tick [_ delta] (stage/act stage delta)))
+  (lc/render [_ {:keys [batch]}]
+    (gui/render batch
+                (fn [_unit-scale]
+                  (stage/draw stage batch))))
+  (lc/tick [_ _state delta]
+    (stage/act stage delta)))

@@ -8,7 +8,6 @@
             [gdl.scene2d.actor :as actor]
             [gdl.scene2d.stage :as stage]
             [gdl.scene2d.ui :as ui]
-            [gdl.graphics.batch :refer [batch]]
             [gdl.graphics.image :as image]
             [gdl.graphics.gui :as gui]
             [gdl.graphics.world :as world]
@@ -36,7 +35,7 @@
                     (.toFront ^com.badlogic.gdx.scenes.scene2d.Actor this)
                     (image/draw-centered (context/get-context gui/unit-scale) (:image item) (gui/mouse-position))))))
 
-(defn- create-stage []
+(defn- create-stage [batch]
   (let [debug-window       (debug-window/create)
         help-window        (help-window/create)
         entity-info-window (entity-info-window/create)
@@ -192,16 +191,17 @@
 
 
 (defmodule stage
-  (lc/create [_ _ctx] (create-stage))
+  (lc/create [_ {:keys [batch]}]
+    (create-stage batch))
   (lc/dispose [_] (dispose stage))
   (lc/show [_] (input/set-processor stage))
   (lc/hide [_] (input/set-processor nil))
-  (lc/render [_]
+  (lc/render [_ {:keys [batch]}]
     (game.render-ingame/render-game batch)
     (gui/render batch
                 (fn [_unit-scale]
                   (stage/draw stage batch))))
-  (lc/tick [_ delta]
+  (lc/tick [_ _state delta]
     (handle-key-input stage)
     (stage/act stage delta)
     (game.update-ingame/update-game stage delta)))

@@ -7,7 +7,6 @@
             [gdl.input :as input]
             [gdl.graphics.world :as world]
             [gdl.graphics.gui :as gui]
-            [gdl.graphics.batch :refer [batch]]
             [gdl.graphics.color :as color]
             [gdl.graphics.shape-drawer :as shape-drawer]
             [gdl.tiled :as tiled]
@@ -165,7 +164,7 @@
               2)
     [table get-properties]))
 
-(defn- create-stage []
+(defn- create-stage [batch]
   (let [stage (stage/create gui/viewport batch)
         window (ui/window :title "Properties")
         [form get-properties] (edn-edit-form game.maps.impl/map-data-file)]
@@ -177,9 +176,9 @@
     stage))
 
 (defmodule stage
-  (lc/create [_ _ctx]
+  (lc/create [_ {:keys [batch]}]
     (reset! current-tiled-map (tiled/load-map module-gen/modules-file))
-    (create-stage))
+    (create-stage batch))
   (lc/dispose [_]
     (dispose stage)
     (dispose @current-tiled-map))
@@ -188,7 +187,7 @@
     (center-world-camera))
   (lc/hide [_]
     (input/set-processor nil))
-  (lc/render [_]
+  (lc/render [_ {:keys [batch]}]
     (tiled/render-map batch
                       @current-tiled-map
                       (constantly color/white)) ; TODO colorsetter optional.
@@ -197,7 +196,7 @@
     (gui/render batch
                 (fn [_unit-scale]
                   (stage/draw stage batch))))
-  (lc/tick [_ delta]
+  (lc/tick [_ _state delta]
     (stage/act stage delta)
     (when (input/is-key-pressed? :ESCAPE)
       (app/set-screen :game.screens.main))

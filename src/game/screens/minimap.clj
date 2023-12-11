@@ -4,7 +4,6 @@
             [gdl.lc :as lc]
             [gdl.input :as input]
             [gdl.tiled :as tiled]
-            [gdl.graphics.batch :refer [batch]]
             [gdl.graphics.color :as color]
             [gdl.graphics.shape-drawer :as shape-drawer]
             [gdl.graphics.world :as world]
@@ -63,10 +62,10 @@
   (lc/show [_]
     (reset! zoom-setting (calculate-zoom))
     (set-zoom @zoom-setting))
-  (lc/render [_]
+  (lc/render [_ {:keys [batch]}]
     (render-minimap batch)
     (world/render batch render-map-level))
-  (lc/tick [_ delta]
+  (lc/tick [_ _state delta]
     (when (or (input/is-key-pressed? :TAB)
               (input/is-key-pressed? :ESCAPE))
       (set-zoom 1)

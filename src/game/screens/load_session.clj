@@ -1,7 +1,6 @@
 (ns game.screens.load-session
   (:require [x.x :refer [defmodule]]
             [gdl.lc :as lc]
-            [gdl.graphics.batch :refer [batch]]
             [gdl.graphics.gui :as gui]
             [gdl.app :as app]
             game.player.session-data))
@@ -14,7 +13,7 @@
 (defmodule _
   (lc/show [_]
     (reset! render-once false))
-  (lc/render [_]
+  (lc/render [_ {:keys [batch]}]
     (gui/render batch
                 (fn [_unit-scale]
                   (reset! render-once true)
@@ -23,7 +22,7 @@
                                     (/ (gui/viewport-height) 2)
                                     #_{:centerx true}
                                     ))))
-  (lc/tick [_ delta]
+  (lc/tick [_ _state delta]
     (when @render-once
       ;(log "Loading new session")
       (game.player.session-data/init @is-loaded-character)

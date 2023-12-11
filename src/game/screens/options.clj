@@ -5,7 +5,6 @@
             [gdl.app :as app]
             [gdl.graphics.gui :as gui]
             [gdl.graphics.image :as image]
-            [gdl.graphics.batch :refer [batch]]
             [gdl.input :as input]
             [gdl.scene2d.ui :as ui]
             [gdl.scene2d.stage :as stage]
@@ -102,14 +101,14 @@
     table))
 
 (defmodule stage
-  (lc/create [_ _ctx]
+  (lc/create [_ {:keys [batch]}]
     (let [stage (stage/create gui/viewport batch)]
       (stage/add-actor stage (create-table))
       stage))
   (lc/dispose [_] (dispose stage))
   (lc/show [_] (input/set-processor stage))
   (lc/hide [_] (input/set-processor nil))
-  (lc/render [_]
+  (lc/render [_ {:keys [batch]}]
     (gui/render batch
                 (fn [unit-scale]
                   (image/draw-centered (context/get-context unit-scale)
@@ -117,7 +116,7 @@
                                        [(/ (gui/viewport-width)  2)
                                         (/ (gui/viewport-height) 2)])
                   (stage/draw stage batch))))
-  (lc/tick [_ delta]
+  (lc/tick [_ _state delta]
     (stage/act stage delta)
     (when (input/is-key-pressed? :ESCAPE)
       (exit))))

@@ -8,7 +8,6 @@
             [gdl.scene2d.stage :as stage]
             [gdl.graphics.gui :as gui]
             [gdl.graphics.image :as image]
-            [gdl.graphics.batch :refer [batch]]
             [game.context :as context]
             [game.screens.load-session :refer (is-loaded-character)]
             [game.player.session-data :refer (current-character-name)]))
@@ -24,31 +23,27 @@
   (when-let [char-name "FOO BAR"]
     (start-loading-game (apply str char-name) :new-character true)))
 
-(declare stage)
-
-(defn- create* []
-  (.bindRoot #'stage (stage/create gui/viewport batch)) ; TODO remove all .bindRoot
-  (let [table (ui/table :rows [[(ui/text-button "New game" try-create-character)]
-                               [(ui/text-button "Map Editor" #(app/set-screen :mapgen.tiledmap-renderer))]
-                               [(ui/text-button "Entity Editor" #(app/set-screen :property-editor.screen))]
-                               [(ui/text-button "Exit" app/exit)]]
-                        :cell-defaults {:pad-bottom 25}
-                        :fill-parent? true)]
-    (stage/add-actor stage table)
-    (.center table)))
-
-(declare ^:private skip-main-menu
+(declare stage
+         ^:private skip-main-menu
          ^:private bg-image)
 
 (defmodule _
-  (lc/create [[_ {:keys [skip-main-menu bg-image]}] _ctx]
+  (lc/create [[_ {:keys [skip-main-menu bg-image]}] {:keys [batch]}]
     (.bindRoot #'skip-main-menu skip-main-menu)
     (.bindRoot #'bg-image (image/create bg-image))
-    (create*))
+    (.bindRoot #'stage (stage/create gui/viewport batch)) ; TODO remove all .bindRoot
+    (let [table (ui/table :rows [[(ui/text-button "New game" try-create-character)]
+                                 [(ui/text-button "Map Editor" #(app/set-screen :mapgen.tiledmap-renderer))]
+                                 [(ui/text-button "Entity Editor" #(app/set-screen :property-editor.screen))]
+                                 [(ui/text-button "Exit" app/exit)]]
+                          :cell-defaults {:pad-bottom 25}
+                          :fill-parent? true)]
+      (stage/add-actor stage table)
+      (.center table)))
   (lc/dispose [_] (dispose stage))
   (lc/show [_] (input/set-processor stage))
   (lc/hide [_] (input/set-processor nil))
-  (lc/render [_]
+  (lc/render [_ {:keys [batch]}]
     (gui/render batch
                 (fn [unit-scale]
                   (image/draw-centered (context/get-context unit-scale)
@@ -56,7 +51,7 @@
                                        [(/ (gui/viewport-width)  2)
                                         (/ (gui/viewport-height) 2)])
                   (stage/draw stage batch))))
-  (lc/tick [_ delta]
+  (lc/tick [_ _state delta]
     (stage/act stage delta)
     (when (input/is-key-pressed? :ESCAPE) ; no input/
       (app/exit))
