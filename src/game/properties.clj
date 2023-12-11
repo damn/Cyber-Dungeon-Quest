@@ -65,7 +65,7 @@
          ^:private properties)
 
 (defmodule file
-  (lc/create [_]
+  (lc/create [_ _ctx]
     (.bindRoot #'properties-file file)
     (.bindRoot #'properties (load-edn file))))
 

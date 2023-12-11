@@ -192,7 +192,7 @@
 
 
 (defmodule stage
-  (lc/create [_] (create-stage))
+  (lc/create [_ _ctx] (create-stage))
   (lc/dispose [_] (dispose stage))
   (lc/show [_] (input/set-processor stage))
   (lc/hide [_] (input/set-processor nil))

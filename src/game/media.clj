@@ -11,7 +11,7 @@
          ^:private fx)
 
 (defmodule _
-  (lc/create [_]
+  (lc/create [_ _ctx]
     (.bindRoot #'font (freetype/generate (files/internal "exocet/films.EXL_____.ttf") 16))
     (.bindRoot #'fx (image/spritesheet "fx/uf_FX.png" 24 24)))
   (lc/dispose [_]

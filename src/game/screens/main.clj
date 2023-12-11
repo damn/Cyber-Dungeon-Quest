@@ -41,7 +41,7 @@
          ^:private bg-image)
 
 (defmodule _
-  (lc/create [[_ {:keys [skip-main-menu bg-image]}]]
+  (lc/create [[_ {:keys [skip-main-menu bg-image]}] _ctx]
     (.bindRoot #'skip-main-menu skip-main-menu)
     (.bindRoot #'bg-image (image/create bg-image))
     (create*))

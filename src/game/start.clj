@@ -19,20 +19,20 @@
             :fps nil} ; TODO fix is set to 60 @ gdl
    :tile-size 48
    :log-lc? false
-   :modules [[:game.properties "resources/properties.edn"]
-             [:game.maps.data]
-             [:game.media]
-             [:game.ui.inventory-window]
-             [:game.ui.action-bar]
-             [:game.player.status-gui]
-             [:game.screens.main {:bg-image "ui/moon_background.png"
-                                  :skip-main-menu false}]
-             [:game.screens.load-session]
-             [:game.screens.ingame]
-             [:game.screens.minimap]
-             [:game.screens.options]
-             [:mapgen.tiledmap-renderer]
-             [:property-editor.screen]]
+   :modules {:game.properties "resources/properties.edn"
+             :game.maps.data nil
+             :game.media nil
+             :game.ui.inventory-window nil
+             :game.ui.action-bar nil
+             :game.player.status-gui nil
+             :game.screens.main {:bg-image "ui/moon_background.png"
+                                 :skip-main-menu false}
+             :game.screens.load-session nil
+             :game.screens.ingame nil
+             :game.screens.minimap nil
+             :game.screens.options nil
+             :mapgen.tiledmap-renderer nil
+             :property-editor.screen nil}
    :first-screen :game.screens.main})
 
 (defn app []

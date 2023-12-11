@@ -177,7 +177,7 @@
     stage))
 
 (defmodule stage
-  (lc/create [_]
+  (lc/create [_ _ctx]
     (reset! current-tiled-map (tiled/load-map module-gen/modules-file))
     (create-stage))
   (lc/dispose [_]

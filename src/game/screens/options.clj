@@ -102,7 +102,7 @@
     table))
 
 (defmodule stage
-  (lc/create [_]
+  (lc/create [_ _ctx]
     (let [stage (stage/create gui/viewport batch)]
       (stage/add-actor stage (create-table))
       stage))

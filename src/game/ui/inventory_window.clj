@@ -89,7 +89,7 @@
          ^:private ^Table table)
 
 (defmodule _
-  (lc/create [_]
+  (lc/create [_ _ctx]
     (.bindRoot #'window (ui/window :title "Inventory"
                                    :id :inventory-window))
     (.bindRoot #'table (ui/table))

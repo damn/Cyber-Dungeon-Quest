@@ -17,7 +17,7 @@
                    :up? true}))
 
 (defmodule _
-  (lc/create [_]
+  (lc/create [_ _ctx]
     (let [scale 2] ; TODO FIXME scale of the whole all game things can set somewhere (gui-scale) for all dists, etc.
       ; ?? can play also sci-fi 24x24 ?
       (def ^:private rahmen (image/create "ui/rahmen.png"))

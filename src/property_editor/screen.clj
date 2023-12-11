@@ -225,7 +225,7 @@
                    [[(ui/text-button "Back to Main Menu" #(app/set-screen :game.screens.main))]])))
 
 (defmodule stage
-  (lc/create [_]
+  (lc/create [_ _ctx]
     (let [stage (stage/create gui/viewport batch)
           table (ui/table :id :main-table
                           :rows [[(left-widget) nil]]

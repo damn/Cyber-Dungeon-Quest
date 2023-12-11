@@ -73,7 +73,7 @@
          ^HorizontalGroup horizontal-group) ; TODO == action-bar
 
 (defmodule _
-  (lc/create [_]
+  (lc/create [_ _ctx]
     (.bindRoot #'horizontal-group (HorizontalGroup.))
     (.addActor horizontal-group (actor/create :act (fn [_] (check-hotbar-actualize))))))
 
