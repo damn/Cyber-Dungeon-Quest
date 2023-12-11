@@ -1,13 +1,13 @@
 (ns game.ui.debug-window
-  (:require [gdl.graphics :as g]
-            [gdl.graphics.world :as world]
+  (:require [gdl.graphics.world :as world]
             [gdl.graphics.gui :as gui]
             [gdl.scene2d.ui :as ui]
             [gdl.scene2d.actor :as actor]
-            game.running))
+            game.running)
+  (:import com.badlogic.gdx.Gdx))
 
 (defn- debug-infos []
-  (str "FPS: " (g/fps)  "\n"
+  (str "FPS: " (.getFramesPerSecond Gdx/graphics)  "\n"
        "World: "(mapv int (world/mouse-position)) "\n"
        "X:" ((world/mouse-position) 0) "\n"
        "Y:" ((world/mouse-position) 1) "\n"
