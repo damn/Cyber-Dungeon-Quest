@@ -12,13 +12,12 @@
             property-editor.screen))
 
 (def app-config
-  {:window {:title "Cyber Dungeon Quest"
-            :width  1440 ; TODO when setting full screen, uses the window size not full w/h, this is MBP full screen w/h
-            :height 900
-            :full-screen false
-            :fps nil} ; TODO fix is set to 60 @ gdl
+  {:app {:title "Cyber Dungeon Quest"
+         :width  1440 ; TODO when setting full screen, uses the window size not full w/h, this is MBP full screen w/h
+         :height 900
+         :full-screen? false
+         :fps nil} ; TODO fix is set to 60 @ gdl
    :tile-size 48
-   :log-lc? false
    :modules {:game.properties "resources/properties.edn"
              :game.maps.data nil
              :game.media nil
