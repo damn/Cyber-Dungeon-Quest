@@ -1,12 +1,11 @@
 (ns game.context
   (:require gdl.app
-            gdl.graphics.world
-            gdl.graphics.gui
             [game.media :as media]))
 
 (defn get-context [unit-scale]
-  {:default-font media/font
-   :unit-scale unit-scale
-   :batch (:batch @gdl.app/state)
-   :world/unit-scale gdl.graphics.world/unit-scale
-   :gui/unit-scale gdl.graphics.gui/unit-scale})
+  (let [{:keys [batch world-unit-scale gui-unit-scale]} @gdl.app/state]
+    {:default-font media/font
+     :unit-scale unit-scale
+     :batch batch
+     :world-unit-scale world-unit-scale
+     :gui-unit-scale gui-unit-scale}))
