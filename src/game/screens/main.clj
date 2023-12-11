@@ -9,7 +9,8 @@
             [gdl.graphics.image :as image]
             [game.context :as context]
             [game.screens.load-session :refer (is-loaded-character)]
-            [game.player.session-data :refer (current-character-name)]))
+            [game.player.session-data :refer (current-character-name)])
+  (:import com.badlogic.gdx.Gdx))
 
 ; TODO do all loading in 'loading' ns...
 
@@ -34,7 +35,7 @@
     (let [table (ui/table :rows [[(ui/text-button "New game" try-create-character)]
                                  [(ui/text-button "Map Editor" #(app/set-screen :mapgen.tiledmap-renderer))]
                                  [(ui/text-button "Entity Editor" #(app/set-screen :property-editor.screen))]
-                                 [(ui/text-button "Exit" app/exit)]]
+                                 [(ui/text-button "Exit" #(.exit Gdx/app))]]
                           :cell-defaults {:pad-bottom 25}
                           :fill-parent? true)]
       (stage/add-actor stage table)
@@ -53,6 +54,6 @@
   (lc/tick [_ _state delta]
     (stage/act stage delta)
     (when (input/is-key-pressed? :ESCAPE) ; no input/
-      (app/exit))
+      (.exit Gdx/app))
     (when skip-main-menu
       (try-create-character))))
