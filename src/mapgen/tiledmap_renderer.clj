@@ -195,9 +195,7 @@
                       (constantly color/white)) ; TODO colorsetter optional.
     (world/render batch
                   render-on-map)
-    (gui/render batch
-                (fn [_unit-scale]
-                  (stage/draw stage batch))))
+    (.draw stage))
   (lc/tick [_ _state delta]
     (.act stage delta)
     (when (input/is-key-pressed? :ESCAPE)

@@ -207,9 +207,7 @@
     (.setInputProcessor Gdx/input nil))
   (lc/render [_ {:keys [batch]}]
     (game.render-ingame/render-game batch)
-    (gui/render batch
-                (fn [_unit-scale]
-                  (stage/draw stage batch))))
+    (.draw stage))
   (lc/tick [_ {:keys [assets]} delta]
     (handle-key-input stage assets)
     (.act stage delta)

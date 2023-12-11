@@ -233,9 +233,7 @@
     (.setInputProcessor Gdx/input stage))
   (lc/hide [_]
     (.setInputProcessor Gdx/input nil))
-  (lc/render [_ {:keys [batch]}]
-    (gui/render batch
-                (fn [_unit-scale]
-                  (stage/draw stage batch))))
+  (lc/render [_ _context]
+    (.draw stage))
   (lc/tick [_ _state delta]
     (.act stage delta)))

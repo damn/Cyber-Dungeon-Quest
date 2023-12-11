@@ -53,8 +53,8 @@
                   (image/draw-centered (context/get-context unit-scale)
                                        bg-image
                                        [(/ (gui/viewport-width)  2)
-                                        (/ (gui/viewport-height) 2)])
-                  (stage/draw stage batch))))
+                                        (/ (gui/viewport-height) 2)])))
+    (.draw stage))
   (lc/tick [_ _state delta]
     (.act stage delta)
     (when (input/is-key-pressed? :ESCAPE) ; no input/
