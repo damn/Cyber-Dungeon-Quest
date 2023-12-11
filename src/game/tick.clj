@@ -23,7 +23,7 @@
     nil
     (delta-speed (:update-speed modifiers) k delta)))
 
-(defn tick-entity! [entity delta]
+(defn tick-entity! [context entity delta]
   (let [modifiers (:modifiers @entity)]
     (swap! entity update-map
            (fn [[k v] delta]
@@ -34,6 +34,6 @@
     (doseq-entity entity
                   (fn [[k v] e delta]
                     (if-let [delta (delta? modifiers k delta)]
-                      (entity/tick! [k v] e delta)
+                      (entity/tick! [k v] context e delta)
                       nil))
                   delta)))

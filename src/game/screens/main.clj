@@ -28,9 +28,9 @@
          ^:private bg-image)
 
 (defmodule _
-  (lc/create [[_ {:keys [skip-main-menu bg-image]}] {:keys [batch]}]
+  (lc/create [[_ {:keys [skip-main-menu bg-image]}] {:keys [assets batch]}]
     (.bindRoot #'skip-main-menu skip-main-menu)
-    (.bindRoot #'bg-image (image/create bg-image))
+    (.bindRoot #'bg-image (image/create assets bg-image))
     (.bindRoot #'stage (stage/create gui/viewport batch)) ; TODO remove all .bindRoot
     (let [table (ui/table :rows [[(ui/text-button "New game" try-create-character)]
                                  [(ui/text-button "Map Editor" #(app/set-screen :mapgen.tiledmap-renderer))]

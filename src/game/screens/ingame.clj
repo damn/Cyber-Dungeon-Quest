@@ -88,7 +88,8 @@
                                  inventory-window
                                  entity-info-window
                                  skill-window
-                                 help-window] :as stage}]
+                                 help-window] :as stage}
+                         assets]
   (action-bar/up-skill-hotkeys)
   (let [windows [debug-window
                  help-window
@@ -99,7 +100,7 @@
       (cond
        ; when game is paused and/or the player is dead, let player be able to drop item-on-cursor?
        ; or drop it automatically when dead?
-       (:item-on-cursor @player-entity) (inventory/put-item-on-ground)
+       (:item-on-cursor @player-entity) (inventory/put-item-on-ground {:assets assets})
        (some actor/visible? windows) (run! actor/set-invisible windows)
        (dead? @player-entity) (if-not false
                                 (app/set-screen :game.screens.main))
@@ -128,7 +129,7 @@
       (and (input/is-leftm-pressed?)
            (not (stage/hit stage (gui/mouse-position)))
            (:item-on-cursor @player-entity))
-      (inventory/put-item-on-ground)
+      (inventory/put-item-on-ground {:assets assets})
 
       ; running around w. item in hand -> how is d2 doing this?
       ; -> do not run the game in this case (no action)
@@ -141,7 +142,9 @@
                (input/is-leftbutton-down?))
            (not (stage/hit stage (gui/mouse-position)))
            (clickable/clickable-mouseover-entity? (get-mouseover-entity)))
-      (clickable/on-clicked stage (get-mouseover-entity))
+      (clickable/on-clicked {:stage stage
+                             :assets assets}
+                            (get-mouseover-entity))
 
       (saved-mouseover-entity) ; saved=holding leftmouse down after clicking on mouseover entity
       (set-movement! (v/direction (:position @player-entity)
@@ -171,7 +174,7 @@
  [game.utils.msg-to-player :refer (show-msg-to-player)]
 
  (defn- denied [text]
-  ; (.play (assets/get-sound asset-manager "bfxr_denied.wav"))
+  ; (.play ^Sound (get assets asset-manager "bfxr_denied.wav"))
   ; deactivated because on mouse down sound gets played again every frame
   ; would need to use Music class instead of Sound for checking isPlaying already
   ; and playing only once
@@ -201,7 +204,7 @@
     (gui/render batch
                 (fn [_unit-scale]
                   (stage/draw stage batch))))
-  (lc/tick [_ _state delta]
-    (handle-key-input stage)
+  (lc/tick [_ {:keys [assets]} delta]
+    (handle-key-input stage assets)
     (stage/act stage delta)
-    (game.update-ingame/update-game stage delta)))
+    (game.update-ingame/update-game assets stage delta)))

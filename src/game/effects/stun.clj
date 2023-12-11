@@ -15,7 +15,7 @@
 (defcomponent :stunned? counter
   (entity/tick [_ delta]
     (counter/tick counter delta))
-  (entity/tick! [[k _] e delta]
+  (entity/tick! [[k _] _ctx e delta]
     (when (counter/stopped? counter)
       (swap! e modifier/reverse-modifiers stun-modifiers)
       (swap! e dissoc k)))
@@ -27,7 +27,7 @@
            (str "Stuns for " (readable-number (/ duration 1000)) " seconds"))
    :valid-params? (fn [_ {:keys [source target]}]
                     (and target)) ; TODO needs :speed/:skillmanager ?!
-   :do! (fn [duration {:keys [target]}]
+   :do! (fn [duration {:keys [target]} _context]
           (if (:stunned? @target)
             (swap! target update-in [:stunned? :maxcnt] + duration)
             (do (doseq-entity target entity/stun!) ; TODO interrupt? (as sepearte ability also ? )

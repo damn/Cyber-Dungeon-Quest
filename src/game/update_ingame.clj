@@ -1,6 +1,5 @@
 (ns game.update-ingame
   (:require [clj-commons.pretty.repl :as p]
-            [gdl.assets :as assets]
             [gdl.input :as input]
             [game.running :refer (running)]
             [game.tick :as tick]
@@ -13,12 +12,13 @@
             [game.utils.msg-to-player :refer [update-msg-to-player]]
             [game.maps.mapchange :refer [check-change-map]]
             [game.maps.contentfields :refer [get-entities-in-active-content-fields]]
-            [game.maps.potential-field :refer [update-potential-fields]]))
+            [game.maps.potential-field :refer [update-potential-fields]])
+  (:import com.badlogic.gdx.audio.Sound))
 
-(defn- update-game-systems [stage delta]
+(defn- update-game-systems [context stage delta]
   ; destroy here not @ tick, because when game is paused
   ; for example pickup item, should be destroyed.
-  (db/destroy-to-be-removed-entities!)
+  (db/destroy-to-be-removed-entities! context)
   (update-mouseover-entity stage)
   (update-msg-to-player delta)
   (when @running
@@ -33,7 +33,7 @@
 
 ; TODO stepping -> p is one step -> how to do ?
 
-(defn update-game [stage delta]
+(defn update-game [assets stage delta]
   ;(reset! running false)
   (when (input/is-key-pressed? :P)
     (swap! running not))
@@ -55,11 +55,12 @@
                  (:movement-vector @player-entity))) ; == WASD movement
       (reset! running true)
       (reset! running false)))
-  (let [delta (limit-delta delta)]
+  (let [delta (limit-delta delta)
+        context {:assets assets}]
     ; TODO all game systems must stop on pause
     ; if an error thrown there
     ; otherwise no need the wrap.
-    (try (update-game-systems stage delta)
+    (try (update-game-systems context stage delta)
          (catch Throwable t
            (println "Catched throwable: ")
            (p/pretty-pst t)
@@ -68,7 +69,7 @@
            ))
     (when @running
       (try (doseq [entity (get-entities-in-active-content-fields)]
-             (tick/tick-entity! entity delta))
+             (tick/tick-entity! context entity delta))
            (catch Throwable t
              (println "Catched throwable: ")
              (p/pretty-pst t)
@@ -77,5 +78,5 @@
   (when (and @running
              (dead? @player-entity))
     (reset! running false)
-    (.play (assets/get-sound "sounds/bfxr_playerdeath.wav")))
+    (.play ^Sound (get assets "sounds/bfxr_playerdeath.wav")))
   (check-change-map))

@@ -21,7 +21,8 @@
 (defcomponent :id id
   (entity/create [_] (unique-number!)) ; TODO precondition (nil? id)
   (entity/create!  [_ e] (swap! ids->entities assoc  id e))
-  (entity/destroy! [_ e] (swap! ids->entities dissoc id)))
+  (entity/destroy! [_ e _ctx]
+    (swap! ids->entities dissoc id)))
 
 (defn create-entity! [m]
   {:pre [(not (contains? m :id))]}
@@ -30,8 +31,8 @@
       atom
       (doseq-entity entity/create!)))
 
-(defn destroy-to-be-removed-entities! []
+(defn destroy-to-be-removed-entities! [context]
   (doseq [e (filter (comp :destroyed? deref) (vals @ids->entities))
           :when (exists? e)] ; TODO why is this ?
     (swap! e update-map entity/destroy)
-    (doseq-entity e entity/destroy!)))
+    (doseq-entity e entity/destroy! context)))

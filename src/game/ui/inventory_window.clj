@@ -1,12 +1,12 @@
 (ns game.ui.inventory-window
   (:require [data.grid2d :as grid]
             [x.x :refer [defmodule]]
+            gdl.app
             [gdl.lc :as lc]
             [gdl.graphics.color :as color]
             [gdl.graphics.shape-drawer :as shape-drawer]
             [gdl.graphics.image :as image]
             [gdl.graphics.gui :as gui]
-            [gdl.assets :as assets]
             [gdl.scene2d.ui :as ui]
             [game.session :as session]
             [game.utils.msg-to-player :refer (show-msg-to-player)]
@@ -14,16 +14,17 @@
             [game.items.core :as items]
             [game.player.entity :refer (player-entity)]
             [game.entities.item :as item-entity])
-  (:import [com.badlogic.gdx.scenes.scene2d Actor Group]
+  (:import com.badlogic.gdx.audio.Sound
+           [com.badlogic.gdx.scenes.scene2d Actor Group]
            [com.badlogic.gdx.scenes.scene2d.ui Widget Image TextTooltip Window Table]
            [com.badlogic.gdx.scenes.scene2d.utils ClickListener]))
 
 (declare ^Window window)
 
 ; TODO ! important ! animation & dont put exactly hiding under player
-(defn put-item-on-ground []
+(defn put-item-on-ground [{:keys [assets]}]
   {:pre [(:item-on-cursor @player-entity)]}
-  (.play (assets/get-sound "sounds/bfxr_itemputground.wav"))
+  (.play ^Sound (get assets "sounds/bfxr_itemputground.wav"))
   (let [{x 0 y 1 :as posi} (:position @player-entity)
        ; [w _] item-body-dimensions
        ; half-size (/ w tile-width 2)
@@ -37,10 +38,10 @@
   (swap! player-entity dissoc :item-on-cursor))
 
 (defn- complain-2h-weapon-and-shield! []
-  ;(.play (assets/get-sound "error.wav"))
+  ;(.play ^Sound (get assets "error.wav"))
   (show-msg-to-player "Two-handed weapon and shield is not possible."))
 
-(defn- clicked-cell [cell]
+(defn- clicked-cell [{:keys [assets]} cell]
   (let [entity player-entity
         inventory (:inventory @entity)
         item (get-in inventory cell)
@@ -50,7 +51,7 @@
      (and (not item-on-cursor)
           item)
      (do
-      (.play (assets/get-sound "sounds/bfxr_takeit.wav"))
+      (.play ^Sound (get assets "sounds/bfxr_takeit.wav"))
       (swap! entity assoc :item-on-cursor item)
       (inventory/remove-item! entity cell))
 
@@ -62,7 +63,7 @@
       (if (inventory/two-handed-weapon-and-shield-together? inventory cell item-on-cursor)
         (complain-2h-weapon-and-shield!)
         (do
-         (.play (assets/get-sound "sounds/bfxr_itemput.wav"))
+         (.play ^Sound (get assets "sounds/bfxr_itemput.wav"))
          (inventory/set-item! entity cell item-on-cursor)
          (swap! entity dissoc :item-on-cursor)))
 
@@ -70,7 +71,7 @@
       (and item
            (inventory/stackable? item item-on-cursor))
       (do
-       (.play (assets/get-sound "sounds/bfxr_itemput.wav"))
+       (.play ^Sound (get assets "sounds/bfxr_itemput.wav"))
        (inventory/stack-item! entity cell item-on-cursor)
        (swap! entity dissoc :item-on-cursor))
 
@@ -80,7 +81,7 @@
       (if (inventory/two-handed-weapon-and-shield-together? inventory cell item-on-cursor)
         (complain-2h-weapon-and-shield!)
         (do
-         (.play (assets/get-sound "sounds/bfxr_itemput.wav"))
+         (.play ^Sound (get assets "sounds/bfxr_itemput.wav"))
          (inventory/remove-item! entity cell)
          (inventory/set-item! entity cell item-on-cursor)
          (swap! entity assoc :item-on-cursor item)))))))
@@ -89,14 +90,14 @@
          ^:private ^Table table)
 
 (defmodule _
-  (lc/create [_ _ctx]
+  (lc/create [_ {:keys [assets]}]
     (.bindRoot #'window (ui/window :title "Inventory"
                                    :id :inventory-window))
     (.bindRoot #'table (ui/table))
     (.pad table (float 2))
     (.add window table)
     (.bindRoot #'slot->background
-               (let [sheet (image/spritesheet "items/images.png" 48 48)]
+               (let [sheet (image/spritesheet assets "items/images.png" 48 48)]
                  (->> {:weapon   0 ; TODO use a vector?
                        :shield   1
                        :rings    2
@@ -110,8 +111,7 @@
                        :bag      10} ; transparent
                       (map (fn [[slot y]]
                              [slot
-                              (-> sheet
-                                  (image/get-sprite [21 (+ y 2)])
+                              (-> (image/get-sprite assets sheet [21 (+ y 2)])
                                   :texture
                                   ui/texture-region-drawable
                                   (.tint (color/rgb 1 1 1 0.4)))]))
@@ -160,7 +160,7 @@
       (.setName (pr-str cell)) ; TODO ! .setUserObject
       (.addListener (proxy [ClickListener] []
                       (clicked [event x y]
-                        (clicked-cell cell))))
+                        (clicked-cell @gdl.app/state cell))))
       (.add (draw-rect-actor))
       (.add (doto (ui/image (slot->background slot))
               (.setName "image"))))))

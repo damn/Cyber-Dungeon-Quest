@@ -17,14 +17,14 @@
                    :up? true}))
 
 (defmodule _
-  (lc/create [_ _ctx]
+  (lc/create [_ {:keys [assets]}]
     (let [scale 2] ; TODO FIXME scale of the whole all game things can set somewhere (gui-scale) for all dists, etc.
       ; ?? can play also sci-fi 24x24 ?
-      (def ^:private rahmen (image/create "ui/rahmen.png"))
+      (def ^:private rahmen (image/create assets "ui/rahmen.png"))
       (def ^:private rahmenw (first  (image/pixel-dimensions rahmen)))
       (def ^:private rahmenh (second (image/pixel-dimensions rahmen)))
-      (def ^:private hpcontent   (image/create "ui/hp.png"))
-      (def ^:private manacontent (image/create "ui/mana.png")))))
+      (def ^:private hpcontent   (image/create assets "ui/hp.png"))
+      (def ^:private manacontent (image/create assets "ui/mana.png")))))
 
 (defn- render-hpmana-bar [context x y contentimg minmaxval name]
   ; stack
@@ -32,7 +32,9 @@
   ; * sub-image
   ; * label
   (image/draw context rahmen x y)
-  (image/draw context (image/get-sub-image contentimg 0 0 (* rahmenw (val-max-ratio minmaxval)) rahmenh) x y)
+  ; fetching assets here manually because usually not part of graphics context necessary
+  (image/draw context (image/get-sub-image (:assets @gdl.app/state) contentimg 0 0
+                                           (* rahmenw (val-max-ratio minmaxval)) rahmenh) x y)
   (render-infostr-on-bar context (str (readable-number (minmaxval 0)) "/" (minmaxval 1) " " name) y rahmenh))
 
 (defn- render-player-stats [context]

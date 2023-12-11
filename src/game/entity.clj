@@ -5,10 +5,10 @@
 (defsystem create! [_ e])
 
 (defsystem destroy [_])
-(defsystem destroy! [c e])
+(defsystem destroy! [_ e context])
 
 (defsystem tick  [_ delta])
-(defsystem tick! [_ e delta])
+(defsystem tick! [_ context e delta])
 
 (defsystem moved! [_ e direction-vector])
 (defsystem affected! [_ e])

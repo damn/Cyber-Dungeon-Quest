@@ -63,7 +63,7 @@
 (defcomponent :shout counter
   (entity/tick [_ delta]
     (counter/tick counter delta))
-  (entity/tick! [_ entity delta]
+  (entity/tick! [_ _ctx entity delta]
     (when (counter/stopped? counter)
       (swap! entity assoc :destroyed? true)
       ; TODO why a shout checks for ray-blocked? ... sounds logic .... ?!
@@ -77,7 +77,7 @@
 ; could use potential field nearest enemy entity also because we only need 1 (faster)
 ; also do not need to check every frame !
 (defcomponent :sleeping _
-  (entity/tick! [_ entity delta]
+  (entity/tick! [_ _ctx entity delta]
     ; was performance problem. - or do not check every frame ! -
     #_(when (seq (filter #(not= (:faction @%) (:faction @entity))
                          (get-visible-entities @entity aggro-range)))

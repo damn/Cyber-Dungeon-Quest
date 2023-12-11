@@ -10,9 +10,9 @@
             [game.entities.audiovisual :as audiovisual]
             [game.player.entity :refer (set-player-entity)]))
 
-(defn- create-images [creature-name]
-  (map #(image/create
-         (str "creatures/animations/" creature-name "-" % ".png"))
+(defn- create-images [assets creature-name]
+  (map #(image/create assets
+                      (str "creatures/animations/" creature-name "-" % ".png"))
        (range 1 5)))
 
 (defn- images->world-unit-dimensions [images]
@@ -26,7 +26,7 @@
   (entity/create! [_ entity]
     (set-player-entity entity)
     (world/set-camera-position! (:position @entity)))
-  (entity/tick! [_ entity delta]
+  (entity/tick! [_ _ctx entity delta]
     (world/set-camera-position! (:position @entity))))
 
 (def ^:private player-components
@@ -53,11 +53,11 @@
         (update :speed * (:speed multiplier))
         (update :hp #(int (* % (:hp multiplier)))))))
 
-(defn- create-creature-data [properties {:keys [is-player] :as extra-params}]
+(defn- create-creature-data [properties {:keys [is-player] :as extra-params} assets]
   (let [creature-name (name (:id properties))
         properties (dissoc properties :id)
         properties (update properties :skills #(or % []))
-        images (create-images creature-name)
+        images (create-images assets creature-name)
         [width height] (images->world-unit-dimensions images)
         {:keys [speed hp]} (species-properties (:species properties))]
     (merge (dissoc properties :image)
@@ -78,14 +78,15 @@
            extra-params)))
 
 (defcomponent :default-monster-death _
-  (entity/destroy! [_ entity]
-    (audiovisual/create! (:position @entity)
+  (entity/destroy! [_ entity context]
+    (audiovisual/create! context
+                         (:position @entity)
                          :creature/die-effect)))
 
-(defn create! [creature-id position creature-params]
+(defn create! [creature-id position creature-params assets]
   (let [entity* (-> creature-id
                     properties/get
-                    (create-creature-data creature-params)
+                    (create-creature-data creature-params assets)
                     (assoc :position position)
                     assoc-left-bottom)]
     (if (valid-position? entity*)

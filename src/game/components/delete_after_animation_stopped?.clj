@@ -6,6 +6,6 @@
 (defcomponent :delete-after-animation-stopped? _
   (entity/create! [_ e]
     (-> @e :animation :looping? not assert))
-  (entity/tick! [_ e delta]
+  (entity/tick! [_ _ctx e delta]
     (when (-> @e :animation animation/stopped?)
       (swap! e assoc :destroyed? true))))

@@ -98,7 +98,7 @@
       (set-touched-cells! e (grid/rectangle->touched-cells cell-grid (:body @e)))
       (when is-solid
         (set-occupied-cells! cell-grid e))))
-  (entity/destroy! [_ e]
+  (entity/destroy! [_ e _ctx]
     (remove-from-touched-cells! e)
     (when is-solid
       (remove-from-occupied-cells! e)))

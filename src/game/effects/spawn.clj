@@ -21,10 +21,11 @@
 ; Also: to make a complete game takes so many creatures, items, skills, balance, ui changes, testing
 ; is it even possible ?
 
-(defn- do! [creature-id {:keys [source target-position]}]
+(defn- do! [creature-id {:keys [source target-position]} {:keys [assets]}]
   (creature-entity/create! creature-id
                            target-position
-                           {:faction (:faction @source)}))
+                           {:faction (:faction @source)}
+                           assets))
 
 (comment
  ; keys: :faction(:source)/:target-position/:creature-id

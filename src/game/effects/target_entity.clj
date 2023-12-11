@@ -42,7 +42,7 @@
                                (:position target*))
                   maxrange)))
 
-(defn- do-effect! [{:keys [hit-effects maxrange]} {:keys [source target]}]
+(defn- do-effect! [{:keys [hit-effects maxrange]} {:keys [source target]} context]
   (if (in-range? @source @target maxrange)
     (do
      (line-entity/create! :start (start-point @source @target)
@@ -50,13 +50,14 @@
                           :duration 50
                           :color (color/rgb 1 0 0 0.75)
                           :thick? true)
-     (effect/do-all! hit-effects {:source source :target target}))
+     (effect/do-all! hit-effects {:source source :target target} context))
     (do
      ; * clicking on far away monster
      ; * hitting ground in front of you ( there is another monster )
      ; * -> it doesn't get hit ! hmmm
      ; * either use 'MISS' or get enemy entities at end-point
-     (audiovisual/create! (end-point @source @target maxrange)
+     (audiovisual/create! context
+                          (end-point @source @target maxrange)
                           :effects.target-entity/hit-ground-effect))))
 
 (defmethod effect/render-info :target-entity [[_ {:keys [maxrange]}] {:keys [source target]}]

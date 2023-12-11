@@ -226,7 +226,7 @@
           (v/direction position (:middle @target-cell)))))))
 
 (defcomponent :move-towards-enemy _
-  (entity/tick! [_ entity _delta]
+  (entity/tick! [_ _ctx entity _delta]
     (swap! entity
            assoc
            :movement-vector

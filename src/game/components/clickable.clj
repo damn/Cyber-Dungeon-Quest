@@ -16,7 +16,7 @@
 
 (def ^:private click-distance-tiles 1.5)
 
-(defmulti on-clicked (fn [stage entity] (:type (:clickable @entity))))
+(defmulti on-clicked (fn [_context entity] (:type (:clickable @entity))))
 
 (defn clickable-mouseover-entity? [entity]
   (and entity

@@ -1,7 +1,6 @@
 (ns game.components.skills
   (:require [x.x :refer [defcomponent]]
             [data.val-max :refer [apply-val]]
-            [gdl.assets :as assets]
             [gdl.graphics.image :as image]
             [gdl.graphics.color :as color]
             [gdl.graphics.shape-drawer :as shape-drawer]
@@ -15,7 +14,8 @@
             [game.utils.counter :as counter]
             [game.effect :as effect]
             [game.entity :as entity]
-            [game.maps.data :refer (get-current-map-data)]))
+            [game.maps.data :refer (get-current-map-data)])
+  (:import com.badlogic.gdx.audio.Sound))
 
 (defn- nearest-enemy-entity [cell-grid entity*]
   (let [enemy-faction (faction/enemy (:faction entity*))]
@@ -148,7 +148,7 @@
       (assoc-in [:skills (:active-skill? entity*) :cooling-down?] (when (:cooldown skill)
                                                                     (counter/create (:cooldown skill))))))
 
-(defn- check-stop! [entity delta]
+(defn- check-stop! [context entity delta]
   (let [id (:active-skill? @entity)
         skill (-> @entity :skills id)
         delta (apply-speed-multipliers @entity skill delta)
@@ -160,23 +160,23 @@
        (swap! entity update-in [:skillmanager :action-counter] counter/tick delta)
        (when (counter/stopped? (get-in @entity [:skillmanager :action-counter]))
          (swap! entity stop-skill skill)
-         (effect/do! effect effect-params))))))
+         (effect/do! effect effect-params context))))))
 
-(defn- check-start! [entity]
+(defn- check-start! [{:keys [assets]} entity]
   (swap! entity assoc-in [:skillmanager :effect-params] (make-effect-params entity))
   (let [skill (when-let [id (choose-skill @entity)]
                 (id (:skills @entity)))]
     (when skill
       (assert (= :usable (usable-state @entity skill)))
-      (.play (assets/get-sound (str "sounds/" (if (:spell? skill) "shoot.wav" "slash.wav"))))
+      (.play ^Sound (get assets (str "sounds/" (if (:spell? skill) "shoot.wav" "slash.wav"))))
       (swap! entity start-skill skill))))
 
 (defcomponent :skillmanager _
-  (entity/tick! [_ entity delta]
+  (entity/tick! [_ context entity delta]
     (swap! entity update :skills update-cooldowns delta)
     (if (:active-skill? @entity)
-      (check-stop! entity delta)
-      (check-start! entity)))
+      (check-stop! context entity delta)
+      (check-start! context entity)))
   (entity/stun! [_ entity]
     (when-let [skill-id (:active-skill? @entity)]
       (swap! entity stop-skill (skill-id (:skills @entity))))))

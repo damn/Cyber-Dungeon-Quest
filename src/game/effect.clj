@@ -27,21 +27,24 @@
 (def text          (partial call-effect-fn :text))
 (def valid-params? (partial call-effect-fn :valid-params?))
 
-(defn- do-effect!* [effect params]
+(defn- do-effect!* [effect params context]
   {:pre [(valid-params? effect params)]}
-  (call-effect-fn :do! effect params))
+  (let [[effect-type effect-value] effect
+        effect-def (effect-type effect-definitions)]
+    (assert effect-def (str "Effect " effect-type " not defined."))
+    ((:do! effect-def) effect-value params context)))
 
 (defn- trigger-affected! [target]
   (when target
     (doseq-entity target entity/affected!)))
 
-(defn do! [effect params]
-  (do-effect!* effect params)
+(defn do! [effect params context]
+  (do-effect!* effect params context)
   (trigger-affected! (:target params)))
 
-(defn do-all! [effects params]
+(defn do-all! [effects params context]
   (doseq [effect effects]
-    (do-effect!* effect params))
+    (do-effect!* effect params context))
   (trigger-affected! (:target params)))
 
 (defmulti render-info (fn [[effect-type effect-value] effect-params] effect-type))

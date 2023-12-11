@@ -1,11 +1,11 @@
 (ns game.entities.audiovisual
-  (:require [gdl.assets :as assets]
-            [game.db :as db]
-            [game.properties :as properties]))
+  (:require [game.db :as db]
+            [game.properties :as properties])
+  (:import com.badlogic.gdx.audio.Sound))
 
-(defn create! [position id]
+(defn create! [{:keys [assets]} position id]
   (let [{:keys [sound animation]} (properties/get id)]
-    (.play (assets/get-sound sound))
+    (.play ^Sound (get assets sound))
     (db/create-entity!
      {:position position
       :animation animation

@@ -9,7 +9,7 @@
 (defcomponent :string-effect {:keys [text counter] :as this}
   (entity/tick [_ delta]
     (update this :counter counter/tick delta))
-  (entity/tick! [[k _] e delta]
+  (entity/tick! [[k _] _ctx e delta]
     (when (counter/stopped? counter)
       (swap! e dissoc k)))
   (entity/render-above [_ context {[x y] :position :keys [body]}]

@@ -45,12 +45,12 @@
    ;[:stun {:duration 200} {:chance 100}]
    ])
 
-(defn- do-effect! [_ {:keys [source direction]}]
+(defn- do-effect! [_ {:keys [source direction]} {:keys [assets]}]
   (projectile-entity/create!
    :position (:position @source)
    :faction  (:faction  @source)
    :size size
-   :animation (media/black-projectile)
+   :animation (media/black-projectile assets)
    :speed speed
    :movement-vector direction
    :maxtime maxtime

@@ -109,13 +109,13 @@
   (swap! entity string-effect/add "SHIELD"))
 
 (defn- armor-blocked-effect [entity]
-  ; (.play (assets/get-sound "sounds/bfxr_armorhit.wav"))
+  ; (.play ^Sound (get assets "sounds/bfxr_armorhit.wav"))
   (swap! entity string-effect/add "ARMOR"))
 
 (defn- blocks? [block-rate]
   (< (rand) block-rate))
 
-(defn- deal-damage! [{dmg-type 0 :as damage} {:keys [source target]}]
+(defn- deal-damage! [{dmg-type 0 :as damage} {:keys [source target]} context]
   (when-not (dead? @target)
     (cond
      (blocks? (effective-block-rate @source @target :shield dmg-type))
@@ -125,7 +125,8 @@
      :else
      (let [[dmg-type min-max-dmg] (effective-damage damage @source @target)
            dmg-amount (random/rand-int-between min-max-dmg)]
-       (audiovisual/create! (:position @target)
+       (audiovisual/create! context
+                            (:position @target)
                             (keyword (str "effects.damage." (name dmg-type))
                                      "hit-effect"))
        (swap! target (fn [target*]

@@ -23,7 +23,7 @@
         (update-in [:body :left-bottom] apply-delta)))) ; TODO left-bottom/center of 'body' has on-position-changed?
 ; but need to check here ... lets see
 
-(defn- update-position-projectile [cell-grid projectile delta v]
+(defn- update-position-projectile [{:keys [cell-grid] :as context} projectile delta v]
   (swap! projectile apply-delta-v delta v)
   (let [{:keys [hit-effects
                 already-hit-bodies
@@ -42,11 +42,13 @@
                        (swap! projectile update-in [:projectile-collision :already-hit-bodies] conj hit-entity)
                        (effect/do-all! hit-effects
                                        {:source projectile
-                                        :target hit-entity})
+                                        :target hit-entity}
+                                       context)
                        (not piercing))
                       (some #(grid/cell-blocked? % @projectile) touched-cells)
                       (do
-                       (audiovisual/create! (:position @projectile)
+                       (audiovisual/create! context
+                                            (:position @projectile)
                                             :projectile/hit-wall-effect)
                        true))]
     (if blocked
@@ -65,7 +67,7 @@
       (body/update-touched-cells! entity touched-cells)
       true)))
 
-(defn- update-position-solid [cell-grid entity delta {vx 0 vy 1 :as v}]
+(defn- update-position-solid [{:keys [cell-grid]} entity delta {vx 0 vy 1 :as v}]
   (let [xdir (Math/signum (float vx))
         ydir (Math/signum (float vy))]
     (or (try-move cell-grid entity delta v)
@@ -95,15 +97,15 @@
   ; TODO make update w. movement-vector (add-component :movement-vector?)
   ; all assoc key to entity main map == add/remove component ?!
   ; how to do this with assoc/dissoc ?
-  (entity/tick! [_ e delta]
+  (entity/tick! [_ context e delta]
     ; TODO direction-vector not 'v' , 'v' is value
-    (let [cell-grid (:cell-grid (get-current-map-data))]
+    (let [context (assoc context :cell-grid (:cell-grid (get-current-map-data)))]
       (when-let [v (:movement-vector @e)]
         (assert (or (zero? (v/length v)) ; TODO what is the point of zero length vectors?
                     (v/normalised? v)))
         (when-not (zero? (v/length v))
           (when-let [moved? (if (:projectile-collision @e)
                               ; => move! called on body itself ???
-                              (update-position-projectile cell-grid e delta v)
-                              (update-position-solid      cell-grid e delta v))]
+                              (update-position-projectile context e delta v)
+                              (update-position-solid      context e delta v))]
             (doseq-entity e entity/moved! v)))))))
