@@ -1,17 +1,17 @@
 (ns game.media
   (:require [x.x :refer [defmodule]]
             [gdl.lc :as lc]
-            [gdl.files :as files]
             [gdl.graphics.image :as image]
             [gdl.graphics.animation :as animation]
-            [gdl.graphics.freetype :as freetype]))
+            [gdl.graphics.freetype :as freetype])
+  (:import com.badlogic.gdx.Gdx))
 
 (declare font
          ^:private fx)
 
 (defmodule _
   (lc/create [_ {:keys [assets]}]
-    (.bindRoot #'font (freetype/generate (files/internal "exocet/films.EXL_____.ttf") 16))
+    (.bindRoot #'font (freetype/generate (.internal Gdx/files "exocet/films.EXL_____.ttf") 16))
     (.bindRoot #'fx (image/spritesheet assets "fx/uf_FX.png" 24 24)))
   (lc/dispose [_]
     (dispose ^com.badlogic.gdx.graphics.g2d.BitmapFont font)))

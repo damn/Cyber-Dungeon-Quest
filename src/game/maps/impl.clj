@@ -5,7 +5,7 @@
             mapgen.module-gen))
 
 (def map-data-file "resources/maps/map.edn")
-; (.readString (gdl.files/internal "maps/map.edn"))
+; (.readString (.internal Gdx/files "maps/map.edn"))
 ; instead of 'slurp'
 ; resources automatically included?
 
