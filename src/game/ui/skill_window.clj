@@ -35,21 +35,3 @@
     ; (str "Free points: " (:free-skill-points @player-entity))
     (.pack window)
     window))
-
-#_(app/on-create
- ; TODO move to src/game/ingame_gui where all other buttons are
- ; no actually - ingame-gui has only the gui components abstract
- ; and somewhere else is gui-specific implementations
- (def ^:private freeskillpointsbutton
-   (gui/make-imgbutton
-    :image (image/create "ui/icons/skills_free.png" :scale gui/buttonscale)
-    :location [(+ gui/buttonx-start 300)
-               gui/button-y]
-    :pressed #(gui/switch-visible skillmenu-frame)
-    :tooltip "You have free skill points"
-    :parent gui/ingamestate-display
-    :visible false)))
-
-#_(defn update-free-skillbutton-button-visibility []
-  (gui/set-visible freeskillpointsbutton
-                   (pos? (:free-skill-points @player-entity))))
