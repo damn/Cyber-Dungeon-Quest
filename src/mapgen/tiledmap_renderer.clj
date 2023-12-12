@@ -4,8 +4,8 @@
             [gdl.app :as app]
             [gdl.lc :as lc]
             [gdl.input :as input]
-            [gdl.graphics.world :as world]
             [gdl.graphics.color :as color]
+            [gdl.graphics.camera :as camera]
             [gdl.graphics.shape-drawer :as shape-drawer]
             [gdl.tiled :as tiled]
             [gdl.scene2d.ui :as ui]
@@ -14,7 +14,7 @@
             [mapgen.movement-property :refer (movement-property movement-properties)]
             [mapgen.module-gen :as module-gen])
   (:import com.badlogic.gdx.Gdx
-           com.badlogic.gdx.graphics.Color
+           (com.badlogic.gdx.graphics Color OrthographicCamera)
            com.badlogic.gdx.maps.tiled.TiledMap
            com.badlogic.gdx.scenes.scene2d.Stage
            com.badlogic.gdx.scenes.scene2d.ui.TextField))
@@ -22,9 +22,10 @@
 (def ^:private current-tiled-map (atom nil))
 (def ^:private current-area-level-grid (atom nil))
 
-(defn- center-world-camera []
-  (world/set-camera-position! [(/ (tiled/width  @current-tiled-map) 2)
-                               (/ (tiled/height @current-tiled-map) 2)]))
+(defn- center-world-camera [world-camera]
+  (camera/set-position! world-camera
+                        [(/ (tiled/width  @current-tiled-map) 2)
+                         (/ (tiled/height @current-tiled-map) 2)]))
 
 ; TODO also highlight current mouseover tile !
 (defn- gui-render []
@@ -48,10 +49,10 @@
 ; TODO clamp movement / zoom / zoom from max zoom rate (see whole map , to see 1 tile, percentage based )
 ; maybe even a slider?
 ; https://libgdx.com/wiki/graphics/2d/orthographic-camera
-(defn adjust-zoom [by]
-  (let [camera world/camera] ; TODO minimap also not necessary to @var
-    (set! (.zoom camera) (+ (.zoom camera) by))
-    (.update camera)))
+; TODO move to gdl
+(defn adjust-zoom [^OrthographicCamera camera by] ; TODO minimap also not necessary to @var
+  (set! (.zoom camera) (+ (.zoom camera) by))
+  (.update camera))
 
 ; TODO movement-speed scales with zoom value for big maps useful
 (def ^:private camera-movement-speed 1)
@@ -61,14 +62,14 @@
 (def ^:private show-grid-lines (atom false))
 
 ; TODO textfield takes control !
-(defn- camera-controls []
-  (if (input/is-key-down? :PLUS)  (adjust-zoom    zoom-speed)) ; TODO only pass + / -
-  (if (input/is-key-down? :MINUS) (adjust-zoom (- zoom-speed)))
+(defn- camera-controls [camera]
+  (if (input/is-key-down? :PLUS)  (adjust-zoom camera    zoom-speed)) ; TODO only pass + / -
+  (if (input/is-key-down? :MINUS) (adjust-zoom camera (- zoom-speed)))
   (let [apply-position (fn [idx f]
-                         (world/set-camera-position!
-                          (update (world/camera-position)
-                                  idx
-                                  #(f % camera-movement-speed))))]
+                         (camera/set-position! camera
+                                               (update (camera/position camera)
+                                                       idx
+                                                       #(f % camera-movement-speed))))]
     (if (input/is-key-down? :LEFT)  (apply-position 0 -))
     (if (input/is-key-down? :RIGHT) (apply-position 0 +))
     (if (input/is-key-down? :UP)    (apply-position 1 +))
@@ -78,8 +79,8 @@
 
 (def ^:private show-area-level-colors true)
 
-(defn- render-on-map [_context]
-  (let [visible-tiles (world/visible-tiles)]
+(defn- render-on-map [{:keys [world-camera]}]
+  (let [visible-tiles (camera/visible-tiles world-camera)]
     (when show-area-level-colors
       (if @current-start-positions
         (doseq [[x y] visible-tiles
@@ -121,14 +122,15 @@
                        (color/rgb 1 1 1 0.5))))
 
 (defn- generate [properties]
-  (let [{:keys [tiled-map
+  (let [{:keys [world-camera]} (app/current-context)
+        {:keys [tiled-map
                 area-level-grid
                 start-positions]} (module-gen/generate properties)]
     (.dispose ^TiledMap @current-tiled-map)
     (reset! current-tiled-map tiled-map)
     (reset! current-area-level-grid area-level-grid)
     (reset! current-start-positions (set start-positions))
-    (center-world-camera)))
+    (center-world-camera world-camera)))
 
 ; for each key k and value v  define
 ; -> form
@@ -184,9 +186,9 @@
   (lc/dispose [_]
     (.dispose stage)
     (.dispose ^TiledMap @current-tiled-map))
-  (lc/show [_]
+  (lc/show [_ {:keys [world-camera]}]
     (.setInputProcessor Gdx/input stage)
-    (center-world-camera))
+    (center-world-camera world-camera))
   (lc/hide [_]
     (.setInputProcessor Gdx/input nil))
   (lc/render [_ context]
@@ -197,7 +199,7 @@
                      :world
                      render-on-map)
     (.draw stage))
-  (lc/tick [_ _state delta]
+  (lc/tick [_ {:keys [world-camera]} delta]
     (.act stage delta)
     (when (input/is-key-pressed? :ESCAPE)
       (app/set-screen :game.screens.main))
@@ -205,7 +207,7 @@
       (swap! show-grid-lines not))
     (if (input/is-key-pressed? :M)
       (swap! show-movement-properties not))
-    (camera-controls)))
+    (camera-controls world-camera)))
 
 ; TODO remove key controls , add checkboxes
 ; TODO fix mouse movement etc

@@ -1,5 +1,5 @@
 (ns game.line-of-sight
-  (:require [gdl.graphics.world :as world]
+  (:require [gdl.graphics.camera :as camera]
             [game.maps.data :refer (get-current-map-data)]
             [game.maps.cell-grid :as cell-grid]))
 
@@ -28,18 +28,18 @@
      rectangle)) ; rectangle == entity*
 
 ; TODO weird mixing up camera & player
-(defn- on-screen? [entity*]
+(defn- on-screen? [entity* {:keys [world-camera world-viewport-width world-viewport-height]}]
   (let [[x y] (:position entity*)
         x (float x)
         y (float y)
-        [cx cy] (world/camera-position)
+        [cx cy] (camera/position world-camera)
         px (float cx)
         py (float cy)
         xdist (Math/abs (- x px))
         ydist (Math/abs (- y py))]
     (and
-      (<= xdist (inc (/ (world/viewport-width)  2)))
-      (<= ydist (inc (/ (world/viewport-height) 2))))))
+      (<= xdist (inc (/ world-viewport-width  2)))
+      (<= ydist (inc (/ world-viewport-height 2))))))
 
 ; TODO big entities (big effects, nova effects, > 1 width/height)
 ; => check on-screen with width&height and also with ray-blocked to all 4 corners
@@ -48,10 +48,10 @@
 ; could memoize it in the entities which entities(positions?) they are seeing or not
 ; and on position change delete it -> look up
 ; even for light sources could memoize position-to-position line of sight checks (static)
-(defn in-line-of-sight? [source* target*]
+(defn in-line-of-sight? [source* target* context]
   (and (:z-order target*)  ; is even an entity which renders something
        (or (not (:is-player source*))
-           (on-screen? target*))
+           (on-screen? target* context))
        (not (cell-grid/ray-blocked? (get-current-map-data)
                                     (:position source*)
                                     (:position target*)))))

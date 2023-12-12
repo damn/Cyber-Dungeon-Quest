@@ -90,7 +90,7 @@
       :is-solid is-solid
       :rotation-angle (or rotation-angle 0)
       :rotate-in-movement-direction? rotate-in-movement-direction?}))
-  (entity/create! [_ e]
+  (entity/create! [_ e _ctx]
     (assert (:position @e))
     ;(assert (valid-position? @e)) ; TODO error because projectiles do not have left-bottom !
     (swap! e assoc-left-bottom)

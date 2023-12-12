@@ -4,7 +4,6 @@
             [gdl.graphics.image :as image]
             [gdl.graphics.color :as color]
             [gdl.graphics.shape-drawer :as shape-drawer]
-            [gdl.graphics.world :as world]
             [gdl.vector :as v]
             [utils.core :refer [mapvals]]
             [game.properties :as properties]
@@ -23,13 +22,13 @@
         enemy-faction
         :entity)))
 
-(defn- make-effect-params [entity]
+(defn- make-effect-params [entity {:keys [world-mouse-position]}]
   (merge {:source entity}
          (if (:is-player @entity)
            (let [target (or (saved-mouseover-entity)
                             (get-mouseover-entity))
                  target-position (or (and target (:position @target))
-                                     (world/mouse-position))]
+                                     world-mouse-position)]
              {:target target
               :target-position target-position
               :direction (v/direction (:position @entity)
@@ -162,8 +161,8 @@
          (swap! entity stop-skill skill)
          (effect/do! effect effect-params context))))))
 
-(defn- check-start! [{:keys [assets]} entity]
-  (swap! entity assoc-in [:skillmanager :effect-params] (make-effect-params entity))
+(defn- check-start! [{:keys [assets] :as context} entity]
+  (swap! entity assoc-in [:skillmanager :effect-params] (make-effect-params entity context))
   (let [skill (when-let [id (choose-skill @entity)]
                 (id (:skills @entity)))]
     (when skill
@@ -182,7 +181,7 @@
       (swap! entity stop-skill (skill-id (:skills @entity))))))
 
 (defcomponent :skills _
-  (entity/create! [[k v] entity]
+  (entity/create! [[k v] entity _ctx]
     (swap! entity (fn [e*] (-> e*
                                (assoc :skillmanager {})
                                (update k #(zipmap % (map properties/get %))))))))

@@ -4,7 +4,7 @@
             [game.entity :as entity]))
 
 (defcomponent :delete-after-animation-stopped? _
-  (entity/create! [_ e]
+  (entity/create! [_ e _ctx]
     (-> @e :animation :looping? not assert))
   (entity/tick! [_ _ctx e delta]
     (when (-> @e :animation animation/stopped?)

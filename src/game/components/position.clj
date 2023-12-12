@@ -6,7 +6,7 @@
                                              remove-entity-from-content-field)]))
 
 (defcomponent :position _
-  (entity/create! [_ e]
+  (entity/create! [_ e _ctx]
     (put-entity-in-correct-content-field e))
   (entity/destroy! [_ e _ctx]
     (remove-entity-from-content-field e))

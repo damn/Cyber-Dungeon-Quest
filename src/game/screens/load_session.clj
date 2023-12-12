@@ -10,7 +10,7 @@
 
 ; TODO not showing at all -> render two frames ? check
 (defmodule _
-  (lc/show [_]
+  (lc/show [_ _ctx]
     (reset! render-once false))
   (lc/render [_ {:keys [batch]}]
     (reset! render-once true)

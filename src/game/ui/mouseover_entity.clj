@@ -3,7 +3,6 @@
             [gdl.input :as input]
             [gdl.graphics.color :as color]
             [gdl.graphics.shape-drawer :as shape-drawer]
-            [gdl.graphics.world :as world]
             [gdl.scene2d.stage :as stage]
             [utils.core :refer [sort-by-order]]
             [game.db :as db]
@@ -31,10 +30,9 @@
                               :good enemy-color
                               neutral-color)))))
 
-(defn- get-current-mouseover-entity []
-  (let [tile-posi (world/mouse-position)
-        cell-grid (:cell-grid (get-current-map-data))
-        hits (get-bodies-at-position cell-grid tile-posi)]
+(defn- get-current-mouseover-entity [{:keys [world-mouse-position] :as context}]
+  (let [cell-grid (:cell-grid (get-current-map-data))
+        hits (get-bodies-at-position cell-grid world-mouse-position)]
     ; TODO needs z-order ? what if 'shout' element or FX ?
     (when hits
       (->> game.render/render-on-map-order
@@ -43,7 +41,7 @@
            ; topmost body selected first, reverse of render-order
            reverse
            ; = same code @ which entities should get rendered...
-           (filter #(in-line-of-sight? @player-entity @%))
+           (filter #(in-line-of-sight? @player-entity @% context))
            first))))
 
 (def ^:private cache (atom nil))
@@ -64,23 +62,23 @@
   []
   (and @is-saved @cache))
 
-(defn- keep-saved? [entity]
+(defn- keep-saved? [entity context]
   (and (input/is-leftbutton-down?)
        (db/exists? entity)
-       (in-line-of-sight? @player-entity @entity)))
+       (in-line-of-sight? @player-entity @entity context)))
 
 (defn- save? [entity]
   (and (input/is-leftm-pressed?) ; dont move & get stuck on any entity under mouse, only save when starting to click on that
        (input/is-leftbutton-down?)
        (not= entity player-entity))) ; movement follows this / targeting / ...
 
-(defn update-mouseover-entity [stage gui-mouse-position]
+(defn update-mouseover-entity [stage {:keys [gui-mouse-position] :as context}]
   (when-not (and @is-saved
-                 (keep-saved? @cache))
+                 (keep-saved? @cache context))
     (when-let [entity @cache]
       (swap! entity dissoc :mouseover?))
     (if-let [entity (when-not (stage/hit stage gui-mouse-position)
-                      (get-current-mouseover-entity))]
+                      (get-current-mouseover-entity context))]
       (do
        (reset! cache entity)
        (reset! is-saved (save? entity))

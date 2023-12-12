@@ -7,7 +7,6 @@
             [gdl.scene2d.stage :as stage]
             [gdl.scene2d.ui :as ui]
             [gdl.graphics.image :as image]
-            [gdl.graphics.world :as world]
             [gdl.tiled :as tiled]
             [game.media :as media]
             [game.properties :as properties]
@@ -95,7 +94,7 @@
                                  entity-info-window
                                  skill-window
                                  help-window] :as stage}
-                         {:keys [assets gui-mouse-position]}]
+                         {:keys [assets gui-mouse-position world-mouse-position]}]
   (action-bar/up-skill-hotkeys)
   (let [windows [debug-window
                  help-window
@@ -159,7 +158,7 @@
       (and (input/is-leftbutton-down?)
            (not (stage/hit stage gui-mouse-position)))
       (set-movement! (v/direction (:position @player-entity)
-                                  (world/mouse-position)))))))
+                                  world-mouse-position))))))
 
 (defmethod skill-component/choose-skill :player [entity*]
   (when-let [skill-id @action-bar/selected-skill-id]
@@ -204,7 +203,7 @@
     (create-stage context))
   (lc/dispose [_]
     (.dispose stage))
-  (lc/show [_]
+  (lc/show [_ _ctx]
     (.setInputProcessor Gdx/input stage))
   (lc/hide [_]
     (.setInputProcessor Gdx/input nil))

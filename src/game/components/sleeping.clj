@@ -28,7 +28,7 @@
    [:modifiers/block :skillmanager]])
 
 (defcomponent :sleeping _
-  (entity/create! [_ entity]
+  (entity/create! [_ entity _ctx]
     (swap! entity modifier/apply-modifiers modifiers))
   (entity/render-above [_ context {[x y] :position :keys [body]}]
     (font/draw-text context
@@ -40,8 +40,8 @@
     (when mouseover?
       (shape-drawer/circle position aggro-range Color/YELLOW))))
 
-(defn- get-visible-entities [cell-grid entity* radius]
-  (filter #(in-line-of-sight? entity* @%)
+(defn- get-visible-entities [cell-grid entity* radius context]
+  (filter #(in-line-of-sight? entity* @% context)
           (cell-grid/circle->touched-entities cell-grid
                                               {:position (:position entity*)
                                                :radius radius})))
@@ -51,33 +51,34 @@
    :faction faction
    :shout (counter/create 200)})
 
-(defn- wake-up! [entity]
+(defn- wake-up! [entity context]
   (swap! entity #(-> %
                      (dissoc :sleeping)
                      (modifier/reverse-modifiers modifiers)
                      (string-effect/add "!")))
-  (db/create-entity!
-   (create-shout-entity (:position @entity)
-                        (:faction  @entity))))
+  (db/create-entity! (create-shout-entity (:position @entity)
+                                          (:faction  @entity))
+                     context))
 
 (defcomponent :shout counter
   (entity/tick [_ delta]
     (counter/tick counter delta))
-  (entity/tick! [_ _ctx entity delta]
+  (entity/tick! [_ context entity delta]
     (when (counter/stopped? counter)
       (swap! entity assoc :destroyed? true)
       ; TODO why a shout checks for ray-blocked? ... sounds logic .... ?!
       (doseq [entity (->> (get-visible-entities (:cell-grid (get-current-map-data))
                                                 @entity
-                                                aggro-range)
+                                                aggro-range
+                                                context)
                           (filter #(and (= (:faction @%) (:faction @entity))
                                         (:sleeping @%))))]
-        (wake-up! entity)))))
+        (wake-up! entity context)))))
 
 ; could use potential field nearest enemy entity also because we only need 1 (faster)
 ; also do not need to check every frame !
 (defcomponent :sleeping _
-  (entity/tick! [_ _ctx entity delta]
+  (entity/tick! [_ context entity delta]
     ; was performance problem. - or do not check every frame ! -
     #_(when (seq (filter #(not= (:faction @%) (:faction @entity))
                          (get-visible-entities @entity aggro-range)))
@@ -89,7 +90,7 @@
                               faction
                               :distance)]
         (when (<= distance (* aggro-range 10)) ; potential field store as 10  TODO necessary ?
-          (wake-up! entity)))))
+          (wake-up! entity context)))))
 
   (entity/affected! [_ entity]
     (wake-up! entity)))

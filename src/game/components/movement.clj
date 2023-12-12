@@ -90,7 +90,7 @@
 ; TODO put movement-vector here also, make 'movement' component
 ; and further above 'body' component
 (defcomponent :speed speed-in-seconds ; movement speed-in-seconds
-  (entity/create! [[k _] e]
+  (entity/create! [[k _] e _ctx]
     (assert (and (:body @e)
                  (:position @e)))
     (swap! e assoc k {:speed (/ speed-in-seconds 1000)}))

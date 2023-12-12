@@ -1,6 +1,7 @@
 (ns game.utils.lightning
-  (:require [gdl.graphics.color :as color]
-            [gdl.graphics.world :as world]
+  (:require [gdl.app :as app]
+            [gdl.graphics.color :as color]
+            [gdl.graphics.camera :as camera]
             [game.maps.data :refer (get-current-map-data)]
             [game.maps.cell-grid :as cell-grid])
   (:import com.badlogic.gdx.graphics.Color))
@@ -97,7 +98,7 @@
                            (:tiled-map (get-current-map-data))
                            #'tile-color-setter-old))))
 #_(defn tile-color-setter-new [_ x y]
-  (let [light-position (world/camera-position)
+  (let [light-position (camera/position world-camera)
         position [x y]
         explored? (explored? position)
         base-color (if explored?
@@ -124,7 +125,8 @@
        Color/WHITE))))
 
 (defn tile-color-setter [_ x y]
-  (let [light-position (world/camera-position)
+  (let [{:keys [world-camera]} (app/current-context)
+        light-position (camera/position world-camera)
         position [x y]
         explored? (explored? position)
         base-color (if explored?

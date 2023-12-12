@@ -1,5 +1,6 @@
 (ns game.effects.target-entity ; TODO naming
   (:require [clojure.string :as str]
+            [gdl.app :as app]
             [gdl.vector :as v]
             [gdl.graphics.color :as color]
             [gdl.graphics.shape-drawer :as shape-drawer]
@@ -13,7 +14,7 @@
 (defn- valid-params? [_ {:keys [source target]}]
   (and source
        target
-       (in-line-of-sight? @source @target)
+       (in-line-of-sight? @source @target (app/current-context)) ; TODO move to valid-params? @ extra param...
        (:hp @target))) ; TODO this is valid-params of hit-effect damage !!
 
 (defn- in-range? [entity* target* maxrange] ; == circle-collides?

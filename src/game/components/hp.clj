@@ -1,7 +1,7 @@
 (ns game.components.hp
   (:require [x.x :refer [defcomponent]]
+            [gdl.app :as app]
             [gdl.graphics.color :as color]
-            [gdl.graphics.world :as world]
             [gdl.graphics.shape-drawer :as shape-drawer]
             [data.val-max :refer [val-max-ratio]]
             [game.entity :as entity]
@@ -34,8 +34,8 @@
       (when (or (< ratio 1) mouseover?)
         (let [x (- x half-width)
               y (+ y half-height)
-              height (world/pixels->world-units hpbar-height-px)
-              border (world/pixels->world-units borders-px)]
+              height (app/pixels->world-units context hpbar-height-px)
+              border (app/pixels->world-units context borders-px)]
           (shape-drawer/filled-rectangle x y width height Color/BLACK)
           (shape-drawer/filled-rectangle (+ x border)
                                          (+ y border)

@@ -7,7 +7,7 @@
   (swap! e #(assoc % :image (animation/current-frame (:animation %)))))
 
 (defcomponent :animation animation
-  (entity/create! [_ e]
+  (entity/create! [_ e _ctx]
     (assoc-frame! e))
   (entity/tick! [_ _ctx e _delta]
     (assoc-frame! e))

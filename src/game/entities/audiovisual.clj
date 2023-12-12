@@ -3,11 +3,11 @@
             [game.properties :as properties])
   (:import com.badlogic.gdx.audio.Sound))
 
-(defn create! [{:keys [assets]} position id]
+(defn create! [{:keys [assets] :as context} position id]
   (let [{:keys [sound animation]} (properties/get id)]
     (.play ^Sound (get assets sound))
-    (db/create-entity!
-     {:position position
-      :animation animation
-      :z-order :effect
-      :delete-after-animation-stopped? true})))
+    (db/create-entity! {:position position
+                        :animation animation
+                        :z-order :effect
+                        :delete-after-animation-stopped? true}
+                       context)))

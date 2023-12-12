@@ -1,7 +1,7 @@
 (ns game.entities.creature
   (:require [x.x :refer [defcomponent]]
+            [gdl.graphics.camera :as camera]
             [gdl.graphics.image :as image]
-            [gdl.graphics.world :as world]
             [gdl.graphics.animation :as animation]
             [game.db :as db]
             [game.entity :as entity]
@@ -23,11 +23,11 @@
      max-height]))
 
 (defcomponent :is-player _
-  (entity/create! [_ entity]
+  (entity/create! [_ entity {:keys [world-camera]}]
     (set-player-entity entity)
-    (world/set-camera-position! (:position @entity)))
-  (entity/tick! [_ _ctx entity delta]
-    (world/set-camera-position! (:position @entity))))
+    (camera/set-position! world-camera (:position @entity)))
+  (entity/tick! [_ {:keys [world-camera]} entity delta]
+    (camera/set-position! world-camera (:position @entity))))
 
 (def ^:private player-components
   {:is-player true
@@ -90,5 +90,5 @@
                     (assoc :position position)
                     assoc-left-bottom)]
     (if (valid-position? entity*)
-      (db/create-entity! entity*)
+      (db/create-entity! entity* context)
       (println "Not able to spawn" creature-id "at" position))))

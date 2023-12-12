@@ -22,7 +22,7 @@
 (declare ^Window window)
 
 ; TODO ! important ! animation & dont put exactly hiding under player
-(defn put-item-on-ground [{:keys [assets]}]
+(defn put-item-on-ground [{:keys [assets] :as context}]
   {:pre [(:item-on-cursor @player-entity)]}
   (.play ^Sound (get assets "sounds/bfxr_itemputground.wav"))
   (let [{x 0 y 1 :as posi} (:position @player-entity)
@@ -34,7 +34,7 @@
         ;_ (println "BLOCKED? " (boolean blocked))
         ;position (if-not blocked below-posi posi)
         ]
-    (item-entity/create! posi (:item-on-cursor @player-entity)))
+    (item-entity/create! posi (:item-on-cursor @player-entity) context))
   (swap! player-entity dissoc :item-on-cursor))
 
 (defn- complain-2h-weapon-and-shield! []

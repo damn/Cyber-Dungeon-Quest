@@ -47,15 +47,16 @@
 
 (defn- do-effect! [_ {:keys [source direction]} context]
   (projectile-entity/create!
-   :position (:position @source)
-   :faction  (:faction  @source)
-   :size size
-   :animation (media/black-projectile context)
-   :speed speed
-   :movement-vector direction
-   :maxtime maxtime
-   :piercing false
-   :hit-effects hit-effects))
+   {:position (:position @source)
+    :faction  (:faction  @source)
+    :size size
+    :animation (media/black-projectile context)
+    :speed speed
+    :movement-vector direction
+    :maxtime maxtime
+    :piercing false
+    :hit-effects hit-effects}
+   context))
 
 (effect/defeffect :projectile
   {:text (fn [_ params]

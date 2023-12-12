@@ -4,15 +4,16 @@
 ; TODO maxrange ?
 ; TODO make only common fields here
 (defn create!
-  [& {:keys [position
-             faction
-             size
-             animation
-             movement-vector
-             hit-effects
-             speed
-             maxtime
-             piercing]}]
+  [{:keys [position
+           faction
+           size
+           animation
+           movement-vector
+           hit-effects
+           speed
+           maxtime
+           piercing]}
+   context]
   (db/create-entity!
    {:position position
     :faction faction
@@ -28,4 +29,5 @@
     :delete-after-duration maxtime
     :projectile-collision {:piercing piercing
                            :hit-effects hit-effects
-                           :already-hit-bodies #{}}}))
+                           :already-hit-bodies #{}}}
+   context))

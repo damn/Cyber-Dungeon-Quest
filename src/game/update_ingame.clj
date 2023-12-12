@@ -20,7 +20,7 @@
   ; for example pickup item, should be destroyed.
   (db/destroy-to-be-removed-entities! context)
   ; TODO or pass directly stage/hit boolean
-  (update-mouseover-entity stage gui-mouse-position)
+  (update-mouseover-entity stage context)
   (update-msg-to-player delta)
   (when @running
     (update-potential-fields)))

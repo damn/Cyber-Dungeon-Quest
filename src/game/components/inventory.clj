@@ -135,7 +135,7 @@
      (try-put-item-in! entity :bag item))))
 
 (defcomponent :items items
-  (entity/create! [_ entity]
+  (entity/create! [_ entity _ctx]
     (swap! entity assoc :inventory empty-inventory)
     ;(swap! entity dissoc :items)
     (doseq [id items]

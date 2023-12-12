@@ -1,7 +1,7 @@
 (ns game.components.string-effect
   (:require [x.x :refer [defcomponent]]
+            [gdl.app :as app]
             [gdl.graphics.font :as font]
-            [gdl.graphics.world :as world]
             [game.utils.counter :as counter]
             [game.ui.config :refer [hpbar-height-px]]
             [game.entity :as entity]))
@@ -17,7 +17,7 @@
                     {:text text
                      :x x
                      :y (+ y (:half-height body)
-                           (world/pixels->world-units hpbar-height-px))
+                           (app/pixels->world-units context hpbar-height-px))
                      :up? true})))
 
 (defn add [entity* text]

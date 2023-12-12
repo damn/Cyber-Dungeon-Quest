@@ -5,11 +5,11 @@
             [gdl.input :as input]
             [gdl.tiled :as tiled]
             [gdl.graphics.color :as color]
+            [gdl.graphics.camera :as camera]
             [gdl.graphics.shape-drawer :as shape-drawer]
-            [gdl.graphics.world :as world]
             [game.utils.lightning :refer [minimap-color-setter]]
             [game.maps.data :refer [get-current-map-data]])
-  (:import com.badlogic.gdx.graphics.Color))
+  (:import (com.badlogic.gdx.graphics Color OrthographicCamera)))
 
 ; 28.4 viewportwidth
 ; 16 viewportheight
@@ -22,15 +22,14 @@
 
 (def ^:private zoom-setting (atom nil))
 
-(defn- calculate-zoom []
+(defn- calculate-zoom [{:keys [^OrthographicCamera world-camera]}]
   (let [positions-explored (map first
                                 (remove (fn [[position value]]
                                           (false? value))
                                         (seq @(:explored-tile-corners (get-current-map-data)))))
-        camera world/camera
-        viewport-width (.viewportWidth camera)
-        viewport-height (.viewportHeight camera)
-        [px py] (world/camera-position)
+        viewport-width  (.viewportWidth  world-camera)
+        viewport-height (.viewportHeight world-camera)
+        [px py] (camera/position world-camera)
         left   (apply min-key (fn [[x y]] x) positions-explored)
         top    (apply max-key (fn [[x y]] y) positions-explored)
         right  (apply max-key (fn [[x y]] x) positions-explored)
@@ -42,22 +41,13 @@
         new-zoom (max vp-ratio-w vp-ratio-h)]
     new-zoom ))
 
-; TODO move to gdl.graphics - also in mapgen.tiledmap-renderer
-(defn- set-zoom [amount]
-  (let [camera world/camera] ; keep it public why not?!
-    (set! (.zoom camera) amount)
-    (.update camera)))
-
-; TODO for debugging I want to zoom -> InputAdapter scroll/touch/gestures ??
-; (set! (.zoom @#'gdl.graphics/world-camera) 0.5)
-
-(defn- render-map-level [_context]
-  (shape-drawer/filled-circle (world/camera-position) 0.5 Color/GREEN)) ; render player..
+(defn- render-map-level [{:keys [world-camera]}]
+  (shape-drawer/filled-circle (camera/position world-camera) 0.5 Color/GREEN)) ; render player..
 
 (defmodule _
-  (lc/show [_]
-    (reset! zoom-setting (calculate-zoom))
-    (set-zoom @zoom-setting))
+  (lc/show [_ {:keys [world-camera] :as context}]
+    (reset! zoom-setting (calculate-zoom context))
+    (camera/set-zoom! world-camera @zoom-setting))
   (lc/render [_ context]
     (tiled/render-map context
                       (:tiled-map (get-current-map-data))
@@ -65,8 +55,8 @@
     (app/render-with context
                      :world
                      render-map-level))
-  (lc/tick [_ _state delta]
+  (lc/tick [_ {:keys [world-camera]} delta]
     (when (or (input/is-key-pressed? :TAB)
               (input/is-key-pressed? :ESCAPE))
-      (set-zoom 1)
+      (camera/set-zoom! world-camera 1)
       (app/set-screen :game.screens.ingame))))

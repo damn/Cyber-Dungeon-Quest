@@ -1,7 +1,7 @@
 (ns game.render-ingame
-  (:require [gdl.graphics.world :as world]
-            [gdl.graphics.shape-drawer :as shape-drawer]
+  (:require [gdl.graphics.shape-drawer :as shape-drawer]
             [gdl.graphics.color :as color]
+            [gdl.graphics.camera :as camera]
             [game.line-of-sight :refer (in-line-of-sight?)]
             [game.maps.data :refer [get-current-map-data]]
             [game.maps.cell-grid :as cell-grid]
@@ -14,8 +14,8 @@
             [game.maps.potential-field :as potential-field])
   (:import com.badlogic.gdx.graphics.Color))
 
-(defn- geom-test []
-  (let [position (world/mouse-position)
+(defn- geom-test [{:keys [world-mouse-position]}]
+  (let [position world-mouse-position
         cell-grid (:cell-grid (get-current-map-data))
         radius 0.8
         circle {:position position :radius radius}]
@@ -30,22 +30,22 @@
  (count (filter #(:sleeping @%) (get-entities-in-active-content-fields)))
  )
 
-(defn- visible-entities* []
+(defn- visible-entities* [context]
   (->> (get-entities-in-active-content-fields)
        (map deref)
-       (filter #(in-line-of-sight? @player-entity %))))
+       (filter #(in-line-of-sight? @player-entity % context))))
 
-(defn- tile-debug []
+(defn- tile-debug [{:keys [world-camera world-viewport-width world-viewport-height]}]
   (let [cell-grid (:cell-grid (get-current-map-data))
-        [left-x right-x bottom-y top-y] (world/camera-frustum)]
+        [left-x right-x bottom-y top-y] (camera/frustum world-camera)]
     (shape-drawer/grid (int left-x)
                        (int bottom-y)
-                       (inc (int (world/viewport-width)))
-                       (+ 2 (int (world/viewport-height)))
+                       (inc (int world-viewport-width))
+                       (+ 2 (int world-viewport-height))
                        1
                        1
                        (color/rgb 0.5 0.5 0.5 0.5))
-    (doseq [[x y] (world/visible-tiles)
+    (doseq [[x y] (camera/visible-tiles world-camera)
             :let [cell (get cell-grid [x y])
                   faction :good
                   {:keys [distance entity]} (get-in @cell [faction])]
@@ -61,12 +61,12 @@
       #_(when (:monster @cell)
           (@#'g/draw-string x y (str (:id @(:monster @cell))) 1)))))
 
-(defn render-map-content [context]
-  #_(tile-debug)
-  (render/render-entities* context (visible-entities*))
-  #_(geom-test)
+(defn render-map-content [{:keys [world-mouse-position] :as context}]
+  #_(tile-debug context)
+  (render/render-entities* context (visible-entities* context))
+  #_(geom-test context)
   ; highlight current mouseover-tile
-  #_(let [[x y] (mapv int (world/mouse-position))
+  #_(let [[x y] (mapv int world-mouse-position)
         cell-grid (:cell-grid (get-current-map-data))
         cell (get cell-grid [x y])]
     (shape-drawer/rectangle x y 1 1 (color/rgb 0 1 0 0.5))
@@ -75,10 +75,6 @@
                              (str [x y])
                              color/gray
                              (pr-str (:potential-field @cell))])))
-
-(defn- print-mouse-tile-position []
-  (let [[tile-x tile-y] (world/mouse-position)]
-    (str (float tile-x) " " (float tile-y))))
 
 (defn render-gui [context]
   (render-player-hp-mana context)

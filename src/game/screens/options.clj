@@ -106,7 +106,7 @@
       stage))
   (lc/dispose [_]
     (.dispose stage))
-  (lc/show [_]
+  (lc/show [_ _ctx]
     (.setInputProcessor Gdx/input stage))
   (lc/hide [_]
     (.setInputProcessor Gdx/input nil))
