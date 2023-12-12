@@ -15,11 +15,12 @@
             [game.maps.potential-field :refer [update-potential-fields]])
   (:import com.badlogic.gdx.audio.Sound))
 
-(defn- update-game-systems [context stage delta]
+(defn- update-game-systems [{:keys [gui-mouse-position] :as context} stage delta]
   ; destroy here not @ tick, because when game is paused
   ; for example pickup item, should be destroyed.
   (db/destroy-to-be-removed-entities! context)
-  (update-mouseover-entity stage)
+  ; TODO or pass directly stage/hit boolean
+  (update-mouseover-entity stage gui-mouse-position)
   (update-msg-to-player delta)
   (when @running
     (update-potential-fields)))

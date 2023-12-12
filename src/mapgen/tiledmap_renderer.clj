@@ -5,7 +5,6 @@
             [gdl.lc :as lc]
             [gdl.input :as input]
             [gdl.graphics.world :as world]
-            [gdl.graphics.gui :as gui]
             [gdl.graphics.color :as color]
             [gdl.graphics.shape-drawer :as shape-drawer]
             [gdl.tiled :as tiled]
@@ -167,8 +166,8 @@
               2)
     [table get-properties]))
 
-(defn- create-stage [batch]
-  (let [stage (stage/create gui/viewport batch)
+(defn- create-stage [{:keys [gui-viewport batch]}]
+  (let [stage (stage/create gui-viewport batch)
         window (ui/window :title "Properties")
         [form get-properties] (edn-edit-form game.maps.impl/map-data-file)]
     (.addActor stage window)
@@ -179,9 +178,9 @@
     stage))
 
 (defmodule ^Stage stage
-  (lc/create [_ {:keys [batch]}]
+  (lc/create [_ context]
     (reset! current-tiled-map (tiled/load-map module-gen/modules-file))
-    (create-stage batch))
+    (create-stage context))
   (lc/dispose [_]
     (.dispose stage)
     (.dispose ^TiledMap @current-tiled-map))

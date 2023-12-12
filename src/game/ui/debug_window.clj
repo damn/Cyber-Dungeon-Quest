@@ -1,17 +1,17 @@
 (ns game.ui.debug-window
-  (:require [gdl.graphics.world :as world]
-            [gdl.graphics.gui :as gui]
+  (:require [gdl.app :as app]
+            [gdl.graphics.world :as world]
             [gdl.scene2d.ui :as ui]
             game.running)
   (:import com.badlogic.gdx.Gdx
            com.badlogic.gdx.scenes.scene2d.Actor))
 
-(defn- debug-infos []
+(defn- debug-infos [{:keys [gui-mouse-position]}]
   (str "FPS: " (.getFramesPerSecond Gdx/graphics)  "\n"
        "World: "(mapv int (world/mouse-position)) "\n"
        "X:" ((world/mouse-position) 0) "\n"
        "Y:" ((world/mouse-position) 1) "\n"
-       "GUI: " (gui/mouse-position) "\n"
+       "GUI: " gui-mouse-position "\n"
        (when-not @game.running/running
          (str "\n~~ PAUSED ~~"))))
 
@@ -22,6 +22,7 @@
     (.add window label)
     (.add window (proxy [Actor] []
                    (act [_delta]
-                     (ui/set-text label (debug-infos))
-                     (.pack window))))
+                     (let [context @app/state]
+                       (ui/set-text label (debug-infos context))
+                       (.pack window)))))
     window))

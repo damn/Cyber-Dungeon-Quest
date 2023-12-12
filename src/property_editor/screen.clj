@@ -4,7 +4,6 @@
             [gdl.lc :as lc]
             [gdl.app :as app]
             [gdl.input :as input]
-            [gdl.graphics.gui :as gui]
             [gdl.scene2d.actor :as actor]
             [gdl.scene2d.stage :as stage]
             [gdl.scene2d.ui :as ui]
@@ -26,11 +25,12 @@
 (declare property-editor-window)
 
 (defn- open-property-editor-window [id]
-  (let [window (property-editor-window id)]
+  (let [{:keys [gui-viewport-width gui-viewport-height] :as context} @app/state
+        window (property-editor-window id)]
     (.addActor (stage) window)
     (actor/set-center window
-                      (/ (gui/viewport-width)  2)
-                      (/ (gui/viewport-height) 2))))
+                      (/ gui-viewport-width  2)
+                      (/ gui-viewport-height 2))))
 
 (defn- get-child-with-id [group id]
   (->> (.getChildren ^com.badlogic.gdx.scenes.scene2d.Group group)
@@ -133,7 +133,8 @@
                            (ui/text-button " - " #(redo-rows (disj (set property-ids) prop-id)))])
                         [[(ui/text-button " + "
                                           (fn []
-                                            (let [window (ui/window :title "Choose"
+                                            (let [{:keys [gui-viewport-width gui-viewport-height]} @app/state
+                                                  window (ui/window :title "Choose"
                                                                     :modal? true)
                                                   clicked-id-fn (fn [id]
                                                                   (.remove window)
@@ -143,8 +144,8 @@
                                               ; TODO fn above -> open in center .. ?
                                               (.addActor (stage) window)
                                               (actor/set-center window
-                                                                (/ (gui/viewport-width)  2)
-                                                                (/ (gui/viewport-height) 2)))))]])))
+                                                                (/ gui-viewport-width  2)
+                                                                (/ gui-viewport-height 2)))))]])))
   (when-let [parent (.getParent table)]
     (ui/pack parent)))
 
@@ -220,8 +221,8 @@
                    [[(ui/text-button "Back to Main Menu" #(app/set-screen :game.screens.main))]])))
 
 (defmodule ^Stage stage
-  (lc/create [_ {:keys [batch]}]
-    (let [stage (stage/create gui/viewport batch)
+  (lc/create [_ {:keys [gui-viewport batch]}]
+    (let [stage (stage/create gui-viewport batch)
           table (ui/table :id :main-table
                           :rows [[(left-widget) nil]]
                           :fill-parent? true)]

@@ -2,7 +2,6 @@
   (:require [x.x :refer [defmodule]]
             [gdl.lc :as lc]
             [gdl.app :as app]
-            [gdl.graphics.gui :as gui]
             [gdl.graphics.image :as image]
             [gdl.input :as input]
             [gdl.scene2d.ui :as ui]
@@ -101,8 +100,8 @@
     table))
 
 (defmodule ^Stage stage
-  (lc/create [_ {:keys [batch] :as context}]
-    (let [stage (stage/create gui/viewport batch)]
+  (lc/create [_ {:keys [gui-viewport batch] :as context}]
+    (let [stage (stage/create gui-viewport batch)]
       (.addActor stage (create-table context))
       stage))
   (lc/dispose [_]
@@ -111,14 +110,14 @@
     (.setInputProcessor Gdx/input stage))
   (lc/hide [_]
     (.setInputProcessor Gdx/input nil))
-  (lc/render [_ context]
+  (lc/render [_ {:keys [gui-viewport-width gui-viewport-height] :as context}]
     (app/render-with context
                      :gui
                      (fn [context]
                        (image/draw-centered context
                                             menu-bg-image
-                                            [(/ (gui/viewport-width)  2)
-                                             (/ (gui/viewport-height) 2)])))
+                                            [(/ gui-viewport-width  2)
+                                             (/ gui-viewport-height 2)])))
     (.draw stage))
   (lc/tick [_ _state delta]
     (.act stage delta)

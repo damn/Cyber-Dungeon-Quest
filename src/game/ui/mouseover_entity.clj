@@ -4,7 +4,6 @@
             [gdl.graphics.color :as color]
             [gdl.graphics.shape-drawer :as shape-drawer]
             [gdl.graphics.world :as world]
-            [gdl.graphics.gui :as gui]
             [gdl.scene2d.stage :as stage]
             [utils.core :refer [sort-by-order]]
             [game.db :as db]
@@ -75,12 +74,12 @@
        (input/is-leftbutton-down?)
        (not= entity player-entity))) ; movement follows this / targeting / ...
 
-(defn update-mouseover-entity [stage]
+(defn update-mouseover-entity [stage gui-mouse-position]
   (when-not (and @is-saved
                  (keep-saved? @cache))
     (when-let [entity @cache]
       (swap! entity dissoc :mouseover?))
-    (if-let [entity (when-not (stage/hit stage (gui/mouse-position))
+    (if-let [entity (when-not (stage/hit stage gui-mouse-position)
                       (get-current-mouseover-entity))]
       (do
        (reset! cache entity)

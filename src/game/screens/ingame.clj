@@ -7,7 +7,6 @@
             [gdl.scene2d.stage :as stage]
             [gdl.scene2d.ui :as ui]
             [gdl.graphics.image :as image]
-            [gdl.graphics.gui :as gui]
             [gdl.graphics.world :as world]
             [gdl.tiled :as tiled]
             [game.media :as media]
@@ -33,14 +32,15 @@
 (defn- item-on-cursor-render-actor []
   (proxy [Actor] []
     (draw [batch _parent-alpha]
-      (when-let [item (:item-on-cursor @player-entity)]
-        ; windows keep changing z-index when selected, or put all windows in 1 group and this actor another group
-        (.toFront ^Actor this)
-        (image/draw-centered {:batch batch :unit-scale 1}
-                             (:image item)
-                             (gui/mouse-position))))))
+      (let [{:keys [gui-mouse-position] :as context} @app/state]
+        (when-let [item (:item-on-cursor @player-entity)]
+          ; windows keep changing z-index when selected, or put all windows in 1 group and this actor another group
+          (.toFront ^Actor this)
+          (image/draw-centered {:batch batch :unit-scale 1}
+                               (:image item)
+                               gui-mouse-position))))))
 
-(defn- create-stage [batch]
+(defn- create-stage [{:keys [gui-viewport batch gui-viewport-width gui-viewport-height]}]
   (let [^Actor debug-window (debug-window/create)
         ^Actor help-window (help-window/create)
         ^Actor entity-info-window (entity-info-window/create)
@@ -50,18 +50,18 @@
                  entity-info-window
                  inventory/window
                  skill-window]
-        stage (stage/create gui/viewport batch)
+        stage (stage/create gui-viewport batch)
         table (ui/table :rows [[{:actor action-bar/horizontal-group :expand? true :bottom? true}]]
                         :fill-parent? true)]
     (.addActor stage table)
-    (.setPosition debug-window 0 (gui/viewport-height))
+    (.setPosition debug-window 0 gui-viewport-height)
     (.setPosition help-window
-                  (- (/ (gui/viewport-width) 2)
+                  (- (/ gui-viewport-width 2)
                      (/ (.getWidth help-window) 2))
-                  (gui/viewport-height))
+                  gui-viewport-height)
     (.setPosition inventory/window
-                  (gui/viewport-width)
-                  (- (/ (gui/viewport-height) 2)
+                  gui-viewport-width
+                  (- (/ gui-viewport-height 2)
                      (/ (.getHeight help-window) 2)))
     (.setPosition entity-info-window (.getX inventory/window) 0)
     (.setWidth entity-info-window (.getWidth inventory/window))
@@ -95,7 +95,7 @@
                                  entity-info-window
                                  skill-window
                                  help-window] :as stage}
-                         {:keys [assets]}]
+                         {:keys [assets gui-mouse-position]}]
   (action-bar/up-skill-hotkeys)
   (let [windows [debug-window
                  help-window
@@ -133,7 +133,7 @@
      (set-movement! (wasd-movement-vector))
      (cond
       (and (input/is-leftm-pressed?)
-           (not (stage/hit stage (gui/mouse-position)))
+           (not (stage/hit stage gui-mouse-position))
            (:item-on-cursor @player-entity))
       (inventory/put-item-on-ground {:assets assets})
 
@@ -146,7 +146,7 @@
       ; TODO is it possible pressed and not down ?
       (and (or (input/is-leftm-pressed?)
                (input/is-leftbutton-down?))
-           (not (stage/hit stage (gui/mouse-position)))
+           (not (stage/hit stage gui-mouse-position))
            (clickable/clickable-mouseover-entity? (get-mouseover-entity)))
       (clickable/on-clicked {:stage stage
                              :assets assets}
@@ -157,7 +157,7 @@
                                   (:position @(saved-mouseover-entity))))
 
       (and (input/is-leftbutton-down?)
-           (not (stage/hit stage (gui/mouse-position))))
+           (not (stage/hit stage gui-mouse-position)))
       (set-movement! (v/direction (:position @player-entity)
                                   (world/mouse-position)))))))
 
@@ -200,8 +200,8 @@
 
 
 (defmodule ^Stage stage
-  (lc/create [_ {:keys [batch]}]
-    (create-stage batch))
+  (lc/create [_ context]
+    (create-stage context))
   (lc/dispose [_]
     (.dispose stage))
   (lc/show [_]

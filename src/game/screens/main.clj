@@ -5,7 +5,6 @@
             [gdl.lc :as lc]
             [gdl.scene2d.ui :as ui]
             [gdl.scene2d.stage :as stage]
-            [gdl.graphics.gui :as gui]
             [gdl.graphics.image :as image]
             [game.screens.load-session :refer (is-loaded-character)]
             [game.player.session-data :refer (current-character-name)])
@@ -28,10 +27,10 @@
          ^:private bg-image)
 
 (defmodule _
-  (lc/create [[_ {:keys [skip-main-menu bg-image]}] {:keys [batch] :as context}]
+  (lc/create [[_ {:keys [skip-main-menu bg-image]}] {:keys [gui-viewport batch] :as context}]
     (.bindRoot #'skip-main-menu skip-main-menu)
     (.bindRoot #'bg-image (image/create context bg-image))
-    (.bindRoot #'stage (stage/create gui/viewport batch)) ; TODO remove all .bindRoot
+    (.bindRoot #'stage (stage/create gui-viewport batch)) ; TODO remove all .bindRoot
     (let [table (ui/table :rows [[(ui/text-button "New game" try-create-character)]
                                  [(ui/text-button "Map Editor" #(app/set-screen :mapgen.tiledmap-renderer))]
                                  [(ui/text-button "Entity Editor" #(app/set-screen :property-editor.screen))]
@@ -46,14 +45,14 @@
     (.setInputProcessor Gdx/input stage))
   (lc/hide [_]
     (.setInputProcessor Gdx/input nil))
-  (lc/render [_ context]
+  (lc/render [_ {:keys [gui-viewport-width gui-viewport-height] :as context}]
     (app/render-with context
                      :gui
                      (fn [context]
                        (image/draw-centered context
                                             bg-image
-                                            [(/ (gui/viewport-width)  2)
-                                             (/ (gui/viewport-height) 2)])))
+                                            [(/ gui-viewport-width  2)
+                                             (/ gui-viewport-height 2)])))
     (.draw stage))
   (lc/tick [_ _state delta]
     (.act stage delta)

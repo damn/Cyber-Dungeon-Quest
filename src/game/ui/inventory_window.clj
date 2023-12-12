@@ -1,12 +1,11 @@
 (ns game.ui.inventory-window
   (:require [data.grid2d :as grid]
             [x.x :refer [defmodule]]
-            gdl.app
+            [gdl.app :as app]
             [gdl.lc :as lc]
             [gdl.graphics.color :as color]
             [gdl.graphics.shape-drawer :as shape-drawer]
             [gdl.graphics.image :as image]
-            [gdl.graphics.gui :as gui]
             [gdl.scene2d.ui :as ui]
             [game.session :as session]
             [game.utils.msg-to-player :refer (show-msg-to-player)]
@@ -16,9 +15,9 @@
             [game.entities.item :as item-entity])
   (:import com.badlogic.gdx.audio.Sound
            com.badlogic.gdx.graphics.Color
-           [com.badlogic.gdx.scenes.scene2d Actor Group]
-           [com.badlogic.gdx.scenes.scene2d.ui Widget Image TextTooltip Window Table]
-           [com.badlogic.gdx.scenes.scene2d.utils ClickListener]))
+           (com.badlogic.gdx.scenes.scene2d Actor Group)
+           (com.badlogic.gdx.scenes.scene2d.ui Widget Image TextTooltip Window Table)
+           com.badlogic.gdx.scenes.scene2d.utils.ClickListener))
 
 (declare ^Window window)
 
@@ -138,9 +137,8 @@
 
 (import 'com.badlogic.gdx.math.Vector2)
 
-(defn- mouseover? [^com.badlogic.gdx.scenes.scene2d.Actor actor]
-  (let [[x y] (gui/mouse-position)
-        v (.stageToLocalCoordinates actor (Vector2. x y))]
+(defn- mouseover? [^Actor actor [x y]]
+  (let [v (.stageToLocalCoordinates actor (Vector2. x y))]
     (.hit actor (.x v) (.y v) true)))
 
 ; TODO why do I need to call getX ?
@@ -149,10 +147,11 @@
 (defn- draw-rect-actor ^Widget []
   (proxy [Widget] []
     (draw [batch parent-alpha]
-      (let [^Widget this this]
+      (let [{:keys [gui-mouse-position]} @app/state
+            ^Widget this this]
         (draw-cell-rect (.getX this)
                         (.getY this)
-                        (mouseover? this)
+                        (mouseover? this gui-mouse-position)
                         (read-string (.getName (.getParent this))))))))
 
 (defn- cell-widget ^Group [slot & {:keys [position]}]

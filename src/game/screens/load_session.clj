@@ -14,12 +14,12 @@
     (reset! render-once false))
   (lc/render [_ {:keys [batch]}]
     (reset! render-once true)
-    #_(gui/render batch
+    #_(app/render-with :gui
                 (fn [_unit-scale]
                   (reset! render-once true)
                   #_(font/draw-text "Loading..."
-                                    (/ (gui/viewport-width) 2)
-                                    (/ (gui/viewport-height) 2)
+                                    (/ gui-viewport-width 2)
+                                    (/ gui-viewport-height 2)
                                     #_{:centerx true}
                                     ))))
   (lc/tick [_ _state delta]

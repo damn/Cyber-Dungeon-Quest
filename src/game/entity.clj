@@ -1,6 +1,8 @@
 (ns game.entity
   (:require [x.x :refer [defsystem]]))
 
+; TODO always context last param
+
 (defsystem create [_])
 (defsystem create! [_ e])
 
