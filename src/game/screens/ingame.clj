@@ -32,7 +32,7 @@
 (defn- item-on-cursor-render-actor []
   (proxy [Actor] []
     (draw [batch _parent-alpha]
-      (let [{:keys [gui-mouse-position] :as context} @app/state]
+      (let [{:keys [gui-mouse-position] :as context} (app/current-context)]
         (when-let [item (:item-on-cursor @player-entity)]
           ; windows keep changing z-index when selected, or put all windows in 1 group and this actor another group
           (.toFront ^Actor this)

@@ -147,7 +147,7 @@
 (defn- draw-rect-actor ^Widget []
   (proxy [Widget] []
     (draw [batch parent-alpha]
-      (let [{:keys [gui-mouse-position]} @app/state
+      (let [{:keys [gui-mouse-position]} (app/current-context)
             ^Widget this this]
         (draw-cell-rect (.getX this)
                         (.getY this)
@@ -160,7 +160,7 @@
       (.setName (pr-str cell)) ; TODO ! .setUserObject
       (.addListener (proxy [ClickListener] []
                       (clicked [event x y]
-                        (clicked-cell @gdl.app/state cell))))
+                        (clicked-cell (app/current-context) cell))))
       (.add (draw-rect-actor))
       (.add (doto (ui/image (slot->background slot))
               (.setName "image"))))))

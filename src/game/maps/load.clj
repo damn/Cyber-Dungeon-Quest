@@ -1,5 +1,5 @@
 (ns game.maps.load
-  (:require gdl.app
+  (:require [gdl.app :as app]
             [gdl.tiled :as tiled]
             [utils.core :refer [translate-to-tile-middle]]
             [game.session :as session]
@@ -38,7 +38,7 @@
 (def state (reify session/State
              (load! [_ mapkey]
                (data/set-map! mapkey)
-               (load-maps-content @gdl.app/state))
+               (load-maps-content (app/current-context)))
              (serialize [_]
                @data/current-map)
              (initial-data [_]

@@ -25,7 +25,7 @@
 (declare property-editor-window)
 
 (defn- open-property-editor-window [id]
-  (let [{:keys [gui-viewport-width gui-viewport-height] :as context} @app/state
+  (let [{:keys [gui-viewport-width gui-viewport-height] :as context} (app/current-context)
         window (property-editor-window id)]
     (.addActor (stage) window)
     (actor/set-center window
@@ -133,7 +133,7 @@
                            (ui/text-button " - " #(redo-rows (disj (set property-ids) prop-id)))])
                         [[(ui/text-button " + "
                                           (fn []
-                                            (let [{:keys [gui-viewport-width gui-viewport-height]} @app/state
+                                            (let [{:keys [gui-viewport-width gui-viewport-height]} (app/current-context)
                                                   window (ui/window :title "Choose"
                                                                     :modal? true)
                                                   clicked-id-fn (fn [id]

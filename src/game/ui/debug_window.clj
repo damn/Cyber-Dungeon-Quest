@@ -22,7 +22,7 @@
     (.add window label)
     (.add window (proxy [Actor] []
                    (act [_delta]
-                     (let [context @app/state]
+                     (let [context (app/current-context)]
                        (ui/set-text label (debug-infos context))
                        (.pack window)))))
     window))
