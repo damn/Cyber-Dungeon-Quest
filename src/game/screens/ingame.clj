@@ -95,7 +95,7 @@
                                  entity-info-window
                                  skill-window
                                  help-window] :as stage}
-                         assets]
+                         {:keys [assets]}]
   (action-bar/up-skill-hotkeys)
   (let [windows [debug-window
                  help-window
@@ -208,10 +208,10 @@
     (.setInputProcessor Gdx/input stage))
   (lc/hide [_]
     (.setInputProcessor Gdx/input nil))
-  (lc/render [_ {:keys [batch] :as context}]
+  (lc/render [_ context]
     ; TODO ! do this somewhere else
     (let [context (assoc context :default-font media/font)]
-      (tiled/render-map batch
+      (tiled/render-map context
                         (:tiled-map (get-current-map-data))
                         #'tile-color-setter)
       (app/render-with context
@@ -221,7 +221,7 @@
                        :gui
                        game.render-ingame/render-gui))
     (.draw stage))
-  (lc/tick [_ {:keys [assets]} delta]
-    (handle-key-input stage assets)
+  (lc/tick [_ context delta]
+    (handle-key-input stage context)
     (.act stage delta)
-    (game.update-ingame/update-game assets stage delta)))
+    (game.update-ingame/update-game context stage delta)))

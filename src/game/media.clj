@@ -4,7 +4,8 @@
             [gdl.graphics.image :as image]
             [gdl.graphics.animation :as animation]
             [gdl.graphics.freetype :as freetype])
-  (:import com.badlogic.gdx.Gdx))
+  (:import com.badlogic.gdx.Gdx
+           com.badlogic.gdx.graphics.g2d.BitmapFont))
 
 (declare font
          ^:private fx)
@@ -14,7 +15,7 @@
     (.bindRoot #'font (freetype/generate (.internal Gdx/files "exocet/films.EXL_____.ttf") 16))
     (.bindRoot #'fx (image/spritesheet context "fx/uf_FX.png" 24 24)))
   (lc/dispose [_]
-    (.dispose ^com.badlogic.gdx.graphics.g2d.BitmapFont font)))
+    (.dispose ^BitmapFont font)))
 
 ; TODO do projectiles why animation ? only 1 frame
 (defn black-projectile [context]

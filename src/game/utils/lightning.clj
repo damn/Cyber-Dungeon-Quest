@@ -88,12 +88,12 @@
 (comment
  (println "\nnew")
  (time (dotimes [_ 100]
-         (tiled/render-map batch
+         (tiled/render-map context
                            (:tiled-map (get-current-map-data))
                            #'tile-color-setter-new)))
  (println "old")
  (time (dotimes [_ 100]
-         (tiled/render-map batch
+         (tiled/render-map context
                            (:tiled-map (get-current-map-data))
                            #'tile-color-setter-old))))
 #_(defn tile-color-setter-new [_ x y]

@@ -51,11 +51,6 @@
 ; TODO for debugging I want to zoom -> InputAdapter scroll/touch/gestures ??
 ; (set! (.zoom @#'gdl.graphics/world-camera) 0.5)
 
-(defn- render-minimap [batch]
-  (tiled/render-map batch
-                    (:tiled-map (get-current-map-data))
-                    minimap-color-setter))
-
 (defn- render-map-level [_context]
   (shape-drawer/filled-circle (world/camera-position) 0.5 Color/GREEN)) ; render player..
 
@@ -63,8 +58,10 @@
   (lc/show [_]
     (reset! zoom-setting (calculate-zoom))
     (set-zoom @zoom-setting))
-  (lc/render [_ {:keys [batch] :as context}]
-    (render-minimap batch)
+  (lc/render [_ context]
+    (tiled/render-map context
+                      (:tiled-map (get-current-map-data))
+                      minimap-color-setter)
     (app/render-with context
                      :world
                      render-map-level))

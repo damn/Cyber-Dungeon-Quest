@@ -190,8 +190,8 @@
     (center-world-camera))
   (lc/hide [_]
     (.setInputProcessor Gdx/input nil))
-  (lc/render [_ {:keys [batch] :as context}]
-    (tiled/render-map batch
+  (lc/render [_ context]
+    (tiled/render-map context
                       @current-tiled-map
                       (constantly Color/WHITE)) ; TODO colorsetter optional.
     (app/render-with context

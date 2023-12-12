@@ -33,7 +33,7 @@
 
 ; TODO stepping -> p is one step -> how to do ?
 
-(defn update-game [assets stage delta]
+(defn update-game [{:keys [assets] :as context} stage delta]
   ;(reset! running false)
   (when (input/is-key-pressed? :P)
     (swap! running not))
@@ -55,8 +55,7 @@
                  (:movement-vector @player-entity))) ; == WASD movement
       (reset! running true)
       (reset! running false)))
-  (let [delta (limit-delta delta)
-        context {:assets assets}]
+  (let [delta (limit-delta delta)]
     ; TODO all game systems must stop on pause
     ; if an error thrown there
     ; otherwise no need the wrap.
