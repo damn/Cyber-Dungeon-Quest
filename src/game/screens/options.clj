@@ -81,7 +81,7 @@
 
 (def ^:private exit #(app/set-screen :game.screens.ingame))
 
-(defn- create-table [assets]
+(defn- create-table [context]
   (let [table (ui/table :rows (concat
                                (for [check-box @status-check-boxes]
                                  [(ui/check-box (get-text check-box)
@@ -97,13 +97,13 @@
                         :cell-defaults {:pad-bottom 25})
         padding 25]
     (.center table) ; ? TODO don't understand
-    (def menu-bg-image (image/create assets "ui/moon_background.png"))
+    (def menu-bg-image (image/create context "ui/moon_background.png"))
     table))
 
 (defmodule ^Stage stage
-  (lc/create [_ {:keys [assets batch]}]
+  (lc/create [_ {:keys [batch] :as context}]
     (let [stage (stage/create gui/viewport batch)]
-      (.addActor stage (create-table assets))
+      (.addActor stage (create-table context))
       stage))
   (lc/dispose [_]
     (.dispose stage))

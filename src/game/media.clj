@@ -10,12 +10,12 @@
          ^:private fx)
 
 (defmodule _
-  (lc/create [_ {:keys [assets]}]
+  (lc/create [_ context]
     (.bindRoot #'font (freetype/generate (.internal Gdx/files "exocet/films.EXL_____.ttf") 16))
-    (.bindRoot #'fx (image/spritesheet assets "fx/uf_FX.png" 24 24)))
+    (.bindRoot #'fx (image/spritesheet context "fx/uf_FX.png" 24 24)))
   (lc/dispose [_]
     (.dispose ^com.badlogic.gdx.graphics.g2d.BitmapFont font)))
 
 ; TODO do projectiles why animation ? only 1 frame
-(defn black-projectile [assets]
-  (animation/create [(image/get-sprite assets fx [1 12])] :frame-duration 500))
+(defn black-projectile [context]
+  (animation/create [(image/get-sprite context fx [1 12])] :frame-duration 500))

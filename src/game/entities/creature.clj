@@ -10,8 +10,8 @@
             [game.entities.audiovisual :as audiovisual]
             [game.player.entity :refer (set-player-entity)]))
 
-(defn- create-images [assets creature-name]
-  (map #(image/create assets
+(defn- create-images [context creature-name]
+  (map #(image/create context
                       (str "creatures/animations/" creature-name "-" % ".png"))
        (range 1 5)))
 
@@ -53,11 +53,11 @@
         (update :speed * (:speed multiplier))
         (update :hp #(int (* % (:hp multiplier)))))))
 
-(defn- create-creature-data [properties {:keys [is-player] :as extra-params} assets]
+(defn- create-creature-data [properties {:keys [is-player] :as extra-params} context]
   (let [creature-name (name (:id properties))
         properties (dissoc properties :id)
         properties (update properties :skills #(or % []))
-        images (create-images assets creature-name)
+        images (create-images context creature-name)
         [width height] (images->world-unit-dimensions images)
         {:keys [speed hp]} (species-properties (:species properties))]
     (merge (dissoc properties :image)
@@ -83,10 +83,10 @@
                          (:position @entity)
                          :creature/die-effect)))
 
-(defn create! [creature-id position creature-params assets]
+(defn create! [creature-id position creature-params context]
   (let [entity* (-> creature-id
                     properties/get
-                    (create-creature-data creature-params assets)
+                    (create-creature-data creature-params context)
                     (assoc :position position)
                     assoc-left-bottom)]
     (if (valid-position? entity*)

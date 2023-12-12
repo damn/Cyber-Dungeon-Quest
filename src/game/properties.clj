@@ -20,12 +20,12 @@
 ; 4. add other hardcoded stuff like projectiles, etc.
 
 ; could just use sprite-idx directly?
-(defn- deserialize-image [assets {:keys [file sub-image-bounds]}]
+(defn- deserialize-image [context {:keys [file sub-image-bounds]}]
   {:pre [file sub-image-bounds]}
   (let [[sprite-x sprite-y] (take 2 sub-image-bounds)
         [tilew tileh]       (drop 2 sub-image-bounds)]
     ; TODO is not the record itself, check how to do @ image itself.
-    (image/get-sprite assets
+    (image/get-sprite context
                       {:file file
                        :tilew tileh
                        :tileh tilew}
@@ -35,8 +35,8 @@
 (defn- serialize-image [image]
   (select-keys image [:file :sub-image-bounds]))
 
-(defn- deserialize-animation [assets {:keys [frames frame-duration looping?]}]
-  (animation/create (map #(deserialize-image assets %) frames)
+(defn- deserialize-animation [context {:keys [frames frame-duration looping?]}]
+  (animation/create (map #(deserialize-image context %) frames)
                     :frame-duration frame-duration
                     :looping? looping?))
 
@@ -45,30 +45,34 @@
       (update :frames #(map serialize-image %))
       (select-keys [:frames :frame-duration :looping?])))
 
-(defn- deserialize [assets data]
+(defn- deserialize [context data]
   (->> data
-       (#(if (:image     %) (update % :image     (fn [img] (deserialize-image assets img)))     %))
-       (#(if (:animation %) (update % :animation (fn [anim] (deserialize-animation assets anim))) %))))
+       (#(if (:image %)
+           (update % :image (fn [img] (deserialize-image context img)))
+           %))
+       (#(if (:animation %)
+           (update % :animation (fn [anim] (deserialize-animation context anim)))
+           %))))
 
 (defn- serialize [data]
   (->> data
        (#(if (:image     %) (update % :image     serialize-image)     %))
        (#(if (:animation %) (update % :animation serialize-animation) %))))
 
-(defn- load-edn [assets file]
+(defn- load-edn [context file]
   (let [properties (-> file slurp edn/read-string)]
     (assert (apply distinct? (map :id properties)))
     (->> properties
-         (map #(deserialize assets %))
+         (map #(deserialize context %))
          (#(zipmap (map :id %) %)))))
 
 (declare ^:private properties-file
          ^:private properties)
 
 (defmodule file
-  (lc/create [_ {:keys [assets]}]
+  (lc/create [_ context]
     (.bindRoot #'properties-file file)
-    (.bindRoot #'properties (load-edn assets file))))
+    (.bindRoot #'properties (load-edn context file))))
 
 (defn get [id]
   (safe-get properties id))

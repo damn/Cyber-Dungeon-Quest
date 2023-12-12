@@ -225,9 +225,3 @@
     (handle-key-input stage assets)
     (.act stage delta)
     (game.update-ingame/update-game assets stage delta)))
-
-
-(comment
- (clojure.pprint/pprint
-  (deref gdl.app/state))
- )

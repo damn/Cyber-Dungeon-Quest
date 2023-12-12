@@ -7,46 +7,39 @@
             [game.entities.creature :as creature-entity]))
 
 ; looping through all tiles of the map 3 times. but dont do it in 1 loop because player needs to be initialized before all monsters!
-(defn- place-entities [tiled-map assets]
+(defn- place-entities [tiled-map context]
   (doseq [[posi creature-id] (tiled/positions-with-property tiled-map :creatures :id)]
     (creature-entity/create! creature-id
                              (translate-to-tile-middle posi)
                              {:sleeping true}
-                             assets))
+                             context))
   ; otherwise will be rendered, is visible, can also just setVisible layer false
   (tiled/remove-layer! tiled-map :creatures))
 
 (defn load-maps-content
   "loads the map content in the right order"
-  [assets]
+  [context]
   ; TODO assert spawns !!
   (creature-entity/create! :vampire ; <+ this main game config should not be here spread out through the code (also skills damage tc.)
                            (:start-position (data/get-current-map-data))
                            {:is-player true}
-                           assets)
+                           context)
   (doseq [map-name data/added-map-order]
     (data/do-in-map map-name
                     (let [{:keys [load-content spawn-monsters tiled-map]} (data/get-map-data map-name)]
                       (when tiled-map ; TODO always
-                        (place-entities tiled-map assets))
+                        (place-entities tiled-map context))
                       (load-content) ; TODO use place-entities
                       (when spawn-monsters ; TODO use place-entities
                         (spawn-monsters))))
     ;(log "Loaded " map-name " content!")
     ))
 
-
 (def state (reify session/State
              (load! [_ mapkey]
                (data/set-map! mapkey)
-               (load-maps-content (:assets @gdl.app/state)))
+               (load-maps-content @gdl.app/state))
              (serialize [_]
                @data/current-map)
              (initial-data [_]
                (first data/added-map-order))))
-
-
-
-
-
-

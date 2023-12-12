@@ -91,14 +91,14 @@
          ^:private ^Table table)
 
 (defmodule _
-  (lc/create [_ {:keys [assets]}]
+  (lc/create [_ context]
     (.bindRoot #'window (ui/window :title "Inventory"
                                    :id :inventory-window))
     (.bindRoot #'table (ui/table))
     (.pad table (float 2))
     (.add window table)
     (.bindRoot #'slot->background
-               (let [sheet (image/spritesheet assets "items/images.png" 48 48)]
+               (let [sheet (image/spritesheet context "items/images.png" 48 48)]
                  (->> {:weapon   0 ; TODO use a vector?
                        :shield   1
                        :rings    2
@@ -112,7 +112,7 @@
                        :bag      10} ; transparent
                       (map (fn [[slot y]]
                              [slot
-                              (-> (image/get-sprite assets sheet [21 (+ y 2)])
+                              (-> (image/get-sprite context sheet [21 (+ y 2)])
                                   :texture
                                   ui/texture-region-drawable
                                   (.tint (color/rgb 1 1 1 0.4)))]))
