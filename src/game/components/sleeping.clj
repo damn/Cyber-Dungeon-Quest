@@ -1,7 +1,6 @@
 (ns game.components.sleeping
   (:require [x.x :refer [defcomponent]]
             [gdl.graphics.font :as font]
-            [gdl.graphics.color :as color]
             [gdl.graphics.shape-drawer :as shape-drawer]
             [game.utils.counter :as counter]
             [game.db :as db]
@@ -12,7 +11,8 @@
             [game.maps.data :refer (get-current-map-data)]
             [game.maps.cell-grid :as cell-grid]
             [game.maps.potential-field :as potential-field]
-            [game.components.string-effect :as string-effect]))
+            [game.components.string-effect :as string-effect])
+  (:import com.badlogic.gdx.graphics.Color))
 
 ; TODO wake up through walls => sounds are being generated?
 ; someone is behind a wall and lots of fighting and magic but no line of sight
@@ -38,7 +38,7 @@
                      :up? true}))
   (entity/render-info [_ context {:keys [position mouseover?]}]
     (when mouseover?
-      (shape-drawer/circle position aggro-range color/yellow))))
+      (shape-drawer/circle position aggro-range Color/YELLOW))))
 
 (defn- get-visible-entities [cell-grid entity* radius]
   (filter #(in-line-of-sight? entity* @%)

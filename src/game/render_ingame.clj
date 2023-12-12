@@ -15,7 +15,8 @@
             [game.update-ingame :refer (thrown-error)]
             [game.player.entity :refer (player-entity)]
             [game.maps.contentfields :refer [get-entities-in-active-content-fields]]
-            [game.maps.potential-field :as potential-field]))
+            [game.maps.potential-field :as potential-field])
+  (:import com.badlogic.gdx.graphics.Color))
 
 (defn- geom-test []
   (let [position (world/mouse-position)
@@ -55,8 +56,8 @@
             :when distance]
       #_(shape-drawer/rectangle (+ x 0.1) (+ y 0.1) 0.8 0.8
                                 (if blocked?
-                                  color/red
-                                  color/green))
+                                  Color/RED
+                                  Color/GREEN))
       (let [ratio (/ (int (/ distance 10)) 15)]
         (shape-drawer/filled-rectangle x y 1 1
                                        (color/rgb ratio (- 1 ratio) ratio 0.6)))

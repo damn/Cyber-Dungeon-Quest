@@ -5,7 +5,8 @@
             [gdl.graphics.shape-drawer :as shape-drawer]
             [data.val-max :refer [val-max-ratio]]
             [game.entity :as entity]
-            [game.ui.config :refer (hpbar-height-px)]))
+            [game.ui.config :refer (hpbar-height-px)])
+  (:import com.badlogic.gdx.graphics.Color))
 
 (def ^:private hpbar-colors
   {:green     (color/rgb 0 0.8 0)
@@ -35,7 +36,7 @@
               y (+ y half-height)
               height (world/pixels->world-units hpbar-height-px)
               border (world/pixels->world-units borders-px)]
-          (shape-drawer/filled-rectangle x y width height color/black)
+          (shape-drawer/filled-rectangle x y width height Color/BLACK)
           (shape-drawer/filled-rectangle (+ x border)
                                          (+ y border)
                                          (- (* width ratio) (* 2 border))

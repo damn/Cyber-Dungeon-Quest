@@ -15,6 +15,7 @@
             [mapgen.movement-property :refer (movement-property movement-properties)]
             [mapgen.module-gen :as module-gen])
   (:import com.badlogic.gdx.Gdx
+           com.badlogic.gdx.graphics.Color
            com.badlogic.gdx.maps.tiled.TiledMap
            com.badlogic.gdx.scenes.scene2d.Stage
            com.badlogic.gdx.scenes.scene2d.ui.TextField))
@@ -105,13 +106,13 @@
               :let [movement-property (movement-property @current-tiled-map [x y])]]
         (shape-drawer/filled-circle [(+ x 0.5) (+ y 0.5)]
                                     0.08
-                                    color/black)
+                                    Color/BLACK)
         (shape-drawer/filled-circle [(+ x 0.5) (+ y 0.5)]
                                     0.05
                                     (case movement-property
-                                      "all"   color/green
-                                      "air"   color/orange
-                                      "none"  color/red)))))
+                                      "all"   Color/GREEN
+                                      "air"   Color/ORANGE
+                                      "none"  Color/RED)))))
 
   (when @show-grid-lines
     (shape-drawer/grid 0 0
@@ -192,7 +193,7 @@
   (lc/render [_ {:keys [batch]}]
     (tiled/render-map batch
                       @current-tiled-map
-                      (constantly color/white)) ; TODO colorsetter optional.
+                      (constantly Color/WHITE)) ; TODO colorsetter optional.
     (world/render batch
                   render-on-map)
     (.draw stage))

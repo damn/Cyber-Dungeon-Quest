@@ -15,6 +15,7 @@
             [game.player.entity :refer (player-entity)]
             [game.entities.item :as item-entity])
   (:import com.badlogic.gdx.audio.Sound
+           com.badlogic.gdx.graphics.Color
            [com.badlogic.gdx.scenes.scene2d Actor Group]
            [com.badlogic.gdx.scenes.scene2d.ui Widget Image TextTooltip Window Table]
            [com.badlogic.gdx.scenes.scene2d.utils ClickListener]))
@@ -124,7 +125,7 @@
 (def ^:private not-allowed-color  (color/rgb 0.6 0   0 0.8))
 
 (defn- draw-cell-rect [x y mouseover? cell]
-  (shape-drawer/rectangle x y cell-size cell-size color/gray)
+  (shape-drawer/rectangle x y cell-size cell-size Color/GRAY)
   (when-let [item (:item-on-cursor @player-entity)]
     (when mouseover?
       (let [color (if (and (inventory/valid-slot? cell item)

@@ -2,7 +2,8 @@
   (:require [gdl.graphics.color :as color]
             [gdl.graphics.world :as world]
             [game.maps.data :refer (get-current-map-data)]
-            [game.maps.cell-grid :as cell-grid]))
+            [game.maps.cell-grid :as cell-grid])
+  (:import com.badlogic.gdx.graphics.Color))
 
 #_(defprotocol LightSource
   (color-at [_ distance]))
@@ -65,8 +66,8 @@
 
 (defn minimap-color-setter [color x y]
   (if (explored? [x y])
-    color/white
-    color/black))
+    Color/WHITE
+    Color/BLACK))
 
 (def ^:private lightmap (atom {}))
 (def ^:private cached-position (atom nil))
@@ -101,7 +102,7 @@
         explored? (explored? position)
         base-color (if explored?
                      explored-tile-color
-                     color/black)
+                     Color/BLACK)
         _ (when (or (not @cached-position)
                     (> (gdl.vector/distance @cached-position
                                                     light-position)
@@ -120,7 +121,7 @@
       (do
        (when-not explored?
          (set-explored! position))
-       color/white))))
+       Color/WHITE))))
 
 (defn tile-color-setter [_ x y]
   (let [light-position (world/camera-position)
@@ -128,14 +129,14 @@
         explored? (explored? position)
         base-color (if explored?
                      explored-tile-color
-                     color/black)
+                     Color/BLACK)
         blocked? (cell-grid/ray-blocked? (get-current-map-data) light-position position)]
     (if blocked?
       base-color
       (do
        (when-not explored?
          (set-explored! position))
-       color/white))))
+       Color/WHITE))))
 
 #_(let [distance (v/distance light-position position)
         lighted-color (color-at player-light-source distance)]

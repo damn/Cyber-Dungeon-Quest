@@ -8,7 +8,8 @@
             [gdl.graphics.shape-drawer :as shape-drawer]
             [gdl.graphics.world :as world]
             [game.utils.lightning :refer [minimap-color-setter]]
-            [game.maps.data :refer [get-current-map-data]]))
+            [game.maps.data :refer [get-current-map-data]])
+  (:import com.badlogic.gdx.graphics.Color))
 
 ; 28.4 viewportwidth
 ; 16 viewportheight
@@ -56,7 +57,7 @@
                     minimap-color-setter))
 
 (defn- render-map-level [unit-scale]
-  (shape-drawer/filled-circle (world/camera-position) 0.5 color/green)) ; render player..
+  (shape-drawer/filled-circle (world/camera-position) 0.5 Color/GREEN)) ; render player..
 
 (defmodule _
   (lc/show [_]

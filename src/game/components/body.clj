@@ -1,12 +1,12 @@
 (ns game.components.body
   (:require [x.x :refer [defcomponent]]
             [gdl.graphics.shape-drawer :as shape-drawer]
-            [gdl.graphics.color :as color]
             [gdl.geom :as geom]
             [gdl.vector :as v]
             [game.entity :as entity]
             [game.maps.data :refer (get-current-map-data)]
-            [game.maps.cell-grid :as grid]))
+            [game.maps.cell-grid :as grid])
+  (:import com.badlogic.gdx.graphics.Color))
 
 (defn- remove-from-occupied-cells! [e]
   (doseq [cell (:occupied-cells @e)]
@@ -38,7 +38,7 @@
 (def min-solid-body-size 0.3)
 
 (defn- draw-bounds [{[x y] :left-bottom :keys [width height is-solid]}]
-  (shape-drawer/rectangle x y width height (if is-solid color/white color/gray)))
+  (shape-drawer/rectangle x y width height (if is-solid Color/WHITE Color/GRAY)))
 
 ; TODO DELETE NOW !!! fucks up everything & confusing as fuck,
 ; make into function idk ?
