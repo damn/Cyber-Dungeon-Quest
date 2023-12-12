@@ -9,6 +9,8 @@
             [gdl.graphics.image :as image]
             [gdl.graphics.gui :as gui]
             [gdl.graphics.world :as world]
+            [gdl.tiled :as tiled]
+            [game.media :as media]
             [game.properties :as properties]
             [game.ui.debug-window :as debug-window]
             [game.ui.help-window :as help-window]
@@ -20,8 +22,9 @@
             [game.components.clickable :as clickable]
             [game.components.hp :refer (dead?)]
             [game.components.skills :as skill-component]
-            [game.context :as context]
+            [game.maps.data :refer [get-current-map-data]]
             [game.player.entity :refer (player-entity)]
+            [game.utils.lightning :refer [tile-color-setter]]
             game.update-ingame
             game.render-ingame)
   (:import com.badlogic.gdx.Gdx
@@ -29,11 +32,11 @@
 
 (defn- item-on-cursor-render-actor []
   (proxy [Actor] []
-    (draw [_batch _parent-alpha]
+    (draw [batch _parent-alpha]
       (when-let [item (:item-on-cursor @player-entity)]
         ; windows keep changing z-index when selected, or put all windows in 1 group and this actor another group
         (.toFront ^Actor this)
-        (image/draw-centered (context/get-context gui/unit-scale)
+        (image/draw-centered {:batch batch :unit-scale 1}
                              (:image item)
                              (gui/mouse-position))))))
 
@@ -205,10 +208,26 @@
     (.setInputProcessor Gdx/input stage))
   (lc/hide [_]
     (.setInputProcessor Gdx/input nil))
-  (lc/render [_ {:keys [batch]}]
-    (game.render-ingame/render-game batch)
+  (lc/render [_ {:keys [batch] :as context}]
+    ; TODO ! do this somewhere else
+    (let [context (assoc context :default-font media/font)]
+      (tiled/render-map batch
+                        (:tiled-map (get-current-map-data))
+                        #'tile-color-setter)
+      (app/render-with context
+                       :world
+                       game.render-ingame/render-map-content)
+      (app/render-with context
+                       :gui
+                       game.render-ingame/render-gui))
     (.draw stage))
   (lc/tick [_ {:keys [assets]} delta]
     (handle-key-input stage assets)
     (.act stage delta)
     (game.update-ingame/update-game assets stage delta)))
+
+
+(comment
+ (clojure.pprint/pprint
+  (deref gdl.app/state))
+ )

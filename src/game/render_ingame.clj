@@ -1,14 +1,10 @@
 (ns game.render-ingame
   (:require [gdl.graphics.world :as world]
-            [gdl.graphics.gui :as gui]
             [gdl.graphics.shape-drawer :as shape-drawer]
             [gdl.graphics.color :as color]
-            [gdl.tiled :as tiled]
-            [game.utils.lightning :refer [tile-color-setter]]
             [game.line-of-sight :refer (in-line-of-sight?)]
             [game.maps.data :refer [get-current-map-data]]
             [game.maps.cell-grid :as cell-grid]
-            [game.context :as context]
             [game.render :as render]
             [game.player.status-gui :refer [render-player-hp-mana]]
             [game.utils.msg-to-player :refer [render-message-to-player]]
@@ -65,10 +61,9 @@
       #_(when (:monster @cell)
           (@#'g/draw-string x y (str (:id @(:monster @cell))) 1)))))
 
-(defn- render-map-content [unit-scale]
+(defn render-map-content [context]
   #_(tile-debug)
-  (render/render-entities* (context/get-context unit-scale)
-                           (visible-entities*))
+  (render/render-entities* context (visible-entities*))
   #_(geom-test)
   ; highlight current mouseover-tile
   #_(let [[x y] (mapv int (world/mouse-position))
@@ -85,14 +80,6 @@
   (let [[tile-x tile-y] (world/mouse-position)]
     (str (float tile-x) " " (float tile-y))))
 
-; TODO use scene2d
-(defn- render-gui [unit-scale]
-  (render-player-hp-mana (context/get-context unit-scale))
+(defn render-gui [context]
+  (render-player-hp-mana context)
   (render-message-to-player))
-
-(defn render-game [batch]
-  (tiled/render-map batch
-                    (:tiled-map (get-current-map-data))
-                    #'tile-color-setter)
-  (world/render batch render-map-content)
-  (gui/render batch render-gui))

@@ -1,7 +1,6 @@
 (ns game.screens.load-session
   (:require [x.x :refer [defmodule]]
             [gdl.lc :as lc]
-            [gdl.graphics.gui :as gui]
             [gdl.app :as app]
             game.player.session-data))
 
@@ -14,7 +13,8 @@
   (lc/show [_]
     (reset! render-once false))
   (lc/render [_ {:keys [batch]}]
-    (gui/render batch
+    (reset! render-once true)
+    #_(gui/render batch
                 (fn [_unit-scale]
                   (reset! render-once true)
                   #_(font/draw-text "Loading..."

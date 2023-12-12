@@ -79,7 +79,7 @@
 
 (def ^:private show-area-level-colors true)
 
-(defn- render-on-map [_unit-scale]
+(defn- render-on-map [_context]
   (let [visible-tiles (world/visible-tiles)]
     (when show-area-level-colors
       (if @current-start-positions
@@ -190,12 +190,13 @@
     (center-world-camera))
   (lc/hide [_]
     (.setInputProcessor Gdx/input nil))
-  (lc/render [_ {:keys [batch]}]
+  (lc/render [_ {:keys [batch] :as context}]
     (tiled/render-map batch
                       @current-tiled-map
                       (constantly Color/WHITE)) ; TODO colorsetter optional.
-    (world/render batch
-                  render-on-map)
+    (app/render-with context
+                     :world
+                     render-on-map)
     (.draw stage))
   (lc/tick [_ _state delta]
     (.act stage delta)

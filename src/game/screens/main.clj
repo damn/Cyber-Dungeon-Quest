@@ -7,7 +7,6 @@
             [gdl.scene2d.stage :as stage]
             [gdl.graphics.gui :as gui]
             [gdl.graphics.image :as image]
-            [game.context :as context]
             [game.screens.load-session :refer (is-loaded-character)]
             [game.player.session-data :refer (current-character-name)])
   (:import com.badlogic.gdx.Gdx
@@ -47,13 +46,14 @@
     (.setInputProcessor Gdx/input stage))
   (lc/hide [_]
     (.setInputProcessor Gdx/input nil))
-  (lc/render [_ {:keys [batch]}]
-    (gui/render batch
-                (fn [unit-scale]
-                  (image/draw-centered (context/get-context unit-scale)
-                                       bg-image
-                                       [(/ (gui/viewport-width)  2)
-                                        (/ (gui/viewport-height) 2)])))
+  (lc/render [_ context]
+    (app/render-with context
+                     :gui
+                     (fn [context]
+                       (image/draw-centered context
+                                            bg-image
+                                            [(/ (gui/viewport-width)  2)
+                                             (/ (gui/viewport-height) 2)])))
     (.draw stage))
   (lc/tick [_ _state delta]
     (.act stage delta)

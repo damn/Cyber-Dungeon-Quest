@@ -56,16 +56,18 @@
                     (:tiled-map (get-current-map-data))
                     minimap-color-setter))
 
-(defn- render-map-level [unit-scale]
+(defn- render-map-level [_context]
   (shape-drawer/filled-circle (world/camera-position) 0.5 Color/GREEN)) ; render player..
 
 (defmodule _
   (lc/show [_]
     (reset! zoom-setting (calculate-zoom))
     (set-zoom @zoom-setting))
-  (lc/render [_ {:keys [batch]}]
+  (lc/render [_ {:keys [batch] :as context}]
     (render-minimap batch)
-    (world/render batch render-map-level))
+    (app/render-with context
+                     :world
+                     render-map-level))
   (lc/tick [_ _state delta]
     (when (or (input/is-key-pressed? :TAB)
               (input/is-key-pressed? :ESCAPE))

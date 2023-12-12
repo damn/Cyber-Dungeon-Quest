@@ -1,6 +1,6 @@
-(ns game.player.status-gui  ; ui.player-stats -> hp/mana bar
-  ; TODO use stage/scene2d
+(ns game.player.status-gui
   (:require [x.x :refer [defmodule]]
+            gdl.app
             [gdl.lc :as lc]
             [gdl.graphics.font :as font]
             [gdl.graphics.image :as image]

@@ -9,7 +9,6 @@
             [gdl.scene2d.stage :as stage]
             [utils.core :refer [find-first]]
             [game.session :as session]
-            [game.context :as context]
             ;[game.line-of-sight :refer (player-line-of-sight-checks)]
             [game.components.body :refer (show-body-bounds)]
             [game.components.skills :refer (show-skill-icon-on-active)])
@@ -112,13 +111,14 @@
     (.setInputProcessor Gdx/input stage))
   (lc/hide [_]
     (.setInputProcessor Gdx/input nil))
-  (lc/render [_ {:keys [batch]}]
-    (gui/render batch
-                (fn [unit-scale]
-                  (image/draw-centered (context/get-context unit-scale)
-                                       menu-bg-image
-                                       [(/ (gui/viewport-width)  2)
-                                        (/ (gui/viewport-height) 2)])))
+  (lc/render [_ context]
+    (app/render-with context
+                     :gui
+                     (fn [context]
+                       (image/draw-centered context
+                                            menu-bg-image
+                                            [(/ (gui/viewport-width)  2)
+                                             (/ (gui/viewport-height) 2)])))
     (.draw stage))
   (lc/tick [_ _state delta]
     (.act stage delta)
