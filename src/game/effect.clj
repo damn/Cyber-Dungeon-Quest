@@ -47,5 +47,5 @@
     (do-effect!* effect params context))
   (trigger-affected! (:target params) context))
 
-(defmulti render-info (fn [[effect-type effect-value] effect-params] effect-type))
-(defmethod render-info :default [_ _])
+(defmulti render-info (fn [context [effect-type effect-value] effect-params] effect-type))
+(defmethod render-info :default [_ _ _])

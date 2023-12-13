@@ -4,7 +4,7 @@
             [gdl.app :as app]
             [gdl.lc :as lc]
             [gdl.graphics.color :as color]
-            [gdl.graphics.shape-drawer :as shape-drawer]
+            [gdl.graphics.shape-drawer :as draw]
             [gdl.graphics.image :as image]
             [gdl.scene2d.ui :as ui]
             [game.session :as session]
@@ -123,8 +123,8 @@
 (def ^:private two-h-shield-color (color/rgb 0.6 0.6 0 0.8))
 (def ^:private not-allowed-color  (color/rgb 0.6 0   0 0.8))
 
-(defn- draw-cell-rect [x y mouseover? cell]
-  (shape-drawer/rectangle x y cell-size cell-size Color/GRAY)
+(defn- draw-cell-rect [drawer x y mouseover? cell]
+  (draw/rectangle drawer x y cell-size cell-size Color/GRAY)
   (when-let [item (:item-on-cursor @player-entity)]
     (when mouseover?
       (let [color (if (and (inventory/valid-slot? cell item)
@@ -133,7 +133,7 @@
                       two-h-shield-color
                       droppable-color)
                     not-allowed-color)]
-        (shape-drawer/filled-rectangle (inc x) (inc y) (- cell-size 2) (- cell-size 2) color)))))
+        (draw/filled-rectangle drawer (inc x) (inc y) (- cell-size 2) (- cell-size 2) color)))))
 
 (import 'com.badlogic.gdx.math.Vector2)
 
@@ -146,10 +146,11 @@
 ; (maybe (.setTransform stack true) ? , but docs say it should work anyway
 (defn- draw-rect-actor ^Widget []
   (proxy [Widget] []
-    (draw [batch parent-alpha]
-      (let [{:keys [gui-mouse-position]} (app/current-context)
+    (draw [_batch _parent-alpha]
+      (let [{:keys [drawer gui-mouse-position]} (app/current-context)
             ^Widget this this]
-        (draw-cell-rect (.getX this)
+        (draw-cell-rect drawer
+                        (.getX this)
                         (.getY this)
                         (mouseover? this gui-mouse-position)
                         (read-string (.getName (.getParent this))))))))

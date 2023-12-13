@@ -5,7 +5,7 @@
             [gdl.lc :as lc]
             [gdl.graphics.color :as color]
             [gdl.graphics.camera :as camera]
-            [gdl.graphics.shape-drawer :as shape-drawer]
+            [gdl.graphics.shape-drawer :as draw]
             [gdl.tiled :as tiled]
             [gdl.scene2d.ui :as ui]
             [gdl.scene2d.stage :as stage]
@@ -78,47 +78,47 @@
 
 (def ^:private show-area-level-colors true)
 
-(defn- render-on-map [{:keys [world-camera]}]
+(defn- render-on-map [{:keys [drawer world-camera]}]
   (let [visible-tiles (camera/visible-tiles world-camera)]
     (when show-area-level-colors
       (if @current-start-positions
         (doseq [[x y] visible-tiles
                 :when (@current-start-positions [x y])]
-          (shape-drawer/filled-rectangle x y 1 1 (color/rgb 0 0 1 0.5))))
+          (draw/filled-rectangle drawer x y 1 1 (color/rgb 0 0 1 0.5))))
       (doseq [[x y] visible-tiles
               :let [movement-property (movement-property @current-tiled-map [x y])]]
         (when (= :all movement-property)
           (let [level (get @current-area-level-grid [x y])]
             (if (number? level)
-              (shape-drawer/filled-rectangle x y 1 1
-                                             (if (= level 0)
-                                               nil;(color/rgb 0 0 1 0.5)
-                                               (color/rgb (/ level 9)
-                                                          (- 1 (/ level 9))
-                                                          0
-                                                          0.5))))))))
+              (draw/filled-rectangle drawer x y 1 1
+                                     (if (= level 0)
+                                       nil;(color/rgb 0 0 1 0.5)
+                                       (color/rgb (/ level 9)
+                                                  (- 1 (/ level 9))
+                                                  0
+                                                  0.5))))))))
 
     ; TODO move down to other doseq and make button
 
     (when @show-movement-properties
       (doseq [[x y] visible-tiles
               :let [movement-property (movement-property @current-tiled-map [x y])]]
-        (shape-drawer/filled-circle [(+ x 0.5) (+ y 0.5)]
-                                    0.08
-                                    Color/BLACK)
-        (shape-drawer/filled-circle [(+ x 0.5) (+ y 0.5)]
-                                    0.05
-                                    (case movement-property
-                                      "all"   Color/GREEN
-                                      "air"   Color/ORANGE
-                                      "none"  Color/RED)))))
+        (draw/filled-circle drawer [(+ x 0.5) (+ y 0.5)]
+                            0.08
+                            Color/BLACK)
+        (draw/filled-circle drawer [(+ x 0.5) (+ y 0.5)]
+                            0.05
+                            (case movement-property
+                              "all"   Color/GREEN
+                              "air"   Color/ORANGE
+                              "none"  Color/RED)))))
 
   (when @show-grid-lines
-    (shape-drawer/grid 0 0
-                       (tiled/width  @current-tiled-map)
-                       (tiled/height @current-tiled-map)
-                       1 1
-                       (color/rgb 1 1 1 0.5))))
+    (draw/grid drawer 0 0
+               (tiled/width  @current-tiled-map)
+               (tiled/height @current-tiled-map)
+               1 1
+               (color/rgb 1 1 1 0.5))))
 
 (defn- generate [properties]
   (let [{:keys [world-camera]} (app/current-context)

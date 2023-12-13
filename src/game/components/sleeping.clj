@@ -1,7 +1,7 @@
 (ns game.components.sleeping
   (:require [x.x :refer [defcomponent]]
             [gdl.graphics.font :as font]
-            [gdl.graphics.shape-drawer :as shape-drawer]
+            [gdl.graphics.shape-drawer :as draw]
             [game.utils.counter :as counter]
             [game.db :as db]
             [game.entity :as entity]
@@ -30,15 +30,17 @@
 (defcomponent :sleeping _
   (entity/create! [_ entity _ctx]
     (swap! entity modifier/apply-modifiers modifiers))
+  ;  game.components.sleeping/eval16145/fn            sleeping.clj:   34
+  ; => give fn a name @ x.x ?
   (entity/render-above [_ context {[x y] :position :keys [body]}]
     (font/draw-text context
                     {:text "zzz"
                      :x x
                      :y (+ y (:half-height body))
                      :up? true}))
-  (entity/render-info [_ context {:keys [position mouseover?]}]
+  (entity/render-info [_ {:keys [drawer]} {:keys [position mouseover?]}]
     (when mouseover?
-      (shape-drawer/circle position aggro-range Color/YELLOW))))
+      (draw/circle drawer position aggro-range Color/YELLOW))))
 
 (defn- get-visible-entities [cell-grid entity* radius context]
   (filter #(in-line-of-sight? entity* @% context)

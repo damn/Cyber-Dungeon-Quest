@@ -1,6 +1,6 @@
 (ns game.effects.stun
   (:require [x.x :refer [defcomponent doseq-entity]]
-            [gdl.graphics.shape-drawer :as shape-drawer]
+            [gdl.graphics.shape-drawer :as draw]
             [gdl.graphics.color :as color]
             [utils.core :refer :all]
             [game.effect :as effect]
@@ -19,8 +19,8 @@
     (when (counter/stopped? counter)
       (swap! e modifier/reverse-modifiers stun-modifiers)
       (swap! e dissoc k)))
-  (entity/render-below [_ context {:keys [position]}]
-    (shape-drawer/circle position 0.5 (color/rgb 1 1 1 0.6))))
+  (entity/render-below [_ {:keys [drawer]} {:keys [position]}]
+    (draw/circle drawer position 0.5 (color/rgb 1 1 1 0.6))))
 
 (effect/defeffect :stun
   {:text (fn [duration _]

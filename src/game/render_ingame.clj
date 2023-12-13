@@ -1,5 +1,5 @@
 (ns game.render-ingame
-  (:require [gdl.graphics.shape-drawer :as shape-drawer]
+  (:require [gdl.graphics.shape-drawer :as draw]
             [gdl.graphics.color :as color]
             [gdl.graphics.camera :as camera]
             [game.line-of-sight :refer (in-line-of-sight?)]
@@ -14,17 +14,17 @@
             [game.maps.potential-field :as potential-field])
   (:import com.badlogic.gdx.graphics.Color))
 
-(defn- geom-test [{:keys [world-mouse-position]}]
+(defn- geom-test [{:keys [drawer world-mouse-position]}]
   (let [position world-mouse-position
         cell-grid (:cell-grid (get-current-map-data))
         radius 0.8
         circle {:position position :radius radius}]
-    (shape-drawer/circle position radius (color/rgb 1 0 0 0.5))
+    (draw/circle drawer position radius (color/rgb 1 0 0 0.5))
     (doseq [[x y] (map #(:position @%)
                        (cell-grid/circle->touched-cells cell-grid circle))]
-      (shape-drawer/rectangle x y 1 1 (color/rgb 1 0 0 0.5)))
+      (draw/rectangle drawer x y 1 1 (color/rgb 1 0 0 0.5)))
     (let [{[x y] :left-bottom :keys [width height]} (gdl.geom/circle->outer-rectangle circle)]
-      (shape-drawer/rectangle x y width height (color/rgb 0 0 1 1)))))
+      (draw/rectangle drawer x y width height (color/rgb 0 0 1 1)))))
 
 (comment
  (count (filter #(:sleeping @%) (get-entities-in-active-content-fields)))
@@ -35,10 +35,10 @@
        (map deref)
        (filter #(in-line-of-sight? @player-entity % context))))
 
-(defn- tile-debug [{:keys [world-camera world-viewport-width world-viewport-height]}]
+(defn- tile-debug [{:keys [drawer world-camera world-viewport-width world-viewport-height]}]
   (let [cell-grid (:cell-grid (get-current-map-data))
         [left-x right-x bottom-y top-y] (camera/frustum world-camera)]
-    (shape-drawer/grid (int left-x)
+    (draw/grid drawer (int left-x)
                        (int bottom-y)
                        (inc (int world-viewport-width))
                        (+ 2 (int world-viewport-height))
@@ -50,18 +50,18 @@
                   faction :good
                   {:keys [distance entity]} (get-in @cell [faction])]
             :when distance]
-      #_(shape-drawer/rectangle (+ x 0.1) (+ y 0.1) 0.8 0.8
-                                (if blocked?
-                                  Color/RED
-                                  Color/GREEN))
+      #_(draw/rectangle drawer (+ x 0.1) (+ y 0.1) 0.8 0.8
+                        (if blocked?
+                          Color/RED
+                          Color/GREEN))
       (let [ratio (/ (int (/ distance 10)) 15)]
-        (shape-drawer/filled-rectangle x y 1 1
-                                       (color/rgb ratio (- 1 ratio) ratio 0.6)))
+        (draw/filled-rectangle drawer x y 1 1
+                               (color/rgb ratio (- 1 ratio) ratio 0.6)))
       #_(@#'g/draw-string x y (str distance) 1)
       #_(when (:monster @cell)
           (@#'g/draw-string x y (str (:id @(:monster @cell))) 1)))))
 
-(defn render-map-content [{:keys [world-mouse-position] :as context}]
+(defn render-map-content [{:keys [drawer world-mouse-position] :as context}]
   #_(tile-debug context)
   (render/render-entities* context (visible-entities* context))
   #_(geom-test context)
@@ -69,7 +69,7 @@
   #_(let [[x y] (mapv int world-mouse-position)
         cell-grid (:cell-grid (get-current-map-data))
         cell (get cell-grid [x y])]
-    (shape-drawer/rectangle x y 1 1 (color/rgb 0 1 0 0.5))
+    (draw/rectangle drawer x y 1 1 (color/rgb 0 1 0 0.5))
     #_(g/render-readable-text x y {:shift false}
                             [color/white
                              (str [x y])
