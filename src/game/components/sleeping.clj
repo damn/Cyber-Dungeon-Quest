@@ -91,6 +91,5 @@
                               :distance)]
         (when (<= distance (* aggro-range 10)) ; potential field store as 10  TODO necessary ?
           (wake-up! entity context)))))
-
-  (entity/affected! [_ entity]
-    (wake-up! entity)))
+  (entity/affected! [_ entity context]
+    (wake-up! entity context)))

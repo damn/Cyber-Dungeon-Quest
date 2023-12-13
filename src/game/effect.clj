@@ -34,18 +34,18 @@
     (assert effect-def (str "Effect " effect-type " not defined."))
     ((:do! effect-def) effect-value params context)))
 
-(defn- trigger-affected! [target]
+(defn- trigger-affected! [target context]
   (when target
-    (doseq-entity target entity/affected!)))
+    (doseq-entity target entity/affected! context)))
 
 (defn do! [effect params context]
   (do-effect!* effect params context)
-  (trigger-affected! (:target params)))
+  (trigger-affected! (:target params) context))
 
 (defn do-all! [effects params context]
   (doseq [effect effects]
     (do-effect!* effect params context))
-  (trigger-affected! (:target params)))
+  (trigger-affected! (:target params) context))
 
 (defmulti render-info (fn [[effect-type effect-value] effect-params] effect-type))
 (defmethod render-info :default [_ _])
