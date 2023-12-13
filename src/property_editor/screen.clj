@@ -8,7 +8,8 @@
             [gdl.scene2d.ui :as ui]
             [game.properties :as properties])
   (:import com.badlogic.gdx.Gdx
-           com.badlogic.gdx.scenes.scene2d.Stage))
+           com.badlogic.gdx.scenes.scene2d.Stage
+           (com.badlogic.gdx.scenes.scene2d.ui WidgetGroup)))
 
 ; * validation on load all properties / save property/properties
 ; => spec => key spec
@@ -139,14 +140,14 @@
                                                                   (.remove window)
                                                                   (redo-rows (conj (set property-ids) id)))]
                                               (.add window (overview-table property-type clicked-id-fn))
-                                              (ui/pack window)
+                                              (.pack window)
                                               ; TODO fn above -> open in center .. ?
                                               (.addActor (stage) window)
                                               (actor/set-center window
                                                                 (/ gui-viewport-width  2)
                                                                 (/ gui-viewport-height 2)))))]])))
   (when-let [parent (.getParent table)]
-    (ui/pack parent)))
+    (.pack ^WidgetGroup parent)))
 
 (defmethod property-widget :one-to-many [attribute property-ids]
   (let [table (ui/table)]
@@ -201,7 +202,7 @@
                                    [(ui/label (name k)) widget]))
                                 [[(ui/text-button "Save" #(properties/save! (get-data)))
                                   (ui/text-button "Cancel" #(.remove window))]]))
-    (ui/pack window)
+    (.pack window)
     window))
 
 
