@@ -105,7 +105,7 @@
                      explored-tile-color
                      Color/BLACK)
         _ (when (or (not @cached-position)
-                    (> (gdl.vector/distance @cached-position
+                    (> (gdl.math.vector/distance @cached-position
                                                     light-position)
                        0.5))
             (do

@@ -2,7 +2,7 @@
   (:require [x.x :refer [defcomponent]]
             [data.val-max :refer [apply-val]]
             [gdl.draw :as draw]
-            [gdl.vector :as v]
+            [gdl.math.vector :as v]
             [gdl.graphics.color :as color]
             [utils.core :refer [mapvals]]
             [game.properties :as properties]

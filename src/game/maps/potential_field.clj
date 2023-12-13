@@ -7,7 +7,7 @@
   ; TODO assert no NADs @ world creation
   (:require [data.grid2d :as grid]
             [x.x :refer [defcomponent]]
-            [gdl.vector :as v]
+            [gdl.math.vector :as v]
             [utils.core :refer :all]
             [game.entity :as entity]
             [game.components.faction :as faction]

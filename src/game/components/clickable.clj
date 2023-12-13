@@ -1,7 +1,7 @@
 (ns game.components.clickable
   (:require [x.x :refer [defcomponent]]
             [gdl.draw :as draw]
-            [gdl.vector :as v]
+            [gdl.math.vector :as v]
             [game.entity :as entity]
             [game.player.entity :refer (player-entity)]))
 

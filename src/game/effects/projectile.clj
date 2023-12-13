@@ -1,6 +1,6 @@
 (ns game.effects.projectile
   (:require [clojure.string :as str]
-            [gdl.vector :as v]
+            [gdl.math.vector :as v]
             [gdl.graphics.animation :as animation]
             [gdl.graphics.image :as image]
             [game.effect :as effect]

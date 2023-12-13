@@ -26,7 +26,7 @@
   :global-vars {*warn-on-reflection* true
                 *print-level* 3}
 
-  :aliases {"dev" ["run" "-m" "gdl.dev-loop" "game.start" "app"]})
+  :aliases {"dev" ["run" "-m" "gdl.dev" "game.start" "app"]})
 
 ; * Notes
 

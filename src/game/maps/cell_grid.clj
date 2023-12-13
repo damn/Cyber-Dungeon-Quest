@@ -1,8 +1,8 @@
 (ns game.maps.cell-grid
-  (:require [gdl.geom :as geom]
-            [gdl.vector :as v]
-            [gdl.tiled :as tiled]
-            [gdl.raycaster :as raycaster]
+  (:require [gdl.tiled :as tiled]
+            [gdl.math.geom :as geom]
+            [gdl.math.vector :as v]
+            [gdl.math.raycaster :as raycaster]
             [data.grid2d :as grid]
             [utils.core :refer [translate-to-tile-middle int-posi diagonal-direction?]]
             [game.session :as session]

@@ -3,11 +3,11 @@
             [gdl.app :as app]
             [gdl.draw :as draw]
             [gdl.lifecycle :as lc]
-            [gdl.vector :as v]
+            [gdl.tiled :as tiled]
+            [gdl.math.vector :as v]
             [gdl.scene2d.actor :as actor]
             [gdl.scene2d.stage :as stage]
             [gdl.scene2d.ui :as ui]
-            [gdl.tiled :as tiled]
             [game.properties :as properties]
             [game.ui.debug-window :as debug-window]
             [game.ui.help-window :as help-window]
@@ -29,7 +29,7 @@
 
 (defn- item-on-cursor-render-actor []
   (proxy [Actor] []
-    (draw [batch _parent-alpha]
+    (draw [_batch _parent-alpha]
       (let [{:keys [drawer gui-mouse-position] :as context} (app/current-context)]
         (when-let [item (:item-on-cursor @player-entity)]
           ; windows keep changing z-index when selected, or put all windows in 1 group and this actor another group

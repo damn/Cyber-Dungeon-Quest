@@ -1,3 +1,4 @@
+; TODO delete, make window modal
 (ns game.screens.load-session
   (:require [x.x :refer [defmodule]]
             [gdl.lifecycle :as lc]

@@ -1,8 +1,8 @@
 (ns game.components.body
   (:require [x.x :refer [defcomponent]]
             [gdl.draw :as draw]
-            [gdl.geom :as geom]
-            [gdl.vector :as v]
+            [gdl.math.geom :as geom]
+            [gdl.math.vector :as v]
             [game.entity :as entity]
             [game.maps.data :refer (get-current-map-data)]
             [game.maps.cell-grid :as grid])

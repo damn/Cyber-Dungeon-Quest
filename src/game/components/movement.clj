@@ -1,7 +1,7 @@
 (ns game.components.movement
   (:require [x.x :refer [defcomponent doseq-entity]]
-            [gdl.geom :as geom]
-            [gdl.vector :as v]
+            [gdl.math.geom :as geom]
+            [gdl.math.vector :as v]
             [utils.core :refer [find-first]]
             [game.entity :as entity]
             [game.effect :as effect]

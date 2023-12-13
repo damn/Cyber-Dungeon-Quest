@@ -23,7 +23,7 @@
     (doseq [[x y] (map #(:position @%)
                        (cell-grid/circle->touched-cells cell-grid circle))]
       (draw/rectangle drawer x y 1 1 (color/rgb 1 0 0 0.5)))
-    (let [{[x y] :left-bottom :keys [width height]} (gdl.geom/circle->outer-rectangle circle)]
+    (let [{[x y] :left-bottom :keys [width height]} (gdl.math.geom/circle->outer-rectangle circle)]
       (draw/rectangle drawer x y width height (color/rgb 0 0 1 1)))))
 
 (comment
