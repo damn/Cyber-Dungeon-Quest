@@ -3,7 +3,6 @@
             [x.x :refer [defmodule]]
             [gdl.lc :as lc]
             [gdl.app :as app]
-            [gdl.input :as input]
             [gdl.scene2d.actor :as actor]
             [gdl.scene2d.stage :as stage]
             [gdl.scene2d.ui :as ui]

@@ -1,6 +1,5 @@
 (ns game.ui.mouseover-entity
   (:require [x.x :refer [defcomponent]]
-            [gdl.input :as input]
             [gdl.graphics.color :as color]
             [gdl.graphics.shape-drawer :as shape-drawer]
             [gdl.scene2d.stage :as stage]
@@ -12,7 +11,8 @@
             [game.line-of-sight :refer (in-line-of-sight?)]
             [game.maps.data :refer (get-current-map-data)]
             [game.maps.cell-grid :refer (get-bodies-at-position)]
-            [game.player.entity :refer (player-entity)]))
+            [game.player.entity :refer (player-entity)])
+  (:import (com.badlogic.gdx Gdx Input$Buttons)))
 
 (def ^:private outline-alpha 0.4)
 (color/defrgb ^:private enemy-color    1 0 0 outline-alpha)
@@ -63,13 +63,13 @@
   (and @is-saved @cache))
 
 (defn- keep-saved? [entity context]
-  (and (input/is-leftbutton-down?)
+  (and (.isButtonPressed Gdx/input Input$Buttons/LEFT)
        (db/exists? entity)
        (in-line-of-sight? @player-entity @entity context)))
 
 (defn- save? [entity]
-  (and (input/is-leftm-pressed?) ; dont move & get stuck on any entity under mouse, only save when starting to click on that
-       (input/is-leftbutton-down?)
+  (and (.isButtonJustPressed Gdx/input Input$Buttons/LEFT) ; dont move & get stuck on any entity under mouse, only save when starting to click on that
+       (.isButtonPressed Gdx/input Input$Buttons/LEFT)
        (not= entity player-entity))) ; movement follows this / targeting / ...
 
 (defn update-mouseover-entity [stage {:keys [gui-mouse-position] :as context}]

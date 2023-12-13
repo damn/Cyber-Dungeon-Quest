@@ -2,14 +2,14 @@
   (:require [x.x :refer [defmodule]]
             [gdl.app :as app]
             [gdl.lc :as lc]
-            [gdl.input :as input]
             [gdl.tiled :as tiled]
             [gdl.graphics.color :as color]
             [gdl.graphics.camera :as camera]
             [gdl.graphics.shape-drawer :as shape-drawer]
             [game.utils.lightning :refer [minimap-color-setter]]
             [game.maps.data :refer [get-current-map-data]])
-  (:import (com.badlogic.gdx.graphics Color OrthographicCamera)))
+  (:import (com.badlogic.gdx Gdx Input$Keys)
+           (com.badlogic.gdx.graphics Color OrthographicCamera)))
 
 ; 28.4 viewportwidth
 ; 16 viewportheight
@@ -56,7 +56,7 @@
                      :world
                      render-map-level))
   (lc/tick [_ {:keys [world-camera]} delta]
-    (when (or (input/is-key-pressed? :TAB)
-              (input/is-key-pressed? :ESCAPE))
+    (when (or (.isKeyJustPressed Gdx/input Input$Keys/TAB)
+              (.isKeyJustPressed Gdx/input Input$Keys/ESCAPE))
       (camera/set-zoom! world-camera 1)
       (app/set-screen :game.screens.ingame))))

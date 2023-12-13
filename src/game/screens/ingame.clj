@@ -2,8 +2,8 @@
   (:require [x.x :refer [defmodule]]
             [gdl.app :as app]
             [gdl.lc :as lc]
-            [gdl.input :as input]
             [gdl.vector :as v]
+            [gdl.scene2d.actor :as actor]
             [gdl.scene2d.stage :as stage]
             [gdl.scene2d.ui :as ui]
             [gdl.graphics.image :as image]
@@ -25,7 +25,7 @@
             [game.utils.lightning :refer [tile-color-setter]]
             game.update-ingame
             game.render-ingame)
-  (:import com.badlogic.gdx.Gdx
+  (:import (com.badlogic.gdx Gdx Input$Keys Input$Buttons)
            (com.badlogic.gdx.scenes.scene2d Actor Stage)))
 
 (defn- item-on-cursor-render-actor []
@@ -74,10 +74,10 @@
   (v/normalise (reduce v/add [0 0] vs)))
 
 (defn- wasd-movement-vector []
-  (let [r (if (input/is-key-down? :D) [1  0])
-        l (if (input/is-key-down? :A) [-1 0])
-        u (if (input/is-key-down? :W) [0  1])
-        d (if (input/is-key-down? :S) [0 -1])]
+  (let [r (if (.isKeyPressed Gdx/input Input$Keys/D) [1  0])
+        l (if (.isKeyPressed Gdx/input Input$Keys/A) [-1 0])
+        u (if (.isKeyPressed Gdx/input Input$Keys/W) [0  1])
+        d (if (.isKeyPressed Gdx/input Input$Keys/S) [0 -1])]
     (when (or r l u d)
       (let [v (add-vs (remove nil? [r l u d]))]
         (when (pos? (v/length v))
@@ -85,9 +85,6 @@
 
 (defn- set-movement! [v]
   (swap! player-entity assoc :movement-vector v))
-
-(defn- toggle-visible [^Actor actor]
-  (.setVisible actor (not (.isVisible actor))))
 
 (defn- handle-key-input [{:keys [debug-window
                                  inventory-window
@@ -101,7 +98,7 @@
                  entity-info-window
                  inventory-window
                  skill-window]]
-    (when (input/is-key-pressed? :ESCAPE)
+    (when (.isKeyJustPressed Gdx/input Input$Keys/ESCAPE)
       (cond
        ; when game is paused and/or the player is dead, let player be able to drop item-on-cursor?
        ; or drop it automatically when dead?
@@ -110,19 +107,19 @@
        (dead? @player-entity) (if-not false
                                 (app/set-screen :game.screens.main))
        :else (app/set-screen :game.screens.options))))
-  (when (input/is-key-pressed? :TAB)
+  (when (.isKeyJustPressed Gdx/input Input$Keys/TAB)
     (app/set-screen :game.screens.minimap)) ; TODO does set-screen do it immediately (cancel the current frame ) or finish this frame?
   ; TODO entity/skill info also
-  (when (input/is-key-pressed? :I)
-    (toggle-visible inventory-window)
-    (toggle-visible entity-info-window)
-    (toggle-visible skill-window))
+  (when (.isKeyJustPressed Gdx/input Input$Keys/I)
+    (actor/toggle-visible! inventory-window)
+    (actor/toggle-visible! entity-info-window)
+    (actor/toggle-visible! skill-window))
 
-  (when (input/is-key-pressed? :H)
-    (toggle-visible help-window))
+  (when (.isKeyJustPressed Gdx/input Input$Keys/H)
+    (actor/toggle-visible! help-window))
 
-  (when (input/is-key-pressed? :Z)
-    (toggle-visible debug-window))
+  (when (.isKeyJustPressed Gdx/input Input$Keys/Z)
+    (actor/toggle-visible! debug-window))
 
   ; we check left-mouse-pressed? and not left-mouse-down? because down may miss
   ; short taps between frames
@@ -131,7 +128,7 @@
     (do
      (set-movement! (wasd-movement-vector))
      (cond
-      (and (input/is-leftm-pressed?)
+      (and (.isButtonJustPressed Gdx/input Input$Buttons/LEFT)
            (not (stage/hit stage gui-mouse-position))
            (:item-on-cursor @player-entity))
       (inventory/put-item-on-ground {:assets assets})
@@ -143,8 +140,8 @@
 
       ; is-leftbutton-down? because hold & click on pressable -> move closer and in range click
       ; TODO is it possible pressed and not down ?
-      (and (or (input/is-leftm-pressed?)
-               (input/is-leftbutton-down?))
+      (and (or (.isButtonJustPressed Gdx/input Input$Buttons/LEFT)
+               (.isButtonPressed Gdx/input Input$Buttons/LEFT))
            (not (stage/hit stage gui-mouse-position))
            (clickable/clickable-mouseover-entity? (get-mouseover-entity)))
       (clickable/on-clicked {:stage stage
@@ -155,7 +152,7 @@
       (set-movement! (v/direction (:position @player-entity)
                                   (:position @(saved-mouseover-entity))))
 
-      (and (input/is-leftbutton-down?)
+      (and (.isButtonPressed Gdx/input Input$Buttons/LEFT)
            (not (stage/hit stage gui-mouse-position)))
       (set-movement! (v/direction (:position @player-entity)
                                   world-mouse-position))))))
@@ -165,8 +162,8 @@
     ; TODO no skill selected and leftmouse -> also show msg to player/sound
     (when (and (not (:item-on-cursor entity*))
                (not (clickable/clickable-mouseover-entity? (get-mouseover-entity)))
-               (or (input/is-leftm-pressed?)
-                   (input/is-leftbutton-down?)))
+               (or (.isButtonJustPressed Gdx/input Input$Buttons/LEFT)
+                   (.isButtonPressed Gdx/input Input$Buttons/LEFT)))
       ; TODO directly pass skill here ...
       ; TODO should get from entity :skills ! not properties ... ?
       (let [state (skill-component/usable-state entity* (properties/get skill-id))]

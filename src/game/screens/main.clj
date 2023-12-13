@@ -1,14 +1,13 @@
 (ns game.screens.main
   (:require [x.x :refer [defmodule]]
             [gdl.app :as app]
-            [gdl.input :as input]
             [gdl.lc :as lc]
             [gdl.scene2d.ui :as ui]
             [gdl.scene2d.stage :as stage]
             [gdl.graphics.image :as image]
             [game.screens.load-session :refer (is-loaded-character)]
             [game.player.session-data :refer (current-character-name)])
-  (:import com.badlogic.gdx.Gdx
+  (:import (com.badlogic.gdx Gdx Input$Keys)
            com.badlogic.gdx.scenes.scene2d.Stage))
 
 ; TODO do all loading in 'loading' ns...
@@ -56,7 +55,7 @@
     (.draw stage))
   (lc/tick [_ _state delta]
     (.act stage delta)
-    (when (input/is-key-pressed? :ESCAPE) ; no input/
+    (when (.isKeyJustPressed Gdx/input Input$Keys/ESCAPE)
       (.exit Gdx/app))
     (when skip-main-menu
       (try-create-character))))

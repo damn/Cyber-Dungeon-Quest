@@ -1,6 +1,5 @@
 (ns game.update-ingame
   (:require [clj-commons.pretty.repl :as p]
-            [gdl.input :as input]
             [game.running :refer (running)]
             [game.tick :as tick]
             [game.db :as db]
@@ -13,7 +12,8 @@
             [game.maps.mapchange :refer [check-change-map]]
             [game.maps.contentfields :refer [get-entities-in-active-content-fields]]
             [game.maps.potential-field :refer [update-potential-fields]])
-  (:import com.badlogic.gdx.audio.Sound))
+  (:import (com.badlogic.gdx Gdx Input$Keys Input$Buttons)
+           com.badlogic.gdx.audio.Sound))
 
 (defn- update-game-systems [{:keys [gui-mouse-position] :as context} stage delta]
   ; destroy here not @ tick, because when game is paused
@@ -36,7 +36,7 @@
 
 (defn update-game [{:keys [assets] :as context} stage delta]
   ;(reset! running false)
-  (when (input/is-key-pressed? :P)
+  (when (.isKeyJustPressed Gdx/input Input$Keys/P)
     (swap! running not))
   ; TODO do not set running to true in case of a throwable ('ERROR')
   ; TODO for deploying can run it anyway and just skip errors (only report 1 error per error not every update call)
@@ -51,7 +51,7 @@
              ; or active-skill?
              ; player-action?
              ; when stunned - ? paused or not ?
-             (or (input/is-leftbutton-down?)
+             (or (.isButtonPressed Gdx/input Input$Buttons/LEFT)
                  (:active-skill? @player-entity)
                  (:movement-vector @player-entity))) ; == WASD movement
       (reset! running true)

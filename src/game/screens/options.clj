@@ -3,7 +3,6 @@
             [gdl.lc :as lc]
             [gdl.app :as app]
             [gdl.graphics.image :as image]
-            [gdl.input :as input]
             [gdl.scene2d.ui :as ui]
             [gdl.scene2d.stage :as stage]
             [utils.core :refer [find-first]]
@@ -11,7 +10,7 @@
             ;[game.line-of-sight :refer (player-line-of-sight-checks)]
             [game.components.body :refer (show-body-bounds)]
             [game.components.skills :refer (show-skill-icon-on-active)])
-  (:import com.badlogic.gdx.Gdx
+  (:import (com.badlogic.gdx Gdx Input$Keys)
            com.badlogic.gdx.scenes.scene2d.Stage))
 
 ; no protocol
@@ -121,5 +120,5 @@
     (.draw stage))
   (lc/tick [_ _state delta]
     (.act stage delta)
-    (when (input/is-key-pressed? :ESCAPE)
+    (when (.isKeyJustPressed Gdx/input Input$Keys/ESCAPE)
       (exit))))

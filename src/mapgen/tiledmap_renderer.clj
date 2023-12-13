@@ -3,7 +3,6 @@
             [x.x :refer [defmodule]]
             [gdl.app :as app]
             [gdl.lc :as lc]
-            [gdl.input :as input]
             [gdl.graphics.color :as color]
             [gdl.graphics.camera :as camera]
             [gdl.graphics.shape-drawer :as shape-drawer]
@@ -13,7 +12,7 @@
             game.maps.impl
             [mapgen.movement-property :refer (movement-property movement-properties)]
             [mapgen.module-gen :as module-gen])
-  (:import com.badlogic.gdx.Gdx
+  (:import (com.badlogic.gdx Gdx Input$Keys)
            (com.badlogic.gdx.graphics Color OrthographicCamera)
            com.badlogic.gdx.maps.tiled.TiledMap
            com.badlogic.gdx.scenes.scene2d.Stage
@@ -63,17 +62,17 @@
 
 ; TODO textfield takes control !
 (defn- camera-controls [camera]
-  (if (input/is-key-down? :PLUS)  (adjust-zoom camera    zoom-speed)) ; TODO only pass + / -
-  (if (input/is-key-down? :MINUS) (adjust-zoom camera (- zoom-speed)))
+  (if (.isKeyPressed Gdx/input Input$Keys/PLUS)  (adjust-zoom camera    zoom-speed)) ; TODO only pass + / -
+  (if (.isKeyPressed Gdx/input Input$Keys/MINUS) (adjust-zoom camera (- zoom-speed)))
   (let [apply-position (fn [idx f]
                          (camera/set-position! camera
                                                (update (camera/position camera)
                                                        idx
                                                        #(f % camera-movement-speed))))]
-    (if (input/is-key-down? :LEFT)  (apply-position 0 -))
-    (if (input/is-key-down? :RIGHT) (apply-position 0 +))
-    (if (input/is-key-down? :UP)    (apply-position 1 +))
-    (if (input/is-key-down? :DOWN)  (apply-position 1 -))))
+    (if (.isKeyPressed Gdx/input Input$Keys/LEFT)  (apply-position 0 -))
+    (if (.isKeyPressed Gdx/input Input$Keys/RIGHT) (apply-position 0 +))
+    (if (.isKeyPressed Gdx/input Input$Keys/UP)    (apply-position 1 +))
+    (if (.isKeyPressed Gdx/input Input$Keys/DOWN)  (apply-position 1 -))))
 
 (def ^:private current-start-positions (atom nil))
 
@@ -201,11 +200,11 @@
     (.draw stage))
   (lc/tick [_ {:keys [world-camera]} delta]
     (.act stage delta)
-    (when (input/is-key-pressed? :ESCAPE)
+    (when (.isKeyJustPressed Gdx/input Input$Keys/ESCAPE)
       (app/set-screen :game.screens.main))
-    (if (input/is-key-pressed? :L)
+    (if (.isKeyJustPressed Gdx/input Input$Keys/L)
       (swap! show-grid-lines not))
-    (if (input/is-key-pressed? :M)
+    (if (.isKeyJustPressed Gdx/input Input$Keys/M)
       (swap! show-movement-properties not))
     (camera-controls world-camera)))
 
