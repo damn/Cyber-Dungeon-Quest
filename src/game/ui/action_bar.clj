@@ -124,7 +124,6 @@
           :let [skill-id (slot @slot->skill-id)]
           :when (and (.isKeyJustPressed Gdx/input (number-str->input-key (name slot)))
                      skill-id)]
-    (println "Pressed NUM_0")
     (.setChecked ^Button (.findActor horizontal-group (str skill-id)) true)))
 
 (comment
