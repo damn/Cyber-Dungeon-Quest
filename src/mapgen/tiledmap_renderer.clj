@@ -140,7 +140,7 @@
     (.setName (str k))))
 
 (defn form-value [^com.badlogic.gdx.scenes.scene2d.ui.Table forms-table k]
-  (.getText ^TextField (.findActor forms-table (str k)))) ; TODO broken with VisTextField -> move interop to gdl
+  (.getText ^com.kotcrab.vis.ui.widget.VisTextField (.findActor forms-table (str k))))
 ; => or reuse exactly entity-editor window
 
 ; TODO any key typed and not saved -> show 'unsaved' icon
