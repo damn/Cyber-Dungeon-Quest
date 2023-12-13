@@ -1,5 +1,8 @@
 (ns game.start
-  (:require [gdl.app :as app]
+  (:require [x.x :refer [defcomponent]]
+            [gdl.app :as app]
+            [gdl.lc :as lc]
+            [gdl.graphics.freetype :as freetype]
             game.modifiers.all
             game.components.require-all
             game.effects.require-all
@@ -9,7 +12,15 @@
             game.screens.minimap
             game.screens.options
             mapgen.tiledmap-renderer
-            property-editor.screen))
+            property-editor.screen)
+  (:import com.badlogic.gdx.Gdx
+           com.badlogic.gdx.graphics.g2d.BitmapFont))
+
+(defcomponent :default-font {:keys [file size]}
+  (lc/create [_ context]
+    (freetype/generate (.internal Gdx/files file) size))
+  (lc/dispose [[_ font]]
+    (.dispose ^BitmapFont font)))
 
 (def app-config
   {:app {:title "Cyber Dungeon Quest"
@@ -18,9 +29,10 @@
          :full-screen? false
          :fps nil} ; TODO fix is set to 60 @ gdl
    :tile-size 48
-   :modules {:game.properties "resources/properties.edn"
+   :modules {:default-font {:file "exocet/films.EXL_____.ttf"
+                            :size 16}
+             :game.properties "resources/properties.edn"
              :game.maps.data nil
-             :game.media nil
              :game.ui.inventory-window nil
              :game.ui.action-bar nil
              :game.player.status-gui nil

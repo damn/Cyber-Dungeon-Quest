@@ -1,6 +1,7 @@
 (ns game.screens.main
   (:require [x.x :refer [defmodule]]
             [gdl.app :as app]
+            [gdl.draw :as draw]
             [gdl.lc :as lc]
             [gdl.scene2d.ui :as ui]
             [gdl.scene2d.stage :as stage]
@@ -47,8 +48,8 @@
   (lc/render [_ {:keys [gui-viewport-width gui-viewport-height] :as context}]
     (app/render-with context
                      :gui
-                     (fn [context]
-                       (image/draw-centered context
+                     (fn [drawer]
+                       (draw/centered-image drawer
                                             bg-image
                                             [(/ gui-viewport-width  2)
                                              (/ gui-viewport-height 2)])))

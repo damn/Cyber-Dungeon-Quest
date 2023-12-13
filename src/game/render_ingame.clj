@@ -1,5 +1,5 @@
 (ns game.render-ingame
-  (:require [gdl.graphics.shape-drawer :as draw]
+  (:require [gdl.draw :as draw]
             [gdl.graphics.color :as color]
             [gdl.graphics.camera :as camera]
             [game.line-of-sight :refer (in-line-of-sight?)]
@@ -14,7 +14,7 @@
             [game.maps.potential-field :as potential-field])
   (:import com.badlogic.gdx.graphics.Color))
 
-(defn- geom-test [{:keys [drawer world-mouse-position]}]
+(defn- geom-test [drawer {:keys [world-mouse-position]}]
   (let [position world-mouse-position
         cell-grid (:cell-grid (get-current-map-data))
         radius 0.8
@@ -35,7 +35,7 @@
        (map deref)
        (filter #(in-line-of-sight? @player-entity % context))))
 
-(defn- tile-debug [{:keys [drawer world-camera world-viewport-width world-viewport-height]}]
+(defn- tile-debug [drawer {:keys [world-camera world-viewport-width world-viewport-height]}]
   (let [cell-grid (:cell-grid (get-current-map-data))
         [left-x right-x bottom-y top-y] (camera/frustum world-camera)]
     (draw/grid drawer (int left-x)
@@ -61,10 +61,15 @@
       #_(when (:monster @cell)
           (@#'g/draw-string x y (str (:id @(:monster @cell))) 1)))))
 
-(defn render-map-content [{:keys [drawer world-mouse-position] :as context}]
-  #_(tile-debug context)
-  (render/render-entities* context (visible-entities* context))
-  #_(geom-test context)
+(defn render-map-content [drawer {:keys [world-mouse-position] :as context}]
+  #_(tile-debug drawer context)
+
+  (render/render-entities* drawer
+                           context
+                           (visible-entities* context))
+
+  #_(geom-test drawer context)
+
   ; highlight current mouseover-tile
   #_(let [[x y] (mapv int world-mouse-position)
         cell-grid (:cell-grid (get-current-map-data))
@@ -76,6 +81,6 @@
                              color/gray
                              (pr-str (:potential-field @cell))])))
 
-(defn render-gui [context]
-  (render-player-hp-mana context)
+(defn render-gui [drawer context]
+  (render-player-hp-mana drawer context)
   (render-message-to-player))

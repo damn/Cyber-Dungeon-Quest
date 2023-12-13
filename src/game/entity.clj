@@ -16,8 +16,8 @@
 (defsystem affected! [_ e context])
 (defsystem stun! [_ e])
 
-(defsystem render-below   [_ context e*])
-(defsystem render-default [_ context e*])
-(defsystem render-above   [_ context e*])
-(defsystem render-info    [_ context e*])
-(defsystem render-debug   [_ context e*])
+(defsystem render-below   [_ drawer context e*])
+(defsystem render-default [_ drawer context e*])
+(defsystem render-above   [_ drawer context e*])
+(defsystem render-info    [_ drawer context e*])
+(defsystem render-debug   [_ drawer context e*])

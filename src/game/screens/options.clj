@@ -2,6 +2,7 @@
   (:require [x.x :refer [defmodule]]
             [gdl.lc :as lc]
             [gdl.app :as app]
+            [gdl.draw :as draw]
             [gdl.graphics.image :as image]
             [gdl.scene2d.ui :as ui]
             [gdl.scene2d.stage :as stage]
@@ -112,8 +113,8 @@
   (lc/render [_ {:keys [gui-viewport-width gui-viewport-height] :as context}]
     (app/render-with context
                      :gui
-                     (fn [context]
-                       (image/draw-centered context
+                     (fn [drawer]
+                       (draw/centered-image drawer
                                             menu-bg-image
                                             [(/ gui-viewport-width  2)
                                              (/ gui-viewport-height 2)])))

@@ -16,7 +16,7 @@
        (range 1 5)))
 
 (defn- images->world-unit-dimensions [images]
-  (let [dimensions (map image/world-unit-dimensions images)
+  (let [dimensions (map :world-unit-dimensions images)
         max-width  (apply max (map first  dimensions))
         max-height (apply max (map second dimensions))]
     [max-width

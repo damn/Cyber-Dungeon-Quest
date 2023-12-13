@@ -3,7 +3,7 @@
             [gdl.app :as app]
             [gdl.vector :as v]
             [gdl.graphics.color :as color]
-            [gdl.graphics.shape-drawer :as draw]
+            [gdl.draw :as draw]
             [game.line-of-sight :refer (in-line-of-sight?)]
             [game.components.skills :refer (ai-should-use?)]
             [game.entities.audiovisual :as audiovisual]
@@ -62,7 +62,7 @@
                           (end-point @source @target maxrange)
                           :effects.target-entity/hit-ground-effect))))
 
-(defmethod effect/render-info :target-entity [{:keys [drawer]} [_ {:keys [maxrange]}] {:keys [source target]}]
+(defmethod effect/render-info :target-entity [drawer [_ {:keys [maxrange]}] {:keys [source target]}]
   (draw/line drawer
              (start-point @source @target)
              (end-point   @source @target maxrange)

@@ -1,7 +1,7 @@
 (ns game.components.string-effect
   (:require [x.x :refer [defcomponent]]
             [gdl.app :as app]
-            [gdl.graphics.font :as font]
+            [gdl.draw :as draw]
             [game.utils.counter :as counter]
             [game.ui.config :refer [hpbar-height-px]]
             [game.entity :as entity]))
@@ -12,13 +12,13 @@
   (entity/tick! [[k _] _ctx e delta]
     (when (counter/stopped? counter)
       (swap! e dissoc k)))
-  (entity/render-above [_ context {[x y] :position :keys [body]}]
-    (font/draw-text context
-                    {:text text
-                     :x x
-                     :y (+ y (:half-height body)
-                           (app/pixels->world-units context hpbar-height-px))
-                     :up? true})))
+  (entity/render-above [_ drawer context {[x y] :position :keys [body]}]
+    (draw/text drawer
+               {:text text
+                :x x
+                :y (+ y (:half-height body)
+                      (app/pixels->world-units context hpbar-height-px))
+                :up? true})))
 
 (defn add [entity* text]
   (if (:string-effect entity*)

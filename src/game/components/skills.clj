@@ -1,10 +1,9 @@
 (ns game.components.skills
   (:require [x.x :refer [defcomponent]]
             [data.val-max :refer [apply-val]]
-            [gdl.graphics.image :as image]
-            [gdl.graphics.color :as color]
-            [gdl.graphics.shape-drawer :as draw]
+            [gdl.draw :as draw]
             [gdl.vector :as v]
+            [gdl.graphics.color :as color]
             [utils.core :refer [mapvals]]
             [game.properties :as properties]
             [game.components.position :as position]
@@ -44,8 +43,8 @@
 (defn- effect-params [entity*]
   (:effect-params (:skillmanager entity*)))
 
-(defn- draw-skill-icon [{:keys [drawer] :as context} icon entity* [x y]]
-  (let [[width height] (image/world-unit-dimensions icon)
+(defn- draw-skill-icon [drawer icon entity* [x y]]
+  (let [[width height] (:world-unit-dimensions icon)
         _ (assert (= width height))
         radius (/ width 2)
         y (+ y (:half-height (:body entity*)))
@@ -58,17 +57,17 @@
                  0 ; start-angle
                  (* (counter/ratio action-counter) 360) ; degree
                  (color/rgb 1 1 1 0.5))
-    (image/draw context icon [(- x radius) y])))
+    (draw/image drawer icon [(- x radius) y])))
 
 (def show-skill-icon-on-active true)
 
 (defcomponent :skills skills
-  (entity/render-info [_ context {:keys [position active-skill?] :as entity*}]
+  (entity/render-info [_ drawer context {:keys [position active-skill?] :as entity*}]
     (doseq [{:keys [id image effect]} (vals skills)
             :when (= id active-skill?)]
       (when show-skill-icon-on-active
-        (draw-skill-icon context image entity* position))
-      (effect/render-info context effect (effect-params entity*)))))
+        (draw-skill-icon drawer image entity* position))
+      (effect/render-info drawer effect (effect-params entity*)))))
 
 (defn- update-cooldown [skill delta]
   (if (:cooling-down? skill)

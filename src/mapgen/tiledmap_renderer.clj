@@ -5,7 +5,7 @@
             [gdl.lc :as lc]
             [gdl.graphics.color :as color]
             [gdl.graphics.camera :as camera]
-            [gdl.graphics.shape-drawer :as draw]
+            [gdl.draw :as draw]
             [gdl.tiled :as tiled]
             [gdl.scene2d.ui :as ui]
             [gdl.scene2d.stage :as stage]
@@ -78,7 +78,7 @@
 
 (def ^:private show-area-level-colors true)
 
-(defn- render-on-map [{:keys [drawer world-camera]}]
+(defn- render-on-map [drawer {:keys [world-camera]}]
   (let [visible-tiles (camera/visible-tiles world-camera)]
     (when show-area-level-colors
       (if @current-start-positions
@@ -194,9 +194,7 @@
     (tiled/render-map context
                       @current-tiled-map
                       (constantly Color/WHITE)) ; TODO colorsetter optional.
-    (app/render-with context
-                     :world
-                     render-on-map)
+    (app/render-with context :world #(render-on-map % context))
     (.draw stage))
   (lc/tick [_ {:keys [world-camera]} delta]
     (.act stage delta)

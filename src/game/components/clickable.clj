@@ -1,18 +1,18 @@
 (ns game.components.clickable
   (:require [x.x :refer [defcomponent]]
-            [gdl.graphics.font :as font]
+            [gdl.draw :as draw]
             [gdl.vector :as v]
             [game.entity :as entity]
             [game.player.entity :refer (player-entity)]))
 
 (defcomponent :clickable {:keys [text]}
-  (entity/render-default [_ context {[x y] :position :keys [mouseover? body]}]
+  (entity/render-default [_ drawer _ctx {[x y] :position :keys [mouseover? body]}]
     (when (and mouseover? text)
-      (font/draw-text context
-                      {:text text
-                       :x x
-                       :y (+ y (:half-height body))
-                       :up? true}))))
+      (draw/text drawer
+                 {:text text
+                  :x x
+                  :y (+ y (:half-height body))
+                  :up? true}))))
 
 (def ^:private click-distance-tiles 1.5)
 

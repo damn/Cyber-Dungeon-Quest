@@ -1,7 +1,6 @@
 (ns game.components.sleeping
   (:require [x.x :refer [defcomponent]]
-            [gdl.graphics.font :as font]
-            [gdl.graphics.shape-drawer :as draw]
+            [gdl.draw :as draw]
             [game.utils.counter :as counter]
             [game.db :as db]
             [game.entity :as entity]
@@ -30,13 +29,13 @@
 (defcomponent :sleeping _
   (entity/create! [_ entity _ctx]
     (swap! entity modifier/apply-modifiers modifiers))
-  (entity/render-above [_ context {[x y] :position :keys [body]}]
-    (font/draw-text context
-                    {:text "zzz"
-                     :x x
-                     :y (+ y (:half-height body))
-                     :up? true}))
-  (entity/render-info [_ {:keys [drawer]} {:keys [position mouseover?]}]
+  (entity/render-above [_ drawer _ctx {[x y] :position :keys [body]}]
+    (draw/text drawer
+               {:text "zzz"
+                :x x
+                :y (+ y (:half-height body))
+                :up? true}))
+  (entity/render-info [_ drawer _ctx {:keys [position mouseover?]}]
     (when mouseover?
       (draw/circle drawer position aggro-range Color/YELLOW))))
 

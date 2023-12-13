@@ -5,7 +5,7 @@
             [gdl.tiled :as tiled]
             [gdl.graphics.color :as color]
             [gdl.graphics.camera :as camera]
-            [gdl.graphics.shape-drawer :as draw]
+            [gdl.draw :as draw]
             [game.utils.lightning :refer [minimap-color-setter]]
             [game.maps.data :refer [get-current-map-data]])
   (:import (com.badlogic.gdx Gdx Input$Keys)
@@ -41,20 +41,18 @@
         new-zoom (max vp-ratio-w vp-ratio-h)]
     new-zoom ))
 
-(defn- render-map-level [{:keys [drawer world-camera]}]
-  (draw/filled-circle drawer (camera/position world-camera) 0.5 Color/GREEN))
-
 (defmodule _
   (lc/show [_ {:keys [world-camera] :as context}]
     (reset! zoom-setting (calculate-zoom context))
     (camera/set-zoom! world-camera @zoom-setting))
-  (lc/render [_ context]
+  (lc/render [_ {:keys [world-camera] :as context}]
     (tiled/render-map context
                       (:tiled-map (get-current-map-data))
                       minimap-color-setter)
     (app/render-with context
                      :world
-                     render-map-level))
+                     (fn [drawer]
+                       (draw/filled-circle drawer (camera/position world-camera) 0.5 Color/GREEN))))
   (lc/tick [_ {:keys [world-camera]} delta]
     (when (or (.isKeyJustPressed Gdx/input Input$Keys/TAB)
               (.isKeyJustPressed Gdx/input Input$Keys/ESCAPE))

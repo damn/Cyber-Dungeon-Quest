@@ -1,7 +1,8 @@
 (ns game.effects.projectile
   (:require [clojure.string :as str]
             [gdl.vector :as v]
-            [game.media :as media]
+            [gdl.graphics.animation :as animation]
+            [gdl.graphics.image :as image]
             [game.effect :as effect]
             [game.maps.data :refer (get-current-map-data)]
             [game.maps.cell-grid :as cell-grid]
@@ -45,12 +46,18 @@
    ;[:stun {:duration 200} {:chance 100}]
    ])
 
+(defn- black-projectile [context]
+  (animation/create [(image/get-sprite context
+                                       (image/spritesheet context "fx/uf_FX.png" 24 24)
+                                       [1 12])]
+                    :frame-duration 500))
+
 (defn- do-effect! [_ {:keys [source direction]} context]
   (projectile-entity/create!
    {:position (:position @source)
     :faction  (:faction  @source)
     :size size
-    :animation (media/black-projectile context)
+    :animation (black-projectile context)
     :speed speed
     :movement-vector direction
     :maxtime maxtime

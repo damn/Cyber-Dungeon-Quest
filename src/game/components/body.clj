@@ -1,6 +1,6 @@
 (ns game.components.body
   (:require [x.x :refer [defcomponent]]
-            [gdl.graphics.shape-drawer :as draw]
+            [gdl.draw :as draw]
             [gdl.geom :as geom]
             [gdl.vector :as v]
             [game.entity :as entity]
@@ -110,6 +110,6 @@
     (when is-solid
       (remove-from-occupied-cells! e)
       (set-occupied-cells! (:cell-grid (get-current-map-data)) e)))
-  (entity/render-debug [_ {:keys [drawer]} e*]
+  (entity/render-debug [_ drawer _ctx e*]
     (when show-body-bounds
       (draw-bounds drawer body))))

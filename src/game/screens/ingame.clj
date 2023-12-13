@@ -1,14 +1,13 @@
 (ns game.screens.ingame
   (:require [x.x :refer [defmodule]]
             [gdl.app :as app]
+            [gdl.draw :as draw]
             [gdl.lc :as lc]
             [gdl.vector :as v]
             [gdl.scene2d.actor :as actor]
             [gdl.scene2d.stage :as stage]
             [gdl.scene2d.ui :as ui]
-            [gdl.graphics.image :as image]
             [gdl.tiled :as tiled]
-            [game.media :as media]
             [game.properties :as properties]
             [game.ui.debug-window :as debug-window]
             [game.ui.help-window :as help-window]
@@ -31,11 +30,11 @@
 (defn- item-on-cursor-render-actor []
   (proxy [Actor] []
     (draw [batch _parent-alpha]
-      (let [{:keys [gui-mouse-position] :as context} (app/current-context)]
+      (let [{:keys [drawer gui-mouse-position] :as context} (app/current-context)]
         (when-let [item (:item-on-cursor @player-entity)]
           ; windows keep changing z-index when selected, or put all windows in 1 group and this actor another group
           (.toFront ^Actor this)
-          (image/draw-centered {:batch batch :unit-scale 1}
+          (draw/centered-image drawer
                                (:image item)
                                gui-mouse-position))))))
 
@@ -205,17 +204,15 @@
   (lc/hide [_]
     (.setInputProcessor Gdx/input nil))
   (lc/render [_ context]
-    ; TODO ! do this somewhere else
-    (let [context (assoc context :default-font media/font)]
-      (tiled/render-map context
-                        (:tiled-map (get-current-map-data))
-                        #'tile-color-setter)
-      (app/render-with context
-                       :world
-                       game.render-ingame/render-map-content)
-      (app/render-with context
-                       :gui
-                       game.render-ingame/render-gui))
+    (tiled/render-map context
+                      (:tiled-map (get-current-map-data))
+                      #'tile-color-setter)
+    (app/render-with context
+                     :world
+                     #(game.render-ingame/render-map-content % context))
+    (app/render-with context
+                     :gui
+                     #(game.render-ingame/render-gui % context))
     (.draw stage))
   (lc/tick [_ context delta]
     (handle-key-input stage context)
