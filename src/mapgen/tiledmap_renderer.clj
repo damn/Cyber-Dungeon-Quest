@@ -5,8 +5,8 @@
             [gdl.lifecycle :as lc]
             [gdl.graphics.color :as color]
             [gdl.graphics.camera :as camera]
-            [gdl.draw :as draw]
-            [gdl.tiled :as tiled]
+            [gdl.graphics.draw :as draw]
+            [gdl.maps.tiled :as tiled]
             [gdl.scene2d.ui :as ui]
             [gdl.scene2d.stage :as stage]
             game.maps.impl

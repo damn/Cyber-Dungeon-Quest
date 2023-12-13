@@ -4,7 +4,7 @@
             [gdl.app :as app]
             [gdl.lifecycle :as lc]
             [gdl.graphics.color :as color]
-            [gdl.draw :as draw]
+            [gdl.graphics.draw :as draw]
             [gdl.graphics.image :as image]
             [gdl.scene2d.ui :as ui]
             [game.session :as session]

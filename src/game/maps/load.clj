@@ -1,6 +1,6 @@
 (ns game.maps.load
   (:require [gdl.app :as app]
-            [gdl.tiled :as tiled]
+            [gdl.maps.tiled :as tiled]
             [utils.core :refer [translate-to-tile-middle]]
             [game.session :as session]
             [game.maps.data :as data]

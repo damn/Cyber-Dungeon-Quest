@@ -1,6 +1,6 @@
 (ns game.components.body
   (:require [x.x :refer [defcomponent]]
-            [gdl.draw :as draw]
+            [gdl.graphics.draw :as draw]
             [gdl.math.geom :as geom]
             [gdl.math.vector :as v]
             [game.entity :as entity]

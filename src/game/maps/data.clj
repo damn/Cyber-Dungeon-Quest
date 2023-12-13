@@ -1,7 +1,7 @@
 (ns game.maps.data
   (:require [x.x :refer [defmodule]]
             [gdl.lifecycle :as lc]
-            [gdl.tiled :as tiled]
+            [gdl.maps.tiled :as tiled]
             [game.session :as session]))
 
 (declare ^:private maps-data

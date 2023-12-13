@@ -1,5 +1,5 @@
 (ns game.render-ingame
-  (:require [gdl.draw :as draw]
+  (:require [gdl.graphics.draw :as draw]
             [gdl.graphics.color :as color]
             [gdl.graphics.camera :as camera]
             [game.line-of-sight :refer (in-line-of-sight?)]

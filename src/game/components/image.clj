@@ -1,6 +1,6 @@
 (ns game.components.image
   (:require [x.x :refer [defcomponent]]
-            [gdl.draw :as draw]
+            [gdl.graphics.draw :as draw]
             [game.entity :as entity]))
 
 (defcomponent :image image

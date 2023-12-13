@@ -1,7 +1,7 @@
 (ns game.screens.main
   (:require [x.x :refer [defmodule]]
             [gdl.app :as app]
-            [gdl.draw :as draw]
+            [gdl.graphics.draw :as draw]
             [gdl.lifecycle :as lc]
             [gdl.scene2d.ui :as ui]
             [gdl.scene2d.stage :as stage]

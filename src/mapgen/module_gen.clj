@@ -1,6 +1,6 @@
 (ns mapgen.module-gen
   (:require [data.grid2d :as grid]
-            [gdl.tiled :as tiled]
+            [gdl.maps.tiled :as tiled]
             [game.properties :as properties]
             [mapgen.utils :as utils]
             [mapgen.transitions :as transitions]

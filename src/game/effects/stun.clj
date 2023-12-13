@@ -1,6 +1,6 @@
 (ns game.effects.stun
   (:require [x.x :refer [defcomponent doseq-entity]]
-            [gdl.draw :as draw]
+            [gdl.graphics.draw :as draw]
             [gdl.graphics.color :as color]
             [utils.core :refer :all]
             [game.effect :as effect]

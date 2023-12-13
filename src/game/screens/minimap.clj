@@ -2,10 +2,10 @@
   (:require [x.x :refer [defmodule]]
             [gdl.app :as app]
             [gdl.lifecycle :as lc]
-            [gdl.tiled :as tiled]
+            [gdl.maps.tiled :as tiled]
             [gdl.graphics.color :as color]
             [gdl.graphics.camera :as camera]
-            [gdl.draw :as draw]
+            [gdl.graphics.draw :as draw]
             [game.utils.lightning :refer [minimap-color-setter]]
             [game.maps.data :refer [get-current-map-data]])
   (:import (com.badlogic.gdx Gdx Input$Keys)

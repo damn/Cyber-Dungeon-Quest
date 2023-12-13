@@ -1,9 +1,9 @@
 (ns game.screens.ingame
   (:require [x.x :refer [defmodule]]
             [gdl.app :as app]
-            [gdl.draw :as draw]
+            [gdl.graphics.draw :as draw]
             [gdl.lifecycle :as lc]
-            [gdl.tiled :as tiled]
+            [gdl.maps.tiled :as tiled]
             [gdl.math.vector :as v]
             [gdl.scene2d.actor :as actor]
             [gdl.scene2d.stage :as stage]

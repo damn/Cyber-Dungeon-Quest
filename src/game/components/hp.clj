@@ -2,7 +2,7 @@
   (:require [x.x :refer [defcomponent]]
             [gdl.app :as app]
             [gdl.graphics.color :as color]
-            [gdl.draw :as draw]
+            [gdl.graphics.draw :as draw]
             [data.val-max :refer [val-max-ratio]]
             [game.entity :as entity]
             [game.ui.config :refer (hpbar-height-px)])

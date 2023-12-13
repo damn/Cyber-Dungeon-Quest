@@ -1,6 +1,6 @@
 (ns game.components.sleeping
   (:require [x.x :refer [defcomponent]]
-            [gdl.draw :as draw]
+            [gdl.graphics.draw :as draw]
             [game.utils.counter :as counter]
             [game.db :as db]
             [game.entity :as entity]

@@ -1,5 +1,5 @@
 (ns game.maps.cell-grid
-  (:require [gdl.tiled :as tiled]
+  (:require [gdl.maps.tiled :as tiled]
             [gdl.math.geom :as geom]
             [gdl.math.vector :as v]
             [gdl.math.raycaster :as raycaster]

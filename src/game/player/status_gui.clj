@@ -1,6 +1,6 @@
 (ns game.player.status-gui
   (:require [x.x :refer [defmodule]]
-            [gdl.draw :as draw]
+            [gdl.graphics.draw :as draw]
             [gdl.lifecycle :as lc]
             [gdl.graphics.image :as image]
             [utils.core :refer [readable-number]]

@@ -1,5 +1,5 @@
 (ns mapgen.movement-property
-  (:require [gdl.tiled :as tiled]
+  (:require [gdl.maps.tiled :as tiled]
             [data.grid2d :refer :all]))
 
 ; TODO performance bottleneck -> every time getting layers, zipmapping properties etc.

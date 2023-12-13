@@ -1,7 +1,7 @@
 (ns game.ui.mouseover-entity
   (:require [x.x :refer [defcomponent]]
             [gdl.graphics.color :as color]
-            [gdl.draw :as draw]
+            [gdl.graphics.draw :as draw]
             [gdl.scene2d.stage :as stage]
             [utils.core :refer [sort-by-order]]
             [game.db :as db]
