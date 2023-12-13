@@ -75,21 +75,13 @@
                                         (:sleeping @%))))]
         (wake-up! entity context)))))
 
-; could use potential field nearest enemy entity also because we only need 1 (faster)
-; also do not need to check every frame !
 (defcomponent :sleeping _
   (entity/tick! [_ context entity delta]
-    ; was performance problem. - or do not check every frame ! -
-    #_(when (seq (filter #(not= (:faction @%) (:faction @entity))
-                         (get-visible-entities @entity aggro-range)))
-        (wake-up! entity))
     (let [cell-grid (:cell-grid (get-current-map-data))
           cell* @(get cell-grid (mapv int (:position @entity)))
           faction (faction/enemy (:faction @entity))]
-      (when-let [distance (-> cell*
-                              faction
-                              :distance)]
-        (when (<= distance (* aggro-range 10)) ; potential field store as 10  TODO necessary ?
+      (when-let [distance (-> cell* faction :distance)]
+        (when (<= distance (* aggro-range 10))
           (wake-up! entity context)))))
   (entity/affected! [_ entity context]
     (wake-up! entity context)))
