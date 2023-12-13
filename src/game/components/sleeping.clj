@@ -30,8 +30,6 @@
 (defcomponent :sleeping _
   (entity/create! [_ entity _ctx]
     (swap! entity modifier/apply-modifiers modifiers))
-  ;  game.components.sleeping/eval16145/fn            sleeping.clj:   34
-  ; => give fn a name @ x.x ?
   (entity/render-above [_ context {[x y] :position :keys [body]}]
     (font/draw-text context
                     {:text "zzz"
