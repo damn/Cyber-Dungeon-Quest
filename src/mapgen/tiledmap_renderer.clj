@@ -2,7 +2,7 @@
   (:require [clojure.edn :as edn]
             [x.x :refer [defmodule]]
             [gdl.app :as app]
-            [gdl.lc :as lc]
+            [gdl.lifecycle :as lc]
             [gdl.graphics.color :as color]
             [gdl.graphics.camera :as camera]
             [gdl.draw :as draw]

@@ -1,6 +1,6 @@
 (ns game.screens.load-session
   (:require [x.x :refer [defmodule]]
-            [gdl.lc :as lc]
+            [gdl.lifecycle :as lc]
             [gdl.app :as app]
             game.player.session-data))
 

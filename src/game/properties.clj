@@ -2,7 +2,7 @@
   (:refer-clojure :exclude [get])
   (:require [clojure.edn :as edn]
             [x.x :refer [defmodule]]
-            [gdl.lc :as lc]
+            [gdl.lifecycle :as lc]
             [gdl.graphics.animation :as animation]
             [gdl.graphics.image :as image]
             [utils.core :refer [safe-get]]))

@@ -1,7 +1,7 @@
 (ns game.start
   (:require [x.x :refer [defcomponent]]
             [gdl.app :as app]
-            [gdl.lc :as lc]
+            [gdl.lifecycle :as lc]
             [gdl.graphics.freetype :as freetype]
             game.modifiers.all
             game.components.require-all

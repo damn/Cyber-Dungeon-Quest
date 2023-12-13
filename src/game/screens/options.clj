@@ -1,6 +1,6 @@
 (ns game.screens.options
   (:require [x.x :refer [defmodule]]
-            [gdl.lc :as lc]
+            [gdl.lifecycle :as lc]
             [gdl.app :as app]
             [gdl.draw :as draw]
             [gdl.graphics.image :as image]

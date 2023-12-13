@@ -1,6 +1,6 @@
 (ns game.maps.data
   (:require [x.x :refer [defmodule]]
-            [gdl.lc :as lc]
+            [gdl.lifecycle :as lc]
             [gdl.tiled :as tiled]
             [game.session :as session]))
 

@@ -1,7 +1,7 @@
 (ns game.screens.minimap
   (:require [x.x :refer [defmodule]]
             [gdl.app :as app]
-            [gdl.lc :as lc]
+            [gdl.lifecycle :as lc]
             [gdl.tiled :as tiled]
             [gdl.graphics.color :as color]
             [gdl.graphics.camera :as camera]

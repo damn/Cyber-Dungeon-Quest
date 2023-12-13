@@ -2,7 +2,7 @@
   (:require [data.grid2d :as grid]
             [x.x :refer [defmodule]]
             [gdl.app :as app]
-            [gdl.lc :as lc]
+            [gdl.lifecycle :as lc]
             [gdl.graphics.color :as color]
             [gdl.draw :as draw]
             [gdl.graphics.image :as image]

@@ -1,6 +1,6 @@
 (ns game.ui.action-bar
   (:require [x.x :refer [defmodule]]
-            [gdl.lc :as lc]
+            [gdl.lifecycle :as lc]
             [gdl.scene2d.ui :as ui]
             [game.session :as session]
             [game.skills.core :as skills]

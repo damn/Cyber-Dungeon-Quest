@@ -2,7 +2,7 @@
   (:require [x.x :refer [defmodule]]
             [gdl.app :as app]
             [gdl.draw :as draw]
-            [gdl.lc :as lc]
+            [gdl.lifecycle :as lc]
             [gdl.vector :as v]
             [gdl.scene2d.actor :as actor]
             [gdl.scene2d.stage :as stage]

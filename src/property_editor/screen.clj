@@ -1,7 +1,7 @@
 (ns property-editor.screen
   (:require [clojure.edn :as edn]
             [x.x :refer [defmodule]]
-            [gdl.lc :as lc]
+            [gdl.lifecycle :as lc]
             [gdl.app :as app]
             [gdl.scene2d.actor :as actor]
             [gdl.scene2d.stage :as stage]
