@@ -8,7 +8,6 @@
             game.effects.require-all
             game.properties
             game.screens.main
-            game.screens.load-session
             game.screens.ingame
             game.screens.minimap
             game.screens.options
@@ -17,12 +16,9 @@
   (:import com.badlogic.gdx.Gdx
            com.badlogic.gdx.graphics.g2d.BitmapFont))
 
-(defcomponent :default-font font
-  (lc/dispose [_]
-    (.dispose ^BitmapFont font)))
-
 ; !!!
 ; TODO make all context stuff namespaced keyword like :context/properties
+; TODO also components,effects,modifiers,effect-params, etc. everything ....
 ; !!! greppable !!!
 
 (defn- create-context [context]
@@ -34,21 +30,18 @@
                          properties (game.properties/load-edn context file)]
                      (.bindRoot #'game.properties/properties-file file)
                      (.bindRoot #'game.properties/properties properties)
-                     (println "loaded properties")
                      properties)]
     {:default-font (freetype/generate (.internal Gdx/files "exocet/films.EXL_____.ttf")
                                       16)
      :context/properties properties
-     :game.maps.data nil ; disposes tiled-map.
-     ; screen lifecycle modules
-     :game.screens.main nil
-     :game.screens.load-session nil
-     :game.screens.ingame (game.screens.ingame/create-stage
+     :game.maps.data (game.maps.data/->Disposable-State)
+     :screens/main-menu (game.screens.main/->Screen)
+     :screens/ingame (game.screens.ingame/screen
                            (assoc context :context/properties properties))
-     :game.screens.minimap nil
-     :game.screens.options (game.screens.options/create-stage context)
-     :mapgen.tiledmap-renderer (mapgen.tiledmap-renderer/create-stage context)
-     :property-editor.screen (property-editor.screen/create-stage context)}))
+     :screens/minimap (game.screens.minimap/->Screen)
+     :screens/option-menu (game.screens.options/screen context)
+     :mapgen.tiledmap-renderer (mapgen.tiledmap-renderer/screen context)
+     :property-editor.screen (property-editor.screen/screen context)}))
 
 (def app-config
   {:app {:title "Cyber Dungeon Quest"
@@ -58,7 +51,7 @@
          :fps nil} ; TODO fix is set to 60 @ gdl
    :tile-size 48
    :modules create-context
-   :first-screen :game.screens.main})
+   :first-screen :screens/main-menu})
 
 (defn app []
   (app/start app-config))

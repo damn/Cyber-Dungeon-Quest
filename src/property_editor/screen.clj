@@ -1,6 +1,5 @@
 (ns property-editor.screen
   (:require [clojure.edn :as edn]
-            [x.x :refer [defmodule]]
             [gdl.lifecycle :as lc]
             [gdl.app :as app]
             [gdl.scene2d.actor :as actor]
@@ -20,7 +19,8 @@
 ; * missing widgets for keys / one-to-many not implemented
 
 (defn- stage ^Stage []
-  (app/current-screen-value))
+  (let [{:keys [context/current-screen] :as context} (app/current-context)]
+    (:stage (current-screen context))))
 
 (declare property-editor-window)
 
@@ -218,9 +218,9 @@
                    ; TODO and here
                    (for [[property-type {:keys [overview]}] (select-keys property-types [:creature :item :skill :weapon])]
                      [(ui/text-button (:title overview) #(set-second-widget (overview-table property-type open-property-editor-window)))])
-                   [[(ui/text-button "Back to Main Menu" #(app/set-screen :game.screens.main))]])))
+                   [[(ui/text-button "Back to Main Menu" #(app/change-screen! :screens/main-menu))]])))
 
-(defn create-stage [{:keys [gui-viewport batch]}]
+(defn- create-stage [{:keys [gui-viewport batch]}]
   (let [stage (stage/create gui-viewport batch)
         table (ui/table :id :main-table
                         :rows [[(left-widget) nil]]
@@ -228,9 +228,11 @@
     (.addActor stage table)
     stage))
 
-(defmodule ^Stage stage
+(defrecord Screen [^Stage stage]
+  lc/Disposable
   (lc/dispose [_]
     (.dispose stage))
+  lc/Screen
   (lc/show [_ _ctx]
     (.setInputProcessor Gdx/input stage))
   (lc/hide [_]
@@ -239,3 +241,6 @@
     (.draw stage))
   (lc/tick [_ _state delta]
     (.act stage delta)))
+
+(defn screen [context]
+  (->Screen (create-stage context)))

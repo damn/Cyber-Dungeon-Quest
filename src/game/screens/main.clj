@@ -1,26 +1,17 @@
 (ns game.screens.main
-  (:require [x.x :refer [defmodule]]
-            [gdl.app :as app]
+  (:require [gdl.app :as app]
             [gdl.graphics.draw :as draw]
             [gdl.lifecycle :as lc]
             [gdl.scene2d.ui :as ui]
             [gdl.scene2d.stage :as stage]
             [gdl.graphics.image :as image]
-            [game.screens.load-session :refer (is-loaded-character)]
-            [game.player.session-data :refer (current-character-name)])
+            game.player.session-data)
   (:import (com.badlogic.gdx Gdx Input$Keys)
            com.badlogic.gdx.scenes.scene2d.Stage))
 
-; TODO do all loading in 'loading' ns...
-
-(defn- start-loading-game [character-name & {new-character :new-character}]
-  (reset! is-loaded-character (not new-character))
-  (reset! current-character-name character-name)
-  (app/set-screen :game.screens.load-session))
-
-(defn- try-create-character []
-  (when-let [char-name "FOO BAR"]
-    (start-loading-game (apply str char-name) :new-character true)))
+(defn- start-session []
+  (game.player.session-data/init)
+  (app/change-screen! :screens/ingame))
 
 (declare ^Stage stage
          ^:private skip-main-menu
@@ -31,18 +22,20 @@
   (.bindRoot #'skip-main-menu skip-main-menu)
   (.bindRoot #'bg-image (image/create context bg-image))
   (.bindRoot #'stage (stage/create gui-viewport batch)) ; TODO remove all .bindRoot
-  (let [table (ui/table :rows [[(ui/text-button "New game" try-create-character)]
-                               [(ui/text-button "Map Editor" #(app/set-screen :mapgen.tiledmap-renderer))]
-                               [(ui/text-button "Entity Editor" #(app/set-screen :property-editor.screen))]
+  (let [table (ui/table :rows [[(ui/text-button "New game" start-session)]
+                               [(ui/text-button "Map Editor" #(app/change-screen! :mapgen.tiledmap-renderer))]
+                               [(ui/text-button "Entity Editor" #(app/change-screen! :property-editor.screen))]
                                [(ui/text-button "Exit" #(.exit Gdx/app))]]
                         :cell-defaults {:pad-bottom 25}
                         :fill-parent? true)]
     (.addActor stage table)
     (.center table)))
 
-(defmodule _
+(defrecord Screen []
+  lc/Disposable
   (lc/dispose [_]
     (.dispose stage))
+  lc/Screen
   (lc/show [_ _ctx]
     (.setInputProcessor Gdx/input stage))
   (lc/hide [_]
@@ -61,4 +54,4 @@
     (when (.isKeyJustPressed Gdx/input Input$Keys/ESCAPE)
       (.exit Gdx/app))
     (when skip-main-menu
-      (try-create-character))))
+      (start-session))))

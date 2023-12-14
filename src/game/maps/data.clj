@@ -1,6 +1,5 @@
 (ns game.maps.data
-  (:require [x.x :refer [defmodule]]
-            [gdl.lifecycle :as lc]
+  (:require [gdl.lifecycle :as lc]
             [gdl.maps.tiled :as tiled]
             [game.session :as session]))
 
@@ -53,8 +52,9 @@
 (defn get-current-map-data []
   (get maps-data @current-map))
 
-(defmodule _
-  (lc/dispose [_]
+(deftype Disposable-State []
+  lc/Disposable
+  (dispose [_]
     (when (bound? #'maps-data)
       (doseq [[mapkey mapdata] maps-data
               :let [tiled-map (:tiled-map mapdata)]

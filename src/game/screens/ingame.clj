@@ -1,6 +1,5 @@
 (ns game.screens.ingame
-  (:require [x.x :refer [defmodule]]
-            [gdl.app :as app]
+  (:require [gdl.app :as app]
             [gdl.graphics.draw :as draw]
             [gdl.lifecycle :as lc]
             [gdl.maps.tiled :as tiled]
@@ -38,11 +37,11 @@
                                (:image item)
                                gui-mouse-position))))))
 
-(defn create-stage [{:keys [batch
-                            gui-viewport
-                            gui-viewport-width
-                            gui-viewport-height]
-                     :as context}]
+(defn- create-stage [{:keys [batch
+                             gui-viewport
+                             gui-viewport-width
+                             gui-viewport-height]
+                      :as context}]
   (let [^Actor debug-window (debug-window/create)
         ^Actor help-window (help-window/create)
         ^Actor entity-info-window (entity-info-window/create)
@@ -108,10 +107,10 @@
        (:item-on-cursor @player-entity) (inventory/put-item-on-ground {:assets assets})
        (some #(.isVisible ^Actor %) windows) (run! #(.setVisible ^Actor % false) windows)
        (dead? @player-entity) (if-not false
-                                (app/set-screen :game.screens.main))
-       :else (app/set-screen :game.screens.options))))
+                                (app/change-screen! :screens/main-menu))
+       :else (app/change-screen! :screens/option-menu))))
   (when (.isKeyJustPressed Gdx/input Input$Keys/TAB)
-    (app/set-screen :game.screens.minimap)) ; TODO does set-screen do it immediately (cancel the current frame ) or finish this frame?
+    (app/change-screen! :screens/minimap)) ; TODO does  do it immediately (cancel the current frame ) or finish this frame?
   ; TODO entity/skill info also
   (when (.isKeyJustPressed Gdx/input Input$Keys/I)
     (actor/toggle-visible! inventory-window)
@@ -198,9 +197,11 @@
 ; copies are just pointers at immutable data structures...
 
 
-(defmodule ^Stage stage
+(defrecord IngameScreen [^Stage stage]
+  lc/Disposable
   (lc/dispose [_]
     (.dispose stage))
+  lc/Screen
   (lc/show [_ _ctx]
     (.setInputProcessor Gdx/input stage))
   (lc/hide [_]
@@ -220,3 +221,6 @@
     (handle-key-input stage context)
     (.act stage delta)
     (game.update-ingame/update-game context stage delta)))
+
+(defn screen [context]
+  (->IngameScreen (create-stage context)))

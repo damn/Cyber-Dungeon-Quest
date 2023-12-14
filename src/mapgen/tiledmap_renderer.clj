@@ -1,6 +1,5 @@
 (ns mapgen.tiledmap-renderer
   (:require [clojure.edn :as edn]
-            [x.x :refer [defmodule]]
             [gdl.app :as app]
             [gdl.lifecycle :as lc]
             [gdl.graphics.color :as color]
@@ -167,7 +166,7 @@
               2)
     [table get-properties]))
 
-(defn create-stage [{:keys [gui-viewport batch]}]
+(defn- create-stage [{:keys [gui-viewport batch]}]
   (reset! current-tiled-map (tiled/load-map module-gen/modules-file))
   (let [stage (stage/create gui-viewport batch)
         window (ui/window :title "Properties")
@@ -179,10 +178,12 @@
     (.pack window)
     stage))
 
-(defmodule ^Stage stage
+(defrecord Screen [^Stage stage]
+  lc/Disposable
   (lc/dispose [_]
     (.dispose stage)
     (.dispose ^TiledMap @current-tiled-map))
+  lc/Screen
   (lc/show [_ {:keys [world-camera]}]
     (.setInputProcessor Gdx/input stage)
     (center-world-camera world-camera))
@@ -197,12 +198,15 @@
   (lc/tick [_ {:keys [world-camera]} delta]
     (.act stage delta)
     (when (.isKeyJustPressed Gdx/input Input$Keys/ESCAPE)
-      (app/set-screen :game.screens.main))
+      (app/change-screen! :screens/main-menu))
     (if (.isKeyJustPressed Gdx/input Input$Keys/L)
       (swap! show-grid-lines not))
     (if (.isKeyJustPressed Gdx/input Input$Keys/M)
       (swap! show-movement-properties not))
     (camera-controls world-camera)))
+
+(defn screen [context]
+  (->Screen (create-stage context)))
 
 ; TODO remove key controls , add checkboxes
 ; TODO fix mouse movement etc

@@ -1,6 +1,5 @@
 (ns game.screens.options
-  (:require [x.x :refer [defmodule]]
-            [gdl.lifecycle :as lc]
+  (:require [gdl.lifecycle :as lc]
             [gdl.app :as app]
             [gdl.graphics.draw :as draw]
             [gdl.graphics.image :as image]
@@ -78,7 +77,7 @@
          (get-state status)]))
     (initial-data [_])))
 
-(def ^:private exit #(app/set-screen :game.screens.ingame))
+(def ^:private exit #(app/change-screen! :screens/ingame))
 
 (defn- create-table [context]
   (let [table (ui/table :rows (concat
@@ -91,7 +90,7 @@
                                                 #(set-state check-box %)
                                                 (boolean (get-state check-box)))])
                                [[(ui/text-button "Resume" exit)]
-                                [(ui/text-button "Exit" #(app/set-screen :game.screens.main))]])
+                                [(ui/text-button "Exit" #(app/change-screen! :screens/main-menu))]])
                         :fill-parent? true
                         :cell-defaults {:pad-bottom 25})
         padding 25]
@@ -99,14 +98,11 @@
     (def menu-bg-image (image/create context "ui/moon_background.png"))
     table))
 
-(defn create-stage [{:keys [gui-viewport batch] :as context}]
-  (let [stage (stage/create gui-viewport batch)]
-    (.addActor stage (create-table context))
-    stage))
-
-(defmodule ^Stage stage
+(defrecord Screen [^Stage stage]
+  lc/Disposable
   (lc/dispose [_]
     (.dispose stage))
+  lc/Screen
   (lc/show [_ _ctx]
     (.setInputProcessor Gdx/input stage))
   (lc/hide [_]
@@ -124,3 +120,8 @@
     (.act stage delta)
     (when (.isKeyJustPressed Gdx/input Input$Keys/ESCAPE)
       (exit))))
+
+(defn screen [{:keys [gui-viewport batch] :as context}]
+  (let [stage (stage/create gui-viewport batch)]
+    (.addActor stage (create-table context))
+    (->Screen stage)))

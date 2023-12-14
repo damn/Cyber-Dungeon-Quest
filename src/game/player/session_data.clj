@@ -1,82 +1,38 @@
 (ns game.player.session-data
-  (:require [utils.core :refer [distinct-seq?]]
-            [game.session :as session]
-            [game.maps.add :refer [add-maps-data]]
-            [game.maps.impl :refer [first-level]]
+  (:require [game.session :as session]
+            game.maps.add
+            game.maps.impl
             game.maps.data
             game.maps.load
-            (game.utils msg-to-player)
+            game.utils.msg-to-player
             game.screens.options
             game.ui.action-bar
             game.ui.inventory-window))
 
-(def current-character-name (atom nil))
-
-(def ^:private file (str "cdq_savegame.clj"))
-
-(defn- read-session-file []
-  (try (read-string (slurp file))
-    (catch java.io.FileNotFoundException e {})))
-
-(defn- pr-str-with-meta [x]
-  (binding [*print-meta* true]
-    (pr-str x)))
-
-(defn- write-session-file [data]
-  (->> data
-       (assoc (read-session-file) @current-character-name)
-       pr-str-with-meta
-       (spit file)))
-
-(defn get-session-file-character-names []
-  (keys (read-session-file)))
-
-(defn get-session-file-data []
-  (get (read-session-file) @current-character-name))
-
-(defn- make-type [v] ; ??? => var-namespaced-name-str
-  (.replace (str (ns-name (:ns (meta v))) "/" (:name (meta v))) "game." ""))
-
 (def state (reify session/State
              (load! [_ _]
-               (add-maps-data (first-level)))
+               (game.maps.add/add-maps-data
+                (game.maps.impl/first-level)))
              (serialize [_])
              (initial-data [_])))
 
-(defn- session-components []
-  (map #(vector @% (make-type %))
-       [; resets all map data -> do it before creating maps => TODO put both in one maps-session-component?
-        #'game.maps.data/state
-        ; create maps before putting entities in them
-        #'game.player.session-data/state
-        ; resets all entity data -> do it before addding entities
-        #'game.db/state
-        #'game.ui.inventory-window/state
-        ; adding entities (including player-entity)
-        #'game.maps.load/state
-        ; now the order of initialisation does not matter anymore
-        #'game.ui.action-bar/state
-        #'game.screens.options/state
-        #'game.ui.mouseover-entity/state
-        #'game.utils.msg-to-player/state]))
+(def ^:private session-components
+  [; resets all map data -> do it before creating maps
+   game.maps.data/state
+   ; create maps before putting entities in them
+   game.player.session-data/state
+   ; resets all entity data -> do it before addding entities
+   game.db/state
+   game.ui.inventory-window/state
+   ; adding entities (including player-entity)
+   game.maps.load/state
+   ; now the order of initialisation does not matter anymore
+   game.ui.action-bar/state
+   game.screens.options/state
+   game.ui.mouseover-entity/state
+   game.utils.msg-to-player/state])
 
-(assert (distinct-seq? (session-components)))
-; The types need to be distinct, so load-session-component can get the data from the savegame-file that corresponds to the right session-component
-
-(defn save-game [] ; TODO pass argument file & states, move to x.session
-  (->> (for [[component stype] (session-components)]
-         (when-let [savedata (session/serialize component)]
-           [stype savedata]))
-       (into {})
-       write-session-file))
-
-; TODO rename 'load-game' ?
-(defn init [is-loaded-character] ; TODO move to x.session
-  (let [session-file-data (when is-loaded-character
-                            (get-session-file-data))]
-    (doseq [[component stype] (session-components)]
-      ;(println "Load state: " stype)
-      (session/load! component
-                     (if is-loaded-character
-                       (get session-file-data stype)
-                       (session/initial-data component))))))
+(defn init []
+  (doseq [component session-components]
+    (session/load! component
+                   (session/initial-data component))))

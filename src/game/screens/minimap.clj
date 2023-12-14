@@ -1,6 +1,5 @@
 (ns game.screens.minimap
-  (:require [x.x :refer [defmodule]]
-            [gdl.app :as app]
+  (:require [gdl.app :as app]
             [gdl.lifecycle :as lc]
             [gdl.maps.tiled :as tiled]
             [gdl.graphics.color :as color]
@@ -41,10 +40,12 @@
         new-zoom (max vp-ratio-w vp-ratio-h)]
     new-zoom ))
 
-(defmodule _
+(deftype Screen []
+  lc/Screen
   (lc/show [_ {:keys [world-camera] :as context}]
     (reset! zoom-setting (calculate-zoom context))
     (camera/set-zoom! world-camera @zoom-setting))
+  (lc/hide [_])
   (lc/render [_ {:keys [world-camera] :as context}]
     (tiled/render-map context
                       (:tiled-map (get-current-map-data))
@@ -57,4 +58,4 @@
     (when (or (.isKeyJustPressed Gdx/input Input$Keys/TAB)
               (.isKeyJustPressed Gdx/input Input$Keys/ESCAPE))
       (camera/set-zoom! world-camera 1)
-      (app/set-screen :game.screens.ingame))))
+      (app/change-screen! :screens/ingame))))
