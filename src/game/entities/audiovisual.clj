@@ -6,8 +6,8 @@
 (defn create! [{:keys [assets context/properties] :as context} position id]
   (let [{:keys [sound animation]} (safe-get properties id)]
     (.play ^Sound (get assets sound))
-    (db/create-entity! {:position position
+    (db/create-entity! context
+                       {:position position
                         :animation animation
                         :z-order :effect
-                        :delete-after-animation-stopped? true}
-                       context)))
+                        :delete-after-animation-stopped? true})))

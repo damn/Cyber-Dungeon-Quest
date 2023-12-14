@@ -6,6 +6,9 @@
             game.modifiers.all
             game.components.require-all
             game.effects.require-all
+            game.ui.inventory-window
+            game.ui.action-bar
+            game.player.status-gui
             game.properties
             game.screens.main
             game.screens.ingame

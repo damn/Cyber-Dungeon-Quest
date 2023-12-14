@@ -1,5 +1,7 @@
 (ns game.player.session-data
-  (:require [game.session :as session]
+  (:require [gdl.app :as app]
+            [game.session :as session]
+            [game.db :as db]
             game.maps.add
             game.maps.impl
             game.maps.data
@@ -21,8 +23,6 @@
    game.maps.data/state
    ; create maps before putting entities in them
    game.player.session-data/state
-   ; resets all entity data -> do it before addding entities
-   game.db/state
    game.ui.inventory-window/state
    ; adding entities (including player-entity)
    game.maps.load/state
@@ -33,6 +33,7 @@
    game.utils.msg-to-player/state])
 
 (defn init []
+  (swap! app/state assoc :context/ids->entities (atom {}))
   (doseq [component session-components]
     (session/load! component
                    (session/initial-data component))))

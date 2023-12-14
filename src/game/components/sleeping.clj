@@ -45,19 +45,15 @@
                                               {:position (:position entity*)
                                                :radius radius})))
 
-(defn- create-shout-entity [position faction]
-  {:position position
-   :faction faction
-   :shout (counter/create 200)})
-
 (defn- wake-up! [entity context]
   (swap! entity #(-> %
                      (dissoc :sleeping)
                      (modifier/reverse-modifiers modifiers)
                      (string-effect/add "!")))
-  (db/create-entity! (create-shout-entity (:position @entity)
-                                          (:faction  @entity))
-                     context))
+  (db/create-entity! context
+                     {:position (:position @entity)
+                      :faction (:faction  @entity)
+                      :shout (counter/create 200)}))
 
 (defcomponent :shout counter
   (entity/tick [_ delta]

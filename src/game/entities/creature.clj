@@ -90,5 +90,5 @@
                     (assoc :position position)
                     assoc-left-bottom)]
     (if (valid-position? entity*)
-      (db/create-entity! entity* context)
+      (db/create-entity! context entity*)
       (println "Not able to spawn" creature-id "at" position))))

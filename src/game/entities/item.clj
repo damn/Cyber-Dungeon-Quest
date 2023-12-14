@@ -28,16 +28,15 @@
 
 ; TODO use image w. shadows spritesheet
 (defn create! [position item context]
-  (db/create-entity!
-   {:position position
-    :body {:width 0.5 ; TODO use item-body-dimensions
-           :height 0.5
-           :is-solid false} ; solid? collides?
-    :z-order :on-ground
-    :image (:image item)
-    :item item
-    ; :mouseover-text (:pretty-name item)
-    ; :clickable :item
-    :clickable {:type :item
-                :text (:pretty-name item)}} ; TODO item-color also from text...? uniques/magic/...
-   context))
+  (db/create-entity! context
+                     {:position position
+                      :body {:width 0.5 ; TODO use item-body-dimensions
+                             :height 0.5
+                             :is-solid false} ; solid? collides?
+                      :z-order :on-ground
+                      :image (:image item)
+                      :item item
+                      ; :mouseover-text (:pretty-name item)
+                      ; :clickable :item
+                      :clickable {:type :item; TODO item-color also from text...? uniques/magic/...
+                                  :text (:pretty-name item)}}))
