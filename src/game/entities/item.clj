@@ -4,26 +4,25 @@
             [game.components.inventory :as inventory]
             [game.utils.msg-to-player :refer [show-msg-to-player]]
             [game.player.entity :refer [player-entity]])
-  (:import com.badlogic.gdx.audio.Sound
-           com.badlogic.gdx.scenes.scene2d.Actor))
+  (:import com.badlogic.gdx.scenes.scene2d.Actor))
 
-(defmethod clickable/on-clicked :item [{:keys [stage assets]} entity]
+(defmethod clickable/on-clicked :item [{:keys [stage] :as context} entity]
   (let [item (:item @entity)]
     (cond
      (.isVisible ^Actor (:inventory-window stage))
      (do
-      (.play ^Sound (get assets "sounds/bfxr_takeit.wav"))
+      (gm/play-sound! context "sounds/bfxr_takeit.wav")
       (swap! entity assoc :destroyed? true)
       (swap! player-entity assoc :item-on-cursor item))
 
      (inventory/try-pickup-item! player-entity item)
      (do
-      (.play ^Sound (get assets "sounds/bfxr_pickup.wav"))
+      (gm/play-sound! context "sounds/bfxr_pickup.wav")
       (swap! entity assoc :destroyed? true))
 
      :else
      (do
-      (.play ^Sound (get assets "sounds/bfxr_denied.wav"))
+      (gm/play-sound! context "sounds/bfxr_denied.wav")
       (show-msg-to-player "Your Inventory is full")))))
 
 ; TODO use image w. shadows spritesheet

@@ -1,11 +1,10 @@
 (ns game.entities.audiovisual
   (:require [utils.core :refer [safe-get]]
-            [game.context :as gm])
-  (:import com.badlogic.gdx.audio.Sound))
+            [game.context :as gm]))
 
-(defn create! [{:keys [assets context/properties] :as context} position id]
+(defn create! [{:keys [context/properties] :as context} position id]
   (let [{:keys [sound animation]} (safe-get properties id)]
-    (.play ^Sound (get assets sound))
+    (gm/play-sound! context sound)
     (gm/create-entity! context
                        {:position position
                         :animation animation

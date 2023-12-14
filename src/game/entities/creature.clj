@@ -26,6 +26,7 @@
   (entity/create! [_ entity {:keys [world-camera]}]
     (set-player-entity entity)
     (camera/set-position! world-camera (:position @entity)))
+  ; TODO make on position changed trigger
   (entity/tick! [_ {:keys [world-camera]} entity delta]
     (camera/set-position! world-camera (:position @entity))))
 

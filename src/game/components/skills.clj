@@ -6,14 +6,14 @@
             [gdl.graphics.color :as color]
             [utils.core :refer [safe-get mapvals]]
             [game.properties :as properties]
+            [game.context :as gm]
             [game.components.position :as position]
             [game.components.faction :as faction]
             [game.ui.mouseover-entity :refer (saved-mouseover-entity get-mouseover-entity)]
             [game.utils.counter :as counter]
             [game.effect :as effect]
             [game.entity :as entity]
-            [game.maps.data :refer (get-current-map-data)])
-  (:import com.badlogic.gdx.audio.Sound))
+            [game.maps.data :refer (get-current-map-data)]))
 
 (defn- nearest-enemy-entity [cell-grid entity*]
   (let [enemy-faction (faction/enemy (:faction entity*))]
@@ -161,13 +161,13 @@
          (swap! entity stop-skill skill)
          (effect/do! effect effect-params context))))))
 
-(defn- check-start! [{:keys [assets] :as context} entity]
+(defn- check-start! [context entity]
   (swap! entity assoc-in [:skillmanager :effect-params] (make-effect-params entity context))
   (let [skill (when-let [id (choose-skill @entity)]
                 (id (:skills @entity)))]
     (when skill
       (assert (= :usable (usable-state @entity skill)))
-      (.play ^Sound (get assets (str "sounds/" (if (:spell? skill) "shoot.wav" "slash.wav"))))
+      (gm/play-sound! context (str "sounds/" (if (:spell? skill) "shoot.wav" "slash.wav")))
       (swap! entity start-skill skill))))
 
 (defcomponent :skillmanager _

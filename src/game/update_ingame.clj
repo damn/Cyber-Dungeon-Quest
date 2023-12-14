@@ -12,8 +12,7 @@
             [game.maps.mapchange :refer [check-change-map]]
             [game.maps.contentfields :refer [get-entities-in-active-content-fields]]
             [game.maps.potential-field :refer [update-potential-fields]])
-  (:import (com.badlogic.gdx Gdx Input$Keys Input$Buttons)
-           com.badlogic.gdx.audio.Sound))
+  (:import (com.badlogic.gdx Gdx Input$Keys Input$Buttons)))
 
 (defn- update-game-systems [{:keys [gui-mouse-position] :as context} stage delta]
   ; destroy here not @ tick, because when game is paused
@@ -34,7 +33,7 @@
 
 ; TODO stepping -> p is one step -> how to do ?
 
-(defn update-game [{:keys [assets] :as context} stage delta]
+(defn update-game [context stage delta]
   ;(reset! running false)
   (when (.isKeyJustPressed Gdx/input Input$Keys/P)
     (swap! running not))
@@ -78,5 +77,5 @@
   (when (and @running
              (dead? @player-entity))
     (reset! running false)
-    (.play ^Sound (get assets "sounds/bfxr_playerdeath.wav")))
+    (gm/play-sound! context "sounds/bfxr_playerdeath.wav"))
   (check-change-map))

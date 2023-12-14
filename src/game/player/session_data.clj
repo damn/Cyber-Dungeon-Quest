@@ -1,6 +1,6 @@
 (ns game.player.session-data
   (:require [x.x :refer [update-map doseq-entity]]
-            game.context
+            [game.context :as gm]
             [game.entity :as entity]
             [gdl.app :as app]
             [game.session :as session]
@@ -11,15 +11,35 @@
             game.utils.msg-to-player
             game.screens.options
             game.ui.action-bar
-            game.ui.inventory-window))
+            game.ui.inventory-window)
+  (:import com.badlogic.gdx.audio.Sound))
+
+; not sure I should extend gdl.app.Context
+; or create a 'session' inside , why e need the whole context???
+; so far only ids->entities? which could be part of some kind of 'session' or 'world' context/world
+; record and not part of the overall record ?!
+; => see create! and destroy! which needs it ...
+
+
+; :body => needs map data / cell-grid for create! / destroy!
+; :id needs id-entity-map
+; items need properties and try-pickup-item!, maybe problematic
+; :position needs contentfields
+; :skills need properties
+
+; player sets world-camera position , also at tick (I could do that before render just set the camera position to player entity)
+; :default-monster-death needs audiovisual -> sound -> assets/properties
+
+; what do I want to do ? completely immutable game structure, only pure functions?
+; => transactions on the game state itself are done in tick, no atoms ...
 
 (extend-type gdl.app.Context
-  game.context/Context
+  gm/Context
   (get-entity [{:keys [context/ids->entities]} id]
     (get @ids->entities id))
 
   (entity-exists? [context e]
-    (game.context/get-entity context (:id @e)))
+    (gm/get-entity context (:id @e)))
 
   (create-entity! [context components-map]
     {:pre [(not (contains? components-map :id))]}
@@ -31,9 +51,12 @@
   (destroy-to-be-removed-entities!
     [{:keys [context/ids->entities] :as context}]
     (doseq [e (filter (comp :destroyed? deref) (vals @ids->entities))
-            :when (game.context/entity-exists? context e)] ; TODO why is this ?
+            :when (gm/entity-exists? context e)] ; TODO why is this ?, maybe assert ?
       (swap! e update-map entity/destroy)
-      (doseq-entity e entity/destroy! context))))
+      (doseq-entity e entity/destroy! context)))
+
+  (play-sound! [{:keys [assets]} file]
+    (.play ^Sound (get assets file))))
 
 (def state (reify session/State
              (load! [_ _]
