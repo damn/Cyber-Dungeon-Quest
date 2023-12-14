@@ -13,11 +13,11 @@
             game.screens.options
             mapgen.tiledmap-renderer
             property-editor.screen)
-  (:import com.badlogic.gdx.Gdx
-           com.badlogic.gdx.graphics.g2d.BitmapFont))
+  (:import com.badlogic.gdx.Gdx))
 
 ; !!!
 ; TODO make all context stuff namespaced keyword like :context/properties
+; ====>>> but defrecords no namespaced keys ? fuck.
 ; TODO also components,effects,modifiers,effect-params, etc. everything ....
 ; !!! greppable !!!
 
@@ -35,10 +35,9 @@
                                       16)
      :context/properties properties
      :game.maps.data (game.maps.data/->Disposable-State)
-     :screens/main-menu (game.screens.main/->Screen)
-     :screens/ingame (game.screens.ingame/screen
-                           (assoc context :context/properties properties))
-     :screens/minimap (game.screens.minimap/->Screen)
+     :screens/main-menu   (game.screens.main/->Screen)
+     :screens/ingame      (game.screens.ingame/screen (assoc context :context/properties properties))
+     :screens/minimap     (game.screens.minimap/->Screen)
      :screens/option-menu (game.screens.options/screen context)
      :mapgen.tiledmap-renderer (mapgen.tiledmap-renderer/screen context)
      :property-editor.screen (property-editor.screen/screen context)}))
