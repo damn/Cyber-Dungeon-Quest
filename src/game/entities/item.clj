@@ -1,5 +1,5 @@
 (ns game.entities.item
-  (:require [game.db :as db]
+  (:require [game.context :as gm]
             [game.components.clickable :as clickable]
             [game.components.inventory :as inventory]
             [game.utils.msg-to-player :refer [show-msg-to-player]]
@@ -28,7 +28,7 @@
 
 ; TODO use image w. shadows spritesheet
 (defn create! [position item context]
-  (db/create-entity! context
+  (gm/create-entity! context
                      {:position position
                       :body {:width 0.5 ; TODO use item-body-dimensions
                              :height 0.5

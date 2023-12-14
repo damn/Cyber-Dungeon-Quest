@@ -4,7 +4,7 @@
             [gdl.graphics.draw :as draw]
             [gdl.scene2d.stage :as stage]
             [utils.core :refer [sort-by-order]]
-            [game.db :as db]
+            [game.context :as gm]
             [game.entity :as entity]
             game.render
             [game.session :as session]
@@ -64,7 +64,7 @@
 
 (defn- keep-saved? [entity context]
   (and (.isButtonPressed Gdx/input Input$Buttons/LEFT)
-       (db/exists? entity)
+       (gm/entity-exists? context entity)
        (in-line-of-sight? @player-entity @entity context)))
 
 (defn- save? [entity]

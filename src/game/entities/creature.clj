@@ -4,7 +4,7 @@
             [gdl.graphics.image :as image]
             [gdl.graphics.animation :as animation]
             [utils.core :refer [safe-get]]
-            [game.db :as db]
+            [game.context :as gm]
             [game.entity :as entity]
             [game.components.body :refer (assoc-left-bottom valid-position?)]
             [game.entities.audiovisual :as audiovisual]
@@ -90,5 +90,5 @@
                     (assoc :position position)
                     assoc-left-bottom)]
     (if (valid-position? entity*)
-      (db/create-entity! context entity*)
+      (gm/create-entity! context entity*)
       (println "Not able to spawn" creature-id "at" position))))

@@ -1,7 +1,9 @@
 (ns game.player.session-data
-  (:require [gdl.app :as app]
+  (:require [x.x :refer [update-map doseq-entity]]
+            game.context
+            [game.entity :as entity]
+            [gdl.app :as app]
             [game.session :as session]
-            [game.db :as db]
             game.maps.add
             game.maps.impl
             game.maps.data
@@ -10,6 +12,28 @@
             game.screens.options
             game.ui.action-bar
             game.ui.inventory-window))
+
+(extend-type gdl.app.Context
+  game.context/Context
+  (get-entity [{:keys [context/ids->entities]} id]
+    (get @ids->entities id))
+
+  (entity-exists? [context e]
+    (game.context/get-entity context (:id @e)))
+
+  (create-entity! [context components-map]
+    {:pre [(not (contains? components-map :id))]}
+    (-> (assoc components-map :id nil)
+        (update-map entity/create)
+        atom
+        (doseq-entity entity/create! context)))
+
+  (destroy-to-be-removed-entities!
+    [{:keys [context/ids->entities] :as context}]
+    (doseq [e (filter (comp :destroyed? deref) (vals @ids->entities))
+            :when (game.context/entity-exists? context e)] ; TODO why is this ?
+      (swap! e update-map entity/destroy)
+      (doseq-entity e entity/destroy! context))))
 
 (def state (reify session/State
              (load! [_ _]

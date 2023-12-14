@@ -2,7 +2,7 @@
   (:require [clj-commons.pretty.repl :as p]
             [game.running :refer (running)]
             [game.tick :as tick]
-            [game.db :as db]
+            [game.context :as gm]
             [game.player.entity :refer (player-entity)]
             [game.components.hp :refer (dead?)]
             [game.components.inventory :as inventory]
@@ -18,7 +18,7 @@
 (defn- update-game-systems [{:keys [gui-mouse-position] :as context} stage delta]
   ; destroy here not @ tick, because when game is paused
   ; for example pickup item, should be destroyed.
-  (db/destroy-to-be-removed-entities! context)
+  (gm/destroy-to-be-removed-entities! context)
   ; TODO or pass directly stage/hit boolean
   (update-mouseover-entity stage context)
   (update-msg-to-player delta)

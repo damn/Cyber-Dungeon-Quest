@@ -2,7 +2,7 @@
   (:require [x.x :refer [defcomponent]]
             [gdl.graphics.draw :as draw]
             [game.utils.counter :as counter]
-            [game.db :as db]
+            [game.context :as gm]
             [game.entity :as entity]
             [game.components.faction :as faction]
             [game.modifier :as modifier]
@@ -50,7 +50,7 @@
                      (dissoc :sleeping)
                      (modifier/reverse-modifiers modifiers)
                      (string-effect/add "!")))
-  (db/create-entity! context
+  (gm/create-entity! context
                      {:position (:position @entity)
                       :faction (:faction  @entity)
                       :shout (counter/create 200)}))

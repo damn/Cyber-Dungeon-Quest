@@ -1,5 +1,5 @@
 (ns game.entities.projectile
-  (:require [game.db :as db]))
+  (:require [game.context :as gm]))
 
 ; TODO maxrange ?
 ; TODO make only common fields here
@@ -14,7 +14,7 @@
            maxtime
            piercing]}
    context]
-  (db/create-entity! context
+  (gm/create-entity! context
                      {:position position
                       :faction faction
                       :body {:width size
