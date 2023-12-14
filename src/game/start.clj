@@ -6,6 +6,7 @@
             game.modifiers.all
             game.components.require-all
             game.effects.require-all
+            game.properties
             game.screens.main
             game.screens.load-session
             game.screens.ingame
@@ -16,11 +17,38 @@
   (:import com.badlogic.gdx.Gdx
            com.badlogic.gdx.graphics.g2d.BitmapFont))
 
-(defcomponent :default-font {:keys [file size]}
-  (lc/create [_ context]
-    (freetype/generate (.internal Gdx/files file) size))
-  (lc/dispose [[_ font]]
+(defcomponent :default-font font
+  (lc/dispose [_]
     (.dispose ^BitmapFont font)))
+
+; !!!
+; TODO make all context stuff namespaced keyword like :context/properties
+; !!! greppable !!!
+
+(defn- create-context [context]
+  (game.ui.inventory-window/initialize! context)
+  (game.ui.action-bar/initialize!)
+  (game.player.status-gui/initialize! context)
+  (game.screens.main/initialize! context {:bg-image "ui/moon_background.png" :skip-main-menu false})
+  (let [properties (let [file "resources/properties.edn"
+                         properties (game.properties/load-edn context file)]
+                     (.bindRoot #'game.properties/properties-file file)
+                     (.bindRoot #'game.properties/properties properties)
+                     (println "loaded properties")
+                     properties)]
+    {:default-font (freetype/generate (.internal Gdx/files "exocet/films.EXL_____.ttf")
+                                      16)
+     :context/properties properties
+     :game.maps.data nil ; disposes tiled-map.
+     ; screen lifecycle modules
+     :game.screens.main nil
+     :game.screens.load-session nil
+     :game.screens.ingame (game.screens.ingame/create-stage
+                           (assoc context :context/properties properties))
+     :game.screens.minimap nil
+     :game.screens.options (game.screens.options/create-stage context)
+     :mapgen.tiledmap-renderer (mapgen.tiledmap-renderer/create-stage context)
+     :property-editor.screen (property-editor.screen/create-stage context)}))
 
 (def app-config
   {:app {:title "Cyber Dungeon Quest"
@@ -29,21 +57,7 @@
          :full-screen? false
          :fps nil} ; TODO fix is set to 60 @ gdl
    :tile-size 48
-   :modules {:default-font {:file "exocet/films.EXL_____.ttf"
-                            :size 16}
-             :game.properties "resources/properties.edn"
-             :game.maps.data nil
-             :game.ui.inventory-window nil
-             :game.ui.action-bar nil
-             :game.player.status-gui nil
-             :game.screens.main {:bg-image "ui/moon_background.png"
-                                 :skip-main-menu false}
-             :game.screens.load-session nil
-             :game.screens.ingame nil
-             :game.screens.minimap nil
-             :game.screens.options nil
-             :mapgen.tiledmap-renderer nil
-             :property-editor.screen nil}
+   :modules create-context
    :first-screen :game.screens.main})
 
 (defn app []

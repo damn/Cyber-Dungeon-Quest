@@ -1,7 +1,7 @@
 (ns game.ui.skill-window
   (:require clojure.set
             [gdl.scene2d.ui :as ui]
-            [game.properties :as properties]
+            [utils.core :refer [safe-get]]
             [game.components.skills :refer (assoc-skill has-skill?)]
             [game.skills.core :as skills]
             [game.player.entity :refer (player-entity)]))
@@ -20,13 +20,13 @@
                               (update :free-skill-points dec)
                               (update :skills assoc-skill skill-id)))))
 
-(defn create []
+(defn create [{:keys [context/properties]}]
   (let [window (ui/window :title "Skills"
                           :id :skill-window)]
     (doseq [id [:projectile
                 :meditation
                 :spawn]
-            :let [skill (properties/get id)
+            :let [skill (safe-get properties id)
                   button (ui/image-button (:image skill)
                                           #(pressed-on-skill-in-menu id))]]
       (.addListener button (ui/text-tooltip #(skills/text id player-entity)))

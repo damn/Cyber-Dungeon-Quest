@@ -220,14 +220,15 @@
                      [(ui/text-button (:title overview) #(set-second-widget (overview-table property-type open-property-editor-window)))])
                    [[(ui/text-button "Back to Main Menu" #(app/set-screen :game.screens.main))]])))
 
+(defn create-stage [{:keys [gui-viewport batch]}]
+  (let [stage (stage/create gui-viewport batch)
+        table (ui/table :id :main-table
+                        :rows [[(left-widget) nil]]
+                        :fill-parent? true)]
+    (.addActor stage table)
+    stage))
+
 (defmodule ^Stage stage
-  (lc/create [_ {:keys [gui-viewport batch]}]
-    (let [stage (stage/create gui-viewport batch)
-          table (ui/table :id :main-table
-                          :rows [[(left-widget) nil]]
-                          :fill-parent? true)]
-      (.addActor stage table)
-      stage))
   (lc/dispose [_]
     (.dispose stage))
   (lc/show [_ _ctx]

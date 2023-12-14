@@ -99,11 +99,12 @@
     (def menu-bg-image (image/create context "ui/moon_background.png"))
     table))
 
+(defn create-stage [{:keys [gui-viewport batch] :as context}]
+  (let [stage (stage/create gui-viewport batch)]
+    (.addActor stage (create-table context))
+    stage))
+
 (defmodule ^Stage stage
-  (lc/create [_ {:keys [gui-viewport batch] :as context}]
-    (let [stage (stage/create gui-viewport batch)]
-      (.addActor stage (create-table context))
-      stage))
   (lc/dispose [_]
     (.dispose stage))
   (lc/show [_ _ctx]

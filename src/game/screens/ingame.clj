@@ -38,11 +38,15 @@
                                (:image item)
                                gui-mouse-position))))))
 
-(defn- create-stage [{:keys [gui-viewport batch gui-viewport-width gui-viewport-height]}]
+(defn create-stage [{:keys [batch
+                            gui-viewport
+                            gui-viewport-width
+                            gui-viewport-height]
+                     :as context}]
   (let [^Actor debug-window (debug-window/create)
         ^Actor help-window (help-window/create)
         ^Actor entity-info-window (entity-info-window/create)
-        skill-window (skill-window/create)
+        skill-window (skill-window/create context)
         windows [debug-window
                  help-window
                  entity-info-window
@@ -195,8 +199,6 @@
 
 
 (defmodule ^Stage stage
-  (lc/create [_ context]
-    (create-stage context))
   (lc/dispose [_]
     (.dispose stage))
   (lc/show [_ _ctx]

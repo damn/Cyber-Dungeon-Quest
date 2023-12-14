@@ -3,9 +3,9 @@
             [gdl.graphics.camera :as camera]
             [gdl.graphics.image :as image]
             [gdl.graphics.animation :as animation]
+            [utils.core :refer [safe-get]]
             [game.db :as db]
             [game.entity :as entity]
-            [game.properties :as properties]
             [game.components.body :refer (assoc-left-bottom valid-position?)]
             [game.entities.audiovisual :as audiovisual]
             [game.player.entity :refer (set-player-entity)]))
@@ -44,23 +44,24 @@
    :choose-skill-type :npc
    :move-towards-enemy true})
 
-(defn- species-properties [species-id]
-  (let [properties (properties/get species-id)
-        multiplier {:id :species/multiplier,
+(defn- species-properties [species-props]
+  (let [multiplier {:id :species/multiplier,
                     :speed 3,
                     :hp 10}]
-    (-> properties
+    (-> species-props
         (update :speed * (:speed multiplier))
         (update :hp #(int (* % (:hp multiplier)))))))
 
-(defn- create-creature-data [properties {:keys [is-player] :as extra-params} context]
-  (let [creature-name (name (:id properties))
-        properties (dissoc properties :id)
-        properties (update properties :skills #(or % []))
+(defn- create-creature-data [creature-props
+                             {:keys [is-player] :as extra-params}
+                             {:keys [context/properties] :as context}]
+  (let [creature-name (name (:id creature-props))
+        creature-props (dissoc creature-props :id)
+        creature-props (update creature-props :skills #(or % []))
         images (create-images context creature-name)
         [width height] (images->world-unit-dimensions images)
-        {:keys [speed hp]} (species-properties (:species properties))]
-    (merge (dissoc properties :image)
+        {:keys [speed hp]} (species-properties (safe-get properties (:species creature-props)))]
+    (merge (dissoc creature-props :image)
            (if is-player
              player-components
              npc-components)
@@ -72,7 +73,7 @@
             :mana 11
             :is-flying false
             :animation (animation/create images :frame-duration 250 :looping? true)
-            :z-order (if (:is-flying properties)
+            :z-order (if (:is-flying creature-props)
                        :flying
                        :ground)}
            extra-params)))
@@ -83,9 +84,8 @@
                          (:position @entity)
                          :creature/die-effect)))
 
-(defn create! [creature-id position creature-params context]
-  (let [entity* (-> creature-id
-                    properties/get
+(defn create! [creature-id position creature-params {:keys [context/properties] :as context}]
+  (let [entity* (-> (safe-get properties creature-id)
                     (create-creature-data creature-params context)
                     (assoc :position position)
                     assoc-left-bottom)]

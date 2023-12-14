@@ -4,7 +4,7 @@
             [gdl.graphics.draw :as draw]
             [gdl.math.vector :as v]
             [gdl.graphics.color :as color]
-            [utils.core :refer [mapvals]]
+            [utils.core :refer [safe-get mapvals]]
             [game.properties :as properties]
             [game.components.position :as position]
             [game.components.faction :as faction]
@@ -181,7 +181,9 @@
       (swap! entity stop-skill (skill-id (:skills @entity))))))
 
 (defcomponent :skills _
-  (entity/create! [[k v] entity _ctx]
+  (entity/create! [[k v] entity {:keys [context/properties]}]
     (swap! entity (fn [e*] (-> e*
                                (assoc :skillmanager {})
-                               (update k #(zipmap % (map properties/get %))))))))
+                               (update k #(zipmap % (map (fn [skill-id]
+                                                           (safe-get properties skill-id))
+                                                         %))))))))

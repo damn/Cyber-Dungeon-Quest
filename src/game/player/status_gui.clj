@@ -1,7 +1,5 @@
 (ns game.player.status-gui
-  (:require [x.x :refer [defmodule]]
-            [gdl.graphics.draw :as draw]
-            [gdl.lifecycle :as lc]
+  (:require [gdl.graphics.draw :as draw]
             [gdl.graphics.image :as image]
             [utils.core :refer [readable-number]]
             [data.val-max :refer [val-max-ratio]]
@@ -14,15 +12,14 @@
               :y (+ y 2)
               :up? true}))
 
-(defmodule _
-  (lc/create [_ context]
-    (let [scale 2] ; TODO FIXME scale of the whole all game things can set somewhere (gui-scale) for all dists, etc.
-      ; ?? can play also sci-fi 24x24 ?
-      (def ^:private rahmen (image/create context "ui/rahmen.png"))
-      (def ^:private rahmenw (first  (:pixel-dimensions rahmen)))
-      (def ^:private rahmenh (second (:pixel-dimensions rahmen)))
-      (def ^:private hpcontent   (image/create context "ui/hp.png"))
-      (def ^:private manacontent (image/create context "ui/mana.png")))))
+(defn initialize! [context]
+  (let [scale 2] ; TODO FIXME scale of the whole all game things can set somewhere (gui-scale) for all dists, etc.
+    ; ?? can play also sci-fi 24x24 ?
+    (def ^:private rahmen (image/create context "ui/rahmen.png"))
+    (def ^:private rahmenw (first  (:pixel-dimensions rahmen)))
+    (def ^:private rahmenh (second (:pixel-dimensions rahmen)))
+    (def ^:private hpcontent   (image/create context "ui/hp.png"))
+    (def ^:private manacontent (image/create context "ui/mana.png"))))
 
 (defn- render-hpmana-bar [drawer context x y contentimg minmaxval name]
   ; stack

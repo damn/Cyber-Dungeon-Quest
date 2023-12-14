@@ -167,7 +167,8 @@
               2)
     [table get-properties]))
 
-(defn- create-stage [{:keys [gui-viewport batch]}]
+(defn create-stage [{:keys [gui-viewport batch]}]
+  (reset! current-tiled-map (tiled/load-map module-gen/modules-file))
   (let [stage (stage/create gui-viewport batch)
         window (ui/window :title "Properties")
         [form get-properties] (edn-edit-form game.maps.impl/map-data-file)]
@@ -179,9 +180,6 @@
     stage))
 
 (defmodule ^Stage stage
-  (lc/create [_ context]
-    (reset! current-tiled-map (tiled/load-map module-gen/modules-file))
-    (create-stage context))
   (lc/dispose [_]
     (.dispose stage)
     (.dispose ^TiledMap @current-tiled-map))

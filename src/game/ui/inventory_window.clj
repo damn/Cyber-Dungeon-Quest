@@ -1,8 +1,6 @@
 (ns game.ui.inventory-window
   (:require [data.grid2d :as grid]
-            [x.x :refer [defmodule]]
             [gdl.app :as app]
-            [gdl.lifecycle :as lc]
             [gdl.graphics.color :as color]
             [gdl.graphics.draw :as draw]
             [gdl.graphics.image :as image]
@@ -89,33 +87,32 @@
 (declare ^:private slot->background
          ^:private ^Table table)
 
-(defmodule _
-  (lc/create [_ context]
-    (.bindRoot #'window (ui/window :title "Inventory"
-                                   :id :inventory-window))
-    (.bindRoot #'table (ui/table))
-    (.pad table (float 2))
-    (.add window table)
-    (.bindRoot #'slot->background
-               (let [sheet (image/spritesheet context "items/images.png" 48 48)]
-                 (->> {:weapon   0 ; TODO use a vector?
-                       :shield   1
-                       :rings    2
-                       :necklace 3
-                       :helm     4
-                       :cloak    5
-                       :chest    6
-                       :leg      7
-                       :glove    8
-                       :boot     9
-                       :bag      10} ; transparent
-                      (map (fn [[slot y]]
-                             [slot
-                              (-> (image/get-sprite context sheet [21 (+ y 2)])
-                                  :texture
-                                  ui/texture-region-drawable
-                                  (.tint (color/rgb 1 1 1 0.4)))]))
-                      (into {}))))))
+(defn initialize! [context]
+  (.bindRoot #'window (ui/window :title "Inventory"
+                                 :id :inventory-window))
+  (.bindRoot #'table (ui/table))
+  (.pad table (float 2))
+  (.add window table)
+  (.bindRoot #'slot->background
+             (let [sheet (image/spritesheet context "items/images.png" 48 48)]
+               (->> {:weapon   0 ; TODO use a vector?
+                     :shield   1
+                     :rings    2
+                     :necklace 3
+                     :helm     4
+                     :cloak    5
+                     :chest    6
+                     :leg      7
+                     :glove    8
+                     :boot     9
+                     :bag      10} ; transparent
+                    (map (fn [[slot y]]
+                           [slot
+                            (-> (image/get-sprite context sheet [21 (+ y 2)])
+                                :texture
+                                ui/texture-region-drawable
+                                (.tint (color/rgb 1 1 1 0.4)))]))
+                    (into {})))))
 
 (def ^:private cell-size 48)
 

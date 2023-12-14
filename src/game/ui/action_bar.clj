@@ -1,7 +1,5 @@
 (ns game.ui.action-bar
-  (:require [x.x :refer [defmodule]]
-            [gdl.lifecycle :as lc]
-            [gdl.scene2d.ui :as ui]
+  (:require [gdl.scene2d.ui :as ui]
             [game.session :as session]
             [game.skills.core :as skills]
             [game.player.entity :refer (player-entity)])
@@ -72,12 +70,11 @@
 (declare check-hotbar-actualize
          ^HorizontalGroup horizontal-group) ; TODO == action-bar
 
-(defmodule _
-  (lc/create [_ _ctx]
-    (.bindRoot #'horizontal-group (HorizontalGroup.))
-    (.addActor horizontal-group (proxy [Actor] []
-                                  (act [_delta]
-                                    (check-hotbar-actualize))))))
+(defn initialize! []
+  (.bindRoot #'horizontal-group (HorizontalGroup.))
+  (.addActor horizontal-group (proxy [Actor] []
+                                (act [_delta]
+                                  (check-hotbar-actualize)))))
 
 (declare ^ButtonGroup button-group)
 

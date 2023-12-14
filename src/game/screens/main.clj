@@ -26,19 +26,21 @@
          ^:private skip-main-menu
          ^:private bg-image)
 
+(defn initialize! [{:keys [gui-viewport batch] :as context}
+                   {:keys [skip-main-menu bg-image]}]
+  (.bindRoot #'skip-main-menu skip-main-menu)
+  (.bindRoot #'bg-image (image/create context bg-image))
+  (.bindRoot #'stage (stage/create gui-viewport batch)) ; TODO remove all .bindRoot
+  (let [table (ui/table :rows [[(ui/text-button "New game" try-create-character)]
+                               [(ui/text-button "Map Editor" #(app/set-screen :mapgen.tiledmap-renderer))]
+                               [(ui/text-button "Entity Editor" #(app/set-screen :property-editor.screen))]
+                               [(ui/text-button "Exit" #(.exit Gdx/app))]]
+                        :cell-defaults {:pad-bottom 25}
+                        :fill-parent? true)]
+    (.addActor stage table)
+    (.center table)))
+
 (defmodule _
-  (lc/create [[_ {:keys [skip-main-menu bg-image]}] {:keys [gui-viewport batch] :as context}]
-    (.bindRoot #'skip-main-menu skip-main-menu)
-    (.bindRoot #'bg-image (image/create context bg-image))
-    (.bindRoot #'stage (stage/create gui-viewport batch)) ; TODO remove all .bindRoot
-    (let [table (ui/table :rows [[(ui/text-button "New game" try-create-character)]
-                                 [(ui/text-button "Map Editor" #(app/set-screen :mapgen.tiledmap-renderer))]
-                                 [(ui/text-button "Entity Editor" #(app/set-screen :property-editor.screen))]
-                                 [(ui/text-button "Exit" #(.exit Gdx/app))]]
-                          :cell-defaults {:pad-bottom 25}
-                          :fill-parent? true)]
-      (.addActor stage table)
-      (.center table)))
   (lc/dispose [_]
     (.dispose stage))
   (lc/show [_ _ctx]

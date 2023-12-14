@@ -1,8 +1,6 @@
 (ns game.properties
   (:refer-clojure :exclude [get])
   (:require [clojure.edn :as edn]
-            [x.x :refer [defmodule]]
-            [gdl.lifecycle :as lc]
             [gdl.graphics.animation :as animation]
             [gdl.graphics.image :as image]
             [utils.core :refer [safe-get]]))
@@ -59,20 +57,16 @@
        (#(if (:image     %) (update % :image     serialize-image)     %))
        (#(if (:animation %) (update % :animation serialize-animation) %))))
 
-(defn- load-edn [context file]
+(defn load-edn [context file]
+  ; TODO use gdx internal files -> context function -> no 'resources/' necessary
   (let [properties (-> file slurp edn/read-string)]
     (assert (apply distinct? (map :id properties)))
     (->> properties
          (map #(deserialize context %))
          (#(zipmap (map :id %) %)))))
 
-(declare ^:private properties-file
-         ^:private properties)
-
-(defmodule file
-  (lc/create [_ context]
-    (.bindRoot #'properties-file file)
-    (.bindRoot #'properties (load-edn context file))))
+(declare properties-file
+         properties)
 
 (defn get [id]
   (safe-get properties id))
