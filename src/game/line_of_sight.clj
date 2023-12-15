@@ -26,7 +26,9 @@
      screen-frustum-rect
      rectangle)) ; rectangle == entity*
 
-; TODO weird mixing up camera & player
+; TODO weird mixing up camera & player => define view-area for player-entity (save there?)
+; => no need to send full context? can pass only world-map ?!
+; or context protocol ?
 (defn- on-screen? [entity* {:keys [world-camera world-viewport-width world-viewport-height]}]
   (let [[x y] (:position entity*)
         x (float x)
