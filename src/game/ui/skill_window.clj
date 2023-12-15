@@ -4,7 +4,7 @@
             [gdl.scene2d.ui :as ui]
             [utils.core :refer [safe-get]]
             [game.components.skills :refer (assoc-skill has-skill?)]
-            [game.skills.core :as skills]))
+            [game.skill :as skill]))
 
 (def ^:privat skill-icon-size 48)
 
@@ -30,7 +30,7 @@
             :let [skill (safe-get properties id)
                   button (ui/image-button (:image skill)
                                           #(pressed-on-skill-in-menu id))]]
-      (.addListener button (ui/text-tooltip #(skills/text id player-entity)))
+      (.addListener button (ui/text-tooltip #(skill/text id player-entity)))
       (.add window button))
     ; TODO render text label free-skill-points
     ; (str "Free points: " (:free-skill-points @player-entity))

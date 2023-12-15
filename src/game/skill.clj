@@ -1,4 +1,4 @@
-(ns game.skills.core
+(ns game.skill
   (:require [clojure.set :as set]
             [clojure.string :as str]
             [utils.core :refer [readable-number]]

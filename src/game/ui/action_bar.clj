@@ -1,7 +1,7 @@
 (ns game.ui.action-bar
   (:require [gdl.app :as app]
             [gdl.scene2d.ui :as ui]
-            [game.skills.core :as skills])
+            [game.skill :as skill])
   (:import (com.badlogic.gdx Gdx Input$Keys)
            com.badlogic.gdx.scenes.scene2d.Actor
            (com.badlogic.gdx.scenes.scene2d.ui HorizontalGroup ButtonGroup Button)))
@@ -93,7 +93,7 @@
           :let [button (ui/image-button image #(reset! selected-skill-id id))]]
     (.setName button (pr-str id))
     (.addListener button (ui/text-tooltip
-                          #(skills/text id player-entity)))
+                          #(skill/text id player-entity)))
     ; TODO HOTKEY
     (.addActor horizontal-group button)
     (.add button-group button)))

@@ -2,7 +2,7 @@
   (:require [utils.core :refer [readable-number]]
             [data.val-max :refer [apply-max]]
             [game.modifier :as modifier]
-            [game.skills.core :as skills]
+            [game.skill :as skill]
             [game.components.skills :as skills-component]))
 
 ; TODO dissoc again if value == default value -> into modifier logic, e.g. modifiers blocks 0 , just dissoc then ?
@@ -47,7 +47,7 @@
    :reverse (fn [mana v] (apply-max mana #(- % v)))})
 
 (modifier/defmodifier :modifiers/skill
-  {:text skills/text
+  {:text skill/text
    :keys [:skills]
    :apply skills-component/assoc-skill
    :reverse dissoc})
