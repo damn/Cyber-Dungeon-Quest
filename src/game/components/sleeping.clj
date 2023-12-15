@@ -7,7 +7,6 @@
             [game.components.faction :as faction]
             [game.modifier :as modifier]
             [game.line-of-sight :refer (in-line-of-sight?)]
-            [game.maps.data :refer (get-current-map-data)]
             [game.maps.cell-grid :as cell-grid]
             [game.maps.potential-field :as potential-field]
             [game.components.string-effect :as string-effect])
@@ -58,11 +57,11 @@
 (defcomponent :shout counter
   (entity/tick [_ delta]
     (counter/tick counter delta))
-  (entity/tick! [_ context entity delta]
+  (entity/tick! [_ {:keys [context/world-map] :as context} entity delta]
     (when (counter/stopped? counter)
       (swap! entity assoc :destroyed? true)
       ; TODO why a shout checks for ray-blocked? ... sounds logic .... ?!
-      (doseq [entity (->> (get-visible-entities (:cell-grid (get-current-map-data))
+      (doseq [entity (->> (get-visible-entities (:cell-grid world-map)
                                                 @entity
                                                 aggro-range
                                                 context)
@@ -71,8 +70,8 @@
         (wake-up! entity context)))))
 
 (defcomponent :sleeping _
-  (entity/tick! [_ context entity delta]
-    (let [cell-grid (:cell-grid (get-current-map-data))
+  (entity/tick! [_ {:keys [context/world-map] :as context} entity delta]
+    (let [cell-grid (:cell-grid world-map)
           cell* @(get cell-grid (mapv int (:position @entity)))
           faction (faction/enemy (:faction @entity))]
       (when-let [distance (-> cell* faction :distance)]

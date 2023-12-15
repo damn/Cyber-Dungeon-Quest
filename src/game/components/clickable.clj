@@ -2,8 +2,7 @@
   (:require [x.x :refer [defcomponent]]
             [gdl.graphics.draw :as draw]
             [gdl.math.vector :as v]
-            [game.entity :as entity]
-            [game.player.entity :refer (player-entity)]))
+            [game.entity :as entity]))
 
 (defcomponent :clickable {:keys [text]}
   (entity/render-default [_ drawer _ctx {[x y] :position :keys [mouseover? body]}]
@@ -18,9 +17,9 @@
 
 (defmulti on-clicked (fn [_context entity] (:type (:clickable @entity))))
 
-(defn clickable-mouseover-entity? [entity]
-  (and entity
-       (:clickable @entity)
-       (< (v/distance (:position @player-entity)
-                      (:position @entity))
+(defn clickable-mouseover-entity? [player-entity* mouseover-entity]
+  (and mouseover-entity
+       (:clickable @mouseover-entity)
+       (< (v/distance (:position player-entity*)
+                      (:position @mouseover-entity))
           click-distance-tiles)))

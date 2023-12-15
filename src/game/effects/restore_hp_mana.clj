@@ -4,7 +4,7 @@
             [game.context :as gm]
             [game.components.skills :refer (ai-should-use?)]))
 
-(defmethod ai-should-use? :restore-hp-mana [_ entity*]
+(defmethod ai-should-use? :restore-hp-mana [_ _context entity*]
   (or (lower-than-max? (:mana entity*))
       (lower-than-max? (:hp   entity*))))
 

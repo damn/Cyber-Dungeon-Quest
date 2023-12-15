@@ -9,9 +9,7 @@
             game.render
             [game.session :as session]
             [game.line-of-sight :refer (in-line-of-sight?)]
-            [game.maps.data :refer (get-current-map-data)]
-            [game.maps.cell-grid :refer (get-bodies-at-position)]
-            [game.player.entity :refer (player-entity)])
+            [game.maps.cell-grid :refer (get-bodies-at-position)])
   (:import (com.badlogic.gdx Gdx Input$Buttons)))
 
 (def ^:private outline-alpha 0.4)
@@ -30,8 +28,11 @@
                        :good enemy-color
                        neutral-color)))))
 
-(defn- get-current-mouseover-entity [{:keys [world-mouse-position] :as context}]
-  (let [cell-grid (:cell-grid (get-current-map-data))
+(defn- get-current-mouseover-entity [{:keys [world-mouse-position
+                                             context/player-entity
+                                             context/world-map]
+                                      :as context}]
+  (let [cell-grid (:cell-grid world-map)
         hits (get-bodies-at-position cell-grid world-mouse-position)]
     ; TODO needs z-order ? what if 'shout' element or FX ?
     (when hits
@@ -62,14 +63,14 @@
   []
   (and @is-saved @cache))
 
-(defn- keep-saved? [entity context]
+(defn- keep-saved? [entity {:keys [context/player-entity] :as context}]
   (and (.isButtonPressed Gdx/input Input$Buttons/LEFT)
        (gm/entity-exists? context entity)
        (in-line-of-sight? @player-entity @entity context)))
 
-(defn- save? [entity]
+(defn- save? [{:keys [context/player-entity]} entity]
   (and (.isButtonJustPressed Gdx/input Input$Buttons/LEFT) ; dont move & get stuck on any entity under mouse, only save when starting to click on that
-       (.isButtonPressed Gdx/input Input$Buttons/LEFT)
+       (.isButtonPressed     Gdx/input Input$Buttons/LEFT)
        (not= entity player-entity))) ; movement follows this / targeting / ...
 
 (defn update-mouseover-entity [stage {:keys [gui-mouse-position] :as context}]
@@ -81,7 +82,7 @@
                       (get-current-mouseover-entity context))]
       (do
        (reset! cache entity)
-       (reset! is-saved (save? entity))
+       (reset! is-saved (save? context entity))
        (swap! entity assoc :mouseover? true))
       (do
        (reset! cache nil)

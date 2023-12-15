@@ -1,10 +1,10 @@
 (ns game.ui.skill-window
   (:require clojure.set
+            [gdl.app :as app]
             [gdl.scene2d.ui :as ui]
             [utils.core :refer [safe-get]]
             [game.components.skills :refer (assoc-skill has-skill?)]
-            [game.skills.core :as skills]
-            [game.player.entity :refer (player-entity)]))
+            [game.skills.core :as skills]))
 
 (def ^:privat skill-icon-size 48)
 
@@ -14,11 +14,12 @@
 ; you can have more general modifiers menus toggling on/off
 ; passives toggle-able ... wtf / stances ...
 (defn- pressed-on-skill-in-menu [skill-id]
-  (when (and (pos? (:free-skill-points @player-entity))
-             (not (has-skill? @player-entity skill-id)))
-    (swap! player-entity #(-> %
-                              (update :free-skill-points dec)
-                              (update :skills assoc-skill skill-id)))))
+  (let [{:keys [context/player-entity]} @app/state]
+    (when (and (pos? (:free-skill-points @player-entity))
+               (not (has-skill? @player-entity skill-id)))
+      (swap! player-entity #(-> %
+                                (update :free-skill-points dec)
+                                (update :skills assoc-skill skill-id))))))
 
 (defn create [{:keys [context/properties]}]
   (let [window (ui/window :title "Skills"

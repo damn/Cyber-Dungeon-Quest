@@ -5,12 +5,12 @@
             [gdl.scene2d.ui :as ui]
             [gdl.scene2d.stage :as stage]
             [gdl.graphics.image :as image]
-            game.player.session-data)
+            game.session)
   (:import (com.badlogic.gdx Gdx Input$Keys)
            com.badlogic.gdx.scenes.scene2d.Stage))
 
 (defn- start-session []
-  (game.player.session-data/init)
+  (game..session/init-context) ; ideally do swap! state here
   (app/change-screen! :screens/ingame))
 
 (declare ^Stage stage

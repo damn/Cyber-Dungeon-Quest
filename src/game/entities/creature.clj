@@ -7,8 +7,7 @@
             [game.context :as gm]
             [game.entity :as entity]
             [game.components.body :refer (assoc-left-bottom valid-position?)]
-            [game.entities.audiovisual :as audiovisual]
-            [game.player.entity :refer (set-player-entity)]))
+            [game.entities.audiovisual :as audiovisual]))
 
 (defn- create-images [context creature-name]
   (map #(image/create context
@@ -23,8 +22,8 @@
      max-height]))
 
 (defcomponent :is-player _
-  (entity/create! [_ entity {:keys [world-camera]}]
-    (set-player-entity entity)
+  (entity/create! [_ entity {:keys [world-camera context/player-entity]}]
+    (reset! player-entity entity)
     (camera/set-position! world-camera (:position @entity)))
   ; TODO make on position changed trigger
   (entity/tick! [_ {:keys [world-camera]} entity delta]
@@ -90,6 +89,6 @@
                     (create-creature-data creature-params context)
                     (assoc :position position)
                     assoc-left-bottom)]
-    (if (valid-position? entity*)
+    (if (valid-position? context entity*)
       (gm/create-entity! context entity*)
       (println "Not able to spawn" creature-id "at" position))))

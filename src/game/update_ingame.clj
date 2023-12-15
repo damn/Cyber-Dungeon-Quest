@@ -3,13 +3,12 @@
             [game.running :refer (running)]
             [game.tick :as tick]
             [game.context :as gm]
-            [game.player.entity :refer (player-entity)]
             [game.components.hp :refer (dead?)]
             [game.components.inventory :as inventory]
             [game.ui.mouseover-entity :refer (update-mouseover-entity)]
             [game.components.movement :as movement]
             [game.utils.msg-to-player :refer [update-msg-to-player]]
-            [game.maps.mapchange :refer [check-change-map]]
+            ;[game.maps.mapchange :refer [check-change-map]]
             [game.maps.contentfields :refer [get-entities-in-active-content-fields]]
             [game.maps.potential-field :refer [update-potential-fields]])
   (:import (com.badlogic.gdx Gdx Input$Keys Input$Buttons)))
@@ -22,7 +21,7 @@
   (update-mouseover-entity stage context)
   (update-msg-to-player delta)
   (when @running
-    (update-potential-fields)))
+    (update-potential-fields context)))
 
 (defn- limit-delta [delta]
   (min delta movement/max-delta))
@@ -33,7 +32,7 @@
 
 ; TODO stepping -> p is one step -> how to do ?
 
-(defn update-game [context stage delta]
+(defn update-game [{:keys [context/player-entity] :as context} stage delta]
   ;(reset! running false)
   (when (.isKeyJustPressed Gdx/input Input$Keys/P)
     (swap! running not))
@@ -67,7 +66,7 @@
            (reset! thrown-error t) ; TODO show that an error appeared ! / or is paused without open debug window
            ))
     (when @running
-      (try (doseq [entity (get-entities-in-active-content-fields)]
+      (try (doseq [entity (get-entities-in-active-content-fields context)]
              (tick/tick-entity! context entity delta))
            (catch Throwable t
              (println "Catched throwable: ")
@@ -78,4 +77,4 @@
              (dead? @player-entity))
     (reset! running false)
     (gm/play-sound! context "sounds/bfxr_playerdeath.wav"))
-  (check-change-map))
+  #_(check-change-map))

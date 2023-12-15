@@ -1,8 +1,7 @@
 (ns game.ui.action-bar
   (:require [gdl.scene2d.ui :as ui]
             [game.session :as session]
-            [game.skills.core :as skills]
-            [game.player.entity :refer (player-entity)])
+            [game.skills.core :as skills])
   (:import (com.badlogic.gdx Gdx Input$Keys)
            com.badlogic.gdx.scenes.scene2d.Actor
            (com.badlogic.gdx.scenes.scene2d.ui HorizontalGroup ButtonGroup Button)))
@@ -58,9 +57,6 @@
                {:selected-skill nil
                 :actionbar (empty-slot->skill-id)})))
 
-(defn- player-skills []
-  (:skills @player-entity))
-
 (defn- add-skill-to-hotbar [skill-id]
   (let [unused-index (first (filter #(nil? (get @slot->skill-id %))
                                     slot-keys))]
@@ -70,26 +66,27 @@
 (declare check-hotbar-actualize
          ^HorizontalGroup horizontal-group) ; TODO == action-bar
 
+(defn- ->hotbar-actualize-actor []
+  (proxy [Actor] []
+    (act [_delta]
+      (check-hotbar-actualize @app/state))))
+
 (defn initialize! []
   (.bindRoot #'horizontal-group (HorizontalGroup.))
-  (.addActor horizontal-group (proxy [Actor] []
-                                (act [_delta]
-                                  (check-hotbar-actualize)))))
+  (.addActor horizontal-group (->hotbar-actualize-actor)))
 
 (declare ^ButtonGroup button-group)
 
-(defn- reset-buttons! []
+(defn- reset-buttons! [{:keys [context/player-entity]}]
   (.clearChildren horizontal-group)
-  (.addActor horizontal-group (proxy [Actor] []
-                                (act [_delta]
-                                  (check-hotbar-actualize))))
+  (.addActor horizontal-group (->hotbar-actualize-actor))
 
   (.bindRoot #'button-group (ButtonGroup.))
   (.setMaxCheckCount button-group 1)
   (.setMinCheckCount button-group 0)
   ;(.setUncheckLast button-group true) ? needed ?
 
-  (doseq [[id {:keys [image]}] (player-skills)
+  (doseq [[id {:keys [image]}] (:skills @player-entity)
           :let [button (ui/image-button image #(reset! selected-skill-id id))]]
     (.setName button (pr-str id))
     (.addListener button (ui/text-tooltip
@@ -103,15 +100,16 @@
  (.setChecked sword-button false)
  )
 
-(defn- check-hotbar-actualize []
-  (when-not (= (set (keys (player-skills)))
-               (set (vals @slot->skill-id)))
-    (reset! slot->skill-id nil)
-    (when-not (contains? (player-skills) @selected-skill-id)
-      (reset! selected-skill-id nil))
-    (doseq [skill-id (keys (player-skills))]
-      (add-skill-to-hotbar skill-id))
-    (reset-buttons!)))
+(defn- check-hotbar-actualize [{:keys [context/player-entity]}]
+  (let [player-skills (:skills @player-entity)]
+    (when-not (= (set (keys player-skills))
+                 (set (vals @slot->skill-id)))
+      (reset! slot->skill-id nil)
+      (when-not (contains? player-skills @selected-skill-id)
+        (reset! selected-skill-id nil))
+      (doseq [skill-id (keys player-skills)]
+        (add-skill-to-hotbar skill-id))
+      (reset-buttons! context))))
 
 (defn- number-str->input-key [number-str]
   (eval (symbol (str "com.badlogic.gdx.Input$Keys/NUM_" number-str))))

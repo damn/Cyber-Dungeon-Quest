@@ -25,7 +25,7 @@
      maxrange))
 
 ; TODO pass effect-params here.
-(defmethod ai-should-use? :target-entity [[effect-id effect-value] entity*]
+(defmethod ai-should-use? :target-entity [[effect-id effect-value] _context entity*]
   (in-range? entity*
              @(:target (:effect-params (:skillmanager entity*)))
              (:maxrange effect-value)))

@@ -1,6 +1,5 @@
 (ns game.line-of-sight
   (:require [gdl.graphics.camera :as camera]
-            [game.maps.data :refer (get-current-map-data)]
             [game.maps.cell-grid :as cell-grid]))
 
 ; TODO ! transparent entities shows 'zzz'
@@ -48,11 +47,11 @@
 ; could memoize it in the entities which entities(positions?) they are seeing or not
 ; and on position change delete it -> look up
 ; even for light sources could memoize position-to-position line of sight checks (static)
-(defn in-line-of-sight? [source* target* context]
+(defn in-line-of-sight? [source* target* {:keys [context/world-map] :as context}]
   (and (:z-order target*)  ; is even an entity which renders something
        (or (not (:is-player source*))
            (on-screen? target* context))
-       (not (cell-grid/ray-blocked? (get-current-map-data)
+       (not (cell-grid/ray-blocked? world-map
                                     (:position source*)
                                     (:position target*)))))
 

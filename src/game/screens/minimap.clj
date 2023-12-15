@@ -5,8 +5,7 @@
             [gdl.graphics.color :as color]
             [gdl.graphics.camera :as camera]
             [gdl.graphics.draw :as draw]
-            [game.utils.lightning :refer [minimap-color-setter]]
-            [game.maps.data :refer [get-current-map-data]])
+            [game.utils.lightning :refer [minimap-color-setter]])
   (:import (com.badlogic.gdx Gdx Input$Keys)
            (com.badlogic.gdx.graphics Color OrthographicCamera)))
 
@@ -21,11 +20,12 @@
 
 (def ^:private zoom-setting (atom nil))
 
-(defn- calculate-zoom [{:keys [^OrthographicCamera world-camera]}]
+(defn- calculate-zoom [{:keys [^OrthographicCamera world-camera
+                               context/world-map]}]
   (let [positions-explored (map first
                                 (remove (fn [[position value]]
                                           (false? value))
-                                        (seq @(:explored-tile-corners (get-current-map-data)))))
+                                        (seq @(:explored-tile-corners world-map))))
         viewport-width  (.viewportWidth  world-camera)
         viewport-height (.viewportHeight world-camera)
         [px py] (camera/position world-camera)
@@ -46,9 +46,9 @@
     (reset! zoom-setting (calculate-zoom context))
     (camera/set-zoom! world-camera @zoom-setting))
   (lc/hide [_])
-  (lc/render [_ {:keys [world-camera] :as context}]
+  (lc/render [_ {:keys [world-camera context/world-map] :as context}]
     (tiled/render-map context
-                      (:tiled-map (get-current-map-data))
+                      (:tiled-map world-map)
                       minimap-color-setter)
     (app/render-with context
                      :world

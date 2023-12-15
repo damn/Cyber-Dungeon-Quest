@@ -2,8 +2,7 @@
   (:require [gdl.graphics.draw :as draw]
             [gdl.graphics.image :as image]
             [utils.core :refer [readable-number]]
-            [data.val-max :refer [val-max-ratio]]
-            [game.player.entity :refer (player-entity)]))
+            [data.val-max :refer [val-max-ratio]]))
 
 (defn- render-infostr-on-bar [drawer {:keys [gui-viewport-width]} infostr y h]
   (draw/text drawer
@@ -31,7 +30,7 @@
                                           (* rahmenw (val-max-ratio minmaxval)) rahmenh) x y)
   (render-infostr-on-bar drawer context (str (readable-number (minmaxval 0)) "/" (minmaxval 1) " " name) y rahmenh))
 
-(defn- render-player-stats [drawer {:keys [gui-viewport-width] :as context}]
+(defn- render-player-stats [drawer {:keys [gui-viewport-width context/player-entity] :as context}]
   (let [x (- (/ gui-viewport-width 2)
              (/ rahmenw 2))
         y-hp 54

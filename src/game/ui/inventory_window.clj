@@ -9,8 +9,7 @@
             [game.context :as gm]
             [game.utils.msg-to-player :refer (show-msg-to-player)]
             [game.components.inventory :as inventory]
-            [game.items.core :as items]
-            [game.player.entity :refer (player-entity)]
+            [game.items.core :as item]
             [game.entities.item :as item-entity])
   (:import com.badlogic.gdx.graphics.Color
            (com.badlogic.gdx.scenes.scene2d Actor Group)
@@ -20,7 +19,7 @@
 (declare ^Window window)
 
 ; TODO ! important ! animation & dont put exactly hiding under player
-(defn put-item-on-ground [context]
+(defn put-item-on-ground [{:keys [context/player-entity] :as context}]
   {:pre [(:item-on-cursor @player-entity)]}
   (gm/play-sound! context "sounds/bfxr_itemputground.wav")
   (let [{x 0 y 1 :as posi} (:position @player-entity)
@@ -39,7 +38,7 @@
   ;(.play ^Sound (get assets "error.wav"))
   (show-msg-to-player "Two-handed weapon and shield is not possible."))
 
-(defn- clicked-cell [context cell]
+(defn- clicked-cell [{:keys [context/player-entity] :as context} cell]
   (let [entity player-entity
         inventory (:inventory @entity)
         item (get-in inventory cell)
@@ -120,7 +119,7 @@
 (def ^:private two-h-shield-color (color/rgb 0.6 0.6 0 0.8))
 (def ^:private not-allowed-color  (color/rgb 0.6 0   0 0.8))
 
-(defn- draw-cell-rect [drawer x y mouseover? cell]
+(defn- draw-cell-rect [drawer player-entity x y mouseover? cell]
   (draw/rectangle drawer x y cell-size cell-size Color/GRAY)
   (when-let [item (:item-on-cursor @player-entity)]
     (when mouseover?
@@ -144,9 +143,10 @@
 (defn- draw-rect-actor ^Widget []
   (proxy [Widget] []
     (draw [_batch _parent-alpha]
-      (let [{:keys [drawer gui-mouse-position]} (app/current-context)
+      (let [{:keys [drawer gui-mouse-position context/player-entity]} (app/current-context)
             ^Widget this this]
         (draw-cell-rect drawer
+                        player-entity
                         (.getX this)
                         (.getY this)
                         (mouseover? this gui-mouse-position)
@@ -203,7 +203,8 @@
   (let [cell-widget (get-cell-widget cell)
         image-widget (get-image-widget cell-widget)]
     (.setDrawable image-widget (ui/texture-region-drawable (:texture (:image item))))
-    (.addListener cell-widget (ui/text-tooltip #(items/text item)))))
+    (.addListener cell-widget (ui/text-tooltip #(item/text (:context/player-entity @app/state)
+                                                           item)))))
 
 (defn- remove-item-from-widget! [cell]
   (let [cell-widget (get-cell-widget cell)

@@ -13,7 +13,6 @@
             [game.components.faction :as faction]
             [game.components.position :refer (get-tile)]
             [game.maps.contentfields :refer (get-entities-in-active-content-fields)]
-            [game.maps.data :refer (get-current-map-data)]
             [game.maps.cell-grid :refer (cached-get-adjacent-cells cell-blocked?
                                                                    is-diagonal? occupied-by-other? inside-cell?
                                                                    fast-cell-blocked?)]))
@@ -122,9 +121,9 @@
                                           faction
                                           tiles->entities)))))
 
-(defn update-potential-fields []
-  (let [entities (get-entities-in-active-content-fields)
-        cell-grid (:cell-grid (get-current-map-data))]
+(defn update-potential-fields [{:keys [context/world-map] :as context}]
+  (let [entities (get-entities-in-active-content-fields context)
+        cell-grid (:cell-grid world-map)]
     (doseq [faction [:good :evil]]
       (update-faction-potential-field cell-grid
                                       faction

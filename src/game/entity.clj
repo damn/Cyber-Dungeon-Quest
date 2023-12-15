@@ -12,7 +12,7 @@
 (defsystem tick  [_ delta])
 (defsystem tick! [_ context e delta])
 
-(defsystem moved! [_ e direction-vector])
+(defsystem moved! [_ e context direction-vector])
 (defsystem affected! [_ e context])
 (defsystem stun! [_ e])
 

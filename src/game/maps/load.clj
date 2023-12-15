@@ -18,10 +18,10 @@
 
 (defn load-maps-content
   "loads the map content in the right order"
-  [context]
+  [{:keys [context/world-map] :as context}]
   ; TODO assert spawns !!
   (creature-entity/create! :vampire ; <+ this main game config should not be here spread out through the code (also skills damage tc.)
-                           (:start-position (data/get-current-map-data))
+                           (:start-position world-map)
                            {:is-player true}
                            context)
   (doseq [map-name data/added-map-order]

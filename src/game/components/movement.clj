@@ -6,7 +6,6 @@
             [game.entity :as entity]
             [game.effect :as effect]
             [game.components.body :as body]
-            [game.maps.data :refer (get-current-map-data)]
             [game.entities.audiovisual :as audiovisual]
             [game.maps.cell-grid :as grid]))
 
@@ -23,11 +22,12 @@
         (update-in [:body :left-bottom] apply-delta)))) ; TODO left-bottom/center of 'body' has on-position-changed?
 ; but need to check here ... lets see
 
-(defn- update-position-projectile [{:keys [cell-grid] :as context} projectile delta v]
+(defn- update-position-projectile [{:keys [context/world-map] :as context} projectile delta v]
   (swap! projectile apply-delta-v delta v)
   (let [{:keys [hit-effects
                 already-hit-bodies
                 piercing]} (:projectile-collision @projectile)
+        cell-grid (:cell-grid world-map)
         touched-cells (grid/rectangle->touched-cells cell-grid (:body @projectile))
         ; valid-position? for solid entity check
         ; on invalid returns {:hit-entities, :or :touched-cells}'
@@ -55,24 +55,20 @@
       (do
        (swap! projectile assoc :destroyed? true)
        false) ; not moved
-      (do
-       (body/update-touched-cells! projectile touched-cells)
-       true)))) ; moved
+      true))) ; moved
 
-(defn- try-move [cell-grid entity delta v]
-  (let [entity* (apply-delta-v @entity delta v)
-        touched-cells (grid/rectangle->touched-cells cell-grid (:body entity*))]
-    (when (body/valid-position? entity* touched-cells)
+(defn- try-move [context entity delta v]
+  (let [entity* (apply-delta-v @entity delta v)]
+    (when (body/valid-position? context entity*)
       (reset! entity entity*)
-      (body/update-touched-cells! entity touched-cells)
       true)))
 
-(defn- update-position-solid [{:keys [cell-grid]} entity delta {vx 0 vy 1 :as v}]
+(defn- update-position-solid [context entity delta {vx 0 vy 1 :as v}]
   (let [xdir (Math/signum (float vx))
         ydir (Math/signum (float vy))]
-    (or (try-move cell-grid entity delta v)
-        (try-move cell-grid entity delta [xdir 0])
-        (try-move cell-grid entity delta [0 ydir]))))
+    (or (try-move context entity delta v)
+        (try-move context entity delta [xdir 0])
+        (try-move context entity delta [0 ydir]))))
 
 ; das spiel soll bei 20fps noch "schnell" sein,d.h. net langsamer werden (max-delta wirkt -> game wird langsamer)
 ; 1000/20 = 50
@@ -99,13 +95,12 @@
   ; how to do this with assoc/dissoc ?
   (entity/tick! [_ context e delta]
     ; TODO direction-vector not 'v' , 'v' is value
-    (let [context (assoc context :cell-grid (:cell-grid (get-current-map-data)))]
-      (when-let [v (:movement-vector @e)]
-        (assert (or (zero? (v/length v)) ; TODO what is the point of zero length vectors?
-                    (v/normalised? v)))
-        (when-not (zero? (v/length v))
-          (when-let [moved? (if (:projectile-collision @e)
-                              ; => move! called on body itself ???
-                              (update-position-projectile context e delta v)
-                              (update-position-solid      context e delta v))]
-            (doseq-entity e entity/moved! v)))))))
+    (when-let [v (:movement-vector @e)]
+      (assert (or (zero? (v/length v)) ; TODO what is the point of zero length vectors?
+                  (v/normalised? v)))
+      (when-not (zero? (v/length v))
+        (when-let [moved? (if (:projectile-collision @e)
+                            ; => move! called on body itself ???
+                            (update-position-projectile context e delta v)
+                            (update-position-solid      context e delta v))]
+          (doseq-entity e entity/moved! context v))))))

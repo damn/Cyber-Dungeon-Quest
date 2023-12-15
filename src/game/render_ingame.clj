@@ -3,20 +3,18 @@
             [gdl.graphics.color :as color]
             [gdl.graphics.camera :as camera]
             [game.line-of-sight :refer (in-line-of-sight?)]
-            [game.maps.data :refer [get-current-map-data]]
             [game.maps.cell-grid :as cell-grid]
             [game.render :as render]
             [game.player.status-gui :refer [render-player-hp-mana]]
             [game.utils.msg-to-player :refer [render-message-to-player]]
             [game.update-ingame :refer (thrown-error)]
-            [game.player.entity :refer (player-entity)]
             [game.maps.contentfields :refer [get-entities-in-active-content-fields]]
             [game.maps.potential-field :as potential-field])
   (:import com.badlogic.gdx.graphics.Color))
 
-(defn- geom-test [drawer {:keys [world-mouse-position]}]
+(defn- geom-test [drawer {:keys [world-mouse-position context/world-map]}]
   (let [position world-mouse-position
-        cell-grid (:cell-grid (get-current-map-data))
+        cell-grid (:cell-grid world-map)
         radius 0.8
         circle {:position position :radius radius}]
     (draw/circle drawer position radius (color/rgb 1 0 0 0.5))
@@ -30,13 +28,14 @@
  (count (filter #(:sleeping @%) (get-entities-in-active-content-fields)))
  )
 
-(defn- visible-entities* [context]
-  (->> (get-entities-in-active-content-fields)
+(defn- visible-entities* [{:keys [context/player-entity] :as context}]
+  (->> (get-entities-in-active-content-fields context)
        (map deref)
        (filter #(in-line-of-sight? @player-entity % context))))
 
-(defn- tile-debug [drawer {:keys [world-camera world-viewport-width world-viewport-height]}]
-  (let [cell-grid (:cell-grid (get-current-map-data))
+(defn- tile-debug [drawer {:keys [world-camera world-viewport-width world-viewport-height
+                                  context/world-map]}]
+  (let [cell-grid (:cell-grid world-map)
         [left-x right-x bottom-y top-y] (camera/frustum world-camera)]
     (draw/grid drawer (int left-x)
                        (int bottom-y)
@@ -61,7 +60,9 @@
       #_(when (:monster @cell)
           (@#'g/draw-string x y (str (:id @(:monster @cell))) 1)))))
 
-(defn render-map-content [drawer {:keys [world-mouse-position] :as context}]
+(defn render-map-content [drawer {:keys [world-mouse-position
+                                         context/world-map]
+                                  :as context}]
   #_(tile-debug drawer context)
 
   (render/render-entities* drawer
@@ -72,7 +73,7 @@
 
   ; highlight current mouseover-tile
   #_(let [[x y] (mapv int world-mouse-position)
-        cell-grid (:cell-grid (get-current-map-data))
+        cell-grid (:cell-grid world-map)
         cell (get cell-grid [x y])]
     (draw/rectangle drawer x y 1 1 (color/rgb 0 1 0 0.5))
     #_(g/render-readable-text x y {:shift false}

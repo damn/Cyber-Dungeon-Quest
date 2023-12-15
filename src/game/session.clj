@@ -1,6 +1,91 @@
-(ns game.session)
+(ns game.session
+  (:require [x.x :refer [update-map doseq-entity]]
+            [game.context :as gm]
+            [game.entity :as entity]
+            [gdl.app :as app]
+            [game.session :as session]
+            game.maps.impl
+            game.maps.data
+            game.maps.load
+            game.utils.msg-to-player
+            game.screens.options
+            game.ui.action-bar
+            game.ui.inventory-window)
+  (:import com.badlogic.gdx.audio.Sound))
 
-(defprotocol State
-  (load! [_ data])
-  (serialize [_])
-  (initial-data [_]))
+; not sure I should extend gdl.app.Context
+; or create a 'session' inside , why e need the whole context???
+; so far only ids->entities? which could be part of some kind of 'session' or 'world' context/world
+; record and not part of the overall record ?!
+; => see create! and destroy! which needs it ...
+
+
+; :body => needs map data / cell-grid for create! / destroy!
+; :id needs id-entity-map
+; items need properties and try-pickup-item!, maybe problematic
+; :position needs contentfields
+; :skills need properties
+
+; player sets world-camera position , also at tick (I could do that before render just set the camera position to player entity)
+; :default-monster-death needs audiovisual -> sound -> assets/properties
+
+; what do I want to do ? completely immutable game structure, only pure functions?
+; => transactions on the game state itself are done in tick, no atoms ...
+
+(extend-type gdl.app.Context
+  gm/Context
+  (get-entity [{:keys [context/ids->entities]} id]
+    (get @ids->entities id))
+
+  (entity-exists? [context e]
+    (gm/get-entity context (:id @e)))
+
+  (create-entity! [context components-map]
+    {:pre [(not (contains? components-map :id))]}
+    (-> (assoc components-map :id nil)
+        (update-map entity/create)
+        atom
+        (doseq-entity entity/create! context)))
+
+  (destroy-to-be-removed-entities!
+    [{:keys [context/ids->entities] :as context}]
+    (doseq [e (filter (comp :destroyed? deref) (vals @ids->entities))
+            :when (gm/entity-exists? context e)] ; TODO why is this ?, maybe assert ?
+      (swap! e update-map entity/destroy)
+      (doseq-entity e entity/destroy! context)))
+
+  (play-sound! [{:keys [assets]} file]
+    (.play ^Sound (get assets file))))
+
+; atom player-entity set to nil
+(def state (reify session/State
+             (load! [_ _]
+               (game.maps.data/add-world-map (game.maps.impl/first-level))
+               ; do this before loading entities! or they canot add themself there !
+               (swap! app/state assoc :context/world-map (game.maps.data/get-current-map-data))
+               )
+             (serialize [_])
+             (initial-data [_])))
+
+(def ^:private session-components
+  [; resets all map data -> do it before creating maps
+   game.maps.data/state
+   ; create maps before putting entities in them
+   game.player.session-data/state
+   game.ui.inventory-window/state
+   ; adding entities (including player-entity)
+   game.maps.load/state
+   ; now the order of initialisation does not matter anymore
+   game.ui.action-bar/state
+   game.screens.options/state
+   game.ui.mouseover-entity/state
+   game.utils.msg-to-player/state])
+
+(defn init-context []
+  (println "~ init session")
+  (swap! app/state assoc :context/ids->entities (atom {}))
+  (doseq [component session-components]
+    (session/load! component
+                   (session/initial-data component)))
+  (println " ~ loaded all components, adding context/world-map")
+  )

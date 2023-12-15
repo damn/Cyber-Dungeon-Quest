@@ -1,11 +1,7 @@
-; TODO  nothing to do with maps - move to position ?
-
 ; TODO why not just check range to player for updating entities
 ; why make this fields ?
 (ns game.maps.contentfields
-  (:require [data.grid2d :as grid]
-            [game.maps.data :refer (get-current-map-data)]
-            [game.player.entity :refer (player-entity)]))
+  (:require [data.grid2d :as grid]))
 
 ; Contentfield Entities
 ; -> :position sollten sie haben
@@ -25,8 +21,11 @@
     [(int (/ x field-w))
      (int (/ y field-h))]))
 
-(defn- get-contentfields []
-  (:contentfields (get-current-map-data)))
+(defn- get-contentfields [{:keys [context/world-map]}]
+  (let [cfs  (:contentfields world-map)]
+    (println "fetching contentfields: " cfs)
+    cfs
+    ))
 
 (defn get-content-field [entity]
   (:content-field entity))
@@ -34,9 +33,9 @@
 (defn remove-entity-from-content-field [entity]
   (swap! (:entities (get-content-field @entity)) disj entity))
 
-(defn put-entity-in-correct-content-field [entity]
+(defn put-entity-in-correct-content-field [context entity]
   (let [old-field (get-content-field @entity)
-        new-field (get (get-contentfields)
+        new-field (get (get-contentfields context)
                        (get-field-idx-of-position (:position @entity)))]
     (when-not (= old-field new-field)
       (swap! (:entities new-field) conj entity)
@@ -44,17 +43,17 @@
       (when old-field
         (swap! (:entities old-field) disj entity)))))
 
-(defn get-player-content-field-idx []
+(defn- get-player-content-field-idx [{:keys [context/player-entity]}]
   (:idx (get-content-field @player-entity)))
 
-(defn get-entities-in-active-content-fields
+(defn get-entities-in-active-content-fields ; ? part of 'gm' ? to be updated/rendered entities ? 'active' ??
   "of current map"
-  []
+  [context]
   (mapcat #(deref (:entities %)); (comp deref :entities) or #(... %) ?
     (remove nil?
-            (map (get-contentfields)  ; keep (get-contentfields)  ?  also @ potential field thing
+            (map (get-contentfields context)  ; keep (get-contentfields)  ?  also @ potential field thing
                  (let [idx (get-player-content-field-idx)]
                    (cons idx (grid/get-8-neighbour-positions idx)))))))
 
-(defn get-all-entities-of-current-map []
-  (mapcat #(deref (:entities %)) (grid/cells (get-contentfields))))
+#_(defn get-all-entities-of-current-map [context]
+  (mapcat #(deref (:entities %)) (grid/cells (get-contentfields context))))

@@ -12,8 +12,7 @@
             [game.ui.mouseover-entity :refer (saved-mouseover-entity get-mouseover-entity)]
             [game.utils.counter :as counter]
             [game.effect :as effect]
-            [game.entity :as entity]
-            [game.maps.data :refer (get-current-map-data)]))
+            [game.entity :as entity]))
 
 (defn- nearest-enemy-entity [cell-grid entity*]
   (let [enemy-faction (faction/enemy (:faction entity*))]
@@ -21,7 +20,7 @@
         enemy-faction
         :entity)))
 
-(defn- make-effect-params [entity {:keys [world-mouse-position]}]
+(defn- make-effect-params [{:keys [world-mouse-position context/world-map]} entity]
   (merge {:source entity}
          (if (:is-player @entity)
            (let [target (or (saved-mouseover-entity)
@@ -32,7 +31,7 @@
               :target-position target-position
               :direction (v/direction (:position @entity)
                                       target-position)})
-           (let [target (nearest-enemy-entity (:cell-grid (get-current-map-data))
+           (let [target (nearest-enemy-entity (:cell-grid world-map)
                                               @entity)]
              {:target target
               :direction (when target
@@ -106,20 +105,25 @@
    :else
    :usable))
 
-(defmulti ai-should-use? (fn [[effect-type effect-value] entity*] effect-type))
-(defmethod ai-should-use? :default [_ entity*]
+(defmulti ai-should-use?
+  (fn [[effect-type _effect-value] _context _entity*]
+    effect-type))
+
+(defmethod ai-should-use? :default [_ _context _entity*]
   true)
 
-(defmulti choose-skill :choose-skill-type)
+(defmulti choose-skill
+  (fn [_context entity*]
+    (:choose-skill-type entity*)))
 
-(defmethod choose-skill :npc [entity*]
+(defmethod choose-skill :npc [context entity*]
   (->> entity*
        :skills
        vals
        (sort-by #(or (:cost %) 0))
        reverse
        (filter #(and (= :usable (usable-state entity* %))
-                     (ai-should-use? (:effect %) entity*)))
+                     (ai-should-use? (:effect %) context entity*)))
        first
        :id))
 
@@ -162,8 +166,8 @@
          (effect/do! effect effect-params context))))))
 
 (defn- check-start! [context entity]
-  (swap! entity assoc-in [:skillmanager :effect-params] (make-effect-params entity context))
-  (let [skill (when-let [id (choose-skill @entity)]
+  (swap! entity assoc-in [:skillmanager :effect-params] (make-effect-params context entity))
+  (let [skill (when-let [id (choose-skill context @entity)]
                 (id (:skills @entity)))]
     (when skill
       (assert (= :usable (usable-state @entity skill)))

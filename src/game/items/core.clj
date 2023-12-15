@@ -1,8 +1,7 @@
 (ns game.items.core
   (:require [clojure.string :as str]
             [gdl.graphics.color :as color]
-            [game.modifier :as modifier]
-            [game.player.entity :refer (player-entity)]))
+            [game.modifier :as modifier]))
 
 ; diablo2 unique gold rgb 144 136 88
 (color/defrgb ^:private gold-item-color 0.84 0.8 0.52)
@@ -17,7 +16,7 @@
        (when-let [cnt (:count item)]
          (str " (" cnt ")"))))
 
-(defn text [item]
+(defn text [entity item]
   (str (if (= (:slot item) :weapon)
          "" ; already in first modifier name of weapon skill == item name (also pretty-name?!)
          (str (item-name item) "\n"))
@@ -25,4 +24,4 @@
        ; no need for this here ?
        (str/join "\n"
                  (for [modifier (:modifiers item)]
-                   (modifier/text player-entity modifier)))))
+                   (modifier/text entity modifier)))))

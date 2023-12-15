@@ -4,7 +4,6 @@
             [gdl.graphics.animation :as animation]
             [gdl.graphics.image :as image]
             [game.effect :as effect]
-            [game.maps.data :refer (get-current-map-data)]
             [game.maps.cell-grid :as cell-grid]
             [game.components.skills :refer (ai-should-use?)]
             [game.entities.projectile :as projectile-entity]))
@@ -17,15 +16,17 @@
 (def ^:private speed 10)
 (def ^:private maxtime (/ maxrange (/ speed 1000)))
 
-(defn- projectile-path-blocked? [start target]
-  (cell-grid/is-path-blocked? (get-current-map-data) start target size))
+; => world-map protocol ?
+(defn- projectile-path-blocked? [{:keys [context/world-map]} start target]
+  (cell-grid/is-path-blocked? world-map start target size))
 
 ; TODO valid params direction has to be  non-nil (entities not los player ) ?
 
 ; TODO pass effect params (target ..)
-(defmethod ai-should-use? :projectile [_ entity*]
+(defmethod ai-should-use? :projectile [_ context entity*]
   (let [target (:target (:effect-params (:skillmanager entity*)))]
-    (and (not (projectile-path-blocked? (:position entity*) ; TODO test
+    (and (not (projectile-path-blocked? context
+                                        (:position entity*) ; TODO test
                                         (:position @target)))
          ; TODO not taking into account body sizes
          (< (v/distance (:position entity*)

@@ -7,7 +7,7 @@
             [gdl.scene2d.actor :as actor]
             [gdl.scene2d.stage :as stage]
             [gdl.scene2d.ui :as ui]
-            [game.properties :as properties]
+            [utils.core :refer [safe-get]]
             [game.ui.debug-window :as debug-window]
             [game.ui.help-window :as help-window]
             [game.ui.entity-info-window :as entity-info-window]
@@ -18,8 +18,6 @@
             [game.components.clickable :as clickable]
             [game.components.hp :refer (dead?)]
             [game.components.skills :as skill-component]
-            [game.maps.data :refer [get-current-map-data]]
-            [game.player.entity :refer (player-entity)]
             [game.utils.lightning :refer [tile-color-setter]]
             game.update-ingame
             game.render-ingame)
@@ -29,7 +27,7 @@
 (defn- item-on-cursor-render-actor []
   (proxy [Actor] []
     (draw [_batch _parent-alpha]
-      (let [{:keys [drawer gui-mouse-position] :as context} (app/current-context)]
+      (let [{:keys [drawer gui-mouse-position context/player-entity] :as context} (app/current-context)]
         (when-let [item (:item-on-cursor @player-entity)]
           ; windows keep changing z-index when selected, or put all windows in 1 group and this actor another group
           (.toFront ^Actor this)
@@ -85,7 +83,7 @@
         (when (pos? (v/length v))
           v)))))
 
-(defn- set-movement! [v]
+(defn- set-movement! [player-entity v]
   (swap! player-entity assoc :movement-vector v))
 
 (defn- handle-key-input [{:keys [debug-window
@@ -93,7 +91,7 @@
                                  entity-info-window
                                  skill-window
                                  help-window] :as stage}
-                         {:keys [assets gui-mouse-position world-mouse-position]}]
+                         {:keys [assets gui-mouse-position world-mouse-position context/player-entity]}]
   (action-bar/up-skill-hotkeys)
   (let [windows [debug-window
                  help-window
@@ -126,9 +124,9 @@
   ; we check left-mouse-pressed? and not left-mouse-down? because down may miss
   ; short taps between frames
   (if (:active-skill? @player-entity)
-    (set-movement! nil)
+    (set-movement! player-entity nil)
     (do
-     (set-movement! (wasd-movement-vector))
+     (set-movement! player-entity (wasd-movement-vector))
      (cond
       (and (.isButtonJustPressed Gdx/input Input$Buttons/LEFT)
            (not (stage/hit stage gui-mouse-position))
@@ -145,30 +143,32 @@
       (and (or (.isButtonJustPressed Gdx/input Input$Buttons/LEFT)
                (.isButtonPressed Gdx/input Input$Buttons/LEFT))
            (not (stage/hit stage gui-mouse-position))
-           (clickable/clickable-mouseover-entity? (get-mouseover-entity)))
+           (clickable/clickable-mouseover-entity? @player-entity
+                                                  (get-mouseover-entity)))
       (clickable/on-clicked {:stage stage
                              :assets assets}
                             (get-mouseover-entity))
 
       (saved-mouseover-entity) ; saved=holding leftmouse down after clicking on mouseover entity
-      (set-movement! (v/direction (:position @player-entity)
-                                  (:position @(saved-mouseover-entity))))
+      (set-movement! player-entity (v/direction (:position @player-entity)
+                                                (:position @(saved-mouseover-entity))))
 
       (and (.isButtonPressed Gdx/input Input$Buttons/LEFT)
            (not (stage/hit stage gui-mouse-position)))
-      (set-movement! (v/direction (:position @player-entity)
-                                  world-mouse-position))))))
+      (set-movement! player-entity (v/direction (:position @player-entity)
+                                                world-mouse-position))))))
 
-(defmethod skill-component/choose-skill :player [entity*]
+(defmethod skill-component/choose-skill :player [{:keys [context/properties]} entity*]
   (when-let [skill-id @action-bar/selected-skill-id]
     ; TODO no skill selected and leftmouse -> also show msg to player/sound
     (when (and (not (:item-on-cursor entity*))
-               (not (clickable/clickable-mouseover-entity? (get-mouseover-entity)))
+               (not (clickable/clickable-mouseover-entity? entity*
+                                                           (get-mouseover-entity)))
                (or (.isButtonJustPressed Gdx/input Input$Buttons/LEFT)
-                   (.isButtonPressed Gdx/input Input$Buttons/LEFT)))
+                   (.isButtonPressed     Gdx/input Input$Buttons/LEFT)))
       ; TODO directly pass skill here ...
       ; TODO should get from entity :skills ! not properties ... ?
-      (let [state (skill-component/usable-state entity* (properties/get skill-id))]
+      (let [state (skill-component/usable-state entity* (safe-get properties skill-id))]
         (if (= state :usable)
           skill-id
           #_(println (str "Skill usable state not usable: " state))
@@ -206,9 +206,9 @@
     (.setInputProcessor Gdx/input stage))
   (lc/hide [_]
     (.setInputProcessor Gdx/input nil))
-  (lc/render [_ context]
+  (lc/render [_ {:keys [context/world-map] :as context}]
     (tiled/render-map context
-                      (:tiled-map (get-current-map-data))
+                      (:tiled-map world-map)
                       #'tile-color-setter)
     (app/render-with context
                      :world

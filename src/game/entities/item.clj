@@ -2,11 +2,10 @@
   (:require [game.context :as gm]
             [game.components.clickable :as clickable]
             [game.components.inventory :as inventory]
-            [game.utils.msg-to-player :refer [show-msg-to-player]]
-            [game.player.entity :refer [player-entity]])
+            [game.utils.msg-to-player :refer [show-msg-to-player]])
   (:import com.badlogic.gdx.scenes.scene2d.Actor))
 
-(defmethod clickable/on-clicked :item [{:keys [stage] :as context} entity]
+(defmethod clickable/on-clicked :item [{:keys [context/player-entity stage] :as context} entity]
   (let [item (:item @entity)]
     (cond
      (.isVisible ^Actor (:inventory-window stage))
