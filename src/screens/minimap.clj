@@ -5,7 +5,7 @@
             [gdl.graphics.color :as color]
             [gdl.graphics.camera :as camera]
             [gdl.graphics.draw :as draw]
-            [game.utils.lightning :refer [minimap-color-setter]])
+            [game.maps.tile-color-setters :refer [minimap-color-setter]])
   (:import (com.badlogic.gdx Gdx Input$Keys)
            (com.badlogic.gdx.graphics Color OrthographicCamera)))
 

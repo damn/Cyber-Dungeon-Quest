@@ -9,7 +9,7 @@
             [game.maps.cell-grid :as cell-grid]
             [game.entity :as entity]
             [game.ui.hp-mana-bars :refer [render-player-hp-mana]]
-            [game.utils.lightning :refer [tile-color-setter]]
+            [game.maps.tile-color-setters :refer [tile-color-setter]]
             [game.maps.contentfields :refer [get-entities-in-active-content-fields]])
   (:import com.badlogic.gdx.graphics.Color))
 
