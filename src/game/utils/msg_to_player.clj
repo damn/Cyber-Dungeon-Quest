@@ -1,7 +1,7 @@
 ; MOVE TO UI !
 ; TODO broken! not displaying anything...
 (ns game.utils.msg-to-player
-  (:require [game.session :as session]))
+  #_(:require [game.session :as session]))
 
 ; TODO use game.utils.counter instead
 (defn- reset-counter! [counter]
@@ -21,7 +21,7 @@
 (def ^:private message (atom nil))
 (def ^:private counter (atom nil))
 
-(def state (reify session/State
+#_(def state (reify session/State
              (load! [_ _]
                (reset! message nil)
                (reset! counter {:current 0,:max 4000}))

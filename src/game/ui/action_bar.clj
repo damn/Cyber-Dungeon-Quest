@@ -1,6 +1,6 @@
 (ns game.ui.action-bar
-  (:require [gdl.scene2d.ui :as ui]
-            [game.session :as session]
+  (:require [gdl.app :as app]
+            [gdl.scene2d.ui :as ui]
             [game.skills.core :as skills])
   (:import (com.badlogic.gdx Gdx Input$Keys)
            com.badlogic.gdx.scenes.scene2d.Actor
@@ -33,10 +33,6 @@
 ; * TODO add hotkey number to tooltips
 ; * TODO hotkeys => select button
 
-(def selected-skill-id (atom nil))
-
-(def ^:private slot->skill-id (atom nil))
-
 (def ^:private slot-keys [:1 :2 :3 :4 :5 :6 :7 :8 :9])
 
 (defn- empty-slot->skill-id []
@@ -44,12 +40,19 @@
          (interleave slot-keys
                      (repeat nil))))
 
+(def selected-skill-id (atom nil))
+(def ^:private slot->skill-id (atom nil))
+
+(defn reset-skills! []
+  (reset! selected-skill-id nil)
+  (reset! slot->skill-id (empty-slot->skill-id)))
+
 ; TODO gui-state is not restored (widgets)
-(def state (reify session/State
+#_(def state (reify session/State
              (load! [_ {:keys [selected-skill
                                actionbar]}]
-               (reset! selected-skill-id selected-skill)
-               (reset! slot->skill-id actionbar))
+               (reset! selected-skill-id nil)
+               (reset! slot->skill-id (empty-slot->skill-id)))
              (serialize [_]
                {:selected-skill @selected-skill-id
                 :actionbar      @slot->skill-id})
@@ -100,7 +103,7 @@
  (.setChecked sword-button false)
  )
 
-(defn- check-hotbar-actualize [{:keys [context/player-entity]}]
+(defn- check-hotbar-actualize [{:keys [context/player-entity] :as context}]
   (let [player-skills (:skills @player-entity)]
     (when-not (= (set (keys player-skills))
                  (set (vals @slot->skill-id)))

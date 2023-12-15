@@ -15,17 +15,14 @@
                       (inc (int (/ h field-h)))
                       (fn [idx]
                         {:idx idx,
-                         :entities (atom #{})})))
+                         :entities (atom #{})}))) ; move atom out
 
   (defn- get-field-idx-of-position [[x y]]
     [(int (/ x field-w))
      (int (/ y field-h))]))
 
 (defn- get-contentfields [{:keys [context/world-map]}]
-  (let [cfs  (:contentfields world-map)]
-    (println "fetching contentfields: " cfs)
-    cfs
-    ))
+  (:contentfields world-map))
 
 (defn get-content-field [entity]
   (:content-field entity))
@@ -39,7 +36,7 @@
                        (get-field-idx-of-position (:position @entity)))]
     (when-not (= old-field new-field)
       (swap! (:entities new-field) conj entity)
-      (swap! entity assoc-in [:content-field] new-field)
+      (swap! entity assoc :content-field new-field)
       (when old-field
         (swap! (:entities old-field) disj entity)))))
 
@@ -52,7 +49,7 @@
   (mapcat #(deref (:entities %)); (comp deref :entities) or #(... %) ?
     (remove nil?
             (map (get-contentfields context)  ; keep (get-contentfields)  ?  also @ potential field thing
-                 (let [idx (get-player-content-field-idx)]
+                 (let [idx (get-player-content-field-idx context)]
                    (cons idx (grid/get-8-neighbour-positions idx)))))))
 
 #_(defn get-all-entities-of-current-map [context]

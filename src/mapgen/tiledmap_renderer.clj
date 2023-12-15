@@ -8,7 +8,6 @@
             [gdl.maps.tiled :as tiled]
             [gdl.scene2d.ui :as ui]
             [gdl.scene2d.stage :as stage]
-            game.maps.impl
             [mapgen.movement-property :refer (movement-property movement-properties)]
             [mapgen.module-gen :as module-gen])
   (:import (com.badlogic.gdx Gdx Input$Keys)
@@ -170,7 +169,7 @@
   (reset! current-tiled-map (tiled/load-map module-gen/modules-file))
   (let [stage (stage/create gui-viewport batch)
         window (ui/window :title "Properties")
-        [form get-properties] (edn-edit-form game.maps.impl/map-data-file)]
+        [form get-properties] (edn-edit-form "resources/maps/map.edn")] ; TODO move to properties
     (.addActor stage window)
     (.add window ^com.badlogic.gdx.scenes.scene2d.Actor form)
     (.row window)

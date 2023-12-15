@@ -21,7 +21,7 @@
                                 (update :free-skill-points dec)
                                 (update :skills assoc-skill skill-id))))))
 
-(defn create [{:keys [context/properties]}]
+(defn create [{:keys [context/properties context/player-entity]}]
   (let [window (ui/window :title "Skills"
                           :id :skill-window)]
     (doseq [id [:projectile

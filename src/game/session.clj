@@ -1,14 +1,18 @@
 (ns game.session
-  (:require [x.x :refer [update-map doseq-entity]]
+  (:require [clojure.edn :as edn]
+            [x.x :refer [update-map doseq-entity]]
+            [data.grid2d :as grid]
+            [gdl.app :as app]
+            [gdl.lifecycle :as lc]
+            [gdl.maps.tiled :as tiled]
+            [utils.core :refer [translate-to-tile-middle]]
+            [mapgen.movement-property :refer (movement-property)]
+            mapgen.module-gen
+            [game.maps.cell-grid :as cell-grid]
+            [game.maps.contentfields :refer [create-mapcontentfields]]
             [game.context :as gm]
             [game.entity :as entity]
-            [gdl.app :as app]
-            [game.session :as session]
-            game.maps.impl
-            game.maps.data
-            game.maps.load
-            game.utils.msg-to-player
-            game.screens.options
+            [game.entities.creature :as creature-entity]
             game.ui.action-bar
             game.ui.inventory-window)
   (:import com.badlogic.gdx.audio.Sound))
@@ -57,35 +61,83 @@
   (play-sound! [{:keys [assets]} file]
     (.play ^Sound (get assets file))))
 
-; atom player-entity set to nil
-(def state (reify session/State
-             (load! [_ _]
-               (game.maps.data/add-world-map (game.maps.impl/first-level))
-               ; do this before loading entities! or they canot add themself there !
-               (swap! app/state assoc :context/world-map (game.maps.data/get-current-map-data))
-               )
-             (serialize [_])
-             (initial-data [_])))
+(defn- first-level []
+  (let [{:keys [tiled-map start-positions]} (mapgen.module-gen/generate
+                                             (edn/read-string (slurp "resources/maps/map.edn"))) ; TODO move to properties
+        start-position (translate-to-tile-middle
+                        (rand-nth (filter #(= "all" (movement-property tiled-map %))
+                                          start-positions)))]
+    {:map-key :first-level
+     :pretty-name "First Level"
+     :tiled-map tiled-map
+     :start-position start-position}))
 
-(def ^:private session-components
-  [; resets all map data -> do it before creating maps
-   game.maps.data/state
-   ; create maps before putting entities in them
-   game.player.session-data/state
-   game.ui.inventory-window/state
-   ; adding entities (including player-entity)
-   game.maps.load/state
-   ; now the order of initialisation does not matter anymore
-   game.ui.action-bar/state
-   game.screens.options/state
-   game.ui.mouseover-entity/state
-   game.utils.msg-to-player/state])
-
-(defn init-context []
-  (println "~ init session")
-  (swap! app/state assoc :context/ids->entities (atom {}))
-  (doseq [component session-components]
-    (session/load! component
-                   (session/initial-data component)))
-  (println " ~ loaded all components, adding context/world-map")
+(defn- create-world-map [{:keys [map-key
+                                 pretty-name
+                                 tiled-map
+                                 start-position] :as argsmap}]
+  (let [cell-grid (cell-grid/create-grid-from-tiledmap tiled-map)
+        w (grid/width  cell-grid)
+        h (grid/height cell-grid)]
+    (merge ; TODO no merge, list explicit which keys are there
+     (dissoc argsmap :map-key)
+     ; TODO here also namespaced keys  !?
+     {:width w
+      :height h
+      :cell-blocked-boolean-array (cell-grid/create-cell-blocked-boolean-array cell-grid)
+      :contentfields (create-mapcontentfields w h)
+      :cell-grid cell-grid
+      :explored-tile-corners (atom (grid/create-grid w h (constantly false)))})
+    )
+  ;(check-not-allowed-diagonals cell-grid)
   )
+
+; --> mach prozedural generierte maps mit prostprocessing (fill-singles/set-cells-behind-walls-nil/remove-nads/..?)
+;& assertions 0 NADS z.b. ...?
+
+; looping through all tiles of the map 3 times. but dont do it in 1 loop because player needs to be initialized before all monsters!
+(defn- place-entities! [context tiled-map]
+  (doseq [[posi creature-id] (tiled/positions-with-property tiled-map :creatures :id)]
+    (creature-entity/create! creature-id
+                             (translate-to-tile-middle posi)
+                             {:sleeping true}
+                             context))
+  ; otherwise will be rendered, is visible, can also just setVisible layer false
+  (tiled/remove-layer! tiled-map :creatures))
+
+(defn- create-entities-from-tiledmap! [{:keys [context/world-map] :as context}]
+
+  ; TODO they need player entity context ?!
+  (place-entities! context (:tiled-map world-map))
+
+  (let [player-entity  (creature-entity/create! :vampire
+                                                (:start-position world-map)
+                                                {:is-player true}
+                                                context)]
+    player-entity))
+
+(deftype Disposable-State []
+  lc/Disposable
+  (dispose [_]
+    ; TODO dispose tiledmap of context/world-map => make disposable record
+    ; TODO dispose maps when starting a new session
+    ; => newly loaded tiledmaps
+    #_(when (bound? #'world-maps)
+      (doseq [[mapkey mapdata] world-maps
+              :let [tiled-map (:tiled-map mapdata)]
+              :when tiled-map]
+        (tiled/dispose tiled-map)))))
+
+(defn init-context [context]
+  (game.ui.inventory-window/rebuild-inventory-widgets!) ; before adding entities ( player gets items )
+  (let [context (merge context
+                       {:context/ids->entities (atom {})
+                        :context/world-map (create-world-map (first-level))})
+        player-entity (create-entities-from-tiledmap! context)
+        context (assoc context :context/player-entity player-entity)]
+    ; TODO take care nowhere is @app/state called or app/current-context
+    ; so we use the new context here
+
+    (game.ui.action-bar/reset-skills!)
+    (game.ui.mouseover-entity/reset-cache!)
+    context))

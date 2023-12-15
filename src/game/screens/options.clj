@@ -6,7 +6,6 @@
             [gdl.scene2d.ui :as ui]
             [gdl.scene2d.stage :as stage]
             [utils.core :refer [find-first]]
-            [game.session :as session]
             ;[game.line-of-sight :refer (player-line-of-sight-checks)]
             [game.components.body :refer (show-body-bounds)]
             [game.components.skills :refer (show-skill-icon-on-active)])
@@ -62,7 +61,7 @@
   (get-state [this] #_(.isShowingFPS app-game-container))
   (set-state [this is-selected] #_(.setShowFPS app-game-container is-selected)))
 
-(def state
+#_(def state
   (reify session/State
     (load! [_ data]
       (if data

@@ -5,7 +5,6 @@
             [gdl.graphics.draw :as draw]
             [gdl.graphics.image :as image]
             [gdl.scene2d.ui :as ui]
-            [game.session :as session]
             [game.context :as gm]
             [game.utils.msg-to-player :refer (show-msg-to-player)]
             [game.components.inventory :as inventory]
@@ -186,12 +185,9 @@
     (.row table)))
 
 ; TODO placed items are not serialized/loaded.
-(def state (reify session/State
-             (load! [_ _]
-               (redo-table)
-               (.pack window))
-             (serialize [_])
-             (initial-data [_])))
+(defn rebuild-inventory-widgets! []
+  (redo-table)
+  (.pack window))
 
 (defn- get-cell-widget ^Group [cell]
   (.findActor table (pr-str cell)))

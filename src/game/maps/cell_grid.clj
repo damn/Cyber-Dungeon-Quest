@@ -5,7 +5,6 @@
             [gdl.math.raycaster :as raycaster]
             [data.grid2d :as grid]
             [utils.core :refer [translate-to-tile-middle int-posi diagonal-direction?]]
-            [game.session :as session]
             [mapgen.movement-property :refer (movement-property)]))
 
 (defrecord Cell [position

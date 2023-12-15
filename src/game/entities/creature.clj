@@ -22,8 +22,7 @@
      max-height]))
 
 (defcomponent :is-player _
-  (entity/create! [_ entity {:keys [world-camera context/player-entity]}]
-    (reset! player-entity entity)
+  (entity/create! [_ entity {:keys [world-camera]}]
     (camera/set-position! world-camera (:position @entity)))
   ; TODO make on position changed trigger
   (entity/tick! [_ {:keys [world-camera]} entity delta]

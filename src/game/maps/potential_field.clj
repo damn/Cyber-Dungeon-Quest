@@ -225,13 +225,13 @@
           (v/direction position (:middle @target-cell)))))))
 
 (defcomponent :move-towards-enemy _
-  (entity/tick! [_ _ctx entity _delta]
+  (entity/tick! [_ {:keys [context/world-map]} entity _delta]
     (swap! entity
            assoc
            :movement-vector
            (if (:active-skill? @entity)
              nil
-             (potential-field-follow-to-enemy (:cell-grid (get-current-map-data)) entity)))))
+             (potential-field-follow-to-enemy (:cell-grid world-map) entity)))))
 
 ;; DEBUG RENDER TODO not working in old map debug game.maps.render_
 

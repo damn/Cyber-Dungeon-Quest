@@ -1,5 +1,5 @@
 #_(ns game.maps.mapchange  ; TODO just change
-  (:require [game.maps.data :refer [set-map! get-pretty-name]]
+  (:require [game.maps.data :refer [set-map!]]
             [game.utils.msg-to-player :refer (show-msg-to-player)]))
 
 #_(def ^:private queued (atom nil))

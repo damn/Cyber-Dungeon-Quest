@@ -7,7 +7,6 @@
             [game.context :as gm]
             [game.entity :as entity]
             game.render
-            [game.session :as session]
             [game.line-of-sight :refer (in-line-of-sight?)]
             [game.maps.cell-grid :refer (get-bodies-at-position)])
   (:import (com.badlogic.gdx Gdx Input$Buttons)))
@@ -48,12 +47,9 @@
 (def ^:private cache (atom nil))
 (def ^:private is-saved (atom false))
 
-(def state (reify session/State
-             (load! [_ data]
-               (reset! cache nil)
-               (reset! is-saved false))
-             (serialize [_])
-             (initial-data [_])))
+(defn reset-cache! []
+  (reset! cache nil)
+  (reset! is-saved false))
 
 (defn get-mouseover-entity []
   @cache)

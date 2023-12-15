@@ -37,7 +37,8 @@
     {:default-font (freetype/generate (.internal Gdx/files "exocet/films.EXL_____.ttf")
                                       16)
      :context/properties properties
-     :game.maps.data (game.maps.data/->Disposable-State)
+     ; TODO here context/world-map
+     ; :game.maps.data (game.maps.data/->Disposable-State)
      :screens/main-menu   (game.screens.main/->Screen)
      :screens/ingame      (game.screens.ingame/screen (assoc context :context/properties properties))
      :screens/minimap     (game.screens.minimap/->Screen)

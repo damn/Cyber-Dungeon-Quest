@@ -10,7 +10,7 @@
            com.badlogic.gdx.scenes.scene2d.Stage))
 
 (defn- start-session []
-  (game..session/init-context) ; ideally do swap! state here
+  (swap! app/state game.session/init-context)
   (app/change-screen! :screens/ingame))
 
 (declare ^Stage stage
