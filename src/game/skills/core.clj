@@ -3,7 +3,7 @@
             [clojure.string :as str]
             [utils.core :refer [readable-number]]
             [game.effect :as effect]
-            [game.properties :as properties]))
+            [cdq.properties :as properties]))
 
 ; TODO  prepare-properties :skills
 ; add :image32x32 (g/get-scaled-copy image [32 32])

@@ -5,7 +5,7 @@
             [gdl.math.vector :as v]
             [gdl.graphics.color :as color]
             [utils.core :refer [safe-get mapvals]]
-            [game.properties :as properties]
+            [cdq.properties :as properties]
             [game.context :as gm]
             [game.components.position :as position]
             [game.components.faction :as faction]

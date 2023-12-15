@@ -1,4 +1,4 @@
-(ns game.properties
+(ns cdq.properties
   (:refer-clojure :exclude [get])
   (:require [clojure.edn :as edn]
             [gdl.graphics.animation :as animation]

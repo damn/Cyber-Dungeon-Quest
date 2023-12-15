@@ -132,7 +132,8 @@
   (game.ui.inventory-window/rebuild-inventory-widgets!) ; before adding entities ( player gets items )
   (let [context (merge context
                        {:context/ids->entities (atom {})
-                        :context/world-map (create-world-map (first-level))})
+                        :context/world-map (create-world-map (first-level))
+                        :context/running (atom true)})
         player-entity (create-entities-from-tiledmap! context)
         context (assoc context :context/player-entity player-entity)]
     ; TODO take care nowhere is @app/state called or app/current-context

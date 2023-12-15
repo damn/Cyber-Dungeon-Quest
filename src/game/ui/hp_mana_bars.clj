@@ -1,4 +1,4 @@
-(ns game.player.status-gui
+(ns game.ui.hp-mana-bars
   (:require [gdl.graphics.draw :as draw]
             [gdl.graphics.image :as image]
             [utils.core :refer [readable-number]]

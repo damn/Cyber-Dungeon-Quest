@@ -8,8 +8,8 @@
             game.effects.require-all
             game.ui.inventory-window
             game.ui.action-bar
-            game.player.status-gui
-            game.properties
+            game.ui.hp-mana-bars
+            cdq.properties
             screens.game
             screens.main-menu
             screens.map-editor
@@ -27,11 +27,11 @@
 (defn- create-context [context]
   (game.ui.inventory-window/initialize! context)
   (game.ui.action-bar/initialize!)
-  (game.player.status-gui/initialize! context)
+  (game.ui.hp-mana-bars/initialize! context)
   (let [properties (let [file "resources/properties.edn"
-                         properties (game.properties/load-edn context file)]
-                     (.bindRoot #'game.properties/properties-file file)
-                     (.bindRoot #'game.properties/properties properties)
+                         properties (cdq.properties/load-edn context file)]
+                     (.bindRoot #'cdq.properties/properties-file file)
+                     (.bindRoot #'cdq.properties/properties properties)
                      properties)]
     {:default-font (freetype/generate (.internal Gdx/files "exocet/films.EXL_____.ttf")
                                       16)

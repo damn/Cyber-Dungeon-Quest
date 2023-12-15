@@ -1,7 +1,7 @@
 (ns mapgen.module-gen
   (:require [data.grid2d :as grid]
             [gdl.maps.tiled :as tiled]
-            [game.properties :as properties]
+            [cdq.properties :as properties]
             [mapgen.utils :as utils]
             [mapgen.transitions :as transitions]
             [mapgen.movement-property :refer (movement-property)]
