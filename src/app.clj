@@ -9,7 +9,7 @@
             game.ui.inventory-window
             game.ui.action-bar
             game.ui.hp-mana-bars
-            cdq.properties
+            properties
             screens.game
             screens.main-menu
             screens.map-editor
@@ -29,9 +29,9 @@
   (game.ui.action-bar/initialize!)
   (game.ui.hp-mana-bars/initialize! context)
   (let [properties (let [file "resources/properties.edn"
-                         properties (cdq.properties/load-edn context file)]
-                     (.bindRoot #'cdq.properties/properties-file file)
-                     (.bindRoot #'cdq.properties/properties properties)
+                         properties (properties/load-edn context file)]
+                     (.bindRoot #'properties/properties-file file)
+                     (.bindRoot #'properties/properties properties)
                      properties)]
     {:default-font (freetype/generate (.internal Gdx/files "exocet/films.EXL_____.ttf")
                                       16)

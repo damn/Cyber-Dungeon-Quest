@@ -37,7 +37,7 @@
  ; for chance to do hit-effect -> use this code @ hit-effects
  ; (extend hit-effects with chance , not effects themself)
  ; and hit-effects to text ...hmmm
- [game.utils.random :as random]
+ [utils.random :as random]
  (or (not chance)
      (random/percent-chance chance)))
 

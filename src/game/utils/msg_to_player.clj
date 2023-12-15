@@ -3,7 +3,7 @@
 (ns game.utils.msg-to-player
   #_(:require [game.session :as session]))
 
-; TODO use game.utils.counter instead
+; TODO use data.counter instead
 (defn- reset-counter! [counter]
   (swap! counter assoc-in [:current] 0))
 

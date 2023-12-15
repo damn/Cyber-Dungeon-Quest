@@ -1,16 +1,16 @@
 (ns game.components.skills
   (:require [x.x :refer [defcomponent]]
             [data.val-max :refer [apply-val]]
+            [data.counter :as counter]
+            [properties :as properties]
             [gdl.graphics.draw :as draw]
             [gdl.math.vector :as v]
             [gdl.graphics.color :as color]
             [utils.core :refer [safe-get mapvals]]
-            [cdq.properties :as properties]
             [game.context :as gm]
             [game.components.position :as position]
             [game.components.faction :as faction]
             [game.ui.mouseover-entity :refer (saved-mouseover-entity get-mouseover-entity)]
-            [game.utils.counter :as counter]
             [game.effect :as effect]
             [game.entity :as entity]))
 

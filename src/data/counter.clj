@@ -1,4 +1,4 @@
-(ns game.utils.counter)
+(ns data.counter)
 
 (defrecord ImmutableCounter [cnt maxcnt])
 

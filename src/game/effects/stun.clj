@@ -6,7 +6,7 @@
             [game.effect :as effect]
             [game.entity :as entity]
             [game.modifier :as modifier]
-            [game.utils.counter :as counter]))
+            [data.counter :as counter]))
 
 (def ^:private stun-modifiers
   [[:modifiers/block :speed]

@@ -1,7 +1,7 @@
 (ns game.components.delete-after-duration
   (:require [x.x :refer [defcomponent]]
-            [game.entity :as entity]
-            [game.utils.counter :as counter]))
+            [data.counter :as counter]
+            [game.entity :as entity]))
 
 (defcomponent :delete-after-duration counter
   (entity/create [[_ duration]]

@@ -2,7 +2,7 @@
   (:require [x.x :refer [defcomponent]]
             [gdl.app :as app]
             [gdl.graphics.draw :as draw]
-            [game.utils.counter :as counter]
+            [data.counter :as counter]
             [game.ui.config :refer [hpbar-height-px]]
             [game.entity :as entity]))
 

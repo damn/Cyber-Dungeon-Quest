@@ -1,7 +1,7 @@
 (ns mapgen.cave-gen
   (:require [data.grid2d :as grid]
             [utils.core :refer (assoc-ks)]
-            [game.utils.random :as rand]))
+            [utils.random :as rand]))
 
 ;Cave Algorithmus.
 ;http://properundead.com/2009/03/cave-generator.html

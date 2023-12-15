@@ -1,4 +1,4 @@
-(ns game.utils.random
+(ns utils.random
   (:import java.util.Random))
 
 ; TODO seed the whole game -> set thread bound var?

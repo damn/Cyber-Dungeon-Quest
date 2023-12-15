@@ -1,6 +1,6 @@
 (ns game.effects.damage
   (:require [data.val-max :refer [apply-val apply-val-max-modifiers]]
-            [game.utils.random :as random]
+            [utils.random :as random]
             [game.effect :as effect]
             [game.components.hp :refer [dead?]]
             [game.components.modifiers :refer [effect-source-modifiers effect-target-modifiers]]

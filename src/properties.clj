@@ -1,4 +1,4 @@
-(ns cdq.properties
+(ns properties
   (:refer-clojure :exclude [get])
   (:require [clojure.edn :as edn]
             [gdl.graphics.animation :as animation]

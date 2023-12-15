@@ -2,8 +2,8 @@
   (:require [clojure.set :as set]
             [clojure.string :as str]
             [utils.core :refer [readable-number]]
-            [game.effect :as effect]
-            [cdq.properties :as properties]))
+            [properties :as properties]
+            [game.effect :as effect]))
 
 ; TODO  prepare-properties :skills
 ; add :image32x32 (g/get-scaled-copy image [32 32])
