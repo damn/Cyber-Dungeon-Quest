@@ -17,7 +17,6 @@
             [game.ui.mouseover-entity :refer (update-mouseover-entity
                                               get-mouseover-entity
                                               saved-mouseover-entity)]
-            ;[game.maps.mapchange :refer [check-change-map]]
             [game.maps.contentfields :refer [get-entities-in-active-content-fields]]
             [game.maps.potential-field :refer [update-potential-fields]])
   (:import (com.badlogic.gdx Gdx Input$Keys Input$Buttons)
@@ -256,5 +255,4 @@
              (dead? @player-entity))
     (reset! running false)
     (gm/play-sound! context "sounds/bfxr_playerdeath.wav")
-    (gm/show-msg-to-player! context "YOU DIED!"))
-  #_(check-change-map))
+    (gm/show-msg-to-player! context "YOU DIED!")))
