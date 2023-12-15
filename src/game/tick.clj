@@ -17,7 +17,6 @@
             [game.ui.mouseover-entity :refer (update-mouseover-entity
                                               get-mouseover-entity
                                               saved-mouseover-entity)]
-            [game.utils.msg-to-player :refer [update-msg-to-player]]
             ;[game.maps.mapchange :refer [check-change-map]]
             [game.maps.contentfields :refer [get-entities-in-active-content-fields]]
             [game.maps.potential-field :refer [update-potential-fields]])
@@ -70,7 +69,6 @@
   (gm/destroy-to-be-removed-entities! context)
   ; TODO or pass directly stage/hit boolean
   (update-mouseover-entity stage context)
-  (update-msg-to-player delta)
   (when @running
     (update-potential-fields context)))
 
@@ -187,15 +185,13 @@
           )))))
 
 (comment
- [game.utils.msg-to-player :refer (show-msg-to-player)]
-
  (defn- denied [text]
   ; (.play ^Sound (get assets asset-manager "bfxr_denied.wav"))
   ; deactivated because on mouse down sound gets played again every frame
   ; would need to use Music class instead of Sound for checking isPlaying already
   ; and playing only once
   ; -> could make a timer if message is the same, dont send sound( /msg to player )
-  (show-msg-to-player text)))
+  (gm/show-msg-to-player! context text)))
 
 ; TODO not enough mana/etc. show REASON for skill not usable ! (or not useful !)
 ; melee out of range shouldnt fire ...
@@ -259,5 +255,6 @@
   (when (and @running
              (dead? @player-entity))
     (reset! running false)
-    (gm/play-sound! context "sounds/bfxr_playerdeath.wav"))
+    (gm/play-sound! context "sounds/bfxr_playerdeath.wav")
+    (gm/show-msg-to-player! context "YOU DIED!"))
   #_(check-change-map))

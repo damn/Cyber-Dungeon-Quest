@@ -14,7 +14,8 @@
   (destroy-to-be-removed-entities! [_]
                                    "Calls entity/destroy and entity/destroy! on all entities which are marked as ':destroyed?'")
   (play-sound! [_ file]
-               "Sound is already loaded from file, this will perform only a lookup for the sound and play it."))
+               "Sound is already loaded from file, this will perform only a lookup for the sound and play it.")
+  (show-msg-to-player! [_ message]))
 
 
 ; get-visible-entities

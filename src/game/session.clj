@@ -59,7 +59,10 @@
       (doseq-entity e entity/destroy! context)))
 
   (play-sound! [{:keys [assets]} file]
-    (.play ^Sound (get assets file))))
+    (.play ^Sound (get assets file)))
+
+  (show-msg-to-player! [_ message]
+    (println message)))
 
 (defn- first-level []
   (let [{:keys [tiled-map start-positions]} (mapgen.module-gen/generate

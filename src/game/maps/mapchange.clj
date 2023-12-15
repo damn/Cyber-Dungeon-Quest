@@ -1,6 +1,5 @@
 #_(ns game.maps.mapchange  ; TODO just change
-  (:require [game.maps.data :refer [set-map!]]
-            [game.utils.msg-to-player :refer (show-msg-to-player)]))
+  (:require [game.maps.data :refer [set-map!]]))
 
 #_(def ^:private queued (atom nil))
 
@@ -23,7 +22,7 @@
     #_(teleport player-entity new-posi)
     (when save-game?
       #_(save-game) ; TODO FIXME
-      (show-msg-to-player  (get-pretty-name new-map) "\nSaved progress..."))))
+      (gm/show-msg-to-player! context (get-pretty-name new-map) "\nSaved progress..."))))
 
 #_(defn check-change-map []
   (when-let [data @queued]

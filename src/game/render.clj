@@ -9,7 +9,6 @@
             [game.maps.cell-grid :as cell-grid]
             [game.entity :as entity]
             [game.ui.hp-mana-bars :refer [render-player-hp-mana]]
-            [game.utils.msg-to-player :refer [render-message-to-player]]
             [game.utils.lightning :refer [tile-color-setter]]
             [game.maps.contentfields :refer [get-entities-in-active-content-fields]])
   (:import com.badlogic.gdx.graphics.Color))
@@ -140,8 +139,7 @@
                              (pr-str (:potential-field @cell))])))
 
 (defn- render-gui [drawer context]
-  (render-player-hp-mana drawer context)
-  (render-message-to-player))
+  (render-player-hp-mana drawer context))
 
 (defn render-game [{:keys [context/world-map] :as context}]
   (tiled/render-map context

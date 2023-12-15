@@ -8,7 +8,6 @@
             [gdl.scene2d.ui :as ui]
             [game.context :as gm]
             [game.modifier :as modifier]
-            [game.utils.msg-to-player :refer (show-msg-to-player)]
             [game.components.inventory :as inventory]
             [game.entities.item :as item-entity])
   (:import com.badlogic.gdx.graphics.Color
@@ -39,9 +38,9 @@
     (item-entity/create! posi (:item-on-cursor @player-entity) context))
   (swap! player-entity dissoc :item-on-cursor))
 
-(defn- complain-2h-weapon-and-shield! []
+(defn- complain-2h-weapon-and-shield! [context]
   ;(.play ^Sound (get assets "error.wav"))
-  (show-msg-to-player "Two-handed weapon and shield is not possible."))
+  (gm/show-msg-to-player! context "Two-handed weapon and shield is not possible."))
 
 (defn- clicked-cell [{:keys [context/player-entity] :as context} cell]
   (let [entity player-entity
@@ -63,7 +62,7 @@
       (and (not item)
            (inventory/valid-slot? cell item-on-cursor))
       (if (inventory/two-handed-weapon-and-shield-together? inventory cell item-on-cursor)
-        (complain-2h-weapon-and-shield!)
+        (complain-2h-weapon-and-shield! context)
         (do
          (gm/play-sound! context "sounds/bfxr_itemput.wav")
          (inventory/set-item! entity cell item-on-cursor)
@@ -81,7 +80,7 @@
       (and item
            (inventory/valid-slot? cell item-on-cursor))
       (if (inventory/two-handed-weapon-and-shield-together? inventory cell item-on-cursor)
-        (complain-2h-weapon-and-shield!)
+        (complain-2h-weapon-and-shield! context)
         (do
          (gm/play-sound! context "sounds/bfxr_itemput.wav")
          (inventory/remove-item! entity cell)

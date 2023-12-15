@@ -1,8 +1,7 @@
 (ns game.entities.item
   (:require [game.context :as gm]
             [game.components.clickable :as clickable]
-            [game.components.inventory :as inventory]
-            [game.utils.msg-to-player :refer [show-msg-to-player]])
+            [game.components.inventory :as inventory])
   (:import com.badlogic.gdx.scenes.scene2d.Actor))
 
 (defmethod clickable/on-clicked :item [{:keys [context/player-entity stage] :as context} entity]
@@ -22,7 +21,7 @@
      :else
      (do
       (gm/play-sound! context "sounds/bfxr_denied.wav")
-      (show-msg-to-player "Your Inventory is full")))))
+      (gm/show-msg-to-player! context "Your Inventory is full")))))
 
 ; TODO use image w. shadows spritesheet
 (defn create! [position item context]
