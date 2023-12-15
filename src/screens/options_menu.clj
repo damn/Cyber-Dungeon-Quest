@@ -1,4 +1,4 @@
-(ns game.screens.options
+(ns screens.options-menu
   (:require [gdl.lifecycle :as lc]
             [gdl.app :as app]
             [gdl.graphics.draw :as draw]
@@ -76,7 +76,7 @@
          (get-state status)]))
     (initial-data [_])))
 
-(def ^:private exit #(app/change-screen! :screens/ingame))
+(def ^:private exit #(app/change-screen! :screens/game))
 
 (defn- create-table [context]
   (let [table (ui/table :rows (concat

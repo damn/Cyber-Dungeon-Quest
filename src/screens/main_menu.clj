@@ -1,4 +1,4 @@
-(ns game.screens.main
+(ns screens.main-menu
   (:require [gdl.app :as app]
             [gdl.graphics.draw :as draw]
             [gdl.lifecycle :as lc]
@@ -9,22 +9,23 @@
   (:import (com.badlogic.gdx Gdx Input$Keys)
            com.badlogic.gdx.scenes.scene2d.Stage))
 
-(defn- start-session []
-  (swap! app/state game.session/init-context)
-  (app/change-screen! :screens/ingame))
-
 (declare ^Stage stage
          ^:private skip-main-menu
          ^:private bg-image)
 
-(defn initialize! [{:keys [gui-viewport batch] :as context}
-                   {:keys [skip-main-menu bg-image]}]
+(defn- initialize! [{:keys [gui-viewport batch] :as context}
+                    {:keys [skip-main-menu bg-image]}]
   (.bindRoot #'skip-main-menu skip-main-menu)
   (.bindRoot #'bg-image (image/create context bg-image))
-  (.bindRoot #'stage (stage/create gui-viewport batch)) ; TODO remove all .bindRoot
-  (let [table (ui/table :rows [[(ui/text-button "New game" start-session)]
-                               [(ui/text-button "Map Editor" #(app/change-screen! :mapgen.tiledmap-renderer))]
-                               [(ui/text-button "Entity Editor" #(app/change-screen! :property-editor.screen))]
+  (.bindRoot #'stage (stage/create gui-viewport batch))
+  (let [table (ui/table :rows [[(ui/text-button "Go on a Cyber Dungeon Quest"
+                                                #(do
+                                                  (swap! app/state game.session/init-context)
+                                                  (app/change-screen! :screens/game)))]
+                               [(ui/text-button "Map Editor"
+                                                #(app/change-screen! :screens/map-editor))]
+                               [(ui/text-button "Property Editor"
+                                                #(app/change-screen! :screens/property-editor))]
                                [(ui/text-button "Exit" #(.exit Gdx/app))]]
                         :cell-defaults {:pad-bottom 25}
                         :fill-parent? true)]
@@ -53,5 +54,9 @@
     (.act stage delta)
     (when (.isKeyJustPressed Gdx/input Input$Keys/ESCAPE)
       (.exit Gdx/app))
-    (when skip-main-menu
+    #_(when skip-main-menu
       (start-session))))
+
+(defn screen [context config]
+  (initialize! context config)
+  (->Screen))

@@ -1,4 +1,4 @@
-(ns game.screens.minimap
+(ns screens.minimap
   (:require [gdl.app :as app]
             [gdl.lifecycle :as lc]
             [gdl.maps.tiled :as tiled]
@@ -58,4 +58,4 @@
     (when (or (.isKeyJustPressed Gdx/input Input$Keys/TAB)
               (.isKeyJustPressed Gdx/input Input$Keys/ESCAPE))
       (camera/set-zoom! world-camera 1)
-      (app/change-screen! :screens/ingame))))
+      (app/change-screen! :screens/game))))

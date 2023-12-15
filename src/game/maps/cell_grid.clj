@@ -7,6 +7,8 @@
             [utils.core :refer [translate-to-tile-middle int-posi diagonal-direction?]]
             [mapgen.movement-property :refer (movement-property)]))
 
+; TODO maybe only 'cell' protocol or cell-grid or world-map protocol? lets see..
+
 (defrecord Cell [position
                  middle
                  adjacent-cells

@@ -1,4 +1,4 @@
-(ns game.start
+(ns app
   (:require [x.x :refer [defcomponent]]
             [gdl.app :as app]
             [gdl.lifecycle :as lc]
@@ -10,12 +10,12 @@
             game.ui.action-bar
             game.player.status-gui
             game.properties
-            game.screens.main
-            game.screens.ingame
-            game.screens.minimap
-            game.screens.options
-            mapgen.tiledmap-renderer
-            property-editor.screen)
+            screens.game
+            screens.main-menu
+            screens.map-editor
+            screens.minimap
+            screens.options-menu
+            screens.property-editor)
   (:import com.badlogic.gdx.Gdx))
 
 ; !!!
@@ -28,7 +28,6 @@
   (game.ui.inventory-window/initialize! context)
   (game.ui.action-bar/initialize!)
   (game.player.status-gui/initialize! context)
-  (game.screens.main/initialize! context {:bg-image "ui/moon_background.png" :skip-main-menu false})
   (let [properties (let [file "resources/properties.edn"
                          properties (game.properties/load-edn context file)]
                      (.bindRoot #'game.properties/properties-file file)
@@ -39,12 +38,14 @@
      :context/properties properties
      ; TODO here context/world-map
      ; :game.maps.data (game.maps.data/->Disposable-State)
-     :screens/main-menu   (game.screens.main/->Screen)
-     :screens/ingame      (game.screens.ingame/screen (assoc context :context/properties properties))
-     :screens/minimap     (game.screens.minimap/->Screen)
-     :screens/option-menu (game.screens.options/screen context)
-     :mapgen.tiledmap-renderer (mapgen.tiledmap-renderer/screen context)
-     :property-editor.screen (property-editor.screen/screen context)}))
+     :screens/game            (screens.game/screen (assoc context :context/properties properties))
+     :screens/main-menu       (screens.main-menu/screen context
+                                                        {:bg-image "ui/moon_background.png"
+                                                         :skip-main-menu false})
+     :screens/map-editor      (screens.map-editor/screen context)
+     :screens/minimap         (screens.minimap/->Screen)
+     :screens/options-menu    (screens.options-menu/screen context)
+     :screens/property-editor (screens.property-editor/screen context)}))
 
 (def app-config
   {:app {:title "Cyber Dungeon Quest"

@@ -1,4 +1,4 @@
-(ns game.screens.ingame
+(ns screens.game
   (:require [gdl.app :as app]
             [gdl.graphics.draw :as draw]
             [gdl.lifecycle :as lc]
@@ -106,7 +106,7 @@
        (some #(.isVisible ^Actor %) windows) (run! #(.setVisible ^Actor % false) windows)
        (dead? @player-entity) (if-not false
                                 (app/change-screen! :screens/main-menu))
-       :else (app/change-screen! :screens/option-menu))))
+       :else (app/change-screen! :screens/options-menu))))
   (when (.isKeyJustPressed Gdx/input Input$Keys/TAB)
     (app/change-screen! :screens/minimap)) ; TODO does  do it immediately (cancel the current frame ) or finish this frame?
   ; TODO entity/skill info also

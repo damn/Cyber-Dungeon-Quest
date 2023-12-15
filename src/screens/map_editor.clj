@@ -1,4 +1,4 @@
-(ns mapgen.tiledmap-renderer
+(ns screens.map-editor
   (:require [clojure.edn :as edn]
             [gdl.app :as app]
             [gdl.lifecycle :as lc]

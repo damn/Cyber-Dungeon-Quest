@@ -1,4 +1,4 @@
-(ns property-editor.screen
+(ns screens.property-editor
   (:require [clojure.edn :as edn]
             [gdl.lifecycle :as lc]
             [gdl.app :as app]
