@@ -11,8 +11,7 @@
             [game.ui.hp-mana-bars :refer [render-player-hp-mana]]
             [game.utils.msg-to-player :refer [render-message-to-player]]
             [game.utils.lightning :refer [tile-color-setter]]
-            [game.maps.contentfields :refer [get-entities-in-active-content-fields]]
-            [game.maps.potential-field :as potential-field])
+            [game.maps.contentfields :refer [get-entities-in-active-content-fields]])
   (:import com.badlogic.gdx.graphics.Color))
 
 ; TODO render-order make vars so on compile time checked ?

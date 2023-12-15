@@ -18,13 +18,13 @@
   (.bindRoot #'skip-main-menu skip-main-menu)
   (.bindRoot #'bg-image (image/create context bg-image))
   (.bindRoot #'stage (stage/create gui-viewport batch))
-  (let [table (ui/table :rows [[(ui/text-button "Go on a Cyber Dungeon Quest"
+  (let [table (ui/table :rows [[(ui/text-button "Start game"
                                                 #(do
                                                   (swap! app/state game.session/init-context)
                                                   (app/change-screen! :screens/game)))]
-                               [(ui/text-button "Map Editor"
+                               [(ui/text-button "Map editor"
                                                 #(app/change-screen! :screens/map-editor))]
-                               [(ui/text-button "Property Editor"
+                               [(ui/text-button "Property editor"
                                                 #(app/change-screen! :screens/property-editor))]
                                [(ui/text-button "Exit" #(.exit Gdx/app))]]
                         :cell-defaults {:pad-bottom 25}
