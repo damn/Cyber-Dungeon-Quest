@@ -12,11 +12,6 @@
             [game.components.string-effect :as string-effect])
   (:import com.badlogic.gdx.graphics.Color))
 
-; TODO wake up through walls => sounds are being generated?
-; someone is behind a wall and lots of fighting and magic but no line of sight
-; or even if he sees in his awareness radius another entity which is attacking player
-; they should be able to communicate/hear events through walls
-
 (def aggro-range 6)
 
 ; :movement/:skillmanager, basically not sleeping can patrol but not 'hostile' to player
