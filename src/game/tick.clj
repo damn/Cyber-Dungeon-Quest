@@ -14,9 +14,7 @@
             [game.components.clickable :as clickable]
             [game.ui.action-bar :as action-bar]
             [game.ui.inventory-window :as inventory]
-            [game.ui.mouseover-entity :refer (update-mouseover-entity
-                                              get-mouseover-entity
-                                              saved-mouseover-entity)]
+            [game.context.mouseover-entity :refer (update-mouseover-entity)]
             [game.maps.contentfields :refer [get-entities-in-active-content-fields]]
             [game.maps.potential-field :refer [update-potential-fields]])
   (:import (com.badlogic.gdx Gdx Input$Keys Input$Buttons)
@@ -66,9 +64,8 @@
   ; destroy here not @ tick, because when game is paused
   ; for example pickup item, should be destroyed.
   (gm/destroy-to-be-removed-entities! context)
-  ; TODO or pass directly stage/hit boolean
-  (update-mouseover-entity stage context)
-  (when @running
+  (update-mouseover-entity context (stage/hit stage gui-mouse-position))
+  (when @running ; sowieso keine bewegungen / kein update gemacht ? checkt nur tiles ?
     (update-potential-fields context)))
 
 (defn- limit-delta [delta]
@@ -77,7 +74,6 @@
 (def thrown-error (atom nil))
 
 (def ^:private pausing true)
-
 
 (defn- add-vs [vs]
   (v/normalise (reduce v/add [0 0] vs)))
@@ -100,7 +96,11 @@
                                  entity-info-window
                                  skill-window
                                  help-window] :as stage}
-                         {:keys [assets gui-mouse-position world-mouse-position context/player-entity]}]
+                         {:keys [gui-mouse-position
+                                 world-mouse-position
+                                 context/player-entity
+                                 context/mouseover-entity]
+                          :as context}]
   (action-bar/up-skill-hotkeys)
   (let [windows [debug-window
                  help-window
@@ -111,7 +111,7 @@
       (cond
        ; when game is paused and/or the player is dead, let player be able to drop item-on-cursor?
        ; or drop it automatically when dead?
-       (:item-on-cursor @player-entity) (inventory/put-item-on-ground {:assets assets})
+       (:item-on-cursor @player-entity) (inventory/put-item-on-ground context)
        (some #(.isVisible ^Actor %) windows) (run! #(.setVisible ^Actor % false) windows)
        (dead? @player-entity) (if-not false
                                 (app/change-screen! :screens/main-menu))
@@ -140,7 +140,7 @@
       (and (.isButtonJustPressed Gdx/input Input$Buttons/LEFT)
            (not (stage/hit stage gui-mouse-position))
            (:item-on-cursor @player-entity))
-      (inventory/put-item-on-ground {:assets assets})
+      (inventory/put-item-on-ground context)
 
       ; running around w. item in hand -> how is d2 doing this?
       ; -> do not run the game in this case (no action)
@@ -153,26 +153,22 @@
                (.isButtonPressed Gdx/input Input$Buttons/LEFT))
            (not (stage/hit stage gui-mouse-position))
            (clickable/clickable-mouseover-entity? @player-entity
-                                                  (get-mouseover-entity)))
-      (clickable/on-clicked {:stage stage
-                             :assets assets}
-                            (get-mouseover-entity))
-
-      (saved-mouseover-entity) ; saved=holding leftmouse down after clicking on mouseover entity
-      (set-movement! player-entity (v/direction (:position @player-entity)
-                                                (:position @(saved-mouseover-entity))))
+                                                  @mouseover-entity))
+      (clickable/on-clicked context stage @mouseover-entity)
 
       (and (.isButtonPressed Gdx/input Input$Buttons/LEFT)
            (not (stage/hit stage gui-mouse-position)))
       (set-movement! player-entity (v/direction (:position @player-entity)
                                                 world-mouse-position))))))
 
-(defmethod skill-component/choose-skill :player [{:keys [context/properties]} entity*]
+(defmethod skill-component/choose-skill :player [{:keys [context/properties
+                                                         context/mouseover-entity]}
+                                                 entity*]
   (when-let [skill-id @action-bar/selected-skill-id]
     ; TODO no skill selected and leftmouse -> also show msg to player/sound
     (when (and (not (:item-on-cursor entity*))
                (not (clickable/clickable-mouseover-entity? entity*
-                                                           (get-mouseover-entity)))
+                                                           @mouseover-entity))
                (or (.isButtonJustPressed Gdx/input Input$Buttons/LEFT)
                    (.isButtonPressed     Gdx/input Input$Buttons/LEFT)))
       ; TODO directly pass skill here ...

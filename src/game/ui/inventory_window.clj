@@ -22,7 +22,7 @@
 
 (declare ^Window window)
 
-; TODO ! important ! animation & dont put exactly hiding under player
+; TODO ! important ! animation & dont put exactly hiding under player -> try neighbor cells first, simple.
 (defn put-item-on-ground [{:keys [context/player-entity] :as context}]
   {:pre [(:item-on-cursor @player-entity)]}
   (gm/play-sound! context "sounds/bfxr_itemputground.wav")

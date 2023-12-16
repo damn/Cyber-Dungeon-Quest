@@ -136,12 +136,12 @@
   (let [context (merge context
                        {:context/ids->entities (atom {})
                         :context/world-map (create-world-map (first-level))
-                        :context/running (atom true)})
+                        :context/running (atom true)
+                        :context/mouseover-entity (atom nil)}) ; references nil or an atom, so need to deref it always and check
         player-entity (create-entities-from-tiledmap! context)
         context (assoc context :context/player-entity player-entity)]
     ; TODO take care nowhere is @app/state called or app/current-context
     ; so we use the new context here
 
     (game.ui.action-bar/reset-skills!)
-    (game.ui.mouseover-entity/reset-cache!)
     context))

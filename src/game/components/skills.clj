@@ -10,7 +10,6 @@
             [game.context :as gm]
             [game.components.position :as position]
             [game.components.faction :as faction]
-            [game.ui.mouseover-entity :refer (saved-mouseover-entity get-mouseover-entity)]
             [game.effect :as effect]
             [game.entity :as entity]))
 
@@ -20,11 +19,13 @@
         enemy-faction
         :entity)))
 
-(defn- make-effect-params [{:keys [world-mouse-position context/world-map]} entity]
+(defn- make-effect-params [{:keys [world-mouse-position
+                                   context/world-map
+                                   context/mouseover-entity]}
+                           entity]
   (merge {:source entity}
          (if (:is-player @entity)
-           (let [target (or (saved-mouseover-entity)
-                            (get-mouseover-entity))
+           (let [target @mouseover-entity
                  target-position (or (and target (:position @target))
                                      world-mouse-position)]
              {:target target

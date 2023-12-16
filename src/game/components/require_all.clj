@@ -7,4 +7,5 @@
             game.components.image
             game.components.line-render
             game.components.mana
+            game.components.mouseover?
             game.components.sleeping))

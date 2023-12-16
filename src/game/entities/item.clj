@@ -4,19 +4,22 @@
             [game.components.inventory :as inventory])
   (:import com.badlogic.gdx.scenes.scene2d.Actor))
 
-(defmethod clickable/on-clicked :item [{:keys [context/player-entity stage] :as context} entity]
-  (let [item (:item @entity)]
+(defmethod clickable/on-clicked :item [{:keys [context/player-entity]
+                                        :as context}
+                                       stage
+                                       clicked-entity]
+  (let [item (:item @clicked-entity)]
     (cond
      (.isVisible ^Actor (:inventory-window stage))
      (do
       (gm/play-sound! context "sounds/bfxr_takeit.wav")
-      (swap! entity assoc :destroyed? true)
+      (swap! clicked-entity assoc :destroyed? true)
       (swap! player-entity assoc :item-on-cursor item))
 
      (inventory/try-pickup-item! player-entity item)
      (do
       (gm/play-sound! context "sounds/bfxr_pickup.wav")
-      (swap! entity assoc :destroyed? true))
+      (swap! clicked-entity assoc :destroyed? true))
 
      :else
      (do
