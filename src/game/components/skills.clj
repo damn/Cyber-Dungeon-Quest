@@ -2,7 +2,6 @@
   (:require [x.x :refer [defcomponent]]
             [data.val-max :refer [apply-val]]
             [data.counter :as counter]
-            [properties :as properties]
             [gdl.graphics.draw :as draw]
             [gdl.math.vector :as v]
             [gdl.graphics.color :as color]
@@ -81,13 +80,6 @@
 (defn- update-cooldowns [skills delta]
   (mapvals #(update-cooldown % delta)
            skills))
-
-(defn has-skill? [entity* id]
-  (contains? (:skills entity*) id))
-
-(defn assoc-skill [skills id]
-  {:pre [(not (contains? skills id))]}
-  (assoc skills id (properties/get id)))
 
 (defn- enough-mana? [entity* {:keys [cost] :as skill}]
   (or (nil? cost)
@@ -192,3 +184,14 @@
                                (update k #(zipmap % (map (fn [skill-id]
                                                            (safe-get properties skill-id))
                                                          %))))))))
+
+(defn has-skill? [skills {:keys [id]}]
+  (contains? skills id))
+
+(defn add-skill [skills {:keys [id] :as skill}]
+  (assert (not (has-skill? skills skill)))
+  (assoc skills id skill))
+
+(defn remove-skill [skills {:keys [id] :as skill}]
+  (assert (has-skill? skills skill))
+  (dissoc skills id))

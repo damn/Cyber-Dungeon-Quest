@@ -1,9 +1,7 @@
 (ns game.modifiers.all
   (:require [utils.core :refer [readable-number]]
             [data.val-max :refer [apply-max]]
-            [game.modifier :as modifier]
-            [game.skill :as skill]
-            [game.components.skills :as skills-component]))
+            [game.modifier :as modifier]))
 
 ; TODO dissoc again if value == default value -> into modifier logic, e.g. modifiers blocks 0 , just dissoc then ?
 ; TODO common modifiers add/decrement or multiplier, etc.
@@ -36,32 +34,26 @@
   {:values  [[15 25] [35 45] [55 65]]
    :text    #(str "+" % " HP")
    :keys    [:hp]
-   :apply   (partial apply-max +) ; TODO broken, do like max-mana, all texts also broken.
+   :apply   (partial apply-max +) ; TODO broken, do like max-mana
    :reverse (partial apply-max -)})
 
 (modifier/defmodifier :modifiers/max-mana
   {:values  [[15 25] [35 45] [55 65]]
-   :text    (fn [v entity] (str "+" v " Mana"))
+   :text    (fn [v] (str "+" v " Mana"))
    :keys    [:mana]
    :apply   (fn [mana v] (apply-max mana #(+ % v)))
    :reverse (fn [mana v] (apply-max mana #(- % v)))})
 
-(modifier/defmodifier :modifiers/skill
-  {:text skill/text
-   :keys [:skills]
-   :apply skills-component/assoc-skill
-   :reverse dissoc})
-
 (modifier/defmodifier :modifiers/cast-speed
   {:values  [[15 25] [35 45] [50 60]]
-   :text    (fn [v entity] (str "+" v "% Casting-Speed"))
+   :text    (fn [v] (str "+" v "% Casting-Speed"))
    :keys    [:modifiers :cast-speed]
    :apply   #(+ (or %1 1) (/ %2 100))
    :reverse #(- %1 (/ %2 100))})
 
 (modifier/defmodifier :modifiers/attack-speed
   {:values  [[15 25] [35 45] [50 60]]
-   :text    (fn [v entity] (str "+" v "% Attack-Speed"))
+   :text    (fn [v] (str "+" v "% Attack-Speed"))
    :keys    [:modifiers :attack-speed]
    :apply   #(+ (or %1 1) (/ %2 100))
    :reverse #(- %1 (/ %2 100))})
@@ -75,7 +67,7 @@
 ; TODO make shield or armor part of the modifier data ...
 ; -> only 1 modifier then with :shield or :armor as first value.
 (defn- damage-block-modifier [block-type]
-  {:text (fn [value _]
+  {:text (fn [value]
            (assert (check-damage-block-modifier-value value)
                    (str "Wrong value for modifier: " value))
            (str value))
@@ -125,7 +117,7 @@
 ; example: [:damage [:source :physical [:max :mult] 3]]
 ; TODO => effect-modifier-modifier
 (modifier/defmodifier :modifiers/damage
-  {:text (fn [value _]
+  {:text (fn [value]
            (assert (check-damage-modifier-value value)
                    (str "Wrong value for damage modifier: " value))
            (damage-modifier-text value))

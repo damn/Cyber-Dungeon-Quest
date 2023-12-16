@@ -842,7 +842,6 @@
   :two-handed? true,
   :pretty-name "Staff",
   :action-time 500,
-  :modifiers #:modifiers{:skill :staff},
   :id :staff,
   :image {:file "items/images.png", :sub-image-bounds (528 144 48 48)},
   :effect
@@ -860,7 +859,6 @@
   :two-handed? true,
   :pretty-name "Axe",
   :action-time 500,
-  :modifiers #:modifiers{:skill :axe},
   :id :axe,
   :image {:file "items/images.png", :sub-image-bounds (336 96 48 48)},
   :effect
@@ -882,7 +880,6 @@
   :two-handed? false,
   :pretty-name "Dagger",
   :action-time 250,
-  :modifiers #:modifiers{:skill :dagger},
   :id :dagger,
   :image {:file "items/images.png", :sub-image-bounds (48 96 48 48)},
   :effect
@@ -1180,7 +1177,6 @@
   :two-handed? false,
   :pretty-name "Sword",
   :action-time 500,
-  :modifiers #:modifiers{:skill :sword},
   :id :sword,
   :image {:file "items/images.png", :sub-image-bounds (0 96 48 48)},
   :effect
@@ -1238,7 +1234,6 @@
   :two-handed? true,
   :pretty-name "Ankh Staff",
   :action-time 500,
-  :modifiers #:modifiers{:skill :staff-ankh},
   :id :staff-ankh,
   :image {:file "items/images.png", :sub-image-bounds (624 144 48 48)},
   :effect
@@ -1261,7 +1256,6 @@
   :two-handed? false,
   :pretty-name "Vorpal Sword Magic",
   :action-time 500,
-  :modifiers #:modifiers{:skill :magic-sword-vorpal},
   :id :magic-sword-vorpal,
   :image {:file "items/images.png", :sub-image-bounds (0 192 48 48)},
   :effect
@@ -1292,7 +1286,6 @@
   :two-handed? true,
   :pretty-name "Quarterstaff",
   :action-time 450,
-  :modifiers #:modifiers{:skill :quarterstaff},
   :id :quarterstaff,
   :image {:file "items/images.png", :sub-image-bounds (192 144 48 48)},
   :effect
@@ -1326,7 +1319,6 @@
   :two-handed? false,
   :pretty-name "Falchion",
   :action-time 375,
-  :modifiers #:modifiers{:skill :falchion},
   :id :falchion,
   :image {:file "items/images.png", :sub-image-bounds (192 96 48 48)},
   :effect
@@ -1384,7 +1376,6 @@
   :two-handed? false,
   :pretty-name "Sling",
   :action-time 1000,
-  :modifiers #:modifiers{:skill :sling},
   :id :sling,
   :image {:file "items/images.png", :sub-image-bounds (384 144 48 48)},
   :effect
@@ -1402,7 +1393,6 @@
   :two-handed? false,
   :pretty-name "Hammer",
   :action-time 650,
-  :modifiers #:modifiers{:skill :hammer},
   :id :hammer,
   :image {:file "items/images.png", :sub-image-bounds (528 96 48 48)},
   :effect
@@ -1484,7 +1474,6 @@
   :two-handed? true,
   :pretty-name "Longbow",
   :action-time 1500,
-  :modifiers #:modifiers{:skill :longbow},
   :id :longbow,
   :image {:file "items/images.png", :sub-image-bounds (240 144 48 48)},
   :effect
@@ -1526,7 +1515,6 @@
   :two-handed? false,
   :pretty-name "Club",
   :action-time 700,
-  :modifiers #:modifiers{:skill :club},
   :id :club,
   :image {:file "items/images.png", :sub-image-bounds (624 96 48 48)},
   :effect
@@ -1540,7 +1528,6 @@
   :two-handed? true,
   :pretty-name "Branch Staff",
   :action-time 500,
-  :modifiers #:modifiers{:skill :staff-branch},
   :id :staff-branch,
   :image {:file "items/images.png", :sub-image-bounds (480 144 48 48)},
   :effect
@@ -1550,7 +1537,6 @@
   :two-handed? true,
   :pretty-name "Jeweled Staff",
   :action-time 500,
-  :modifiers #:modifiers{:skill :staff-jeweled},
   :id :staff-jeweled,
   :image {:file "items/images.png", :sub-image-bounds (576 144 48 48)},
   :effect
@@ -1560,7 +1546,6 @@
   :two-handed? false,
   :pretty-name "Trident",
   :action-time 550,
-  :modifiers #:modifiers{:skill :trident},
   :id :trident,
   :image {:file "items/images.png", :sub-image-bounds (96 144 48 48)},
   :effect
@@ -1626,7 +1611,6 @@
   :two-handed? true,
   :pretty-name "Greatspear",
   :action-time 650,
-  :modifiers #:modifiers{:skill :greatspear},
   :id :greatspear,
   :image {:file "items/images.png", :sub-image-bounds (48 144 48 48)},
   :effect
@@ -1640,7 +1624,6 @@
   :two-handed? false,
   :pretty-name "Broadsword",
   :action-time 600,
-  :modifiers #:modifiers{:skill :broadsword},
   :id :broadsword,
   :image {:file "items/images.png", :sub-image-bounds (240 96 48 48)},
   :effect

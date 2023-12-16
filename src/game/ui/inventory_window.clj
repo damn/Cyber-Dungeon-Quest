@@ -98,7 +98,7 @@
   (.add window table)
   (.bindRoot #'slot->background
              (let [sheet (image/spritesheet context "items/images.png" 48 48)]
-               (->> {:weapon   0 ; TODO use a vector?
+               (->> {:weapon   0
                      :shield   1
                      :rings    2
                      :necklace 3
@@ -201,28 +201,22 @@
   (.findActor ^Group cell-widget "image"))
 
 ; TODO write 'two handed' at weapon info -> key-to-pretty-tooltip-text function for keywords (extend-c?)
-; TODO showing 'Sword' -> 'Sword' modifier -> stupid
 (defn- item-name [item]
   (str (:pretty-name item)
        (when-let [cnt (:count item)]
          (str " (" cnt ")"))))
 
-(defn- item-text [entity item]
-  (str (if (= (:slot item) :weapon)
-         "" ; already in first modifier name of weapon skill == item name (also pretty-name?!)
-         (str (item-name item) "\n"))
-       ; TODO not player-entity but referenced entity, TODO only used @ skill modifier
-       ; no need for this here ?
-       (str/join "\n"
-                 (for [modifier (:modifiers item)]
-                   (modifier/text entity modifier)))))
+; TODO no weapon text action-time/effect ... 'text' protocol on items,weapons,skill, ? (creature for rightclick info, projectiles, ... ?)
+; dispatch on property/type ?
+(defn- item-text [item]
+  (str (str (item-name item) "\n")
+       (str/join "\n" (map modifier/text (:modifiers item)))))
 
 (defn- set-item-image-in-widget! [cell item]
   (let [cell-widget (get-cell-widget cell)
         image-widget (get-image-widget cell-widget)]
     (.setDrawable image-widget (ui/texture-region-drawable (:texture (:image item))))
-    (.addListener cell-widget (ui/text-tooltip #(item-text (:context/player-entity @app/state)
-                                                           item)))))
+    (.addListener cell-widget (ui/text-tooltip #(item-text item)))))
 
 (defn- remove-item-from-widget! [cell]
   (let [cell-widget (get-cell-widget cell)

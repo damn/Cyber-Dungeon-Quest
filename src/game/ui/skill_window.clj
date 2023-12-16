@@ -3,8 +3,8 @@
             [gdl.app :as app]
             [gdl.scene2d.ui :as ui]
             [utils.core :refer [safe-get]]
-            [game.components.skills :refer (assoc-skill has-skill?)]
-            [game.skill :as skill]))
+            [game.skill :as skill]
+            [game.components.skills :as skills]))
 
 (def ^:privat skill-icon-size 48)
 
@@ -13,15 +13,15 @@
 ; 'skills' menu is a modifier menu ...
 ; you can have more general modifiers menus toggling on/off
 ; passives toggle-able ... wtf / stances ...
-(defn- pressed-on-skill-in-menu [skill-id]
+(defn- pressed-on-skill-in-menu [skill]
   (let [{:keys [context/player-entity]} @app/state]
     (when (and (pos? (:free-skill-points @player-entity))
-               (not (has-skill? @player-entity skill-id)))
+               (not (skills/has-skill? (:skills @player-entity) skill)))
       (swap! player-entity #(-> %
                                 (update :free-skill-points dec)
-                                (update :skills assoc-skill skill-id))))))
+                                (update :skills skills/add-skill skill))))))
 
-(defn create [{:keys [context/properties context/player-entity]}]
+(defn create [{:keys [context/properties]}]
   (let [window (ui/window :title "Skills"
                           :id :skill-window)]
     (doseq [id [:projectile
@@ -29,8 +29,10 @@
                 :spawn]
             :let [skill (safe-get properties id)
                   button (ui/image-button (:image skill)
-                                          #(pressed-on-skill-in-menu id))]]
-      (.addListener button (ui/text-tooltip #(skill/text id player-entity)))
+                                          #(pressed-on-skill-in-menu skill))]]
+      (.addListener button (ui/text-tooltip (fn []
+                                              ; player-entity is not yet added to context
+                                              (skill/text skill (:context/player-entity @app/state)))))
       (.add window button))
     ; TODO render text label free-skill-points
     ; (str "Free points: " (:free-skill-points @player-entity))

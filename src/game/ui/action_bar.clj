@@ -89,11 +89,10 @@
   (.setMinCheckCount button-group 0)
   ;(.setUncheckLast button-group true) ? needed ?
 
-  (doseq [[id {:keys [image]}] (:skills @player-entity)
+  (doseq [[id {:keys [image] :as skill}] (:skills @player-entity)
           :let [button (ui/image-button image #(reset! selected-skill-id id))]]
     (.setName button (pr-str id))
-    (.addListener button (ui/text-tooltip
-                          #(skill/text id player-entity)))
+    (.addListener button (ui/text-tooltip #(skill/text skill player-entity)))
     ; TODO HOTKEY
     (.addActor horizontal-group button)
     (.add button-group button)))

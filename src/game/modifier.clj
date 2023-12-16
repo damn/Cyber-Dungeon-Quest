@@ -1,6 +1,4 @@
-; TODO all modifier-fns broken, need entity arg ( only skill has)
-; TODO parse valid modifiers @ read properties !
-; schema .. !
+; TODO schema - parse valid modifiers @ read properties !
 (ns game.modifier)
 
 (def modifier-definitions {})
@@ -23,13 +21,9 @@
           entity*
           modifiers))
 
-(defn apply-modifiers [entity* modifiers]
-  (call-modifier-fns entity* :apply modifiers))
+(defn apply-modifiers   [entity* modifiers] (call-modifier-fns entity* :apply   modifiers))
+(defn reverse-modifiers [entity* modifiers] (call-modifier-fns entity* :reverse modifiers))
 
-(defn reverse-modifiers [entity* modifiers]
-  (call-modifier-fns entity* :reverse modifiers))
-
-(defn text [entity [modifier-type value]]
+(defn text [[modifier-type value]]
   ((:text (modifier-type modifier-definitions))
-   value
-   entity))
+   value))

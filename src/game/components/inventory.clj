@@ -3,7 +3,8 @@
             [x.x :refer [defcomponent]]
             [utils.core :refer [safe-get find-first]]
             [game.entity :as entity]
-            [game.modifier :as modifier]))
+            [game.modifier :as modifier]
+            [game.components.skills :as skills]))
 
 (def empty-inventory
   (->> {:bag      [6 4]
@@ -65,6 +66,8 @@
   (swap! entity update :inventory inv-set-item cell item)
   (when (applies-modifiers? cell)
     (swap! entity modifier/apply-modifiers (:modifiers item)))
+  (when (= (:slot item) :weapon)
+    (swap! entity update :skills skills/add-skill item))
   (when (:is-player @entity)
     (set-item-image-in-widget! cell item)))
 
@@ -73,6 +76,8 @@
     (swap! entity update :inventory inv-remove-item cell)
     (when (applies-modifiers? cell)
       (swap! entity modifier/reverse-modifiers (:modifiers item)))
+    (when (= (:slot item) :weapon)
+      (swap! entity update :skills skills/remove-skill item))
     (when (:is-player @entity)
       (remove-item-from-widget! cell))))
 
