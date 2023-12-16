@@ -1,31 +1,12 @@
 (ns game.ui.mouseover-entity
-  (:require [x.x :refer [defcomponent]]
-            [gdl.graphics.color :as color]
-            [gdl.graphics.draw :as draw]
-            [gdl.scene2d.stage :as stage]
+  (:require [gdl.scene2d.stage :as stage]
             [utils.core :refer [sort-by-order]]
             [game.context :as gm]
-            [game.entity :as entity]
             game.render
             [game.line-of-sight :refer (in-line-of-sight?)]
             [game.maps.cell-grid :refer (get-bodies-at-position)])
   (:import (com.badlogic.gdx Gdx Input$Buttons)))
 
-(def ^:private outline-alpha 0.4)
-(color/defrgb ^:private enemy-color    1 0 0 outline-alpha)
-(color/defrgb ^:private friendly-color 0 1 0 outline-alpha)
-(color/defrgb ^:private neutral-color  1 1 1 outline-alpha)
-
-(defcomponent :mouseover? _
-  (entity/render-below [_ drawer _ctx {:keys [position body faction]}]
-    (draw/with-line-width drawer 3
-      #(draw/ellipse drawer position
-                     (:half-width body)
-                     (:half-height body)
-                     (case faction ; TODO enemy faction of player
-                       :evil friendly-color
-                       :good enemy-color
-                       neutral-color)))))
 
 (defn- get-current-mouseover-entity [{:keys [world-mouse-position
                                              context/player-entity
