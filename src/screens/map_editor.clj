@@ -119,10 +119,12 @@
                (color/rgb 1 1 1 0.5))))
 
 (defn- generate [properties]
-  (let [{:keys [world-camera]} (app/current-context)
+  (let [{:keys [world-camera
+                context/properties]} (app/current-context)
         {:keys [tiled-map
                 area-level-grid
-                start-positions]} (module-gen/generate properties)]
+                start-positions]} (module-gen/generate (assoc properties
+                                                              :creature-properties (filter :species (vals properties))))]
     (.dispose ^TiledMap @current-tiled-map)
     (reset! current-tiled-map tiled-map)
     (reset! current-area-level-grid area-level-grid)

@@ -1,4 +1,4 @@
-(ns game.entity
+(ns game.entity ; TODO this is game.component ! / entity protocol will be something else !
   (:require [x.x :refer [defsystem]]))
 
 ; TODO always context last param

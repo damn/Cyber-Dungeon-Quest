@@ -1,7 +1,6 @@
 (ns mapgen.module-gen
   (:require [data.grid2d :as grid]
             [gdl.maps.tiled :as tiled]
-            [properties :as properties]
             [mapgen.utils :as utils]
             [mapgen.transitions :as transitions]
             [mapgen.movement-property :refer (movement-property)]
@@ -206,9 +205,8 @@
        _ (utils/printgrid grid)])
 )
 
-(defn- creatures-with-level [level]
-  (filter #(= level (:level %))
-          (properties/get-all :creature)))
+(defn- creatures-with-level [creature-properties level]
+  (filter #(= level (:level %)) creature-properties))
 
 (def ^:private creature->tile
   (memoize
@@ -217,13 +215,13 @@
        (.put (.getProperties tile) "id" id)
        tile))))
 
-(defn- creature-spawn-positions [spawn-rate tiled-map area-level-grid]
+(defn- creature-spawn-positions [creature-properties spawn-rate tiled-map area-level-grid]
   (keep (fn [[position area-level]]
           (if (and (number? area-level)
                    (= "all" (movement-property tiled-map position)))
             ; module size 14x14 = 196 tiles, ca 5 monsters = 5/200 = 1/40
             (if (<= (rand) spawn-rate)
-              (let [creatures (creatures-with-level area-level)]
+              (let [creatures (creatures-with-level creature-properties area-level)]
                 #_(println "Spawn creature with level " area-level)
                 (when (seq creatures)
                   (let [creature (rand-nth creatures)
@@ -236,14 +234,15 @@
         area-level-grid))
 
 ; TODO use 'steps' ?
-(defn- place-creatures! [spawn-rate tiled-map area-level-grid]
+(defn- place-creatures! [creature-properties spawn-rate tiled-map area-level-grid]
   (let [layer (add-layer! tiled-map
                           :name "creatures"
                           :visible true)]
-    (doseq [[position tile] (creature-spawn-positions spawn-rate tiled-map area-level-grid)]
+    (doseq [[position tile] (creature-spawn-positions creature-properties spawn-rate tiled-map area-level-grid)]
       (set-tile! layer position tile))))
 
-(defn generate [{:keys [map-size
+(defn generate [{:keys [creature-properties
+                        map-size
                         max-area-level
                         spawn-rate]}]
   (let [{:keys [start grid]} (make-grid :size map-size) ; TODO pass as arg
@@ -277,7 +276,8 @@
                                        (and (number? area-level)
                                             (zero? area-level)))
                                      area-level-grid))]
-    (place-creatures! spawn-rate
+    (place-creatures! creature-properties
+                      spawn-rate
                       tiled-map ; TODO move out of this ns, use area-level-grid still
                       area-level-grid)
     {:tiled-map tiled-map

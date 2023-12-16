@@ -64,9 +64,11 @@
   (show-msg-to-player! [_ message]
     (println message)))
 
-(defn- first-level []
+(defn- first-level [properties]
   (let [{:keys [tiled-map start-positions]} (mapgen.module-gen/generate
-                                             (edn/read-string (slurp "resources/maps/map.edn"))) ; TODO move to properties
+                                             ; TODO move to properties
+                                             (assoc (edn/read-string (slurp "resources/maps/map.edn"))
+                                                    :creature-properties (filter :species (vals properties))))
         start-position (translate-to-tile-middle
                         (rand-nth (filter #(= "all" (movement-property tiled-map %))
                                           start-positions)))]
@@ -135,7 +137,7 @@
   (game.ui.inventory-window/rebuild-inventory-widgets!) ; before adding entities ( player gets items )
   (let [context (merge context
                        {:context/ids->entities (atom {})
-                        :context/world-map (create-world-map (first-level))
+                        :context/world-map (create-world-map (first-level (:context/properties context)))
                         :context/running (atom true)
                         :context/mouseover-entity (atom nil)}) ; references nil or an atom, so need to deref it always and check
         player-entity (create-entities-from-tiledmap! context)
