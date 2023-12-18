@@ -1,4 +1,4 @@
-(ns game.context.mouseover-entity
+(ns context.mouseover-entity
   (:require [utils.core :refer [sort-by-order]]
             [game.line-of-sight :refer (in-line-of-sight?)]
             [game.maps.cell-grid :refer (get-bodies-at-position)]))

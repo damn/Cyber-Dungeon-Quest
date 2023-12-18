@@ -6,7 +6,7 @@
             [gdl.scene2d.actor :as actor]
             [gdl.scene2d.stage :as stage]
             [gdl.scene2d.ui :as ui]
-            [properties :as properties])
+            [context.properties :as properties])
   (:import com.badlogic.gdx.Gdx
            com.badlogic.gdx.scenes.scene2d.Stage
            (com.badlogic.gdx.scenes.scene2d.ui WidgetGroup)))

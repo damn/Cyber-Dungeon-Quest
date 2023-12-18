@@ -1,4 +1,4 @@
-(ns game.context.ecs
+(ns context.ecs
   (:require [clj-commons.pretty.repl :as p]
 
             ; TODO this only used here, good.

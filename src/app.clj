@@ -2,6 +2,7 @@
   (:require [gdl.app :as app]
             [gdl.protocols :refer [generate-ttf]]
             gdl.default-context
+            context.properties
             [game.protocols :refer [create-gui-stage]]
             game.modifiers.all
             game.components.require-all
@@ -10,7 +11,6 @@
             game.ui.inventory-window
             game.ui.action-bar
             game.ui.hp-mana-bars
-            properties
             game.tick
             game.render
             game.render.debug
@@ -25,9 +25,9 @@
 (defn- create-context []
   (let [context (gdl.default-context/->Context :tile-size 48)
         properties (let [file "resources/properties.edn"
-                         properties (properties/load-edn context file)]
-                     (.bindRoot #'properties/properties-file file)
-                     (.bindRoot #'properties/properties properties)
+                         properties (context.properties/load-edn context file)]
+                     (.bindRoot #'context.properties/properties-file file)
+                     (.bindRoot #'context.properties/properties properties)
                      properties)
         context (merge context {:context/properties properties})]
     (game.ui.inventory-window/initialize! context)

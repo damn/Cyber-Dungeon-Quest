@@ -11,7 +11,7 @@
             [game.maps.cell-grid :as cell-grid]
             [game.maps.contentfields :refer [create-mapcontentfields]]
             game.protocols
-            [game.context.ecs :as ecs]
+            [context.ecs :as ecs]
             [game.entities.creature :as creature-entity]
             game.ui.action-bar
             game.ui.inventory-window)
