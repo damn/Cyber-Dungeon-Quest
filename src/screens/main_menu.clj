@@ -39,10 +39,10 @@
   lc/Screen
   (lc/show [_ _ctx]
     (.setInputProcessor Gdx/input stage))
-  (lc/hide [_]
+  (lc/hide [_ _ctx]
     (.setInputProcessor Gdx/input nil))
   (lc/render [_ {:keys [gui-viewport-width gui-viewport-height] :as context}]
-    (app/render-with context
+    (app/render-view context
                      :gui
                      (fn [drawer]
                        (draw/centered-image drawer

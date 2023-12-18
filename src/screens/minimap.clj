@@ -45,12 +45,12 @@
   (lc/show [_ {:keys [world-camera] :as context}]
     (reset! zoom-setting (calculate-zoom context))
     (camera/set-zoom! world-camera @zoom-setting))
-  (lc/hide [_])
+  (lc/hide [_ _ctx])
   (lc/render [_ {:keys [world-camera context/world-map] :as context}]
     (tiled/render-map context
                       (:tiled-map world-map)
                       minimap-color-setter)
-    (app/render-with context
+    (app/render-view context
                      :world
                      (fn [drawer]
                        (draw/filled-circle drawer (camera/position world-camera) 0.5 Color/GREEN))))

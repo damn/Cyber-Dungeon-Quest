@@ -1,5 +1,5 @@
 (ns game.entities.projectile
-  (:require [game.context :as gm]))
+  (:require [game.protocols :as gm]))
 
 ; TODO maxrange ?
 ; TODO make only common fields here

@@ -6,10 +6,17 @@
             game.modifiers.all
             game.components.require-all
             game.effects.require-all
+            game.ui.actors
             game.ui.inventory-window
             game.ui.action-bar
             game.ui.hp-mana-bars
             properties
+
+            game.tick
+            game.render
+            game.render.debug
+
+
             screens.game
             screens.main-menu
             screens.map-editor
@@ -32,20 +39,24 @@
                          properties (properties/load-edn context file)]
                      (.bindRoot #'properties/properties-file file)
                      (.bindRoot #'properties/properties properties)
-                     properties)]
-    {:default-font (freetype/generate (.internal Gdx/files "exocet/films.EXL_____.ttf")
-                                      16)
-     :context/properties properties
-     ; TODO here context/world-map
-     ; :game.maps.data (game.maps.data/->Disposable-State)
-     :screens/game            (screens.game/screen (assoc context :context/properties properties))
-     :screens/main-menu       (screens.main-menu/screen context
-                                                        {:bg-image "ui/moon_background.png"
-                                                         :skip-main-menu false})
-     :screens/map-editor      (screens.map-editor/screen context)
-     :screens/minimap         (screens.minimap/->Screen)
-     :screens/options-menu    (screens.options-menu/screen context)
-     :screens/property-editor (screens.property-editor/screen context)}))
+                     properties)
+        context (merge context
+                       {:context/properties properties})]
+    (merge context
+           {:default-font (freetype/generate (.internal Gdx/files "exocet/films.EXL_____.ttf")
+                                             16)
+
+            ; TODO here context/world-map
+            ; :game.maps.data (game.maps.data/->Disposable-State)
+            :screens/game            (screens.game/screen context
+                                                          (game.ui.actors/create-actors context))
+            :screens/main-menu       (screens.main-menu/screen context
+                                                               {:bg-image "ui/moon_background.png"
+                                                                :skip-main-menu false})
+            :screens/map-editor      (screens.map-editor/screen context)
+            :screens/minimap         (screens.minimap/->Screen)
+            :screens/options-menu    (screens.options-menu/screen context)
+            :screens/property-editor (screens.property-editor/screen context)})))
 
 (def app-config
   {:app {:title "Cyber Dungeon Quest"

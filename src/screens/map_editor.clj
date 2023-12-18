@@ -188,13 +188,13 @@
   (lc/show [_ {:keys [world-camera]}]
     (.setInputProcessor Gdx/input stage)
     (center-world-camera world-camera))
-  (lc/hide [_]
+  (lc/hide [_ _ctx]
     (.setInputProcessor Gdx/input nil))
   (lc/render [_ context]
     (tiled/render-map context
                       @current-tiled-map
                       (constantly Color/WHITE)) ; TODO colorsetter optional.
-    (app/render-with context :world #(render-on-map % context))
+    (app/render-view context :world #(render-on-map % context))
     (.draw stage))
   (lc/tick [_ {:keys [world-camera]} delta]
     (.act stage delta)

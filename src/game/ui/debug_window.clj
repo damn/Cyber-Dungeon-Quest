@@ -7,20 +7,20 @@
 (defn- debug-infos [{:keys [gui-mouse-position
                             world-mouse-position
                             context/running
-                            context/player-entity]}]
+                            context/player-entity
+                            context/thrown-error]}]
   (str "FPS: " (.getFramesPerSecond Gdx/graphics)  "\n"
        "World: "(mapv int world-mouse-position) "\n"
        "X:" (world-mouse-position 0) "\n"
        "Y:" (world-mouse-position 1) "\n"
        "GUI: " gui-mouse-position "\n"
-       ; "\nERROR!\n " (deref game.tick/thrown-error) "\n\n"
-       ; TODO add thrown-error to context, cant require here
-       "@running " @running "\n"
-       "player state " (:state (:fsm (:components/state @player-entity))) "\n"
-       "(state/pause-game?  (:state-obj (:components/state @player-entity))) \n"
-       (game.components.state/pause-game? (:state-obj (:components/state @player-entity)))))
+       (when @thrown-error
+         (str "\nERROR!\n " @thrown-error "\n\n"))
+       "Game running? " @running "\n"))
 
 (defn create []
+  ; TODO just a self-updating window with textfn and title/id
+  ; textfn-window
   (let [window (ui/window :title "Debug"
                           :id :debug-window)
         label (ui/label "")]

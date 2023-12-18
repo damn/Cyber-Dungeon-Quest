@@ -4,7 +4,7 @@
             [data.counter :as counter]
             [data.val-max :refer [apply-val]]
             [game.effect :as effect]
-            [game.context :as gm]
+            [game.protocols :as gm]
             [game.components.state :as state]
             [game.components.skills :as skills]))
 

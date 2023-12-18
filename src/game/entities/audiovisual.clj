@@ -1,6 +1,6 @@
 (ns game.entities.audiovisual
   (:require [utils.core :refer [safe-get]]
-            [game.context :as gm]))
+            [game.protocols :as gm]))
 
 (defn create! [{:keys [context/properties] :as context} position id]
   (let [{:keys [sound animation]} (safe-get properties id)]

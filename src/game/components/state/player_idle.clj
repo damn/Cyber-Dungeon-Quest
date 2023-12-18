@@ -3,7 +3,7 @@
             [gdl.scene2d.stage :as stage]
             [utils.core :refer [safe-get]]
             [data.counter :as counter]
-            [game.context :as gm]
+            [game.protocols :as gm]
             [game.effect :as effect]
             [game.components.state :as state]
             [game.components.clickable :as clickable]

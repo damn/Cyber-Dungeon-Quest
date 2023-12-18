@@ -6,7 +6,7 @@
             [gdl.graphics.draw :as draw]
             [gdl.graphics.image :as image]
             [gdl.scene2d.ui :as ui]
-            [game.context :as gm]
+            [game.protocols :as gm]
             [game.modifier :as modifier]
             [game.components.state :as state]
             [game.components.inventory :as inventory]

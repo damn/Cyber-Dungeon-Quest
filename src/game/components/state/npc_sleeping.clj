@@ -1,7 +1,7 @@
 (ns game.components.state.npc-sleeping
   (:require [gdl.graphics.draw :as draw]
             [data.counter :as counter]
-            [game.context :as gm]
+            [game.protocols :as gm]
             [game.components.state :as state]
             [game.components.string-effect :as string-effect]
             [game.components.faction :as faction])

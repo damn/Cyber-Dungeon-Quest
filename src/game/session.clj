@@ -1,68 +1,61 @@
 (ns game.session
   (:require [clojure.edn :as edn]
-            [x.x :refer [update-map doseq-entity]]
             [data.grid2d :as grid]
             [gdl.app :as app]
             [gdl.lifecycle :as lc]
             [gdl.maps.tiled :as tiled]
+            [gdl.scene2d.stage :as stage]
             [utils.core :refer [translate-to-tile-middle]]
             [mapgen.movement-property :refer (movement-property)]
             mapgen.module-gen
             [game.maps.cell-grid :as cell-grid]
             [game.maps.contentfields :refer [create-mapcontentfields]]
-            [game.context :as gm]
-            [game.entity :as entity]
+            game.protocols
+            [game.context.ecs :as ecs]
             [game.entities.creature :as creature-entity]
             game.ui.action-bar
             game.ui.inventory-window)
-  (:import com.badlogic.gdx.audio.Sound))
-
-; not sure I should extend gdl.app.Context
-; or create a 'session' inside , why e need the whole context???
-; so far only ids->entities? which could be part of some kind of 'session' or 'world' context/world
-; record and not part of the overall record ?!
-; => see create! and destroy! which needs it ...
-
-
-; :body => needs map data / cell-grid for create! / destroy!
-; :id needs id-entity-map
-; items need properties and try-pickup-item!, maybe problematic
-; :position needs contentfields
-; :skills need properties
-
-; player sets world-camera position , also at tick (I could do that before render just set the camera position to player entity)
-; :default-monster-death needs audiovisual -> sound -> assets/properties
-
-; what do I want to do ? completely immutable game structure, only pure functions?
-; => transactions on the game state itself are done in tick, no atoms ...
+  (:import com.badlogic.gdx.Gdx
+           com.badlogic.gdx.audio.Sound
+           com.badlogic.gdx.scenes.scene2d.Stage))
 
 (extend-type gdl.app.Context
-  gm/Context
-  (get-entity [{:keys [context/ids->entities]} id]
-    (get @ids->entities id))
-
-  (entity-exists? [context e]
-    (gm/get-entity context (:id @e)))
-
-  (create-entity! [context components-map]
-    {:pre [(not (contains? components-map :id))]}
-    (-> (assoc components-map :id nil)
-        (update-map entity/create)
-        atom
-        (doseq-entity entity/create! context)))
-
-  (destroy-to-be-removed-entities!
-    [{:keys [context/ids->entities] :as context}]
-    (doseq [e (filter (comp :destroyed? deref) (vals @ids->entities))
-            :when (gm/entity-exists? context e)] ; TODO why is this ?, maybe assert ?
-      (swap! e update-map entity/destroy)
-      (doseq-entity e entity/destroy! context)))
-
+  game.protocols/Context
   (play-sound! [{:keys [assets]} file]
     (.play ^Sound (get assets file)))
 
   (show-msg-to-player! [_ message]
-    (println message)))
+    (println message))
+
+  game.protocols/StageCreater
+  (create-gui-stage [{:keys [gui-viewport batch]} actors]
+    (let [stage (stage/create gui-viewport batch)]
+      (doseq [actor actors]
+        (.addActor stage actor))
+      stage))
+
+  game.protocols/ViewRenderer
+  (render-view [context view-key render-fn]
+    (app/render-view context view-key render-fn))
+
+  game.protocols/ContextStageSetter
+  (set-screen-stage [_ stage]
+    ; set-screen-stage & also sets it to context ':stage' key
+    (.setInputProcessor Gdx/input stage))
+  (remove-screen-stage [_]
+    ; TODO dissoc also :stage from context
+    (.setInputProcessor Gdx/input nil)))
+
+(extend-type Stage
+  gdl.lifecycle/Disposable
+  (dispose [stage]
+    (.dispose stage))
+  game.protocols/Stage
+  (draw [stage]
+    (.draw stage))
+  (act [stage delta]
+    (.act stage delta)))
+; TODO also for my own Disposable protocol
 
 (defn- first-level [properties]
   (let [{:keys [tiled-map start-positions]} (mapgen.module-gen/generate
@@ -135,9 +128,14 @@
 
 (defn init-context [context]
   (game.ui.inventory-window/rebuild-inventory-widgets!) ; before adding entities ( player gets items )
+
+  ; TODO make namespaced kws / or variables ? no then deps.
   (let [context (merge context
-                       {:context/ids->entities (atom {})
-                        :context/world-map (create-world-map (first-level (:context/properties context)))
+                       (ecs/->context :z-orders [:on-ground ; items
+                                                 :ground    ; creatures, player
+                                                 :flying    ; flying creatures
+                                                 :effect])  ; projectiles, nova
+                       {:context/world-map (create-world-map (first-level (:context/properties context)))
                         :context/running (atom true)
                         :context/mouseover-entity (atom nil)}) ; references nil or an atom, so need to deref it always and check
         player-entity (create-entities-from-tiledmap! context)

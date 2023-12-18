@@ -1,5 +1,5 @@
 (ns game.entities.line
-  (:require [game.context :as gm]))
+  (:require [game.protocols :as gm]))
 
 (defn create! [context {:keys [start end duration color thick?]}]
   (gm/create-entity! context

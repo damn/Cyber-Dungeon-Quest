@@ -1,12 +1,12 @@
 (ns game.context.mouseover-entity
   (:require [utils.core :refer [sort-by-order]]
-            [game.render :refer [render-on-map-order]]
             [game.line-of-sight :refer (in-line-of-sight?)]
             [game.maps.cell-grid :refer (get-bodies-at-position)]))
 
 (defn- calculate-mouseover-entity
   [{:keys [world-mouse-position
            context/player-entity
+           context/render-on-map-order
            context/world-map]
     :as context}]
   (let [cell-grid (:cell-grid world-map)

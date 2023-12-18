@@ -235,7 +235,7 @@
   lc/Screen
   (lc/show [_ _ctx]
     (.setInputProcessor Gdx/input stage))
-  (lc/hide [_]
+  (lc/hide [_ _ctx]
     (.setInputProcessor Gdx/input nil))
   (lc/render [_ _context]
     (.draw stage))

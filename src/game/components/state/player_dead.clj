@@ -1,6 +1,6 @@
 (ns game.components.state.player-dead
   (:require [gdl.app :as app]
-            [game.context :as gm]
+            [game.protocols :as gm]
             [game.components.state :as state])
   (:import (com.badlogic.gdx Gdx Input$Keys)))
 
