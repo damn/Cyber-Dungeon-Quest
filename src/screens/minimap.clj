@@ -1,6 +1,6 @@
 (ns screens.minimap
   (:require [gdl.app :as app]
-            [gdl.lifecycle :as lc]
+            gdl.screen
             [gdl.maps.tiled :as tiled]
             [gdl.graphics.color :as color]
             [gdl.graphics.camera :as camera]
@@ -41,12 +41,12 @@
     new-zoom ))
 
 (deftype Screen []
-  lc/Screen
-  (lc/show [_ {:keys [world-camera] :as context}]
+  gdl.screen/Screen
+  (show [_ {:keys [world-camera] :as context}]
     (reset! zoom-setting (calculate-zoom context))
     (camera/set-zoom! world-camera @zoom-setting))
-  (lc/hide [_ _ctx])
-  (lc/render [_ {:keys [world-camera context/world-map] :as context}]
+  (hide [_ _ctx])
+  (render [_ {:keys [world-camera context/world-map] :as context}]
     (tiled/render-map context
                       (:tiled-map world-map)
                       minimap-color-setter)
@@ -54,7 +54,7 @@
                      :world
                      (fn [drawer]
                        (draw/filled-circle drawer (camera/position world-camera) 0.5 Color/GREEN))))
-  (lc/tick [_ {:keys [world-camera]} delta]
+  (tick [_ {:keys [world-camera]} delta]
     (when (or (.isKeyJustPressed Gdx/input Input$Keys/TAB)
               (.isKeyJustPressed Gdx/input Input$Keys/ESCAPE))
       (camera/set-zoom! world-camera 1)

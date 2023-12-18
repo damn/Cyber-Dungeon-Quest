@@ -1,8 +1,7 @@
 (ns app
-  (:require [x.x :refer [defcomponent]]
-            [gdl.app :as app]
-            [gdl.lifecycle :as lc]
-            [gdl.graphics.freetype :as freetype]
+  (:require [gdl.app :as app]
+            [gdl.protocols :refer [generate-ttf]]
+            [game.protocols :refer [create-gui-stage]]
             game.modifiers.all
             game.components.require-all
             game.effects.require-all
@@ -11,12 +10,9 @@
             game.ui.action-bar
             game.ui.hp-mana-bars
             properties
-
             game.tick
             game.render
             game.render.debug
-
-
             screens.game
             screens.main-menu
             screens.map-editor
@@ -24,12 +20,6 @@
             screens.options-menu
             screens.property-editor)
   (:import com.badlogic.gdx.Gdx))
-
-; !!!
-; TODO make all context stuff namespaced keyword like :context/properties
-; ====>>> but defrecords no namespaced keys ? fuck.
-; TODO also components,effects,modifiers,effect-params, etc. everything ....
-; !!! greppable !!!
 
 (defn- create-context [context]
   (game.ui.inventory-window/initialize! context)
@@ -43,16 +33,16 @@
         context (merge context
                        {:context/properties properties})]
     (merge context
-           {:default-font (freetype/generate (.internal Gdx/files "exocet/films.EXL_____.ttf")
-                                             16)
+           {:default-font (generate-ttf context {:file "exocet/films.EXL_____.ttf"
+                                                 :size 16})
 
             ; TODO here context/world-map
             ; :game.maps.data (game.maps.data/->Disposable-State)
-            :screens/game            (screens.game/screen context
-                                                          (game.ui.actors/create-actors context))
-            :screens/main-menu       (screens.main-menu/screen context
-                                                               {:bg-image "ui/moon_background.png"
-                                                                :skip-main-menu false})
+            :screens/game            (-> context
+                                         (create-gui-stage (game.ui.actors/create-actors context))
+                                         screens.game/->Screen)
+            :screens/main-menu       (screens.main-menu/screen context {:bg-image "ui/moon_background.png"
+                                                                        :skip-main-menu false})
             :screens/map-editor      (screens.map-editor/screen context)
             :screens/minimap         (screens.minimap/->Screen)
             :screens/options-menu    (screens.options-menu/screen context)

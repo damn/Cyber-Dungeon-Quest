@@ -1,6 +1,7 @@
 (ns screens.property-editor
   (:require [clojure.edn :as edn]
-            [gdl.lifecycle :as lc]
+            gdl.protocols
+            gdl.screen
             [gdl.app :as app]
             [gdl.scene2d.actor :as actor]
             [gdl.scene2d.stage :as stage]
@@ -229,17 +230,17 @@
     stage))
 
 (defrecord Screen [^Stage stage]
-  lc/Disposable
-  (lc/dispose [_]
+  gdl.protocols/Disposable
+  (dispose [_]
     (.dispose stage))
-  lc/Screen
-  (lc/show [_ _ctx]
+  gdl.screen/Screen
+  (show [_ _ctx]
     (.setInputProcessor Gdx/input stage))
-  (lc/hide [_ _ctx]
+  (hide [_ _ctx]
     (.setInputProcessor Gdx/input nil))
-  (lc/render [_ _context]
+  (render [_ _context]
     (.draw stage))
-  (lc/tick [_ _state delta]
+  (tick [_ _state delta]
     (.act stage delta)))
 
 (defn screen [context]

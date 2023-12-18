@@ -70,7 +70,7 @@
     (actor/toggle-visible! debug-window)))
 
 
-(extend-type gdl.app.Context
+(extend-type gdl.protocols.Context
   game.protocols/GameScreenTick
   (tick-game [{:keys [context/player-entity
                       context/running

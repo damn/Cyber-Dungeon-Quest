@@ -83,9 +83,8 @@
 ; or to-be-updated-entities ?!
 ; dont want to know about contentfields ( ? )
 
-(println "extend-type gdl.app.Context with EntityComponentSystem")
 
-(extend-type gdl.app.Context
+(extend-type gdl.protocols.Context
   game.protocols/EntityComponentSystem
   (get-entity [{:keys [context/ids->entities]} id]
     (get @ids->entities id))

@@ -1,5 +1,6 @@
 (ns screens.game
-  (:require [gdl.lifecycle :as lc :refer [dispose]]
+  (:require [gdl.protocols :refer [dispose]]
+            gdl.screen
             [game.protocols :refer [render-view
                                     set-screen-stage
                                     remove-screen-stage
@@ -8,15 +9,14 @@
                                     render-world-map
                                     render-in-world-view
                                     render-in-gui-view
-                                    tick-game
-                                    create-gui-stage]]))
+                                    tick-game]]))
 
 (defrecord Screen [stage]
-  lc/Disposable
+  gdl.protocols/Disposable
   (dispose [_]
     (dispose stage))
 
-  lc/Screen
+  gdl.screen/Screen
   (show [_ context]
     (set-screen-stage context stage))
 
@@ -32,6 +32,3 @@
   (tick [_ context delta]
     (tick-game context stage delta)
     (act stage delta)))
-
-(defn screen [context actors]
-  (->Screen (create-gui-stage context actors)))

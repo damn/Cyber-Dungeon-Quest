@@ -44,7 +44,7 @@
       #_(when (:monster @cell)
           (@#'g/draw-string x y (str (:id @(:monster @cell))) 1)))))
 
-(extend-type gdl.app.Context
+(extend-type gdl.protocols.Context
   game.protocols/DebugRenderer
   (render-debug-before-entities [context drawer]
     #_(tile-debug drawer context))

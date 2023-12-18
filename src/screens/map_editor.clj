@@ -1,7 +1,8 @@
 (ns screens.map-editor
   (:require [clojure.edn :as edn]
             [gdl.app :as app]
-            [gdl.lifecycle :as lc]
+            gdl.protocols
+            gdl.screen
             [gdl.graphics.color :as color]
             [gdl.graphics.camera :as camera]
             [gdl.graphics.draw :as draw]
@@ -180,23 +181,23 @@
     stage))
 
 (defrecord Screen [^Stage stage]
-  lc/Disposable
-  (lc/dispose [_]
+  gdl.protocols/Disposable
+  (dispose [_]
     (.dispose stage)
     (.dispose ^TiledMap @current-tiled-map))
-  lc/Screen
-  (lc/show [_ {:keys [world-camera]}]
+  gdl.screen/Screen
+  (show [_ {:keys [world-camera]}]
     (.setInputProcessor Gdx/input stage)
     (center-world-camera world-camera))
-  (lc/hide [_ _ctx]
+  (hide [_ _ctx]
     (.setInputProcessor Gdx/input nil))
-  (lc/render [_ context]
+  (render [_ context]
     (tiled/render-map context
                       @current-tiled-map
                       (constantly Color/WHITE)) ; TODO colorsetter optional.
     (app/render-view context :world #(render-on-map % context))
     (.draw stage))
-  (lc/tick [_ {:keys [world-camera]} delta]
+  (tick [_ {:keys [world-camera]} delta]
     (.act stage delta)
     (when (.isKeyJustPressed Gdx/input Input$Keys/ESCAPE)
       (app/change-screen! :screens/main-menu))

@@ -2,7 +2,7 @@
   (:require [clojure.edn :as edn]
             [data.grid2d :as grid]
             [gdl.app :as app]
-            [gdl.lifecycle :as lc]
+            gdl.protocols
             [gdl.maps.tiled :as tiled]
             [gdl.scene2d.stage :as stage]
             [utils.core :refer [translate-to-tile-middle]]
@@ -19,7 +19,7 @@
            com.badlogic.gdx.audio.Sound
            com.badlogic.gdx.scenes.scene2d.Stage))
 
-(extend-type gdl.app.Context
+(extend-type gdl.protocols.Context
   game.protocols/Context
   (play-sound! [{:keys [assets]} file]
     (.play ^Sound (get assets file)))
@@ -47,7 +47,7 @@
     (.setInputProcessor Gdx/input nil)))
 
 (extend-type Stage
-  gdl.lifecycle/Disposable
+  gdl.protocols/Disposable
   (dispose [stage]
     (.dispose stage))
   game.protocols/Stage
@@ -115,7 +115,7 @@
     player-entity))
 
 (deftype Disposable-State []
-  lc/Disposable
+  gdl.protocols/Disposable
   (dispose [_]
     ; TODO dispose tiledmap of context/world-map => make disposable record
     ; TODO dispose maps when starting a new session

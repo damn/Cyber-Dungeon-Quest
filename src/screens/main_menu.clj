@@ -1,7 +1,8 @@
 (ns screens.main-menu
   (:require [gdl.app :as app]
             [gdl.graphics.draw :as draw]
-            [gdl.lifecycle :as lc]
+            gdl.protocols
+            gdl.screen
             [gdl.scene2d.ui :as ui]
             [gdl.scene2d.stage :as stage]
             [gdl.graphics.image :as image]
@@ -33,15 +34,15 @@
     (.center table)))
 
 (defrecord Screen []
-  lc/Disposable
-  (lc/dispose [_]
+  gdl.protocols/Disposable
+  (dispose [_]
     (.dispose stage))
-  lc/Screen
-  (lc/show [_ _ctx]
+  gdl.screen/Screen
+  (show [_ _ctx]
     (.setInputProcessor Gdx/input stage))
-  (lc/hide [_ _ctx]
+  (hide [_ _ctx]
     (.setInputProcessor Gdx/input nil))
-  (lc/render [_ {:keys [gui-viewport-width gui-viewport-height] :as context}]
+  (render [_ {:keys [gui-viewport-width gui-viewport-height] :as context}]
     (app/render-view context
                      :gui
                      (fn [drawer]
@@ -50,7 +51,7 @@
                                             [(/ gui-viewport-width  2)
                                              (/ gui-viewport-height 2)])))
     (.draw stage))
-  (lc/tick [_ _state delta]
+  (tick [_ _state delta]
     (.act stage delta)
     (when (.isKeyJustPressed Gdx/input Input$Keys/ESCAPE)
       (.exit Gdx/app))
