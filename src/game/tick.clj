@@ -82,7 +82,7 @@
                  delta]
   (handle-key-input stage context)
   (let [state (:state-obj (:components/state @player-entity))]
-    (state/manual-tick! state context player-entity delta)
+    (state/manual-tick! state context delta)
     (reset! running (if (or @thrown-error
                             (and pausing (state/pause-game? state)))
                       false

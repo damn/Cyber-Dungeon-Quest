@@ -24,7 +24,7 @@
 (defrecord State [entity skill effect-params counter]
   state/PlayerState
   (pause-game? [_] false)
-  (manual-tick! [_ context entity delta])
+  (manual-tick! [_ context delta])
 
   state/State
   (enter [_ context]
@@ -75,4 +75,6 @@
   (->State entity
            skill
            effect-params
-           (counter/create (apply-action-speed-modifier (:action-time skill)))))
+           (counter/create (apply-action-speed-modifier @entity
+                                                        skill
+                                                        (:action-time skill)))))
