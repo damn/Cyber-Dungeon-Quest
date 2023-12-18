@@ -46,7 +46,10 @@
                                           (- y (/ (:height body) 2))]))
 
 ; needs only cell-grid actually? or protocol ol world-map?
+; ON WORLD (not world-map) world/valid-position?
 (defn valid-position? [{:keys [context/world-map]} entity*]
+  ; TODO save params & check why its not a valid position
+
   (let [touched-cells (grid/rectangle->touched-cells (:cell-grid world-map)
                                                      (:body entity*))]
     (and

@@ -12,7 +12,7 @@
             [game.line-of-sight :refer (in-line-of-sight?)]
             [game.maps.contentfields :refer [get-entities-in-active-content-fields]] ))
 
-; TODO move x.x here also
+; TODO move x.x here also or just defsystems
 
 
 ; if lightning => pass render-on-map argument 'colorsetter' by default
@@ -34,6 +34,7 @@
          ; TODO pretty print error => same like tick => pass function through context? idk
          ; or context/handle-error ... O.O
          ; with environment ? clojure error oopts all args ? possible => can inspect then, even 'drawer' or 'context'  ?
+         (p/pretty-pst t)
          (reset! (:context/thrown-error c) t))
        ; TODO highlight entity ? as mouseover?
        ; TODO automatically open debug window

@@ -11,8 +11,7 @@
               :up? true}))
 
 (defn initialize! [context]
-  (let [scale 2] ; TODO FIXME scale of the whole all game things can set somewhere (gui-scale) for all dists, etc.
-    ; ?? can play also sci-fi 24x24 ?
+  (let [scale 2]
     (def ^:private rahmen (create-image context "ui/rahmen.png"))
     (def ^:private rahmenw (first  (:pixel-dimensions rahmen)))
     (def ^:private rahmenh (second (:pixel-dimensions rahmen)))
@@ -20,14 +19,9 @@
     (def ^:private manacontent (create-image context "ui/mana.png"))))
 
 (defn- render-hpmana-bar [c x y contentimg minmaxval name]
-  ; stack
-  ; * rahmen
-  ; * sub-image
-  ; * label
   (draw-image c rahmen x y)
-  (draw-image c (get-sub-image c
-                               (assoc contentimg
-                                      :sub-image-bounds [0 0 (* rahmenw (val-max-ratio minmaxval)) rahmenh]))
+  (draw-image c
+              (get-sub-image c (assoc contentimg :sub-image-bounds [0 0 (* rahmenw (val-max-ratio minmaxval)) rahmenh]))
               x y)
   (render-infostr-on-bar c (str (readable-number (minmaxval 0)) "/" (minmaxval 1) " " name) y rahmenh))
 

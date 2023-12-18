@@ -25,9 +25,9 @@
     (remove-screen-stage context))
 
   (render [_ context]
-    (render-world-map context)
-    (render-world-view context (partial render-in-world-view context))
-    (render-gui-view   context (partial render-in-gui-view   context))
+    (render-world-map  context)
+    (render-world-view context render-in-world-view)
+    (render-gui-view   context render-in-gui-view)
     (draw stage))
 
   (tick [_ context delta]

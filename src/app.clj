@@ -23,7 +23,7 @@
   (:import com.badlogic.gdx.Gdx))
 
 (defn- create-context []
-  (let [context (gdl.default-context/->Context)
+  (let [context (gdl.default-context/->Context :tile-size 48)
         properties (let [file "resources/properties.edn"
                          properties (properties/load-edn context file)]
                      (.bindRoot #'properties/properties-file file)
@@ -55,7 +55,6 @@
          :height 900
          :full-screen? false
          :fps nil} ; TODO fix is set to 60 @ gdl
-   :tile-size 48
    :context-fn create-context
    :first-screen :screens/main-menu})
 

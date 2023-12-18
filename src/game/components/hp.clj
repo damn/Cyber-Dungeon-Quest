@@ -36,7 +36,7 @@
               y (+ y half-height)
               height (pixels->world-units c hpbar-height-px) ; pre-calculate it maybe somehow, but will put too much stuff in properties?
               border (pixels->world-units c borders-px)] ; => can actually still use global state? idk
-          (draw-filled-rectangle c x y width height :color/black)
+          (draw-filled-rectangle c x y width height Color/BLACK)
           (draw-filled-rectangle c
                                  (+ x border)
                                  (+ y border)
