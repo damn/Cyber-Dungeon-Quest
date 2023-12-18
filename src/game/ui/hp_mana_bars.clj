@@ -19,10 +19,10 @@
     (def ^:private manacontent (create-image context "ui/mana.png"))))
 
 (defn- render-hpmana-bar [c x y contentimg minmaxval name]
-  (draw-image c rahmen x y)
+  (draw-image c rahmen [x y])
   (draw-image c
               (get-sub-image c (assoc contentimg :sub-image-bounds [0 0 (* rahmenw (val-max-ratio minmaxval)) rahmenh]))
-              x y)
+              [x y])
   (render-infostr-on-bar c (str (readable-number (minmaxval 0)) "/" (minmaxval 1) " " name) y rahmenh))
 
 (defn render-player-hp-mana [{:keys [gui-viewport-width context/player-entity] :as c}]
