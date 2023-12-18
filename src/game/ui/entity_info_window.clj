@@ -7,20 +7,8 @@
   (binding [*print-level* nil]
     (with-out-str
      (clojure.pprint/pprint
-      (-> entity*
-          (select-keys [:id
-                        :name
-                        :speed
-                        :hp
-                        :mana
-                        :faction
-                        :creature
-                        :level
-                        :is-flying
-                        :active-skill?
-                        :modifiers
-                        :items])
-          (assoc :skills (keys (:skills entity*))))))))
+      {:id (:id entity*)
+       :state (:state (:fsm (:components/state entity*))) }))))
 
 (defn create []
   (let [window (ui/window :title "Info"

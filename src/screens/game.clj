@@ -7,7 +7,7 @@
   (:import com.badlogic.gdx.Gdx
            com.badlogic.gdx.scenes.scene2d.Stage))
 
-(defrecord IngameScreen [^Stage stage]
+(defrecord Screen [^Stage stage]
   lc/Disposable
   (lc/dispose [_]
     (.dispose stage))
@@ -24,7 +24,7 @@
     (.act stage delta)))
 
 (defn screen [{:keys [gui-viewport batch] :as context}]
-  (->IngameScreen (let [stage (stage/create gui-viewport batch)]
-                    (doseq [actor (game.ui.actors/create-actors context)]
-                      (.addActor stage actor))
-                    stage)))
+  (->Screen (let [stage (stage/create gui-viewport batch)]
+              (doseq [actor (game.ui.actors/create-actors context)]
+                (.addActor stage actor))
+              stage)))

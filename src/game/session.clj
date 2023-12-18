@@ -105,7 +105,7 @@
   (doseq [[posi creature-id] (tiled/positions-with-property tiled-map :creatures :id)]
     (creature-entity/create! creature-id
                              (translate-to-tile-middle posi)
-                             {:sleeping true}
+                             {:initial-state :sleeping}
                              context))
   ; otherwise will be rendered, is visible, can also just setVisible layer false
   (tiled/remove-layer! tiled-map :creatures))

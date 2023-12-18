@@ -1,5 +1,6 @@
 (ns game.entities.creature
-  (:require [x.x :refer [defcomponent]]
+  (:require [reduce-fsm :as fsm]
+            [x.x :refer [defcomponent]]
             [gdl.graphics.camera :as camera]
             [gdl.graphics.image :as image]
             [gdl.graphics.animation :as animation]
@@ -7,7 +8,75 @@
             [game.context :as gm]
             [game.entity :as entity]
             [game.components.body :refer (assoc-left-bottom valid-position?)]
+            (game.components.state
+             [active-skill :as active-skill]
+             [npc-dead :as npc-dead]
+             [npc-idle :as npc-idle]
+             [npc-sleeping :as npc-sleeping]
+             [player-dead :as player-dead]
+             [player-idle :as player-idle]
+             [player-item-on-cursor :as player-item-on-cursor]
+             [player-moving :as player-moving]
+             [stunned :as stunned])
             [game.entities.audiovisual :as audiovisual]))
+
+(fsm/defsm-inc ^:private npc-fsm
+  [[:sleeping
+    :kill -> :dead
+    :stun -> :stunned
+    :alert -> :idle]
+   [:idle
+    :kill -> :dead
+    :stun -> :stunned
+    :start-action -> :active-skill]
+   [:active-skill
+    :kill -> :dead
+    :stun -> :stunned
+    :action-done -> :idle]
+   [:stunned
+    :kill -> :dead
+    :effect-wears-off -> :idle]
+   [:dead]])
+
+(fsm/defsm-inc ^:private player-fsm
+  [[:idle
+    :kill -> :dead
+    :stun -> :stunned
+    :start-action -> :active-skill
+    :pickup-item -> :item-on-cursor
+    :movement-input -> :moving]
+   [:moving
+    :kill -> :dead
+    :stun -> :stunned
+    :no-movement-input -> :idle]
+   [:active-skill
+    :kill -> :dead
+    :stun -> :stunned
+    :action-done -> :idle]
+   [:stunned
+    :kill -> :dead
+    :effect-wears-off -> :idle]
+   [:item-on-cursor
+    :kill -> :dead
+    :stun -> :stunned
+    :drop-item -> :idle
+    :dropped-item -> :idle]
+   [:dead]])
+
+(def ^:private npc-state-constructors
+  {:sleeping     npc-sleeping/->State
+   :idle         npc-idle/->State
+   :active-skill active-skill/->CreateWithCounter
+   :stunned      stunned/->CreateWithCounter
+   :dead         npc-dead/->State})
+
+(def ^:private player-state-constructors
+  {:item-on-cursor player-item-on-cursor/->State
+   :idle           player-idle/->State
+   :moving         player-moving/->State
+   :active-skill   active-skill/->CreateWithCounter
+   :stunned        stunned/->CreateWithCounter
+   :dead           player-dead/->State})
 
 (defn- create-images [context creature-name]
   (map #(image/create context
@@ -52,7 +121,8 @@
         (update :hp #(int (* % (:hp multiplier)))))))
 
 (defn- create-creature-data [creature-props
-                             {:keys [is-player] :as extra-params}
+                             {:keys [is-player
+                                     initial-state] :as extra-params}
                              {:keys [context/properties] :as context}]
   (let [creature-name (name (:id creature-props))
         creature-props (dissoc creature-props :id)
@@ -72,6 +142,15 @@
             :mana 11
             :is-flying false
             :animation (animation/create images :frame-duration 250 :looping? true)
+            :components/state {:initial-state (if is-player
+                                                :idle
+                                                initial-state)
+                               :fsm (if is-player
+                                      player-fsm
+                                      npc-fsm)
+                               :state-obj-constructors (if is-player
+                                                         player-state-constructors
+                                                         npc-state-constructors)}
             :z-order (if (:is-flying creature-props)
                        :flying
                        :ground)}

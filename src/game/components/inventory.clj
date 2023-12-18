@@ -46,7 +46,7 @@
            (if-let [weapon (first (slot->items inventory :weapon))]
              (:two-handed? weapon)))))
 
-(defn- applies-modifiers? [[slot _]]
+(defn applies-modifiers? [[slot _]]
   (not= :bag slot))
 
 (defn- inv-set-item [inventory cell item]
@@ -65,9 +65,9 @@
 (defn set-item! [entity cell item]
   (swap! entity update :inventory inv-set-item cell item)
   (when (applies-modifiers? cell)
-    (swap! entity modifier/apply-modifiers (:modifiers item)))
-  (when (= (:slot item) :weapon)
-    (swap! entity update :skills skills/add-skill item))
+    (swap! entity modifier/apply-modifiers (:modifiers item))
+    (when (and (= (:slot item) :weapon))
+      (swap! entity update :skills skills/add-skill item)))
   (when (:is-player @entity)
     (set-item-image-in-widget! cell item)))
 
@@ -75,18 +75,11 @@
   (let [item (get-in (:inventory @entity) cell)]
     (swap! entity update :inventory inv-remove-item cell)
     (when (applies-modifiers? cell)
-      (swap! entity modifier/reverse-modifiers (:modifiers item)))
-    (when (= (:slot item) :weapon)
-      (swap! entity update :skills skills/remove-skill item))
+      (swap! entity modifier/reverse-modifiers (:modifiers item))
+      (when (= (:slot item) :weapon)
+        (swap! entity update :skills skills/remove-skill item)))
     (when (:is-player @entity)
       (remove-item-from-widget! cell))))
-
-(defn cell-in-use? [entity* cell] ; TODO naming (includes is-active check) ->
-  (let [inventory (:inventory entity*)
-        item (get-in inventory cell)]
-    (and item
-         (applies-modifiers? cell)
-         (:active-skill? entity*))))
 
 (defn stackable? [item-a item-b]
   (and (:count item-a)

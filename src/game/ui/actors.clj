@@ -13,12 +13,15 @@
 (defn- item-on-cursor-render-actor []
   (proxy [Actor] []
     (draw [_batch _parent-alpha]
-      (let [{:keys [drawer gui-mouse-position context/player-entity] :as context} (app/current-context)]
-        (when-let [item (:item-on-cursor @player-entity)]
-          ; windows keep changing z-index when selected, or put all windows in 1 group and this actor another group
+      (let [{:keys [drawer
+                    gui-mouse-position
+                    context/player-entity] :as context} (app/current-context)]
+        (when (= :item-on-cursor
+                 (:state (:fsm (:components/state @player-entity))))
+          ; windows keep changing z-index when selected
           (.toFront ^Actor this)
           (draw/centered-image drawer
-                               (:image item)
+                               (:image (:item-on-cursor @player-entity))
                                gui-mouse-position))))))
 
 (defn create-actors [{:keys [gui-viewport-width

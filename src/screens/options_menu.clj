@@ -7,8 +7,7 @@
             [gdl.scene2d.stage :as stage]
             [utils.core :refer [find-first]]
             ;[game.line-of-sight :refer (player-line-of-sight-checks)]
-            [game.components.body :refer (show-body-bounds)]
-            [game.components.skills :refer (show-skill-icon-on-active)])
+            [game.components.body :refer (show-body-bounds)])
   (:import (com.badlogic.gdx Gdx Input$Keys)
            com.badlogic.gdx.scenes.scene2d.Stage))
 
@@ -41,7 +40,6 @@
 ; * make separate DEBUG 'd' state , do not show this on options state
 (def ^:private debug-flags [;(debug-flag #'player-line-of-sight-checks)
                             (debug-flag #'show-body-bounds)
-                            (debug-flag #'show-skill-icon-on-active)
                             ])
 
 (status-check-box

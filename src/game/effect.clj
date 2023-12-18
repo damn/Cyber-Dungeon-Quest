@@ -1,21 +1,8 @@
-(ns game.effect
-  (:require [x.x :refer [doseq-entity]]
-            [game.entity :as entity]))
-
-(comment
- ; todo first step change value/params/effect param order
- ; and 2. make effects/ namespaced kw. => resources/properties.edn has effects
- ; 3. also required-params ? just data ?
- ; 4. system as protocol -> defsystems -> all required to implement possible?
- ; why not defsystems just defines multiple , but then need a name for it?
- (defsystem component-text [_ params])
- (defsystem valid-params? [_ params]) ; can also check component value itself ?
- ; => spec / malli spec fn also ?
- (defsystem component-do [_ params]))
+(ns game.effect)
 
 (def ^:private effect-definitions {})
 
-(defn defeffect [effect-type effect-def] ; TODO just 'def'
+(defn defeffect [effect-type effect-def]
   (alter-var-root #'effect-definitions assoc effect-type effect-def)
   effect-type)
 
@@ -34,18 +21,19 @@
     (assert effect-def (str "Effect " effect-type " not defined."))
     ((:do! effect-def) effect-value params context)))
 
-(defn- trigger-affected! [target context]
-  (when target
-    (doseq-entity target entity/affected! context)))
-
 (defn do! [effect params context]
-  (do-effect!* effect params context)
-  (trigger-affected! (:target params) context))
+  (do-effect!* effect params context))
 
 (defn do-all! [effects params context]
   (doseq [effect effects]
-    (do-effect!* effect params context))
-  (trigger-affected! (:target params) context))
+    (do-effect!* effect params context)))
 
-(defmulti render-info (fn [drawer [effect-type effect-value] effect-params] effect-type))
+(defmulti render-info (fn [drawer [effect-type effect-value] effect-params]
+                        effect-type))
 (defmethod render-info :default [_ _ _])
+
+(defmulti ai-should-use? (fn [[effect-type _effect-value] _effect-params _context _entity*]
+                           effect-type))
+(defmethod ai-should-use? :default [_ _effect-params _context _entity*]
+  true)
+

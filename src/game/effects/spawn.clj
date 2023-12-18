@@ -11,7 +11,8 @@
 ; limit max. spawns
 ; animation/sound
 ; proper icon (grayscaled ?)
-; keep in player movement range priority.
+; keep in player movement range priority ( follow player if too far, otherwise going for enemies)
+; => so they follow you around
 
 ; not try-spawn, but check valid-params & then spawn !
 
@@ -24,7 +25,8 @@
 (defn- do! [creature-id {:keys [source target-position]} context]
   (creature-entity/create! creature-id
                            target-position
-                           {:faction (:faction @source)}
+                           {:faction (:faction @source)
+                            :initial-state :idle}
                            context))
 
 (comment

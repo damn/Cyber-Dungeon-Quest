@@ -43,6 +43,3 @@
                                  (- (* width ratio) (* 2 border))
                                  (- height (* 2 border))
                                  (hpbar-color ratio)))))))
-
-(defn dead? [{:keys [hp]}]
-  (zero? (hp 0)))

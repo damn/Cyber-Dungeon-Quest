@@ -2,7 +2,7 @@
   (:require [data.val-max :refer [apply-val apply-val-max-modifiers]]
             [utils.random :as random]
             [game.effect :as effect]
-            [game.components.hp :refer [dead?]]
+            [game.components.state :as state]
             [game.components.modifiers :refer [effect-source-modifiers effect-target-modifiers]]
             [game.components.string-effect :as string-effect]
             [game.entities.audiovisual :as audiovisual]))
@@ -114,28 +114,34 @@
 (defn- blocks? [block-rate]
   (< (rand) block-rate))
 
+(defn- no-hp-left? [hp]
+  (zero? (hp 0)))
+
 (defn- deal-damage! [{dmg-type 0 :as damage} {:keys [source target]} context]
-  (when-not (dead? @target)
-    (cond
-     (blocks? (effective-block-rate @source @target :shield dmg-type))
-     (shield-blocked-effect target)
-     (blocks? (effective-block-rate @source @target :armor dmg-type))
-     (armor-blocked-effect target)
-     :else
-     (let [[dmg-type min-max-dmg] (effective-damage damage @source @target)
-           dmg-amount (random/rand-int-between min-max-dmg)]
-       (audiovisual/create! context
-                            (:position @target)
-                            (keyword (str "effects.damage." (name dmg-type))
-                                     "hit-effect"))
-       (swap! target (fn [target*]
-                       (let [target* (-> target*
-                                         (update :hp apply-val #(- % dmg-amount))
-                                         (string-effect/add (str "[RED]" dmg-amount)))]
-                         (if (and (dead? target*)
-                                  (not (:is-player target*)))
-                           (assoc target* :destroyed? true)
-                           target*))))))))
+  (cond
+   (no-hp-left? (:hp @target))
+   nil
+
+   (blocks? (effective-block-rate @source @target :shield dmg-type))
+   (shield-blocked-effect target)
+
+   (blocks? (effective-block-rate @source @target :armor dmg-type))
+   (armor-blocked-effect target)
+
+   :else
+   (let [[dmg-type min-max-dmg] (effective-damage damage @source @target)
+         dmg-amount (random/rand-int-between min-max-dmg)]
+     (audiovisual/create! context
+                          (:position @target)
+                          (keyword (str "effects.damage." (name dmg-type))
+                                   "hit-effect"))
+     (swap! target (fn [entity*]
+                     (-> entity*
+                         (update :hp apply-val #(- % dmg-amount))
+                         (string-effect/add (str "[RED]" dmg-amount)))))
+     (state/send-event! context
+                        target
+                        (if (no-hp-left? (:hp @target)) :kill :alert)))))
 
 (defn- damage->text [[dmg-type [min-dmg max-dmg]]]
   (str min-dmg "-" max-dmg " " (name dmg-type) " damage"))

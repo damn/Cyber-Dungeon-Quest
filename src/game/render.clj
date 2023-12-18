@@ -46,7 +46,7 @@
     (try
      (system component drawer context entity*)
      (catch Throwable t
-       (println "Render error for:" [component (:id entity*) system])
+       (println "Render error for: entity :id " (:id entity*) " \n component " component "\n system" system)
        (throw t)
        ; TODO I want to get multimethod
        ))))

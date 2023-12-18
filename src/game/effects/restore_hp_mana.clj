@@ -1,10 +1,9 @@
 (ns game.effects.restore-hp-mana
   (:require [data.val-max :refer [lower-than-max? set-to-max]]
             [game.effect :as effect]
-            [game.context :as gm]
-            [game.components.skills :refer (ai-should-use?)]))
+            [game.context :as gm]))
 
-(defmethod ai-should-use? :restore-hp-mana [_ _context entity*]
+(defmethod effect/ai-should-use? :restore-hp-mana [_ _effect-params _context entity*]
   (or (lower-than-max? (:mana entity*))
       (lower-than-max? (:hp   entity*))))
 

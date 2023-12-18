@@ -13,7 +13,7 @@
     (when (counter/stopped? counter)
       (swap! e dissoc k)))
   (entity/render-above [_ drawer context {[x y] :position :keys [body]}]
-    (draw/text drawer
+    (draw/text (update drawer :unit-scale * 2)
                {:text text
                 :x x
                 :y (+ y (:half-height body)

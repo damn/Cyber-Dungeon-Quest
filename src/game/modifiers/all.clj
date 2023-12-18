@@ -4,31 +4,8 @@
             [game.modifier :as modifier]))
 
 ; TODO dissoc again if value == default value -> into modifier logic, e.g. modifiers blocks 0 , just dissoc then ?
-; TODO common modifiers add/decrement or multiplier, etc.
 ; TODO fix max-hp like max-mana
-
-(defn- add-block [blocks ctype]
-  (update blocks ctype #(inc (or % 0))))
-
-(defn- remove-block [blocks ctype]
-  {:pre  [(> (get blocks ctype) 0)]}
-  (update blocks ctype dec))
-
-(modifier/defmodifier :modifiers/block
-  {:text     #(str "Stops " (name %))
-   :keys     [:modifiers :blocks]
-   :apply    add-block
-   :reverse  remove-block})
-
-(defn- modify-update-speed [update-speeds [ctype value]]
-  (update update-speeds ctype #(+ (or % 1) value)))
-
-(modifier/defmodifier :modifiers/update-speed
-  {:values   [[8 20] [25 35] [40 50]]
-   :text     #(str (Math/signum (float (% 1))) (% 1) "% " (% 0))
-   :keys     [:modifiers :update-speed]
-   :apply    modify-update-speed
-   :reverse  #(modify-update-speed %1 [(%2 0) (- (%2 1))])})
+; TODO add movement speed +/- modifier.
 
 (modifier/defmodifier :modifiers/max-hp
   {:values  [[15 25] [35 45] [55 65]]
@@ -43,6 +20,9 @@
    :keys    [:mana]
    :apply   (fn [mana v] (apply-max mana #(+ % v)))
    :reverse (fn [mana v] (apply-max mana #(- % v)))})
+
+; TODO (/ action-time cast-speed)
+; new calculations
 
 (modifier/defmodifier :modifiers/cast-speed
   {:values  [[15 25] [35 45] [50 60]]

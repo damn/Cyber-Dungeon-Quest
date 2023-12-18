@@ -1,4 +1,4 @@
-(ns game.entity ; TODO this is game.component ! / entity protocol will be something else !
+(ns game.entity ; TODO rename to game.component
   (:require [x.x :refer [defsystem]]))
 
 ; TODO always context last param
@@ -13,8 +13,6 @@
 (defsystem tick! [_ context e delta])
 
 (defsystem moved! [_ e context direction-vector])
-(defsystem affected! [_ e context])
-(defsystem stun! [_ e])
 
 (defsystem render-below   [_ drawer context e*])
 (defsystem render-default [_ drawer context e*])

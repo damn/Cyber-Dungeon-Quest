@@ -8,6 +8,7 @@
             [gdl.scene2d.ui :as ui]
             [game.context :as gm]
             [game.modifier :as modifier]
+            [game.components.state :as state]
             [game.components.inventory :as inventory]
             [game.entities.item :as item-entity])
   (:import com.badlogic.gdx.graphics.Color
@@ -21,22 +22,6 @@
 #_(color/defrgb modifiers-text-color 0.38 0.47 1)
 
 (declare ^Window window)
-
-; TODO ! important ! animation & dont put exactly hiding under player -> try neighbor cells first, simple.
-(defn put-item-on-ground [{:keys [context/player-entity] :as context}]
-  {:pre [(:item-on-cursor @player-entity)]}
-  (gm/play-sound! context "sounds/bfxr_itemputground.wav")
-  (let [{x 0 y 1 :as posi} (:position @player-entity)
-       ; [w _] item-body-dimensions
-       ; half-size (/ w tile-width 2)
-       ; below-posi [x (+ 0.7 y)] ; put here so player sees that item is put on ground (confusing trying to put heal pot on player)
-       ; blocked (blocked-location? below-posi half-size half-size :ground)
-        ; blocked location checks if other solid bodies ... if put under player would block from player
-        ;_ (println "BLOCKED? " (boolean blocked))
-        ;position (if-not blocked below-posi posi)
-        ]
-    (item-entity/create! posi (:item-on-cursor @player-entity) context))
-  (swap! player-entity dissoc :item-on-cursor))
 
 (defn- complain-2h-weapon-and-shield! [context]
   ;(.play ^Sound (get assets "error.wav"))
@@ -53,7 +38,7 @@
           item)
      (do
       (gm/play-sound! context "sounds/bfxr_takeit.wav")
-      (swap! entity assoc :item-on-cursor item)
+      (state/send-event! context entity :pickup-item item)
       (inventory/remove-item! entity cell))
 
      item-on-cursor
@@ -66,7 +51,8 @@
         (do
          (gm/play-sound! context "sounds/bfxr_itemput.wav")
          (inventory/set-item! entity cell item-on-cursor)
-         (swap! entity dissoc :item-on-cursor)))
+         (swap! entity dissoc :item-on-cursor)
+         (state/send-event! context entity :dropped-item)))
 
       ; INCREMENT ITEM
       (and item
@@ -74,7 +60,8 @@
       (do
        (gm/play-sound! context "sounds/bfxr_itemput.wav")
        (inventory/stack-item! entity cell item-on-cursor)
-       (swap! entity dissoc :item-on-cursor))
+       (swap! entity dissoc :item-on-cursor)
+       (state/send-event! context entity :dropped-item))
 
       ; SWAP ITEMS
       (and item
@@ -85,7 +72,7 @@
          (gm/play-sound! context "sounds/bfxr_itemput.wav")
          (inventory/remove-item! entity cell)
          (inventory/set-item! entity cell item-on-cursor)
-         (swap! entity assoc :item-on-cursor item)))))))
+         (state/send-event! context entity :pickup-item item)))))))
 
 (declare ^:private slot->background
          ^:private ^Table table)
@@ -125,15 +112,22 @@
 
 (defn- draw-cell-rect [drawer player-entity x y mouseover? cell]
   (draw/rectangle drawer x y cell-size cell-size Color/GRAY)
-  (when-let [item (:item-on-cursor @player-entity)]
-    (when mouseover?
-      (let [color (if (and (inventory/valid-slot? cell item)
-                           (not (inventory/cell-in-use? @player-entity cell))) ; TODO not player-entity but entity
-                    (if (inventory/two-handed-weapon-and-shield-together? (:inventory @player-entity) cell item)
-                      two-h-shield-color
-                      droppable-color)
-                    not-allowed-color)]
-        (draw/filled-rectangle drawer (inc x) (inc y) (- cell-size 2) (- cell-size 2) color)))))
+  (when (and mouseover?
+             (= :item-on-cursor
+                (:state (:fsm (:components/state @player-entity)))))
+    (let [item (:item-on-cursor @player-entity)
+          color (cond
+                 (not (inventory/valid-slot? cell item))
+                 not-allowed-color
+
+                 (inventory/two-handed-weapon-and-shield-together? (:inventory @player-entity)
+                                                                   cell
+                                                                   item)
+                 two-h-shield-color
+
+                 :else
+                 droppable-color)]
+      (draw/filled-rectangle drawer (inc x) (inc y) (- cell-size 2) (- cell-size 2) color))))
 
 (import 'com.badlogic.gdx.math.Vector2)
 

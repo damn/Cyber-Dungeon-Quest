@@ -5,7 +5,6 @@
             [gdl.math.vector :as v]
             [gdl.graphics.color :as color]
             [game.line-of-sight :refer (in-line-of-sight?)]
-            [game.components.skills :refer (ai-should-use?)]
             [game.entities.audiovisual :as audiovisual]
             [game.entities.line :as line-entity]
             [game.effect :as effect]))
@@ -24,10 +23,9 @@
         (:radius (:body target*)))
      maxrange))
 
-; TODO pass effect-params here.
-(defmethod ai-should-use? :target-entity [[effect-id effect-value] _context entity*]
+(defmethod effect/ai-should-use? :target-entity [[effect-id effect-value] effect-params _context entity*]
   (in-range? entity*
-             @(:target (:effect-params (:skillmanager entity*)))
+             @(:target effect-params)
              (:maxrange effect-value)))
 
 ; TODO use at projectile & also adjust rotation

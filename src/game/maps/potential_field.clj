@@ -6,10 +6,8 @@
   ; * the potential field flows into diagonals, so they should be reachable too.
   ; TODO assert no NADs @ world creation
   (:require [data.grid2d :as grid]
-            [x.x :refer [defcomponent]]
             [gdl.math.vector :as v]
             [utils.core :refer :all]
-            [game.entity :as entity]
             [game.components.faction :as faction]
             [game.components.position :refer (get-tile)]
             [game.maps.contentfields :refer (get-entities-in-active-content-fields)]
@@ -223,15 +221,6 @@
                      (occupied-by-other? own-cell entity)) ; prevent friction 2 move to center
         (when-not (inside-cell? cell-grid @entity target-cell)
           (v/direction position (:middle @target-cell)))))))
-
-(defcomponent :move-towards-enemy _
-  (entity/tick! [_ {:keys [context/world-map]} entity _delta]
-    (swap! entity
-           assoc
-           :movement-vector
-           (if (:active-skill? @entity)
-             nil
-             (potential-field-follow-to-enemy (:cell-grid world-map) entity)))))
 
 ;; DEBUG RENDER TODO not working in old map debug game.maps.render_
 

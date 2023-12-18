@@ -5,7 +5,6 @@
             [gdl.graphics.image :as image]
             [game.effect :as effect]
             [game.maps.cell-grid :as cell-grid]
-            [game.components.skills :refer (ai-should-use?)]
             [game.entities.projectile :as projectile-entity]))
 
 ; -> range needs to be smaller than potential field range
@@ -22,9 +21,8 @@
 
 ; TODO valid params direction has to be  non-nil (entities not los player ) ?
 
-; TODO pass effect params (target ..)
-(defmethod ai-should-use? :projectile [_ context entity*]
-  (let [target (:target (:effect-params (:skillmanager entity*)))]
+(defmethod effect/ai-should-use? :projectile [_ effect-params context entity*]
+  (let [target (:target effect-params)]
     (and (not (projectile-path-blocked? context
                                         (:position entity*) ; TODO test
                                         (:position @target)))
