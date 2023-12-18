@@ -1,8 +1,9 @@
 (ns screens.game
-  (:require [gdl.protocols :refer [dispose]]
+  (:require [gdl.protocols :refer [dispose
+                                   render-world-view
+                                   render-gui-view]]
             gdl.screen
-            [game.protocols :refer [render-view
-                                    set-screen-stage
+            [game.protocols :refer [set-screen-stage
                                     remove-screen-stage
                                     draw
                                     act
@@ -25,8 +26,8 @@
 
   (render [_ context]
     (render-world-map context)
-    (render-view context :world (partial render-in-world-view context))
-    (render-view context :gui   (partial render-in-gui-view   context))
+    (render-world-view context (partial render-in-world-view context))
+    (render-gui-view   context (partial render-in-gui-view   context))
     (draw stage))
 
   (tick [_ context delta]

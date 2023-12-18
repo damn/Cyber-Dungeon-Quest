@@ -1,6 +1,7 @@
 (ns app
   (:require [gdl.app :as app]
             [gdl.protocols :refer [generate-ttf]]
+            gdl.default-context
             [game.protocols :refer [create-gui-stage]]
             game.modifiers.all
             game.components.require-all
@@ -21,17 +22,17 @@
             screens.property-editor)
   (:import com.badlogic.gdx.Gdx))
 
-(defn- create-context [context]
-  (game.ui.inventory-window/initialize! context)
-  (game.ui.action-bar/initialize!)
-  (game.ui.hp-mana-bars/initialize! context)
-  (let [properties (let [file "resources/properties.edn"
+(defn- create-context []
+  (let [context (gdl.default-context/->Context)
+        properties (let [file "resources/properties.edn"
                          properties (properties/load-edn context file)]
                      (.bindRoot #'properties/properties-file file)
                      (.bindRoot #'properties/properties properties)
                      properties)
-        context (merge context
-                       {:context/properties properties})]
+        context (merge context {:context/properties properties})]
+    (game.ui.inventory-window/initialize! context)
+    (game.ui.action-bar/initialize!)
+    (game.ui.hp-mana-bars/initialize! context)
     (merge context
            {:default-font (generate-ttf context {:file "exocet/films.EXL_____.ttf"
                                                  :size 16})
@@ -55,7 +56,7 @@
          :full-screen? false
          :fps nil} ; TODO fix is set to 60 @ gdl
    :tile-size 48
-   :modules create-context
+   :context-fn create-context
    :first-screen :screens/main-menu})
 
 (defn app []

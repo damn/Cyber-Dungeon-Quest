@@ -1,6 +1,6 @@
 (ns game.components.state.active-skill
-  (:require [gdl.graphics.draw :as draw]
-            [gdl.graphics.color :as color]
+  (:require [gdl.graphics.color :as color]
+            [gdl.protocols :refer [draw-filled-circle draw-sector draw-image]]
             [data.counter :as counter]
             [data.val-max :refer [apply-val]]
             [game.effect :as effect]
@@ -8,18 +8,18 @@
             [game.components.state :as state]
             [game.components.skills :as skills]))
 
-(defn- draw-skill-icon [drawer icon entity* [x y] action-counter-ratio]
+(defn- draw-skill-icon [c icon entity* [x y] action-counter-ratio]
   (let [[width height] (:world-unit-dimensions icon)
         _ (assert (= width height))
         radius (/ width 2)
         y (+ y (:half-height (:body entity*)))
         center [x (+ y radius)]]
-    (draw/filled-circle drawer center radius (color/rgb 1 1 1 0.125))
-    (draw/sector drawer center radius
+    (draw-filled-circle c center radius (color/rgb 1 1 1 0.125))
+    (draw-sector c center radius
                  0 ; start-angle
                  (* action-counter-ratio 360) ; degree
                  (color/rgb 1 1 1 0.5))
-    (draw/image drawer icon [(- x radius) y])))
+    (draw-image c icon [(- x radius) y])))
 
 (defrecord State [entity skill effect-params counter]
   state/PlayerState
@@ -55,12 +55,12 @@
         (effect/do! effect effect-params context)
         (state/send-event! context entity :action-done)))))
 
-  (render-below [_ drawer context entity*])
-  (render-above [_ drawer context entity*])
-  (render-info [_ drawer context {:keys [position] :as entity*}]
+  (render-below [_ c entity*])
+  (render-above [_ c entity*])
+  (render-info [_ c {:keys [position] :as entity*}]
     (let [{:keys [image effect]} skill]
-      (draw-skill-icon drawer image entity* position (counter/ratio counter))
-      (effect/render-info drawer effect effect-params))))
+      (draw-skill-icon c image entity* position (counter/ratio counter))
+      (effect/render-info c effect effect-params))))
 
 (defn- apply-action-speed-modifier [entity* skill action-time]
   (let [{:keys [cast-speed attack-speed]} (:modifiers entity*)

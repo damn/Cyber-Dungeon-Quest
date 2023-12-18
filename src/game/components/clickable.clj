@@ -1,13 +1,13 @@
 (ns game.components.clickable
   (:require [x.x :refer [defcomponent]]
-            [gdl.graphics.draw :as draw]
+            [gdl.protocols :refer [draw-text]]
             [gdl.math.vector :as v]
             [game.entity :as entity]))
 
 (defcomponent :clickable {:keys [text]}
-  (entity/render-default [_ drawer _ctx {[x y] :position :keys [mouseover? body]}]
+  (entity/render-default [_ c {[x y] :position :keys [mouseover? body]}]
     (when (and mouseover? text)
-      (draw/text drawer
+      (draw-text c
                  {:text text
                   :x x
                   :y (+ y (:half-height body))

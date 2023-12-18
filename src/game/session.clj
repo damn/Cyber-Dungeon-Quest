@@ -34,10 +34,6 @@
         (.addActor stage actor))
       stage))
 
-  game.protocols/ViewRenderer
-  (render-view [context view-key render-fn]
-    (app/render-view context view-key render-fn))
-
   game.protocols/ContextStageSetter
   (set-screen-stage [_ stage]
     ; set-screen-stage & also sets it to context ':stage' key

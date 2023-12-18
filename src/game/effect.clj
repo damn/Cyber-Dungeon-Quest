@@ -28,7 +28,7 @@
   (doseq [effect effects]
     (do-effect!* effect params context)))
 
-(defmulti render-info (fn [drawer [effect-type effect-value] effect-params]
+(defmulti render-info (fn [c [effect-type effect-value] effect-params]
                         effect-type))
 (defmethod render-info :default [_ _ _])
 

@@ -8,7 +8,7 @@
                   Calls entity/create system on the components-map
                   Then puts it into an atom and calls entity/create! system on all components.")
   (tick-active-entities [_ delta])
-  (render-visible-entities [_ drawer])
+  (render-visible-entities [_])
   (destroy-to-be-removed-entities! [_]
                                    "Calls entity/destroy and entity/destroy! on all entities which are marked as ':destroyed?'"))
 
@@ -17,20 +17,18 @@
                "Sound is already loaded from file, this will perform only a lookup for the sound and play it.")
   (show-msg-to-player! [_ message]))
 
-(defprotocol ViewRenderer
-  (render-view [_ view-key render-fn]))
-
 (defprotocol GameScreenTick
   (tick-game [_ stage delta])) ; TODO before-stage-tick ? ; TODO remove stage, put in context
 
 (defprotocol GameScreenRender
   (render-world-map     [_])
-  (render-in-world-view [_ drawer])
-  (render-in-gui-view   [_ drawer]))
+  ; TODO confusing names with render-world-view / render-gui-view @ gdl.protocols
+  (render-in-world-view [_])
+  (render-in-gui-view   [_]))
 
 (defprotocol DebugRenderer
-  (render-debug-before-entities [_ drawer])
-  (render-debug-after-entities  [_ drawer]))
+  (render-debug-before-entities [_])
+  (render-debug-after-entities  [_]))
 
 (defprotocol StageCreater
   (create-gui-stage [_ actors]))

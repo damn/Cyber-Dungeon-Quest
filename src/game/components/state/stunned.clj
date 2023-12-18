@@ -1,6 +1,6 @@
 (ns game.components.state.stunned
-  (:require [gdl.graphics.draw :as draw]
-            [gdl.graphics.color :as color]
+  (:require [gdl.graphics.color :as color]
+            [gdl.protocols :refer [draw-circle]]
             [data.counter :as counter]
             [game.components.state :as state]))
 
@@ -17,10 +17,10 @@
   (tick! [_ context delta]
     (when (counter/stopped? counter)
       (state/send-event! context entity :effect-wears-off)))
-  (render-below [_ drawer _ctx {:keys [position]}]
-    (draw/circle drawer position 0.5 (color/rgb 1 1 1 0.6)))
-  (render-above [_ drawer context entity*])
-  (render-info  [_ drawer context entity*]))
+  (render-below [_ c {:keys [position]}]
+    (draw-circle c position 0.5 (color/rgb 1 1 1 0.6)))
+  (render-above [_ c entity*])
+  (render-info  [_ c entity*]))
 
 (defn ->CreateWithCounter [entity duration]
   (->State entity (counter/create duration)))

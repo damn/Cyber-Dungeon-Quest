@@ -1,9 +1,7 @@
 (ns screens.options-menu
   (:require [gdl.app :as app]
-            gdl.protocols
             gdl.screen
-            [gdl.graphics.draw :as draw]
-            [gdl.graphics.image :as image]
+            [gdl.protocols :refer [draw-centered-image render-gui-view create-image]]
             [gdl.scene2d.ui :as ui]
             [gdl.scene2d.stage :as stage]
             [utils.core :refer [find-first]]
@@ -93,7 +91,7 @@
                         :cell-defaults {:pad-bottom 25})
         padding 25]
     (.center table) ; ? TODO don't understand
-    (def menu-bg-image (image/create context "ui/moon_background.png"))
+    (def menu-bg-image (create-image context "ui/moon_background.png"))
     table))
 
 (defrecord Screen [^Stage stage]
@@ -106,10 +104,9 @@
   (hide [_ _ctx]
     (.setInputProcessor Gdx/input nil))
   (render [_ {:keys [gui-viewport-width gui-viewport-height] :as context}]
-    (app/render-view context
-                     :gui
-                     (fn [drawer]
-                       (draw/centered-image drawer
+    (render-gui-view context
+                     (fn [c]
+                       (draw-centered-image c
                                             menu-bg-image
                                             [(/ gui-viewport-width  2)
                                              (/ gui-viewport-height 2)])))

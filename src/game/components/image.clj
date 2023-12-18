@@ -1,11 +1,11 @@
 (ns game.components.image
   (:require [x.x :refer [defcomponent]]
-            [gdl.graphics.draw :as draw]
+            [gdl.protocols :refer [draw-rotated-centered-image]]
             [game.entity :as entity]))
 
 (defcomponent :image image
-  (entity/render-default [_ drawer _ctx {:keys [position body]}]
-    (draw/rotated-centered-image drawer
+  (entity/render-default [_ c {:keys [position body]}]
+    (draw-rotated-centered-image c
                                  image
                                  (if body (:rotation-angle body) 0)
                                  position)))

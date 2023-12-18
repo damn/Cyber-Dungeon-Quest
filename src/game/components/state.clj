@@ -8,9 +8,9 @@
   (exit  [_ context])
   (tick [_ delta])
   (tick! [_ context delta])
-  (render-below [_ drawer context entity*])
-  (render-above [_ drawer context entity*])
-  (render-info  [_ drawer context entity*]))
+  (render-below [_ c entity*])
+  (render-above [_ c entity*])
+  (render-info  [_ c entity*]))
 
 (defprotocol PlayerState
   (pause-game? [_])
@@ -29,9 +29,9 @@
     (update v :state-obj tick delta))
   (entity/tick! [_ context _entity delta]
     (tick! state-obj context delta))
-  (entity/render-below [_ drawer ctx entity*] (render-below state-obj drawer ctx entity*))
-  (entity/render-above [_ drawer ctx entity*] (render-above state-obj drawer ctx entity*))
-  (entity/render-info  [_ drawer ctx entity*] (render-info  state-obj drawer ctx entity*)))
+  (entity/render-below [_ c entity*] (render-below state-obj c entity*))
+  (entity/render-above [_ c entity*] (render-above state-obj c entity*))
+  (entity/render-info  [_ c entity*] (render-info  state-obj c entity*)))
 
 (defn send-event! [context entity event & args]
   (let [{:keys [fsm

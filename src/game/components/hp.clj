@@ -1,8 +1,7 @@
 (ns game.components.hp
   (:require [x.x :refer [defcomponent]]
-            [gdl.app :as app]
             [gdl.graphics.color :as color]
-            [gdl.graphics.draw :as draw]
+            [gdl.protocols :refer [draw-filled-rectangle pixels->world-units]]
             [data.val-max :refer [val-max-ratio]]
             [game.entity :as entity]
             [game.ui.config :refer (hpbar-height-px)])
@@ -28,16 +27,17 @@
 (defcomponent :hp hp
   (entity/create [[_ max-hp]]
     [max-hp max-hp])
-  (entity/render-info [_ drawer context {[x y] :position :keys [body mouseover?]}]
-    (let [{:keys [width half-width half-height]} body
-          ratio (val-max-ratio hp)]
+  (entity/render-info [_ c {[x y] :position
+                            {:keys [width half-width half-height]} :body
+                            :keys [mouseover?]}]
+    (let [ratio (val-max-ratio hp)]
       (when (or (< ratio 1) mouseover?)
         (let [x (- x half-width)
               y (+ y half-height)
-              height (app/pixels->world-units context hpbar-height-px)
-              border (app/pixels->world-units context borders-px)]
-          (draw/filled-rectangle drawer x y width height Color/BLACK)
-          (draw/filled-rectangle drawer
+              height (pixels->world-units c hpbar-height-px) ; pre-calculate it maybe somehow, but will put too much stuff in properties?
+              border (pixels->world-units c borders-px)] ; => can actually still use global state? idk
+          (draw-filled-rectangle c x y width height :color/black)
+          (draw-filled-rectangle c
                                  (+ x border)
                                  (+ y border)
                                  (- (* width ratio) (* 2 border))

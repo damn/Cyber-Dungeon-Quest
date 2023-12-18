@@ -5,7 +5,7 @@
             ; but position-changed / moved ! is also there
             [x.x :refer [update-map doseq-entity]]
             gdl.app
-            [gdl.graphics.draw :as draw]
+            [gdl.protocols :refer [draw-text]]
             [utils.core :refer [define-order sort-by-order]]
             [game.protocols :as gm]
             [game.entity :as entity]
@@ -24,30 +24,30 @@
 ; but in gdl its only on first start ?!
 ; no wait! it says 'app-start-failed' !! haha
 
-(defn- render-entity* [system drawer {:keys [context/thrown-error] :as context} entity*]
+(defn- render-entity* [system {:keys [context/thrown-error] :as c} entity*]
   (doseq [component entity*]
     (try
-     (system component drawer context entity*)
+     (system component c entity*)
      (catch Throwable t
        (when-not @thrown-error
          (println "Render error for: entity :id " (:id entity*) " \n component " component "\n system" system)
          ; TODO pretty print error => same like tick => pass function through context? idk
          ; or context/handle-error ... O.O
          ; with environment ? clojure error oopts all args ? possible => can inspect then, even 'drawer' or 'context'  ?
-         (reset! (:context/thrown-error context) t))
+         (reset! (:context/thrown-error c) t))
        ; TODO highlight entity ? as mouseover?
        ; TODO automatically open debug window
        (let [[x y] (:position entity*)]
-         (draw/text drawer {:text (str "Render error entity :id " (:id entity*) "\n" (component 0) "\n"system "\n" @(:context/thrown-error context))
-                            :x x
-                            :y y
-                            :up? true
-                            }))
+         (draw-text c {:text (str "Render error entity :id " (:id entity*) "\n" (component 0) "\n"system "\n" @(:context/thrown-error c))
+                       :x x
+                       :y y
+                       :up? true
+                       }))
        ; TODO throw/catch renderfn missing & pass body ?
        ; TODO I want to get multimethod name
        ))))
 
-(defn- render-entities* [drawer {:keys [context/render-on-map-order] :as context} entities*]
+(defn- render-entities* [{:keys [context/render-on-map-order] :as c} entities*]
   (doseq [[_ entities*] (sort-by-order (group-by :z-order entities*)
                                        first
                                        render-on-map-order)
@@ -57,9 +57,9 @@
                   #'entity/render-above
                   #'entity/render-info]
           entity* entities*]
-    (render-entity* system drawer context entity*))
+    (render-entity* system c entity*))
   (doseq [entity* entities*]
-    (render-entity* #'entity/render-debug drawer context entity*)))
+    (render-entity* #'entity/render-debug c entity*)))
 
 (defn- visible-entities* [{:keys [context/player-entity] :as context}]
   (->> (get-entities-in-active-content-fields context)
@@ -107,10 +107,8 @@
        (p/pretty-pst t)
        (reset! thrown-error t))))
 
-  (render-visible-entities [context drawer]
-    (render-entities* drawer
-                      context
-                      (visible-entities* context)))
+  (render-visible-entities [c]
+    (render-entities* c (visible-entities* c)))
 
   (destroy-to-be-removed-entities!
     [{:keys [context/ids->entities] :as context}]

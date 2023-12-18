@@ -4,7 +4,7 @@
             [gdl.maps.tiled :as tiled]
             [gdl.graphics.color :as color]
             [gdl.graphics.camera :as camera]
-            [gdl.graphics.draw :as draw]
+            [gdl.protocols :refer [draw-filled-circle render-world-view]]
             [game.maps.tile-color-setters :refer [minimap-color-setter]])
   (:import (com.badlogic.gdx Gdx Input$Keys)
            (com.badlogic.gdx.graphics Color OrthographicCamera)))
@@ -50,10 +50,8 @@
     (tiled/render-map context
                       (:tiled-map world-map)
                       minimap-color-setter)
-    (app/render-view context
-                     :world
-                     (fn [drawer]
-                       (draw/filled-circle drawer (camera/position world-camera) 0.5 Color/GREEN))))
+    (render-world-view context
+                       #(draw-filled-circle % (camera/position world-camera) 0.5 Color/GREEN)))
   (tick [_ {:keys [world-camera]} delta]
     (when (or (.isKeyJustPressed Gdx/input Input$Keys/TAB)
               (.isKeyJustPressed Gdx/input Input$Keys/ESCAPE))

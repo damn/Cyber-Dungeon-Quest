@@ -1,11 +1,13 @@
 (ns screens.map-editor
   (:require [clojure.edn :as edn]
             [gdl.app :as app]
-            gdl.protocols
             gdl.screen
             [gdl.graphics.color :as color]
             [gdl.graphics.camera :as camera]
-            [gdl.graphics.draw :as draw]
+            [gdl.protocols :refer [draw-filled-rectangle
+                                   draw-filled-circle
+                                   draw-grid
+                                   render-world-view]]
             [gdl.maps.tiled :as tiled]
             [gdl.scene2d.ui :as ui]
             [gdl.scene2d.stage :as stage]
@@ -77,19 +79,19 @@
 
 (def ^:private show-area-level-colors true)
 
-(defn- render-on-map [drawer {:keys [world-camera]}]
+(defn- render-on-map [{:keys [world-camera] :as c}]
   (let [visible-tiles (camera/visible-tiles world-camera)]
     (when show-area-level-colors
       (if @current-start-positions
         (doseq [[x y] visible-tiles
                 :when (@current-start-positions [x y])]
-          (draw/filled-rectangle drawer x y 1 1 (color/rgb 0 0 1 0.5))))
+          (draw-filled-rectangle c x y 1 1 (color/rgb 0 0 1 0.5))))
       (doseq [[x y] visible-tiles
               :let [movement-property (movement-property @current-tiled-map [x y])]]
         (when (= :all movement-property)
           (let [level (get @current-area-level-grid [x y])]
             (if (number? level)
-              (draw/filled-rectangle drawer x y 1 1
+              (draw-filled-rectangle c x y 1 1
                                      (if (= level 0)
                                        nil;(color/rgb 0 0 1 0.5)
                                        (color/rgb (/ level 9)
@@ -102,10 +104,10 @@
     (when @show-movement-properties
       (doseq [[x y] visible-tiles
               :let [movement-property (movement-property @current-tiled-map [x y])]]
-        (draw/filled-circle drawer [(+ x 0.5) (+ y 0.5)]
+        (draw-filled-circle c [(+ x 0.5) (+ y 0.5)]
                             0.08
                             Color/BLACK)
-        (draw/filled-circle drawer [(+ x 0.5) (+ y 0.5)]
+        (draw-filled-circle c [(+ x 0.5) (+ y 0.5)]
                             0.05
                             (case movement-property
                               "all"   Color/GREEN
@@ -113,7 +115,7 @@
                               "none"  Color/RED)))))
 
   (when @show-grid-lines
-    (draw/grid drawer 0 0
+    (draw-grid c 0 0
                (tiled/width  @current-tiled-map)
                (tiled/height @current-tiled-map)
                1 1
@@ -195,7 +197,7 @@
     (tiled/render-map context
                       @current-tiled-map
                       (constantly Color/WHITE)) ; TODO colorsetter optional.
-    (app/render-view context :world #(render-on-map % context))
+    (render-world-view context render-on-map)
     (.draw stage))
   (tick [_ {:keys [world-camera]} delta]
     (.act stage delta)

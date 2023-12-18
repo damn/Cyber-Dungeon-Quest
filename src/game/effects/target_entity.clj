@@ -1,7 +1,7 @@
 (ns game.effects.target-entity ; TODO naming
   (:require [clojure.string :as str]
             [gdl.app :as app]
-            [gdl.graphics.draw :as draw]
+            [gdl.protocols :refer [draw-line]]
             [gdl.math.vector :as v]
             [gdl.graphics.color :as color]
             [game.line-of-sight :refer (in-line-of-sight?)]
@@ -60,8 +60,8 @@
                           (end-point @source @target maxrange)
                           :effects.target-entity/hit-ground-effect))))
 
-(defmethod effect/render-info :target-entity [drawer [_ {:keys [maxrange]}] {:keys [source target]}]
-  (draw/line drawer
+(defmethod effect/render-info :target-entity [c [_ {:keys [maxrange]}] {:keys [source target]}]
+  (draw-line c
              (start-point @source @target)
              (end-point   @source @target maxrange)
              (if (in-range? @source @target maxrange)

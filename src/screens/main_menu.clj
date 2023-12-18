@@ -1,11 +1,9 @@
 (ns screens.main-menu
   (:require [gdl.app :as app]
-            [gdl.graphics.draw :as draw]
-            gdl.protocols
+            [gdl.protocols :refer [draw-centered-image render-gui-view create-image]]
             gdl.screen
             [gdl.scene2d.ui :as ui]
             [gdl.scene2d.stage :as stage]
-            [gdl.graphics.image :as image]
             game.session)
   (:import (com.badlogic.gdx Gdx Input$Keys)
            com.badlogic.gdx.scenes.scene2d.Stage))
@@ -17,7 +15,7 @@
 (defn- initialize! [{:keys [gui-viewport batch] :as context}
                     {:keys [skip-main-menu bg-image]}]
   (.bindRoot #'skip-main-menu skip-main-menu)
-  (.bindRoot #'bg-image (image/create context bg-image))
+  (.bindRoot #'bg-image (create-image context bg-image))
   (.bindRoot #'stage (stage/create gui-viewport batch))
   (let [table (ui/table :rows [[(ui/text-button "Start game"
                                                 #(do
@@ -43,10 +41,9 @@
   (hide [_ _ctx]
     (.setInputProcessor Gdx/input nil))
   (render [_ {:keys [gui-viewport-width gui-viewport-height] :as context}]
-    (app/render-view context
-                     :gui
-                     (fn [drawer]
-                       (draw/centered-image drawer
+    (render-gui-view context
+                     (fn [c]
+                       (draw-centered-image c
                                             bg-image
                                             [(/ gui-viewport-width  2)
                                              (/ gui-viewport-height 2)])))

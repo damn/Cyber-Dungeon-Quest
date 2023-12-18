@@ -12,9 +12,9 @@
     (tiled/render-map context
                       (:tiled-map world-map)
                       #'tile-color-setter))
-  (render-in-world-view [context drawer]
-    (render-debug-before-entities context drawer)
-    (render-visible-entities      context drawer)
-    (render-debug-after-entities  context drawer))
-  (render-in-gui-view  [context drawer]
-    (render-player-hp-mana drawer context)))
+  (render-in-world-view [c]
+    (render-debug-before-entities c)
+    (render-visible-entities      c)
+    (render-debug-after-entities  c))
+  (render-in-gui-view  [c]
+    (render-player-hp-mana c)))

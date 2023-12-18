@@ -1,6 +1,6 @@
 (ns game.components.body
   (:require [x.x :refer [defcomponent]]
-            [gdl.graphics.draw :as draw]
+            [gdl.protocols :refer [draw-rectangle]]
             [gdl.math.geom :as geom]
             [gdl.math.vector :as v]
             [game.entity :as entity]
@@ -36,8 +36,8 @@
 ; skipping bodies at too fast movement
 (def min-solid-body-size 0.3)
 
-(defn- draw-bounds [drawer {[x y] :left-bottom :keys [width height is-solid]}]
-  (draw/rectangle drawer x y width height (if is-solid Color/WHITE Color/GRAY)))
+(defn- draw-bounds [c {[x y] :left-bottom :keys [width height is-solid]}]
+  (draw-rectangle c x y width height (if is-solid Color/WHITE Color/GRAY)))
 
 ; TODO DELETE NOW !!! fucks up everything & confusing as fuck,
 ; make into function idk ?
@@ -109,6 +109,6 @@
     (when is-solid
       (remove-from-occupied-cells! e)
       (set-occupied-cells! (:cell-grid world-map) e)))
-  (entity/render-debug [_ drawer _ctx e*]
+  (entity/render-debug [_ c e*]
     (when show-body-bounds
-      (draw-bounds drawer body))))
+      (draw-bounds c body))))

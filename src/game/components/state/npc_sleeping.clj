@@ -1,5 +1,5 @@
 (ns game.components.state.npc-sleeping
-  (:require [gdl.graphics.draw :as draw]
+  (:require [gdl.protocols :refer [draw-text draw-circle]]
             [data.counter :as counter]
             [game.protocols :as gm]
             [game.components.state :as state]
@@ -29,13 +29,13 @@
         (when (<= distance (* aggro-range 10))
           (state/send-event! context entity :alert)))))
 
-  (render-below [_ drawer context entity*])
-  (render-above [_ drawer _ctx {[x y] :position :keys [body]}]
-    (draw/text drawer
+  (render-below [_ c entity*])
+  (render-above [_ c {[x y] :position :keys [body]}]
+    (draw-text c
                {:text "zzz"
                 :x x
                 :y (+ y (:half-height body))
                 :up? true}))
-  (render-info [_ drawer _ctx {:keys [position mouseover?]}]
+  (render-info [_ c {:keys [position mouseover?]}]
     (when mouseover? ; TODO is not exact, using tile distance, (remove ?)
-      (draw/circle drawer position aggro-range Color/YELLOW))))
+      (draw-circle c position aggro-range Color/YELLOW))))

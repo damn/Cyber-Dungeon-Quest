@@ -3,8 +3,7 @@
             [data.grid2d :as grid]
             [gdl.app :as app]
             [gdl.graphics.color :as color]
-            [gdl.graphics.draw :as draw]
-            [gdl.graphics.image :as image]
+            [gdl.protocols :refer [draw-rectangle draw-filled-rectangle spritesheet get-sprite]]
             [gdl.scene2d.ui :as ui]
             [game.protocols :as gm]
             [game.modifier :as modifier]
@@ -84,7 +83,7 @@
   (.pad table (float 2))
   (.add window table)
   (.bindRoot #'slot->background
-             (let [sheet (image/spritesheet context "items/images.png" 48 48)]
+             (let [sheet (spritesheet context "items/images.png" 48 48)]
                (->> {:weapon   0
                      :shield   1
                      :rings    2
@@ -98,7 +97,7 @@
                      :bag      10} ; transparent
                     (map (fn [[slot y]]
                            [slot
-                            (-> (image/get-sprite context sheet [21 (+ y 2)])
+                            (-> (get-sprite context sheet [21 (+ y 2)])
                                 :texture
                                 ui/texture-region-drawable
                                 (.tint (color/rgb 1 1 1 0.4)))]))
@@ -110,8 +109,8 @@
 (def ^:private two-h-shield-color (color/rgb 0.6 0.6 0 0.8))
 (def ^:private not-allowed-color  (color/rgb 0.6 0   0 0.8))
 
-(defn- draw-cell-rect [drawer player-entity x y mouseover? cell]
-  (draw/rectangle drawer x y cell-size cell-size Color/GRAY)
+(defn- draw-cell-rect [c player-entity x y mouseover? cell]
+  (draw-rectangle c x y cell-size cell-size Color/GRAY)
   (when (and mouseover?
              (= :item-on-cursor
                 (:state (:fsm (:components/state @player-entity)))))
@@ -127,7 +126,7 @@
 
                  :else
                  droppable-color)]
-      (draw/filled-rectangle drawer (inc x) (inc y) (- cell-size 2) (- cell-size 2) color))))
+      (draw-filled-rectangle c (inc x) (inc y) (- cell-size 2) (- cell-size 2) color))))
 
 (import 'com.badlogic.gdx.math.Vector2)
 
@@ -141,9 +140,9 @@
 (defn- draw-rect-actor ^Widget []
   (proxy [Widget] []
     (draw [_batch _parent-alpha]
-      (let [{:keys [drawer gui-mouse-position context/player-entity]} (app/current-context)
+      (let [{:keys [gui-mouse-position context/player-entity] :as c} (app/current-context)
             ^Widget this this]
-        (draw-cell-rect drawer
+        (draw-cell-rect c
                         player-entity
                         (.getX this)
                         (.getY this)

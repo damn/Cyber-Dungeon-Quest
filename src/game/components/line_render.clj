@@ -1,11 +1,11 @@
 (ns game.components.line-render
   (:require [x.x :refer [defcomponent]]
-            [gdl.graphics.draw :as draw]
+            [gdl.protocols :refer [with-shape-line-width draw-line]]
             [game.entity :as entity]))
 
 (defcomponent :line-render {:keys [thick? end color]}
-  (entity/render-default [_ drawer _ctx {:keys [position]}]
+  (entity/render-default [_ c {:keys [position]}]
     (if thick?
-      (draw/with-line-width drawer 4
-        #(draw/line drawer position end color))
-      (draw/line drawer position end color))))
+      (with-shape-line-width c 4
+        #(draw-line c position end color))
+      (draw-line c position end color))))

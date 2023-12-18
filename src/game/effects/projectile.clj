@@ -2,7 +2,7 @@
   (:require [clojure.string :as str]
             [gdl.math.vector :as v]
             [gdl.graphics.animation :as animation]
-            [gdl.graphics.image :as image]
+            [gdl.protocols :refer [get-sprite spritesheet]]
             [game.effect :as effect]
             [game.maps.cell-grid :as cell-grid]
             [game.entities.projectile :as projectile-entity]))
@@ -46,9 +46,9 @@
    ])
 
 (defn- black-projectile [context]
-  (animation/create [(image/get-sprite context
-                                       (image/spritesheet context "fx/uf_FX.png" 24 24)
-                                       [1 12])]
+  (animation/create [(get-sprite context
+                                 (spritesheet context "fx/uf_FX.png" 24 24)
+                                 [1 12])]
                     :frame-duration 500))
 
 (defn- do-effect! [_ {:keys [source direction]} context]

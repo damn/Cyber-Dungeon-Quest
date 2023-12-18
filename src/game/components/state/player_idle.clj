@@ -85,9 +85,9 @@
   (exit  [_ context])
   (tick [this delta] this)
   (tick! [_ _context _delta])
-  (render-below [_ drawer context entity*])
-  (render-above [_ drawer context entity*])
-  (render-info  [_ drawer context entity*]))
+  (render-below [_ c entity*])
+  (render-above [_ c entity*])
+  (render-info  [_ c entity*]))
 
 (comment
  (defn- denied [text]

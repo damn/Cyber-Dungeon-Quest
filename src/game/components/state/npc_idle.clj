@@ -49,6 +49,6 @@
       (when-let [skill (npc-choose-skill context @entity effect-params)]
         (state/send-event! context entity :start-action skill effect-params))))
 
-  (render-below [_ drawer context entity*])
-  (render-above [_ drawer context entity*])
-  (render-info  [_ drawer context entity*]))
+  (render-below [_ c entity*])
+  (render-above [_ c entity*])
+  (render-info  [_ c entity*]))

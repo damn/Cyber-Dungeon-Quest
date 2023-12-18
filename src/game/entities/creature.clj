@@ -2,7 +2,7 @@
   (:require [reduce-fsm :as fsm]
             [x.x :refer [defcomponent]]
             [gdl.graphics.camera :as camera]
-            [gdl.graphics.image :as image]
+            [gdl.protocols :refer [create-image]]
             [gdl.graphics.animation :as animation]
             [utils.core :refer [safe-get]]
             [game.protocols :as gm]
@@ -79,7 +79,7 @@
    :dead           player-dead/->State})
 
 (defn- create-images [context creature-name]
-  (map #(image/create context
+  (map #(create-image context
                       (str "creatures/animations/" creature-name "-" % ".png"))
        (range 1 5)))
 
@@ -169,4 +169,7 @@
                     assoc-left-bottom)]
     (if (valid-position? context entity*)
       (gm/create-entity! context entity*)
-      (println "Not able to spawn" creature-id "at" position))))
+      (do
+       (println "Not able to spawn" creature-id "at" position)
+       (throw (Error. (str "Not able to spawn " creature-id " at " position)))
+       ))))

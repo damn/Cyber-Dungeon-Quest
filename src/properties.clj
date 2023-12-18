@@ -2,7 +2,7 @@
   (:refer-clojure :exclude [get])
   (:require [clojure.edn :as edn]
             [gdl.graphics.animation :as animation]
-            [gdl.graphics.image :as image]
+            [gdl.protocols :refer [get-sprite]]
             [utils.core :refer [safe-get]]))
 
 ; Other approaches :
@@ -23,12 +23,12 @@
   (let [[sprite-x sprite-y] (take 2 sub-image-bounds)
         [tilew tileh]       (drop 2 sub-image-bounds)]
     ; TODO is not the record itself, check how to do @ image itself.
-    (image/get-sprite context
-                      {:file file
-                       :tilew tileh
-                       :tileh tilew}
-                      [(int (/ sprite-x tilew))
-                       (int (/ sprite-y tileh))])))
+    (get-sprite context
+                {:file file
+                 :tilew tileh
+                 :tileh tilew}
+                [(int (/ sprite-x tilew))
+                 (int (/ sprite-y tileh))])))
 
 (defn- serialize-image [image]
   (select-keys image [:file :sub-image-bounds]))

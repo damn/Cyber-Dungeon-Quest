@@ -26,6 +26,6 @@
     (if-let [movement-vector (WASD-movement-vector)]
       (swap! entity assoc :movement-vector movement-vector)
       (state/send-event! context entity :no-movement-input)))
-  (render-below [_ drawer context entity*])
-  (render-above [_ drawer context entity*])
-  (render-info  [_ drawer context entity*]))
+  (render-below [_ c entity*])
+  (render-above [_ c entity*])
+  (render-info  [_ c entity*]))
