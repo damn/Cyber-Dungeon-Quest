@@ -1,5 +1,6 @@
 (ns game.session
   (:require gdl.context
+            gdl.disposable
             [gdl.maps.tiled :as tiled]
             [gdl.scene2d.stage :as stage]
             context.ecs
@@ -36,7 +37,7 @@
     (.setInputProcessor Gdx/input nil)))
 
 (extend-type Stage
-  gdl.context/Disposable
+  gdl.disposable/Disposable
   (dispose [stage]
     (.dispose stage))
   game.protocols/Stage

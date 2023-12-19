@@ -2,6 +2,7 @@
   (:require [gdl.app :as app]
             gdl.screen
             [gdl.context :refer [draw-centered-image render-gui-view create-image]]
+            gdl.disposable
             [gdl.scene2d.ui :as ui]
             [gdl.scene2d.stage :as stage]
             [utils.core :refer [find-first]]
@@ -95,7 +96,7 @@
     table))
 
 (defrecord Screen [^Stage stage]
-  gdl.context/Disposable
+  gdl.disposable/Disposable
   (dispose [_]
     (.dispose stage))
   gdl.screen/Screen

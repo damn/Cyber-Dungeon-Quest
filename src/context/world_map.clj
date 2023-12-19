@@ -2,6 +2,7 @@
   (:require [clojure.edn :as edn]
             [data.grid2d :as grid]
             gdl.context
+            gdl.disposable
             [utils.core :refer [translate-to-tile-middle]]
             [game.maps.contentfields :refer [create-mapcontentfields]]
             [game.maps.cell-grid :as cell-grid]
@@ -77,7 +78,7 @@
                            context))
 
 (deftype Disposable-State []
-  gdl.context/Disposable
+  gdl.disposable/Disposable
   (dispose [_]
     ; TODO dispose tiledmap of context/world-map => make disposable record
     ; TODO dispose maps when starting a new session

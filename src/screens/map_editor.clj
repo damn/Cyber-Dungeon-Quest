@@ -8,6 +8,7 @@
                                    draw-filled-circle
                                    draw-grid
                                    render-world-view]]
+            gdl.disposable
             [gdl.maps.tiled :as tiled]
             [gdl.scene2d.ui :as ui]
             [gdl.scene2d.stage :as stage]
@@ -183,7 +184,7 @@
     stage))
 
 (defrecord Screen [^Stage stage]
-  gdl.context/Disposable
+  gdl.disposable/Disposable
   (dispose [_]
     (.dispose stage)
     (.dispose ^TiledMap @current-tiled-map))

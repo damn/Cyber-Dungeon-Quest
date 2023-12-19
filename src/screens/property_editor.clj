@@ -1,6 +1,7 @@
 (ns screens.property-editor
   (:require [clojure.edn :as edn]
             gdl.context
+            gdl.disposable
             gdl.screen
             [gdl.app :as app]
             [gdl.scene2d.actor :as actor]
@@ -230,7 +231,7 @@
     stage))
 
 (defrecord Screen [^Stage stage]
-  gdl.context/Disposable
+  gdl.disposable/Disposable
   (dispose [_]
     (.dispose stage))
   gdl.screen/Screen
