@@ -1,6 +1,7 @@
 (ns game.render.debug
   (:require [gdl.app :as app]
-            [gdl.context :refer [draw-circle draw-rectangle draw-filled-rectangle draw-grid]]
+            [gdl.context :refer [draw-circle draw-rectangle draw-filled-rectangle draw-grid
+                                 world-mouse-position]]
             [gdl.graphics.color :as color]
             [gdl.graphics.camera :as camera]
             [game.maps.cell-grid :as cell-grid])
@@ -8,8 +9,8 @@
 
 ; TODO make check-buttons with debug-window or MENU top screen is good for debug I think
 
-(defn- geom-test [{:keys [world-mouse-position context/world-map] :as c}]
-  (let [position world-mouse-position
+(defn- geom-test [{:keys [context/world-map] :as c}]
+  (let [position (world-mouse-position c)
         cell-grid (:cell-grid world-map)
         radius 0.8
         circle {:position position :radius radius}]
@@ -51,12 +52,10 @@
   (render-debug-before-entities [c]
     #_(tile-debug c))
 
-  (render-debug-after-entities [{:keys [world-mouse-position
-                                        context/world-map]
-                                 :as c}]
+  (render-debug-after-entities [{:keys [context/world-map] :as c}]
     #_(geom-test c)
     ; highlight current mouseover-tile
-    #_(let [[x y] (mapv int world-mouse-position)
+    #_(let [[x y] (mapv int (world-mouse-position c))
             cell-grid (:cell-grid world-map)
             cell (get cell-grid [x y])]
         (draw-rectangle c x y 1 1 (color/rgb 0 1 0 0.5))

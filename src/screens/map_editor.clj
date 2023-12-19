@@ -122,10 +122,10 @@
                1 1
                (color/rgb 1 1 1 0.5))))
 
-(defn- generate [properties]
-  (let [{:keys [world-camera
-                context/properties]} (app/current-context)
-        {:keys [tiled-map
+(defn- generate [{:keys [world-camera
+                         context/properties]}
+                 properties]
+  (let [{:keys [tiled-map
                 area-level-grid
                 start-positions]} (module-gen/generate (assoc properties
                                                               :creature-properties (filter :species (vals properties))))]
@@ -179,7 +179,7 @@
     (.addActor stage window)
     (.add window ^com.badlogic.gdx.scenes.scene2d.Actor form)
     (.row window)
-    (.add window (ui/text-button "Generate" #(generate (get-properties))))
+    (.add window (ui/text-button "Generate" #(generate @app/state (get-properties))))
     (.pack window)
     stage))
 

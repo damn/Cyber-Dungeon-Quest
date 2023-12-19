@@ -4,7 +4,7 @@
             [gdl.app :as app]
             [gdl.graphics.color :as color]
             [gdl.context :refer [draw-rectangle draw-filled-rectangle spritesheet get-sprite
-                                 play-sound!]]
+                                 play-sound! gui-mouse-position]]
             [gdl.scene2d.ui :as ui]
             [game.context :as gm]
             [game.modifier :as modifier]
@@ -141,13 +141,13 @@
 (defn- draw-rect-actor ^Widget []
   (proxy [Widget] []
     (draw [_batch _parent-alpha]
-      (let [{:keys [gui-mouse-position context/player-entity] :as c} (app/current-context)
+      (let [{:keys [context/player-entity] :as c} @app/state
             ^Widget this this]
         (draw-cell-rect c
                         player-entity
                         (.getX this)
                         (.getY this)
-                        (mouseover? this gui-mouse-position)
+                        (mouseover? this (gui-mouse-position c))
                         (read-string (.getName (.getParent this))))))))
 
 (defn- cell-widget ^Group [slot & {:keys [position]}]
@@ -156,7 +156,7 @@
       (.setName (pr-str cell)) ; TODO ! .setUserObject
       (.addListener (proxy [ClickListener] []
                       (clicked [event x y]
-                        (clicked-cell (app/current-context) cell))))
+                        (clicked-cell @app/state cell))))
       (.add (draw-rect-actor))
       (.add (doto (ui/image (slot->background slot))
               (.setName "image"))))))

@@ -13,7 +13,7 @@
 (defn- valid-params? [_ {:keys [source target]}]
   (and source
        target
-       (in-line-of-sight? @source @target (app/current-context)) ; TODO move to valid-params? @ extra param... !!
+       (in-line-of-sight? @source @target @app/state) ; TODO move to valid-params? @ extra param... !!
        (:hp @target))) ; TODO this is valid-params of hit-effect damage !!
 
 (defn- in-range? [entity* target* maxrange] ; == circle-collides?

@@ -1,7 +1,7 @@
 (ns app
   (:require [gdl.app :as app]
             [gdl.context :refer [generate-ttf]]
-            gdl.default-context
+            [gdl.default-context :as default-context]
             [context.properties :as properties]
             [game.context :refer [create-gui-stage]]
             game.modifiers.all
@@ -21,9 +21,6 @@
             screens.options-menu
             screens.property-editor))
 
-; TODOs changes from gdl:
-; gdl.context => gdl.context
-
 ; contexts == effect
 ; modifier move to data/ ?
 ; action-bar / inventory-window / to context ?
@@ -35,7 +32,7 @@
 
 
 (defn- create-context []
-  (let [context (gdl.default-context/->context :tile-size 48)
+  (let [context (default-context/->context :tile-size 48)
         properties (let [file "resources/properties.edn"
                          properties (properties/load-edn context file)]
                      (.bindRoot #'properties/properties-file file)

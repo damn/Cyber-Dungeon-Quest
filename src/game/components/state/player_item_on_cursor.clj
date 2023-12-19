@@ -1,5 +1,5 @@
 (ns game.components.state.player-item-on-cursor
-  (:require [gdl.context :refer [play-sound!]]
+  (:require [gdl.context :refer [play-sound! gui-mouse-position]]
             [gdl.scene2d.stage :as stage]
             [game.components.state :as state]
             [game.components.inventory :as inventory]
@@ -24,10 +24,10 @@
 (defrecord State [entity item]
   state/PlayerState
   (pause-game? [_] true)
-  (manual-tick! [_ {:keys [gui-mouse-position] :as context} delta]
+  (manual-tick! [_ context delta]
     (when (and (.isButtonJustPressed Gdx/input Input$Buttons/LEFT)
                (not (stage/hit (:stage (:screens/game context)) ; TODO fixme
-                               gui-mouse-position)))
+                               (gui-mouse-position context))))
       (state/send-event! context entity :drop-item)))
 
   state/State

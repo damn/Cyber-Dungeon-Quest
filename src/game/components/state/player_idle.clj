@@ -1,5 +1,5 @@
 (ns game.components.state.player-idle
-  (:require [gdl.context :refer [play-sound!]]
+  (:require [gdl.context :refer [play-sound! world-mouse-position gui-mouse-position]]
             [gdl.math.vector :as v]
             [gdl.scene2d.stage :as stage]
             [utils.core :refer [safe-get]]
@@ -38,13 +38,10 @@
       (play-sound! context "sounds/bfxr_denied.wav")
       (gm/show-msg-to-player! context "Your Inventory is full")))))
 
-(defn- make-effect-params [{:keys [world-mouse-position
-                                   context/mouseover-entity]
-                            :as context}
-                           entity]
+(defn- make-effect-params [{:keys [context/mouseover-entity] :as context} entity]
   (let [target @mouseover-entity
         target-position (or (and target (:position @target))
-                            world-mouse-position)]
+                            (world-mouse-position context))]
     {:source entity
      :target target
      :target-position target-position
@@ -54,18 +51,16 @@
 (defrecord State [entity]
   state/PlayerState
   (pause-game? [_] true)
-  (manual-tick! [_
-                 {:keys [gui-mouse-position
-                         context/mouseover-entity
-                         context/properties]
-                  :as context}
+  (manual-tick! [_ {:keys [context/mouseover-entity
+                           context/properties]
+                    :as context}
                  delta]
     (let [stage (:stage (:screens/game context))]  ; TODO hack FIXME
       (if-let [movement-vector (WASD-movement-vector)]
         (state/send-event! context entity :movement-input movement-vector)
         (when (.isButtonJustPressed Gdx/input Input$Buttons/LEFT)
           (cond
-           (stage/hit stage gui-mouse-position)
+           (stage/hit stage (gui-mouse-position context))
            nil
 
            (clickable/clickable-mouseover-entity? @entity @mouseover-entity)

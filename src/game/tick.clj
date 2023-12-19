@@ -1,5 +1,6 @@
 (ns game.tick
   (:require [gdl.app :as app]
+            [gdl.context :refer [gui-mouse-position]]
             [gdl.scene2d.actor :as actor]
             [gdl.scene2d.stage :as stage]
             [game.context :refer [tick-active-entities
@@ -12,11 +13,9 @@
   (:import (com.badlogic.gdx Gdx Input$Keys Input$Buttons)
            com.badlogic.gdx.scenes.scene2d.Actor))
 
-(defn- update-game-systems [{:keys [gui-mouse-position
-                                    context/running]
-                             :as context}
-                            stage ; TODO stage part of context
-                            delta]
+(defn- update-game-systems
+  [{:keys [context/running] :as context} stage delta]
+  ; TODO stage part of context
   ; destroy here not @ tick, because when game is paused
   ; for example pickup item, should be destroyed. TODO fix - weird ! I want to do just context/tick ...
   ; => finally the whole context just swap , but we like atoms?
@@ -24,7 +23,8 @@
   (destroy-to-be-removed-entities! context)
 
   ; this do always so can get debug info even when game not running
-  (update-mouseover-entity context (stage/hit stage gui-mouse-position))
+  ; TODO move stage in context , can do stage/hit inside update
+  (update-mouseover-entity context (stage/hit stage (gui-mouse-position context)))
 
   (when @running ; sowieso keine bewegungen / kein update gemacht ? checkt nur tiles ?
     (update-potential-fields context)))
@@ -38,12 +38,7 @@
                                  inventory-window
                                  entity-info-window
                                  skill-window
-                                 help-window] :as stage}
-                         {:keys [gui-mouse-position
-                                 world-mouse-position
-                                 context/player-entity
-                                 context/mouseover-entity]
-                          :as context}]
+                                 help-window] :as stage}]
   (action-bar/up-skill-hotkeys)
   (let [windows [debug-window
                  help-window
@@ -80,7 +75,7 @@
                :as context}
               stage
               delta]
-    (handle-key-input stage context)
+    (handle-key-input stage)
     (let [state (:state-obj (:components/state @player-entity))]
       (state/manual-tick! state context delta)
       (reset! running (if (or @thrown-error

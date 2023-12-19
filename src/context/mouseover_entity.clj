@@ -1,17 +1,17 @@
 (ns context.mouseover-entity
-  (:require game.context
+  (:require [gdl.context :refer [world-mouse-position]]
+            game.context
             [utils.core :refer [sort-by-order]]
             [game.line-of-sight :refer (in-line-of-sight?)]
             [game.maps.cell-grid :refer (get-bodies-at-position)]))
 
 (defn- calculate-mouseover-entity
-  [{:keys [world-mouse-position
-           context/player-entity
+  [{:keys [context/player-entity
            context/render-on-map-order
            context/world-map]
     :as context}]
   (let [cell-grid (:cell-grid world-map)
-        hits (get-bodies-at-position cell-grid world-mouse-position)]
+        hits (get-bodies-at-position cell-grid (world-mouse-position context))]
     ; TODO needs z-order ? what if 'shout' element or FX ?
     (when hits
       (->> render-on-map-order

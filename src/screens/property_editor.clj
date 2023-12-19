@@ -21,13 +21,14 @@
 ; * missing widgets for keys / one-to-many not implemented
 
 (defn- stage ^Stage []
-  (let [{:keys [context/current-screen] :as context} (app/current-context)]
+  (let [{:keys [context/current-screen] :as context} @app/state]
     (:stage (current-screen context))))
 
 (declare property-editor-window)
 
 (defn- open-property-editor-window [id]
-  (let [{:keys [gui-viewport-width gui-viewport-height] :as context} (app/current-context)
+  (let [{:keys [gui-viewport-width
+                gui-viewport-height] :as context} @app/state
         window (property-editor-window id)]
     (.addActor (stage) window)
     (actor/set-center window
@@ -135,7 +136,7 @@
                            (ui/text-button " - " #(redo-rows (disj (set property-ids) prop-id)))])
                         [[(ui/text-button " + "
                                           (fn []
-                                            (let [{:keys [gui-viewport-width gui-viewport-height]} (app/current-context)
+                                            (let [{:keys [gui-viewport-width gui-viewport-height]} @app/state
                                                   window (ui/window :title "Choose"
                                                                     :modal? true)
                                                   clicked-id-fn (fn [id]
