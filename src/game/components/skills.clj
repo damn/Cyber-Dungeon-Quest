@@ -3,7 +3,7 @@
             [gdl.context :refer [get-property]]
             [data.counter :as counter]
             [utils.core :refer [mapvals]]
-            [game.entity :as entity]
+            [context.ecs :as entity]
             [game.effect :as effect]))
 
 (defn- update-cooldown [skill delta]

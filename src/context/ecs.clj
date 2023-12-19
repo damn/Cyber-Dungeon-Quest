@@ -2,16 +2,34 @@
   (:require [clj-commons.pretty.repl :as p]
             ; TODO this only used here, good.
             ; but position-changed / moved ! is also there
-            [x.x :refer [update-map doseq-entity]]
+            [x.x :refer [defsystem update-map doseq-entity]]
             [gdl.context :refer [draw-text]]
             [utils.core :refer [define-order sort-by-order]]
             [game.context :as gm]
-            [game.entity :as entity]
             [game.line-of-sight :refer (in-line-of-sight?)]
             [game.maps.contentfields :refer [get-entities-in-active-content-fields]]))
 
-; TODO move x.x here also or just defsystems
+; e = entity reference (an atom)
+; e* = deref-ed entity, a map.
+; c = context
 
+; TODO always context last param
+(defsystem create [_])
+(defsystem create! [_ e c])
+
+(defsystem destroy [_])
+(defsystem destroy! [_ e c])
+
+(defsystem tick  [_ delta])
+(defsystem tick! [_ c e delta])
+
+(defsystem moved! [_ e c direction-vector])
+
+(defsystem render-below   [_ c e*])
+(defsystem render-default [_ c e*])
+(defsystem render-above   [_ c e*])
+(defsystem render-info    [_ c e*])
+(defsystem render-debug   [_ c e*])
 
 ; if lightning => pass render-on-map argument 'colorsetter' by default
 ; on all render-systems , has to be handled & everything has to have body then?
@@ -51,14 +69,14 @@
                                        first
                                        render-on-map-order)
           ; vars so I can see the function name @ error (can I do this with x.x? give multimethods names?)
-          system [#'entity/render-below
-                  #'entity/render-default
-                  #'entity/render-above
-                  #'entity/render-info]
+          system [#'render-below
+                  #'render-default
+                  #'render-above
+                  #'render-info]
           entity* entities*]
     (render-entity* system c entity*))
   (doseq [entity* entities*]
-    (render-entity* #'entity/render-debug c entity*)))
+    (render-entity* #'render-debug c entity*)))
 
 (defn- visible-entities* [{:keys [context/player-entity] :as context}]
   (->> (get-entities-in-active-content-fields context)
@@ -66,10 +84,10 @@
        (filter #(in-line-of-sight? @player-entity % context))))
 
 (defn- tick-entity! [context entity delta]
-  (swap! entity update-map entity/tick delta)
-  ; (doseq-entity entity entity/tick! context delta)
+  (swap! entity update-map tick delta)
+  ; (doseq-entity entity tick! context delta)
   (doseq [k (keys @entity)] ; TODO FIXME
-    (entity/tick! [k (k @entity)] context entity delta)))
+    (tick! [k (k @entity)] context entity delta)))
 
 
 ; get-entities-in-active-content-fields
@@ -88,9 +106,9 @@
   (create-entity! [context components-map]
     {:pre [(not (contains? components-map :id))]}
     (-> (assoc components-map :id nil)
-        (update-map entity/create)
+        (update-map create)
         atom
-        (doseq-entity entity/create! context)))
+        (doseq-entity create! context)))
 
   (tick-active-entities
     [{:keys [context/thrown-error] :as context} delta]
@@ -108,8 +126,8 @@
     [{:keys [context/ids->entities] :as context}]
     (doseq [e (filter (comp :destroyed? deref) (vals @ids->entities))
             :when (gm/entity-exists? context e)] ; TODO why is this ?, maybe assert ?
-      (swap! e update-map entity/destroy)
-      (doseq-entity e entity/destroy! context))))
+      (swap! e update-map destroy)
+      (doseq-entity e destroy! context))))
 
 ; TODO use only locally?
 ; with higher up context/ecs key or something like that

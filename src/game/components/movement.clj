@@ -3,7 +3,7 @@
             [gdl.math.geom :as geom]
             [gdl.math.vector :as v]
             [utils.core :refer [find-first]]
-            [game.entity :as entity]
+            [context.ecs :as entity]
             [game.effect :as effect]
             [game.components.body :as body]
             [game.entities.audiovisual :as audiovisual]

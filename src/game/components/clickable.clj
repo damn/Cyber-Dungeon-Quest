@@ -2,7 +2,7 @@
   (:require [x.x :refer [defcomponent]]
             [gdl.context :refer [draw-text]]
             [gdl.math.vector :as v]
-            [game.entity :as entity]))
+            [context.ecs :as entity]))
 
 (defcomponent :clickable {:keys [text]}
   (entity/render-default [_ c {[x y] :position :keys [mouseover? body]}]

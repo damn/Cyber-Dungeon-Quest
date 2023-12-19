@@ -4,15 +4,16 @@
             [gdl.context.default :as default-context]
             [app.state :refer [current-context]]
             [context.properties :as properties]
+
             game.session ; TODO remove
+
             game.modifiers.all
             game.components.require-all
             game.effects.require-all
             game.ui.inventory-window
             game.ui.action-bar
             game.ui.hp-mana-bars
-            game.tick
-            game.render.debug
+
             screens.game
             screens.main-menu
             screens.map-editor
@@ -60,6 +61,7 @@
     (game.ui.action-bar/initialize!)
     (game.ui.hp-mana-bars/initialize! context)
     (merge context
+           ; TODO previous default-font overwritten not dispposed, use safe-merge always.
            {:default-font (generate-ttf context {:file "exocet/films.EXL_____.ttf"
                                                  :size 16})
             :screens/game            (->stage-screen context (screens.game/screen context))

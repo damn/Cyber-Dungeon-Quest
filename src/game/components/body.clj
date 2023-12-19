@@ -3,7 +3,7 @@
             [gdl.context :refer [draw-rectangle]]
             [gdl.math.geom :as geom]
             [gdl.math.vector :as v]
-            [game.entity :as entity]
+            [context.ecs :as entity]
             [game.maps.cell-grid :as grid])
   (:import com.badlogic.gdx.graphics.Color))
 

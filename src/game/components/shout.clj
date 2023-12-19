@@ -1,7 +1,7 @@
 (ns game.components.shout
   (:require [x.x :refer [defcomponent]]
             [data.counter :as counter]
-            [game.entity :as entity]
+            [context.ecs :as entity]
             [game.components.state :as state]
             [game.line-of-sight :refer (in-line-of-sight?)]
             [game.maps.cell-grid :as cell-grid]))

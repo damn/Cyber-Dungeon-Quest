@@ -1,7 +1,7 @@
 (ns game.components.state
   (:require [reduce-fsm :as fsm]
             [x.x :refer [defcomponent]]
-            [game.entity :as entity]))
+            [context.ecs :as entity]))
 
 (defprotocol State
   (enter [_ context])

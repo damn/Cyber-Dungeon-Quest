@@ -3,7 +3,7 @@
             [x.x :refer [defcomponent]]
             [gdl.context :refer [get-property]]
             [utils.core :refer [find-first]]
-            [game.entity :as entity]
+            [context.ecs :as entity]
             [game.modifier :as modifier]
             [game.components.skills :as skills]))
 

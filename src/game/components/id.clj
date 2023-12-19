@@ -1,6 +1,6 @@
 (ns game.components.id
   (:require [x.x :refer [defcomponent]]
-            [game.entity :as entity]))
+            [context.ecs :as entity]))
 
 (let [cnt (atom 0)]
   (defn- unique-number! []

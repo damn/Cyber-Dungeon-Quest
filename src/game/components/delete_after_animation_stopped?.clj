@@ -1,7 +1,7 @@
 (ns game.components.delete-after-animation-stopped?
   (:require [x.x :refer [defcomponent]]
             [gdl.graphics.animation :as animation]
-            [game.entity :as entity]))
+            [context.ecs :as entity]))
 
 (defcomponent :delete-after-animation-stopped? _
   (entity/create! [_ e _ctx]

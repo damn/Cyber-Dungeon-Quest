@@ -1,6 +1,6 @@
 (ns game.components.mana
   (:require [x.x :refer [defcomponent]]
-            [game.entity :as entity]))
+            [context.ecs :as entity]))
 
 (defcomponent :mana max-mana
   (entity/create [_]

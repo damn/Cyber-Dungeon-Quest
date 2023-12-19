@@ -1,7 +1,7 @@
 (ns game.components.image
   (:require [x.x :refer [defcomponent]]
             [gdl.context :refer [draw-rotated-centered-image]]
-            [game.entity :as entity]))
+            [context.ecs :as entity]))
 
 (defcomponent :image image
   (entity/render-default [_ c {:keys [position body]}]

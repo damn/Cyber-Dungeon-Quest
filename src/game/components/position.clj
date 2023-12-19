@@ -1,7 +1,7 @@
 (ns game.components.position
   (:require [x.x :refer [defcomponent]]
             [utils.core :refer [int-posi]]
-            [game.entity :as entity]
+            [context.ecs :as entity]
             [game.maps.contentfields :refer (put-entity-in-correct-content-field
                                              remove-entity-from-content-field)]))
 

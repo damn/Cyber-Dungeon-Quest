@@ -1,11 +1,8 @@
 (ns game.entities.creature
   (:require [reduce-fsm :as fsm]
-            [x.x :refer [defcomponent]]
-            [gdl.graphics.camera :as camera]
             [gdl.context :refer [create-image get-property]]
             [gdl.graphics.animation :as animation]
             [game.context :as gm]
-            [game.entity :as entity]
             [game.components.body :refer (assoc-left-bottom valid-position?)]
             (game.components.state
              [active-skill :as active-skill]
@@ -16,8 +13,7 @@
              [player-idle :as player-idle]
              [player-item-on-cursor :as player-item-on-cursor]
              [player-moving :as player-moving]
-             [stunned :as stunned])
-            [game.entities.audiovisual :as audiovisual]))
+             [stunned :as stunned])))
 
 (fsm/defsm-inc ^:private npc-fsm
   [[:sleeping
@@ -89,13 +85,6 @@
     [max-width
      max-height]))
 
-(defcomponent :is-player _
-  (entity/create! [_ entity {:keys [world-camera]}]
-    (camera/set-position! world-camera (:position @entity)))
-  ; TODO make on position changed trigger
-  (entity/tick! [_ {:keys [world-camera]} entity delta]
-    (camera/set-position! world-camera (:position @entity))))
-
 (def ^:private player-components
   {:is-player true
    :faction :evil
@@ -154,12 +143,6 @@
                        :flying
                        :ground)}
            extra-params)))
-
-(defcomponent :default-monster-death _
-  (entity/destroy! [_ entity context]
-    (audiovisual/create! context
-                         (:position @entity)
-                         :creature/die-effect)))
 
 (defn create! [creature-id position creature-params context]
   (let [entity* (-> context

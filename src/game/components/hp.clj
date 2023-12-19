@@ -3,7 +3,7 @@
             [gdl.graphics.color :as color]
             [gdl.context :refer [draw-filled-rectangle pixels->world-units]]
             [data.val-max :refer [val-max-ratio]]
-            [game.entity :as entity]
+            [context.ecs :as entity]
             [game.ui.config :refer (hpbar-height-px)])
   (:import com.badlogic.gdx.graphics.Color))
 
