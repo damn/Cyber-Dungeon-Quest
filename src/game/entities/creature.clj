@@ -2,7 +2,7 @@
   (:require [reduce-fsm :as fsm]
             [x.x :refer [defcomponent]]
             [gdl.graphics.camera :as camera]
-            [gdl.protocols :refer [create-image]]
+            [gdl.context :refer [create-image]]
             [gdl.graphics.animation :as animation]
             [utils.core :refer [safe-get]]
             [game.protocols :as gm]

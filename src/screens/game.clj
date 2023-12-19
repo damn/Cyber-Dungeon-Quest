@@ -1,5 +1,5 @@
 (ns screens.game
-  (:require [gdl.protocols :refer [dispose
+  (:require [gdl.context :refer [dispose
                                    render-world-view
                                    render-gui-view]]
             gdl.screen
@@ -13,7 +13,7 @@
                                     tick-game]]))
 
 (defrecord Screen [stage]
-  gdl.protocols/Disposable
+  gdl.context/Disposable
   (dispose [_]
     (dispose stage))
 

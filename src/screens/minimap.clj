@@ -4,7 +4,7 @@
             [gdl.maps.tiled :as tiled]
             [gdl.graphics.color :as color]
             [gdl.graphics.camera :as camera]
-            [gdl.protocols :refer [draw-filled-circle render-world-view]]
+            [gdl.context :refer [draw-filled-circle render-world-view]]
             [game.maps.tile-color-setters :refer [minimap-color-setter]])
   (:import (com.badlogic.gdx Gdx Input$Keys)
            (com.badlogic.gdx.graphics Color OrthographicCamera)))

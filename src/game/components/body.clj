@@ -1,6 +1,6 @@
 (ns game.components.body
   (:require [x.x :refer [defcomponent]]
-            [gdl.protocols :refer [draw-rectangle]]
+            [gdl.context :refer [draw-rectangle]]
             [gdl.math.geom :as geom]
             [gdl.math.vector :as v]
             [game.entity :as entity]

@@ -1,6 +1,6 @@
 (ns game.components.image
   (:require [x.x :refer [defcomponent]]
-            [gdl.protocols :refer [draw-rotated-centered-image]]
+            [gdl.context :refer [draw-rotated-centered-image]]
             [game.entity :as entity]))
 
 (defcomponent :image image

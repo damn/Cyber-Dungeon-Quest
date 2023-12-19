@@ -1,12 +1,16 @@
 (ns screens.main-menu
   (:require [gdl.app :as app]
-            [gdl.protocols :refer [draw-centered-image render-gui-view create-image]]
+            [gdl.context :refer [draw-centered-image render-gui-view create-image]]
             gdl.screen
             [gdl.scene2d.ui :as ui]
             [gdl.scene2d.stage :as stage]
             game.session)
   (:import (com.badlogic.gdx Gdx Input$Keys)
            com.badlogic.gdx.scenes.scene2d.Stage))
+
+; TODO here build start-game context !
+; here we click and change screen !
+; first create 'world', not 'world-map' context and move to context/
 
 (declare ^Stage stage
          ^:private skip-main-menu
@@ -32,7 +36,7 @@
     (.center table)))
 
 (defrecord Screen []
-  gdl.protocols/Disposable
+  gdl.context/Disposable
   (dispose [_]
     (.dispose stage))
   gdl.screen/Screen

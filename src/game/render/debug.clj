@@ -1,6 +1,6 @@
 (ns game.render.debug
   (:require [gdl.app :as app]
-            [gdl.protocols :refer [draw-circle draw-rectangle draw-filled-rectangle draw-grid]]
+            [gdl.context :refer [draw-circle draw-rectangle draw-filled-rectangle draw-grid]]
             [gdl.graphics.color :as color]
             [gdl.graphics.camera :as camera]
             [game.maps.cell-grid :as cell-grid])
@@ -46,7 +46,7 @@
       #_(when (:monster @cell)
           (@#'g/draw-string x y (str (:id @(:monster @cell))) 1)))))
 
-(extend-type gdl.protocols.Context
+(extend-type gdl.context.Context
   game.protocols/DebugRenderer
   (render-debug-before-entities [c]
     #_(tile-debug c))

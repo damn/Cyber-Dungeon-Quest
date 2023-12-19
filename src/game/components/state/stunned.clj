@@ -1,6 +1,6 @@
 (ns game.components.state.stunned
   (:require [gdl.graphics.color :as color]
-            [gdl.protocols :refer [draw-circle]]
+            [gdl.context :refer [draw-circle]]
             [data.counter :as counter]
             [game.components.state :as state]))
 

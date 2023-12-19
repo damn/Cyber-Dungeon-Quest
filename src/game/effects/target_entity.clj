@@ -1,7 +1,7 @@
 (ns game.effects.target-entity ; TODO naming
   (:require [clojure.string :as str]
             [gdl.app :as app]
-            [gdl.protocols :refer [draw-line]]
+            [gdl.context :refer [draw-line]]
             [gdl.math.vector :as v]
             [gdl.graphics.color :as color]
             [game.line-of-sight :refer (in-line-of-sight?)]

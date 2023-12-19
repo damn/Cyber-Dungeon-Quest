@@ -1,5 +1,5 @@
 (ns game.components.state.npc-sleeping
-  (:require [gdl.protocols :refer [draw-text draw-circle]]
+  (:require [gdl.context :refer [draw-text draw-circle]]
             [data.counter :as counter]
             [game.protocols :as gm]
             [game.components.state :as state]

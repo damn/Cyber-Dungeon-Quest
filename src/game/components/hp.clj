@@ -1,7 +1,7 @@
 (ns game.components.hp
   (:require [x.x :refer [defcomponent]]
             [gdl.graphics.color :as color]
-            [gdl.protocols :refer [draw-filled-rectangle pixels->world-units]]
+            [gdl.context :refer [draw-filled-rectangle pixels->world-units]]
             [data.val-max :refer [val-max-ratio]]
             [game.entity :as entity]
             [game.ui.config :refer (hpbar-height-px)])

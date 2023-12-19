@@ -2,7 +2,7 @@
   (:require [clojure.string :as str]
             [gdl.math.vector :as v]
             [gdl.graphics.animation :as animation]
-            [gdl.protocols :refer [get-sprite spritesheet]]
+            [gdl.context :refer [get-sprite spritesheet]]
             [game.effect :as effect]
             [game.maps.cell-grid :as cell-grid]
             [game.entities.projectile :as projectile-entity]))

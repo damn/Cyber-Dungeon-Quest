@@ -3,7 +3,7 @@
             [data.grid2d :as grid]
             [gdl.app :as app]
             [gdl.graphics.color :as color]
-            [gdl.protocols :refer [draw-rectangle draw-filled-rectangle spritesheet get-sprite]]
+            [gdl.context :refer [draw-rectangle draw-filled-rectangle spritesheet get-sprite]]
             [gdl.scene2d.ui :as ui]
             [game.protocols :as gm]
             [game.modifier :as modifier]

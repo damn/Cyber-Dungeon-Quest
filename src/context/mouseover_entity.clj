@@ -1,5 +1,6 @@
 (ns context.mouseover-entity
-  (:require [utils.core :refer [sort-by-order]]
+  (:require gdl.context
+            [utils.core :refer [sort-by-order]]
             [game.line-of-sight :refer (in-line-of-sight?)]
             [game.maps.cell-grid :refer (get-bodies-at-position)]))
 
@@ -22,14 +23,19 @@
            (filter #(in-line-of-sight? @player-entity @% context))
            first))))
 
-(defn update-mouseover-entity [{:keys [context/mouseover-entity]
-                                :as context}
-                               mouse-over-ui-element?]
-  (when-let [entity @mouseover-entity]
-    (swap! entity dissoc :mouseover?))
-  (let [entity (if mouse-over-ui-element?
-                 nil
-                 (calculate-mouseover-entity context))]
-    (reset! mouseover-entity entity)
-    (when entity
-      (swap! entity assoc :mouseover? true))))
+(extend-type gdl.context.Context
+  MouseOverEntity
+  (update-mouseover-entity [{:keys [context/mouseover-entity]
+                             :as context}
+                            mouse-over-ui-element?]
+    (when-let [entity @mouseover-entity]
+      (swap! entity dissoc :mouseover?))
+    (let [entity (if mouse-over-ui-element?
+                   nil
+                   (calculate-mouseover-entity context))]
+      (reset! mouseover-entity entity)
+      (when entity
+        (swap! entity assoc :mouseover? true)))))
+
+(defn ->context-map []
+  {:context/mouseover-entity (atom nil)})

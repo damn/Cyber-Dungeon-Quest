@@ -1,6 +1,6 @@
 (ns game.components.state.active-skill
   (:require [gdl.graphics.color :as color]
-            [gdl.protocols :refer [draw-filled-circle draw-sector draw-image]]
+            [gdl.context :refer [draw-filled-circle draw-sector draw-image]]
             [data.counter :as counter]
             [data.val-max :refer [apply-val]]
             [game.effect :as effect]

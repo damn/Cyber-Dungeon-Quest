@@ -2,7 +2,7 @@
   (:refer-clojure :exclude [get])
   (:require [clojure.edn :as edn]
             [gdl.graphics.animation :as animation]
-            [gdl.protocols :refer [get-sprite]]
+            [gdl.context :refer [get-sprite]]
             [utils.core :refer [safe-get]]))
 
 ; Other approaches :

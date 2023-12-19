@@ -1,6 +1,6 @@
 (ns game.ui.actors
   (:require [gdl.app :as app]
-            [gdl.protocols :refer [draw-centered-image]]
+            [gdl.context :refer [draw-centered-image]]
             [gdl.scene2d.ui :as ui]
             [game.ui.debug-window :as debug-window]
             [game.ui.help-window :as help-window]

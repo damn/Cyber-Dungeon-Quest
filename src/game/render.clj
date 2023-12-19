@@ -6,7 +6,7 @@
             [game.ui.hp-mana-bars :refer [render-player-hp-mana]]
             [game.maps.tile-color-setters :refer [tile-color-setter]]))
 
-(extend-type gdl.protocols.Context
+(extend-type gdl.context.Context
   game.protocols/GameScreenRender
   (render-world-map [{:keys [context/world-map] :as context}]
     (tiled/render-map context

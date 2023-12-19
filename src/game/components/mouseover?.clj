@@ -1,7 +1,7 @@
 (ns game.components.mouseover?
   (:require [x.x :refer [defcomponent]]
             [gdl.graphics.color :as color]
-            [gdl.protocols :refer [with-shape-line-width draw-ellipse]]
+            [gdl.context :refer [with-shape-line-width draw-ellipse]]
             [game.entity :as entity]))
 
 (def ^:private outline-alpha 0.4)

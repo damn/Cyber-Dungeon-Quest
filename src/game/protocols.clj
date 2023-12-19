@@ -1,4 +1,4 @@
-(ns game.protocols)
+(ns game.protocols) ; TODO == game.context
 
 (defprotocol EntityComponentSystem
   (get-entity [_ id])
@@ -22,7 +22,7 @@
 
 (defprotocol GameScreenRender
   (render-world-map     [_])
-  ; TODO confusing names with render-world-view / render-gui-view @ gdl.protocols
+  ; TODO confusing names with render-world-view / render-gui-view @ gdl.context
   (render-in-world-view [_])
   (render-in-gui-view   [_]))
 
@@ -37,7 +37,11 @@
   (set-screen-stage [_ stage])
   (remove-screen-stage [_]))
 
+; TODO is just stage ... move to gdl
 (defprotocol Stage
   (draw [_])
   ; TODO this is 'tick!' or 'act!' because with side effects, different protocol than counter/animation
   (act [_ delta]))
+
+(defprotocol MouseOverEntity
+  (update-mouseover-entity [_ stage-hit?]))

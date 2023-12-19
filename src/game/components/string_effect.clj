@@ -1,6 +1,6 @@
 (ns game.components.string-effect
   (:require [x.x :refer [defcomponent]]
-            [gdl.protocols :refer [draw-text pixels->world-units]]
+            [gdl.context :refer [draw-text pixels->world-units]]
             [data.counter :as counter]
             [game.ui.config :refer [hpbar-height-px]]
             [game.entity :as entity]))

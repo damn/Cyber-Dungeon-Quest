@@ -1,8 +1,8 @@
 (ns app
   (:require [gdl.app :as app]
-            [gdl.protocols :refer [generate-ttf]]
+            [gdl.context :refer [generate-ttf]]
             gdl.default-context
-            context.properties
+            [context.properties :as properties]
             [game.protocols :refer [create-gui-stage]]
             game.modifiers.all
             game.components.require-all
@@ -19,15 +19,26 @@
             screens.map-editor
             screens.minimap
             screens.options-menu
-            screens.property-editor)
-  (:import com.badlogic.gdx.Gdx))
+            screens.property-editor))
+
+; TODOs changes from gdl:
+; gdl.context => gdl.context
+
+; contexts == effect
+; modifier move to data/ ?
+; action-bar / inventory-window / to context ?
+; 'maps' => context
+; components/ and effects/ out of game ?
+; amd modifiers/?
+; then no game left ?
+; just engine ?
 
 (defn- create-context []
   (let [context (gdl.default-context/->Context :tile-size 48)
         properties (let [file "resources/properties.edn"
-                         properties (context.properties/load-edn context file)]
-                     (.bindRoot #'context.properties/properties-file file)
-                     (.bindRoot #'context.properties/properties properties)
+                         properties (properties/load-edn context file)]
+                     (.bindRoot #'properties/properties-file file)
+                     (.bindRoot #'properties/properties properties)
                      properties)
         context (merge context {:context/properties properties})]
     (game.ui.inventory-window/initialize! context)
@@ -36,9 +47,6 @@
     (merge context
            {:default-font (generate-ttf context {:file "exocet/films.EXL_____.ttf"
                                                  :size 16})
-
-            ; TODO here context/world-map
-            ; :game.maps.data (game.maps.data/->Disposable-State)
             :screens/game            (-> context
                                          (create-gui-stage (game.ui.actors/create-actors context))
                                          screens.game/->Screen)

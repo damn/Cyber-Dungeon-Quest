@@ -1,7 +1,7 @@
 (ns screens.options-menu
   (:require [gdl.app :as app]
             gdl.screen
-            [gdl.protocols :refer [draw-centered-image render-gui-view create-image]]
+            [gdl.context :refer [draw-centered-image render-gui-view create-image]]
             [gdl.scene2d.ui :as ui]
             [gdl.scene2d.stage :as stage]
             [utils.core :refer [find-first]]
@@ -95,7 +95,7 @@
     table))
 
 (defrecord Screen [^Stage stage]
-  gdl.protocols/Disposable
+  gdl.context/Disposable
   (dispose [_]
     (.dispose stage))
   gdl.screen/Screen

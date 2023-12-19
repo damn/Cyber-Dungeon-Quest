@@ -1,16 +1,14 @@
 (ns context.ecs
   (:require [clj-commons.pretty.repl :as p]
-
             ; TODO this only used here, good.
             ; but position-changed / moved ! is also there
             [x.x :refer [update-map doseq-entity]]
-            gdl.app
-            [gdl.protocols :refer [draw-text]]
+            [gdl.context :refer [draw-text]]
             [utils.core :refer [define-order sort-by-order]]
             [game.protocols :as gm]
             [game.entity :as entity]
             [game.line-of-sight :refer (in-line-of-sight?)]
-            [game.maps.contentfields :refer [get-entities-in-active-content-fields]] ))
+            [game.maps.contentfields :refer [get-entities-in-active-content-fields]]))
 
 ; TODO move x.x here also or just defsystems
 
@@ -67,8 +65,6 @@
        (map deref)
        (filter #(in-line-of-sight? @player-entity % context))))
 
-
-
 (defn- tick-entity! [context entity delta]
   (swap! entity update-map entity/tick delta)
   ; (doseq-entity entity entity/tick! context delta)
@@ -76,16 +72,12 @@
     (entity/tick! [k (k @entity)] context entity delta)))
 
 
-
-
-
 ; get-entities-in-active-content-fields
 ; => rename just get-active-entities
 ; or to-be-updated-entities ?!
 ; dont want to know about contentfields ( ? )
 
-
-(extend-type gdl.protocols.Context
+(extend-type gdl.context.Context
   game.protocols/EntityComponentSystem
   (get-entity [{:keys [context/ids->entities]} id]
     (get @ids->entities id))

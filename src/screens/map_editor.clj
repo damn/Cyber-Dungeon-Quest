@@ -4,7 +4,7 @@
             gdl.screen
             [gdl.graphics.color :as color]
             [gdl.graphics.camera :as camera]
-            [gdl.protocols :refer [draw-filled-rectangle
+            [gdl.context :refer [draw-filled-rectangle
                                    draw-filled-circle
                                    draw-grid
                                    render-world-view]]
@@ -183,7 +183,7 @@
     stage))
 
 (defrecord Screen [^Stage stage]
-  gdl.protocols/Disposable
+  gdl.context/Disposable
   (dispose [_]
     (.dispose stage)
     (.dispose ^TiledMap @current-tiled-map))

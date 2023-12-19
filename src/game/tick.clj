@@ -2,9 +2,9 @@
   (:require [gdl.app :as app]
             [gdl.scene2d.actor :as actor]
             [gdl.scene2d.stage :as stage]
-            [context.mouseover-entity :refer (update-mouseover-entity)]
             [game.protocols :refer [tick-active-entities
-                                    destroy-to-be-removed-entities!]]
+                                    destroy-to-be-removed-entities!
+                                    update-mouseover-entity]]
             [game.components.movement :as movement]
             [game.components.state :as state]
             [game.ui.action-bar :as action-bar]
@@ -70,7 +70,7 @@
     (actor/toggle-visible! debug-window)))
 
 
-(extend-type gdl.protocols.Context
+(extend-type gdl.context.Context
   game.protocols/GameScreenTick
   (tick-game [{:keys [context/player-entity
                       context/running

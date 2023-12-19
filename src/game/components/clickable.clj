@@ -1,6 +1,6 @@
 (ns game.components.clickable
   (:require [x.x :refer [defcomponent]]
-            [gdl.protocols :refer [draw-text]]
+            [gdl.context :refer [draw-text]]
             [gdl.math.vector :as v]
             [game.entity :as entity]))
 

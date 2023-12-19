@@ -1,5 +1,5 @@
 (ns game.ui.hp-mana-bars
-  (:require [gdl.protocols :refer [draw-text draw-image create-image get-sub-image]]
+  (:require [gdl.context :refer [draw-text draw-image create-image get-sub-image]]
             [utils.core :refer [readable-number]]
             [data.val-max :refer [val-max-ratio]]))
 
