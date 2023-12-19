@@ -34,9 +34,9 @@
  )
 
 (effect/defeffect :spawn
-  {:text (fn [creature-id _]
+  {:text (fn [creature-id _params _context]
            (str "Spawns a " creature-id)) ; pretty name
-   :valid-params? (fn [_ {:keys [source target-position]}]
+   :valid-params? (fn [_effect-val {:keys [source target-position]} _context]
                     ; TODO line of sight ? / not blocked ..
                     (and source
                          (:faction @source)

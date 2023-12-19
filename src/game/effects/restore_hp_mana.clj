@@ -9,10 +9,11 @@
 
 ; TODO make with 'target' then can use as hit-effect too !
 (effect/defeffect :restore-hp-mana
-  {:text (fn [_ _] "Restores full hp and mana.")
-   :valid-params? (fn [_ {:keys [source]}]
+  {:text (fn [_effect-val _params _context]
+           "Restores full hp and mana.")
+   :valid-params? (fn [_effect {:keys [source]} _context]
                     source)
-   :do! (fn [_ {:keys [source]} context]
+   :do! (fn [_effect-val {:keys [source]} context]
           (play-sound! context "sounds/bfxr_drugsuse.wav")
           (swap! source #(-> %
                              (update :hp set-to-max)

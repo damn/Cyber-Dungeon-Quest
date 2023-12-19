@@ -46,7 +46,7 @@
   (tick! [_ context delta]
     (let [effect (:effect skill)]
       (cond
-       (not (effect/valid-params? effect effect-params))
+       (not (effect/valid-params? effect effect-params context))
        (state/send-event! context entity :action-done)
 
        (counter/stopped? counter)

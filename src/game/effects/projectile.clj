@@ -65,11 +65,11 @@
    context))
 
 (effect/defeffect :projectile
-  {:text (fn [_ params]
+  {:text (fn [_effect-val params context]
            (str/join "\n"
                      (for [effect hit-effects] ; TODO make fn in effect/ for multiple text?
-                       (effect/text effect params))))
+                       (effect/text effect params context))))
    ; TODO source,direction
-   :valid-params? (fn [_ {:keys [target]}]
+   :valid-params? (fn [_effect-val {:keys [target]} _context]
                     target)
    :do! do-effect!})

@@ -10,8 +10,6 @@
   (pause-game? [_] true)
 
   (manual-tick! [_ context delta]
-    ; TODO do at end of frame, dont change here, otherwise :context/current-screen is different in
-    ; argument context and atom context
     (when (.isKeyJustPressed Gdx/input Input$Keys/X)
       (change-screen! :screens/main-menu)))
 

@@ -92,7 +92,7 @@
   (doseq [[id {:keys [image] :as skill}] (:skills @player-entity)
           :let [button (ui/image-button image #(reset! selected-skill-id id))]]
     (.setName button (pr-str id))
-    (.addListener button (ui/text-tooltip #(skill/text skill player-entity)))
+    (.addListener button (ui/text-tooltip #(skill/text skill player-entity @current-context)))
     ; TODO HOTKEY
     (.addActor horizontal-group button)
     (.add button-group button)))

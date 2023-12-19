@@ -33,10 +33,11 @@
                     cooldown
                     spell?
                     effect]}
-            entity]
+            entity
+            context]
   (str (str/capitalize (name id)) "\n"
        (if spell? "Spell" "Weapon") "\n"
        (when cost (str "Cost " cost  "\n"))
        (if spell?  "Cast-Time " "Attack-time ") (ms->pprint-seconds action-time) " seconds\n"
        (when cooldown (str "Cooldown " (ms->pprint-seconds cooldown) "\n"))
-       (effect/text effect {:source entity})))
+       (effect/text effect {:source entity} context)))

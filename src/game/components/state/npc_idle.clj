@@ -30,7 +30,10 @@
        vals
        (sort-by #(or (:cost %) 0))
        reverse
-       (filter #(and (= :usable (skills/usable-state entity* % effect-params))
+       (filter #(and (= :usable (skills/usable-state entity*
+                                                     %
+                                                     effect-params
+                                                     context))
                      (effect/ai-should-use? (:effect %) effect-params context entity*)))
        first))
 

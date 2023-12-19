@@ -3,24 +3,10 @@
             [gdl.context :refer [draw-line]]
             [gdl.math.vector :as v]
             [gdl.graphics.color :as color]
-
-            ; TODO FIXME WRONG
-            [app.state :refer [current-context]]
-
             [game.line-of-sight :refer (in-line-of-sight?)]
             [game.entities.audiovisual :as audiovisual]
             [game.entities.line :as line-entity]
             [game.effect :as effect]))
-
-; TODO target still exists ?! necessary ? what if disappears/dead?
-(defn- valid-params? [_ {:keys [source target]}]
-  (and source
-       target
-       ; AAOMGGG
-       (in-line-of-sight? @source @target @current-context) ; TODO move to valid-params? @ extra param... !!
-       ; TODO merge effect-params with context
-       ; => the params of an effect are its context for its value / effect-type?
-       (:hp @target))) ; TODO this is valid-params of hit-effect damage !!
 
 (defn- in-range? [entity* target* maxrange] ; == circle-collides?
   (< (- (v/distance (:position entity*)
@@ -75,10 +61,17 @@
                (color/rgb 1 1 0 0.5))))
 
 (effect/defeffect :target-entity
-  {:text (fn [{:keys [maxrange hit-effects]} params]
+  {:text (fn [{:keys [maxrange hit-effects]} params context]
            (str "Range " maxrange " meters\n"
                 (str/join "\n" ; TODO same as other effect multiple text -> effect/effects-text?
                           (for [effect hit-effects]
-                            (effect/text effect params)))))
-   :valid-params? valid-params?
+                            (effect/text effect params context)))))
+   :valid-params?
+   ; TODO target still exists ?! necessary ? what if disappears/dead?
+   (fn [_effect-val {:keys [source target]} context]
+     (and source
+          target
+          (in-line-of-sight? @source @target context)
+          (:hp @target))) ; TODO this is valid-params of hit-effect damage !!
+
    :do! do-effect!})

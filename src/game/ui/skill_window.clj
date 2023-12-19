@@ -31,8 +31,10 @@
                   button (ui/image-button (:image skill)
                                           #(pressed-on-skill-in-menu skill))]]
       (.addListener button (ui/text-tooltip (fn []
-                                              ; player-entity is not yet added to context
-                                              (skill/text skill (:context/player-entity @current-context)))))
+                                              (let [context @current-context]
+                                                (skill/text skill
+                                                            (:context/player-entity context)
+                                                            context)))))
       (.add window button))
     ; TODO render text label free-skill-points
     ; (str "Free points: " (:free-skill-points @player-entity))

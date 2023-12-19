@@ -28,6 +28,10 @@
 ; and then the frame finishes with the original unchanged context
 ; do it always at end of frame
 ; at manual-tick! just pass as a variable or something or do manual for player-dead !
+; see 54de785
+; => all screen changes should return the code with new context
+; or do at end of frame _ONLY_
+; (change-screen context new-screen) => returns new context
 
 ; contexts == effect
 ; modifier move to data/ ?

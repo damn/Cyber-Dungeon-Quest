@@ -41,7 +41,8 @@
 
 (defn usable-state [{:keys [mana]}
                     {:keys [cost cooling-down? effect]}
-                    effect-params]
+                    effect-params
+                    context]
   (cond
    cooling-down?
    :cooldown
@@ -49,7 +50,7 @@
    (and cost (> cost (mana 0)))
    :not-enough-mana
 
-   (not (effect/valid-params? effect effect-params))
+   (not (effect/valid-params? effect effect-params context))
    :invalid-params
 
    :else

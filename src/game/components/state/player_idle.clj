@@ -70,7 +70,7 @@
            (if-let [skill-id @action-bar/selected-skill-id]
              (let [effect-params (make-effect-params context entity)
                    skill (safe-get properties skill-id)
-                   state (skills/usable-state @entity skill effect-params)]
+                   state (skills/usable-state @entity skill effect-params context)]
                (if (= state :usable)
                  (state/send-event! context entity :start-action skill effect-params)
                  (gm/show-msg-to-player! context (str "Skill usable state not usable: " state))))

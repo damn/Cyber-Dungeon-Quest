@@ -6,20 +6,21 @@
   (alter-var-root #'effect-definitions assoc effect-type effect-def)
   effect-type)
 
-(defn- call-effect-fn [fn-k [effect-type effect-value] params]
-  (let [effect-def (effect-type effect-definitions)]
-    (assert effect-def (str "Effect " effect-type " not defined."))
-    ((fn-k effect-def) effect-value params)))
+; TODO this is just multimethods without default ? possible? that they then break ?
+; defsystems / component / defsystem without default return ?
+; always  give explicit default return? just use defmultis?
+(defn- call-effect-fn [fn-key effect params context]
+  (let [[type value] effect
+        definition (get effect-definitions type)]
+    (assert definition (str "Effect " type " not defined."))
+    ((fn-key definition) value params context)))
 
 (def text          (partial call-effect-fn :text))
 (def valid-params? (partial call-effect-fn :valid-params?))
 
 (defn- do-effect!* [effect params context]
-  {:pre [(valid-params? effect params)]}
-  (let [[effect-type effect-value] effect
-        effect-def (effect-type effect-definitions)]
-    (assert effect-def (str "Effect " effect-type " not defined."))
-    ((:do! effect-def) effect-value params context)))
+  {:pre [(valid-params? effect params context)]} ; TODO checking line of sight, etc again here , should already be checked
+  (call-effect-fn :do! effect params context))
 
 (defn do! [effect params context]
   (do-effect!* effect params context))

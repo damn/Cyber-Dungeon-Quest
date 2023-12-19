@@ -147,12 +147,12 @@
   (str min-dmg "-" max-dmg " " (name dmg-type) " damage"))
 
 (effect/defeffect :damage
-  {:text (fn modified-text [damage {:keys [source]}]
+  {:text (fn modified-text [damage {:keys [source]} _context]
            (let [modified (effective-damage damage @source)]
              (if (= damage modified)
                (damage->text damage)
                (str (damage->text damage) "\nModified: " (damage->text modified)))))
-   :valid-params? (fn [_ {:keys [source target]}]
+   :valid-params? (fn [_effect-val {:keys [source target]} _context]
                     (and source
                          target
                          (:hp @target)))
