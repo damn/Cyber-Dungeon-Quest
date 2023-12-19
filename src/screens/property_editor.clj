@@ -117,9 +117,7 @@
   (let [{:keys [title
                 sort-by-fn
                 extra-infos-widget]} (:overview (get property-types property-type))
-        _ (println "overview table of " property-type)
         entities (all-properties context property-type)
-        _ (println "entities found: " (count entities))
         entities (if sort-by-fn
                    (sort-by sort-by-fn entities)
                    entities)
