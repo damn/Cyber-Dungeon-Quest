@@ -14,7 +14,7 @@
            com.badlogic.gdx.scenes.scene2d.Actor))
 
 (defn- update-game-systems
-  [{:keys [context/running] :as context} stage delta]
+  [{:keys [context/game-running?] :as context} stage delta]
   ; TODO stage part of context
   ; destroy here not @ tick, because when game is paused
   ; for example pickup item, should be destroyed. TODO fix - weird ! I want to do just context/tick ...
@@ -26,7 +26,7 @@
   ; TODO move stage in context , can do stage/hit inside update
   (update-mouseover-entity context (stage/hit stage (gui-mouse-position context)))
 
-  (when @running ; sowieso keine bewegungen / kein update gemacht ? checkt nur tiles ?
+  (when @game-running? ; sowieso keine bewegungen / kein update gemacht ? checkt nur tiles ?
     (update-potential-fields context)))
 
 (defn- limit-delta [delta]
@@ -34,26 +34,16 @@
 
 (def ^:private pausing true)
 
-(defn- handle-key-input [{:keys [debug-window
+(defn- check-window-hotkeys [{:keys [debug-window
                                  inventory-window
                                  entity-info-window
                                  skill-window
                                  help-window] :as stage}]
-  (action-bar/up-skill-hotkeys)
   (let [windows [debug-window
                  help-window
                  entity-info-window
                  inventory-window
-                 skill-window]]
-    (when (.isKeyJustPressed Gdx/input Input$Keys/ESCAPE)
-      (cond
-       (some #(.isVisible ^Actor %) windows)
-       (run! #(.setVisible ^Actor % false) windows)
-       :else
-       (change-screen! :screens/options-menu))))
-
-  (when (.isKeyJustPressed Gdx/input Input$Keys/TAB)
-    (change-screen! :screens/minimap))
+                 skill-window]])
   ; TODO entity/skill info also
   (when (.isKeyJustPressed Gdx/input Input$Keys/I)
     (actor/toggle-visible! inventory-window)
@@ -64,26 +54,39 @@
   (when (.isKeyJustPressed Gdx/input Input$Keys/Z)
     (actor/toggle-visible! debug-window)))
 
+(defn- end-of-frame-checks [{:keys [context/player-entity]}]
+  (when (.isKeyJustPressed Gdx/input Input$Keys/TAB)
+    (change-screen! :screens/minimap))
+  (when (.isKeyJustPressed Gdx/input Input$Keys/ESCAPE)
+    (cond
+     (some #(.isVisible ^Actor %) windows)
+     (run! #(.setVisible ^Actor % false) windows)
+     :else
+     (change-screen! :screens/options-menu)))
+  (when (and (.isKeyJustPressed Gdx/input Input$Keys/X)
+             (= :dead (:state (:fsm (:components/state @player-entity)))))
+    (change-screen! :screens/main-menu)))
 
 (extend-type gdl.context.Context
   game.context/GameScreenTick
   (tick-game [{:keys [context/player-entity
-                      context/running
+                      context/game-running?
                       context/thrown-error]
                ; TODO call ecs/thrown-error ?? move the whole ECS component in 1 map itself ? easier overview
                ; when browsing context
                :as context}
               stage
               delta]
-    (handle-key-input stage)
+    (action-bar/up-skill-hotkeys)
+    (check-window-hotkeys stage)
     (let [state (:state-obj (:components/state @player-entity))]
       (state/manual-tick! state context delta)
-      (reset! running (if (or @thrown-error
-                              (and pausing (state/pause-game? state)))
-                        false
-                        true)))
+      (let [pause-game? (or @thrown-error
+                            (and pausing (state/pause-game? state)))]
+        (reset! game-running? (not pause-game?))))
     (let [delta (limit-delta delta)]
       (update-game-systems context stage delta)
-      (when @running
-        (tick-active-entities context delta)))))
+      (when @game-running?
+        (tick-active-entities context delta)))
+    (end-of-frame-checks context)))
 

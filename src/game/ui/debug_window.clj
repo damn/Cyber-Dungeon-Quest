@@ -5,7 +5,7 @@
   (:import com.badlogic.gdx.Gdx
            com.badlogic.gdx.scenes.scene2d.Actor))
 
-(defn- debug-infos [{:keys [context/running
+(defn- debug-infos [{:keys [context/game-running?
                             context/player-entity
                             context/thrown-error] :as c}]
   (let [world-mouse (world-mouse-position c)]
@@ -16,7 +16,7 @@
          "GUI: " (gui-mouse-position c) "\n"
          (when @thrown-error
            (str "\nERROR!\n " @thrown-error "\n\n"))
-         "Game running? " @running "\n")))
+         "Game running? " @game-running? "\n")))
 
 (defn create []
   ; TODO just a self-updating window with textfn and title/id

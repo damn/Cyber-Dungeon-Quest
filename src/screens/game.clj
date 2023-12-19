@@ -25,4 +25,6 @@
 
   (tick [_ context delta]
     (tick-game context stage delta)
+    ; it's good that stage comes after because many widgets change screen (changing the current-context)
+    ; but tick-game also changes screen ...
     (act stage delta)))

@@ -23,6 +23,18 @@
             screens.options-menu
             screens.property-editor))
 
+; ALL CONTEXT STUFF MOVE IN GDL/CONTEXT (ecs, effect-handler, modifier-handler (modifier text needs properties), ?)
+; => herre only _implementation_ of components/ , effects/, properties/ etc.
+; properties/skill faction creature weapon item etc.
+; => can make a simple game to show the stuff also
+; => incredible...
+
+; effects - properties
+(comment
+ ; for example for player death  ...
+ {:play-sound "sounds/bfxr_playerdeath.wav" ; <- effect-component
+  :notify-player "YOU DIED!. Press X to leave."})
+
 ; TODO FIXME HACK !
 ; change-screen is problematic, changes the current-context atom
 ; and then the frame finishes with the original unchanged context

@@ -24,7 +24,9 @@
                                                          :flying    ; flying creatures
                                                          :effect])  ; projectiles, nova
                        (context.mouseover-entity/->context-map)
-                       {:context/running (atom true)})]
+                       ; this is actually only update-entities? and potential-field not the whole 'app/game'
+                       ; => move to ecs?
+                       {:context/game-running? (atom true)})]
     (context.world-map/merge->context context)))
 
 (declare ^Stage stage

@@ -202,13 +202,13 @@
     (.draw stage))
   (tick [_ {:keys [world-camera]} delta]
     (.act stage delta)
-    (when (.isKeyJustPressed Gdx/input Input$Keys/ESCAPE)
-      (change-screen! :screens/main-menu))
     (if (.isKeyJustPressed Gdx/input Input$Keys/L)
       (swap! show-grid-lines not))
     (if (.isKeyJustPressed Gdx/input Input$Keys/M)
       (swap! show-movement-properties not))
-    (camera-controls world-camera)))
+    (camera-controls world-camera)
+    (when (.isKeyJustPressed Gdx/input Input$Keys/ESCAPE)
+      (change-screen! :screens/main-menu))))
 
 (defn screen [context]
   (->Screen (create-stage context)))

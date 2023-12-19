@@ -9,9 +9,7 @@
   state/PlayerState
   (pause-game? [_] true)
 
-  (manual-tick! [_ context delta]
-    (when (.isKeyJustPressed Gdx/input Input$Keys/X)
-      (change-screen! :screens/main-menu)))
+  (manual-tick! [_ context delta])
 
   state/State
   (enter [_ context]
