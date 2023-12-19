@@ -1,9 +1,10 @@
 (ns game.components.state.player-idle
-  (:require [gdl.math.vector :as v]
+  (:require [gdl.context :refer [play-sound!]]
+            [gdl.math.vector :as v]
             [gdl.scene2d.stage :as stage]
             [utils.core :refer [safe-get]]
             [data.counter :as counter]
-            [game.protocols :as gm]
+            [game.context :as gm]
             [game.effect :as effect]
             [game.components.state :as state]
             [game.components.clickable :as clickable]
@@ -23,18 +24,18 @@
     (cond
      (.isVisible ^Actor (:inventory-window stage))
      (do
-      (gm/play-sound! context "sounds/bfxr_takeit.wav")
+      (play-sound! context "sounds/bfxr_takeit.wav")
       (swap! clicked-entity assoc :destroyed? true)
       (state/send-event! context player-entity :pickup-item item))
 
      (inventory/try-pickup-item! player-entity item)
      (do
-      (gm/play-sound! context "sounds/bfxr_pickup.wav")
+      (play-sound! context "sounds/bfxr_pickup.wav")
       (swap! clicked-entity assoc :destroyed? true))
 
      :else
      (do
-      (gm/play-sound! context "sounds/bfxr_denied.wav")
+      (play-sound! context "sounds/bfxr_denied.wav")
       (gm/show-msg-to-player! context "Your Inventory is full")))))
 
 (defn- make-effect-params [{:keys [world-mouse-position

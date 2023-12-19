@@ -1,6 +1,6 @@
 (ns game.components.state.player-item-on-cursor
-  (:require [gdl.scene2d.stage :as stage]
-            [game.protocols :as gm]
+  (:require [gdl.context :refer [play-sound!]]
+            [gdl.scene2d.stage :as stage]
             [game.components.state :as state]
             [game.components.inventory :as inventory]
             [game.entities.item :as item-entity])
@@ -9,7 +9,7 @@
 ; TODO ! important ! animation & dont put exactly hiding under player -> try neighbor cells first, simple.
 (defn- put-item-on-ground [{:keys [context/player-entity] :as context}]
   {:pre [(:item-on-cursor @player-entity)]}
-  (gm/play-sound! context "sounds/bfxr_itemputground.wav")
+  (play-sound! context "sounds/bfxr_itemputground.wav")
   (let [{x 0 y 1 :as posi} (:position @player-entity)
         ; [w _] item-body-dimensions
         ; half-size (/ w tile-width 2)

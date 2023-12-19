@@ -1,10 +1,9 @@
 (ns game.components.state.active-skill
   (:require [gdl.graphics.color :as color]
-            [gdl.context :refer [draw-filled-circle draw-sector draw-image]]
+            [gdl.context :refer [draw-filled-circle draw-sector draw-image play-sound!]]
             [data.counter :as counter]
             [data.val-max :refer [apply-val]]
             [game.effect :as effect]
-            [game.protocols :as gm]
             [game.components.state :as state]
             [game.components.skills :as skills]))
 
@@ -28,7 +27,7 @@
 
   state/State
   (enter [_ context]
-    (gm/play-sound! context (str "sounds/" (if (:spell? skill) "shoot.wav" "slash.wav")))
+    (play-sound! context (str "sounds/" (if (:spell? skill) "shoot.wav" "slash.wav")))
     (swap! entity update :skills skills/set-skill-to-cooldown skill)
     ; should assert enough mana
     ; but should also assert usable-state = :usable

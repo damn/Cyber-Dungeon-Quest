@@ -1,5 +1,5 @@
 (ns game.entities.item
-  (:require [game.protocols :as gm]))
+  (:require [game.context :as gm]))
 
 ; TODO use image w. shadows spritesheet
 (defn create! [position item context]

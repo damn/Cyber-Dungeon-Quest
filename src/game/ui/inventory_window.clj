@@ -3,9 +3,10 @@
             [data.grid2d :as grid]
             [gdl.app :as app]
             [gdl.graphics.color :as color]
-            [gdl.context :refer [draw-rectangle draw-filled-rectangle spritesheet get-sprite]]
+            [gdl.context :refer [draw-rectangle draw-filled-rectangle spritesheet get-sprite
+                                 play-sound!]]
             [gdl.scene2d.ui :as ui]
-            [game.protocols :as gm]
+            [game.context :as gm]
             [game.modifier :as modifier]
             [game.components.state :as state]
             [game.components.inventory :as inventory]
@@ -36,7 +37,7 @@
      (and (not item-on-cursor)
           item)
      (do
-      (gm/play-sound! context "sounds/bfxr_takeit.wav")
+      (play-sound! context "sounds/bfxr_takeit.wav")
       (state/send-event! context entity :pickup-item item)
       (inventory/remove-item! entity cell))
 
@@ -48,7 +49,7 @@
       (if (inventory/two-handed-weapon-and-shield-together? inventory cell item-on-cursor)
         (complain-2h-weapon-and-shield! context)
         (do
-         (gm/play-sound! context "sounds/bfxr_itemput.wav")
+         (play-sound! context "sounds/bfxr_itemput.wav")
          (inventory/set-item! entity cell item-on-cursor)
          (swap! entity dissoc :item-on-cursor)
          (state/send-event! context entity :dropped-item)))
@@ -57,7 +58,7 @@
       (and item
            (inventory/stackable? item item-on-cursor))
       (do
-       (gm/play-sound! context "sounds/bfxr_itemput.wav")
+       (play-sound! context "sounds/bfxr_itemput.wav")
        (inventory/stack-item! entity cell item-on-cursor)
        (swap! entity dissoc :item-on-cursor)
        (state/send-event! context entity :dropped-item))
@@ -68,7 +69,7 @@
       (if (inventory/two-handed-weapon-and-shield-together? inventory cell item-on-cursor)
         (complain-2h-weapon-and-shield! context)
         (do
-         (gm/play-sound! context "sounds/bfxr_itemput.wav")
+         (play-sound! context "sounds/bfxr_itemput.wav")
          (inventory/remove-item! entity cell)
          (inventory/set-item! entity cell item-on-cursor)
          (state/send-event! context entity :pickup-item item)))))))

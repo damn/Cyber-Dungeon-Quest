@@ -5,30 +5,27 @@
             [gdl.scene2d.stage :as stage]
             context.ecs
             context.mouseover-entity
-            game.protocols
+            game.context
             game.ui.action-bar
             game.ui.inventory-window)
   (:import com.badlogic.gdx.Gdx
-           com.badlogic.gdx.audio.Sound
            com.badlogic.gdx.scenes.scene2d.Stage))
 
 ; TODO this all move to gdl
 (extend-type gdl.context.Context
-  game.protocols/Context
-  (play-sound! [{:keys [assets]} file]
-    (.play ^Sound (get assets file)))
-
+  game.context/Context
   (show-msg-to-player! [_ message]
     (println message))
 
-  game.protocols/StageCreater
+  game.context/StageCreater
+  ; ->gui-stage
   (create-gui-stage [{:keys [gui-viewport batch]} actors]
     (let [stage (stage/create gui-viewport batch)]
       (doseq [actor actors]
         (.addActor stage actor))
       stage))
 
-  game.protocols/ContextStageSetter
+  game.context/ContextStageSetter
   (set-screen-stage [_ stage]
     ; set-screen-stage & also sets it to context ':stage' key
     (.setInputProcessor Gdx/input stage))
@@ -40,7 +37,7 @@
   gdl.disposable/Disposable
   (dispose [stage]
     (.dispose stage))
-  game.protocols/Stage
+  game.context/Stage
   (draw [stage]
     (.draw stage))
   (act [stage delta]

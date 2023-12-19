@@ -5,7 +5,7 @@
             [x.x :refer [update-map doseq-entity]]
             [gdl.context :refer [draw-text]]
             [utils.core :refer [define-order sort-by-order]]
-            [game.protocols :as gm]
+            [game.context :as gm]
             [game.entity :as entity]
             [game.line-of-sight :refer (in-line-of-sight?)]
             [game.maps.contentfields :refer [get-entities-in-active-content-fields]]))
@@ -78,7 +78,7 @@
 ; dont want to know about contentfields ( ? )
 
 (extend-type gdl.context.Context
-  game.protocols/EntityComponentSystem
+  game.context/EntityComponentSystem
   (get-entity [{:keys [context/ids->entities]} id]
     (get @ids->entities id))
 

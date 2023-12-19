@@ -3,7 +3,7 @@
             [gdl.context :refer [generate-ttf]]
             gdl.default-context
             [context.properties :as properties]
-            [game.protocols :refer [create-gui-stage]]
+            [game.context :refer [create-gui-stage]]
             game.modifiers.all
             game.components.require-all
             game.effects.require-all
@@ -33,8 +33,9 @@
 ; then no game left ?
 ; just engine ?
 
+
 (defn- create-context []
-  (let [context (gdl.default-context/->Context :tile-size 48)
+  (let [context (gdl.default-context/->context :tile-size 48)
         properties (let [file "resources/properties.edn"
                          properties (properties/load-edn context file)]
                      (.bindRoot #'properties/properties-file file)

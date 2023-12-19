@@ -1,4 +1,4 @@
-(ns game.protocols) ; TODO == game.context
+(ns game.context)
 
 (defprotocol EntityComponentSystem
   (get-entity [_ id])
@@ -13,8 +13,6 @@
                                    "Calls entity/destroy and entity/destroy! on all entities which are marked as ':destroyed?'"))
 
 (defprotocol Context
-  (play-sound! [_ file]
-               "Sound is already loaded from file, this will perform only a lookup for the sound and play it.")
   (show-msg-to-player! [_ message]))
 
 (defprotocol GameScreenTick

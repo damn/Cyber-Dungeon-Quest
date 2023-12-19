@@ -5,7 +5,7 @@
             [gdl.context :refer [create-image]]
             [gdl.graphics.animation :as animation]
             [utils.core :refer [safe-get]]
-            [game.protocols :as gm]
+            [game.context :as gm]
             [game.entity :as entity]
             [game.components.body :refer (assoc-left-bottom valid-position?)]
             (game.components.state

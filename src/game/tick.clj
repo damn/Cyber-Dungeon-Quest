@@ -2,7 +2,7 @@
   (:require [gdl.app :as app]
             [gdl.scene2d.actor :as actor]
             [gdl.scene2d.stage :as stage]
-            [game.protocols :refer [tick-active-entities
+            [game.context :refer [tick-active-entities
                                     destroy-to-be-removed-entities!
                                     update-mouseover-entity]]
             [game.components.movement :as movement]
@@ -71,7 +71,7 @@
 
 
 (extend-type gdl.context.Context
-  game.protocols/GameScreenTick
+  game.context/GameScreenTick
   (tick-game [{:keys [context/player-entity
                       context/running
                       context/thrown-error]

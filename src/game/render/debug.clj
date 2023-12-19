@@ -47,7 +47,7 @@
           (@#'g/draw-string x y (str (:id @(:monster @cell))) 1)))))
 
 (extend-type gdl.context.Context
-  game.protocols/DebugRenderer
+  game.context/DebugRenderer
   (render-debug-before-entities [c]
     #_(tile-debug c))
 

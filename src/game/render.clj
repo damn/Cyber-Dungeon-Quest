@@ -1,13 +1,13 @@
 (ns game.render
   (:require [gdl.maps.tiled :as tiled]
-            [game.protocols :refer [render-debug-before-entities
+            [game.context :refer [render-debug-before-entities
                                     render-visible-entities
                                     render-debug-after-entities]]
             [game.ui.hp-mana-bars :refer [render-player-hp-mana]]
             [game.maps.tile-color-setters :refer [tile-color-setter]]))
 
 (extend-type gdl.context.Context
-  game.protocols/GameScreenRender
+  game.context/GameScreenRender
   (render-world-map [{:keys [context/world-map] :as context}]
     (tiled/render-map context
                       (:tiled-map world-map)
