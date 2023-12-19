@@ -17,3 +17,6 @@
 
 (defprotocol MouseOverEntity
   (update-mouseover-entity [_]))
+
+(defprotocol World
+  (get-entities-in-active-content-fields [_]))

@@ -2,8 +2,7 @@
   (:require [x.x :refer [defcomponent]]
             [utils.core :refer [int-posi]]
             [context.ecs :as entity]
-            [game.maps.contentfields :refer (put-entity-in-correct-content-field
-                                             remove-entity-from-content-field)]))
+            [context.world-map :refer (put-entity-in-correct-content-field remove-entity-from-content-field)]))
 
 (defcomponent :position _
   (entity/create! [_ e context]

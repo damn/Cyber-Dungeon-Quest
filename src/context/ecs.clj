@@ -5,9 +5,8 @@
             [x.x :refer [defsystem update-map doseq-entity]]
             [gdl.context :refer [draw-text]]
             [utils.core :refer [define-order sort-by-order]]
-            [game.context :as gm]
-            [game.line-of-sight :refer (in-line-of-sight?)]
-            [game.maps.contentfields :refer [get-entities-in-active-content-fields]]))
+            [game.context :refer [get-entity entity-exists? get-entities-in-active-content-fields]]
+            [game.line-of-sight :refer (in-line-of-sight?)]))
 
 ; e = entity reference (an atom)
 ; e* = deref-ed entity, a map.
@@ -101,7 +100,7 @@
     (get @ids->entities id))
 
   (entity-exists? [context e]
-    (gm/get-entity context (:id @e)))
+    (get-entity context (:id @e)))
 
   (create-entity! [context components-map]
     {:pre [(not (contains? components-map :id))]}
@@ -125,7 +124,7 @@
   (destroy-to-be-removed-entities!
     [{:keys [context/ids->entities] :as context}]
     (doseq [e (filter (comp :destroyed? deref) (vals @ids->entities))
-            :when (gm/entity-exists? context e)] ; TODO why is this ?, maybe assert ?
+            :when (entity-exists? context e)] ; TODO why is this ?, maybe assert ?
       (swap! e update-map destroy)
       (doseq-entity e destroy! context))))
 

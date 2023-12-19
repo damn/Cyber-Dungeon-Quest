@@ -8,9 +8,8 @@
   (:require [data.grid2d :as grid]
             [gdl.math.vector :as v]
             [utils.core :refer :all]
+            [game.context :refer (get-entities-in-active-content-fields)]
             [game.components.faction :as faction]
-            [game.components.position :refer (get-tile)]
-            [game.maps.contentfields :refer (get-entities-in-active-content-fields)]
             [game.maps.cell-grid :refer (cached-get-adjacent-cells cell-blocked?
                                                                    is-diagonal? occupied-by-other? inside-cell?
                                                                    fast-cell-blocked?)]))
@@ -101,7 +100,7 @@
 (defn- tiles->entities [entities faction]
   (let [entities (filter #(= (:faction @%) faction)
                          entities)]
-    (zipmap (map #(get-tile @%) entities)
+    (zipmap (map #(mapv int (:position @%)) entities)
             entities)))
 
 (def ^:private cache (atom nil))
