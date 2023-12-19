@@ -13,7 +13,7 @@
   (:import (com.badlogic.gdx Gdx Input$Keys Input$Buttons)
            com.badlogic.gdx.scenes.scene2d.Actor))
 
-(defn- update-game-systems
+(defn- update-context-systems
   [{:keys [context/update-entities?] :as context} stage delta]
   ; TODO stage part of context
   ; destroy here not @ tick, because when game is paused
@@ -34,17 +34,12 @@
 
 (def ^:private pausing true)
 
-(defn- check-window-hotkeys [{:keys [debug-window
-                                 inventory-window
-                                 entity-info-window
-                                 skill-window
-                                 help-window] :as stage}]
-  (let [windows [debug-window
-                 help-window
-                 entity-info-window
-                 inventory-window
-                 skill-window]])
-  ; TODO entity/skill info also
+(defn- end-of-frame-checks [{:keys [context/player-entity]}
+                            {:keys [debug-window
+                                    inventory-window
+                                    entity-info-window
+                                    skill-window
+                                    help-window] :as stage}]
   (when (.isKeyJustPressed Gdx/input Input$Keys/I)
     (actor/toggle-visible! inventory-window)
     (actor/toggle-visible! entity-info-window)
@@ -52,17 +47,20 @@
   (when (.isKeyJustPressed Gdx/input Input$Keys/H)
     (actor/toggle-visible! help-window))
   (when (.isKeyJustPressed Gdx/input Input$Keys/Z)
-    (actor/toggle-visible! debug-window)))
-
-(defn- end-of-frame-checks [{:keys [context/player-entity]}]
+    (actor/toggle-visible! debug-window))
+  (let [windows [debug-window
+                 help-window
+                 entity-info-window
+                 inventory-window
+                 skill-window]]
+    (when (.isKeyJustPressed Gdx/input Input$Keys/ESCAPE)
+      (cond
+       (some #(.isVisible ^Actor %) windows)
+       (run! #(.setVisible ^Actor % false) windows)
+       :else
+       (change-screen! :screens/options-menu))))
   (when (.isKeyJustPressed Gdx/input Input$Keys/TAB)
     (change-screen! :screens/minimap))
-  (when (.isKeyJustPressed Gdx/input Input$Keys/ESCAPE)
-    (cond
-     (some #(.isVisible ^Actor %) windows)
-     (run! #(.setVisible ^Actor % false) windows)
-     :else
-     (change-screen! :screens/options-menu)))
   (when (and (.isKeyJustPressed Gdx/input Input$Keys/X)
              (= :dead (:state (:fsm (:components/state @player-entity)))))
     (change-screen! :screens/main-menu)))
@@ -76,15 +74,14 @@
               stage
               delta]
     (action-bar/up-skill-hotkeys)
-    (check-window-hotkeys stage)
     (let [state (:state-obj (:components/state @player-entity))
           _ (state/manual-tick! state context delta)
           pause-game? (or @thrown-error
                           (and pausing (state/pause-game? state)))
           update? (reset! update-entities? (not pause-game?))
           delta (limit-delta delta)]
-      (update-game-systems context stage delta)
+      (update-context-systems context stage delta)
       (when update?
         (tick-active-entities context delta)))
-    (end-of-frame-checks context)))
+    (end-of-frame-checks context stage)))
 
