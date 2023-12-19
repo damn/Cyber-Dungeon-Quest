@@ -116,7 +116,7 @@
 ; then I can call function on ecs, but it requires also context ...
 (defn ->context [& {:keys [z-orders]}]
   {:context/ids->entities (atom {})
-   :context/thrown-error (atom nil)
+   :context/thrown-error (atom nil) ; naming ? context/ecs ? so know error is from ecs ?
    :context/render-on-map-order (define-order z-orders)})
 
 ; TODO ids->entities used in :id component

@@ -77,14 +77,14 @@
               delta]
     (action-bar/up-skill-hotkeys)
     (check-window-hotkeys stage)
-    (let [state (:state-obj (:components/state @player-entity))]
-      (state/manual-tick! state context delta)
-      (let [pause-game? (or @thrown-error
-                            (and pausing (state/pause-game? state)))]
-        (reset! update-entities? (not pause-game?))))
-    (let [delta (limit-delta delta)]
+    (let [state (:state-obj (:components/state @player-entity))
+          _ (state/manual-tick! state context delta)
+          pause-game? (or @thrown-error
+                          (and pausing (state/pause-game? state)))
+          update? (reset! update-entities? (not pause-game?))
+          delta (limit-delta delta)]
       (update-game-systems context stage delta)
-      (when @update-entities?
+      (when update?
         (tick-active-entities context delta)))
     (end-of-frame-checks context)))
 
