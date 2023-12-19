@@ -5,13 +5,28 @@
             gdl.screen
             [gdl.scene2d.ui :as ui]
             [gdl.scene2d.stage :as stage]
-            game.session)
+            context.ecs
+            context.mouseover-entity
+            context.world-map
+            game.ui.action-bar
+            game.ui.inventory-window)
   (:import (com.badlogic.gdx Gdx Input$Keys)
            com.badlogic.gdx.scenes.scene2d.Stage))
 
-; TODO here build start-game context !
-; here we click and change screen !
-; first create 'world', not 'world-map' context and move to context/
+(defn- init-context [context]
+  (game.ui.inventory-window/rebuild-inventory-widgets!) ; before adding entities ( player gets items )
+  (game.ui.action-bar/reset-skills!) ; empties skills -> before adding player
+
+  ; TODO z-order namespaced keywords
+  (let [context (merge context
+                       (context.ecs/->context :z-orders [:on-ground ; items
+                                                         :ground    ; creatures, player
+                                                         :flying    ; flying creatures
+                                                         :effect])  ; projectiles, nova
+                       (context.mouseover-entity/->context-map)
+                       {:context/running (atom true)})]
+    (game.ui.action-bar/reset-skills!)
+    (context.world-map/merge->context context)))
 
 (declare ^Stage stage
          ^:private skip-main-menu
@@ -24,7 +39,7 @@
   (.bindRoot #'stage (stage/create gui-viewport batch))
   (let [table (ui/table :rows [[(ui/text-button "Start game"
                                                 #(do
-                                                  (swap! app/state game.session/init-context)
+                                                  (swap! app/state init-context)
                                                   (app/change-screen! :screens/game)))]
                                [(ui/text-button "Map editor"
                                                 #(app/change-screen! :screens/map-editor))]

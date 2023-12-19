@@ -2,12 +2,7 @@
   (:require gdl.context
             gdl.disposable
             [gdl.scene2d.stage :as stage]
-            context.ecs
-            context.mouseover-entity
-            context.world-map
-            game.context
-            game.ui.action-bar
-            game.ui.inventory-window)
+            game.context)
   (:import com.badlogic.gdx.Gdx
            com.badlogic.gdx.scenes.scene2d.Stage))
 
@@ -43,19 +38,3 @@
   (act [stage delta]
     (.act stage delta)))
 ; TODO also for my own Disposable protocol
-
-; TODO this @ screns/main-menu
-(defn init-context [context]
-  (game.ui.inventory-window/rebuild-inventory-widgets!) ; before adding entities ( player gets items )
-  (game.ui.action-bar/reset-skills!) ; empties skills -> before adding player
-
-  ; TODO z-order namespaced keywords
-  (let [context (merge context
-                       (context.ecs/->context :z-orders [:on-ground ; items
-                                                         :ground    ; creatures, player
-                                                         :flying    ; flying creatures
-                                                         :effect])  ; projectiles, nova
-                       (context.mouseover-entity/->context-map)
-                       {:context/running (atom true)})]
-    (game.ui.action-bar/reset-skills!)
-    (context.world-map/merge->context context)))
