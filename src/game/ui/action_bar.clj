@@ -1,6 +1,7 @@
 (ns game.ui.action-bar
   (:require [gdl.app :as app]
             [gdl.scene2d.ui :as ui]
+            [app.state :refer [current-context]]
             [game.skill :as skill])
   (:import (com.badlogic.gdx Gdx Input$Keys)
            com.badlogic.gdx.scenes.scene2d.Actor
@@ -72,7 +73,7 @@
 (defn- ->hotbar-actualize-actor []
   (proxy [Actor] []
     (act [_delta]
-      (check-hotbar-actualize @app/state))))
+      (check-hotbar-actualize @current-context))))
 
 (defn initialize! []
   (.bindRoot #'horizontal-group (HorizontalGroup.))

@@ -1,10 +1,10 @@
 (ns screens.minimap
-  (:require [gdl.app :as app]
-            gdl.screen
+  (:require gdl.screen
             [gdl.maps.tiled :as tiled]
             [gdl.graphics.color :as color]
             [gdl.graphics.camera :as camera]
             [gdl.context :refer [draw-filled-circle render-world-view]]
+            [app.state :refer [change-screen!]]
             [game.maps.tile-color-setters :refer [minimap-color-setter]])
   (:import (com.badlogic.gdx Gdx Input$Keys)
            (com.badlogic.gdx.graphics Color OrthographicCamera)))
@@ -56,4 +56,4 @@
     (when (or (.isKeyJustPressed Gdx/input Input$Keys/TAB)
               (.isKeyJustPressed Gdx/input Input$Keys/ESCAPE))
       (camera/set-zoom! world-camera 1)
-      (app/change-screen! :screens/game))))
+      (change-screen! :screens/game))))

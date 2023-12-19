@@ -1,7 +1,7 @@
 (ns game.ui.debug-window
-  (:require [gdl.app :as app]
-            [gdl.context :refer [gui-mouse-position world-mouse-position]]
-            [gdl.scene2d.ui :as ui])
+  (:require [gdl.context :refer [gui-mouse-position world-mouse-position]]
+            [gdl.scene2d.ui :as ui]
+            [app.state :refer [current-context]])
   (:import com.badlogic.gdx.Gdx
            com.badlogic.gdx.scenes.scene2d.Actor))
 
@@ -27,7 +27,6 @@
     (.add window label)
     (.add window (proxy [Actor] []
                    (act [_delta]
-                     (let [context @app/state]
-                       (ui/set-text label (debug-infos context))
-                       (.pack window)))))
+                     (ui/set-text label (debug-infos @current-context))
+                     (.pack window))))
     window))

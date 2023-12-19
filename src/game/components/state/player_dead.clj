@@ -2,6 +2,7 @@
   (:require [gdl.app :as app]
             [gdl.context :refer [play-sound!]]
             [game.context :as gm]
+            [app.state :refer [change-screen!]]
             [game.components.state :as state])
   (:import (com.badlogic.gdx Gdx Input$Keys)))
 
@@ -10,8 +11,10 @@
   (pause-game? [_] true)
 
   (manual-tick! [_ context delta]
+    ; TODO do at end of frame, dont change here, otherwise :context/current-screen is different in
+    ; argument context and atom context
     (when (.isKeyJustPressed Gdx/input Input$Keys/X)
-      (app/change-screen! :screens/main-menu)))
+      (change-screen! :screens/main-menu)))
 
   state/State
   (enter [_ context]

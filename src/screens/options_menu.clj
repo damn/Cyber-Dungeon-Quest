@@ -1,11 +1,11 @@
 (ns screens.options-menu
-  (:require [gdl.app :as app]
-            gdl.screen
+  (:require gdl.screen
             [gdl.context :refer [draw-centered-image render-gui-view create-image]]
             gdl.disposable
             [gdl.scene2d.ui :as ui]
             [gdl.scene2d.stage :as stage]
             [utils.core :refer [find-first]]
+            [app.state :refer [change-screen!]]
             ;[game.line-of-sight :refer (player-line-of-sight-checks)]
             [game.components.body :refer (show-body-bounds)])
   (:import (com.badlogic.gdx Gdx Input$Keys)
@@ -74,7 +74,7 @@
          (get-state status)]))
     (initial-data [_])))
 
-(def ^:private exit #(app/change-screen! :screens/game))
+(def ^:private exit #(change-screen! :screens/game))
 
 (defn- create-table [context]
   (let [table (ui/table :rows (concat
@@ -87,7 +87,7 @@
                                                 #(set-state check-box %)
                                                 (boolean (get-state check-box)))])
                                [[(ui/text-button "Resume" exit)]
-                                [(ui/text-button "Exit" #(app/change-screen! :screens/main-menu))]])
+                                [(ui/text-button "Exit" #(change-screen! :screens/main-menu))]])
                         :fill-parent? true
                         :cell-defaults {:pad-bottom 25})
         padding 25]

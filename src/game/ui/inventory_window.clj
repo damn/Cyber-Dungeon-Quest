@@ -1,11 +1,11 @@
 (ns game.ui.inventory-window
   (:require [clojure.string :as str]
             [data.grid2d :as grid]
-            [gdl.app :as app]
             [gdl.graphics.color :as color]
             [gdl.context :refer [draw-rectangle draw-filled-rectangle spritesheet get-sprite
                                  play-sound! gui-mouse-position]]
             [gdl.scene2d.ui :as ui]
+            [app.state :refer [current-context]]
             [game.context :as gm]
             [game.modifier :as modifier]
             [game.components.state :as state]
@@ -141,7 +141,7 @@
 (defn- draw-rect-actor ^Widget []
   (proxy [Widget] []
     (draw [_batch _parent-alpha]
-      (let [{:keys [context/player-entity] :as c} @app/state
+      (let [{:keys [context/player-entity] :as c} @current-context
             ^Widget this this]
         (draw-cell-rect c
                         player-entity
@@ -156,7 +156,7 @@
       (.setName (pr-str cell)) ; TODO ! .setUserObject
       (.addListener (proxy [ClickListener] []
                       (clicked [event x y]
-                        (clicked-cell @app/state cell))))
+                        (clicked-cell @current-context cell))))
       (.add (draw-rect-actor))
       (.add (doto (ui/image (slot->background slot))
               (.setName "image"))))))

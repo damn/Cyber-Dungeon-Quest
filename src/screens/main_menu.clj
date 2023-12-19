@@ -1,10 +1,10 @@
 (ns screens.main-menu
-  (:require [gdl.app :as app]
-            [gdl.context :refer [draw-centered-image render-gui-view create-image]]
+  (:require [gdl.context :refer [draw-centered-image render-gui-view create-image]]
             gdl.disposable
             gdl.screen
             [gdl.scene2d.ui :as ui]
             [gdl.scene2d.stage :as stage]
+            [app.state :refer [current-context change-screen!]]
             context.ecs
             context.mouseover-entity
             context.world-map
@@ -38,12 +38,12 @@
   (.bindRoot #'stage (stage/create gui-viewport batch))
   (let [table (ui/table :rows [[(ui/text-button "Start game"
                                                 #(do
-                                                  (swap! app/state init-context)
-                                                  (app/change-screen! :screens/game)))]
+                                                  (swap! current-context init-context)
+                                                  (change-screen! :screens/game)))]
                                [(ui/text-button "Map editor"
-                                                #(app/change-screen! :screens/map-editor))]
+                                                #(change-screen! :screens/map-editor))]
                                [(ui/text-button "Property editor"
-                                                #(app/change-screen! :screens/property-editor))]
+                                                #(change-screen! :screens/property-editor))]
                                [(ui/text-button "Exit" #(.exit Gdx/app))]]
                         :cell-defaults {:pad-bottom 25}
                         :fill-parent? true)]

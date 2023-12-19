@@ -1,6 +1,5 @@
 (ns screens.map-editor
   (:require [clojure.edn :as edn]
-            [gdl.app :as app]
             gdl.screen
             [gdl.graphics.color :as color]
             [gdl.graphics.camera :as camera]
@@ -12,6 +11,7 @@
             [gdl.maps.tiled :as tiled]
             [gdl.scene2d.ui :as ui]
             [gdl.scene2d.stage :as stage]
+            [app.state :refer [current-context change-screen!]]
             [mapgen.movement-property :refer (movement-property movement-properties)]
             [mapgen.module-gen :as module-gen])
   (:import (com.badlogic.gdx Gdx Input$Keys)
@@ -179,7 +179,7 @@
     (.addActor stage window)
     (.add window ^com.badlogic.gdx.scenes.scene2d.Actor form)
     (.row window)
-    (.add window (ui/text-button "Generate" #(generate @app/state (get-properties))))
+    (.add window (ui/text-button "Generate" #(generate @current-context (get-properties))))
     (.pack window)
     stage))
 
@@ -203,7 +203,7 @@
   (tick [_ {:keys [world-camera]} delta]
     (.act stage delta)
     (when (.isKeyJustPressed Gdx/input Input$Keys/ESCAPE)
-      (app/change-screen! :screens/main-menu))
+      (change-screen! :screens/main-menu))
     (if (.isKeyJustPressed Gdx/input Input$Keys/L)
       (swap! show-grid-lines not))
     (if (.isKeyJustPressed Gdx/input Input$Keys/M)

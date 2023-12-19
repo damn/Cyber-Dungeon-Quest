@@ -1,7 +1,7 @@
 (ns game.ui.actors
-  (:require [gdl.app :as app]
-            [gdl.context :refer [draw-centered-image gui-mouse-position]]
+  (:require [gdl.context :refer [draw-centered-image gui-mouse-position]]
             [gdl.scene2d.ui :as ui]
+            [app.state :refer [current-context]]
             [game.ui.debug-window :as debug-window]
             [game.ui.help-window :as help-window]
             [game.ui.entity-info-window :as entity-info-window]
@@ -13,7 +13,7 @@
 (defn- item-on-cursor-render-actor []
   (proxy [Actor] []
     (draw [_batch _parent-alpha]
-      (let [{:keys [context/player-entity] :as c} @app/state]
+      (let [{:keys [context/player-entity] :as c} @current-context]
         (when (= :item-on-cursor
                  (:state (:fsm (:components/state @player-entity))))
           ; windows keep changing z-index when selected

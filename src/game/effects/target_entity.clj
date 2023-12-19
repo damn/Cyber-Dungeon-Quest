@@ -4,6 +4,10 @@
             [gdl.context :refer [draw-line]]
             [gdl.math.vector :as v]
             [gdl.graphics.color :as color]
+
+            ; TODO FIXME WRONG
+            [app.state :refer [current-context]]
+
             [game.line-of-sight :refer (in-line-of-sight?)]
             [game.entities.audiovisual :as audiovisual]
             [game.entities.line :as line-entity]
@@ -13,7 +17,10 @@
 (defn- valid-params? [_ {:keys [source target]}]
   (and source
        target
-       (in-line-of-sight? @source @target @app/state) ; TODO move to valid-params? @ extra param... !!
+       ; AAOMGGG
+       (in-line-of-sight? @source @target @current-context) ; TODO move to valid-params? @ extra param... !!
+       ; TODO merge effect-params with context
+       ; => the params of an effect are its context for its value / effect-type?
        (:hp @target))) ; TODO this is valid-params of hit-effect damage !!
 
 (defn- in-range? [entity* target* maxrange] ; == circle-collides?

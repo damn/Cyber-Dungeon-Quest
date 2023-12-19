@@ -2,8 +2,10 @@
   (:require [gdl.app :as app]
             [gdl.context :refer [generate-ttf]]
             [gdl.default-context :as default-context]
+            [app.state :refer [current-context]]
             [context.properties :as properties]
             [game.context :refer [create-gui-stage]]
+            game.session ; TODO remove
             game.modifiers.all
             game.components.require-all
             game.effects.require-all
@@ -21,6 +23,12 @@
             screens.options-menu
             screens.property-editor))
 
+; TODO FIXME HACK !
+; change-screen is problematic, changes the current-context atom
+; and then the frame finishes with the original unchanged context
+; do it always at end of frame
+; at manual-tick! just pass as a variable or something or do manual for player-dead !
+
 ; contexts == effect
 ; modifier move to data/ ?
 ; action-bar / inventory-window / to context ?
@@ -30,6 +38,7 @@
 ; then no game left ?
 ; just engine ?
 
+; TODO maybe use safe-merge for all my context stuff (only give warnings @ main-menu when overwriting?)
 
 (defn- create-context []
   (let [context (default-context/->context :tile-size 48)
@@ -61,6 +70,7 @@
          :height 900
          :full-screen? false
          :fps nil} ; TODO fix is set to 60 @ gdl
+   :current-context current-context
    :context-fn create-context
    :first-screen :screens/main-menu})
 

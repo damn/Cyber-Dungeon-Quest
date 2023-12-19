@@ -1,6 +1,6 @@
 (ns game.ui.entity-info-window
-  (:require [gdl.app :as app]
-            [gdl.scene2d.ui :as ui])
+  (:require [gdl.scene2d.ui :as ui]
+            [app.state :refer [current-context]])
   (:import com.badlogic.gdx.scenes.scene2d.Actor))
 
 (defn- entity-info-text [entity*]
@@ -20,7 +20,7 @@
     (.add window (proxy [Actor] []
                    (act [_delta]
                      (ui/set-text label
-                                  (when-let [entity @(:context/mouseover-entity @app/state)]
+                                  (when-let [entity @(:context/mouseover-entity @current-context)]
                                     (entity-info-text @entity)))
                      (.pack window))))
     window))

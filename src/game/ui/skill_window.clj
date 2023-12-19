@@ -1,8 +1,8 @@
 (ns game.ui.skill-window
   (:require clojure.set
-            [gdl.app :as app]
             [gdl.scene2d.ui :as ui]
             [utils.core :refer [safe-get]]
+            [app.state :refer [current-context]]
             [game.skill :as skill]
             [game.components.skills :as skills]))
 
@@ -14,7 +14,7 @@
 ; you can have more general modifiers menus toggling on/off
 ; passives toggle-able ... wtf / stances ...
 (defn- pressed-on-skill-in-menu [skill]
-  (let [{:keys [context/player-entity]} @app/state]
+  (let [{:keys [context/player-entity]} @current-context]
     (when (and (pos? (:free-skill-points @player-entity))
                (not (skills/has-skill? (:skills @player-entity) skill)))
       (swap! player-entity #(-> %
@@ -32,7 +32,7 @@
                                           #(pressed-on-skill-in-menu skill))]]
       (.addListener button (ui/text-tooltip (fn []
                                               ; player-entity is not yet added to context
-                                              (skill/text skill (:context/player-entity @app/state)))))
+                                              (skill/text skill (:context/player-entity @current-context)))))
       (.add window button))
     ; TODO render text label free-skill-points
     ; (str "Free points: " (:free-skill-points @player-entity))

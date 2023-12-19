@@ -3,6 +3,7 @@
             [gdl.context :refer [gui-mouse-position]]
             [gdl.scene2d.actor :as actor]
             [gdl.scene2d.stage :as stage]
+            [app.state :refer [change-screen!]]
             [game.context :refer [tick-active-entities
                                     destroy-to-be-removed-entities!
                                     update-mouseover-entity]]
@@ -50,10 +51,10 @@
        (some #(.isVisible ^Actor %) windows)
        (run! #(.setVisible ^Actor % false) windows)
        :else
-       (app/change-screen! :screens/options-menu))))
+       (change-screen! :screens/options-menu))))
 
   (when (.isKeyJustPressed Gdx/input Input$Keys/TAB)
-    (app/change-screen! :screens/minimap)) ; TODO does  do it immediately (cancel the current frame ) or finish this frame?
+    (change-screen! :screens/minimap))
   ; TODO entity/skill info also
   (when (.isKeyJustPressed Gdx/input Input$Keys/I)
     (actor/toggle-visible! inventory-window)
@@ -71,7 +72,7 @@
                       context/running
                       context/thrown-error]
                ; TODO call ecs/thrown-error ?? move the whole ECS component in 1 map itself ? easier overview
-               ; when browsing app/state
+               ; when browsing context
                :as context}
               stage
               delta]
