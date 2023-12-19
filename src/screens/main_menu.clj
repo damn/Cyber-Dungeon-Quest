@@ -25,7 +25,6 @@
                                                          :effect])  ; projectiles, nova
                        (context.mouseover-entity/->context-map)
                        {:context/running (atom true)})]
-    (game.ui.action-bar/reset-skills!)
     (context.world-map/merge->context context)))
 
 (declare ^Stage stage
