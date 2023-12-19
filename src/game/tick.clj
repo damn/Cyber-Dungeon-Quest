@@ -1,6 +1,5 @@
 (ns game.tick
-  (:require [gdl.app :as app]
-            [gdl.context :refer [gui-mouse-position]]
+  (:require [gdl.context :refer [gui-mouse-position]]
             [gdl.scene2d.actor :as actor]
             [gdl.scene2d.stage :as stage]
             [app.state :refer [change-screen!]]

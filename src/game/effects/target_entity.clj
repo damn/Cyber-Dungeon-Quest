@@ -1,6 +1,5 @@
 (ns game.effects.target-entity ; TODO naming
   (:require [clojure.string :as str]
-            [gdl.app :as app]
             [gdl.context :refer [draw-line]]
             [gdl.math.vector :as v]
             [gdl.graphics.color :as color]

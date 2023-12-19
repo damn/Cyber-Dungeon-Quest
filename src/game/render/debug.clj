@@ -1,6 +1,5 @@
 (ns game.render.debug
-  (:require [gdl.app :as app]
-            [gdl.context :refer [draw-circle draw-rectangle draw-filled-rectangle draw-grid
+  (:require [gdl.context :refer [draw-circle draw-rectangle draw-filled-rectangle draw-grid
                                  world-mouse-position]]
             [gdl.graphics.color :as color]
             [gdl.graphics.camera :as camera]

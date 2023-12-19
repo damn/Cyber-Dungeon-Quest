@@ -1,6 +1,5 @@
 (ns game.components.state.player-dead
-  (:require [gdl.app :as app]
-            [gdl.context :refer [play-sound!]]
+  (:require [gdl.context :refer [play-sound!]]
             [game.context :as gm]
             [app.state :refer [change-screen!]]
             [game.components.state :as state])

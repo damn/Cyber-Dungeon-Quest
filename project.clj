@@ -28,7 +28,7 @@
   :global-vars {*warn-on-reflection* true
                 *print-level* 3}
 
-  :aliases {"dev" ["run" "-m" "gdl.dev" "app" "app"]})
+  :aliases {"dev" ["run" "-m" "gdl.dev" "app.start" "app"]})
 
 ; * Notes
 

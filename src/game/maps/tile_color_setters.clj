@@ -1,6 +1,5 @@
 (ns game.maps.tile-color-setters
-  (:require [gdl.app :as app]
-            [gdl.graphics.color :as color]
+  (:require [gdl.graphics.color :as color]
             [gdl.graphics.camera :as camera]
             [app.state :refer [current-context]]
             [game.maps.cell-grid :as cell-grid])

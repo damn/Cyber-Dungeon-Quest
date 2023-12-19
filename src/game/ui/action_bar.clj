@@ -1,6 +1,5 @@
 (ns game.ui.action-bar
-  (:require [gdl.app :as app]
-            [gdl.scene2d.ui :as ui]
+  (:require [gdl.scene2d.ui :as ui]
             [app.state :refer [current-context]]
             [game.skill :as skill])
   (:import (com.badlogic.gdx Gdx Input$Keys)

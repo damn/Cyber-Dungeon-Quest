@@ -1,4 +1,4 @@
-(ns app
+(ns app.start
   (:require [gdl.app :as app]
             [gdl.context :refer [generate-ttf]]
             [gdl.default-context :as default-context]
