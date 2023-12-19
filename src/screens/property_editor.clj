@@ -1,16 +1,21 @@
 (ns screens.property-editor
   (:require [clojure.edn :as edn]
-            gdl.context
+            [gdl.context :refer [current-screen get-property all-properties]]
             gdl.disposable
             gdl.screen
             [gdl.scene2d.actor :as actor]
             [gdl.scene2d.stage :as stage]
             [gdl.scene2d.ui :as ui]
             [app.state :refer [current-context change-screen!]]
-            [context.properties :as properties])
+            context.properties)
   (:import com.badlogic.gdx.Gdx
            com.badlogic.gdx.scenes.scene2d.Stage
            (com.badlogic.gdx.scenes.scene2d.ui WidgetGroup)))
+
+; Idea;
+; during running game each entity has property/id
+; can right click and edit the properties on the fly of _everything_
+; in non-debug mode only presenting, otherwise editable.
 
 ; * validation on load all properties / save property/properties
 ; => spec => key spec
@@ -20,17 +25,16 @@
 ; * non-toggle image-button at overview => VisImageButton
 ; * missing widgets for keys / one-to-many not implemented
 
-(defn- stage ^Stage []
-  (let [{:keys [context/current-screen] :as context} @current-context]
-    (:stage (current-screen context))))
+(defn- stage ^Stage [context]
+  (:stage (current-screen context)))
 
 (declare property-editor-window)
 
-(defn- open-property-editor-window [id]
-  (let [{:keys [gui-viewport-width
-                gui-viewport-height] :as context} @current-context
-        window (property-editor-window id)]
-    (.addActor (stage) window)
+(defn- open-property-editor-window [{:keys [gui-viewport-width
+                                            gui-viewport-height] :as context}
+                                    property-id]
+  (let [window (property-editor-window context property-id)]
+    (.addActor (stage context) window)
     (actor/set-center window
                       (/ gui-viewport-width  2)
                       (/ gui-viewport-height 2))))
@@ -76,33 +80,46 @@
    :skills :one-to-many
    :items :one-to-many})
 
-(defmulti property-widget (fn [k v] (get attribute-widget k)))
-(defmulti widget-data (fn [k widget] (get attribute-widget k)))
+; property-key->create-widget
+(defmulti property-widget (fn [_context k _v] (get attribute-widget k)))
 
-(defmethod property-widget :default [_ v]
+; widget->data
+(defmulti widget-data (fn [k _widget] (get attribute-widget k)))
+
+(defmethod property-widget :default [_context _ v]
   (ui/label (pr-str v))) ; TODO print-level set to nil ! not showing all effect -> print-fn?
 
 (defmethod widget-data :default [_ _]
   nil)
 
-(defmethod property-widget :image [_ image]
+(defmethod property-widget :image [_context _ image]
   (ui/image (ui/texture-region-drawable (:texture image))))
 
-(defmethod property-widget :text-field [_ v]
+(defmethod property-widget :text-field [_context _ v]
   (ui/text-field (pr-str v)))
 
 (defmethod widget-data :text-field [_ widget]
   (edn/read-string
    (.getText ^com.kotcrab.vis.ui.widget.VisTextField widget)))
 
-(defmethod property-widget :link-button [_ id]
-  (ui/text-button (name id) #(open-property-editor-window id)))
+(defmethod property-widget :link-button [_context _ id]
+  (ui/text-button (name id) #(open-property-editor-window @current-context id)))
 
-(defn- overview-table ^com.badlogic.gdx.scenes.scene2d.ui.Table [property-type clicked-id-fn]
+(comment
+ (get-property @current-context :dragon-shadow)
+
+ ; FIXME could not save dragon level input because the key was not in data
+ ; so he complains at overwrite and save...
+
+ )
+
+(defn- overview-table ^com.badlogic.gdx.scenes.scene2d.ui.Table [context property-type clicked-id-fn]
   (let [{:keys [title
                 sort-by-fn
                 extra-infos-widget]} (:overview (get property-types property-type))
-        entities (properties/get-all property-type)
+        _ (println "overview table of " property-type)
+        entities (all-properties context property-type)
+        _ (println "entities found: " (count entities))
         entities (if sort-by-fn
                    (sort-by sort-by-fn entities)
                    entities)
@@ -110,7 +127,7 @@
     (ui/table :rows (concat [[{:actor (ui/label title) :colspan number-columns}]]
                             (for [entities (partition-all number-columns entities)]
                               (for [{:keys [id] :as props} entities
-                                    :let [on-clicked #(clicked-id-fn id)
+                                    :let [on-clicked #(clicked-id-fn @current-context id)
                                           button (if (:image props)
                                                    (ui/image-button (:image props) on-clicked)
                                                    (ui/text-button (name id) on-clicked))
@@ -124,37 +141,40 @@
                                     stack)))))))
 
 
-(defn- add-one-to-many-rows [^com.kotcrab.vis.ui.widget.VisTable table property-type property-ids]
+(defn- add-one-to-many-rows [context ^com.kotcrab.vis.ui.widget.VisTable table property-type property-ids]
   (.addSeparator table)
-  (let [redo-rows (fn [property-ids]
+  (let [redo-rows (fn [context property-ids]
                     (.clearChildren ^com.badlogic.gdx.scenes.scene2d.ui.Table table)
-                    (add-one-to-many-rows table property-type property-ids))]
+                    (add-one-to-many-rows context table property-type property-ids))]
     (ui/add-rows table (concat
                         (for [prop-id property-ids]
-                          [(ui/image (ui/texture-region-drawable (:texture (:image (properties/get prop-id))))
+                          [(ui/image (ui/texture-region-drawable (:texture (:image (get-property context prop-id))))
                                      :id prop-id)
-                           (ui/text-button " - " #(redo-rows (disj (set property-ids) prop-id)))])
+                           (ui/text-button " - " #(redo-rows @current-context
+                                                             (disj (set property-ids) prop-id)))])
                         [[(ui/text-button " + "
                                           (fn []
                                             (let [{:keys [gui-viewport-width gui-viewport-height]} @current-context
                                                   window (ui/window :title "Choose"
                                                                     :modal? true)
-                                                  clicked-id-fn (fn [id]
+                                                  clicked-id-fn (fn [context id]
                                                                   (.remove window)
-                                                                  (redo-rows (conj (set property-ids) id)))]
-                                              (.add window (overview-table property-type clicked-id-fn))
+                                                                  (redo-rows context
+                                                                             (conj (set property-ids) id)))]
+                                              (.add window (overview-table context property-type clicked-id-fn))
                                               (.pack window)
                                               ; TODO fn above -> open in center .. ?
-                                              (.addActor (stage) window)
+                                              (.addActor (stage context) window)
                                               (actor/set-center window
                                                                 (/ gui-viewport-width  2)
                                                                 (/ gui-viewport-height 2)))))]])))
   (when-let [parent (.getParent table)]
     (.pack ^WidgetGroup parent)))
 
-(defmethod property-widget :one-to-many [attribute property-ids]
+; TODO needs context
+(defmethod property-widget :one-to-many [context attribute property-ids]
   (let [table (ui/table)]
-    (add-one-to-many-rows table (attribute->property-type attribute) property-ids)
+    (add-one-to-many-rows context table (attribute->property-type attribute) property-ids)
     table))
 
 (defmethod widget-data :one-to-many [_ widget]
@@ -187,9 +207,9 @@
    )
  )
 
-(defn- property-editor-window [id]
-  (let [props (properties/get id)
-        {:keys [title property-keys]} (get property-types (properties/property-type props))
+(defn- property-editor-window [context id]
+  (let [props (get-property context id)
+        {:keys [title property-keys]} (get property-types (context.properties/property-type props))
         window (ui/window :title title
                           :modal? true
                           :cell-defaults {:pad 5})
@@ -199,34 +219,40 @@
                           [k (or (widget-data k widget)
                                  (get props k))]))]
     (ui/add-rows window (concat (for [k property-keys
-                                      :let [widget (property-widget k (get props k))]]
+                                      :let [widget (property-widget context k (get props k))]]
                                   (do
                                    (actor/set-id widget k)
                                    [(ui/label (name k)) widget]))
-                                [[(ui/text-button "Save" #(properties/save! (get-data)))
+                                [[(ui/text-button "Save" #(context.properties/update-and-write-to-file! context (get-data)))
                                   (ui/text-button "Cancel" #(.remove window))]]))
     (.pack window)
     window))
 
 
-(defn- set-second-widget [widget]
-  (let [^com.badlogic.gdx.scenes.scene2d.ui.Table table (:main-table (stage))]
+(defn- set-second-widget [context widget]
+  (let [^com.badlogic.gdx.scenes.scene2d.ui.Table table (:main-table (stage context))]
     (.setActor ^com.badlogic.gdx.scenes.scene2d.ui.Cell
                (second (.getCells table)) widget)
     (.pack table)))
 
-(defn- left-widget []
+(defn- left-widget [context]
   (ui/table :cell-defaults {:pad 5}
             :rows (concat
                    ; TODO and here
                    (for [[property-type {:keys [overview]}] (select-keys property-types [:creature :item :skill :weapon])]
-                     [(ui/text-button (:title overview) #(set-second-widget (overview-table property-type open-property-editor-window)))])
+                     [(ui/text-button (:title overview)
+                                      (fn []
+                                        (let [context @current-context]
+                                          (set-second-widget context
+                                                             (overview-table context
+                                                                             property-type
+                                                                             open-property-editor-window)))))])
                    [[(ui/text-button "Back to Main Menu" #(change-screen! :screens/main-menu))]])))
 
-(defn- create-stage [{:keys [gui-viewport batch]}]
+(defn- create-stage [{:keys [gui-viewport batch] :as context}]
   (let [stage (stage/create gui-viewport batch)
         table (ui/table :id :main-table
-                        :rows [[(left-widget) nil]]
+                        :rows [[(left-widget context) nil]]
                         :fill-parent? true)]
     (.addActor stage table)
     stage))

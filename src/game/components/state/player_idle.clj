@@ -1,8 +1,7 @@
 (ns game.components.state.player-idle
-  (:require [gdl.context :refer [play-sound! world-mouse-position gui-mouse-position]]
+  (:require [gdl.context :refer [play-sound! world-mouse-position gui-mouse-position get-property]]
             [gdl.math.vector :as v]
             [gdl.scene2d.stage :as stage]
-            [utils.core :refer [safe-get]]
             [data.counter :as counter]
             [game.context :as gm]
             [game.effect :as effect]
@@ -51,10 +50,7 @@
 (defrecord State [entity]
   state/PlayerState
   (pause-game? [_] true)
-  (manual-tick! [_ {:keys [context/mouseover-entity
-                           context/properties]
-                    :as context}
-                 delta]
+  (manual-tick! [_ {:keys [context/mouseover-entity] :as context} delta]
     (let [stage (:stage (:screens/game context))]  ; TODO hack FIXME
       (if-let [movement-vector (WASD-movement-vector)]
         (state/send-event! context entity :movement-input movement-vector)
@@ -69,7 +65,7 @@
            :else
            (if-let [skill-id @action-bar/selected-skill-id]
              (let [effect-params (make-effect-params context entity)
-                   skill (safe-get properties skill-id)
+                   skill (get-property context skill-id)
                    state (skills/usable-state @entity skill effect-params context)]
                (if (= state :usable)
                  (state/send-event! context entity :start-action skill effect-params)

@@ -1,7 +1,8 @@
 (ns game.components.skills
   (:require [x.x :refer [defcomponent]]
+            [gdl.context :refer [get-property]]
             [data.counter :as counter]
-            [utils.core :refer [safe-get mapvals]]
+            [utils.core :refer [mapvals]]
             [game.entity :as entity]
             [game.effect :as effect]))
 
@@ -15,10 +16,10 @@
     skill))
 
 (defcomponent :skills skills
-  (entity/create! [_ entity {:keys [context/properties]}]
+  (entity/create! [_ entity context]
     (swap! entity update :skills
            #(zipmap %
-                    (map (fn [skill-id] (safe-get properties skill-id))
+                    (map (fn [skill-id] (get-property context skill-id))
                          %))))
   (entity/tick [_ delta]
     (mapvals #(update-cooldown % delta) skills)))

@@ -2,9 +2,8 @@
   (:require [reduce-fsm :as fsm]
             [x.x :refer [defcomponent]]
             [gdl.graphics.camera :as camera]
-            [gdl.context :refer [create-image]]
+            [gdl.context :refer [create-image get-property]]
             [gdl.graphics.animation :as animation]
-            [utils.core :refer [safe-get]]
             [game.context :as gm]
             [game.entity :as entity]
             [game.components.body :refer (assoc-left-bottom valid-position?)]
@@ -123,13 +122,13 @@
 (defn- create-creature-data [creature-props
                              {:keys [is-player
                                      initial-state] :as extra-params}
-                             {:keys [context/properties] :as context}]
+                             context]
   (let [creature-name (name (:id creature-props))
         creature-props (dissoc creature-props :id)
         creature-props (update creature-props :skills #(or % []))
         images (create-images context creature-name)
         [width height] (images->world-unit-dimensions images)
-        {:keys [speed hp]} (species-properties (safe-get properties (:species creature-props)))]
+        {:keys [speed hp]} (species-properties (get-property context (:species creature-props)))]
     (merge (dissoc creature-props :image)
            (if is-player
              player-components
@@ -162,8 +161,9 @@
                          (:position @entity)
                          :creature/die-effect)))
 
-(defn create! [creature-id position creature-params {:keys [context/properties] :as context}]
-  (let [entity* (-> (safe-get properties creature-id)
+(defn create! [creature-id position creature-params context]
+  (let [entity* (-> context
+                    (get-property creature-id)
                     (create-creature-data creature-params context)
                     (assoc :position position)
                     assoc-left-bottom)]
@@ -171,5 +171,4 @@
       (gm/create-entity! context entity*)
       (do
        (println "Not able to spawn" creature-id "at" position)
-       (throw (Error. (str "Not able to spawn " creature-id " at " position)))
-       ))))
+       (throw (Error. (str "Not able to spawn " creature-id " at " position)))))))

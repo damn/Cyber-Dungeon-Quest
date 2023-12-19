@@ -23,6 +23,13 @@
             screens.options-menu
             screens.property-editor))
 
+
+; DELTA PART OF CONTEXT ?!
+
+; TODO use gdx internal files -> context function -> no 'resources/' necessary
+; => CONTEXT PROTOCOL READ-FILE GET-FILE !!!
+; all lIBGDX STUFF ...
+
 ; ALL CONTEXT STUFF MOVE IN GDL/CONTEXT (ecs, effect-handler, modifier-handler (modifier text needs properties), ?)
 ; => herre only _implementation_ of components/ , effects/, properties/ etc.
 ; properties/skill faction creature weapon item etc.
@@ -34,16 +41,6 @@
  ; for example for player death  ...
  {:play-sound "sounds/bfxr_playerdeath.wav" ; <- effect-component
   :notify-player "YOU DIED!. Press X to leave."})
-
-; TODO FIXME HACK !
-; change-screen is problematic, changes the current-context atom
-; and then the frame finishes with the original unchanged context
-; do it always at end of frame
-; at manual-tick! just pass as a variable or something or do manual for player-dead !
-; see 54de785
-; => all screen changes should return the code with new context
-; or do at end of frame _ONLY_
-; (change-screen context new-screen) => returns new context
 
 ; contexts == effect
 ; modifier move to data/ ?
@@ -57,13 +54,9 @@
 ; TODO maybe use safe-merge for all my context stuff (only give warnings @ main-menu when overwriting?)
 
 (defn- create-context []
-  (let [context (default-context/->context :tile-size 48)
-        properties (let [file "resources/properties.edn"
-                         properties (properties/load-edn context file)]
-                     (.bindRoot #'properties/properties-file file)
-                     (.bindRoot #'properties/properties properties)
-                     properties)
-        context (merge context {:context/properties properties})]
+  (let [context (default-context/->context :tile-size 48) ; TODO world-unit-scale !!! directly pass...
+        context (merge context
+                       (properties/->context context "resources/properties.edn"))]
     (game.ui.inventory-window/initialize! context)
     (game.ui.action-bar/initialize!)
     (game.ui.hp-mana-bars/initialize! context)
@@ -87,7 +80,7 @@
          :full-screen? false
          :fps nil} ; TODO fix is set to 60 @ gdl
    :current-context current-context
-   :context-fn create-context
+   :create-context create-context
    :first-screen :screens/main-menu})
 
 (defn app []

@@ -1,7 +1,8 @@
 (ns game.components.inventory
   (:require [data.grid2d :as grid]
             [x.x :refer [defcomponent]]
-            [utils.core :refer [safe-get find-first]]
+            [gdl.context :refer [get-property]]
+            [utils.core :refer [find-first]]
             [game.entity :as entity]
             [game.modifier :as modifier]
             [game.components.skills :as skills]))
@@ -132,8 +133,8 @@
      (try-put-item-in! entity :bag item))))
 
 (defcomponent :items items
-  (entity/create! [_ entity {:keys [context/properties]}]
+  (entity/create! [_ entity context]
     (swap! entity assoc :inventory empty-inventory)
     ;(swap! entity dissoc :items)
     (doseq [id items]
-      (try-pickup-item! entity (safe-get properties id)))))
+      (try-pickup-item! entity (get-property context id)))))

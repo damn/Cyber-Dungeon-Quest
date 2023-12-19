@@ -1,10 +1,9 @@
 (ns game.entities.audiovisual
-  (:require [gdl.context :refer [play-sound!]]
-            [utils.core :refer [safe-get]]
+  (:require [gdl.context :refer [play-sound! get-property]]
             [game.context :as gm]))
 
-(defn create! [{:keys [context/properties] :as context} position id]
-  (let [{:keys [sound animation]} (safe-get properties id)]
+(defn create! [context position id]
+  (let [{:keys [sound animation]} (get-property context id)]
     (play-sound! context sound)
     (gm/create-entity! context
                        {:position position

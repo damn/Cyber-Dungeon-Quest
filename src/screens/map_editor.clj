@@ -3,10 +3,7 @@
             gdl.screen
             [gdl.graphics.color :as color]
             [gdl.graphics.camera :as camera]
-            [gdl.context :refer [draw-filled-rectangle
-                                   draw-filled-circle
-                                   draw-grid
-                                   render-world-view]]
+            [gdl.context :refer [draw-filled-rectangle draw-filled-circle draw-grid render-world-view all-properties]]
             gdl.disposable
             [gdl.maps.tiled :as tiled]
             [gdl.scene2d.ui :as ui]
@@ -122,13 +119,11 @@
                1 1
                (color/rgb 1 1 1 0.5))))
 
-(defn- generate [{:keys [world-camera
-                         context/properties]}
-                 properties]
+(defn- generate [{:keys [world-camera] :as context} properties]
   (let [{:keys [tiled-map
                 area-level-grid
                 start-positions]} (module-gen/generate (assoc properties
-                                                              :creature-properties (filter :species (vals properties))))]
+                                                              :creature-properties (all-properties context :species)))]
     (.dispose ^TiledMap @current-tiled-map)
     (reset! current-tiled-map tiled-map)
     (reset! current-area-level-grid area-level-grid)

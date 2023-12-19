@@ -2,7 +2,7 @@
   (:require [clojure.edn :as edn]
             [gdl.maps.tiled :as tiled]
             [data.grid2d :as grid]
-            gdl.context
+            [gdl.context :refer [all-properties]]
             gdl.disposable
             [utils.core :refer [translate-to-tile-middle]]
             [game.maps.contentfields :refer [create-mapcontentfields]]
@@ -22,11 +22,11 @@
 ; ! entities creation fns and audiovisual also game.context protocols !
 ; idk how to call it
 
-(defn- first-level [properties]
+(defn- first-level [context]
   (let [{:keys [tiled-map start-positions]} (mapgen.module-gen/generate
                                              ; TODO move to properties
                                              (assoc (edn/read-string (slurp "resources/maps/map.edn"))
-                                                    :creature-properties (filter :species (vals properties))))
+                                                    :creature-properties (all-properties context :species)))
         start-position (translate-to-tile-middle
                         (rand-nth (filter #(= "all" (movement-property tiled-map %))
                                           start-positions)))]
@@ -90,9 +90,9 @@
               :when tiled-map]
         (tiled/dispose tiled-map)))))
 
-(defn merge->context [{:keys [context/properties] :as context}]
+(defn merge->context [context]
   (let [context (merge context
-                       {:context/world-map (create-world-map (first-level properties))})]
+                       {:context/world-map (create-world-map (first-level context))})]
     (merge context
            {:context/player-entity (create-entities-from-tiledmap! context)})))
 

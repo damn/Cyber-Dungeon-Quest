@@ -1,12 +1,9 @@
 (ns game.ui.skill-window
-  (:require clojure.set
+  (:require [gdl.context :refer [get-property]]
             [gdl.scene2d.ui :as ui]
-            [utils.core :refer [safe-get]]
             [app.state :refer [current-context]]
             [game.skill :as skill]
             [game.components.skills :as skills]))
-
-(def ^:privat skill-icon-size 48)
 
 ; TODO this is actually two modifiers ... skill and free-skill-p
 ; and can do modifier-text @ tooltip ....
@@ -21,13 +18,13 @@
                                 (update :free-skill-points dec)
                                 (update :skills skills/add-skill skill))))))
 
-(defn create [{:keys [context/properties]}]
+(defn create [context]
   (let [window (ui/window :title "Skills"
                           :id :skill-window)]
     (doseq [id [:projectile
                 :meditation
                 :spawn]
-            :let [skill (safe-get properties id)
+            :let [skill (get-property context id)
                   button (ui/image-button (:image skill)
                                           #(pressed-on-skill-in-menu skill))]]
       (.addListener button (ui/text-tooltip (fn []

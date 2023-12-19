@@ -1,6 +1,5 @@
 (ns game.components.state.player-moving
   (:require [gdl.scene2d.stage :as stage]
-            [utils.core :refer [safe-get]]
             [data.counter :as counter]
             [game.context :as gm]
             [game.effect :as effect]

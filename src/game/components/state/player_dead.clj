@@ -1,9 +1,7 @@
 (ns game.components.state.player-dead
   (:require [gdl.context :refer [play-sound!]]
             [game.context :as gm]
-            [app.state :refer [change-screen!]]
-            [game.components.state :as state])
-  (:import (com.badlogic.gdx Gdx Input$Keys)))
+            [game.components.state :as state]))
 
 (defrecord State [entity]
   state/PlayerState

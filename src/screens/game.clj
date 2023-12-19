@@ -5,6 +5,11 @@
             [game.context :refer [set-screen-stage remove-screen-stage draw act render-world-map
                                     render-in-world-view render-in-gui-view tick-game]]))
 
+; TODO no !
+; Screen with gui-stage & TWO FUNCTIONS: render-before-stage, tick-befeore-stage
+; => can be reused in all your screens ...
+; => remove 6x sceen /stage stuff
+
 (defrecord Screen [stage]
   gdl.disposable/Disposable
   (dispose [_]
