@@ -14,7 +14,7 @@
            com.badlogic.gdx.scenes.scene2d.Actor))
 
 (defn- update-game-systems
-  [{:keys [context/game-running?] :as context} stage delta]
+  [{:keys [context/update-entities?] :as context} stage delta]
   ; TODO stage part of context
   ; destroy here not @ tick, because when game is paused
   ; for example pickup item, should be destroyed. TODO fix - weird ! I want to do just context/tick ...
@@ -26,7 +26,7 @@
   ; TODO move stage in context , can do stage/hit inside update
   (update-mouseover-entity context (stage/hit stage (gui-mouse-position context)))
 
-  (when @game-running? ; sowieso keine bewegungen / kein update gemacht ? checkt nur tiles ?
+  (when @update-entities? ; sowieso keine bewegungen / kein update gemacht ? checkt nur tiles ?
     (update-potential-fields context)))
 
 (defn- limit-delta [delta]
@@ -70,10 +70,8 @@
 (extend-type gdl.context.Context
   game.context/GameScreenTick
   (tick-game [{:keys [context/player-entity
-                      context/game-running?
+                      context/update-entities?
                       context/thrown-error]
-               ; TODO call ecs/thrown-error ?? move the whole ECS component in 1 map itself ? easier overview
-               ; when browsing context
                :as context}
               stage
               delta]
@@ -83,10 +81,10 @@
       (state/manual-tick! state context delta)
       (let [pause-game? (or @thrown-error
                             (and pausing (state/pause-game? state)))]
-        (reset! game-running? (not pause-game?))))
+        (reset! update-entities? (not pause-game?))))
     (let [delta (limit-delta delta)]
       (update-game-systems context stage delta)
-      (when @game-running?
+      (when @update-entities?
         (tick-active-entities context delta)))
     (end-of-frame-checks context)))
 

@@ -92,9 +92,10 @@
         atom
         (doseq-entity entity/create! context)))
 
-  (tick-active-entities [{:keys [context/thrown-error] :as context} delta]
+  (tick-active-entities
+    [{:keys [context/thrown-error] :as context} delta]
     (try
-     (doseq [entity (get-entities-in-active-content-fields context)]
+     (doseq [entity (get-entities-in-active-content-fields context)] ; world context protocol -> get-active-entities world
        (tick-entity! context entity delta))
      (catch Throwable t
        (p/pretty-pst t)
