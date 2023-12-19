@@ -90,12 +90,11 @@
               :when tiled-map]
         (tiled/dispose tiled-map)))))
 
-(defn ->context [{:keys [context/properties] :as context}]
+(defn merge->context [{:keys [context/properties] :as context}]
   (let [context (merge context
-                       {:context/world-map (create-world-map (first-level properties))})
-        player-entity (create-entities-from-tiledmap! context)]
+                       {:context/world-map (create-world-map (first-level properties))})]
     (merge context
-           {:context/player-entity player-entity})))
+           {:context/player-entity (create-entities-from-tiledmap! context)})))
 
 
 ; TODO extend here game.context ( also properties do  )

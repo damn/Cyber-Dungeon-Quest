@@ -47,6 +47,8 @@
 ; TODO this @ screns/main-menu
 (defn init-context [context]
   (game.ui.inventory-window/rebuild-inventory-widgets!) ; before adding entities ( player gets items )
+  (game.ui.action-bar/reset-skills!) ; empties skills -> before adding player
+
   ; TODO z-order namespaced keywords
   (let [context (merge context
                        (context.ecs/->context :z-orders [:on-ground ; items
@@ -56,5 +58,4 @@
                        (context.mouseover-entity/->context-map)
                        {:context/running (atom true)})]
     (game.ui.action-bar/reset-skills!)
-    (merge context
-           (context.world-map/->context context))))
+    (context.world-map/merge->context context)))
