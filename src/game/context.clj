@@ -15,28 +15,5 @@
 (defprotocol Context
   (show-msg-to-player! [_ message]))
 
-(defprotocol GameScreenTick
-  (tick-game [_ stage delta])) ; TODO before-stage-tick ? ; TODO remove stage, put in context
-
-(defprotocol GameScreenRender
-  (render-world-map     [_])
-  ; TODO confusing names with render-world-view / render-gui-view @ gdl.context
-  (render-in-world-view [_])
-  (render-in-gui-view   [_]))
-
-(defprotocol DebugRenderer
-  (render-debug-before-entities [_])
-  (render-debug-after-entities  [_]))
-
-(defprotocol ContextStageSetter
-  (set-screen-stage [_ stage])
-  (remove-screen-stage [_]))
-
-; TODO is just stage ... move to gdl
-(defprotocol Stage
-  (draw [_])
-  ; TODO this is 'tick!' or 'act!' because with side effects, different protocol than counter/animation
-  (act [_ delta]))
-
 (defprotocol MouseOverEntity
   (update-mouseover-entity [_]))

@@ -1,19 +1,17 @@
 (ns app.start
   (:require [gdl.app :as app]
-            [gdl.context :refer [generate-ttf ->stage]]
-            [gdl.default-context :as default-context]
+            [gdl.context :refer [generate-ttf ->stage-screen]]
+            [gdl.context.default :as default-context]
             [app.state :refer [current-context]]
             [context.properties :as properties]
             game.session ; TODO remove
             game.modifiers.all
             game.components.require-all
             game.effects.require-all
-            game.ui.actors
             game.ui.inventory-window
             game.ui.action-bar
             game.ui.hp-mana-bars
             game.tick
-            game.render
             game.render.debug
             screens.game
             screens.main-menu
@@ -22,8 +20,10 @@
             screens.options-menu
             screens.property-editor))
 
+; TODO aadd .exit app to context
 
 ; DELTA PART OF CONTEXT ?!
+; => why we need render AND tick ?!
 
 ; TODO use gdx internal files -> context function -> no 'resources/' necessary
 ; => CONTEXT PROTOCOL READ-FILE GET-FILE !!!
@@ -62,14 +62,12 @@
     (merge context
            {:default-font (generate-ttf context {:file "exocet/films.EXL_____.ttf"
                                                  :size 16})
-            :screens/game            (-> context
-                                         (->stage (game.ui.actors/create-actors context))
-                                         screens.game/->Screen)
-            :screens/main-menu       (screens.main-menu/screen context {:bg-image "ui/moon_background.png"})
-            :screens/map-editor      (screens.map-editor/screen context)
+            :screens/game            (->stage-screen context (screens.game/screen context))
+            :screens/main-menu       (->stage-screen context (screens.main-menu/screen context {:bg-image "ui/moon_background.png"}))
+            :screens/map-editor      (->stage-screen context (screens.map-editor/screen context))
             :screens/minimap         (screens.minimap/->Screen)
-            :screens/options-menu    (screens.options-menu/screen context)
-            :screens/property-editor (screens.property-editor/screen context)})))
+            :screens/options-menu    (->stage-screen context (screens.options-menu/screen context))
+            :screens/property-editor (->stage-screen context (screens.property-editor/screen context))})))
 
 (def app-config
   {:app {:title "Cyber Dungeon Quest"

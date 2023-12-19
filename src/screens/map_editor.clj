@@ -3,7 +3,7 @@
             gdl.screen
             [gdl.graphics.color :as color]
             [gdl.graphics.camera :as camera]
-            [gdl.context :refer [->stage draw-filled-rectangle draw-filled-circle draw-grid render-world-view all-properties]]
+            [gdl.context :refer [draw-filled-rectangle draw-filled-circle draw-grid render-world-view all-properties]]
             gdl.disposable
             [gdl.maps.tiled :as tiled]
             [gdl.scene2d.ui :as ui]
@@ -13,7 +13,6 @@
   (:import (com.badlogic.gdx Gdx Input$Keys)
            (com.badlogic.gdx.graphics Color OrthographicCamera)
            com.badlogic.gdx.maps.tiled.TiledMap
-           com.badlogic.gdx.scenes.scene2d.Stage
            com.badlogic.gdx.scenes.scene2d.ui.TextField))
 
 (def ^:private current-tiled-map (atom nil))
@@ -165,36 +164,20 @@
               2)
     [table get-properties]))
 
-(defn- create-stage [context]
-  (reset! current-tiled-map (tiled/load-map module-gen/modules-file))
-  (let [window (ui/window :title "Properties")
-        stage (->stage context [window])
-        [form get-properties] (edn-edit-form "resources/maps/map.edn")] ; TODO move to properties
-    (.add window ^com.badlogic.gdx.scenes.scene2d.Actor form)
-    (.row window)
-    (.add window (ui/text-button "Generate" #(generate @current-context (get-properties))))
-    (.pack window)
-    stage))
-
-(defrecord Screen [^Stage stage]
+(defrecord SubScreen []
   gdl.disposable/Disposable
   (dispose [_]
-    (.dispose stage)
     (.dispose ^TiledMap @current-tiled-map))
   gdl.screen/Screen
   (show [_ {:keys [world-camera]}]
-    (.setInputProcessor Gdx/input stage)
     (center-world-camera world-camera))
-  (hide [_ _ctx]
-    (.setInputProcessor Gdx/input nil))
+  (hide [_ _ctx])
   (render [_ context]
     (tiled/render-map context
                       @current-tiled-map
                       (constantly Color/WHITE)) ; TODO colorsetter optional.
-    (render-world-view context render-on-map)
-    (.draw stage))
+    (render-world-view context render-on-map))
   (tick [_ {:keys [world-camera]} delta]
-    (.act stage delta)
     (if (.isKeyJustPressed Gdx/input Input$Keys/L)
       (swap! show-grid-lines not))
     (if (.isKeyJustPressed Gdx/input Input$Keys/M)
@@ -204,7 +187,17 @@
       (change-screen! :screens/main-menu))))
 
 (defn screen [context]
-  (->Screen (create-stage context)))
+  (reset! current-tiled-map (tiled/load-map module-gen/modules-file))
+  (let [window (ui/window :title "Properties")
+        [form get-properties] (edn-edit-form "resources/maps/map.edn")] ; TODO move to properties
+    (.add window ^com.badlogic.gdx.scenes.scene2d.Actor form)
+    (.row window)
+    (.add window (ui/text-button "Generate" #(generate @current-context (get-properties))))
+    (.pack window)
+    {:actors [window]
+     :sub-screen (->SubScreen)}))
+
+
 
 ; TODO remove key controls , add checkboxes
 ; TODO fix mouse movement etc

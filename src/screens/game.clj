@@ -1,35 +1,31 @@
 (ns screens.game
-  (:require [gdl.context :refer [render-world-view render-gui-view]]
-            [gdl.disposable :refer [dispose]]
-            gdl.screen
-            [game.context :refer [set-screen-stage remove-screen-stage draw act render-world-map
-                                    render-in-world-view render-in-gui-view tick-game]]))
+  (:require [gdl.context :refer [render-gui-view render-world-view]]
+            [gdl.screen :refer [Screen]]
+            [gdl.maps.tiled :as tiled]
+            [game.context :refer [render-visible-entities]]
+            [game.tick :refer [tick-game]]
+            game.ui.actors
+            [game.ui.hp-mana-bars :refer [render-player-hp-mana]]
+            [game.maps.tile-color-setters :refer [tile-color-setter]]
+            [game.render.debug :as debug]))
 
-; TODO no !
-; Screen with gui-stage & TWO FUNCTIONS: render-before-stage, tick-befeore-stage
-; => can be reused in all your screens ...
-; => remove 6x sceen /stage stuff
-
-(defrecord Screen [stage]
-  gdl.disposable/Disposable
-  (dispose [_]
-    (dispose stage))
-
-  gdl.screen/Screen
-  (show [_ context]
-    (set-screen-stage context stage))
-
-  (hide [_ context]
-    (remove-screen-stage context))
-
-  (render [_ context]
-    (render-world-map  context)
-    (render-world-view context render-in-world-view)
-    (render-gui-view   context render-in-gui-view)
-    (draw stage))
-
+(defrecord SubScreen []
+  Screen
+  (show [_ _context])
+  (hide [_ _context])
+  (render [_ {:keys [context/world-map] :as context}]
+    (tiled/render-map context
+                      (:tiled-map world-map)
+                      #'tile-color-setter)
+    (render-world-view context
+                       (fn [c]
+                         (debug/render-before-entities c)
+                         (render-visible-entities      c)
+                         (debug/render-after-entities  c)))
+    (render-gui-view context render-player-hp-mana))
   (tick [_ context delta]
-    (tick-game context stage delta)
-    ; it's good that stage comes after because many widgets change screen (changing the current-context)
-    ; but tick-game also changes screen ...
-    (act stage delta)))
+    (tick-game context delta)))
+
+(defn screen [context]
+  {:actors (game.ui.actors/create-actors context)
+   :sub-screen (screens.game/->SubScreen)})

@@ -1,6 +1,5 @@
 (ns screens.main-menu
-  (:require [gdl.context :refer [->stage draw-centered-image render-gui-view create-image]]
-            gdl.disposable
+  (:require [gdl.context :refer [draw-centered-image render-gui-view create-image]]
             gdl.screen
             [gdl.scene2d.ui :as ui]
             [app.state :refer [current-context change-screen!]]
@@ -9,8 +8,7 @@
             context.world-map
             game.ui.action-bar
             game.ui.inventory-window)
-  (:import (com.badlogic.gdx Gdx Input$Keys)
-           com.badlogic.gdx.scenes.scene2d.Stage))
+  (:import (com.badlogic.gdx Gdx Input$Keys)))
 
 (defn- init-context [context]
   (game.ui.inventory-window/rebuild-inventory-widgets!) ; before adding entities ( player gets items )
@@ -26,25 +24,18 @@
                        {:context/update-entities? (atom true)})]
     (context.world-map/merge->context context)))
 
-(defrecord Screen [^Stage stage bg-image]
-  gdl.disposable/Disposable
-  (dispose [_]
-    (.dispose stage))
+(defrecord SubScreen [bg-image]
   gdl.screen/Screen
-  (show [_ _ctx]
-    (.setInputProcessor Gdx/input stage))
-  (hide [_ _ctx]
-    (.setInputProcessor Gdx/input nil))
+  (show [_ _ctx])
+  (hide [_ _ctx])
   (render [_ {:keys [gui-viewport-width gui-viewport-height] :as context}]
     (render-gui-view context
                      (fn [c]
                        (draw-centered-image c
                                             bg-image
                                             [(/ gui-viewport-width  2)
-                                             (/ gui-viewport-height 2)])))
-    (.draw stage))
-  (tick [_ _state delta]
-    (.act stage delta)
+                                             (/ gui-viewport-height 2)]))))
+  (tick [_ _context delta]
     (when (.isKeyJustPressed Gdx/input Input$Keys/ESCAPE)
       (.exit Gdx/app))))
 
@@ -59,8 +50,7 @@
                                                 #(change-screen! :screens/property-editor))]
                                [(ui/text-button "Exit" #(.exit Gdx/app))]]
                         :cell-defaults {:pad-bottom 25}
-                        :fill-parent? true)
-        _ (.center table)
-        stage (->stage context [table])
-        bg-image (create-image context bg-image)]
-    (->Screen stage bg-image)))
+                        :fill-parent? true)]
+    (.center table)
+    {:actors [table]
+     :sub-screen (->SubScreen (create-image context bg-image))}))

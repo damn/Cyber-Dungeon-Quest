@@ -1,5 +1,6 @@
 (ns game.tick
-  (:require [gdl.scene2d.actor :as actor]
+  (:require [gdl.context :refer [get-stage]]
+            [gdl.scene2d.actor :as actor]
             [app.state :refer [change-screen!]]
             [game.context :refer [tick-active-entities
                                   destroy-to-be-removed-entities!
@@ -30,25 +31,25 @@
 
 (def ^:private pausing true)
 
-(defn- end-of-frame-checks [{:keys [context/player-entity]}
-                            {:keys [debug-window
-                                    inventory-window
-                                    entity-info-window
-                                    skill-window
-                                    help-window] :as stage}]
-  (when (.isKeyJustPressed Gdx/input Input$Keys/I)
-    (actor/toggle-visible! inventory-window)
-    (actor/toggle-visible! entity-info-window)
-    (actor/toggle-visible! skill-window))
-  (when (.isKeyJustPressed Gdx/input Input$Keys/H)
-    (actor/toggle-visible! help-window))
-  (when (.isKeyJustPressed Gdx/input Input$Keys/Z)
-    (actor/toggle-visible! debug-window))
-  (let [windows [debug-window
+(defn- end-of-frame-checks [{:keys [context/player-entity] :as context}]
+  (let [{:keys [debug-window
+                inventory-window
+                entity-info-window
+                skill-window
+                help-window] :as stage} (get-stage context)
+        windows [debug-window
                  help-window
                  entity-info-window
                  inventory-window
                  skill-window]]
+    (when (.isKeyJustPressed Gdx/input Input$Keys/I)
+      (actor/toggle-visible! inventory-window)
+      (actor/toggle-visible! entity-info-window)
+      (actor/toggle-visible! skill-window))
+    (when (.isKeyJustPressed Gdx/input Input$Keys/H)
+      (actor/toggle-visible! help-window))
+    (when (.isKeyJustPressed Gdx/input Input$Keys/Z)
+      (actor/toggle-visible! debug-window))
     (when (.isKeyJustPressed Gdx/input Input$Keys/ESCAPE)
       (cond
        (some #(.isVisible ^Actor %) windows)
@@ -61,23 +62,19 @@
              (= :dead (:state (:fsm (:components/state @player-entity)))))
     (change-screen! :screens/main-menu)))
 
-(extend-type gdl.context.Context
-  game.context/GameScreenTick
-  (tick-game [{:keys [context/player-entity
-                      context/update-entities?
-                      context/thrown-error]
-               :as context}
-              stage
-              delta]
-    (action-bar/up-skill-hotkeys)
-    (let [state (:state-obj (:components/state @player-entity))
-          _ (state/manual-tick! state context delta)
-          pause-game? (or @thrown-error
-                          (and pausing (state/pause-game? state)))
-          update? (reset! update-entities? (not pause-game?))
-          delta (limit-delta delta)]
-      (update-context-systems context delta)
-      (when update?
-        (tick-active-entities context delta)))
-    (end-of-frame-checks context stage)))
-
+(defn tick-game [{:keys [context/player-entity
+                         context/update-entities?
+                         context/thrown-error]
+                  :as context}
+                 delta]
+  (action-bar/up-skill-hotkeys)
+  (let [state (:state-obj (:components/state @player-entity))
+        _ (state/manual-tick! state context delta)
+        pause-game? (or @thrown-error
+                        (and pausing (state/pause-game? state)))
+        update? (reset! update-entities? (not pause-game?))
+        delta (limit-delta delta)]
+    (update-context-systems context delta)
+    (when update?
+      (tick-active-entities context delta)))
+  (end-of-frame-checks context))

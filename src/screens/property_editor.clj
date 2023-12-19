@@ -1,15 +1,11 @@
 (ns screens.property-editor
   (:require [clojure.edn :as edn]
-            [gdl.context :refer [get-stage ->stage current-screen get-property all-properties]]
-            gdl.disposable
-            gdl.screen
+            [gdl.context :refer [get-stage get-property all-properties]]
             [gdl.scene2d.actor :as actor]
             [gdl.scene2d.ui :as ui]
             [app.state :refer [current-context change-screen!]]
             context.properties)
-  (:import com.badlogic.gdx.Gdx
-           com.badlogic.gdx.scenes.scene2d.Stage
-           (com.badlogic.gdx.scenes.scene2d.ui WidgetGroup)))
+  (:import (com.badlogic.gdx.scenes.scene2d.ui WidgetGroup)))
 
 ; Idea;
 ; during running game each entity has property/id
@@ -243,22 +239,7 @@
                                                                              open-property-editor-window)))))])
                    [[(ui/text-button "Back to Main Menu" #(change-screen! :screens/main-menu))]])))
 
-(defrecord Screen [^Stage stage]
-  gdl.disposable/Disposable
-  (dispose [_]
-    (.dispose stage))
-  gdl.screen/Screen
-  (show [_ _ctx]
-    (.setInputProcessor Gdx/input stage))
-  (hide [_ _ctx]
-    (.setInputProcessor Gdx/input nil))
-  (render [_ _context]
-    (.draw stage))
-  (tick [_ _state delta]
-    (.act stage delta)))
-
 (defn screen [context]
-  (->Screen
-   (->stage context [(ui/table :id :main-table
-                               :rows [[(left-widget context) nil]]
-                               :fill-parent? true)])))
+  {:actors [(ui/table :id :main-table
+                      :rows [[(left-widget context) nil]]
+                      :fill-parent? true)]})

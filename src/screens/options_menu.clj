@@ -1,14 +1,12 @@
 (ns screens.options-menu
   (:require gdl.screen
-            [gdl.context :refer [->stage draw-centered-image render-gui-view create-image]]
-            gdl.disposable
+            [gdl.context :refer [->stage-screen draw-centered-image render-gui-view create-image]]
             [gdl.scene2d.ui :as ui]
             [utils.core :refer [find-first]]
             [app.state :refer [change-screen!]]
             ;[game.line-of-sight :refer (player-line-of-sight-checks)]
             [game.components.body :refer (show-body-bounds)])
-  (:import (com.badlogic.gdx Gdx Input$Keys)
-           com.badlogic.gdx.scenes.scene2d.Stage))
+  (:import (com.badlogic.gdx Gdx Input$Keys)))
 
 ; no protocol
 (defprotocol StatusCheckBox
@@ -94,28 +92,21 @@
     (def menu-bg-image (create-image context "ui/moon_background.png"))
     table))
 
-(defrecord Screen [^Stage stage]
-  gdl.disposable/Disposable
-  (dispose [_]
-    (.dispose stage))
+(defrecord SubScreen []
   gdl.screen/Screen
-  (show [_ _ctx]
-    (.setInputProcessor Gdx/input stage))
-  (hide [_ _ctx]
-    (.setInputProcessor Gdx/input nil))
+  (show [_ _ctx])
+  (hide [_ _ctx])
   (render [_ {:keys [gui-viewport-width gui-viewport-height] :as context}]
     (render-gui-view context
                      (fn [c]
                        (draw-centered-image c
                                             menu-bg-image
                                             [(/ gui-viewport-width  2)
-                                             (/ gui-viewport-height 2)])))
-    (.draw stage))
+                                             (/ gui-viewport-height 2)]))))
   (tick [_ _state delta]
-    (.act stage delta)
     (when (.isKeyJustPressed Gdx/input Input$Keys/ESCAPE)
       (exit))))
 
 (defn screen [context]
-  (->Screen
-   (->stage context [(create-table context)])))
+  {:actors [(create-table context)]
+   :sub-screen (->SubScreen)})

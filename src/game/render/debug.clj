@@ -46,20 +46,18 @@
       #_(when (:monster @cell)
           (@#'g/draw-string x y (str (:id @(:monster @cell))) 1)))))
 
-(extend-type gdl.context.Context
-  game.context/DebugRenderer
-  (render-debug-before-entities [c]
-    #_(tile-debug c))
+(defn render-before-entities [c]
+  #_(tile-debug c))
 
-  (render-debug-after-entities [{:keys [context/world-map] :as c}]
-    #_(geom-test c)
-    ; highlight current mouseover-tile
-    #_(let [[x y] (mapv int (world-mouse-position c))
-            cell-grid (:cell-grid world-map)
-            cell (get cell-grid [x y])]
-        (draw-rectangle c x y 1 1 (color/rgb 0 1 0 0.5))
-        #_(g/render-readable-text x y {:shift false}
-                                  [color/white
-                                   (str [x y])
-                                   color/gray
-                                   (pr-str (:potential-field @cell))])) ))
+(defn render-after-entities [{:keys [context/world-map] :as c}]
+  #_(geom-test c)
+  ; highlight current mouseover-tile
+  #_(let [[x y] (mapv int (world-mouse-position c))
+          cell-grid (:cell-grid world-map)
+          cell (get cell-grid [x y])]
+      (draw-rectangle c x y 1 1 (color/rgb 0 1 0 0.5))
+      #_(g/render-readable-text x y {:shift false}
+                                [color/white
+                                 (str [x y])
+                                 color/gray
+                                 (pr-str (:potential-field @cell))])))
