@@ -1,5 +1,5 @@
 (ns context.mouseover-entity
-  (:require [gdl.context :refer [world-mouse-position]]
+  (:require [gdl.context :refer [world-mouse-position mouse-on-stage-actor?]]
             game.context
             [utils.core :refer [sort-by-order]]
             [game.line-of-sight :refer (in-line-of-sight?)]
@@ -26,11 +26,10 @@
 (extend-type gdl.context.Context
   game.context/MouseOverEntity
   (update-mouseover-entity [{:keys [context/mouseover-entity]
-                             :as context}
-                            mouse-over-ui-element?]
+                             :as context}]
     (when-let [entity @mouseover-entity]
       (swap! entity dissoc :mouseover?))
-    (let [entity (if mouse-over-ui-element?
+    (let [entity (if (mouse-on-stage-actor? context)
                    nil
                    (calculate-mouseover-entity context))]
       (reset! mouseover-entity entity)

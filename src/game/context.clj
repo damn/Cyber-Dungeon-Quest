@@ -28,9 +28,6 @@
   (render-debug-before-entities [_])
   (render-debug-after-entities  [_]))
 
-(defprotocol StageCreater
-  (create-gui-stage [_ actors]))
-
 (defprotocol ContextStageSetter
   (set-screen-stage [_ stage])
   (remove-screen-stage [_]))
@@ -42,4 +39,4 @@
   (act [_ delta]))
 
 (defprotocol MouseOverEntity
-  (update-mouseover-entity [_ stage-hit?]))
+  (update-mouseover-entity [_]))

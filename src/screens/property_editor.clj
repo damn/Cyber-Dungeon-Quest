@@ -1,10 +1,9 @@
 (ns screens.property-editor
   (:require [clojure.edn :as edn]
-            [gdl.context :refer [current-screen get-property all-properties]]
+            [gdl.context :refer [get-stage ->stage current-screen get-property all-properties]]
             gdl.disposable
             gdl.screen
             [gdl.scene2d.actor :as actor]
-            [gdl.scene2d.stage :as stage]
             [gdl.scene2d.ui :as ui]
             [app.state :refer [current-context change-screen!]]
             context.properties)
@@ -25,16 +24,13 @@
 ; * non-toggle image-button at overview => VisImageButton
 ; * missing widgets for keys / one-to-many not implemented
 
-(defn- stage ^Stage [context]
-  (:stage (current-screen context)))
-
 (declare property-editor-window)
 
 (defn- open-property-editor-window [{:keys [gui-viewport-width
                                             gui-viewport-height] :as context}
                                     property-id]
   (let [window (property-editor-window context property-id)]
-    (.addActor (stage context) window)
+    (.addActor (get-stage context) window)
     (actor/set-center window
                       (/ gui-viewport-width  2)
                       (/ gui-viewport-height 2))))
@@ -162,7 +158,7 @@
                                               (.add window (overview-table context property-type clicked-id-fn))
                                               (.pack window)
                                               ; TODO fn above -> open in center .. ?
-                                              (.addActor (stage context) window)
+                                              (.addActor (get-stage context) window)
                                               (actor/set-center window
                                                                 (/ gui-viewport-width  2)
                                                                 (/ gui-viewport-height 2)))))]])))
@@ -228,7 +224,7 @@
 
 
 (defn- set-second-widget [context widget]
-  (let [^com.badlogic.gdx.scenes.scene2d.ui.Table table (:main-table (stage context))]
+  (let [^com.badlogic.gdx.scenes.scene2d.ui.Table table (:main-table (get-stage context))]
     (.setActor ^com.badlogic.gdx.scenes.scene2d.ui.Cell
                (second (.getCells table)) widget)
     (.pack table)))
@@ -247,14 +243,6 @@
                                                                              open-property-editor-window)))))])
                    [[(ui/text-button "Back to Main Menu" #(change-screen! :screens/main-menu))]])))
 
-(defn- create-stage [{:keys [gui-viewport batch] :as context}]
-  (let [stage (stage/create gui-viewport batch)
-        table (ui/table :id :main-table
-                        :rows [[(left-widget context) nil]]
-                        :fill-parent? true)]
-    (.addActor stage table)
-    stage))
-
 (defrecord Screen [^Stage stage]
   gdl.disposable/Disposable
   (dispose [_]
@@ -270,4 +258,7 @@
     (.act stage delta)))
 
 (defn screen [context]
-  (->Screen (create-stage context)))
+  (->Screen
+   (->stage context [(ui/table :id :main-table
+                               :rows [[(left-widget context) nil]]
+                               :fill-parent? true)])))

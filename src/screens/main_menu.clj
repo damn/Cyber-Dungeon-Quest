@@ -1,9 +1,8 @@
 (ns screens.main-menu
-  (:require [gdl.context :refer [draw-centered-image render-gui-view create-image]]
+  (:require [gdl.context :refer [->stage draw-centered-image render-gui-view create-image]]
             gdl.disposable
             gdl.screen
             [gdl.scene2d.ui :as ui]
-            [gdl.scene2d.stage :as stage]
             [app.state :refer [current-context change-screen!]]
             context.ecs
             context.mouseover-entity
@@ -27,30 +26,7 @@
                        {:context/update-entities? (atom true)})]
     (context.world-map/merge->context context)))
 
-(declare ^Stage stage
-         ^:private skip-main-menu
-         ^:private bg-image)
-
-(defn- initialize! [{:keys [gui-viewport batch] :as context}
-                    {:keys [skip-main-menu bg-image]}]
-  (.bindRoot #'skip-main-menu skip-main-menu)
-  (.bindRoot #'bg-image (create-image context bg-image))
-  (.bindRoot #'stage (stage/create gui-viewport batch))
-  (let [table (ui/table :rows [[(ui/text-button "Start game"
-                                                #(do
-                                                  (swap! current-context init-context)
-                                                  (change-screen! :screens/game)))]
-                               [(ui/text-button "Map editor"
-                                                #(change-screen! :screens/map-editor))]
-                               [(ui/text-button "Property editor"
-                                                #(change-screen! :screens/property-editor))]
-                               [(ui/text-button "Exit" #(.exit Gdx/app))]]
-                        :cell-defaults {:pad-bottom 25}
-                        :fill-parent? true)]
-    (.addActor stage table)
-    (.center table)))
-
-(defrecord Screen []
+(defrecord Screen [^Stage stage bg-image]
   gdl.disposable/Disposable
   (dispose [_]
     (.dispose stage))
@@ -70,10 +46,21 @@
   (tick [_ _state delta]
     (.act stage delta)
     (when (.isKeyJustPressed Gdx/input Input$Keys/ESCAPE)
-      (.exit Gdx/app))
-    #_(when skip-main-menu
-      (start-session))))
+      (.exit Gdx/app))))
 
-(defn screen [context config]
-  (initialize! context config)
-  (->Screen))
+(defn screen [context {:keys [bg-image]}]
+  (let [table (ui/table :rows [[(ui/text-button "Start game"
+                                                #(do
+                                                  (swap! current-context init-context)
+                                                  (change-screen! :screens/game)))]
+                               [(ui/text-button "Map editor"
+                                                #(change-screen! :screens/map-editor))]
+                               [(ui/text-button "Property editor"
+                                                #(change-screen! :screens/property-editor))]
+                               [(ui/text-button "Exit" #(.exit Gdx/app))]]
+                        :cell-defaults {:pad-bottom 25}
+                        :fill-parent? true)
+        _ (.center table)
+        stage (->stage context [table])
+        bg-image (create-image context bg-image)]
+    (->Screen stage bg-image)))

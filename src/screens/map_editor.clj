@@ -3,11 +3,10 @@
             gdl.screen
             [gdl.graphics.color :as color]
             [gdl.graphics.camera :as camera]
-            [gdl.context :refer [draw-filled-rectangle draw-filled-circle draw-grid render-world-view all-properties]]
+            [gdl.context :refer [->stage draw-filled-rectangle draw-filled-circle draw-grid render-world-view all-properties]]
             gdl.disposable
             [gdl.maps.tiled :as tiled]
             [gdl.scene2d.ui :as ui]
-            [gdl.scene2d.stage :as stage]
             [app.state :refer [current-context change-screen!]]
             [mapgen.movement-property :refer (movement-property movement-properties)]
             [mapgen.module-gen :as module-gen])
@@ -166,12 +165,11 @@
               2)
     [table get-properties]))
 
-(defn- create-stage [{:keys [gui-viewport batch]}]
+(defn- create-stage [context]
   (reset! current-tiled-map (tiled/load-map module-gen/modules-file))
-  (let [stage (stage/create gui-viewport batch)
-        window (ui/window :title "Properties")
+  (let [window (ui/window :title "Properties")
+        stage (->stage context [window])
         [form get-properties] (edn-edit-form "resources/maps/map.edn")] ; TODO move to properties
-    (.addActor stage window)
     (.add window ^com.badlogic.gdx.scenes.scene2d.Actor form)
     (.row window)
     (.add window (ui/text-button "Generate" #(generate @current-context (get-properties))))

@@ -1,14 +1,6 @@
 (ns game.components.state.player-moving
-  (:require [gdl.scene2d.stage :as stage]
-            [data.counter :as counter]
-            [game.context :as gm]
-            [game.effect :as effect]
-            [game.components.state :as state]
-            [game.components.clickable :as clickable]
-            [game.components.inventory :as inventory]
-            [game.components.faction :as faction]
-            [game.components.state.wasd-movement :refer [WASD-movement-vector]])
-  (:import com.badlogic.gdx.scenes.scene2d.Actor))
+  (:require [game.components.state :as state]
+            [game.components.state.wasd-movement :refer [WASD-movement-vector]]))
 
 (defrecord State [entity movement-vector]
   state/PlayerState

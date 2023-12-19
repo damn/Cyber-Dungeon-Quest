@@ -1,10 +1,9 @@
 (ns app.start
   (:require [gdl.app :as app]
-            [gdl.context :refer [generate-ttf]]
+            [gdl.context :refer [generate-ttf ->stage]]
             [gdl.default-context :as default-context]
             [app.state :refer [current-context]]
             [context.properties :as properties]
-            [game.context :refer [create-gui-stage]]
             game.session ; TODO remove
             game.modifiers.all
             game.components.require-all
@@ -64,10 +63,9 @@
            {:default-font (generate-ttf context {:file "exocet/films.EXL_____.ttf"
                                                  :size 16})
             :screens/game            (-> context
-                                         (create-gui-stage (game.ui.actors/create-actors context))
+                                         (->stage (game.ui.actors/create-actors context))
                                          screens.game/->Screen)
-            :screens/main-menu       (screens.main-menu/screen context {:bg-image "ui/moon_background.png"
-                                                                        :skip-main-menu false})
+            :screens/main-menu       (screens.main-menu/screen context {:bg-image "ui/moon_background.png"})
             :screens/map-editor      (screens.map-editor/screen context)
             :screens/minimap         (screens.minimap/->Screen)
             :screens/options-menu    (screens.options-menu/screen context)

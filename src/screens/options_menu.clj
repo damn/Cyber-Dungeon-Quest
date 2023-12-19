@@ -1,9 +1,8 @@
 (ns screens.options-menu
   (:require gdl.screen
-            [gdl.context :refer [draw-centered-image render-gui-view create-image]]
+            [gdl.context :refer [->stage draw-centered-image render-gui-view create-image]]
             gdl.disposable
             [gdl.scene2d.ui :as ui]
-            [gdl.scene2d.stage :as stage]
             [utils.core :refer [find-first]]
             [app.state :refer [change-screen!]]
             ;[game.line-of-sight :refer (player-line-of-sight-checks)]
@@ -117,7 +116,6 @@
     (when (.isKeyJustPressed Gdx/input Input$Keys/ESCAPE)
       (exit))))
 
-(defn screen [{:keys [gui-viewport batch] :as context}]
-  (let [stage (stage/create gui-viewport batch)]
-    (.addActor stage (create-table context))
-    (->Screen stage)))
+(defn screen [context]
+  (->Screen
+   (->stage context [(create-table context)])))

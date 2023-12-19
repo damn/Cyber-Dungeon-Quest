@@ -1,7 +1,6 @@
 (ns game.components.state.player-idle
-  (:require [gdl.context :refer [play-sound! world-mouse-position gui-mouse-position get-property]]
+  (:require [gdl.context :refer [play-sound! world-mouse-position get-property mouse-on-stage-actor?]]
             [gdl.math.vector :as v]
-            [gdl.scene2d.stage :as stage]
             [data.counter :as counter]
             [game.context :as gm]
             [game.effect :as effect]
@@ -56,7 +55,7 @@
         (state/send-event! context entity :movement-input movement-vector)
         (when (.isButtonJustPressed Gdx/input Input$Buttons/LEFT)
           (cond
-           (stage/hit stage (gui-mouse-position context))
+           (mouse-on-stage-actor? context)
            nil
 
            (clickable/clickable-mouseover-entity? @entity @mouseover-entity)

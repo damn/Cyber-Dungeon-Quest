@@ -1,11 +1,9 @@
 (ns game.tick
-  (:require [gdl.context :refer [gui-mouse-position]]
-            [gdl.scene2d.actor :as actor]
-            [gdl.scene2d.stage :as stage]
+  (:require [gdl.scene2d.actor :as actor]
             [app.state :refer [change-screen!]]
             [game.context :refer [tick-active-entities
-                                    destroy-to-be-removed-entities!
-                                    update-mouseover-entity]]
+                                  destroy-to-be-removed-entities!
+                                  update-mouseover-entity]]
             [game.components.movement :as movement]
             [game.components.state :as state]
             [game.ui.action-bar :as action-bar]
@@ -14,8 +12,7 @@
            com.badlogic.gdx.scenes.scene2d.Actor))
 
 (defn- update-context-systems
-  [{:keys [context/update-entities?] :as context} stage delta]
-  ; TODO stage part of context
+  [{:keys [context/update-entities?] :as context} delta]
   ; destroy here not @ tick, because when game is paused
   ; for example pickup item, should be destroyed. TODO fix - weird ! I want to do just context/tick ...
   ; => finally the whole context just swap , but we like atoms?
@@ -23,8 +20,7 @@
   (destroy-to-be-removed-entities! context)
 
   ; this do always so can get debug info even when game not running
-  ; TODO move stage in context , can do stage/hit inside update
-  (update-mouseover-entity context (stage/hit stage (gui-mouse-position context)))
+  (update-mouseover-entity context)
 
   (when @update-entities? ; sowieso keine bewegungen / kein update gemacht ? checkt nur tiles ?
     (update-potential-fields context)))
@@ -80,7 +76,7 @@
                           (and pausing (state/pause-game? state)))
           update? (reset! update-entities? (not pause-game?))
           delta (limit-delta delta)]
-      (update-context-systems context stage delta)
+      (update-context-systems context delta)
       (when update?
         (tick-active-entities context delta)))
     (end-of-frame-checks context stage)))

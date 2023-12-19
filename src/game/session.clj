@@ -1,7 +1,6 @@
 (ns game.session
   (:require gdl.context
             gdl.disposable
-            [gdl.scene2d.stage :as stage]
             game.context)
   (:import com.badlogic.gdx.Gdx
            com.badlogic.gdx.scenes.scene2d.Stage))
@@ -11,14 +10,6 @@
   game.context/Context
   (show-msg-to-player! [_ message]
     (println message))
-
-  game.context/StageCreater
-  ; ->gui-stage
-  (create-gui-stage [{:keys [gui-viewport batch]} actors]
-    (let [stage (stage/create gui-viewport batch)]
-      (doseq [actor actors]
-        (.addActor stage actor))
-      stage))
 
   game.context/ContextStageSetter
   (set-screen-stage [_ stage]
