@@ -1,32 +1,9 @@
 (ns game.maps.cell-grid
-  (:require [gdl.maps.tiled :as tiled]
-            [gdl.math.geom :as geom]
+  (:require [gdl.math.geom :as geom]
             [gdl.math.vector :as v]
             [gdl.math.raycaster :as raycaster]
             [data.grid2d :as grid]
-            [utils.core :refer [translate-to-tile-middle int-posi diagonal-direction?]]
-            [mapgen.movement-property :refer (movement-property)]))
-
-; TODO maybe only 'cell' protocol or cell-grid or world-map protocol? lets see..
-
-(defrecord Cell [position
-                 middle
-                 adjacent-cells
-                 movement
-                 entities
-                 occupied
-                 good
-                 evil])
-
-(defn- create-cell [position movement]
-  {:pre [(#{:none :air :all} movement)]}
-  (atom
-   (map->Cell
-    {:position position
-     :middle (translate-to-tile-middle position)
-     :movement movement
-     :entities #{}
-     :occupied #{}})))
+            [utils.core :refer [translate-to-tile-middle int-posi diagonal-direction?]]))
 
 (defn occupied-by-other?
   "returns true if there is some solid body with center-tile = this cell
@@ -60,21 +37,6 @@
       (swap! cell assoc :adjacent-cells result)
       result)))
 
-(defn- set-cell-blocked-boolean-array [arr cell]
-  (let [[x y] (:position @cell)]
-    (aset arr
-          x
-          y
-          (boolean (cell-blocked? cell {:is-flying true})))))
-
-(defn create-cell-blocked-boolean-array [grid]
-  (let [arr (make-array Boolean/TYPE
-                        (grid/width grid)
-                        (grid/height grid))]
-    (doseq [cell (grid/cells grid)]
-      (set-cell-blocked-boolean-array arr cell))
-    arr))
-
 (defn get-entities [cell]
   (if cell
     (:entities @cell)
@@ -100,16 +62,6 @@
         xdir (- tx fx)
         ydir (- ty fy)]
     (diagonal-direction? [xdir ydir])))
-
-(defn create-grid-from-tiledmap [tiled-map]
-  (grid/create-grid (tiled/width  tiled-map)
-                    (tiled/height tiled-map)
-                    (fn [position]
-                      (create-cell position
-                                   (case (movement-property tiled-map position)
-                                     "none" :none
-                                     "air"  :air
-                                     "all"  :all)))))
 
 (defn- rectangle->touched-tiles
   [{[x y] :left-bottom :keys [left-bottom width height]}]

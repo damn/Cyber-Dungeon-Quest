@@ -35,11 +35,55 @@
      :tiled-map tiled-map
      :start-position start-position}))
 
+(defrecord Cell [position
+                 middle
+                 adjacent-cells
+                 movement
+                 entities
+                 occupied
+                 good
+                 evil])
+
+(defn- create-cell [position movement]
+  {:pre [(#{:none :air :all} movement)]}
+  (atom
+   (map->Cell
+    {:position position
+     :middle (translate-to-tile-middle position)
+     :movement movement
+     :entities #{}
+     :occupied #{}})))
+
+(defn- create-grid-from-tiledmap [tiled-map]
+  (grid/create-grid (tiled/width  tiled-map)
+                    (tiled/height tiled-map)
+                    (fn [position]
+                      (create-cell position
+                                   (case (movement-property tiled-map position)
+                                     "none" :none
+                                     "air"  :air
+                                     "all"  :all)))))
+
+(defn- set-cell-blocked-boolean-array [arr cell]
+  (let [[x y] (:position @cell)]
+    (aset arr
+          x
+          y
+          (boolean (cell-grid/cell-blocked? cell {:is-flying true})))))
+
+(defn- create-cell-blocked-boolean-array [grid]
+  (let [arr (make-array Boolean/TYPE
+                        (grid/width grid)
+                        (grid/height grid))]
+    (doseq [cell (grid/cells grid)]
+      (set-cell-blocked-boolean-array arr cell))
+    arr))
+
 (defn- create-world-map [{:keys [map-key
                                  pretty-name
                                  tiled-map
                                  start-position] :as argsmap}]
-  (let [cell-grid (cell-grid/create-grid-from-tiledmap tiled-map)
+  (let [cell-grid (create-grid-from-tiledmap tiled-map)
         w (grid/width  cell-grid)
         h (grid/height cell-grid)]
     (merge ; TODO no merge, list explicit which keys are there
@@ -47,7 +91,7 @@
      ; TODO here also namespaced keys  !?
      {:width w
       :height h
-      :cell-blocked-boolean-array (cell-grid/create-cell-blocked-boolean-array cell-grid)
+      :cell-blocked-boolean-array (create-cell-blocked-boolean-array cell-grid)
       :contentfields (create-mapcontentfields w h)
       :cell-grid cell-grid
       :explored-tile-corners (atom (grid/create-grid w h (constantly false)))})
