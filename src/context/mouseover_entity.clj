@@ -1,5 +1,5 @@
 (ns context.mouseover-entity
-  (:require gdl.context
+  (:require game.context
             [utils.core :refer [sort-by-order]]
             [game.line-of-sight :refer (in-line-of-sight?)]
             [game.maps.cell-grid :refer (get-bodies-at-position)]))
@@ -24,7 +24,7 @@
            first))))
 
 (extend-type gdl.context.Context
-  MouseOverEntity
+  game.context/MouseOverEntity
   (update-mouseover-entity [{:keys [context/mouseover-entity]
                              :as context}
                             mouse-over-ui-element?]

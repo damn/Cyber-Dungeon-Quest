@@ -92,6 +92,6 @@
 
 (comment
  (defn- denied [text]
-   ; (gm/play-sound! context "bfxr_denied.wav")
+   ; (play-sound! context "bfxr_denied.wav")
    (gm/show-msg-to-player! context text)))
 

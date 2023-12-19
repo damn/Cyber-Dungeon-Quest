@@ -1,10 +1,10 @@
 (ns game.session
   (:require gdl.context
             gdl.disposable
-            [gdl.maps.tiled :as tiled]
             [gdl.scene2d.stage :as stage]
             context.ecs
             context.mouseover-entity
+            context.world-map
             game.context
             game.ui.action-bar
             game.ui.inventory-window)
@@ -54,9 +54,7 @@
                                                          :flying    ; flying creatures
                                                          :effect])  ; projectiles, nova
                        (context.mouseover-entity/->context-map)
-                       (context.world-map/->context-map context)
-                       {:context/running (atom true)})
-        player-entity (create-entities-from-tiledmap! context)
-        context (assoc context :context/player-entity player-entity)]
+                       {:context/running (atom true)})]
     (game.ui.action-bar/reset-skills!)
-    context))
+    (merge context
+           (context.world-map/->context context))))

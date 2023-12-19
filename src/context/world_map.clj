@@ -1,5 +1,6 @@
 (ns context.world-map
   (:require [clojure.edn :as edn]
+            [gdl.maps.tiled :as tiled]
             [data.grid2d :as grid]
             gdl.context
             gdl.disposable
@@ -77,7 +78,7 @@
                            {:is-player true}
                            context))
 
-(deftype Disposable-State []
+(deftype Disposable-State [] ; TODO let world-map record implement this so tiledmaps get disposed
   gdl.disposable/Disposable
   (dispose [_]
     ; TODO dispose tiledmap of context/world-map => make disposable record
@@ -89,14 +90,12 @@
               :when tiled-map]
         (tiled/dispose tiled-map)))))
 
-(defn ->context-map [{:keys [context/properties]}]
-  (let [world-map (create-world-map (first-level properties))
-
-        ])
-  {:context/world-map world-map
-   ; TODO here context/world-map
-   ; :game.maps.data (game.maps.data/->Disposable-State)
-   })
+(defn ->context [{:keys [context/properties] :as context}]
+  (let [context (merge context
+                       {:context/world-map (create-world-map (first-level properties))})
+        player-entity (create-entities-from-tiledmap! context)]
+    (merge context
+           {:context/player-entity player-entity})))
 
 
 ; TODO extend here game.context ( also properties do  )

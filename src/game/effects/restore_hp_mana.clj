@@ -1,5 +1,5 @@
 (ns game.effects.restore-hp-mana
-  (:require [gdl.protocols :refer [play-sound!]]
+  (:require [gdl.context :refer [play-sound!]]
             [data.val-max :refer [lower-than-max? set-to-max]]
             [game.effect :as effect]))
 
