@@ -116,7 +116,25 @@
 (defn- no-hp-left? [hp]
   (zero? (hp 0)))
 
-(defn- deal-damage! [context {dmg-type 0 :as damage} {:keys [source target]}]
+(defn- damage->text [[dmg-type [min-dmg max-dmg]]]
+  (str min-dmg "-" max-dmg " " (name dmg-type) " damage"))
+
+(defmethod effect/text :damage
+  [{:keys [source]} damage]
+  (let [modified (effective-damage damage @source)]
+    (if (= damage modified)
+      (damage->text damage)
+      (str (damage->text damage) "\nModified: " (damage->text modified)))) )
+
+(defmethod effect/valid-params? :damage
+  [{:keys [source target]} _effect-val]
+  (and source
+       target
+       (:hp @target)))
+
+(defmethod effect/do! :damage
+  [{:keys [effects/source
+           effects/target] :as context} {dmg-type 0 :as damage}]
   (cond
    (no-hp-left? (:hp @target))
    nil
@@ -138,19 +156,6 @@
                          (update :hp apply-val #(- % dmg-amount))
                          (string-effect/add (str "[RED]" dmg-amount)))))
      (send-event! context target
-                  (if (no-hp-left? (:hp @target)) :kill :alert)))))
-
-(defn- damage->text [[dmg-type [min-dmg max-dmg]]]
-  (str min-dmg "-" max-dmg " " (name dmg-type) " damage"))
-
-(effect/component :damage
-  {:text (fn [_context damage {:keys [source]}]
-           (let [modified (effective-damage damage @source)]
-             (if (= damage modified)
-               (damage->text damage)
-               (str (damage->text damage) "\nModified: " (damage->text modified)))))
-   :valid-params? (fn [_context _effect-val {:keys [source target]}]
-                    (and source
-                         target
-                         (:hp @target)))
-   :do! deal-damage!})
+                  (if (no-hp-left? (:hp @target))
+                    :kill
+                    :alert)))))

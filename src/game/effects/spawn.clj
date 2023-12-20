@@ -24,17 +24,21 @@
  ; keys: :faction(:source)/:target-position/:creature-id
  )
 
-(effect/component :spawn
-  {:text (fn [_context creature-id _params]
-           (str "Spawns a " creature-id)) ; pretty name
-   :valid-params? (fn [_context _effect-val {:keys [source target-position]}]
-                    ; TODO line of sight ? / not blocked ..
-                    (and source
-                         (:faction @source)
-                         target-position))
-   :do! (fn [context creature-id {:keys [source target-position]}]
-          (creature-entity context
-                           creature-id
-                           target-position
-                           {:faction (:faction @source)
-                            :initial-state :idle}))})
+(defmethod effect/text :spawn
+  [_context [_ creature-id]]
+  (str "Spawns a " creature-id))
+
+(defmethod effect/valid-params? :spawn
+  [{:keys [source target-position]} _effect]
+  ; TODO line of sight ? / not blocked ..
+  (and source
+       (:faction @source)
+       target-position))
+
+(defmethod effect/do! :spawn
+  [{:keys [source target-position]} [_ creature-id]]
+  (creature-entity context
+                   creature-id
+                   target-position
+                   {:faction (:faction @source)
+                    :initial-state :idle}))

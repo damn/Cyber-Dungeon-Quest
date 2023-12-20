@@ -15,7 +15,8 @@
 (def ^:private maxtime (/ maxrange (/ speed 1000)))
 
 ; TODO valid params direction has to be  non-nil (entities not los player ) ?
-(defmethod effect/useful? :projectile [_ effect-params context entity*]
+(defmethod effect/useful? :projectile
+  [context _effect]
   (let [target (:target effect-params)]
     (and (not (path-blocked? context
                              (:position entity*) ; TODO test
@@ -46,20 +47,24 @@
                                  [1 12])]
                     :frame-duration 500))
 
-(effect/component :projectile
-  {:text (fn [context _effect-val params]
-           (effect-text (merge context params) hit-effect))
+(defmethod effect/text :projectile
+  [context _effect]
+  (effect-text (merge context params) hit-effect))
+
+(defmethod effect/valid-params? :projectile
+  [{:keys [target]} _effect]
    ; TODO source,direction
-   :valid-params? (fn [_context _effect-val {:keys [target]}]
-                    target)
-   :do! (fn [context _ {:keys [source direction]}]
-          (projectile-entity context
-                             {:position (:position @source)
-                              :faction  (:faction  @source)
-                              :size size
-                              :animation (black-projectile context)
-                              :speed speed
-                              :movement-vector direction
-                              :maxtime maxtime
-                              :piercing false
-                              :hit-effect hit-effect}))})
+  target)
+
+(defmethod effect/do! :projectile
+  [{:keys [source direction]} _effect]
+  (projectile-entity context
+                     {:position (:position @source)
+                      :faction  (:faction  @source)
+                      :size size
+                      :animation (black-projectile context)
+                      :speed speed
+                      :movement-vector direction
+                      :maxtime maxtime
+                      :piercing false
+                      :hit-effect hit-effect}))

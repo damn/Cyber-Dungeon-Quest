@@ -3,18 +3,25 @@
             [data.val-max :refer [lower-than-max? set-to-max]]
             [game.effect :as effect]))
 
-(defmethod effect/useful? :restore-hp-mana [_ _effect-params _context entity*]
+; TODO make with 'target' then can use as hit-effect too !
+; ==> choose self or allies (or enemies)
+
+(defmethod effect/useful? :restore-hp-mana
+  [_context _effect]
   (or (lower-than-max? (:mana entity*))
       (lower-than-max? (:hp   entity*))))
 
-; TODO make with 'target' then can use as hit-effect too !
-(effect/component :restore-hp-mana
-  {:text (fn [_context _effect-val _params]
-           "Restores full hp and mana.")
-   :valid-params? (fn [_context _effect {:keys [source]}]
-                    source)
-   :do! (fn [context _effect-val {:keys [source]}]
-          (play-sound! context "sounds/bfxr_drugsuse.wav")
-          (swap! source #(-> %
-                             (update :hp set-to-max)
-                             (update :mana set-to-max))))})
+(defmethod effect/text :restore-hp-mana
+  [_context _effect]
+  "Restores full hp and mana.")
+
+(defmethod effect/valid-params? :restore-hp-mana
+  [{:keys [source]} _effect]
+  source)
+
+(defmethod effect/do! :restore-hp-mana
+  [{:keys [source]} _effect]
+  (play-sound! context "sounds/bfxr_drugsuse.wav")
+  (swap! source #(-> %
+                     (update :hp set-to-max)
+                     (update :mana set-to-max))))
