@@ -11,9 +11,16 @@
             [utils.core :refer :all]
             [game.context :refer (get-entities-in-active-content-fields)]
             [game.components.faction :as faction]
-            [game.maps.cell-grid :refer (cached-get-adjacent-cells cell-blocked?
-                                                                   is-diagonal? inside-cell?
-                                                                   fast-cell-blocked?)]))
+            [game.maps.cell-grid :as cell-grid]))
+
+(defn- cached-get-adjacent-cells [cell-grid cell]
+  (if-let [result (:adjacent-cells @cell)]
+    result
+    (let [result (map cell-grid (-> @cell
+                                    :position
+                                    grid/get-8-neighbour-positions))]
+      (swap! cell assoc :adjacent-cells result)
+      result)))
 
 (defn- occupied-by-other?
   "returns true if there is some solid body with center-tile = this cell
@@ -22,6 +29,18 @@
   (seq (disj (:occupied @cell) entity)))
 
 (def ^:private max-iterations 15)
+
+(defn- diagonal-direction? [[x y]]
+  (and (not (zero? x))
+       (not (zero? y))))
+
+(comment
+ (defn is-diagonal? [from to]
+   (let [[fx fy] (:position @from)
+         [tx ty] (:position @to)
+         xdir (- tx fx)
+         ydir (- ty fy)]
+     (diagonal-direction? [xdir ydir]))))
 
 (defn- fast-is-diagonal? [cell* other-cell*]
   (let [[x1 y1] (:position cell*)
@@ -44,7 +63,7 @@
             adjacent-cell (cached-get-adjacent-cells cell-grid cell)
             :let [cell* @cell
                   adjacent-cell* @adjacent-cell]
-            :when (not (or (fast-cell-blocked? adjacent-cell*) ; filters nil cells
+            :when (not (or (cell-grid/fast-cell-blocked? adjacent-cell*) ; filters nil cells
                            (marked? adjacent-cell*)))
             :let [distance-value (+ (distance cell*)
                                     ; TODO new bottleneck is-diagonal?
@@ -159,7 +178,7 @@
 ; not using filter because nil cells considered @ remove-not-allowed-diagonals
 (defn- filter-viable-cells [entity adjacent-cells]
   (remove-not-allowed-diagonals
-    (mapv #(when-not (or (cell-blocked? %)
+    (mapv #(when-not (or (cell-grid/cell-blocked? %)
                          (occupied-by-other? % entity))
              %)
           adjacent-cells)))
@@ -209,6 +228,11 @@
                          (or
                           (some #(viable-cell? cell-grid distance-to own-dist entity %) cells)
                           own-cell)))}))))
+
+(defn- inside-cell? [cell-grid entity* cell]
+  (let [touched-cells (cell-grid/rectangle->touched-cells cell-grid (:body entity*))]
+    (and (= 1 (count touched-cells))
+         (= cell (first touched-cells)))))
 
 (extend-type gdl.context.Context
   game.context/PotentialField

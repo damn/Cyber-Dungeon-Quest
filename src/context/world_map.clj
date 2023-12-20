@@ -133,8 +133,9 @@
          (not (ray-blocked? context (:position source*) (:position target*)))))
 
   (circle->touched-entities [{:keys [context/world-map]} circle]
-    (cell-grid/circle->touched-entities (:cell-grid world-map)
-                                        circle))
+    (->> (cell-grid/circle->touched-cells (:cell-grid world-map) circle)
+         cell-grid/get-entities-from-cells
+         (filter #(geom/collides? circle (:body @%)))))
 
   (ray-blocked? [{:keys [context/world-map]} start target]
     (let [{:keys [cell-blocked-boolean-array width height]} world-map]

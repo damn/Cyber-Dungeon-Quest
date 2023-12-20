@@ -46,10 +46,6 @@
   [ks f]
   (zipmap ks (map f ks)))
 
-(defn diagonal-direction? [[x y]]
-  (and (not (zero? x))
-       (not (zero? y))))
-
 (defn int-posi [p] (mapv int p))
 
 ;; Order
