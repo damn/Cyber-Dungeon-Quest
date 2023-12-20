@@ -19,4 +19,5 @@
   (update-mouseover-entity [_]))
 
 (defprotocol World
-  (get-entities-in-active-content-fields [_]))
+  (get-entities-in-active-content-fields [_])
+  (entities-at-position [_ position]))

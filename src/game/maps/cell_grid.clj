@@ -110,11 +110,6 @@
        get-entities-from-cells
        (filter #(geom/collides? circle (:body @%)))))
 
-(defn get-bodies-at-position [cell-grid position]
-  (when-let [cell (get cell-grid (mapv int position))]
-    (filter #(geom/point-in-rect? position (:body @%))
-            (get-entities cell))))
-
 (defn ray-blocked? [{:keys [cell-blocked-boolean-array width height]} start target]
   (raycaster/ray-blocked? cell-blocked-boolean-array width height start target))
 

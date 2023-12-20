@@ -1,6 +1,7 @@
 (ns context.world-map
   (:require [clojure.edn :as edn]
             [gdl.maps.tiled :as tiled]
+            [gdl.math.geom :as geom]
             [data.grid2d :as grid]
             [gdl.context :refer [all-properties]]
             gdl.disposable
@@ -59,6 +60,9 @@
         (swap! (:entities old-field) disj entity)))))
 
 (defn- get-player-content-field-idx [{:keys [context/player-entity]}]
+  (println " (:idx (get-content-field @player-entity))"
+           (:idx (get-content-field @player-entity))
+           )
   (:idx (get-content-field @player-entity)))
 
 (extend-type gdl.context.Context
@@ -68,7 +72,12 @@
             (remove nil?
                     (map (get-contentfields context)  ; keep (get-contentfields)  ?  also @ potential field thing
                          (let [idx (get-player-content-field-idx context)]
-                           (cons idx (grid/get-8-neighbour-positions idx))))))))
+                           (cons idx (grid/get-8-neighbour-positions idx)))))))
+
+  (entities-at-position [{:keys [context/world-map]} position]
+    (when-let [cell (get (:cell-grid world-map) (mapv int position))]
+      (filter #(geom/point-in-rect? position (:body @%))
+              (cell-grid/get-entities cell)))))
 
 #_(defn get-all-entities-of-current-map [context]
   (mapcat #(deref (:entities %)) (grid/cells (get-contentfields context))))
