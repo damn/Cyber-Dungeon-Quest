@@ -28,7 +28,9 @@
                  "path-w in tiles. casts two rays.")
   (explored?     [_ position])
   (set-explored! [_ position])
+  ; world-cell-grid?
   (get-cell-grid [_])
+  ; world-cell?
   (get-cell [_ position]
             "Converts position to integer."))
 

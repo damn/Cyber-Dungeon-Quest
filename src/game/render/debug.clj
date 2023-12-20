@@ -9,9 +9,9 @@
 
 ; TODO make check-buttons with debug-window or MENU top screen is good for debug I think
 
-(defn- geom-test [context]
+(defn- geom-test [c]
   (let [position (world-mouse-position c)
-        cell-grid (get-cell-grid context)
+        cell-grid (get-cell-grid c)
         radius 0.8
         circle {:position position :radius radius}]
     (draw-circle c position radius (color/rgb 1 0 0 0.5))

@@ -8,12 +8,19 @@
             [gdl.math.raycaster :as raycaster]
             [gdl.math.vector :as v]
             [data.grid2d :as grid]
-            [utils.core :refer [translate-to-tile-middle]]
+            [utils.core :refer [->tile tile->middle]]
             [context.world.cell-grid :refer [create-cell-grid]]
-            [game.context :refer [creature-entity ray-blocked?]]
-            [game.world.cell-grid :refer [circle->touched-cells cells->entities]]
+            [game.context :refer [creature-entity ray-blocked? get-cell]]
+            [game.world.cell-grid :refer [circle->touched-cells]]
+            [game.world.cell :as cell :refer [cells->entities]]
             [mapgen.movement-property :refer (movement-property)]
             mapgen.module-gen))
+
+; rename this to context.world (can have multiple world-maps later)
+; rename cell-grid just to grid
+; get-grid => world-grid
+; get-cell => world-cell
+; and protocols also rename folders
 
 ;;
 
@@ -166,7 +173,7 @@
                                              ; TODO move to properties
                                              (assoc (edn/read-string (slurp "resources/maps/map.edn"))
                                                     :creature-properties (all-properties context :creature)))
-        start-position (translate-to-tile-middle
+        start-position (tile->middle
                         (rand-nth (filter #(= "all" (movement-property tiled-map %))
                                           start-positions)))]
     {:map-key :first-level
@@ -226,7 +233,7 @@
   (doseq [[posi creature-id] (tiled/positions-with-property tiled-map :creatures :id)]
     (creature-entity context
                      creature-id
-                     (translate-to-tile-middle posi)
+                     (tile->middle posi)
                      {:initial-state :sleeping}))
   ; otherwise will be rendered, is visible, can also just setVisible layer false
   (tiled/remove-layer! tiled-map :creatures))

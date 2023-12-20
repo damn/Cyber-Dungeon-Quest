@@ -6,7 +6,7 @@
             [context.ecs :as entity]
             [game.context :refer [get-cell-grid]]
             [game.world.cell-grid :refer [rectangle->touched-cells]]
-            [game.world.cell :as cell])
+            [game.world.cell :as cell :refer [cells->entities]])
   (:import com.badlogic.gdx.graphics.Color))
 
 (defn- remove-from-occupied-cells! [entity]
@@ -22,20 +22,20 @@
           [(int (+ (left-bottom 0) (/ width 2)))
            (int (+ (left-bottom 1) (/ height 2)))])]))
 
-(defn- set-occupied-cells! [cell-grid e]
-  (let [cells (rectangle->occupied-cells cell-grid (:body @e))]
+(defn- set-occupied-cells! [cell-grid entity]
+  (let [cells (rectangle->occupied-cells cell-grid (:body @entity))]
     (doseq [cell cells]
-      (swap! cell cell/add-occupying-entity e))
-    (swap! e assoc :occupied-cells cells)))
+      (swap! cell cell/add-occupying-entity entity))
+    (swap! entity assoc :occupied-cells cells)))
 
-(defn- set-touched-cells! [e new-cells]
+(defn- set-touched-cells! [entity new-cells]
   {:pre [(not-any? nil? new-cells)]}
-  (swap! e assoc :touched-cells new-cells)
+  (swap! entity assoc :touched-cells new-cells)
   (doseq [cell new-cells]
     (swap! cell cell/add-entity entity)))
 
-(defn- remove-from-touched-cells! [e]
-  (doseq [cell (:touched-cells @e)]
+(defn- remove-from-touched-cells! [entity]
+  (doseq [cell (:touched-cells @entity)]
     (swap! cell cell/remove-entity entity)))
 
 (defn- update-touched-cells! [e touched-cells]

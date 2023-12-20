@@ -1,7 +1,8 @@
 (ns context.world.cell-grid
   (:require [data.grid2d :as grid2d]
             [gdl.math.geom :as geom]
-            game.world.cell-grid
+            [utils.core :refer [tile->middle]]
+            [game.world.cell-grid :refer [rectangle->touched-cells]]
             game.world.cell))
 
 (defn- rectangle->touched-tiles
@@ -57,6 +58,7 @@
   (add-entity [this entity]
     (assert (not (get entities entity)))
     (update this :entities conj entity))
+
   (remove-entity [this entity]
     (assert (get entities entity))
     (update this :entities disj entity))
@@ -64,27 +66,30 @@
   (add-occupying-entity [this entity]
     (assert (not (get occupied entity)))
     (update this :occupied conj entity))
+
   (remove-occupying-entity [this entity]
     (assert (get occupied entity))
     (update this :occupied disj entity))
 
-  (blocked?
-    ([this]
-     (blocked? this {}))
-    ([this {:keys [is-flying]}] ; TODO only used for boolean array thingy
-     (case movement
-           :none true
-           :air (not is-flying)
-           :all false)))
+  (blocked? [_]
+    (= :none movement))
+
+  (blocked? [_ {:keys [is-flying]}]
+    (case movement
+      :none true
+      :air (not is-flying)
+      :all false))
 
   (occupied-by-other? [_ entity]
     (seq (disj occupied entity))))
+
+
 
 (defn- create-cell [position movement]
   {:pre [(#{:none :air :all} movement)]}
   (map->Cell
    {:position position
-    :middle (translate-to-tile-middle position)
+    :middle (tile->middle position)
     :movement movement
     :entities #{}
     :occupied #{}}))

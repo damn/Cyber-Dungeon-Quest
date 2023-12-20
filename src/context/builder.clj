@@ -206,6 +206,8 @@
                             :is-solid false
                             :rotation-angle 0
                             :rotate-in-movement-direction? true}
+                     ; TODO forgot to add :is-flying true !!!
+                     ; blocked by stones which I can see over
                      :z-order :effect
                      :speed speed
                      :movement-vector movement-vector

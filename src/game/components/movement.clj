@@ -7,8 +7,8 @@
             [game.context :refer [audiovisual get-cell-grid]]
             [game.effect :as effect]
             [game.components.body :as body]
-            [game.world.cell-grid :refer [rectangle->touched-cells cells->entities]]
-            [game.world.cell :as cell]))
+            [game.world.cell-grid :refer [rectangle->touched-cells]]
+            [game.world.cell :as cell :refer [cells->entities]]))
 
 (defn- apply-delta-v [entity* delta v]
   (let [{:keys [speed]} (:speed entity*)

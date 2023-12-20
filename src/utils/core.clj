@@ -103,11 +103,6 @@
     (int x)
     (round-n-decimals x 2)))
 
-(defn translate-to-tile-middle
-  "translate position to middle of tile becuz. body position is also @ middle of tile."
-  [p]
-  (mapv (partial + 0.5) p))
-
 (defmacro when-seq [[aseq bind] & body]
   `(let [~aseq ~bind]
      (when (seq ~aseq)
@@ -125,7 +120,8 @@
         (throw (IllegalArgumentException. (str "Cannot find " k)))
         result))))
 
-(defn ->tile
-  "Converts the position to integer with (mapv int position)."
-  [position]
+(defn ->tile [position]
   (mapv int position))
+
+(defn tile->middle [position]
+  (mapv (partial + 0.5) position))
