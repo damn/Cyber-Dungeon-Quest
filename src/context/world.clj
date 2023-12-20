@@ -13,8 +13,7 @@
             [context.world.content-grid :refer [->content-grid]]
             [game.context :refer [creature-entity ray-blocked? content-grid world-grid world-cell]]
             [game.world.content-grid :as content-grid]
-            [game.world.grid :refer [circle->cells]]
-            [game.world.cell :as cell :refer [cells->entities]]
+            [game.world.cell :as cell]
             [mapgen.movement-property :refer (movement-property)]
             mapgen.module-gen))
 

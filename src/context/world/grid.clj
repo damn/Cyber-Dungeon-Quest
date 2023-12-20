@@ -2,7 +2,7 @@
   (:require [data.grid2d :as grid2d]
             [gdl.math.geom :as geom]
             [utils.core :refer [tile->middle]]
-            [game.world.grid :refer [rectangle->cells circle->cells]]
+            [game.world.grid :refer [rectangle->cells circle->cells valid-position?]]
             [game.world.cell :as cell :refer [cells->entities]]))
 
 (defn- rectangle->tiles
@@ -75,8 +75,8 @@
     (if-let [result (:adjacent-cells @cell)]
       result
       (let [result (keep grid (-> @cell
-                                       :position
-                                       grid2d/get-8-neighbour-positions))]
+                                  :position
+                                  grid2d/get-8-neighbour-positions))]
         (swap! cell assoc :adjacent-cells result)
         result)))
 
@@ -108,6 +108,7 @@
                                     (geom/collides? (:body %) (:body entity*)))))))))
 
   (add-entity! [grid entity]
+    ;(assert (valid-position? grid @entity)) ; TODO deactivate because projectile no left-bottom remove that field or update properly for all
     (set-cells! grid entity)
     (when (:is-solid @entity) (set-occupied-cells! grid entity)))
 
@@ -116,6 +117,7 @@
     (when (:is-solid @entity) (remove-from-occupied-cells! entity)))
 
   (entity-position-changed! [grid entity]
+    ;(assert (valid-position? grid @entity)) ; TODO deactivate because projectile no left-bottom remove that field or update properly for all
     (update-cells! grid entity)
     (when (:is-solid @entity) (update-occupied-cells! grid entity))))
 

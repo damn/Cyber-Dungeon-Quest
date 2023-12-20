@@ -7,22 +7,25 @@
             [game.context :refer [audiovisual world-grid]]
             [game.effect :as effect]
             [game.components.body :as body]
-            [game.world.grid :refer [rectangle->cells]]
+            [game.world.grid :refer [rectangle->cells valid-position?]]
             [game.world.cell :as cell :refer [cells->entities]]))
 
+; TODO check max-speed for not skipping min-size-bodies
+; (* speed multiplier delta )
+; probably fixed timestep 17 ms or something
+; if speed > max speed, then make multiple smaller updates
+; -> any kind of speed possible (fast arrows)
 (defn- apply-delta-v [entity* delta v]
-  (let [{:keys [speed]} (:speed entity*)
-        ; TODO check max-speed (* speed multiplier delta )
+  (let [speed (:entity/movement entity*)
         apply-delta (fn [p]
                       (mapv #(+ %1 (* %2 speed delta))
                             p
                             v))]
     (-> entity*
-        (update :position    apply-delta)
-        ; TODO on-position changed trigger make..
-        (update-in [:body :left-bottom] apply-delta)))) ; TODO left-bottom/center of 'body' has on-position-changed?
-; but need to check here ... lets see
+        (update :position apply-delta)
+        (update-in [:body :left-bottom] apply-delta))))
 
+; TODO DRY with valid-position?
 (defn- update-position-projectile [context projectile delta v]
   (swap! projectile apply-delta-v delta v)
   (let [{:keys [hit-effects
@@ -30,8 +33,6 @@
                 piercing]} (:projectile-collision @projectile)
         grid (world-grid context)
         cells (rectangle->cells grid (:body @projectile))
-        ; valid-position? for solid entity check
-        ; on invalid returns {:hit-entities, :or :cells}'
         hit-entity (find-first #(and (not (contains? already-hit-bodies %))
                                      (not= (:faction @projectile) (:faction @%))
                                      (:is-solid (:body @%))
@@ -55,50 +56,40 @@
        false) ; not moved
       true))) ; moved
 
-(defn- try-move [context entity delta v]
+(defn- try-move [grid entity delta v]
   (let [entity* (apply-delta-v @entity delta v)]
-    (when (body/valid-position? context entity*)
+    (when (valid-position? grid entity*)
       (reset! entity entity*)
       true)))
 
-(defn- update-position-solid [context entity delta {vx 0 vy 1 :as v}]
+(defn- update-position-solid [grid entity delta {vx 0 vy 1 :as v}]
   (let [xdir (Math/signum (float vx))
         ydir (Math/signum (float vy))]
-    (or (try-move context entity delta v)
-        (try-move context entity delta [xdir 0])
-        (try-move context entity delta [0 ydir]))))
+    (or (try-move grid entity delta v)
+        (try-move grid entity delta [xdir 0])
+        (try-move grid entity delta [0 ydir]))))
 
 ; das spiel soll bei 20fps noch "schnell" sein,d.h. net langsamer werden (max-delta wirkt -> game wird langsamer)
+; TODO makes no sense why should it be fast then
 ; 1000/20 = 50
 (def max-delta 50)
 
 ; max speed damit kleinere bodies beim direkten dr�berfliegen nicht �bersprungen werden (an den ecken werden sie trotzdem �bersprungen..)
 ; schnellere speeds m�ssten in mehreren steps sich bewegen.
-(def ^:private max-speed (* 1000 (/ body/min-solid-body-size max-delta)))
+(def ^:private max-speed (* 1000 (/ body/min-solid-body-size max-delta))) ; TODO is not checked
 ; => world-units / second
-; TODO also max speed limited by tile-size !! another max. value ! independent of min-solid-body size
 
-; TODO check if speed > max speed, then make multiple smaller updates
-; -> any kind of speed possible (fast arrows)
+(defcomponent :entity/movement speed-in-seconds
+  (entity/create! [_ e _ctx]
+    (assert (and (:body @e) (:position @e)))
+    (swap! e assoc :entity/movement (/ speed-in-seconds 1000)))
 
-; TODO put movement-vector here also, make 'movement' component
-; and further above 'body' component
-(defcomponent :speed speed-in-seconds ; movement speed-in-seconds
-  (entity/create! [[k _] e _ctx]
-    (assert (and (:body @e)
-                 (:position @e)))
-    (swap! e assoc k {:speed (/ speed-in-seconds 1000)}))
-  ; TODO make update w. movement-vector (add-component :movement-vector?)
-  ; all assoc key to entity main map == add/remove component ?!
-  ; how to do this with assoc/dissoc ?
   (entity/tick! [_ context e delta]
-    ; TODO direction-vector not 'v' , 'v' is value
-    (when-let [v (:movement-vector @e)]
-      (assert (or (zero? (v/length v)) ; TODO what is the point of zero length vectors?
-                  (v/normalised? v)))
-      (when-not (zero? (v/length v))
+    (when-let [direction (:movement-vector @e)]
+      (assert (or (zero? (v/length direction)) ; TODO what is the point of zero length vectors?
+                  (v/normalised? direction)))
+      (when-not (zero? (v/length direction))
         (when-let [moved? (if (:projectile-collision @e)
-                            ; => move! called on body itself ???
-                            (update-position-projectile context e delta v)
-                            (update-position-solid      context e delta v))]
-          (doseq-entity e entity/moved! context v))))))
+                            (update-position-projectile context e delta direction)
+                            (update-position-solid (world-grid context) e delta direction))]
+          (doseq-entity e entity/moved! context direction))))))

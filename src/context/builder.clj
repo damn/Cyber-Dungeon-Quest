@@ -3,7 +3,7 @@
             [gdl.context :refer [create-image play-sound! get-property]]
             [gdl.graphics.animation :as animation]
             [game.context :refer [create-entity!]]
-            [game.components.body :refer (assoc-left-bottom valid-position?)]
+            [game.components.body :refer (assoc-left-bottom)]
             (game.components.state
              [active-skill :as active-skill]
              [npc-dead :as npc-dead]
@@ -125,7 +125,7 @@
            {:body {:width width
                    :height height
                    :is-solid true}
-            :speed speed
+            :entity/movement speed
             :hp hp
             :mana 11
             :is-flying false
@@ -154,11 +154,7 @@
                       (create-creature-data creature-params context)
                       (assoc :position position)
                       assoc-left-bottom)]
-      (if (valid-position? context entity*)
-        (create-entity! context entity*)
-        (do
-         (println "Not able to spawn" creature-id "at" position)
-         (throw (Error. (str "Not able to spawn " creature-id " at " position)))))))
+      (create-entity! context entity*)))
 
   (audiovisual [context position id]
     (let [{:keys [sound animation]} (get-property context id)]
@@ -209,7 +205,7 @@
                      ; TODO forgot to add :is-flying true !!!
                      ; blocked by stones which I can see over
                      :z-order :effect
-                     :speed speed
+                     :entity/movement speed
                      :movement-vector movement-vector
                      :animation animation
                      :delete-after-duration maxtime

@@ -4,7 +4,7 @@
             [gdl.math.vector :as v]
             [context.ecs :as entity]
             [game.context :refer [world-grid]]
-            [game.world.grid :refer [add-entity! remove-entity! entity-position-changed! valid-position?]])
+            [game.world.grid :refer [add-entity! remove-entity! entity-position-changed!]])
   (:import com.badlogic.gdx.graphics.Color))
 
 ; setting a min-size for colliding bodies so movement can set a max-speed for not
@@ -51,17 +51,15 @@
 
   (entity/create! [_ entity context]
     (assert (:position @entity))
-    ;(assert (valid-position? context @e)) ; TODO error because projectiles do not have left-bottom !
     (swap! entity assoc-left-bottom)
     (add-entity! (world-grid context) entity))
 
-  (entity/destroy! [_ e context]
+  (entity/destroy! [_ entity context]
     (remove-entity! (world-grid context) entity))
 
-  (entity/moved! [_ e context direction-vector]
-    (assert (valid-position? context @e))
+  (entity/moved! [_ entity context direction-vector]
     (when rotate-in-movement-direction?
-      (swap! e assoc-in [:body :rotation-angle] (v/get-angle-from-vector direction-vector)))
+      (swap! entity assoc-in [:body :rotation-angle] (v/get-angle-from-vector direction-vector)))
     (entity-position-changed! (world-grid context) entity))
 
   (entity/render-debug [_ c e*]
