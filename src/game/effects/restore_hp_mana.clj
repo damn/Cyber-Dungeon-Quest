@@ -7,9 +7,9 @@
 ; ==> choose self or allies (or enemies)
 
 (defmethod effect/useful? :effects/restore-hp-mana
-  [_context _effect]
-  (or (lower-than-max? (:mana entity*))
-      (lower-than-max? (:hp   entity*))))
+  [{:keys [effect/source]} _effect]
+  (or (lower-than-max? (:mana @source))
+      (lower-than-max? (:hp   @source))))
 
 (defmethod effect/text :effects/restore-hp-mana
   [_context _effect]
@@ -20,7 +20,7 @@
   source)
 
 (defmethod effect/do! :effects/restore-hp-mana
-  [{:keys [effect/source]} _effect]
+  [{:keys [effect/source] :as context} _effect]
   (play-sound! context "sounds/bfxr_drugsuse.wav")
   (swap! source #(-> %
                      (update :hp set-to-max)

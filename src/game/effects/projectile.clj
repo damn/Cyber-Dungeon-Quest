@@ -17,7 +17,7 @@
 ; TODO valid params direction has to be  non-nil (entities not los player ) ?
 (defmethod effect/useful? :effects/projectile
   [{:keys [effect/source
-           effect/target]}
+           effect/target] :as context}
    _effect]
   (and (not (path-blocked? context
                            (:position @source) ; TODO test
@@ -61,7 +61,7 @@
 
 (defmethod effect/do! :effects/projectile
   [{:keys [effect/source
-           effect/direction]}
+           effect/direction] :as context}
    _effect]
   (projectile-entity context
                      {:position (:position @source)

@@ -4,7 +4,7 @@
             game.context))
 
 ; TODO spell effect-text only effect/source
-; @ game.skill/text ... o.o
+; @ game.skill/text ... o.o,need to know that @ texts
 ; TODO no default - make sure is no typo - better have to implement all ?
 ; => make macro defmethods
 ; TODO @do-effecT! validparam check
@@ -12,8 +12,12 @@
 ; maybe just checks required-keys , list of required keys
 ; we also need to check the effect-value too (for property editor also)
 
-(defn- by-type [_context [type _value]]
-  (assert (= "effects" (namespace type)))
+(defn- by-type [_context [type value]]
+  (assert (keyword? type)
+          (str "Type is not a keyword: " type " and value: " value)
+          )
+  (assert (= "effects" (namespace type))
+          (str "Effect keys need to have :effects/ keyword namespace type: " type " , value: " value))
   type)
 
 (defmulti do!           by-type)
@@ -27,9 +31,9 @@
 (defmethod useful? :default [_ _] true)
 
 (extend-type gdl.context.Context
-  game.context.EffectInterpreter
+  game.context/EffectInterpreter
   (do-effect! [context effect]
-    (assert (valid-params? context effect))
+    (assert (game.context/valid-params? context effect))
     (doseq [component effect]
       (do! context component)))
 

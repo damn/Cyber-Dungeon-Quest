@@ -38,7 +38,7 @@
 
 (defmethod effect/do! :effects/spawn
   [{:keys [effect/source
-           effect/target-position]}
+           effect/target-position] :as context}
    [_ creature-id]]
   (creature-entity context
                    creature-id

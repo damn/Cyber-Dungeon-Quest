@@ -1,29 +1,29 @@
-({:id :spawn,
+({:id :spells/spawn,
   :spell? true,
   :action-time 400,
   :cooldown 0,
   :cost 0,
-  :effect [:spawn :bat],
+  :effect [[:effects/spawn :bat]],
   :image {:file "skills/images.png", :sub-image-bounds (160 64 32 32)}}
- {:id :projectile,
+ {:id :spells/projectile,
   :spell? true,
   :action-time 400,
   :cooldown 0,
   :cost 4,
-  :effect [:projectile true],
+  :effect [[:effects/projectile true]],
   :image {:file "skills/images.png", :sub-image-bounds (96 32 32 32)}}
- {:id :meditation,
+ {:id :spells/meditation,
   :spell? true,
   :action-time 7000,
   :cooldown 0,
   :cost 1,
-  :effect [:restore-hp-mana true],
+  :effect [[:effects/restore-hp-mana true]],
   :image {:file "skills/images.png", :sub-image-bounds (64 96 32 32)}}
- {:id :nova,
+ {:id :spells/nova,
   :spell? true,
   :action-time 300,
   :cooldown 0,
-  :effect [:nova true],
+  :effect [[:effects/nova true]],
   :image {:file "skills/images.png", :sub-image-bounds (0 64 32 32)}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds (336 48 48 48)},
@@ -516,7 +516,7 @@
   :skills #{},
   :items #{}}
  {:level 1,
-  :skills #{:projectile :meditation},
+  :skills #{:spells/projectile :spells/meditation},
   :id :wizard,
   :image {:file "creatures/images.png", :sub-image-bounds (0 0 48 48)},
   :species :species/human,
@@ -845,8 +845,8 @@
   :id :staff,
   :image {:file "items/images.png", :sub-image-bounds (528 144 48 48)},
   :effect
-  [:target-entity
-   {:maxrange 0.6, :hit-effects [[:damage [:physical [3 6]]]]}]}
+  [[:effects/target-entity
+    {:maxrange 0.6, :hit-effect [[:effects/damage [:physical [3 6]]]]}]]}
  {:image {:file "items/images.png", :sub-image-bounds (432 624 48 48)},
   :slot :boot,
   :id :mystic-boot,
@@ -862,8 +862,8 @@
   :id :axe,
   :image {:file "items/images.png", :sub-image-bounds (336 96 48 48)},
   :effect
-  [:target-entity
-   {:maxrange 0.5, :hit-effects [[:damage [:physical [5 10]]]]}]}
+  [[:effects/target-entity
+    {:maxrange 0.5, :hit-effect [[:effects/damage [:physical [5 10]]]]}]]}
  {:image {:file "items/images.png", :sub-image-bounds (0 432 48 48)},
   :slot :helm,
   :id :cloth-helm,
@@ -883,8 +883,8 @@
   :id :dagger,
   :image {:file "items/images.png", :sub-image-bounds (48 96 48 48)},
   :effect
-  [:target-entity
-   {:maxrange 0.5, :hit-effects [[:damage [:physical [2 5]]]]}]}
+  [[:effects/target-entity
+    {:maxrange 0.5, :hit-effect [[:effects/damage [:physical [2 5]]]]}]]}
  {:image {:file "items/images.png", :sub-image-bounds (480 528 48 48)},
   :slot :cloak,
   :id :cloak-royal,
@@ -1180,8 +1180,8 @@
   :id :sword,
   :image {:file "items/images.png", :sub-image-bounds (0 96 48 48)},
   :effect
-  [:target-entity
-   {:maxrange 0.5, :hit-effects [[:damage [:physical [5 10]]]]}]}
+  [[:effects/target-entity
+    {:maxrange 0.5, :hit-effect [[:effects/damage [:physical [5 10]]]]}]]}
  {:image {:file "items/images.png", :sub-image-bounds (384 432 48 48)},
   :slot :helm,
   :id :wild-helm,
@@ -1237,8 +1237,8 @@
   :id :staff-ankh,
   :image {:file "items/images.png", :sub-image-bounds (624 144 48 48)},
   :effect
-  [:target-entity
-   {:maxrange 0.6, :hit-effects [[:damage [:physical [3 6]]]]}]}
+  [[:effects/target-entity
+    {:maxrange 0.6, :hit-effect [[:effects/damage [:physical [3 6]]]]}]]}
  {:slot :weapon,
   :action-time nil,
   :damage nil,
@@ -1259,8 +1259,8 @@
   :id :magic-sword-vorpal,
   :image {:file "items/images.png", :sub-image-bounds (0 192 48 48)},
   :effect
-  [:target-entity
-   {:maxrange 0.5, :hit-effects [[:damage [:physical [5 10]]]]}]}
+  [[:effects/target-entity
+    {:maxrange 0.5, :hit-effect [[:effects/damage [:physical [5 10]]]]}]]}
  {:image {:file "items/images.png", :sub-image-bounds (864 384 48 48)},
   :slot :necklace,
   :id :necklace-dark,
@@ -1289,8 +1289,8 @@
   :id :quarterstaff,
   :image {:file "items/images.png", :sub-image-bounds (192 144 48 48)},
   :effect
-  [:target-entity
-   {:maxrange 0.75, :hit-effects [[:damage [:physical [3 7]]]]}]}
+  [[:effects/target-entity
+    {:maxrange 0.75, :hit-effect [[:effects/damage [:physical [3 7]]]]}]]}
  {:image {:file "items/images.png", :sub-image-bounds (144 624 48 48)},
   :slot :boot,
   :id :chain-boot,
@@ -1322,8 +1322,8 @@
   :id :falchion,
   :image {:file "items/images.png", :sub-image-bounds (192 96 48 48)},
   :effect
-  [:target-entity
-   {:maxrange 0.5, :hit-effects [[:damage [:physical [3 7]]]]}]}
+  [[:effects/target-entity
+    {:maxrange 0.5, :hit-effect [[:effects/damage [:physical [3 7]]]]}]]}
  {:slot :weapon,
   :action-time nil,
   :damage nil,
@@ -1379,8 +1379,8 @@
   :id :sling,
   :image {:file "items/images.png", :sub-image-bounds (384 144 48 48)},
   :effect
-  [:target-entity
-   {:maxrange 5.0, :hit-effects [[:damage [:physical [10 20]]]]}]}
+  [[:effects/target-entity
+    {:maxrange 5.0, :hit-effect [[:effects/damage [:physical [10 20]]]]}]]}
  {:slot :weapon,
   :action-time nil,
   :damage nil,
@@ -1396,8 +1396,8 @@
   :id :hammer,
   :image {:file "items/images.png", :sub-image-bounds (528 96 48 48)},
   :effect
-  [:target-entity
-   {:maxrange 0.5, :hit-effects [[:damage [:physical [6 13]]]]}]}
+  [[:effects/target-entity
+    {:maxrange 0.5, :hit-effect [[:effects/damage [:physical [6 13]]]]}]]}
  {:slot :weapon,
   :action-time nil,
   :damage nil,
@@ -1477,8 +1477,8 @@
   :id :longbow,
   :image {:file "items/images.png", :sub-image-bounds (240 144 48 48)},
   :effect
-  [:target-entity
-   {:maxrange 7.5, :hit-effects [[:damage [:physical [15 30]]]]}]}
+  [[:effects/target-entity
+    {:maxrange 7.5, :hit-effect [[:effects/damage [:physical [15 30]]]]}]]}
  {:image {:file "items/images.png", :sub-image-bounds (0 480 48 48)},
   :slot :chest,
   :id :cloth-chest,
@@ -1518,8 +1518,8 @@
   :id :club,
   :image {:file "items/images.png", :sub-image-bounds (624 96 48 48)},
   :effect
-  [:target-entity
-   {:maxrange 0.5, :hit-effects [[:damage [:physical [7 14]]]]}]}
+  [[:effects/target-entity
+    {:maxrange 0.5, :hit-effect [[:effects/damage [:physical [7 14]]]]}]]}
  {:image {:file "items/images.png", :sub-image-bounds (336 240 48 48)},
   :slot :shield,
   :id :shield-iron-great,
@@ -1531,8 +1531,8 @@
   :id :staff-branch,
   :image {:file "items/images.png", :sub-image-bounds (480 144 48 48)},
   :effect
-  [:target-entity
-   {:maxrange 0.6, :hit-effects [[:damage [:physical [3 6]]]]}]}
+  [[:effects/target-entity
+    {:maxrange 0.6, :hit-effect [[:effects/damage [:physical [3 6]]]]}]]}
  {:slot :weapon,
   :two-handed? true,
   :pretty-name "Jeweled Staff",
@@ -1540,8 +1540,8 @@
   :id :staff-jeweled,
   :image {:file "items/images.png", :sub-image-bounds (576 144 48 48)},
   :effect
-  [:target-entity
-   {:maxrange 0.6, :hit-effects [[:damage [:physical [3 6]]]]}]}
+  [[:effects/target-entity
+    {:maxrange 0.6, :hit-effect [[:effects/damage [:physical [3 6]]]]}]]}
  {:slot :weapon,
   :two-handed? false,
   :pretty-name "Trident",
@@ -1549,8 +1549,8 @@
   :id :trident,
   :image {:file "items/images.png", :sub-image-bounds (96 144 48 48)},
   :effect
-  [:target-entity
-   {:maxrange 1.0, :hit-effects [[:damage [:physical [5 11]]]]}]}
+  [[:effects/target-entity
+    {:maxrange 1.0, :hit-effect [[:effects/damage [:physical [5 11]]]]}]]}
  {:image {:file "items/images.png", :sub-image-bounds (96 480 48 48)},
   :slot :chest,
   :id :studded-chest,
@@ -1614,8 +1614,8 @@
   :id :greatspear,
   :image {:file "items/images.png", :sub-image-bounds (48 144 48 48)},
   :effect
-  [:target-entity
-   {:maxrange 1.0, :hit-effects [[:damage [:physical [6 13]]]]}]}
+  [[:effects/target-entity
+    {:maxrange 1.0, :hit-effect [[:effects/damage [:physical [6 13]]]]}]]}
  {:image {:file "items/images.png", :sub-image-bounds (288 288 48 48)},
   :slot :shield,
   :id :shield-ice-kite,
@@ -1627,8 +1627,8 @@
   :id :broadsword,
   :image {:file "items/images.png", :sub-image-bounds (240 96 48 48)},
   :effect
-  [:target-entity
-   {:maxrange 0.5, :hit-effects [[:damage [:physical [6 12]]]]}]}
+  [[:effects/target-entity
+    {:maxrange 0.5, :hit-effect [[:effects/damage [:physical [6 12]]]]}]]}
  {:image {:file "items/images.png", :sub-image-bounds (48 432 48 48)},
   :slot :helm,
   :id :leather-helm,

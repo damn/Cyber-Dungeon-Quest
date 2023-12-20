@@ -52,7 +52,7 @@
 ; TODO this is valid-params of hit-effect damage !!
 (defmethod effect/valid-params? :effects/target-entity
   [{:keys [effect/source
-           effect/target]}
+           effect/target] :as context}
    _effect]
   (and source
        target
@@ -71,6 +71,9 @@
                    :duration 50
                    :color (color/rgb 1 0 0 0.75)
                    :thick? true})
+     ; TODO => make new context with end-point ... and check on point entity
+     ; friendly fire ?!
+     ; player maybe just direction possible ?!
      (do-effect! context hit-effect))
     (do
      ; TODO
