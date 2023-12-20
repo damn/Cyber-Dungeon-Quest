@@ -24,7 +24,7 @@
        [[l b] [l t] [r b] [r t]]))))
 
 (extend-type data.grid2d.Grid2D
-  game.world.grid/CellGrid
+  game.world.grid/Grid
   (cached-adjacent-cells [grid cell]
     (if-let [result (:adjacent-cells @cell)]
       result
