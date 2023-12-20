@@ -111,12 +111,13 @@
 
   (tick-active-entities
     [{:keys [context/thrown-error] :as context} delta]
-    (try
-     (doseq [entity (get-entities-in-active-content-fields context)] ; world context protocol -> get-active-entities world
-       (tick-entity! context entity delta))
-     (catch Throwable t
-       (p/pretty-pst t)
-       (reset! thrown-error t))))
+    (doseq [entity (get-entities-in-active-content-fields context)] ; world context protocol -> get-active-entities world
+      (try
+       (tick-entity! context entity delta)
+       (catch Throwable t
+         (p/pretty-pst t)
+         (println "Entity id: " (:id @entity))
+         (reset! thrown-error t)))))
 
   (render-visible-entities [c]
     (render-entities* c (visible-entities* c)))
