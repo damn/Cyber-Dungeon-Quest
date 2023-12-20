@@ -21,9 +21,9 @@
 (defn create [context]
   (let [window (ui/window :title "Skills"
                           :id :skill-window)]
-    (doseq [id [:projectile
-                :meditation
-                :spawn]
+    (doseq [id [:spells/projectile
+                :spells/meditation
+                :spells/spawn]
             :let [skill (get-property context id)
                   button (ui/image-button (:image skill)
                                           #(pressed-on-skill-in-menu skill))]]

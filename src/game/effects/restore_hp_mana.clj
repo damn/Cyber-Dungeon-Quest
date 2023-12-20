@@ -6,20 +6,20 @@
 ; TODO make with 'target' then can use as hit-effect too !
 ; ==> choose self or allies (or enemies)
 
-(defmethod effect/useful? :restore-hp-mana
+(defmethod effect/useful? :effects/restore-hp-mana
   [_context _effect]
   (or (lower-than-max? (:mana entity*))
       (lower-than-max? (:hp   entity*))))
 
-(defmethod effect/text :restore-hp-mana
+(defmethod effect/text :effects/restore-hp-mana
   [_context _effect]
   "Restores full hp and mana.")
 
-(defmethod effect/valid-params? :restore-hp-mana
+(defmethod effect/valid-params? :effects/restore-hp-mana
   [{:keys [effect/source]} _effect]
   source)
 
-(defmethod effect/do! :restore-hp-mana
+(defmethod effect/do! :effects/restore-hp-mana
   [{:keys [effect/source]} _effect]
   (play-sound! context "sounds/bfxr_drugsuse.wav")
   (swap! source #(-> %

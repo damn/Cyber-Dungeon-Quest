@@ -24,11 +24,11 @@
  ; keys: :faction(:source)/:target-position/:creature-id
  )
 
-(defmethod effect/text :spawn
+(defmethod effect/text :effects/spawn
   [_context [_ creature-id]]
   (str "Spawns a " creature-id))
 
-(defmethod effect/valid-params? :spawn
+(defmethod effect/valid-params? :effects/spawn
   [{:keys [effect/source
            effect/target-position]} _effect]
   ; TODO line of sight ? / not blocked ..
@@ -36,7 +36,7 @@
        (:faction @source)
        target-position))
 
-(defmethod effect/do! :spawn
+(defmethod effect/do! :effects/spawn
   [{:keys [effect/source
            effect/target-position]}
    [_ creature-id]]

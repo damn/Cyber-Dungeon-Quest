@@ -44,14 +44,15 @@
     (update this :counter counter/tick delta))
 
   (tick! [_ context delta]
-    (let [effect (:effect skill)]
+    (let [effect (:effect skill)
+          effect-context (merge context effect-context)]
       (cond
-       (not (valid-params? (merge context effect-context) effect))
+       (not (valid-params? effect-context effect))
        (send-event! context entity :action-done)
 
        (counter/stopped? counter)
        (do
-        (do-effect! (merge context effect-context) effect)
+        (do-effect! effect-context effect)
         (send-event! context entity :action-done)))))
 
   (render-below [_ c entity*])

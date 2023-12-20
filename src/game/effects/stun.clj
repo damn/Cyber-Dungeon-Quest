@@ -3,7 +3,7 @@
             [game.context :refer [send-event!]]
             [context.effect-interpreter :as effect]))
 
-(defmethod effect/text :stun
+(defmethod effect/text :effects/stun
   [_context [_ duration]]
   (str "Stuns for " (readable-number (/ duration 1000)) " seconds"))
 
@@ -11,10 +11,10 @@
 (defmethod effect/valid-params?
   [{:keys [effect/source
            effect/target]}
-   _this]
+   _effect]
   (and target))
 
-(defmethod effect/do! :stun
+(defmethod effect/do! :effects/stun
   [{:keys [effect/target]}
    [_ duration]]
   (send-event! context target :stun duration))

@@ -7,10 +7,10 @@
             [game.components.string-effect :as string-effect]))
 
 ; example:
-; [:damage [:physical [5 6]]]
+; [:effects/damage [:physical [5 6]]]
 (comment
  ; malli:
- [:tuple [:enum :damage]
+ [:tuple [:enum :effects/damage]
   [:tuple [:enum :physical :magic]
    [:tuple int? int?]]]
  ; TODO => val-max-data as schema!
@@ -49,23 +49,23 @@
 
 (defn- apply-source-modifiers [{damage-type 0 :as damage} source*]
   (apply-damage-modifiers damage
-                          (-> source* (effect-source-modifiers :damage) damage-type)))
+                          (-> source* (effect-source-modifiers :effects/damage) damage-type)))
 
 (defn- apply-target-modifiers [{damage-type 0 :as damage} target*]
   (apply-damage-modifiers damage
-                          (-> target* (effect-target-modifiers :damage) damage-type)))
+                          (-> target* (effect-target-modifiers :effects/damage) damage-type)))
 
 (comment
  (set! *print-level* nil)
  (apply-source-modifiers [:physical [5 10]]
-                         {:modifiers {:damage {:source {:physical {[:val :inc] 1}}}}})
+                         {:modifiers {:effects/damage {:source {:physical {[:val :inc] 1}}}}})
  [:physical [6 10]]
  (apply-source-modifiers [:magic [5 10]]
-                         {:modifiers {:damage {:source {:physical {[:val :inc] 1}}}}})
+                         {:modifiers {:effects/damage {:source {:physical {[:val :inc] 1}}}}})
  [:magic [5 10]]
 
  (apply-source-modifiers [:magic [5 10]]
-                         {:modifiers {:damage {:source {:magic {[:max :mult] 3}}}}})
+                         {:modifiers {:effects/damage {:source {:magic {[:max :mult] 3}}}}})
  [:magic [5 30]]
  )
 
@@ -93,14 +93,14 @@
  [:physical [1 20]]
 
  (effective-damage [:physical [3 10]]
-                   {:modifiers {:damage {:source {:physical  {[:max :mult] 2
-                                                              [:val :mult] 1.5
-                                                              [:val :inc] 1
-                                                              [:max :inc] 0}}}}}
-                   {:modifiers {:damage {:target {:physical  {[:max :mult] 1
-                                                              [:val :mult] 1
-                                                              [:val :inc] -5
-                                                              [:max :inc] 0}}}}})
+                   {:modifiers {:effects/damage {:source {:physical  {[:max :mult] 2
+                                                                      [:val :mult] 1.5
+                                                                      [:val :inc] 1
+                                                                      [:max :inc] 0}}}}}
+                   {:modifiers {:effects/damage {:target {:physical  {[:max :mult] 1
+                                                                      [:val :mult] 1
+                                                                      [:val :inc] -5
+                                                                      [:max :inc] 0}}}}})
  [:physical [1 20]]
  )
 
@@ -119,20 +119,20 @@
 (defn- damage->text [[dmg-type [min-dmg max-dmg]]]
   (str min-dmg "-" max-dmg " " (name dmg-type) " damage"))
 
-(defmethod effect/text :damage
-  [{:keys [effect/source]} damage]
+(defmethod effect/text :effects/damage
+  [{:keys [effect/source]} [_ damage]]
   (let [modified (effective-damage damage @source)]
     (if (= damage modified)
       (damage->text damage)
       (str (damage->text damage) "\nModified: " (damage->text modified)))) )
 
-(defmethod effect/valid-params? :damage
-  [{:keys [effect/source effect/target]} _effect-val]
+(defmethod effect/valid-params? :effects/damage
+  [{:keys [effect/source effect/target]} _effect]
   (and source target (:hp @target)))
 
-(defmethod effect/do! :damage
+(defmethod effect/do! :effects/damage
   [{:keys [effect/source
-           effect/target] :as context} {dmg-type 0 :as damage}]
+           effect/target] :as context} [_ {dmg-type 0 :as damage}]]
   (cond
    (no-hp-left? (:hp @target))
    nil

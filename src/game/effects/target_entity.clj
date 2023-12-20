@@ -12,11 +12,11 @@
         (:radius (:body target*)))
      maxrange))
 
-(defmethod effect/useful? :target-entity
+(defmethod effect/useful? :effects/target-entity
   [{:keys [effect/source
            effect/target]}
-   [_type value]]
-  (in-range? @source @target (:maxrange value)))
+   [_ {:keys [maxrange]}]]
+  (in-range? @source @target maxrange))
 
 ; TODO use at projectile & also adjust rotation
 (defn- start-point [entity* target*]
@@ -31,7 +31,7 @@
                                (:position target*))
                   maxrange)))
 
-(defmethod effect/render-info :target-entity
+(defmethod effect/render-info :effects/target-entity
   [{:keys [effect/source
            effect/target] :as context}
    [_ {:keys [maxrange]}]]
@@ -42,15 +42,15 @@
                (color/rgb 1 0 0 0.5)
                (color/rgb 1 1 0 0.5))))
 
-(defmethod effect/text :target-entity
+(defmethod effect/text :effects/target-entity
   [context [_ {:keys [maxrange hit-effect]}]]
   (str "Range " maxrange " meters\n"
        ; TODO already merged before calling text? ... when are they coming from ?
-       (effect-text (merge context params) hit-effect)))
+       (effect-text context hit-effect)))
 
 ; TODO target still exists ?! necessary ? what if disappears/dead?
 ; TODO this is valid-params of hit-effect damage !!
-(defmethod effect/valid-params? :target-entity
+(defmethod effect/valid-params? :effects/target-entity
   [{:keys [effect/source
            effect/target]}
    _effect]
@@ -59,7 +59,7 @@
        (line-of-sight? context @source @target)
        (:hp @target)))
 
-(defmethod effect/do! :target-entity
+(defmethod effect/do! :effects/target-entity
   [{:keys [effect/source
            effect/target] :as context}
    [_ {:keys [hit-effect maxrange]}]]
@@ -71,9 +71,7 @@
                    :duration 50
                    :color (color/rgb 1 0 0 0.75)
                    :thick? true})
-     (do-effect! (merge context
-                        {:effect/source source :effect/target target})
-                 hit-effect ))
+     (do-effect! context hit-effect))
     (do
      ; TODO
      ; * clicking on far away monster

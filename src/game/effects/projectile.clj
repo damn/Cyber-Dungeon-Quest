@@ -15,17 +15,18 @@
 (def ^:private maxtime (/ maxrange (/ speed 1000)))
 
 ; TODO valid params direction has to be  non-nil (entities not los player ) ?
-(defmethod effect/useful? :projectile
-  [context _effect]
-  (let [target (:target effect-params)]
-    (and (not (path-blocked? context
-                             (:position entity*) ; TODO test
-                             (:position @target)
-                             size))
-         ; TODO not taking into account body sizes
-         (< (v/distance (:position entity*)
-                        (:position @target))
-            maxrange))))
+(defmethod effect/useful? :effects/projectile
+  [{:keys [effect/source
+           effect/target]}
+   _effect]
+  (and (not (path-blocked? context
+                           (:position @source) ; TODO test
+                           (:position @target)
+                           size))
+       ; TODO not taking into account body sizes
+       (< (v/distance (:position @source)
+                      (:position @target))
+          maxrange)))
 
 (comment
  ; for chance to do hit-effect -> use this code @ hit-effects
@@ -36,8 +37,8 @@
      (random/percent-chance chance)))
 
 (def ^:private hit-effect
-  [[:damage [:magic [4 8]]]
-   [:stun 500]
+  [[:effects/damage [:magic [4 8]]]
+   [:effects/stun 500]
    ;[:stun {:duration 200} {:chance 100}]
    ])
 
@@ -47,16 +48,18 @@
                                  [1 12])]
                     :frame-duration 500))
 
-(defmethod effect/text :projectile
+(defmethod effect/text :effects/projectile
   [context _effect]
-  (effect-text (merge context params) hit-effect))
+  (effect-text context hit-effect))
 
-(defmethod effect/valid-params? :projectile
-  [{:keys [effect/target]} _effect]
-   ; TODO source,direction
-  target)
+(defmethod effect/valid-params? :effects/projectile
+  [{:keys [effect/source
+           effect/target
+           efefct/direction]}
+   _effect]
+  (and source target direction)) ; faction @ source also ?
 
-(defmethod effect/do! :projectile
+(defmethod effect/do! :effects/projectile
   [{:keys [effect/source
            effect/direction]}
    _effect]

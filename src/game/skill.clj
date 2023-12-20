@@ -41,4 +41,4 @@
        (if spell?  "Cast-Time " "Attack-time ") (ms->pprint-seconds action-time) " seconds\n"
        (when cooldown (str "Cooldown " (ms->pprint-seconds cooldown) "\n"))
        (effect-text (merge context {:effect/source entity})
-                    [effect])))
+                    effect)))
