@@ -195,8 +195,7 @@
     (creature-entity context
                      creature-id
                      (translate-to-tile-middle posi)
-                     {:initial-state :sleeping}
-                     context))
+                     {:initial-state :sleeping}))
   ; otherwise will be rendered, is visible, can also just setVisible layer false
   (tiled/remove-layer! tiled-map :creatures))
 
@@ -207,8 +206,7 @@
   (creature-entity context
                    :vampire
                    (:start-position world-map)
-                   {:is-player true}
-                   context))
+                   {:is-player true}))
 
 (deftype Disposable-State [] ; TODO let world-map record implement this so tiledmaps get disposed
   gdl.disposable/Disposable

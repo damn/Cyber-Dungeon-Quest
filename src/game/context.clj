@@ -24,6 +24,7 @@
   (in-line-of-sight? [_ source* target*]))
 
 (defprotocol Builder
+  (creature-entity [_ creature-id position creature-params])
   (audiovisual [_ position property-id])
   (item-entity [_ position item])
   (line-entity [_ {:keys [start end duration color thick?]}])
