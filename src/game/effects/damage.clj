@@ -1,11 +1,11 @@
 (ns game.effects.damage
   (:require [data.val-max :refer [apply-val apply-val-max-modifiers]]
             [utils.random :as random]
+            [game.context :refer [audiovisual]]
             [game.effect :as effect]
             [game.components.state :as state]
             [game.components.modifiers :refer [effect-source-modifiers effect-target-modifiers]]
-            [game.components.string-effect :as string-effect]
-            [game.entities.audiovisual :as audiovisual]))
+            [game.components.string-effect :as string-effect]))
 
 ; example:
 ; [:damage [:physical [5 6]]]
@@ -131,10 +131,9 @@
    :else
    (let [[dmg-type min-max-dmg] (effective-damage damage @source @target)
          dmg-amount (random/rand-int-between min-max-dmg)]
-     (audiovisual/create! context
-                          (:position @target)
-                          (keyword (str "effects.damage." (name dmg-type))
-                                   "hit-effect"))
+     (audiovisual context (:position @target)
+                  (keyword (str "effects.damage." (name dmg-type))
+                           "hit-effect"))
      (swap! target (fn [entity*]
                      (-> entity*
                          (update :hp apply-val #(- % dmg-amount))

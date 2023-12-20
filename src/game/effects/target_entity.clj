@@ -3,8 +3,7 @@
             [gdl.context :refer [draw-line]]
             [gdl.math.vector :as v]
             [gdl.graphics.color :as color]
-            [game.context :refer (in-line-of-sight?)]
-            [game.entities.audiovisual :as audiovisual]
+            [game.context :refer (audiovisual in-line-of-sight?)]
             [game.entities.line :as line-entity]
             [game.effect :as effect]))
 
@@ -48,9 +47,9 @@
      ; * hitting ground in front of you ( there is another monster )
      ; * -> it doesn't get hit ! hmmm
      ; * either use 'MISS' or get enemy entities at end-point
-     (audiovisual/create! context
-                          (end-point @source @target maxrange)
-                          :effects.target-entity/hit-ground-effect))))
+     (audiovisual context
+                  (end-point @source @target maxrange)
+                  :effects.target-entity/hit-ground-effect))))
 
 (defmethod effect/render-info :target-entity [c [_ {:keys [maxrange]}] {:keys [source target]}]
   (draw-line c
@@ -64,6 +63,8 @@
   {:text (fn [{:keys [maxrange hit-effects]} params context]
            (str "Range " maxrange " meters\n"
                 (str/join "\n" ; TODO same as other effect multiple text -> effect/effects-text?
+                          ; maybr work with 'effect' as a list of effect-components
+                          ; so alsways 'effect' and not 'effects'
                           (for [effect hit-effects]
                             (effect/text effect params context)))))
    :valid-params?

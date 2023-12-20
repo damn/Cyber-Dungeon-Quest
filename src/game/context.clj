@@ -22,3 +22,7 @@
   (get-entities-in-active-content-fields [_])
   (entities-at-position [_ position])
   (in-line-of-sight? [_ source* target*]))
+
+(defprotocol Builder
+  (audiovisual [_ position property-id]))
+

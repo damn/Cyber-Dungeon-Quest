@@ -4,9 +4,9 @@
             [gdl.math.vector :as v]
             [utils.core :refer [find-first]]
             [context.ecs :as entity]
+            [game.context :refer [audiovisual]]
             [game.effect :as effect]
             [game.components.body :as body]
-            [game.entities.audiovisual :as audiovisual]
             [game.maps.cell-grid :as grid]))
 
 (defn- apply-delta-v [entity* delta v]
@@ -47,9 +47,7 @@
                        (not piercing))
                       (some #(grid/cell-blocked? % @projectile) touched-cells)
                       (do
-                       (audiovisual/create! context
-                                            (:position @projectile)
-                                            :projectile/hit-wall-effect)
+                       (audiovisual context (:position @projectile) :projectile/hit-wall-effect)
                        true))]
     (if blocked
       (do
