@@ -1,12 +1,14 @@
 (ns context.mouseover-entity
   (:require [gdl.context :refer [world-mouse-position mouse-on-stage-actor?]]
-            [game.context :refer [entities-at-position line-of-sight?]]
-            [utils.core :refer [sort-by-order]]))
+            [utils.core :refer [sort-by-order]]
+            [game.context :refer [world-grid line-of-sight?]]
+            [game.world.grid :refer [point->entities]]))
 
 (defn- calculate-mouseover-entity [{:keys [context/player-entity
                                            context/render-on-map-order]
                                     :as context}]
-  (when-let [hits (entities-at-position context (world-mouse-position context))]
+  (when-let [hits (point->entities (world-grid context)
+                                   (world-mouse-position context))]
     ; TODO needs z-order ? what if 'shout' element or FX ?
     (->> render-on-map-order
          ; TODO re-use render-ingame code to-be-rendered-entities-on-map

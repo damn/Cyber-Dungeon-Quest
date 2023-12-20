@@ -1,7 +1,7 @@
 (ns context.world.grid
   (:require [data.grid2d :as grid2d]
             [gdl.math.geom :as geom]
-            [utils.core :refer [tile->middle]]
+            [utils.core :refer [->tile tile->middle]]
             [game.world.grid :refer [rectangle->cells circle->cells valid-position?]]
             [game.world.cell :as cell :refer [cells->entities]]))
 
@@ -96,6 +96,11 @@
          cells->entities
          (filter #(geom/collides? circle (:body @%)))))
 
+  (point->entities [grid position]
+    (when-let [cell (get grid (->tile position))]
+      (filter #(geom/point-in-rect? position (:body @%))
+              (:entities @cell))))
+
   (valid-position? [grid entity*]
     (let [cells* (map deref (rectangle->cells grid (:body entity*)))]
       (and (not-any? #(cell/blocked? % entity*) cells*)
@@ -120,6 +125,8 @@
     ;(assert (valid-position? grid @entity)) ; TODO deactivate because projectile no left-bottom remove that field or update properly for all
     (update-cells! grid entity)
     (when (:is-solid @entity) (update-occupied-cells! grid entity))))
+
+; TODO separate ns?
 
 (defrecord Cell [position
                  middle ; TODO needed ?

@@ -4,7 +4,6 @@
             gdl.disposable
             [gdl.graphics.camera :as camera]
             [gdl.maps.tiled :as tiled]
-            [gdl.math.geom :as geom]
             [gdl.math.raycaster :as raycaster]
             [gdl.math.vector :as v]
             [data.grid2d :as grid2d]
@@ -84,11 +83,6 @@
 
 (extend-type gdl.context.Context
   game.context/World
-  (entities-at-position [context position] ; TODO also operates on grid only, but do we care ??
-    (when-let [cell (world-cell context position)]
-      (filter #(geom/point-in-rect? position (:body @%))
-              (:entities @cell))))
-
   (line-of-sight? [context source* target*]
     (and (:z-order target*)  ; is even an entity which renders something
          (or (not (:is-player source*))
