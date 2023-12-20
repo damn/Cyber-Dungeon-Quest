@@ -55,7 +55,7 @@
 (defmethod effect/valid-params? :effects/projectile
   [{:keys [effect/source
            effect/target
-           efefct/direction]}
+           effect/direction]}
    _effect]
   (and source target direction)) ; faction @ source also ?
 

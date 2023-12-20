@@ -14,8 +14,7 @@
 
 (defn- by-type [_context [type value]]
   (assert (keyword? type)
-          (str "Type is not a keyword: " type " and value: " value)
-          )
+          (str "Type is not a keyword: " type " and value: " value))
   (assert (= "effects" (namespace type))
           (str "Effect keys need to have :effects/ keyword namespace type: " type " , value: " value))
   type)
