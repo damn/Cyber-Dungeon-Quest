@@ -4,5 +4,5 @@
 
 (extend-type gdl.context.Context
   game.context/PlayerMessage
-  (show-msg-to-player [_ message]
+  (show-msg-to-player! [_ message]
     (println message)))

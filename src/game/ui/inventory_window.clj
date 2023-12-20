@@ -6,7 +6,7 @@
                                  play-sound! gui-mouse-position]]
             [gdl.scene2d.ui :as ui]
             [app.state :refer [current-context]]
-            [game.context :as gm]
+            [game.context :refer [show-msg-to-player!]]
             [game.modifier :as modifier]
             [game.components.state :as state]
             [game.components.inventory :as inventory])
@@ -24,7 +24,7 @@
 
 (defn- complain-2h-weapon-and-shield! [context]
   ;(.play ^Sound (get assets "error.wav"))
-  (gm/show-msg-to-player! context "Two-handed weapon and shield is not possible."))
+  (show-msg-to-player! context "Two-handed weapon and shield is not possible."))
 
 (defn- clicked-cell [{:keys [context/player-entity] :as context} cell]
   (let [entity player-entity

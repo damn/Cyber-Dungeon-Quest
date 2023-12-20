@@ -2,7 +2,7 @@
   (:require [gdl.context :refer [play-sound! world-mouse-position get-property mouse-on-stage-actor?]]
             [gdl.math.vector :as v]
             [data.counter :as counter]
-            [game.context :as gm]
+            [game.context :refer [show-msg-to-player!]]
             [game.effect :as effect]
             [game.components.state :as state]
             [game.components.clickable :as clickable]
@@ -34,7 +34,7 @@
      :else
      (do
       (play-sound! context "sounds/bfxr_denied.wav")
-      (gm/show-msg-to-player! context "Your Inventory is full")))))
+      (show-msg-to-player! context "Your Inventory is full")))))
 
 (defn- make-effect-params [{:keys [context/mouseover-entity] :as context} entity]
   (let [target @mouseover-entity
@@ -68,8 +68,8 @@
                    state (skills/usable-state @entity skill effect-params context)]
                (if (= state :usable)
                  (state/send-event! context entity :start-action skill effect-params)
-                 (gm/show-msg-to-player! context (str "Skill usable state not usable: " state))))
-             (gm/show-msg-to-player! context "No selected skill.")))))))
+                 (show-msg-to-player! context (str "Skill usable state not usable: " state))))
+             (show-msg-to-player! context "No selected skill.")))))))
 
   state/State
   (enter [_ context])
@@ -83,5 +83,5 @@
 (comment
  (defn- denied [text]
    ; (play-sound! context "bfxr_denied.wav")
-   (gm/show-msg-to-player! context text)))
+   (show-msg-to-player! context text)))
 
