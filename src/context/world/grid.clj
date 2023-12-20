@@ -3,7 +3,7 @@
             [gdl.math.geom :as geom]
             [utils.core :refer [tile->middle]]
             [game.world.grid :refer [rectangle->cells circle->cells]]
-            [game.world.cell :refer [cells->entities]]))
+            [game.world.cell :as cell :refer [cells->entities]]))
 
 (defn- rectangle->tiles
   [{[x y] :left-bottom :keys [left-bottom width height]}]
@@ -22,6 +22,52 @@
              y (range b (inc t))]
          [x y])
        [[l b] [l t] [r b] [r t]]))))
+
+(defn- set-cells! [grid entity]
+  (let [cells (rectangle->cells grid (:body @entity))]
+    (assert (not-any? nil? cells))
+    (swap! entity assoc :cells cells)
+    (doseq [cell cells]
+      (swap! cell cell/add-entity entity))))
+
+(defn- remove-from-cells! [entity]
+  (doseq [cell (:cells @entity)]
+    (swap! cell cell/remove-entity entity)))
+
+; old version, only calculating cells once, faster
+; but anyway movement calculates it again -> refactor there first
+#_(defn- update-cells! [grid entity]
+  (let [cells (rectangle->cells grid (:body @entity))]
+    (when-not (= cells (:cells @entity))
+      (remove-from-cells! entity)
+      (set-cells! e cells))))
+
+(defn- update-cells! [grid entity]
+  (remove-from-cells! entity)
+  (set-cells! grid entity))
+
+; could use inside tiles only for >1 tile bodies (for example size 4.5 use 4x4 tiles for occupied)
+; => only now there are no >1 tile entities anyway
+(defn- rectangle->occupied-cells [grid {:keys [left-bottom width height] :as rectangle}]
+  (if (or (> width 1) (> height 1))
+    (rectangle->cells grid rectangle)
+    [(get grid
+          [(int (+ (left-bottom 0) (/ width 2)))
+           (int (+ (left-bottom 1) (/ height 2)))])]))
+
+(defn- set-occupied-cells! [grid entity]
+  (let [cells (rectangle->occupied-cells grid (:body @entity))]
+    (doseq [cell cells]
+      (swap! cell cell/add-occupying-entity entity))
+    (swap! entity assoc :occupied-cells cells)))
+
+(defn- remove-from-occupied-cells! [entity]
+  (doseq [cell (:occupied-cells @entity)]
+    (swap! cell cell/remove-occupying-entity entity)))
+
+(defn- update-occupied-cells! [grid entity]
+  (remove-from-occupied-cells! entity)
+  (set-occupied-cells! grid entity))
 
 (extend-type data.grid2d.Grid2D
   game.world.grid/Grid
@@ -48,7 +94,30 @@
     (->> (circle->cells grid circle)
          (map deref)
          cells->entities
-         (filter #(geom/collides? circle (:body @%))))))
+         (filter #(geom/collides? circle (:body @%)))))
+
+  (valid-position? [grid entity*]
+    (let [cells* (map deref (rectangle->cells grid (:body entity*)))]
+      (and (not-any? #(cell/blocked? % entity*) cells*)
+           (or (not (:is-solid (:body entity*)))
+               (->> cells*
+                    cells->entities
+                    (map deref)
+                    (not-any? #(and (not= (:id %) (:id entity*))
+                                    (:is-solid (:body %))
+                                    (geom/collides? (:body %) (:body entity*)))))))))
+
+  (add-entity! [grid entity]
+    (set-cells! grid entity)
+    (when (:is-solid @entity) (set-occupied-cells! grid entity)))
+
+  (remove-entity! [_ entity]
+    (remove-from-cells! entity)
+    (when (:is-solid @entity) (remove-from-occupied-cells! entity)))
+
+  (entity-position-changed! [grid entity]
+    (update-cells! grid entity)
+    (when (:is-solid @entity) (update-occupied-cells! grid entity))))
 
 (defrecord Cell [position
                  middle ; TODO needed ?
@@ -56,7 +125,6 @@
                  movement
                  entities
                  occupied
-
                  ; TODO potential-field ? PotentialFieldCell ?
                  good
                  evil]

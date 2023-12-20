@@ -4,8 +4,7 @@
             [gdl.math.vector :as v]
             [context.ecs :as entity]
             [game.context :refer [world-grid]]
-            [game.world.grid :refer [add-entity! remove-entity! entity-position-changed!
-                                     valid-position?]])
+            [game.world.grid :refer [add-entity! remove-entity! entity-position-changed! valid-position?]])
   (:import com.badlogic.gdx.graphics.Color))
 
 ; setting a min-size for colliding bodies so movement can set a max-speed for not
