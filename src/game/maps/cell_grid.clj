@@ -3,13 +3,7 @@
             [gdl.math.vector :as v]
             [gdl.math.raycaster :as raycaster]
             [data.grid2d :as grid]
-            [utils.core :refer [translate-to-tile-middle int-posi diagonal-direction?]]))
-
-(defn occupied-by-other?
-  "returns true if there is some solid body with center-tile = this cell
-   or a multiple-cell-size body which touches this cell."
-  [cell entity]
-  (seq (disj (:occupied @cell) entity)))
+            [utils.core :refer [diagonal-direction?]]))
 
 (defn cell-blocked?
   ([cell]

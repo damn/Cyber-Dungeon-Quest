@@ -11,8 +11,14 @@
             [game.context :refer (get-entities-in-active-content-fields)]
             [game.components.faction :as faction]
             [game.maps.cell-grid :refer (cached-get-adjacent-cells cell-blocked?
-                                                                   is-diagonal? occupied-by-other? inside-cell?
+                                                                   is-diagonal? inside-cell?
                                                                    fast-cell-blocked?)]))
+
+(defn- occupied-by-other?
+  "returns true if there is some solid body with center-tile = this cell
+   or a multiple-cell-size body which touches this cell."
+  [cell entity]
+  (seq (disj (:occupied @cell) entity)))
 
 (def ^:private max-iterations 15)
 
