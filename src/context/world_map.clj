@@ -144,7 +144,13 @@
     (let [[start1,target1,start2,target2] (create-double-ray-endpositions start target path-w)]
       (or
        (ray-blocked? context start1 target1)
-       (ray-blocked? context start2 target2)))))
+       (ray-blocked? context start2 target2))))
+
+  (explored? [{:keys [context/world-map] :as context} position]
+    (get @(:explored-tile-corners world-map) position))
+
+  (set-explored! [{:keys [context/world-map] :as context} position]
+    (swap! (:explored-tile-corners world-map) assoc (mapv int position) true)))
 
 (defn- first-level [context]
   (let [{:keys [tiled-map start-positions]} (mapgen.module-gen/generate

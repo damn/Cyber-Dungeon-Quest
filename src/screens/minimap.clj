@@ -4,8 +4,8 @@
             [gdl.graphics.color :as color]
             [gdl.graphics.camera :as camera]
             [gdl.context :refer [draw-filled-circle render-world-view]]
-            [app.state :refer [change-screen!]]
-            [game.maps.tile-color-setters :refer [minimap-color-setter]])
+            [app.state :refer [current-context change-screen!]]
+            [game.context :refer [explored?]])
   (:import (com.badlogic.gdx Gdx Input$Keys)
            (com.badlogic.gdx.graphics Color OrthographicCamera)))
 
@@ -40,6 +40,15 @@
         new-zoom (max vp-ratio-w vp-ratio-h)]
     new-zoom ))
 
+; TODO FIXME deref'fing current-context at each tile corner
+; massive performance issue - probably
+; => pass context through java tilemap render class
+; or prepare colors before
+(defn- tile-corner-color-setter [color x y]
+  (if (explored? @current-context [x y])
+    Color/WHITE
+    Color/BLACK))
+
 (deftype Screen []
   gdl.screen/Screen
   (show [_ {:keys [world-camera] :as context}]
@@ -49,7 +58,7 @@
   (render [_ {:keys [world-camera context/world-map] :as context}]
     (tiled/render-map context
                       (:tiled-map world-map)
-                      minimap-color-setter)
+                      tile-corner-color-setter)
     (render-world-view context
                        #(draw-filled-circle % (camera/position world-camera) 0.5 Color/GREEN)))
   (tick [_ {:keys [world-camera]} delta]

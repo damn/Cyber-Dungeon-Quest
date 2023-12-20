@@ -23,9 +23,11 @@
   (entities-at-position [_ position])
   (in-line-of-sight? [_ source* target*])
   (circle->touched-entities [_ circle])
-  (ray-blocked? [_ start target])
+  (ray-blocked?  [_ start target])
   (path-blocked? [_ start target path-w]
-                 "path-w in tiles. casts two rays."))
+                 "path-w in tiles. casts two rays.")
+  (explored?     [_ position])
+  (set-explored! [_ position]))
 
 (defprotocol Builder
   (creature-entity [_ creature-id position creature-params])
