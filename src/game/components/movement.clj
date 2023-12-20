@@ -4,10 +4,10 @@
             [gdl.math.vector :as v]
             [utils.core :refer [find-first]]
             [context.ecs :as entity]
-            [game.context :refer [audiovisual get-cell-grid]]
+            [game.context :refer [audiovisual world-grid]]
             [game.effect :as effect]
             [game.components.body :as body]
-            [game.world.cell-grid :refer [rectangle->cells]]
+            [game.world.grid :refer [rectangle->cells]]
             [game.world.cell :as cell :refer [cells->entities]]))
 
 (defn- apply-delta-v [entity* delta v]
@@ -28,8 +28,8 @@
   (let [{:keys [hit-effects
                 already-hit-bodies
                 piercing]} (:projectile-collision @projectile)
-        cell-grid (get-cell-grid context)
-        cells (rectangle->cells cell-grid (:body @projectile))
+        grid (world-grid context)
+        cells (rectangle->cells grid (:body @projectile))
         ; valid-position? for solid entity check
         ; on invalid returns {:hit-entities, :or :cells}'
         hit-entity (find-first #(and (not (contains? already-hit-bodies %))

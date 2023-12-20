@@ -21,18 +21,14 @@
 (defprotocol World
   (get-entities-in-active-content-fields [_])
   (entities-at-position [_ position])
-  (in-line-of-sight? [_ source* target*]) ; TODO 'line-of-sight?' ?
+  (line-of-sight? [_ source* target*])
   (circle->entities [_ circle])
   (ray-blocked?  [_ start target])
-  (path-blocked? [_ start target path-w]
-                 "path-w in tiles. casts two rays.")
+  (path-blocked? [_ start target path-w] "path-w in tiles. casts two rays.")
   (explored?     [_ position])
   (set-explored! [_ position])
-  ; world-cell-grid?
-  (get-cell-grid [_])
-  ; world-cell?
-  (get-cell [_ position]
-            "Converts position to integer."))
+  (world-grid [_])
+  (world-cell [_ position] "Converts position to integer."))
 
 (defprotocol Builder
   (creature-entity [_ creature-id position creature-params])

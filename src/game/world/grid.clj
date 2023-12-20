@@ -1,6 +1,6 @@
-(ns game.world.cell-grid)
+(ns game.world.grid)
 
-(defprotocol CellGrid
+(defprotocol Grid
   (cached-adjacent-cells [_ cell])
   (rectangle->cells [_ rectangle])
   (circle->cells    [_ circle]))

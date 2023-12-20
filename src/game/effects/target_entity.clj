@@ -3,7 +3,7 @@
             [gdl.context :refer [draw-line]]
             [gdl.math.vector :as v]
             [gdl.graphics.color :as color]
-            [game.context :refer (audiovisual line-entity in-line-of-sight?)]
+            [game.context :refer (audiovisual line-entity line-of-sight?)]
             [game.effect :as effect]))
 
 (defn- in-range? [entity* target* maxrange] ; == circle-collides?
@@ -71,7 +71,7 @@
    (fn [_effect-val {:keys [source target]} context]
      (and source
           target
-          (in-line-of-sight? context @source @target)
+          (line-of-sight? context @source @target)
           (:hp @target))) ; TODO this is valid-params of hit-effect damage !!
 
    :do! do-effect!})

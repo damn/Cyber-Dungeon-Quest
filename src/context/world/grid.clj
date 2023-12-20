@@ -2,7 +2,7 @@
   (:require [data.grid2d :as grid2d]
             [gdl.math.geom :as geom]
             [utils.core :refer [tile->middle]]
-            [game.world.cell-grid :refer [rectangle->cells]]
+            [game.world.grid :refer [rectangle->cells]]
             game.world.cell))
 
 (defn- rectangle->tiles
@@ -24,25 +24,25 @@
        [[l b] [l t] [r b] [r t]]))))
 
 (extend-type data.grid2d.Grid2D
-  game.world.cell-grid/CellGrid
-  (cached-adjacent-cells [cell-grid cell]
+  game.world.grid/CellGrid
+  (cached-adjacent-cells [grid cell]
     (if-let [result (:adjacent-cells @cell)]
       result
-      (let [result (keep cell-grid (-> @cell
+      (let [result (keep grid (-> @cell
                                        :position
                                        grid2d/get-8-neighbour-positions))]
         (swap! cell assoc :adjacent-cells result)
         result)))
 
-  (rectangle->cells [cell-grid rectangle]
+  (rectangle->cells [grid rectangle]
     (->> rectangle
          rectangle->tiles
-         (map cell-grid)))
+         (keep grid)))
 
-  (circle->cells [cell-grid circle]
+  (circle->cells [grid circle]
     (->> circle
          geom/circle->outer-rectangle
-         (rectangle->cells cell-grid))))
+         (rectangle->cells grid))))
 
 (defrecord Cell [position
                  middle ; TODO needed ?
@@ -54,7 +54,7 @@
                  ; TODO potential-field ? PotentialFieldCell ?
                  good
                  evil]
-  game.world.cell/WorldCell
+  game.world.cell/Cell
   (add-entity [this entity]
     (assert (not (get entities entity)))
     (update this :entities conj entity))
@@ -92,7 +92,7 @@
     :entities #{}
     :occupied #{}}))
 
-(defn create-cell-grid [width height position->value]
+(defn create-grid [width height position->value]
   (grid2d/create-grid width height
                       #(->> %
                             position->value

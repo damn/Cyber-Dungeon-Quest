@@ -1,7 +1,7 @@
 (ns game.components.state.npc-sleeping
   (:require [gdl.context :refer [draw-text draw-circle]]
             [data.counter :as counter]
-            [game.context :refer [create-entity! send-event! get-cell]]
+            [game.context :refer [create-entity! send-event! world-cell]]
             [game.components.state :as state]
             [game.components.string-effect :as string-effect]
             [game.components.faction :as faction])
@@ -25,7 +25,7 @@
   (tick [this delta] this)
   (tick! [_ context delta]
     ; TODO !!!
-    (let [cell* @(get-cell context (:position @entity))
+    (let [cell* @(world-cell context (:position @entity))
           faction (faction/enemy (:faction @entity))]
       (when-let [distance (-> cell* faction :distance)]
         (when (<= distance (* aggro-range 10))

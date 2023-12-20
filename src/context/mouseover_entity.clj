@@ -1,6 +1,6 @@
 (ns context.mouseover-entity
   (:require [gdl.context :refer [world-mouse-position mouse-on-stage-actor?]]
-            [game.context :refer [entities-at-position in-line-of-sight?]]
+            [game.context :refer [entities-at-position line-of-sight?]]
             [utils.core :refer [sort-by-order]]))
 
 (defn- calculate-mouseover-entity [{:keys [context/player-entity
@@ -14,7 +14,7 @@
          ; topmost body selected first, reverse of render-order
          reverse
          ; = same code @ which entities should get rendered...
-         (filter #(in-line-of-sight? context @player-entity @%))
+         (filter #(line-of-sight? context @player-entity @%))
          first)))
 
 (extend-type gdl.context.Context

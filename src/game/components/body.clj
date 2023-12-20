@@ -4,8 +4,8 @@
             [gdl.math.geom :as geom]
             [gdl.math.vector :as v]
             [context.ecs :as entity]
-            [game.context :refer [get-cell-grid]]
-            [game.world.cell-grid :refer [rectangle->cells]]
+            [game.context :refer [world-grid]]
+            [game.world.grid :refer [rectangle->cells]]
             [game.world.cell :as cell :refer [cells->entities]])
   (:import com.badlogic.gdx.graphics.Color))
 
@@ -15,15 +15,15 @@
 
 ; could use inside tiles only for >1 tile bodies (for example size 4.5 use 4x4 tiles for occupied)
 ; => only now there are no >1 tile entities anyway
-(defn- rectangle->occupied-cells [cell-grid {:keys [left-bottom width height] :as rectangle}]
+(defn- rectangle->occupied-cells [grid {:keys [left-bottom width height] :as rectangle}]
   (if (or (> width 1) (> height 1))
-    (rectangle->cells cell-grid rectangle)
-    [(get cell-grid
+    (rectangle->cells grid rectangle)
+    [(get grid
           [(int (+ (left-bottom 0) (/ width 2)))
            (int (+ (left-bottom 1) (/ height 2)))])]))
 
-(defn- set-occupied-cells! [cell-grid entity]
-  (let [cells (rectangle->occupied-cells cell-grid (:body @entity))]
+(defn- set-occupied-cells! [grid entity]
+  (let [cells (rectangle->occupied-cells grid (:body @entity))]
     (doseq [cell cells]
       (swap! cell cell/add-occupying-entity entity))
     (swap! entity assoc :occupied-cells cells)))
@@ -56,13 +56,13 @@
   (assoc-in entity* [:body :left-bottom] [(- x (/ (:width body)  2))
                                           (- y (/ (:height body) 2))]))
 
-; needs only cell-grid actually? or protocol ol world-map?
+; needs only grid actually? or protocol ol world-map?
 ; ON WORLD (not world-map) world/valid-position?
 (defn valid-position? [context entity*]
   ; TODO save params & check why its not a valid position
 
-  (let [cells (rectangle->cells (get-cell-grid context)
-                                                (:body entity*))]
+  (let [cells (rectangle->cells (world-grid context)
+                                (:body entity*))]
     (and
      (not-any? #(cell/blocked? @% entity*) cells)
      (or (not (:is-solid (:body entity*)))
@@ -107,10 +107,10 @@
     (assert (:position @e))
     ;(assert (valid-position? context @e)) ; TODO error because projectiles do not have left-bottom !
     (swap! e assoc-left-bottom)
-    (let [cell-grid (get-cell-grid context)]
-      (set-cells! e (rectangle->cells cell-grid (:body @e)))
+    (let [grid (world-grid context)]
+      (set-cells! e (rectangle->cells grid (:body @e)))
       (when is-solid
-        (set-occupied-cells! cell-grid e))))
+        (set-occupied-cells! grid e))))
   (entity/destroy! [_ e _ctx]
     (remove-from-cells! e)
     (when is-solid
@@ -119,11 +119,11 @@
     (assert (valid-position? context @e))
     (when rotate-in-movement-direction?
       (swap! e assoc-in [:body :rotation-angle] (v/get-angle-from-vector direction-vector)))
-    (let [cell-grid (get-cell-grid context)]
-      (update-cells! e (rectangle->cells cell-grid (:body @e)))
+    (let [grid (world-grid context)]
+      (update-cells! e (rectangle->cells grid (:body @e)))
       (when is-solid
         (remove-from-occupied-cells! e)
-        (set-occupied-cells! cell-grid e))))
+        (set-occupied-cells! grid e))))
   (entity/render-debug [_ c e*]
     (when show-body-bounds
       (draw-bounds c body))))

@@ -187,7 +187,7 @@
   (redo-table)
   (.pack window))
 
-(defn- get-cell-widget ^Group [cell]
+(defn- world-cell-widget ^Group [cell]
   (.findActor table (pr-str cell)))
 
 (defn- get-image-widget ^Image [cell-widget]
@@ -206,13 +206,13 @@
        (str/join "\n" (map modifier/text (:modifiers item)))))
 
 (defn- set-item-image-in-widget! [cell item]
-  (let [cell-widget (get-cell-widget cell)
+  (let [cell-widget (world-cell-widget cell)
         image-widget (get-image-widget cell-widget)]
     (.setDrawable image-widget (ui/texture-region-drawable (:texture (:image item))))
     (.addListener cell-widget (ui/text-tooltip #(item-text item)))))
 
 (defn- remove-item-from-widget! [cell]
-  (let [cell-widget (get-cell-widget cell)
+  (let [cell-widget (world-cell-widget cell)
         image-widget (get-image-widget cell-widget)
         ^TextTooltip tooltip (first (filter #(instance? TextTooltip %)
                                             (.getListeners cell-widget)))]

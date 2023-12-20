@@ -7,19 +7,19 @@
             [gdl.math.geom :as geom]
             [gdl.math.raycaster :as raycaster]
             [gdl.math.vector :as v]
-            [data.grid2d :as grid]
+            [data.grid2d :as grid2d]
             [utils.core :refer [->tile tile->middle]]
-            [context.world.grid :refer [create-cell-grid]]
-            [game.context :refer [creature-entity ray-blocked? get-cell]]
-            [game.world.cell-grid :refer [circle->cells]]
+            [context.world.grid :refer [create-grid]]
+            [game.context :refer [creature-entity ray-blocked? world-cell]]
+            [game.world.grid :refer [circle->cells]]
             [game.world.cell :as cell :refer [cells->entities]]
             [mapgen.movement-property :refer (movement-property)]
             mapgen.module-gen))
 
 ; rename this to context.world (can have multiple world-maps later)
-; rename cell-grid just to grid
+; rename grid just to grid
 ; get-grid => world-grid
-; get-cell => world-cell
+; world-cell => world-cell
 ; and protocols also rename folders
 
 ; TODO forgot to filter nil cells , e.g. cached-adjcent cells or something
@@ -49,7 +49,7 @@
       field-h 16]
 
   (defn- create-mapcontentfields [w h]
-    (grid/create-grid (inc (int (/ w field-w))) ; inc wegen r�ndern
+    (grid2d/create-grid (inc (int (/ w field-w))) ; inc wegen r�ndern
                       (inc (int (/ h field-h)))
                       (fn [idx]
                         {:idx idx,
@@ -83,7 +83,7 @@
 
 (comment
  (defn get-all-entities-of-current-map [context]
-   (mapcat #(deref (:entities %)) (grid/cells (get-contentfields context))))
+   (mapcat #(deref (:entities %)) (grid2d/cells (get-contentfields context))))
 
  (count
   (get-all-entities-of-current-map @app.state/current-context))
@@ -126,21 +126,21 @@
             (remove nil?
                     (map (get-contentfields context)  ; keep (get-contentfields)  ?  also @ potential field thing
                          (let [idx (get-player-content-field-idx context)]
-                           (cons idx (grid/get-8-neighbour-positions idx)))))))
+                           (cons idx (grid2d/get-8-neighbour-positions idx)))))))
 
   (entities-at-position [context position]
-    (when-let [cell (get-cell context position)]
+    (when-let [cell (world-cell context position)]
       (filter #(geom/point-in-rect? position (:body @%))
               (:entities @cell))))
 
-  (in-line-of-sight? [context source* target*]
+  (line-of-sight? [context source* target*]
     (and (:z-order target*)  ; is even an entity which renders something
          (or (not (:is-player source*))
              (on-screen? target* context))
          (not (ray-blocked? context (:position source*) (:position target*)))))
 
   (circle->entities [{:keys [context/world-map]} circle]
-    (->> (circle->cells (:cell-grid world-map) circle)
+    (->> (circle->cells (:grid world-map) circle)
          (map deref)
          cells->entities
          (filter #(geom/collides? circle (:body @%)))))
@@ -161,11 +161,11 @@
   (set-explored! [{:keys [context/world-map] :as context} position]
     (swap! (:explored-tile-corners world-map) assoc (->tile position) true))
 
-  (get-cell-grid [{:keys [context/world-map]}]
-    (:cell-grid world-map))
+  (world-grid [{:keys [context/world-map]}]
+    (:grid world-map))
 
-  (get-cell [{:keys [context/world-map]} position]
-    (get (:cell-grid world-map) (->tile position))))
+  (world-cell [{:keys [context/world-map]} position]
+    (get (:grid world-map) (->tile position))))
 
 (defn- first-level [context]
   (let [{:keys [tiled-map start-positions]} (mapgen.module-gen/generate
@@ -181,7 +181,7 @@
      :start-position start-position}))
 
 (defn- create-grid-from-tiledmap [tiled-map]
-  (create-cell-grid (tiled/width  tiled-map)
+  (create-grid (tiled/width  tiled-map)
                     (tiled/height tiled-map)
                     (fn [position]
                       (case (movement-property tiled-map position)
@@ -198,9 +198,9 @@
 
 (defn- create-cell-blocked-boolean-array [grid]
   (let [arr (make-array Boolean/TYPE
-                        (grid/width grid)
-                        (grid/height grid))]
-    (doseq [cell (grid/cells grid)]
+                        (grid2d/width grid)
+                        (grid2d/height grid))]
+    (doseq [cell (grid2d/cells grid)]
       (set-cell-blocked-boolean-array arr @cell))
     arr))
 
@@ -208,20 +208,20 @@
                                  pretty-name
                                  tiled-map
                                  start-position] :as argsmap}]
-  (let [cell-grid (create-grid-from-tiledmap tiled-map)
-        w (grid/width  cell-grid)
-        h (grid/height cell-grid)]
+  (let [grid (create-grid-from-tiledmap tiled-map)
+        w (grid2d/width  grid)
+        h (grid2d/height grid)]
     (merge ; TODO no merge, list explicit which keys are there
      (dissoc argsmap :map-key)
      ; TODO here also namespaced keys  !?
      {:width w
       :height h
-      :cell-blocked-boolean-array (create-cell-blocked-boolean-array cell-grid)
+      :cell-blocked-boolean-array (create-cell-blocked-boolean-array grid)
       :contentfields (create-mapcontentfields w h)
-      :cell-grid cell-grid
-      :explored-tile-corners (atom (grid/create-grid w h (constantly false)))})
+      :grid grid
+      :explored-tile-corners (atom (grid2d/create-grid w h (constantly false)))})
     )
-  ;(check-not-allowed-diagonals cell-grid)
+  ;(check-not-allowed-diagonals grid)
   )
 
 ; --> mach prozedural generierte maps mit prostprocessing (fill-singles/set-cells-behind-walls-nil/remove-nads/..?)

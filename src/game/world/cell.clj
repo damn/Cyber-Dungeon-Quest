@@ -1,6 +1,7 @@
 (ns game.world.cell)
 
-(defprotocol WorldCell
+; TODO is cell* actually
+(defprotocol Cell
   (add-entity [_ entity])
   (remove-entity [_ entity])
   (add-occupying-entity [_ entity])
