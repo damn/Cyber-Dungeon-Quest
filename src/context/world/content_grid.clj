@@ -1,5 +1,6 @@
 (ns context.world.content-grid
   (:require [data.grid2d :as grid2d]
+            gdl.context
             [game.context :refer [content-grid]]
             game.world.content-grid))
 
@@ -23,13 +24,13 @@
         (swap! update :entities disj entity))))
 
 (defn ->content-grid [w h cell-w cell-h]
-  (->ContentFields (grid2d/create-grid (inc (int (/ w cell-w))) ; inc because corners
-                                       (inc (int (/ h cell-h)))
-                                       (fn [idx]
-                                         (atom {:idx idx,
-                                                :entities #{}})))
-                   cell-w
-                   cell-h))
+  (->ContentGrid (grid2d/create-grid (inc (int (/ w cell-w))) ; inc because corners
+                                     (inc (int (/ h cell-h)))
+                                     (fn [idx]
+                                       (atom {:idx idx,
+                                              :entities #{}})))
+                 cell-w
+                 cell-h))
 
 (extend-type gdl.context.Context
   game.context/World

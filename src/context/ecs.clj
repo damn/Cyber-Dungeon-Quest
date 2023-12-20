@@ -80,12 +80,6 @@
   (doseq [k (keys @entity)] ; TODO FIXME
     (tick! [k (k @entity)] context entity delta)))
 
-
-; get-active-entities
-; => rename just get-active-entities
-; or to-be-updated-entities ?!
-; dont want to know about contentfields ( ? )
-
 (extend-type gdl.context.Context
   game.context/EntityComponentSystem
   (get-entity [{:keys [context/ids->entities]} id]

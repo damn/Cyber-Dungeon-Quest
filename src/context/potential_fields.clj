@@ -220,7 +220,7 @@
     (and (= 1 (count cells))
          (= cell (first cells)))))
 
-(extend-type gdl.context.Context
+(extend-type gdl.context.Context ; TODO only on grid this ?!
   game.context/PotentialField
   (update-potential-fields [context]
     (update-potential-fields* context))
