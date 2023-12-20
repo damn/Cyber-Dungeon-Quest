@@ -3,9 +3,9 @@
             [gdl.math.vector :as v]
             [gdl.graphics.animation :as animation]
             [gdl.context :refer [get-sprite spritesheet]]
+            [game.context :refer [projectile-entity]]
             [game.effect :as effect]
-            [game.maps.cell-grid :as cell-grid]
-            [game.entities.projectile :as projectile-entity]))
+            [game.maps.cell-grid :as cell-grid]))
 
 ; -> range needs to be smaller than potential field range
 ; -> first range check then ray ! otherwise somewhere in contentfield out of sight
@@ -52,17 +52,16 @@
                     :frame-duration 500))
 
 (defn- do-effect! [_ {:keys [source direction]} context]
-  (projectile-entity/create!
-   {:position (:position @source)
-    :faction  (:faction  @source)
-    :size size
-    :animation (black-projectile context)
-    :speed speed
-    :movement-vector direction
-    :maxtime maxtime
-    :piercing false
-    :hit-effects hit-effects}
-   context))
+  (projectile-entity context
+                     {:position (:position @source)
+                      :faction  (:faction  @source)
+                      :size size
+                      :animation (black-projectile context)
+                      :speed speed
+                      :movement-vector direction
+                      :maxtime maxtime
+                      :piercing false
+                      :hit-effects hit-effects}))
 
 (effect/defeffect :projectile
   {:text (fn [_effect-val params context]

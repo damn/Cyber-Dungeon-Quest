@@ -3,8 +3,7 @@
             [gdl.context :refer [draw-line]]
             [gdl.math.vector :as v]
             [gdl.graphics.color :as color]
-            [game.context :refer (audiovisual in-line-of-sight?)]
-            [game.entities.line :as line-entity]
+            [game.context :refer (audiovisual line-entity in-line-of-sight?)]
             [game.effect :as effect]))
 
 (defn- in-range? [entity* target* maxrange] ; == circle-collides?
@@ -35,12 +34,12 @@
 (defn- do-effect! [{:keys [hit-effects maxrange]} {:keys [source target]} context]
   (if (in-range? @source @target maxrange)
     (do
-     (line-entity/create! context
-                          {:start (start-point @source @target)
-                           :end (:position @target)
-                           :duration 50
-                           :color (color/rgb 1 0 0 0.75)
-                           :thick? true})
+     (line-entity context
+                  {:start (start-point @source @target)
+                   :end (:position @target)
+                   :duration 50
+                   :color (color/rgb 1 0 0 0.75)
+                   :thick? true})
      (effect/do-all! hit-effects {:source source :target target} context))
     (do
      ; * clicking on far away monster

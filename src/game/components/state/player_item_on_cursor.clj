@@ -1,8 +1,8 @@
 (ns game.components.state.player-item-on-cursor
   (:require [gdl.context :refer [play-sound! mouse-on-stage-actor?]]
+            [game.context :refer [item-entity]]
             [game.components.state :as state]
-            [game.components.inventory :as inventory]
-            [game.entities.item :as item-entity])
+            [game.components.inventory :as inventory])
   (:import (com.badlogic.gdx Gdx Input$Buttons)))
 
 ; TODO ! important ! animation & dont put exactly hiding under player -> try neighbor cells first, simple.
@@ -18,7 +18,7 @@
         ;_ (println "BLOCKED? " (boolean blocked))
         ;position (if-not blocked below-posi posi)
         ]
-    (item-entity/create! posi (:item-on-cursor @player-entity) context)))
+    (item-entity context posi (:item-on-cursor @player-entity))))
 
 (defrecord State [entity item]
   state/PlayerState

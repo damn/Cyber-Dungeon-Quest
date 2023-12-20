@@ -9,8 +9,7 @@
             [game.context :as gm]
             [game.modifier :as modifier]
             [game.components.state :as state]
-            [game.components.inventory :as inventory]
-            [game.entities.item :as item-entity])
+            [game.components.inventory :as inventory])
   (:import com.badlogic.gdx.graphics.Color
            (com.badlogic.gdx.scenes.scene2d Actor Group)
            (com.badlogic.gdx.scenes.scene2d.ui Widget Image TextTooltip Window Table)

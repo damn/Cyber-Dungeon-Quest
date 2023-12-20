@@ -24,5 +24,15 @@
   (in-line-of-sight? [_ source* target*]))
 
 (defprotocol Builder
-  (audiovisual [_ position property-id]))
-
+  (audiovisual [_ position property-id])
+  (item-entity [_ position item])
+  (line-entity [_ {:keys [start end duration color thick?]}])
+  (projectile-entity [_ {:keys [position
+                                faction
+                                size
+                                animation
+                                movement-vector
+                                hit-effects
+                                speed
+                                maxtime
+                                piercing]}]))

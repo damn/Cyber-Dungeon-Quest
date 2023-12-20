@@ -7,8 +7,8 @@
             [gdl.math.geom :as geom]
             [data.grid2d :as grid]
             [utils.core :refer [translate-to-tile-middle]]
+            [game.context :refer [creature-entity]]
             [game.maps.cell-grid :as cell-grid]
-            [game.entities.creature :as creature-entity]
             [mapgen.movement-property :refer (movement-property)]
             mapgen.module-gen))
 
@@ -192,10 +192,11 @@
 ; looping through all tiles of the map 3 times. but dont do it in 1 loop because player needs to be initialized before all monsters!
 (defn- place-entities! [context tiled-map]
   (doseq [[posi creature-id] (tiled/positions-with-property tiled-map :creatures :id)]
-    (creature-entity/create! creature-id
-                             (translate-to-tile-middle posi)
-                             {:initial-state :sleeping}
-                             context))
+    (creature-entity context
+                     creature-id
+                     (translate-to-tile-middle posi)
+                     {:initial-state :sleeping}
+                     context))
   ; otherwise will be rendered, is visible, can also just setVisible layer false
   (tiled/remove-layer! tiled-map :creatures))
 
@@ -203,10 +204,11 @@
 (defn- create-entities-from-tiledmap! [{:keys [context/world-map] :as context}]
   ; TODO they need player entity context ?!
   (place-entities! context (:tiled-map world-map))
-  (creature-entity/create! :vampire
-                           (:start-position world-map)
-                           {:is-player true}
-                           context))
+  (creature-entity context
+                   :vampire
+                   (:start-position world-map)
+                   {:is-player true}
+                   context))
 
 (deftype Disposable-State [] ; TODO let world-map record implement this so tiledmaps get disposed
   gdl.disposable/Disposable

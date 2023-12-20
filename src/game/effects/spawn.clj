@@ -1,12 +1,8 @@
 (ns game.effects.spawn
   (:require [game.effect :as effect]
-            [game.entities.creature :as creature-entity]))
-
-; TODO
+            [game.context :refer [creature-entity]]))
 
 ; BLOCKING PLAYER MOVEMENT !
-
-
 ; check not blocked position // line of sight.
 ; limit max. spawns
 ; animation/sound
@@ -22,13 +18,6 @@
 ; Also: to make a complete game takes so many creatures, items, skills, balance, ui changes, testing
 ; is it even possible ?
 
-(defn- do! [creature-id {:keys [source target-position]} context]
-  (creature-entity/create! creature-id
-                           target-position
-                           {:faction (:faction @source)
-                            :initial-state :idle}
-                           context))
-
 (comment
  ; keys: :faction(:source)/:target-position/:creature-id
  )
@@ -41,4 +30,9 @@
                     (and source
                          (:faction @source)
                          target-position))
-   :do! do!})
+   :do! (fn [creature-id {:keys [source target-position]} context]
+          (creature-entity context
+                           creature-id
+                           target-position
+                           {:faction (:faction @source)
+                            :initial-state :idle}))})
