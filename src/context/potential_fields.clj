@@ -260,7 +260,7 @@
 
 #_(defn calculate-mouseover-body-colors [mouseoverbody]
   (when-let [body mouseoverbody]
-    (let [occupied-cell (world-cell context (:position @body))
+    (let [occupied-cell (get (world-grid context) (->tile (:position @body)))
           own-dist (distance-to occupied-cell)
           adj-cells (cached-adjacent-cells grid occupied-cell)
           potential-cells (filter distance-to

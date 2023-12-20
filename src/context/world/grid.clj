@@ -2,6 +2,7 @@
   (:require [data.grid2d :as grid2d]
             [gdl.math.geom :as geom]
             [utils.core :refer [->tile tile->middle]]
+            [game.faction :as faction]
             [game.world.grid :refer [rectangle->cells circle->cells valid-position?]]
             [game.world.cell :as cell :refer [cells->entities]]))
 
@@ -164,7 +165,15 @@
       :all false))
 
   (occupied-by-other? [_ entity]
-    (seq (disj occupied entity))))
+    (seq (disj occupied entity)))
+
+  ; TODO just pass faction
+  (nearest-enemy-entity [this faction]
+    (-> this ((faction/enemy faction)) :entity))
+
+  ; TODO just pass faction
+  (nearest-enemy-distance [this faction]
+    (-> this ((faction/enemy faction)) :distance)))
 
 (defn- create-cell [position movement]
   {:pre [(#{:none :air :all} movement)]}

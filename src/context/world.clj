@@ -10,7 +10,7 @@
             [utils.core :refer [->tile tile->middle]]
             [context.world.grid :refer [create-grid]]
             [context.world.content-grid :refer [->content-grid]]
-            [game.context :refer [creature-entity ray-blocked? content-grid world-grid world-cell]]
+            [game.context :refer [creature-entity ray-blocked? content-grid world-grid]]
             [game.world.content-grid :as content-grid]
             [game.world.cell :as cell]
             [mapgen.movement-property :refer (movement-property)]
@@ -29,8 +29,6 @@
 ; rename this to context.world (can have multiple world-maps later)
 ; (maybe world-map can be a record with functions too ? ...)
 ; rename grid just to grid
-; get-grid => world-grid
-; world-cell => world-cell
 ; and protocols also rename folders
 
 ; TODO forgot to filter nil cells , e.g. cached-adjcent cells or something
@@ -65,6 +63,7 @@
      (<= xdist (inc (/ world-viewport-width  2)))
      (<= ydist (inc (/ world-viewport-height 2))))))
 
+; TO gdl.math....
 (defn- create-double-ray-endpositions
   "path-w in tiles."
   [[start-x start-y] [target-x target-y] path-w]
@@ -99,9 +98,11 @@
        (ray-blocked? context start1 target1)
        (ray-blocked? context start2 target2))))
 
+  ; TODO put tile param
   (explored? [{:keys [context/world-map] :as context} position]
     (get @(:explored-tile-corners world-map) position))
 
+  ; TODO put tile param already
   (set-explored! [{:keys [context/world-map] :as context} position]
     (swap! (:explored-tile-corners world-map) assoc (->tile position) true))
 
@@ -113,10 +114,7 @@
                                       (:context/player-entity context)))
 
   (world-grid [{:keys [context/world-map]}]
-    (:grid world-map))
-
-  (world-cell [context position] ; TODO fn on world-grid ? idk
-    (get (world-grid context) (->tile position))))
+    (:grid world-map)))
 
 (defn- first-level [context]
   (let [{:keys [tiled-map start-positions]} (mapgen.module-gen/generate

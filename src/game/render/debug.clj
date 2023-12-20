@@ -3,7 +3,7 @@
                                  world-mouse-position]]
             [gdl.graphics.color :as color]
             [gdl.graphics.camera :as camera]
-            [game.context :refer [world-grid world-cell]]
+            [game.context :refer [world-grid]]
             [game.world.grid :refer [circle->cells]])
   (:import com.badlogic.gdx.graphics.Color))
 
@@ -52,7 +52,7 @@
 (defn render-after-entities [c]
   #_(geom-test c)
   ; highlight current mouseover-tile
-  #_(let [cell (world-cell c (world-mouse-position c))]
+  #_(let [cell (get (world-grid c) (->tile (world-mouse-position c)))]
       (draw-rectangle c x y 1 1 (color/rgb 0 1 0 0.5))
       #_(g/render-readable-text x y {:shift false}
                                 [color/white

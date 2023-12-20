@@ -1,20 +1,16 @@
 (ns game.components.state.npc-idle
   (:require [gdl.math.vector :as v]
             [data.counter :as counter]
-            [game.context :refer [potential-field-follow-to-enemy send-event! world-cell]]
+            [game.context :refer [world-grid potential-field-follow-to-enemy send-event!]]
             [game.effect :as effect]
-            [game.faction :as faction]
             [game.components.skills :as skills]
-            [game.components.state :as state]))
-
-(defn- nearest-enemy-entity [context {:keys [faction position]}]
-  (-> (world-cell context position)
-      deref
-      ((faction/enemy faction))
-      :entity))
+            [game.components.state :as state]
+            [game.world.cell :as cell]))
 
 (defn- make-effect-params [context entity]
-  (let [target (nearest-enemy-entity context @entity)]
+  (let [cell (get (world-grid context)
+                  (utils.core/->tile (:position @entity)))
+        target (cell/nearest-enemy-entity @cell (:faction @entity))]
     {:source entity
      :target target
      :direction (when target

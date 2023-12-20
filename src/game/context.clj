@@ -20,15 +20,13 @@
 
 (defprotocol World
   (line-of-sight? [_ source* target*])
-  (entities-at-position [_ position])
   (ray-blocked?  [_ start target])
   (path-blocked? [_ start target path-w] "path-w in tiles. casts two rays.")
   (explored?     [_ position])
   (set-explored! [_ position])
   (content-grid [_])
   (get-active-entities [_])
-  (world-grid [_])
-  (world-cell [_ position] "Converts position to integer."))
+  (world-grid [_]))
 
 (defprotocol Builder
   (creature-entity [_ creature-id position creature-params])

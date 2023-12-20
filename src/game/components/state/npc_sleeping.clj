@@ -1,10 +1,10 @@
 (ns game.components.state.npc-sleeping
   (:require [gdl.context :refer [draw-text draw-circle]]
             [data.counter :as counter]
-            [game.context :refer [create-entity! send-event! world-cell]]
+            [game.context :refer [world-grid create-entity! send-event!]]
             [game.components.state :as state]
             [game.components.string-effect :as string-effect]
-            [game.faction :as faction])
+            [game.world.cell :as cell])
   (:import com.badlogic.gdx.graphics.Color))
 
 (def ^:private aggro-range 6)
@@ -23,11 +23,11 @@
                      :shout (counter/create 200)}))
 
   (tick [this delta] this)
+
   (tick! [_ context delta]
-    ; TODO !!!
-    (let [cell* @(world-cell context (:position @entity))
-          faction (faction/enemy (:faction @entity))]
-      (when-let [distance (-> cell* faction :distance)]
+    (let [cell (get (world-grid context)
+                    (utils.core/->tile (:position @entity)))]
+      (when-let [distance (cell/nearest-enemy-distance @cell (:faction @entity))]
         (when (<= distance (* aggro-range 10))
           (send-event! context entity :alert)))))
 
