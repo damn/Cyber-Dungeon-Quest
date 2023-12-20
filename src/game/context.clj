@@ -12,7 +12,7 @@
   (destroy-to-be-removed-entities! [_]
                                    "Calls entity/destroy and entity/destroy! on all entities which are marked as ':destroyed?'"))
 
-(defprotocol Context
+(defprotocol PlayerMessage
   (show-msg-to-player! [_ message]))
 
 (defprotocol MouseOverEntity

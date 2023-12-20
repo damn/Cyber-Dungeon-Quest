@@ -4,8 +4,8 @@
             [gdl.context.default :as default-context]
             [app.state :refer [current-context]]
             [context.properties :as properties]
-
-            game.session ; TODO remove
+            context.player-message
+            context.builder
 
             game.modifiers.all
             game.components.require-all ; often forget to require, then weird bug ...how to check
