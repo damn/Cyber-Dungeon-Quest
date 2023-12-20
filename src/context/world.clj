@@ -1,4 +1,4 @@
-(ns context.world-map
+(ns context.world
   (:require [clojure.edn :as edn]
             [gdl.context :refer [all-properties]]
             gdl.disposable
@@ -16,7 +16,13 @@
             [mapgen.movement-property :refer (movement-property)]
             mapgen.module-gen))
 
+; world map only used @ render tiledmap & minimap & minimap explored tile corners
+; => remove so can later add multiple maps if needed
+; move content field out
+; check usages of grid @ body / potential field / movement where can simplify or collect fns
+
 ; rename this to context.world (can have multiple world-maps later)
+; (maybe world-map can be a record with functions too ? ...)
 ; rename grid just to grid
 ; get-grid => world-grid
 ; world-cell => world-cell
@@ -139,6 +145,9 @@
              (on-screen? target* context))
          (not (ray-blocked? context (:position source*) (:position target*)))))
 
+  ; TODO (:grid world-map) dangerous ! => if multiple maps ! thats why world-map usage limit
+  ; ! all context data internal limit & offer protocol !
+  ; e.g. id->entity-map ... @ position or @ body/movement check ...
   (circle->entities [{:keys [context/world-map]} circle]
     (->> (circle->cells (:grid world-map) circle)
          (map deref)
@@ -219,6 +228,7 @@
       :cell-blocked-boolean-array (create-cell-blocked-boolean-array grid)
       :contentfields (create-mapcontentfields w h)
       :grid grid
+      ; TODO just explored-tiles? or explored-grid ?
       :explored-tile-corners (atom (grid2d/create-grid w h (constantly false)))})
     )
   ;(check-not-allowed-diagonals grid)

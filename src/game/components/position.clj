@@ -1,7 +1,7 @@
 (ns game.components.position
   (:require [x.x :refer [defcomponent]]
             [context.ecs :as entity]
-            [context.world-map :refer (put-entity-in-correct-content-field remove-entity-from-content-field)]))
+            [context.world :refer (put-entity-in-correct-content-field remove-entity-from-content-field)]))
 
 (defcomponent :position _
   (entity/create! [_ e context]

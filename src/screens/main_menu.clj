@@ -5,7 +5,7 @@
             [app.state :refer [current-context change-screen!]]
             context.ecs
             context.mouseover-entity
-            context.world-map
+            [context.world :as world]
             game.ui.action-bar
             game.ui.inventory-window)
   (:import (com.badlogic.gdx Gdx Input$Keys)))
@@ -22,7 +22,7 @@
                                                          :effect])  ; projectiles, nova
                        (context.mouseover-entity/->context-map)
                        {:context/update-entities? (atom true)})]
-    (context.world-map/merge->context context)))
+    (world/merge->context context)))
 
 (defrecord SubScreen [bg-image]
   gdl.screen/Screen
