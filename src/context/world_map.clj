@@ -5,9 +5,11 @@
             [gdl.graphics.camera :as camera]
             [gdl.maps.tiled :as tiled]
             [gdl.math.geom :as geom]
+            [gdl.math.raycaster :as raycaster]
+            [gdl.math.vector :as v]
             [data.grid2d :as grid]
             [utils.core :refer [translate-to-tile-middle]]
-            [game.context :refer [creature-entity]]
+            [game.context :refer [creature-entity ray-blocked?]]
             [game.maps.cell-grid :as cell-grid]
             [mapgen.movement-property :refer (movement-property)]
             mapgen.module-gen))
@@ -94,6 +96,22 @@
      (<= xdist (inc (/ world-viewport-width  2)))
      (<= ydist (inc (/ world-viewport-height 2))))))
 
+(defn- create-double-ray-endpositions
+  "path-w in tiles."
+  [[start-x start-y] [target-x target-y] path-w]
+  {:pre [(< path-w 0.98)]} ; wieso 0.98??
+  (let [path-w (+ path-w 0.02) ;etwas gr�sser damit z.b. projektil nicht an ecken anst�sst
+        v (v/direction [start-x start-y]
+                       [target-y target-y])
+        [normal1 normal2] (v/get-normal-vectors v)
+        normal1 (v/scale normal1 (/ path-w 2))
+        normal2 (v/scale normal2 (/ path-w 2))
+        start1  (v/add [start-x  start-y]  normal1)
+        start2  (v/add [start-x  start-y]  normal2)
+        target1 (v/add [target-x target-y] normal1)
+        target2 (v/add [target-x target-y] normal2)]
+    [start1,target1,start2,target2]))
+
 (extend-type gdl.context.Context
   game.context/World
   (get-entities-in-active-content-fields [context]
@@ -108,19 +126,25 @@
       (filter #(geom/point-in-rect? position (:body @%))
               (cell-grid/get-entities cell))))
 
-  (in-line-of-sight? [{:keys [context/world-map] :as context}
-                      source*
-                      target*]
+  (in-line-of-sight? [context source* target*]
     (and (:z-order target*)  ; is even an entity which renders something
          (or (not (:is-player source*))
              (on-screen? target* context))
-         (not (cell-grid/ray-blocked? world-map
-                                      (:position source*)
-                                      (:position target*)))))
+         (not (ray-blocked? context (:position source*) (:position target*)))))
 
   (circle->touched-entities [{:keys [context/world-map]} circle]
     (cell-grid/circle->touched-entities (:cell-grid world-map)
-                                        circle)))
+                                        circle))
+
+  (ray-blocked? [{:keys [context/world-map]} start target]
+    (let [{:keys [cell-blocked-boolean-array width height]} world-map]
+      (raycaster/ray-blocked? cell-blocked-boolean-array width height start target)))
+
+  (path-blocked? [context start target path-w]
+    (let [[start1,target1,start2,target2] (create-double-ray-endpositions start target path-w)]
+      (or
+       (ray-blocked? context start1 target1)
+       (ray-blocked? context start2 target2)))))
 
 (defn- first-level [context]
   (let [{:keys [tiled-map start-positions]} (mapgen.module-gen/generate
@@ -249,7 +273,6 @@
 ; * nearest-enemy-entity
 ; * potential field direction to nearest enemy
 ; * npc sleeping state tick! check distance nearest enemy
-; * projectile-path-blocked?
 
 ; move game.maps code here probably mostly (ray-blocked? ...)
 ; contentfields

@@ -1,7 +1,5 @@
 (ns game.maps.cell-grid
   (:require [gdl.math.geom :as geom]
-            [gdl.math.vector :as v]
-            [gdl.math.raycaster :as raycaster]
             [data.grid2d :as grid]
             [utils.core :refer [diagonal-direction?]]))
 
@@ -103,30 +101,3 @@
   (->> (circle->touched-cells cell-grid circle)
        get-entities-from-cells
        (filter #(geom/collides? circle (:body @%)))))
-
-(defn ray-blocked? [{:keys [cell-blocked-boolean-array width height]} start target]
-  (raycaster/ray-blocked? cell-blocked-boolean-array width height start target))
-
-(defn- create-double-ray-endpositions
-  "path-w in tiles."
-  [[start-x start-y] [target-x target-y] path-w]
-  {:pre [(< path-w 0.98)]} ; wieso 0.98??
-  (let [path-w (+ path-w 0.02) ;etwas gr�sser damit z.b. projektil nicht an ecken anst�sst
-        v (v/direction [start-x start-y]
-                       [target-y target-y])
-        [normal1 normal2] (v/get-normal-vectors v)
-        normal1 (v/scale normal1 (/ path-w 2))
-        normal2 (v/scale normal2 (/ path-w 2))
-        start1  (v/add [start-x  start-y]  normal1)
-        start2  (v/add [start-x  start-y]  normal2)
-        target1 (v/add [target-x target-y] normal1)
-        target2 (v/add [target-x target-y] normal2)]
-    [start1,target1,start2,target2]))
-
-(defn is-path-blocked?
-  "path-w in tiles. casts two rays."
-  [world-map start target path-w]
-  (let [[start1,target1,start2,target2] (create-double-ray-endpositions start target path-w)]
-    (or
-     (ray-blocked? world-map start1 target1)
-     (ray-blocked? world-map start2 target2))))

@@ -22,7 +22,10 @@
   (get-entities-in-active-content-fields [_])
   (entities-at-position [_ position])
   (in-line-of-sight? [_ source* target*])
-  (circle->touched-entities [_ circle]))
+  (circle->touched-entities [_ circle])
+  (ray-blocked? [_ start target])
+  (path-blocked? [_ start target path-w]
+                 "path-w in tiles. casts two rays."))
 
 (defprotocol Builder
   (creature-entity [_ creature-id position creature-params])
@@ -44,4 +47,5 @@
   (potential-field-follow-to-enemy [_ entity]))
 
 (defprotocol FiniteStateMachine
-  (send-event! [_ entity event] [_ entity event params]))
+  (send-event! [_ entity event]
+               [_ entity event params]))

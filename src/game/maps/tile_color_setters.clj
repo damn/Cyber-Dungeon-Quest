@@ -1,8 +1,7 @@
 (ns game.maps.tile-color-setters
   (:require [gdl.graphics.color :as color]
             [gdl.graphics.camera :as camera]
-            [app.state :refer [current-context]]
-            [game.maps.cell-grid :as cell-grid])
+            [app.state :refer [current-context]])
   (:import com.badlogic.gdx.graphics.Color))
 
 (defn- explored? [{:keys [context/world-map] :as context} position]
@@ -25,14 +24,14 @@
 (def ^:private explored-tile-color (color/rgb 0.5 0.5 0.5))
 
 (defn tile-color-setter [_ x y]
-  (let [{:keys [world-camera context/world-map] :as context}  @current-context
+  (let [{:keys [world-camera] :as context}  @current-context
         light-position (camera/position world-camera)
         position [x y]
         explored? (explored? context position)
         base-color (if explored?
                      explored-tile-color
                      Color/BLACK)
-        blocked? (cell-grid/ray-blocked? world-map light-position position)]
+        blocked? (ray-blocked? context light-position position)]
     (if blocked?
       base-color
       (do
