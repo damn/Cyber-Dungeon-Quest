@@ -1,10 +1,11 @@
 (ns context.world-map
   (:require [clojure.edn :as edn]
+            [gdl.context :refer [all-properties]]
+            gdl.disposable
+            [gdl.graphics.camera :as camera]
             [gdl.maps.tiled :as tiled]
             [gdl.math.geom :as geom]
             [data.grid2d :as grid]
-            [gdl.context :refer [all-properties]]
-            gdl.disposable
             [utils.core :refer [translate-to-tile-middle]]
             [game.maps.cell-grid :as cell-grid]
             [game.entities.creature :as creature-entity]
@@ -62,6 +63,19 @@
 (defn- get-player-content-field-idx [{:keys [context/player-entity]}]
   (:idx (get-content-field @player-entity)))
 
+(defn- on-screen? [entity* {:keys [world-camera world-viewport-width world-viewport-height]}]
+  (let [[x y] (:position entity*)
+        x (float x)
+        y (float y)
+        [cx cy] (camera/position world-camera)
+        px (float cx)
+        py (float cy)
+        xdist (Math/abs (- x px))
+        ydist (Math/abs (- y py))]
+    (and
+     (<= xdist (inc (/ world-viewport-width  2)))
+     (<= ydist (inc (/ world-viewport-height 2))))))
+
 (extend-type gdl.context.Context
   game.context/World
   (get-entities-in-active-content-fields [context]
@@ -74,7 +88,17 @@
   (entities-at-position [{:keys [context/world-map]} position]
     (when-let [cell (get (:cell-grid world-map) (mapv int position))]
       (filter #(geom/point-in-rect? position (:body @%))
-              (cell-grid/get-entities cell)))))
+              (cell-grid/get-entities cell))))
+
+  (in-line-of-sight? [{:keys [context/world-map] :as context}
+                      source*
+                      target*]
+    (and (:z-order target*)  ; is even an entity which renders something
+         (or (not (:is-player source*))
+             (on-screen? target* context))
+         (not (cell-grid/ray-blocked? world-map
+                                      (:position source*)
+                                      (:position target*))))))
 
 #_(defn get-all-entities-of-current-map [context]
   (mapcat #(deref (:entities %)) (grid/cells (get-contentfields context))))
@@ -201,7 +225,6 @@
 
 ; TODO extend here game.context ( also properties do  )
 ; search world-map
-; * get-bodies-at-position
 ; * valid-position?
 ; * touched-cells/occupied cells ??
 ; * update posi projectile also does something (like valid position)
@@ -210,7 +233,6 @@
 ; * potential field direction to nearest enemy
 ; * npc sleeping state tick! check distance nearest enemy
 ; * projectile-path-blocked?
-; * in-line-of-sight?
 
 ; move game.maps code here probably mostly (ray-blocked? ...)
 ; contentfields

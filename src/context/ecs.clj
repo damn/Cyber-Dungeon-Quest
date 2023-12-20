@@ -5,8 +5,8 @@
             [x.x :refer [defsystem update-map doseq-entity]]
             [gdl.context :refer [draw-text]]
             [utils.core :refer [define-order sort-by-order]]
-            [game.context :refer [get-entity entity-exists? get-entities-in-active-content-fields]]
-            [game.line-of-sight :refer (in-line-of-sight?)]))
+            [game.context :refer [get-entity entity-exists? get-entities-in-active-content-fields
+                                  in-line-of-sight?]]))
 
 ; e = entity reference (an atom)
 ; e* = deref-ed entity, a map.
@@ -80,7 +80,7 @@
 (defn- visible-entities* [{:keys [context/player-entity] :as context}]
   (->> (get-entities-in-active-content-fields context)
        (map deref)
-       (filter #(in-line-of-sight? @player-entity % context))))
+       (filter #(in-line-of-sight? context @player-entity %))))
 
 (defn- tick-entity! [context entity delta]
   (swap! entity update-map tick delta)

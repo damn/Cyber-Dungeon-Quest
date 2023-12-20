@@ -3,7 +3,7 @@
             [gdl.context :refer [draw-line]]
             [gdl.math.vector :as v]
             [gdl.graphics.color :as color]
-            [game.line-of-sight :refer (in-line-of-sight?)]
+            [game.context :refer (in-line-of-sight?)]
             [game.entities.audiovisual :as audiovisual]
             [game.entities.line :as line-entity]
             [game.effect :as effect]))
@@ -71,7 +71,7 @@
    (fn [_effect-val {:keys [source target]} context]
      (and source
           target
-          (in-line-of-sight? @source @target context)
+          (in-line-of-sight? context @source @target)
           (:hp @target))) ; TODO this is valid-params of hit-effect damage !!
 
    :do! do-effect!})

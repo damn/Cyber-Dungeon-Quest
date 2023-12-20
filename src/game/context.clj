@@ -20,4 +20,5 @@
 
 (defprotocol World
   (get-entities-in-active-content-fields [_])
-  (entities-at-position [_ position]))
+  (entities-at-position [_ position])
+  (in-line-of-sight? [_ source* target*]))
