@@ -1,7 +1,8 @@
 (ns game.maps.tile-color-setters
   (:require [gdl.graphics.color :as color]
             [gdl.graphics.camera :as camera]
-            [app.state :refer [current-context]])
+            [app.state :refer [current-context]]
+            [game.context :refer [ray-blocked?]])
   (:import com.badlogic.gdx.graphics.Color))
 
 (defn- explored? [{:keys [context/world-map] :as context} position]
