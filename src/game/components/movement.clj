@@ -40,9 +40,8 @@
         blocked (cond hit-entity
                       (do
                        (swap! projectile update-in [:projectile-collision :already-hit-bodies] conj hit-entity)
-                       (do-effect! (merge context
-                                         {:effect/source projectile
-                                          :effect/target hit-entity})
+                       (do-effect! (merge context {:effect/source projectile
+                                                   :effect/target hit-entity})
                                   hit-effect)
                        (not piercing))
                       (some #(cell/blocked? @% @projectile) cells)

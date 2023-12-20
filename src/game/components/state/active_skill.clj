@@ -3,7 +3,7 @@
             [gdl.context :refer [draw-filled-circle draw-sector draw-image play-sound!]]
             [data.counter :as counter]
             [data.val-max :refer [apply-val]]
-            [game.context :refer [valid-params? do-effect! send-event!]]
+            [game.context :refer [valid-params? do-effect! effect-render-info send-event!]]
             [game.entity :as entity]
             [game.components.skills :as skills]))
 
@@ -60,8 +60,7 @@
   (render-info [_ c {:keys [position] :as entity*}]
     (let [{:keys [image effect]} skill]
       (draw-skill-icon c image entity* position (counter/ratio counter))
-      ; TODO ? render fns ?!
-      (effect/render-info c effect effect-params))))
+      (effect-render-info (merge c effect-params) effect))))
 
 (defn- apply-action-speed-modifier [entity* skill action-time]
   (let [{:keys [cast-speed attack-speed]} (:modifiers entity*)

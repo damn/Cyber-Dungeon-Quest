@@ -1,4 +1,8 @@
-(ns context.effect-interpreter)
+(ns context.effect-interpreter
+  (:require gdl.context
+            game.context))
+
+; TODO grep source/target
 
 (def ^:private components {})
 
@@ -6,32 +10,40 @@
   (alter-var-root #'components assoc effect-type effect-def)
   effect-type)
 
-; TODO this is just multimethods without default ? possible? that they then break ?
-; defsystems / component / defsystem without default return ?
-; always  give explicit default return? just use defmultis?
-(defn- call-effect-fn [fn-key context [type value] params context]
+(defn- call-effect-fn [fn-key context [type value]]
   (let [definition (get components type)]
     (assert definition (str "Effect " type " not defined."))
-    ((fn-key definition) value params context)))
+    ((fn-key definition) context value)))
 
-; only used @ skill, 1-part-effects only yet.
-(def valid-params? (partial call-effect-fn :valid-params?))
+(defn- type-dispatch [_context [type _value]]
+  type)
 
-(defn text [context effect params]
-  (->> (for [component effect]
-         (call-effect-fn :text context component params))
-       (str/join "\n")))
-
-(defn do! [context effect params]
-  ; (assert (valid-params? context component params)) ; TODO checking line of sight, etc again here , should already be checked
-  (doseq [component effect]
-    (call-effect-fn :do! context component params)))
-
-; these are context-systems O.O just multimethods ....
-
-(defmulti render-info (fn [_context [type _value]] type))
+(defmulti render-info type-dispatch)
 (defmethod render-info :default [_ _])
 
-(defmulti ai-should-use? (fn [context [type _value]] type))
-(defmethod ai-should-use? :default [_ _]
-  true) ; TODO ?!
+(defmulti useful? type-dispatch)
+(defmethod useful? :default [_ _] true)
+
+(extend-type gdl.context.Context
+  game.context.EffectInterpreter
+  (do-effect! [context effect]
+    ; (assert (valid-params? context effect)) ; TODO checking line of sight, etc again here , should already be checked
+    (doseq [component effect]
+      (call-effect-fn :do! context component)))
+
+  (effect-text [context effect]
+    (->> (for [component effect]
+           (call-effect-fn :text context component))
+         (str/join "\n")))
+
+  (valid-params? [context effect]
+    ; TODO only used @ skill, 1-part-effects only yet.
+    (call-effect-fn :valid-params? context effect))
+
+  (effect-render-info [context effect]
+    ; TODO only used @ skill, 1-part-effects only yet.
+    (render-info context effect))
+
+  (effect-useful? [_ effect]
+    ; TODO only used @ skill, 1-part-effects only yet.
+    (useful? context effect)))

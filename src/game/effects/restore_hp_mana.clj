@@ -3,7 +3,7 @@
             [data.val-max :refer [lower-than-max? set-to-max]]
             [game.effect :as effect]))
 
-(defmethod effect/ai-should-use? :restore-hp-mana [_ _effect-params _context entity*]
+(defmethod effect/useful? :restore-hp-mana [_ _effect-params _context entity*]
   (or (lower-than-max? (:mana entity*))
       (lower-than-max? (:hp   entity*))))
 

@@ -1,8 +1,7 @@
 (ns game.components.state.npc-idle
   (:require [gdl.math.vector :as v]
             [data.counter :as counter]
-            [game.context :refer [world-grid potential-field-follow-to-enemy send-event!]]
-            [game.effect :as effect]
+            [game.context :refer [effect-useful? world-grid potential-field-follow-to-enemy send-event!]]
             [game.entity :as entity]
             [game.components.skills :as skills]
             [game.world.cell :as cell]))
@@ -27,8 +26,8 @@
                                                      %
                                                      effect-params
                                                      context))
-                     ; TODO render fns  ?!
-                     (effect/ai-should-use? (:effect %) effect-params context entity*)))
+                     (effect-useful? (merge context effect-params)
+                                     (:effect %))))
        first))
 
 (defrecord State [entity]

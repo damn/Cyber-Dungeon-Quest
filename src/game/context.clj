@@ -36,9 +36,11 @@
   (world-grid [_]))
 
 (defprotocol EffectInterpreter
-  (do-effect!    [_ effect])
-  (effect-text   [_ effect])
-  (valid-params? [_ effect]))
+  (do-effect!         [_ effect])
+  (effect-text        [_ effect])
+  (valid-params?      [_ effect])
+  (effect-render-info [_ effect])
+  (effect-useful?     [_ effect]))
 
 (defprotocol Builder
   (creature-entity [_ creature-id position creature-params])

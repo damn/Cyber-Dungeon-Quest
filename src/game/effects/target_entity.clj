@@ -13,7 +13,7 @@
         (:radius (:body target*)))
      maxrange))
 
-(defmethod effect/ai-should-use? :target-entity [[effect-id effect-value] effect-params _context entity*]
+(defmethod effect/useful? :target-entity [[effect-id effect-value] effect-params _context entity*]
   (in-range? entity*
              @(:target effect-params)
              (:maxrange effect-value)))

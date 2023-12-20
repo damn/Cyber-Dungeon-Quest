@@ -15,7 +15,7 @@
 (def ^:private maxtime (/ maxrange (/ speed 1000)))
 
 ; TODO valid params direction has to be  non-nil (entities not los player ) ?
-(defmethod effect/ai-should-use? :projectile [_ effect-params context entity*]
+(defmethod effect/useful? :projectile [_ effect-params context entity*]
   (let [target (:target effect-params)]
     (and (not (path-blocked? context
                              (:position entity*) ; TODO test
