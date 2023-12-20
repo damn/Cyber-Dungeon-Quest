@@ -7,7 +7,7 @@
             [game.context :refer [audiovisual get-cell-grid]]
             [game.effect :as effect]
             [game.components.body :as body]
-            [game.world.cell-grid :refer [rectangle->touched-cells]]
+            [game.world.cell-grid :refer [rectangle->cells]]
             [game.world.cell :as cell :refer [cells->entities]]))
 
 (defn- apply-delta-v [entity* delta v]
@@ -29,14 +29,14 @@
                 already-hit-bodies
                 piercing]} (:projectile-collision @projectile)
         cell-grid (get-cell-grid context)
-        touched-cells (rectangle->touched-cells cell-grid (:body @projectile))
+        cells (rectangle->cells cell-grid (:body @projectile))
         ; valid-position? for solid entity check
-        ; on invalid returns {:hit-entities, :or :touched-cells}'
+        ; on invalid returns {:hit-entities, :or :cells}'
         hit-entity (find-first #(and (not (contains? already-hit-bodies %))
                                      (not= (:faction @projectile) (:faction @%))
                                      (:is-solid (:body @%))
                                      (geom/collides? (:body @projectile) (:body @%)))
-                               (cells->entities (map deref touched-cells)))
+                               (cells->entities (map deref cells)))
         blocked (cond hit-entity
                       (do
                        (swap! projectile update-in [:projectile-collision :already-hit-bodies] conj hit-entity)
@@ -45,7 +45,7 @@
                                         :target hit-entity}
                                        context)
                        (not piercing))
-                      (some #(cell/blocked? @% @projectile) touched-cells)
+                      (some #(cell/blocked? @% @projectile) cells)
                       (do
                        (audiovisual context (:position @projectile) :projectile/hit-wall-effect)
                        true))]

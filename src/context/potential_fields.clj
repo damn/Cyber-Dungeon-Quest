@@ -11,10 +11,9 @@
             [utils.core :refer :all]
             [game.context :refer (get-entities-in-active-content-fields get-cell-grid)]
             [game.components.faction :as faction]
-            [game.world.cell-grid :refer [cached-get-adjacent-cells
-                                          rectangle->touched-cells]]
+            [game.world.cell-grid :refer [cached-adjacent-cells
+                                          rectangle->cells]]
             [game.world.cell :as cell]))
-
 
 (def ^:private max-iterations 15)
 
@@ -48,10 +47,10 @@
         marked? faction]
     ; sorting important because of diagonal-cell values, flow from lower dist first for correct distance
     (doseq [cell (sort-by #(distance @%) last-marked-cells)
-            adjacent-cell (cached-get-adjacent-cells cell-grid cell)
+            adjacent-cell (cached-adjacent-cells cell-grid cell)
             :let [cell* @cell
                   adjacent-cell* @adjacent-cell]
-            :when (not (or (cell/blocked? adjacent-cell*) ; filters nil cells
+            :when (not (or (cell/blocked? adjacent-cell*)
                            (marked? adjacent-cell*)))
             :let [distance-value (+ (distance cell*)
                                     ; TODO new bottleneck is-diagonal?
@@ -126,14 +125,14 @@
     (when-not (= (get-in @cache last-state) tiles->entities)
       (swap! cache assoc-in last-state tiles->entities)
       (doseq [cell (get-in @cache marked-cells)]
-        (swap! cell dissoc faction))
+        (swap! cell assoc faction nil)) ; don't dissoc - will lose the Cell record type
       (swap! cache assoc-in marked-cells (generate-potential-field
                                           cell-grid
                                           faction
                                           tiles->entities)))))
 
 (defn- update-potential-fields* [context]
-  (let [entities (get-entities-in-active-content-fields context)
+  (let [entities (get-entities-in-active-content-fields context) ; TODO move out, pass only entities
         cell-grid (get-cell-grid context)]
     (doseq [faction [:good :evil]]
       (update-faction-potential-field cell-grid
@@ -165,7 +164,7 @@
 
 ; not using filter because nil cells considered @ remove-not-allowed-diagonals
 ; TODO only non-nil cells check
-; TODO always called with cached-get-adjacent-cells ...
+; TODO always called with cached-adjacent-cells ...
 (defn- filter-viable-cells [entity adjacent-cells]
   (remove-not-allowed-diagonals
     (mapv #(when-not (or (cell/blocked? @%)
@@ -181,7 +180,7 @@
 (defn- viable-cell? [cell-grid distance-to own-dist entity cell]
   (when-let [best-cell (get-min-dist-cell
                         distance-to
-                        (filter-viable-cells entity (cached-get-adjacent-cells cell-grid cell)))]
+                        (filter-viable-cells entity (cached-adjacent-cells cell-grid cell)))]
     (when (< (distance-to best-cell) own-dist)
       cell)))
 
@@ -192,7 +191,7 @@
         distance-to    #(get-in @% [faction :distance])
         nearest-entity #(get-in @% [faction :entity])
         own-dist (distance-to own-cell)
-        adjacent-cells (cached-get-adjacent-cells cell-grid own-cell)]
+        adjacent-cells (cached-adjacent-cells cell-grid own-cell)]
     (if (and own-dist (zero? own-dist))
       {:target-entity (nearest-entity own-cell)}
       (if-let [adjacent-cell (first (filter #(and (distance-to %)
@@ -220,9 +219,9 @@
                           own-cell)))}))))
 
 (defn- inside-cell? [cell-grid entity* cell]
-  (let [touched-cells (rectangle->touched-cells cell-grid (:body entity*))]
-    (and (= 1 (count touched-cells))
-         (= cell (first touched-cells)))))
+  (let [cells (rectangle->cells cell-grid (:body entity*))]
+    (and (= 1 (count cells))
+         (= cell (first cells)))))
 
 (extend-type gdl.context.Context
   game.context/PotentialField
@@ -266,7 +265,7 @@
   (when-let [body mouseoverbody]
     (let [occupied-cell (get-cell context (:position @body))
           own-dist (distance-to occupied-cell)
-          adj-cells (cached-get-adjacent-cells cell-grid occupied-cell)
+          adj-cells (cached-adjacent-cells cell-grid occupied-cell)
           potential-cells (filter distance-to
                                   (filter-viable-cells body adj-cells))
           adj-cells (remove nil? adj-cells)]

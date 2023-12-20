@@ -4,7 +4,7 @@
             [gdl.graphics.color :as color]
             [gdl.graphics.camera :as camera]
             [game.context :refer [get-cell-grid get-cell]]
-            [game.world.cell-grid :refer [circle->touched-cells]])
+            [game.world.cell-grid :refer [circle->cells]])
   (:import com.badlogic.gdx.graphics.Color))
 
 ; TODO make check-buttons with debug-window or MENU top screen is good for debug I think
@@ -16,7 +16,7 @@
         circle {:position position :radius radius}]
     (draw-circle c position radius (color/rgb 1 0 0 0.5))
     (doseq [[x y] (map #(:position @%)
-                       (circle->touched-cells cell-grid circle))]
+                       (circle->cells cell-grid circle))]
       (draw-rectangle c x y 1 1 (color/rgb 1 0 0 0.5)))
     (let [{[x y] :left-bottom :keys [width height]} (gdl.math.geom/circle->outer-rectangle circle)]
       (draw-rectangle c x y width height (color/rgb 0 0 1 1)))))

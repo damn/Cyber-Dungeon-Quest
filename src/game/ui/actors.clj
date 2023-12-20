@@ -15,7 +15,7 @@
     (draw [_batch _parent-alpha]
       (let [{:keys [context/player-entity] :as c} @current-context]
         (when (= :item-on-cursor
-                 (:state (:fsm (:components/state @player-entity))))
+                 (:state (:fsm (:entity/state @player-entity))))
           ; windows keep changing z-index when selected
           (.toFront ^Actor this)
           (draw-centered-image c

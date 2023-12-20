@@ -59,7 +59,7 @@
   (when (.isKeyJustPressed Gdx/input Input$Keys/TAB)
     (change-screen! :screens/minimap))
   (when (and (.isKeyJustPressed Gdx/input Input$Keys/X)
-             (= :dead (:state (:fsm (:components/state @player-entity)))))
+             (= :dead (:state (:fsm (:entity/state @player-entity)))))
     (change-screen! :screens/main-menu)))
 
 (defn tick-game [{:keys [context/player-entity
@@ -68,7 +68,7 @@
                   :as context}
                  delta]
   (action-bar/up-skill-hotkeys)
-  (let [state (:state-obj (:components/state @player-entity))
+  (let [state (:state-obj (:entity/state @player-entity))
         _ (state/manual-tick! state context delta)
         pause-game? (or @thrown-error
                         (and pausing (state/pause-game? state)))

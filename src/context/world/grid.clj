@@ -1,11 +1,11 @@
-(ns context.world.cell-grid
+(ns context.world.grid
   (:require [data.grid2d :as grid2d]
             [gdl.math.geom :as geom]
             [utils.core :refer [tile->middle]]
-            [game.world.cell-grid :refer [rectangle->touched-cells]]
+            [game.world.cell-grid :refer [rectangle->cells]]
             game.world.cell))
 
-(defn- rectangle->touched-tiles
+(defn- rectangle->tiles
   [{[x y] :left-bottom :keys [left-bottom width height]}]
   {:pre [left-bottom width height]}
   (let [x       (float x)
@@ -25,24 +25,24 @@
 
 (extend-type data.grid2d.Grid2D
   game.world.cell-grid/CellGrid
-  (cached-get-adjacent-cells [cell-grid cell]
+  (cached-adjacent-cells [cell-grid cell]
     (if-let [result (:adjacent-cells @cell)]
       result
-      (let [result (map cell-grid (-> @cell   ; TODO remove nil ones
-                                      :position
-                                      grid2d/get-8-neighbour-positions))]
+      (let [result (keep cell-grid (-> @cell
+                                       :position
+                                       grid2d/get-8-neighbour-positions))]
         (swap! cell assoc :adjacent-cells result)
         result)))
 
-  (rectangle->touched-cells [cell-grid rectangle]
+  (rectangle->cells [cell-grid rectangle]
     (->> rectangle
-         rectangle->touched-tiles
+         rectangle->tiles
          (map cell-grid)))
 
-  (circle->touched-cells [cell-grid circle]
+  (circle->cells [cell-grid circle]
     (->> circle
          geom/circle->outer-rectangle
-         (rectangle->touched-cells cell-grid))))
+         (rectangle->cells cell-grid))))
 
 (defrecord Cell [position
                  middle ; TODO needed ?
@@ -82,8 +82,6 @@
 
   (occupied-by-other? [_ entity]
     (seq (disj occupied entity))))
-
-
 
 (defn- create-cell [position movement]
   {:pre [(#{:none :air :all} movement)]}

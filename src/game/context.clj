@@ -21,8 +21,8 @@
 (defprotocol World
   (get-entities-in-active-content-fields [_])
   (entities-at-position [_ position])
-  (in-line-of-sight? [_ source* target*])
-  (circle->touched-entities [_ circle])
+  (in-line-of-sight? [_ source* target*]) ; TODO 'line-of-sight?' ?
+  (circle->entities [_ circle])
   (ray-blocked?  [_ start target])
   (path-blocked? [_ start target path-w]
                  "path-w in tiles. casts two rays.")

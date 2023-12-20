@@ -9,9 +9,9 @@
             [gdl.math.vector :as v]
             [data.grid2d :as grid]
             [utils.core :refer [->tile tile->middle]]
-            [context.world.cell-grid :refer [create-cell-grid]]
+            [context.world.grid :refer [create-cell-grid]]
             [game.context :refer [creature-entity ray-blocked? get-cell]]
-            [game.world.cell-grid :refer [circle->touched-cells]]
+            [game.world.cell-grid :refer [circle->cells]]
             [game.world.cell :as cell :refer [cells->entities]]
             [mapgen.movement-property :refer (movement-property)]
             mapgen.module-gen))
@@ -22,12 +22,11 @@
 ; get-cell => world-cell
 ; and protocols also rename folders
 
+; TODO forgot to filter nil cells , e.g. cached-adjcent cells or something
+
 ;;
 
 ;; just grep context/world-map and move into API
-
-
-
 
 ;;;
 
@@ -140,8 +139,8 @@
              (on-screen? target* context))
          (not (ray-blocked? context (:position source*) (:position target*)))))
 
-  (circle->touched-entities [{:keys [context/world-map]} circle]
-    (->> (circle->touched-cells (:cell-grid world-map) circle)
+  (circle->entities [{:keys [context/world-map]} circle]
+    (->> (circle->cells (:cell-grid world-map) circle)
          (map deref)
          cells->entities
          (filter #(geom/collides? circle (:body @%)))))
@@ -238,7 +237,6 @@
   ; otherwise will be rendered, is visible, can also just setVisible layer false
   (tiled/remove-layer! tiled-map :creatures))
 
-; PROTOCOL FN ?
 (defn- create-entities-from-tiledmap! [{:keys [context/world-map] :as context}]
   ; TODO they need player entity context ?!
   (place-entities! context (:tiled-map world-map))
@@ -264,25 +262,3 @@
                        {:context/world-map (create-world-map (first-level context))})]
     (merge context
            {:context/player-entity (create-entities-from-tiledmap! context)})))
-
-
-; TODO extend here game.context ( also properties do  )
-; search world-map
-; * valid-position?
-; * touched-cells/occupied cells ??
-; * update posi projectile also does something (like valid position)
-; * sleeping get-friendly-entities-in-line-of-sight (et entities in circle)
-; * nearest-enemy-entity
-; * potential field direction to nearest enemy
-; * npc sleeping state tick! check distance nearest enemy
-
-; move game.maps code here probably mostly (ray-blocked? ...)
-; contentfields
-; potential field ? part of this context?
-; explored tiles set / check
-; ray blocked @ tile-setter
-; geom tests ?!
-
-; * render tiledmap (context/world-map => :tiled-map)
-; => render-world
-; * render-minimap ?!

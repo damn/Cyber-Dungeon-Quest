@@ -5,7 +5,7 @@
             [gdl.math.vector :as v]
             [context.ecs :as entity]
             [game.context :refer [get-cell-grid]]
-            [game.world.cell-grid :refer [rectangle->touched-cells]]
+            [game.world.cell-grid :refer [rectangle->cells]]
             [game.world.cell :as cell :refer [cells->entities]])
   (:import com.badlogic.gdx.graphics.Color))
 
@@ -17,7 +17,7 @@
 ; => only now there are no >1 tile entities anyway
 (defn- rectangle->occupied-cells [cell-grid {:keys [left-bottom width height] :as rectangle}]
   (if (or (> width 1) (> height 1))
-    (rectangle->touched-cells cell-grid rectangle)
+    (rectangle->cells cell-grid rectangle)
     [(get cell-grid
           [(int (+ (left-bottom 0) (/ width 2)))
            (int (+ (left-bottom 1) (/ height 2)))])]))
@@ -28,20 +28,20 @@
       (swap! cell cell/add-occupying-entity entity))
     (swap! entity assoc :occupied-cells cells)))
 
-(defn- set-touched-cells! [entity new-cells]
+(defn- set-cells! [entity new-cells]
   {:pre [(not-any? nil? new-cells)]}
-  (swap! entity assoc :touched-cells new-cells)
+  (swap! entity assoc :cells new-cells)
   (doseq [cell new-cells]
     (swap! cell cell/add-entity entity)))
 
-(defn- remove-from-touched-cells! [entity]
-  (doseq [cell (:touched-cells @entity)]
+(defn- remove-from-cells! [entity]
+  (doseq [cell (:cells @entity)]
     (swap! cell cell/remove-entity entity)))
 
-(defn- update-touched-cells! [e touched-cells]
-  (when-not (= touched-cells (:touched-cells @e))
-    (remove-from-touched-cells! e)
-    (set-touched-cells! e touched-cells)))
+(defn- update-cells! [e cells]
+  (when-not (= cells (:cells @e))
+    (remove-from-cells! e)
+    (set-cells! e cells)))
 
 ; setting a min-size for colliding bodies so movement can set a max-speed for not
 ; skipping bodies at too fast movement
@@ -61,12 +61,12 @@
 (defn valid-position? [context entity*]
   ; TODO save params & check why its not a valid position
 
-  (let [touched-cells (rectangle->touched-cells (get-cell-grid context)
+  (let [cells (rectangle->cells (get-cell-grid context)
                                                 (:body entity*))]
     (and
-     (not-any? #(cell/blocked? @% entity*) touched-cells)
+     (not-any? #(cell/blocked? @% entity*) cells)
      (or (not (:is-solid (:body entity*)))
-         (->> touched-cells
+         (->> cells
               (map deref)
               cells->entities
               (not-any? #(and (not= (:id @%) (:id entity*))
@@ -108,11 +108,11 @@
     ;(assert (valid-position? context @e)) ; TODO error because projectiles do not have left-bottom !
     (swap! e assoc-left-bottom)
     (let [cell-grid (get-cell-grid context)]
-      (set-touched-cells! e (rectangle->touched-cells cell-grid (:body @e)))
+      (set-cells! e (rectangle->cells cell-grid (:body @e)))
       (when is-solid
         (set-occupied-cells! cell-grid e))))
   (entity/destroy! [_ e _ctx]
-    (remove-from-touched-cells! e)
+    (remove-from-cells! e)
     (when is-solid
       (remove-from-occupied-cells! e)))
   (entity/moved! [_ e context direction-vector]
@@ -120,7 +120,7 @@
     (when rotate-in-movement-direction?
       (swap! e assoc-in [:body :rotation-angle] (v/get-angle-from-vector direction-vector)))
     (let [cell-grid (get-cell-grid context)]
-      (update-touched-cells! e (rectangle->touched-cells cell-grid (:body @e)))
+      (update-cells! e (rectangle->cells cell-grid (:body @e)))
       (when is-solid
         (remove-from-occupied-cells! e)
         (set-occupied-cells! cell-grid e))))

@@ -8,7 +8,8 @@
     (with-out-str
      (clojure.pprint/pprint
       {:id (:id entity*)
-       :state (:state (:fsm (:components/state entity*)))}))))
+       ; TODO entity/state accessors -> private -> protocol fn make on entity* ?
+       :state (:state (:fsm (:entity/state entity*)))}))))
 
 (defn create []
   (let [window (ui/window :title "Info"

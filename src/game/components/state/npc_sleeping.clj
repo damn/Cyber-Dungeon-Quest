@@ -14,6 +14,8 @@
   (enter [_ _ctx])
 
   (exit [_ context]
+    ; TODO make state = alerted, and shout at the end of that !
+    ; then nice alert '!' and different entities different altert time
     (swap! entity string-effect/add "!")
     (create-entity! context
                     {:position (:position @entity)

@@ -18,12 +18,12 @@
   (pause-game? [_])
   (manual-tick! [_ context delta]))
 
-(defcomponent :components/state {:keys [initial-state
-                                        fsm
-                                        state-obj
-                                        state-obj-constructors]}
+(defcomponent :entity/state {:keys [initial-state
+                                    fsm
+                                    state-obj
+                                    state-obj-constructors]}
   (entity/create! [_ entity _ctx]
-    (swap! entity assoc :components/state
+    (swap! entity assoc :entity/state
            {:fsm (fsm initial-state nil) ; throws when initial-state is not part of states
             :state-obj ((initial-state state-obj-constructors) entity)
             :state-obj-constructors state-obj-constructors}))
@@ -42,19 +42,21 @@
      (game.context/send-event! context entity event nil))
 
     ([context entity event params]
-     (let [{:keys [fsm
-                   state-obj
-                   state-obj-constructors]} (:components/state @entity)
-           old-state (:state fsm)
-           new-fsm (fsm/fsm-event fsm event)
-           new-state (:state new-fsm)]
-       (when (not= old-state new-state)
-         (exit state-obj context)
-         (let [constructor (new-state state-obj-constructors)
-               new-state-obj (if params
-                               (constructor entity params)
-                               (constructor entity))]
-           (enter new-state-obj context)
-           (swap! entity update :components/state #(assoc %
-                                                          :fsm new-fsm
-                                                          :state-obj new-state-obj))))))))
+     ; 'when' because e.g. sending events to projectiles at wakeup (same faction filter)
+     ; who do not have a state component
+     (when-let [{:keys [fsm
+                        state-obj
+                        state-obj-constructors]} (:entity/state @entity)]
+       (let [old-state (:state fsm)
+             new-fsm (fsm/fsm-event fsm event)
+             new-state (:state new-fsm)]
+         (when (not= old-state new-state)
+           (exit state-obj context)
+           (let [constructor (new-state state-obj-constructors)
+                 new-state-obj (if params
+                                 (constructor entity params)
+                                 (constructor entity))]
+             (enter new-state-obj context)
+             (swap! entity update :entity/state #(assoc %
+                                                        :fsm new-fsm
+                                                        :state-obj new-state-obj)))))))))

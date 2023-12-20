@@ -130,15 +130,15 @@
             :mana 11
             :is-flying false
             :animation (animation/create images :frame-duration 250 :looping? true)
-            :components/state {:initial-state (if is-player
-                                                :idle
-                                                initial-state)
-                               :fsm (if is-player
-                                      player-fsm
-                                      npc-fsm)
-                               :state-obj-constructors (if is-player
-                                                         player-state-constructors
-                                                         npc-state-constructors)}
+            :entity/state {:initial-state (if is-player
+                                            :idle
+                                            initial-state)
+                           :fsm (if is-player
+                                  player-fsm
+                                  npc-fsm)
+                           :state-obj-constructors (if is-player
+                                                     player-state-constructors
+                                                     npc-state-constructors)}
             :z-order (if (:is-flying creature-props)
                        :flying
                        :ground)}
