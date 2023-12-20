@@ -11,7 +11,8 @@
             [utils.core :refer [->tile tile->middle]]
             [context.world.grid :refer [create-grid]]
             [context.world.content-grid :refer [->content-grid]]
-            [game.context :refer [creature-entity ray-blocked? world-cell]]
+            [game.context :refer [creature-entity ray-blocked? content-grid world-grid world-cell]]
+            [game.world.content-grid :as content-grid]
             [game.world.grid :refer [circle->cells]]
             [game.world.cell :as cell :refer [cells->entities]]
             [mapgen.movement-property :refer (movement-property)]
@@ -115,15 +116,18 @@
   (set-explored! [{:keys [context/world-map] :as context} position]
     (swap! (:explored-tile-corners world-map) assoc (->tile position) true))
 
-
   (content-grid [{:keys [context/world-map]}]
     (:content-grid world-map))
+
+  (get-active-entities [context]
+    (content-grid/get-active-entities (content-grid context)
+                                      (:context/player-entity context)))
 
   (world-grid [{:keys [context/world-map]}]
     (:grid world-map))
 
-  (world-cell [{:keys [context/world-map]} position]
-    (get (:grid world-map) (->tile position))))
+  (world-cell [context position]
+    (get (world-grid context) (->tile position))))
 
 (defn- first-level [context]
   (let [{:keys [tiled-map start-positions]} (mapgen.module-gen/generate

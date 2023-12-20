@@ -20,8 +20,16 @@
   (remove-entity! [_ entity]
     (-> @entity
         :entity/content-cell
-        deref
-        (swap! update :entities disj entity))))
+        (swap! update :entities disj entity)))
+
+  (get-active-entities [_ center-entity]
+    (->> (let [idx (-> @center-entity
+                       :entity/content-cell
+                       deref
+                       :idx)]
+           (cons idx (grid2d/get-8-neighbour-positions idx)))
+         (keep grid)
+         (mapcat (comp :entities deref)))))
 
 (defn ->content-grid [w h cell-w cell-h]
   (->ContentGrid (grid2d/create-grid (inc (int (/ w cell-w))) ; inc because corners
@@ -31,17 +39,6 @@
                                               :entities #{}})))
                  cell-w
                  cell-h))
-
-(extend-type gdl.context.Context
-  game.context/World
-  (get-active-entities [{:keys [context/player-entity] :as context}]
-    (->> (let [idx (-> @player-entity
-                       :entity/content-cell
-                       deref
-                       :idx)]
-           (cons idx (grid2d/get-8-neighbour-positions idx)))
-         (keep (:grid (content-grid context)))
-         (mapcat (comp :entities deref)))))
 
 (comment
 
