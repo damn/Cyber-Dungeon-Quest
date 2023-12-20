@@ -8,7 +8,7 @@
             game.session ; TODO remove
 
             game.modifiers.all
-            game.components.require-all
+            game.components.require-all ; often forget to require, then weird bug ...how to check
             game.effects.require-all
             game.ui.inventory-window
             game.ui.action-bar

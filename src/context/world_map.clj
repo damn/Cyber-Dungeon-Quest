@@ -60,9 +60,6 @@
         (swap! (:entities old-field) disj entity)))))
 
 (defn- get-player-content-field-idx [{:keys [context/player-entity]}]
-  (println " (:idx (get-content-field @player-entity))"
-           (:idx (get-content-field @player-entity))
-           )
   (:idx (get-content-field @player-entity)))
 
 (extend-type gdl.context.Context

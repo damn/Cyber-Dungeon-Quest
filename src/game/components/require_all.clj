@@ -10,5 +10,6 @@
             game.components.line-render
             game.components.mana
             game.components.mouseover?
+            game.components.position
             game.components.shout
             game.components.state))
