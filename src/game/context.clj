@@ -21,7 +21,8 @@
 (defprotocol World
   (get-entities-in-active-content-fields [_])
   (entities-at-position [_ position])
-  (in-line-of-sight? [_ source* target*]))
+  (in-line-of-sight? [_ source* target*])
+  (circle->touched-entities [_ circle]))
 
 (defprotocol Builder
   (creature-entity [_ creature-id position creature-params])

@@ -1,7 +1,7 @@
 (ns game.components.state.npc-sleeping
   (:require [gdl.context :refer [draw-text draw-circle]]
             [data.counter :as counter]
-            [game.context :as gm]
+            [game.context :refer [create-entity!]]
             [game.components.state :as state]
             [game.components.string-effect :as string-effect]
             [game.components.faction :as faction])
@@ -15,10 +15,10 @@
 
   (exit [_ context]
     (swap! entity string-effect/add "!")
-    (gm/create-entity! context
-                       {:position (:position @entity)
-                        :faction (:faction  @entity)
-                        :shout (counter/create 200)}) )
+    (create-entity! context
+                    {:position (:position @entity)
+                     :faction (:faction  @entity)
+                     :shout (counter/create 200)}))
 
   (tick [this delta] this)
   (tick! [_ {:keys [context/world-map] :as context} delta]

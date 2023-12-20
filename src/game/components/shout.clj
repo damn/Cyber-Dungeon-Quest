@@ -2,21 +2,19 @@
   (:require [x.x :refer [defcomponent]]
             [data.counter :as counter]
             [context.ecs :as entity]
-            [game.context :refer [in-line-of-sight?]]
-            [game.components.state :as state]
-            [game.maps.cell-grid :as cell-grid]))
+            [game.context :refer [in-line-of-sight? circle->touched-entities]]
+            [game.components.state :as state]))
 
 (def ^:private shout-range 6)
 
-(defn- get-friendly-entities-in-line-of-sight [{:keys [context/world-map]
-                                                :as context}
-                                               entity*
-                                               radius]
-  (filter #(and (= (:faction @%) (:faction entity*)
-                   (in-line-of-sight? context entity* @%)))
-          (cell-grid/circle->touched-entities (:cell-grid world-map)
-                                              {:position (:position entity*)
-                                               :radius radius})))
+; TODO gets itself also
+  ; == faction/friendly? e1 e2 ( entity*/friendly? e*1 e*2) ?
+(defn- get-friendly-entities-in-line-of-sight [context entity* radius]
+  (->> {:position (:position entity*)
+        :radius radius}
+       (circle->touched-entities context)
+       (filter #(and (= (:faction @%) (:faction entity*))
+                     (in-line-of-sight? context entity* @%)))))
 
 (defcomponent :shout counter
   (entity/tick [_ delta]

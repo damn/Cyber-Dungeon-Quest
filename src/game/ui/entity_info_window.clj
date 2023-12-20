@@ -8,7 +8,7 @@
     (with-out-str
      (clojure.pprint/pprint
       {:id (:id entity*)
-       :state (:state (:fsm (:components/state entity*))) }))))
+       :state (:state (:fsm (:components/state entity*)))}))))
 
 (defn create []
   (let [window (ui/window :title "Info"

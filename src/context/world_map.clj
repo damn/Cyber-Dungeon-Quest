@@ -116,7 +116,11 @@
              (on-screen? target* context))
          (not (cell-grid/ray-blocked? world-map
                                       (:position source*)
-                                      (:position target*))))))
+                                      (:position target*)))))
+
+  (circle->touched-entities [{:keys [context/world-map]} circle]
+    (cell-grid/circle->touched-entities (:cell-grid world-map)
+                                        circle)))
 
 (defn- first-level [context]
   (let [{:keys [tiled-map start-positions]} (mapgen.module-gen/generate
