@@ -1,18 +1,10 @@
 (ns context.ecs
   (:require [clj-commons.pretty.repl :as p]
-            ; TODO this only used here, good.
-            ; but position-changed / moved ! is also there
             [x.x :refer [defsystem update-map doseq-entity]]
             [gdl.context :refer [draw-text]]
             [utils.core :refer [define-order sort-by-order]]
-            [game.context :refer [get-entity entity-exists? get-entities-in-active-content-fields
-                                  line-of-sight?]]))
+            [game.context :refer [get-entity entity-exists? get-active-entities line-of-sight?]]))
 
-; e = entity reference (an atom)
-; e* = deref-ed entity, a map.
-; c = context
-
-; TODO always context last param
 (defsystem create [_])
 (defsystem create! [_ e c])
 
@@ -78,7 +70,7 @@
     (render-entity* #'render-debug c entity*)))
 
 (defn- visible-entities* [{:keys [context/player-entity] :as context}]
-  (->> (get-entities-in-active-content-fields context)
+  (->> (get-active-entities context)
        (map deref)
        (filter #(line-of-sight? context @player-entity %))))
 
@@ -89,7 +81,7 @@
     (tick! [k (k @entity)] context entity delta)))
 
 
-; get-entities-in-active-content-fields
+; get-active-entities
 ; => rename just get-active-entities
 ; or to-be-updated-entities ?!
 ; dont want to know about contentfields ( ? )
@@ -111,7 +103,7 @@
 
   (tick-active-entities
     [{:keys [context/thrown-error] :as context} delta]
-    (doseq [entity (get-entities-in-active-content-fields context)] ; world context protocol -> get-active-entities world
+    (doseq [entity (get-active-entities context)]
       (try
        (tick-entity! context entity delta)
        (catch Throwable t

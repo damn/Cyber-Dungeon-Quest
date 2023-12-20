@@ -1,12 +1,10 @@
 (ns game.components.position
   (:require [x.x :refer [defcomponent]]
             [context.ecs :as entity]
-            [context.world :refer (put-entity-in-correct-content-field remove-entity-from-content-field)]))
+            [game.context :refer [update-entity! remove-entity!]]
+            [game.world.content-grid :as content-grid]))
 
 (defcomponent :position _
-  (entity/create! [_ e context]
-    (put-entity-in-correct-content-field context e))
-  (entity/destroy! [_ e _ctx]
-    (remove-entity-from-content-field e))
-  (entity/moved! [_ e context direction-vector] ; TODO needs context, also call it position-changed!
-    (put-entity-in-correct-content-field context e)))
+  (entity/create!  [_ e ctx]      (update-entity! (content-grid ctx) e))
+  (entity/destroy! [_ e ctx]      (remove-entity! (content-grid ctx) e))
+  (entity/moved!   [_ e ctx _dir] (update-entity! (content-grid ctx) e)))

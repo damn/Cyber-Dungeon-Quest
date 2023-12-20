@@ -1,5 +1,5 @@
-(ns game.world.content-fields)
+(ns game.world.content-grid)
 
-#_(defprotocol ContentFields
-  (put-entity-in-correct-content-field)
-  )
+(defprotocol ContentGrid
+  (update-entity! [_ entity])
+  (remove-entity! [_ entity]))

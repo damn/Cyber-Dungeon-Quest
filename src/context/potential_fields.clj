@@ -9,7 +9,7 @@
             gdl.context
             [gdl.math.vector :as v]
             [utils.core :refer :all]
-            [game.context :refer (get-entities-in-active-content-fields world-grid)]
+            [game.context :refer (get-active-entities world-grid)]
             [game.components.faction :as faction]
             [game.world.grid :refer [cached-adjacent-cells rectangle->cells]]
             [game.world.cell :as cell]))
@@ -131,7 +131,7 @@
                                           tiles->entities)))))
 
 (defn- update-potential-fields* [context]
-  (let [entities (get-entities-in-active-content-fields context) ; TODO move out, pass only entities
+  (let [entities (get-active-entities context) ; TODO move out, pass only entities
         grid (world-grid context)]
     (doseq [faction [:good :evil]] ; TODO :faction/foo
       (update-faction-potential-field grid faction entities))))

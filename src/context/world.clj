@@ -10,6 +10,7 @@
             [data.grid2d :as grid2d]
             [utils.core :refer [->tile tile->middle]]
             [context.world.grid :refer [create-grid]]
+            [context.world.content-grid :refer [->content-grid]]
             [game.context :refer [creature-entity ray-blocked? world-cell]]
             [game.world.grid :refer [circle->cells]]
             [game.world.cell :as cell :refer [cells->entities]]
@@ -47,55 +48,6 @@
 ; ! entities creation fns and audiovisual also game.context protocols !
 ; idk how to call it
 
-; Contentfield Entities
-; -> :position sollten sie haben
-; Ansonsten updates? / renders? ansonsten ist sinnlos sie dazuzuf�gen.
-; TODO entities dont save a contenfield in their :position component but just the idx (for printing..), also simpler here?
-(let [field-w 16 ; TODO not world-viewport but player-viewport ? cannot link to world-viewport (minimap ...)
-      field-h 16]
-
-  (defn- create-mapcontentfields [w h]
-    (grid2d/create-grid (inc (int (/ w field-w))) ; inc wegen r�ndern
-                      (inc (int (/ h field-h)))
-                      (fn [idx]
-                        {:idx idx,
-                         :entities (atom #{})}))) ; move atom out
-
-  (defn- get-field-idx-of-position [[x y]]
-    [(int (/ x field-w))
-     (int (/ y field-h))]))
-
-(defn- get-contentfields [{:keys [context/world-map]}]
-  (:contentfields world-map))
-
-(defn- get-content-field [entity]
-  (:content-field entity))
-
-(defn remove-entity-from-content-field [entity]
-  (swap! (:entities (get-content-field @entity)) disj entity))
-
-(defn put-entity-in-correct-content-field [context entity]
-  (let [old-field (get-content-field @entity)
-        new-field (get (get-contentfields context)
-                       (get-field-idx-of-position (:position @entity)))]
-    (when-not (= old-field new-field)
-      (swap! (:entities new-field) conj entity)
-      (swap! entity assoc :content-field new-field)
-      (when old-field
-        (swap! (:entities old-field) disj entity)))))
-
-(defn- get-player-content-field-idx [{:keys [context/player-entity]}]
-  (:idx (get-content-field @player-entity)))
-
-(comment
- (defn get-all-entities-of-current-map [context]
-   (mapcat #(deref (:entities %)) (grid2d/cells (get-contentfields context))))
-
- (count
-  (get-all-entities-of-current-map @app.state/current-context))
-
- )
-
 (defn- on-screen? [entity* {:keys [world-camera world-viewport-width world-viewport-height]}]
   (let [[x y] (:position entity*)
         x (float x)
@@ -127,13 +79,6 @@
 
 (extend-type gdl.context.Context
   game.context/World
-  (get-entities-in-active-content-fields [context]
-    (mapcat #(deref (:entities %)); (comp deref :entities) or #(... %) ?
-            (remove nil?
-                    (map (get-contentfields context)  ; keep (get-contentfields)  ?  also @ potential field thing
-                         (let [idx (get-player-content-field-idx context)]
-                           (cons idx (grid2d/get-8-neighbour-positions idx)))))))
-
   (entities-at-position [context position]
     (when-let [cell (world-cell context position)]
       (filter #(geom/point-in-rect? position (:body @%))
@@ -169,6 +114,10 @@
 
   (set-explored! [{:keys [context/world-map] :as context} position]
     (swap! (:explored-tile-corners world-map) assoc (->tile position) true))
+
+
+  (content-grid [{:keys [context/world-map]}]
+    (:content-grid world-map))
 
   (world-grid [{:keys [context/world-map]}]
     (:grid world-map))
@@ -226,7 +175,7 @@
      {:width w
       :height h
       :cell-blocked-boolean-array (create-cell-blocked-boolean-array grid)
-      :contentfields (create-mapcontentfields w h)
+      :content-grid (->content-grid w h 16 16)
       :grid grid
       ; TODO just explored-tiles? or explored-grid ?
       :explored-tile-corners (atom (grid2d/create-grid w h (constantly false)))})

@@ -19,7 +19,8 @@
   (update-mouseover-entity [_]))
 
 (defprotocol World
-  (get-entities-in-active-content-fields [_])
+  (content-grid [_])
+  (get-active-entities [_])
   (entities-at-position [_ position])
   (line-of-sight? [_ source* target*])
   (circle->entities [_ circle])
