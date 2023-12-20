@@ -2,17 +2,13 @@
   (:require [gdl.context :refer [get-stage]]
             [gdl.scene2d.actor :as actor]
             [app.state :refer [change-screen!]]
-            [game.context :refer [tick-active-entities destroy-to-be-removed-entities!  update-mouseover-entity]]
+            [game.context :refer [tick-active-entities destroy-to-be-removed-entities! update-mouseover-entity
+                                  update-potential-fields]]
             [game.components.movement :as movement]
             [game.components.state :as state]
 
             ; => context
-            [game.ui.action-bar :as action-bar]
-
-            ; => context
-            [game.maps.potential-field :refer [update-potential-fields]]
-
-            )
+            [game.ui.action-bar :as action-bar])
   (:import (com.badlogic.gdx Gdx Input$Keys Input$Buttons)
            com.badlogic.gdx.scenes.scene2d.Actor))
 

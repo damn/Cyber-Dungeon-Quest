@@ -37,3 +37,7 @@
                                 speed
                                 maxtime
                                 piercing]}]))
+
+(defprotocol PotentialField
+  (update-potential-fields [_])
+  (potential-field-follow-to-enemy [_ entity]))

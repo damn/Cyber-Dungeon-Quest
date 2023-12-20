@@ -1,11 +1,12 @@
   "Assumption: The map contains no not-allowed diagonal cells, diagonal wall cells where both
   adjacent cells are walls and blocked.
   (important for wavefront-expansion and field-following)"
-(ns game.maps.potential-field
+(ns context.potential-fields
   ; * entities do not move to NADs (they remove them)
   ; * the potential field flows into diagonals, so they should be reachable too.
   ; TODO assert no NADs @ world creation
   (:require [data.grid2d :as grid]
+            gdl.context
             [gdl.math.vector :as v]
             [utils.core :refer :all]
             [game.context :refer (get-entities-in-active-content-fields)]
@@ -124,7 +125,7 @@
                                           faction
                                           tiles->entities)))))
 
-(defn update-potential-fields [{:keys [context/world-map] :as context}]
+(defn- update-potential-fields* [{:keys [context/world-map] :as context}]
   (let [entities (get-entities-in-active-content-fields context)
         cell-grid (:cell-grid world-map)]
     (doseq [faction [:good :evil]]
@@ -209,23 +210,29 @@
                           (some #(viable-cell? cell-grid distance-to own-dist entity %) cells)
                           own-cell)))}))))
 
-; TODO work with entity* !? occupied-by-other? works with entity not entity* ... not with ids ... hmmm
-(defn potential-field-follow-to-enemy [cell-grid entity]
-  (let [position (:position @entity)
-        own-cell (get cell-grid (mapv int position))
-        {:keys [target-entity target-cell]} (find-next-cell cell-grid entity own-cell)]
-    (cond
-      target-entity
-      (v/direction position (:position @target-entity))
+(extend-type gdl.context.Context
+  game.context/PotentialField
+  (update-potential-fields [context]
+    (update-potential-fields* context))
 
-      (nil? target-cell)
-      nil
+  ; TODO work with entity* !? occupied-by-other? works with entity not entity* ... not with ids ... hmmm
+  (potential-field-follow-to-enemy [{:keys [context/world-map]} entity]
+    (let [cell-grid (:cell-grid world-map)
+          position (:position @entity)
+          own-cell (get cell-grid (mapv int position))
+          {:keys [target-entity target-cell]} (find-next-cell cell-grid entity own-cell)]
+      (cond
+       target-entity
+       (v/direction position (:position @target-entity))
 
-      :else
-      (when-not (and (= target-cell own-cell)
-                     (occupied-by-other? own-cell entity)) ; prevent friction 2 move to center
-        (when-not (inside-cell? cell-grid @entity target-cell)
-          (v/direction position (:middle @target-cell)))))))
+       (nil? target-cell)
+       nil
+
+       :else
+       (when-not (and (= target-cell own-cell)
+                      (occupied-by-other? own-cell entity)) ; prevent friction 2 move to center
+         (when-not (inside-cell? cell-grid @entity target-cell)
+           (v/direction position (:middle @target-cell))))))))
 
 ;; DEBUG RENDER TODO not working in old map debug game.maps.render_
 

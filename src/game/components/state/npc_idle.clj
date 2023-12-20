@@ -1,11 +1,11 @@
 (ns game.components.state.npc-idle
   (:require [gdl.math.vector :as v]
             [data.counter :as counter]
+            [game.context :refer [potential-field-follow-to-enemy]]
             [game.effect :as effect]
             [game.components.faction :as faction]
             [game.components.skills :as skills]
-            [game.components.state :as state]
-            [game.maps.potential-field :as potential-field]))
+            [game.components.state :as state]))
 
 (defn- nearest-enemy-entity [{:keys [context/world-map]}
                              {:keys [faction position]}]
@@ -46,8 +46,8 @@
 
   (tick [this delta] this)
 
-  (tick! [_ {:keys [context/world-map] :as context} delta]
-    (swap! entity assoc :movement-vector (potential-field/potential-field-follow-to-enemy (:cell-grid world-map) entity))
+  (tick! [_ context delta]
+    (swap! entity assoc :movement-vector (potential-field-follow-to-enemy context entity))
     (let [effect-params (make-effect-params context entity)]
       (when-let [skill (npc-choose-skill context @entity effect-params)]
         (state/send-event! context entity :start-action skill effect-params))))

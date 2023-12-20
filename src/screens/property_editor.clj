@@ -5,7 +5,8 @@
             [gdl.scene2d.ui :as ui]
             [app.state :refer [current-context change-screen!]]
             context.properties)
-  (:import (com.badlogic.gdx.scenes.scene2d.ui WidgetGroup)))
+  (:import com.badlogic.gdx.scenes.scene2d.Stage
+           (com.badlogic.gdx.scenes.scene2d.ui WidgetGroup)))
 
 ; Idea;
 ; during running game each entity has property/id
@@ -26,7 +27,7 @@
                                             gui-viewport-height] :as context}
                                     property-id]
   (let [window (property-editor-window context property-id)]
-    (.addActor (get-stage context) window)
+    (.addActor ^Stage (get-stage context) window)
     (actor/set-center window
                       (/ gui-viewport-width  2)
                       (/ gui-viewport-height 2))))
@@ -154,7 +155,7 @@
                                               (.add window (overview-table context property-type clicked-id-fn))
                                               (.pack window)
                                               ; TODO fn above -> open in center .. ?
-                                              (.addActor (get-stage context) window)
+                                              (.addActor ^Stage (get-stage context) window)
                                               (actor/set-center window
                                                                 (/ gui-viewport-width  2)
                                                                 (/ gui-viewport-height 2)))))]])))

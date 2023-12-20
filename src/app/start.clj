@@ -6,6 +6,7 @@
             [context.properties :as properties]
             context.player-message
             context.builder
+            context.potential-fields
 
             game.modifiers.all
             game.components.require-all ; often forget to require, then weird bug ...how to check

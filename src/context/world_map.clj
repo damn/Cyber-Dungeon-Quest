@@ -12,6 +12,15 @@
             [mapgen.movement-property :refer (movement-property)]
             mapgen.module-gen))
 
+;;
+
+;; just grep context/world-map and move into API
+
+
+
+
+;;;
+
 ; TODO world-map context , all access to that data game.context fn
 ; check also other contexts keep private
 
