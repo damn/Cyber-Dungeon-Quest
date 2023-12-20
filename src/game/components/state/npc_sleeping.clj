@@ -4,7 +4,7 @@
             [game.context :refer [create-entity! send-event! world-cell]]
             [game.components.state :as state]
             [game.components.string-effect :as string-effect]
-            [game.components.faction :as faction])
+            [game.faction :as faction])
   (:import com.badlogic.gdx.graphics.Color))
 
 (def ^:private aggro-range 6)

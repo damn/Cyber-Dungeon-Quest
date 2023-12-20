@@ -7,7 +7,7 @@
             [game.components.state :as state]
             [game.components.clickable :as clickable]
             [game.components.inventory :as inventory]
-            [game.components.faction :as faction]
+            [game.faction :as faction]
             [game.components.skills :as skills]
             [game.components.state.wasd-movement :refer [WASD-movement-vector]]
             [game.ui.action-bar :as action-bar])

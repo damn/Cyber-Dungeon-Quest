@@ -1,6 +1,4 @@
-(ns game.components.faction)
-
-; TODO ALSO PROTOCOL !
+(ns game.faction)
 
 (defn enemy [faction]
   (case faction

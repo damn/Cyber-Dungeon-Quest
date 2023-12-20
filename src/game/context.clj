@@ -19,15 +19,14 @@
   (update-mouseover-entity [_]))
 
 (defprotocol World
-  (content-grid [_])
-  (get-active-entities [_])
-  (entities-at-position [_ position])
   (line-of-sight? [_ source* target*])
-  (circle->entities [_ circle])
+  (entities-at-position [_ position])
   (ray-blocked?  [_ start target])
   (path-blocked? [_ start target path-w] "path-w in tiles. casts two rays.")
   (explored?     [_ position])
   (set-explored! [_ position])
+  (content-grid [_])
+  (get-active-entities [_])
   (world-grid [_])
   (world-cell [_ position] "Converts position to integer."))
 

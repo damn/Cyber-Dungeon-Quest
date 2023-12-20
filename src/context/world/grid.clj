@@ -2,8 +2,8 @@
   (:require [data.grid2d :as grid2d]
             [gdl.math.geom :as geom]
             [utils.core :refer [tile->middle]]
-            [game.world.grid :refer [rectangle->cells]]
-            game.world.cell))
+            [game.world.grid :refer [rectangle->cells circle->cells]]
+            [game.world.cell :refer [cells->entities]]))
 
 (defn- rectangle->tiles
   [{[x y] :left-bottom :keys [left-bottom width height]}]
@@ -42,7 +42,13 @@
   (circle->cells [grid circle]
     (->> circle
          geom/circle->outer-rectangle
-         (rectangle->cells grid))))
+         (rectangle->cells grid)))
+
+  (circle->entities [grid circle]
+    (->> (circle->cells grid circle)
+         (map deref)
+         cells->entities
+         (filter #(geom/collides? circle (:body @%))))))
 
 (defrecord Cell [position
                  middle ; TODO needed ?

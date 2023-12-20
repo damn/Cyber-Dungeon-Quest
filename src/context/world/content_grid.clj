@@ -1,8 +1,9 @@
 (ns context.world.content-grid
   (:require [data.grid2d :as grid2d]
-            gdl.context
-            [game.context :refer [content-grid]]
             game.world.content-grid))
+
+; why needs entity a reference to the cell
+; just calculate it easily
 
 (defrecord ContentGrid [grid cell-w cell-h]
   game.world.content-grid/ContentGrid
@@ -43,8 +44,8 @@
 (comment
 
  (defn get-all-entities-of-current-map [context]
-   (mapcat #(deref (:entities %))
-           (grid2d/cells (:content-grid (:context/world-map context)))))
+   (mapcat (comp :entities deref)
+           (grid2d/cells (game.context/content-grid context))))
 
  (count
   (get-all-entities-of-current-map @app.state/current-context))

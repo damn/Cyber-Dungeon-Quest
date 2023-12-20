@@ -3,7 +3,7 @@
             [data.counter :as counter]
             [game.context :refer [potential-field-follow-to-enemy send-event! world-cell]]
             [game.effect :as effect]
-            [game.components.faction :as faction]
+            [game.faction :as faction]
             [game.components.skills :as skills]
             [game.components.state :as state]))
 

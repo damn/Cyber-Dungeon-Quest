@@ -1,47 +1,12 @@
 (ns game.components.body
   (:require [x.x :refer [defcomponent]]
             [gdl.context :refer [draw-rectangle]]
-            [gdl.math.geom :as geom]
             [gdl.math.vector :as v]
             [context.ecs :as entity]
             [game.context :refer [world-grid]]
-            [game.world.grid :refer [rectangle->cells]]
-            [game.world.cell :as cell :refer [cells->entities]])
+            [game.world.grid :refer [add-entity! remove-entity! entity-position-changed!
+                                     valid-position?]])
   (:import com.badlogic.gdx.graphics.Color))
-
-(defn- remove-from-occupied-cells! [entity]
-  (doseq [cell (:occupied-cells @entity)]
-    (swap! cell cell/remove-occupying-entity entity)))
-
-; could use inside tiles only for >1 tile bodies (for example size 4.5 use 4x4 tiles for occupied)
-; => only now there are no >1 tile entities anyway
-(defn- rectangle->occupied-cells [grid {:keys [left-bottom width height] :as rectangle}]
-  (if (or (> width 1) (> height 1))
-    (rectangle->cells grid rectangle)
-    [(get grid
-          [(int (+ (left-bottom 0) (/ width 2)))
-           (int (+ (left-bottom 1) (/ height 2)))])]))
-
-(defn- set-occupied-cells! [grid entity]
-  (let [cells (rectangle->occupied-cells grid (:body @entity))]
-    (doseq [cell cells]
-      (swap! cell cell/add-occupying-entity entity))
-    (swap! entity assoc :occupied-cells cells)))
-
-(defn- set-cells! [entity new-cells]
-  {:pre [(not-any? nil? new-cells)]}
-  (swap! entity assoc :cells new-cells)
-  (doseq [cell new-cells]
-    (swap! cell cell/add-entity entity)))
-
-(defn- remove-from-cells! [entity]
-  (doseq [cell (:cells @entity)]
-    (swap! cell cell/remove-entity entity)))
-
-(defn- update-cells! [e cells]
-  (when-not (= cells (:cells @e))
-    (remove-from-cells! e)
-    (set-cells! e cells)))
 
 ; setting a min-size for colliding bodies so movement can set a max-speed for not
 ; skipping bodies at too fast movement
@@ -50,28 +15,9 @@
 (defn- draw-bounds [c {[x y] :left-bottom :keys [width height is-solid]}]
   (draw-rectangle c x y width height (if is-solid Color/WHITE Color/GRAY)))
 
-; TODO DELETE NOW !!! fucks up everything & confusing as fuck,
-; make into function idk ?
 (defn assoc-left-bottom [{:keys [body] [x y] :position :as entity*}]
   (assoc-in entity* [:body :left-bottom] [(- x (/ (:width body)  2))
                                           (- y (/ (:height body) 2))]))
-
-; needs only grid actually? or protocol ol world-map?
-; ON WORLD (not world-map) world/valid-position?
-(defn valid-position? [context entity*]
-  ; TODO save params & check why its not a valid position
-
-  (let [cells (rectangle->cells (world-grid context)
-                                (:body entity*))]
-    (and
-     (not-any? #(cell/blocked? @% entity*) cells)
-     (or (not (:is-solid (:body entity*)))
-         (->> cells
-              (map deref)
-              cells->entities
-              (not-any? #(and (not= (:id @%) (:id entity*))
-                              (:is-solid (:body @%))
-                              (geom/collides? (:body @%) (:body entity*)))))))))
 
 (def show-body-bounds false)
 
@@ -94,36 +40,31 @@
                      (<= 0 rotation-angle 360))))
     (map->Body
      {:left-bottom left-bottom
-      :width width
-      :height height
-      :half-width  (/ width  2)
-      :half-height (/ height 2)
-      :radius (max (/ width  2)
-                   (/ height 2))
+      :width  (float width)
+      :height (float height)
+      :half-width  (float (/ width  2))
+      :half-height (float (/ height 2))
+      :radius (float (max (/ width  2)
+                          (/ height 2)))
       :is-solid is-solid
       :rotation-angle (or rotation-angle 0)
       :rotate-in-movement-direction? rotate-in-movement-direction?}))
-  (entity/create! [_ e context]
-    (assert (:position @e))
+
+  (entity/create! [_ entity context]
+    (assert (:position @entity))
     ;(assert (valid-position? context @e)) ; TODO error because projectiles do not have left-bottom !
-    (swap! e assoc-left-bottom)
-    (let [grid (world-grid context)]
-      (set-cells! e (rectangle->cells grid (:body @e)))
-      (when is-solid
-        (set-occupied-cells! grid e))))
-  (entity/destroy! [_ e _ctx]
-    (remove-from-cells! e)
-    (when is-solid
-      (remove-from-occupied-cells! e)))
+    (swap! entity assoc-left-bottom)
+    (add-entity! (world-grid context) entity))
+
+  (entity/destroy! [_ e context]
+    (remove-entity! (world-grid context) entity))
+
   (entity/moved! [_ e context direction-vector]
     (assert (valid-position? context @e))
     (when rotate-in-movement-direction?
       (swap! e assoc-in [:body :rotation-angle] (v/get-angle-from-vector direction-vector)))
-    (let [grid (world-grid context)]
-      (update-cells! e (rectangle->cells grid (:body @e)))
-      (when is-solid
-        (remove-from-occupied-cells! e)
-        (set-occupied-cells! grid e))))
+    (entity-position-changed! (world-grid context) entity))
+
   (entity/render-debug [_ c e*]
     (when show-body-bounds
       (draw-bounds c body))))

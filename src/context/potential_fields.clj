@@ -10,7 +10,7 @@
             [gdl.math.vector :as v]
             [utils.core :refer :all]
             [game.context :refer (get-active-entities world-grid)]
-            [game.components.faction :as faction]
+            [game.faction :as faction]
             [game.world.grid :refer [cached-adjacent-cells rectangle->cells]]
             [game.world.cell :as cell]))
 
@@ -182,7 +182,7 @@
       cell)))
 
 (defn- find-next-cell
-  "returns {:target-entity entity} or {:tarworld-cell cell}. Cell can be nil."
+  "returns {:target-entity entity} or {:target-cell cell}. Cell can be nil."
   [grid entity own-cell]
   (let [faction (faction/enemy (:faction @entity))
         distance-to    #(get-in @% [faction :distance])
@@ -195,7 +195,7 @@
                                                   (zero? (distance-to %)))
                                             adjacent-cells))]
         {:target-entity (nearest-entity adjacent-cell)}
-        {:tarworld-cell (let [cells (filter-viable-cells entity adjacent-cells)
+        {:target-cell (let [cells (filter-viable-cells entity adjacent-cells)
                             min-key-cell (get-min-dist-cell distance-to cells)]
                         (cond
                          (not min-key-cell)  ; red
@@ -230,19 +230,19 @@
     (let [grid (world-grid context)
           position (:position @entity)
           own-cell (get grid (->tile position))
-          {:keys [target-entity tarworld-cell]} (find-next-cell grid entity own-cell)]
+          {:keys [target-entity target-cell]} (find-next-cell grid entity own-cell)]
       (cond
        target-entity
        (v/direction position (:position @target-entity))
 
-       (nil? tarworld-cell)
+       (nil? target-cell)
        nil
 
        :else
-       (when-not (and (= tarworld-cell own-cell)
+       (when-not (and (= target-cell own-cell)
                       (cell/occupied-by-other? @own-cell entity)) ; prevent friction 2 move to center
-         (when-not (inside-cell? grid @entity tarworld-cell)
-           (v/direction position (:middle @tarworld-cell))))))))
+         (when-not (inside-cell? grid @entity target-cell)
+           (v/direction position (:middle @target-cell))))))))
 
 ;; DEBUG RENDER TODO not working in old map debug game.maps.render_
 

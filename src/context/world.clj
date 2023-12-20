@@ -18,6 +18,11 @@
             [mapgen.movement-property :refer (movement-property)]
             mapgen.module-gen))
 
+
+  ; TODO (:grid world-map) dangerous ! => if multiple maps ! thats why world-map usage limit
+  ; ! all context data internal limit & offer protocol !
+  ; e.g. id->entity-map ... @ position or @ body/movement check ...
+
 ; world map only used @ render tiledmap & minimap & minimap explored tile corners
 ; => remove so can later add multiple maps if needed
 ; move content field out
@@ -80,7 +85,7 @@
 
 (extend-type gdl.context.Context
   game.context/World
-  (entities-at-position [context position]
+  (entities-at-position [context position] ; TODO also operates on grid only, but do we care ??
     (when-let [cell (world-cell context position)]
       (filter #(geom/point-in-rect? position (:body @%))
               (:entities @cell))))
@@ -90,15 +95,6 @@
          (or (not (:is-player source*))
              (on-screen? target* context))
          (not (ray-blocked? context (:position source*) (:position target*)))))
-
-  ; TODO (:grid world-map) dangerous ! => if multiple maps ! thats why world-map usage limit
-  ; ! all context data internal limit & offer protocol !
-  ; e.g. id->entity-map ... @ position or @ body/movement check ...
-  (circle->entities [{:keys [context/world-map]} circle]
-    (->> (circle->cells (:grid world-map) circle)
-         (map deref)
-         cells->entities
-         (filter #(geom/collides? circle (:body @%)))))
 
   (ray-blocked? [{:keys [context/world-map]} start target]
     (let [{:keys [cell-blocked-boolean-array width height]} world-map]
@@ -126,7 +122,7 @@
   (world-grid [{:keys [context/world-map]}]
     (:grid world-map))
 
-  (world-cell [context position]
+  (world-cell [context position] ; TODO fn on world-grid ? idk
     (get (world-grid context) (->tile position))))
 
 (defn- first-level [context]

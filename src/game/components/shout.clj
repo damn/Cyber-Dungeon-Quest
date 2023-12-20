@@ -2,7 +2,8 @@
   (:require [x.x :refer [defcomponent]]
             [data.counter :as counter]
             [context.ecs :as entity]
-            [game.context :refer [line-of-sight? circle->entities send-event!]]))
+            [game.context :refer [world-grid line-of-sight? send-event!]]
+            [game.world.grid :refer [circle->entities]]))
 
 (def ^:private shout-range 6)
 
@@ -11,11 +12,9 @@
 (defn- get-friendly-entities-in-line-of-sight [context entity* radius]
   (->> {:position (:position entity*)
         :radius radius}
-       (circle->entities context)
+       (circle->entities (world-grid context))
        (filter #(and (= (:faction @%) (:faction entity*))
                      (line-of-sight? context entity* @%)))))
-
-; TODO sends to projectiles, which do not process events - error state machine nil
 
 (defcomponent :shout counter
   (entity/tick [_ delta]
