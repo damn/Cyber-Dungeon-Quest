@@ -4,7 +4,7 @@
             [gdl.graphics.animation :as animation]
             [gdl.context :refer [get-sprite spritesheet]]
             [game.context :refer [effect-text projectile-entity path-blocked?]]
-            [game.effect :as effect]))
+            [context.effect-interpreter :as effect]))
 
 ; -> range needs to be smaller than potential field range
 ; -> first range check then ray ! otherwise somewhere in contentfield out of sight
@@ -52,12 +52,14 @@
   (effect-text (merge context params) hit-effect))
 
 (defmethod effect/valid-params? :projectile
-  [{:keys [target]} _effect]
+  [{:keys [effect/target]} _effect]
    ; TODO source,direction
   target)
 
 (defmethod effect/do! :projectile
-  [{:keys [source direction]} _effect]
+  [{:keys [effect/source
+           effect/direction]}
+   _effect]
   (projectile-entity context
                      {:position (:position @source)
                       :faction  (:faction  @source)

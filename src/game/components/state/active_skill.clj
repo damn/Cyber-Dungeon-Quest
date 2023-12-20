@@ -20,7 +20,7 @@
                  (color/rgb 1 1 1 0.5))
     (draw-image c icon [(- x radius) y])))
 
-(defrecord State [entity skill effect-params counter]
+(defrecord State [entity skill effect-context counter]
   entity/PlayerState
   (pause-game? [_] false)
   (manual-tick! [_ context delta])
@@ -46,13 +46,12 @@
   (tick! [_ context delta]
     (let [effect (:effect skill)]
       (cond
-       ; TODO Check namespaced params
-       (not (valid-params? (merge context effect-params) effect))
+       (not (valid-params? (merge context effect-context) effect))
        (send-event! context entity :action-done)
 
        (counter/stopped? counter)
        (do
-        (do-effect! (merge context effect-params) [effect])
+        (do-effect! (merge context effect-context) effect)
         (send-event! context entity :action-done)))))
 
   (render-below [_ c entity*])
@@ -60,7 +59,7 @@
   (render-info [_ c {:keys [position] :as entity*}]
     (let [{:keys [image effect]} skill]
       (draw-skill-icon c image entity* position (counter/ratio counter))
-      (effect-render-info (merge c effect-params) effect))))
+      (effect-render-info (merge c effect-context) effect))))
 
 (defn- apply-action-speed-modifier [entity* skill action-time]
   (let [{:keys [cast-speed attack-speed]} (:modifiers entity*)
@@ -71,10 +70,15 @@
                                     1))]
     (max 0 (int modified-action-time))))
 
-(defn ->CreateWithCounter [entity [skill effect-params]]
+(defn ->CreateWithCounter [entity [skill effect-context]]
+  ; assert keys effect-context only with 'effect/'
+  ; so we don't use an outdated 'context' in the State update
+  ; on use we merge it with the main context
+  (assert (every? #(= "effect" (namespace %)) (keys effect-context)))
   (->State entity
            skill
-           effect-params
-           (counter/create (apply-action-speed-modifier @entity
-                                                        skill
-                                                        (:action-time skill)))))
+           effect-context
+           (->> skill
+                :action-time
+                (apply-action-speed-modifier @entity skill)
+                counter/create)))

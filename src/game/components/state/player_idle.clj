@@ -3,7 +3,6 @@
             [gdl.math.vector :as v]
             [data.counter :as counter]
             [game.context :refer [show-msg-to-player! send-event!]]
-            [game.effect :as effect]
             [game.entity :as entity]
             [game.components.clickable :as clickable]
             [game.components.inventory :as inventory]
@@ -36,15 +35,14 @@
       (play-sound! context "sounds/bfxr_denied.wav")
       (show-msg-to-player! context "Your Inventory is full")))))
 
-(defn- make-effect-params [{:keys [context/mouseover-entity] :as context} entity]
+(defn- effect-context [{:keys [context/mouseover-entity] :as context} entity]
   (let [target @mouseover-entity
         target-position (or (and target (:position @target))
                             (world-mouse-position context))]
-    {:source entity
-     :target target
-     :target-position target-position
-     :direction (v/direction (:position @entity)
-                             target-position)}))
+    {:effect/source entity
+     :effect/target target
+     :effect/target-position target-position
+     :effect/direction (v/direction (:position @entity) target-position)}))
 
 (defrecord State [entity]
   entity/PlayerState
@@ -63,11 +61,11 @@
 
            :else
            (if-let [skill-id @action-bar/selected-skill-id]
-             (let [effect-params (make-effect-params context entity)
+             (let [effect-context (effect-context context entity)
                    skill (get-property context skill-id)
-                   state (skills/usable-state @entity skill effect-params context)]
+                   state (skills/usable-state (merge context effect-context) @entity skill)]
                (if (= state :usable)
-                 (send-event! context entity :start-action [skill effect-params])
+                 (send-event! context entity :start-action [skill effect-context])
                  (show-msg-to-player! context (str "Skill usable state not usable: " state))))
              (show-msg-to-player! context "No selected skill.")))))))
 

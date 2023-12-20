@@ -1,5 +1,5 @@
 (ns game.effects.spawn
-  (:require [game.effect :as effect]
+  (:require [context.effect-interpreter :as effect]
             [game.context :refer [creature-entity]]))
 
 ; TODO spawning on player both without error ?!
@@ -29,14 +29,17 @@
   (str "Spawns a " creature-id))
 
 (defmethod effect/valid-params? :spawn
-  [{:keys [source target-position]} _effect]
+  [{:keys [effect/source
+           effect/target-position]} _effect]
   ; TODO line of sight ? / not blocked ..
   (and source
        (:faction @source)
        target-position))
 
 (defmethod effect/do! :spawn
-  [{:keys [source target-position]} [_ creature-id]]
+  [{:keys [effect/source
+           effect/target-position]}
+   [_ creature-id]]
   (creature-entity context
                    creature-id
                    target-position

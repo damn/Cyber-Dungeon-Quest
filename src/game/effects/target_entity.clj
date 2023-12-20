@@ -3,7 +3,7 @@
             [gdl.math.vector :as v]
             [gdl.graphics.color :as color]
             [game.context :refer (do-effect! effect-text audiovisual line-entity line-of-sight?)]
-            [game.effect :as effect]))
+            [context.effect-interpreter :as effect]))
 
 (defn- in-range? [entity* target* maxrange] ; == circle-collides?
   (< (- (v/distance (:position entity*)
@@ -13,10 +13,10 @@
      maxrange))
 
 (defmethod effect/useful? :target-entity
-  [{:keys [target]} [_type value]]
-  (in-range? entity* ;TODO  source ?
-             @target
-             (:maxrange value)))
+  [{:keys [effect/source
+           effect/target]}
+   [_type value]]
+  (in-range? @source @target (:maxrange value)))
 
 ; TODO use at projectile & also adjust rotation
 (defn- start-point [entity* target*]
@@ -32,7 +32,8 @@
                   maxrange)))
 
 (defmethod effect/render-info :target-entity
-  [{:keys [source target] :as context}
+  [{:keys [effect/source
+           effect/target] :as context}
    [_ {:keys [maxrange]}]]
   (draw-line context
              (start-point @source @target)
@@ -50,14 +51,18 @@
 ; TODO target still exists ?! necessary ? what if disappears/dead?
 ; TODO this is valid-params of hit-effect damage !!
 (defmethod effect/valid-params? :target-entity
-  [{:keys [source target]} _effect]
+  [{:keys [effect/source
+           effect/target]}
+   _effect]
   (and source
        target
        (line-of-sight? context @source @target)
        (:hp @target)))
 
 (defmethod effect/do! :target-entity
-  [{:keys [source target] :as context} [_ {:keys [hit-effect maxrange]}]]
+  [{:keys [effect/source
+           effect/target] :as context}
+   [_ {:keys [hit-effect maxrange]}]]
   (if (in-range? @source @target maxrange)
     (do
      (line-entity context

@@ -40,10 +40,9 @@
     (assoc-in skills [id :cooling-down?] (counter/create cooldown))
     skills))
 
-(defn usable-state [{:keys [mana]}
-                    {:keys [cost cooling-down? effect]}
-                    effect-params ; TODO namespaced keys
-                    context]
+(defn usable-state [effect-context
+                    {:keys [mana]}
+                    {:keys [cost cooling-down? effect]}]
   (cond
    cooling-down?
    :cooldown
@@ -51,8 +50,7 @@
    (and cost (> cost (mana 0)))
    :not-enough-mana
 
-   (not (valid-params? (merge context effect-params)
-                       effect))
+   (not (valid-params? effect-context effect))
    :invalid-params
 
    :else

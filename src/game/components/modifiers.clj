@@ -4,7 +4,7 @@
   (-> entity* :modifiers effect-type))
 
 (defn effect-source-modifiers [entity* effect-type]
-  (-> entity* (effect-modifiers effect-type) :source))
+  (-> entity* (effect-modifiers effect-type) :effect/source))
 
 (defn effect-target-modifiers [entity* effect-type]
-  (-> entity* (effect-modifiers effect-type) :target))
+  (-> entity* (effect-modifiers effect-type) :effect/target))

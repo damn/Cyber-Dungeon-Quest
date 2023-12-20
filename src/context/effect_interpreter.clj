@@ -2,23 +2,22 @@
   (:require gdl.context
             game.context))
 
+; TODO make all spells effects with ns key
+; TODO make them also [ ]  => a seq and adjust valid params etc.
+
 ; TODO grep source/target
 ; TODO effects/damage ? namespaced ? maybe hit-effects/ bla-effects/
+; TODO everywhere not value but type value passed
 
-(defn- type-dispatch [_context [type _value]]
+(defn- by-type [_context [type _value]]
   type)
 
-; TODO everywhere not value but type value passed
-;; TODO search game.effect, not exist anymore...
-
-(defmulti do!           type-dispatch)
-(defmulti text          type-dispatch)
-(defmulti valid-params? type-dispatch)
-
-(defmulti render-info type-dispatch)
+(defmulti do!           by-type)
+(defmulti text          by-type)
+(defmulti valid-params? by-type)
+(defmulti render-info   by-type)
 (defmethod render-info :default [_ _])
-
-(defmulti useful? type-dispatch)
+(defmulti useful?       by-type)
 (defmethod useful? :default [_ _] true)
 
 (extend-type gdl.context.Context

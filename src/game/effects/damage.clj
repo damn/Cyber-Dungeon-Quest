@@ -2,7 +2,7 @@
   (:require [data.val-max :refer [apply-val apply-val-max-modifiers]]
             [utils.random :as random]
             [game.context :refer [audiovisual send-event!]]
-            [game.effect :as effect]
+            [context.effect-interpreter :as effect]
             [game.components.modifiers :refer [effect-source-modifiers effect-target-modifiers]]
             [game.components.string-effect :as string-effect]))
 
@@ -24,7 +24,7 @@
   (-> entity* (effect-target-modifiers block-type) damage-type))
 
 (defn- effective-block-rate [source* target* block-type damage-type]
-  (max (- (or (target-block-rate target* block-type damage-type) 0)
+  (max (- (or (target-block-rate   target* block-type damage-type) 0)
           (or (source-block-ignore source* block-type damage-type) 0))
        0))
 
@@ -120,21 +120,19 @@
   (str min-dmg "-" max-dmg " " (name dmg-type) " damage"))
 
 (defmethod effect/text :damage
-  [{:keys [source]} damage]
+  [{:keys [effect/source]} damage]
   (let [modified (effective-damage damage @source)]
     (if (= damage modified)
       (damage->text damage)
       (str (damage->text damage) "\nModified: " (damage->text modified)))) )
 
 (defmethod effect/valid-params? :damage
-  [{:keys [source target]} _effect-val]
-  (and source
-       target
-       (:hp @target)))
+  [{:keys [effect/source effect/target]} _effect-val]
+  (and source target (:hp @target)))
 
 (defmethod effect/do! :damage
-  [{:keys [effects/source
-           effects/target] :as context} {dmg-type 0 :as damage}]
+  [{:keys [effect/source
+           effect/target] :as context} {dmg-type 0 :as damage}]
   (cond
    (no-hp-left? (:hp @target))
    nil
