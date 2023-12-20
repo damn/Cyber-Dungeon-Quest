@@ -27,7 +27,10 @@
   (path-blocked? [_ start target path-w]
                  "path-w in tiles. casts two rays.")
   (explored?     [_ position])
-  (set-explored! [_ position]))
+  (set-explored! [_ position])
+  (get-cell-grid [_])
+  (get-cell [_ position]
+            "Converts position to integer."))
 
 (defprotocol Builder
   (creature-entity [_ creature-id position creature-params])

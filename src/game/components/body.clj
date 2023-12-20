@@ -4,29 +4,20 @@
             [gdl.math.geom :as geom]
             [gdl.math.vector :as v]
             [context.ecs :as entity]
-            [game.maps.cell-grid :as cell-grid])
+            [game.context :refer [get-cell-grid]]
+            [game.world.cell-grid :refer [rectangle->touched-cells]]
+            [game.world.cell :as cell])
   (:import com.badlogic.gdx.graphics.Color))
 
-(defn- in-cell? [cell entity]
-  (get (cell-grid/get-entities cell) entity))
-
-(defn- add-entity! [cell entity]
-  {:pre [(not (in-cell? cell entity))]}
-  (swap! cell update :entities conj entity))
-
-(defn- remove-entity! [cell entity]
-  {:pre [(in-cell? cell entity)]}
-  (swap! cell update :entities disj entity))
-
-(defn- remove-from-occupied-cells! [e]
-  (doseq [cell (:occupied-cells @e)]
-    (swap! cell update :occupied disj e)))
+(defn- remove-from-occupied-cells! [entity]
+  (doseq [cell (:occupied-cells @entity)]
+    (swap! cell cell/remove-occupying-entity entity)))
 
 ; could use inside tiles only for >1 tile bodies (for example size 4.5 use 4x4 tiles for occupied)
 ; => only now there are no >1 tile entities anyway
 (defn- rectangle->occupied-cells [cell-grid {:keys [left-bottom width height] :as rectangle}]
   (if (or (> width 1) (> height 1))
-    (cell-grid/rectangle->touched-cells cell-grid rectangle)
+    (rectangle->touched-cells cell-grid rectangle)
     [(get cell-grid
           [(int (+ (left-bottom 0) (/ width 2)))
            (int (+ (left-bottom 1) (/ height 2)))])]))
@@ -34,18 +25,18 @@
 (defn- set-occupied-cells! [cell-grid e]
   (let [cells (rectangle->occupied-cells cell-grid (:body @e))]
     (doseq [cell cells]
-      (swap! cell update :occupied conj e))
+      (swap! cell cell/add-occupying-entity e))
     (swap! e assoc :occupied-cells cells)))
 
 (defn- set-touched-cells! [e new-cells]
   {:pre [(not-any? nil? new-cells)]}
   (swap! e assoc :touched-cells new-cells)
   (doseq [cell new-cells]
-    (add-entity! cell e)))
+    (swap! cell cell/add-entity entity)))
 
 (defn- remove-from-touched-cells! [e]
   (doseq [cell (:touched-cells @e)]
-    (remove-entity! cell e)))
+    (swap! cell cell/remove-entity entity)))
 
 (defn- update-touched-cells! [e touched-cells]
   (when-not (= touched-cells (:touched-cells @e))
@@ -67,16 +58,17 @@
 
 ; needs only cell-grid actually? or protocol ol world-map?
 ; ON WORLD (not world-map) world/valid-position?
-(defn valid-position? [{:keys [context/world-map]} entity*]
+(defn valid-position? [context entity*]
   ; TODO save params & check why its not a valid position
 
-  (let [touched-cells (cell-grid/rectangle->touched-cells (:cell-grid world-map)
-                                                     (:body entity*))]
+  (let [touched-cells (rectangle->touched-cells (get-cell-grid context)
+                                                (:body entity*))]
     (and
-     (not-any? #(cell-grid/cell-blocked? % entity*) touched-cells)
+     (not-any? #(cell/blocked? @% entity*) touched-cells)
      (or (not (:is-solid (:body entity*)))
          (->> touched-cells
-              cell-grid/get-entities-from-cells
+              (map deref)
+              cells->entities
               (not-any? #(and (not= (:id @%) (:id entity*))
                               (:is-solid (:body @%))
                               (geom/collides? (:body @%) (:body entity*)))))))))
@@ -111,27 +103,27 @@
       :is-solid is-solid
       :rotation-angle (or rotation-angle 0)
       :rotate-in-movement-direction? rotate-in-movement-direction?}))
-  (entity/create! [_ e {:keys [context/world-map]}]
+  (entity/create! [_ e context]
     (assert (:position @e))
     ;(assert (valid-position? context @e)) ; TODO error because projectiles do not have left-bottom !
     (swap! e assoc-left-bottom)
-    (let [cell-grid (:cell-grid world-map)]
-      (set-touched-cells! e (cell-grid/rectangle->touched-cells cell-grid (:body @e)))
+    (let [cell-grid (get-cell-grid context)]
+      (set-touched-cells! e (rectangle->touched-cells cell-grid (:body @e)))
       (when is-solid
         (set-occupied-cells! cell-grid e))))
   (entity/destroy! [_ e _ctx]
     (remove-from-touched-cells! e)
     (when is-solid
       (remove-from-occupied-cells! e)))
-  (entity/moved! [_ e {:keys [context/world-map] :as context} direction-vector]
+  (entity/moved! [_ e context direction-vector]
     (assert (valid-position? context @e))
     (when rotate-in-movement-direction?
       (swap! e assoc-in [:body :rotation-angle] (v/get-angle-from-vector direction-vector)))
-    (update-touched-cells! e (cell-grid/rectangle->touched-cells (:cell-grid world-map)
-                                                                 (:body @e)))
-    (when is-solid
-      (remove-from-occupied-cells! e)
-      (set-occupied-cells! (:cell-grid world-map) e)))
+    (let [cell-grid (get-cell-grid context)]
+      (update-touched-cells! e (rectangle->touched-cells cell-grid (:body @e)))
+      (when is-solid
+        (remove-from-occupied-cells! e)
+        (set-occupied-cells! cell-grid e))))
   (entity/render-debug [_ c e*]
     (when show-body-bounds
       (draw-bounds c body))))

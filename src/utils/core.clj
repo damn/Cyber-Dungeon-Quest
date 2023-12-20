@@ -46,8 +46,6 @@
   [ks f]
   (zipmap ks (map f ks)))
 
-(defn int-posi [p] (mapv int p))
-
 ;; Order
 
 (defn define-order [order-k-vector]
@@ -126,3 +124,8 @@
       (if (= result obj)
         (throw (IllegalArgumentException. (str "Cannot find " k)))
         result))))
+
+(defn ->tile
+  "Converts the position to integer with (mapv int position)."
+  [position]
+  (mapv int position))

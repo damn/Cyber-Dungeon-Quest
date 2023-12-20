@@ -4,10 +4,11 @@
             [gdl.math.vector :as v]
             [utils.core :refer [find-first]]
             [context.ecs :as entity]
-            [game.context :refer [audiovisual]]
+            [game.context :refer [audiovisual get-cell-grid]]
             [game.effect :as effect]
             [game.components.body :as body]
-            [game.maps.cell-grid :as grid]))
+            [game.world.cell-grid :refer [rectangle->touched-cells cells->entities]]
+            [game.world.cell :as cell]))
 
 (defn- apply-delta-v [entity* delta v]
   (let [{:keys [speed]} (:speed entity*)
@@ -22,21 +23,20 @@
         (update-in [:body :left-bottom] apply-delta)))) ; TODO left-bottom/center of 'body' has on-position-changed?
 ; but need to check here ... lets see
 
-(defn- update-position-projectile [{:keys [context/world-map] :as context} projectile delta v]
+(defn- update-position-projectile [context projectile delta v]
   (swap! projectile apply-delta-v delta v)
   (let [{:keys [hit-effects
                 already-hit-bodies
                 piercing]} (:projectile-collision @projectile)
-        cell-grid (:cell-grid world-map)
-        touched-cells (grid/rectangle->touched-cells cell-grid (:body @projectile))
+        cell-grid (get-cell-grid context)
+        touched-cells (rectangle->touched-cells cell-grid (:body @projectile))
         ; valid-position? for solid entity check
         ; on invalid returns {:hit-entities, :or :touched-cells}'
         hit-entity (find-first #(and (not (contains? already-hit-bodies %))
                                      (not= (:faction @projectile) (:faction @%))
                                      (:is-solid (:body @%))
                                      (geom/collides? (:body @projectile) (:body @%)))
-                               (grid/get-entities-from-cells
-                                touched-cells))
+                               (cells->entities (map deref touched-cells)))
         blocked (cond hit-entity
                       (do
                        (swap! projectile update-in [:projectile-collision :already-hit-bodies] conj hit-entity)
@@ -45,7 +45,7 @@
                                         :target hit-entity}
                                        context)
                        (not piercing))
-                      (some #(grid/cell-blocked? % @projectile) touched-cells)
+                      (some #(cell/blocked? @% @projectile) touched-cells)
                       (do
                        (audiovisual context (:position @projectile) :projectile/hit-wall-effect)
                        true))]

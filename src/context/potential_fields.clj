@@ -9,24 +9,12 @@
             gdl.context
             [gdl.math.vector :as v]
             [utils.core :refer :all]
-            [game.context :refer (get-entities-in-active-content-fields)]
+            [game.context :refer (get-entities-in-active-content-fields get-cell-grid)]
             [game.components.faction :as faction]
-            [game.maps.cell-grid :as cell-grid]))
+            [game.world.cell-grid :refer [cached-get-adjacent-cells
+                                          rectangle->touched-cells]]
+            [game.world.cell :as cell]))
 
-(defn- cached-get-adjacent-cells [cell-grid cell]
-  (if-let [result (:adjacent-cells @cell)]
-    result
-    (let [result (map cell-grid (-> @cell
-                                    :position
-                                    grid/get-8-neighbour-positions))]
-      (swap! cell assoc :adjacent-cells result)
-      result)))
-
-(defn- occupied-by-other?
-  "returns true if there is some solid body with center-tile = this cell
-   or a multiple-cell-size body which touches this cell."
-  [cell entity]
-  (seq (disj (:occupied @cell) entity)))
 
 (def ^:private max-iterations 15)
 
@@ -63,7 +51,7 @@
             adjacent-cell (cached-get-adjacent-cells cell-grid cell)
             :let [cell* @cell
                   adjacent-cell* @adjacent-cell]
-            :when (not (or (cell-grid/fast-cell-blocked? adjacent-cell*) ; filters nil cells
+            :when (not (or (cell/blocked? adjacent-cell*) ; filters nil cells
                            (marked? adjacent-cell*)))
             :let [distance-value (+ (distance cell*)
                                     ; TODO new bottleneck is-diagonal?
@@ -87,7 +75,7 @@
                                        (filter   #(:faction @%))
                                        (group-by #(:faction @%)))]
            [faction
-            (zipmap (map #(get-tile @%) entities)
+            (zipmap (map #(->tile (:position @%)) entities)
                     entities)])))
 
  (def max-iterations 1)
@@ -126,7 +114,7 @@
 (defn- tiles->entities [entities faction]
   (let [entities (filter #(= (:faction @%) faction)
                          entities)]
-    (zipmap (map #(mapv int (:position @%)) entities)
+    (zipmap (map #(->tile (:position @%)) entities)
             entities)))
 
 (def ^:private cache (atom nil))
@@ -144,9 +132,9 @@
                                           faction
                                           tiles->entities)))))
 
-(defn- update-potential-fields* [{:keys [context/world-map] :as context}]
+(defn- update-potential-fields* [context]
   (let [entities (get-entities-in-active-content-fields context)
-        cell-grid (:cell-grid world-map)]
+        cell-grid (get-cell-grid context)]
     (doseq [faction [:good :evil]]
       (update-faction-potential-field cell-grid
                                       faction
@@ -176,10 +164,12 @@
             adjacent-cells)))
 
 ; not using filter because nil cells considered @ remove-not-allowed-diagonals
+; TODO only non-nil cells check
+; TODO always called with cached-get-adjacent-cells ...
 (defn- filter-viable-cells [entity adjacent-cells]
   (remove-not-allowed-diagonals
-    (mapv #(when-not (or (cell-grid/cell-blocked? %)
-                         (occupied-by-other? % entity))
+    (mapv #(when-not (or (cell/blocked? @%)
+                         (cell/occupied-by-other? @% entity))
              %)
           adjacent-cells)))
 
@@ -230,7 +220,7 @@
                           own-cell)))}))))
 
 (defn- inside-cell? [cell-grid entity* cell]
-  (let [touched-cells (cell-grid/rectangle->touched-cells cell-grid (:body entity*))]
+  (let [touched-cells (rectangle->touched-cells cell-grid (:body entity*))]
     (and (= 1 (count touched-cells))
          (= cell (first touched-cells)))))
 
@@ -240,10 +230,10 @@
     (update-potential-fields* context))
 
   ; TODO work with entity* !? occupied-by-other? works with entity not entity* ... not with ids ... hmmm
-  (potential-field-follow-to-enemy [{:keys [context/world-map]} entity]
-    (let [cell-grid (:cell-grid world-map)
+  (potential-field-follow-to-enemy [context entity]
+    (let [cell-grid (get-cell-grid context)
           position (:position @entity)
-          own-cell (get cell-grid (mapv int position))
+          own-cell (get cell-grid (->tile position))
           {:keys [target-entity target-cell]} (find-next-cell cell-grid entity own-cell)]
       (cond
        target-entity
@@ -254,7 +244,7 @@
 
        :else
        (when-not (and (= target-cell own-cell)
-                      (occupied-by-other? own-cell entity)) ; prevent friction 2 move to center
+                      (cell/occupied-by-other? @own-cell entity)) ; prevent friction 2 move to center
          (when-not (inside-cell? cell-grid @entity target-cell)
            (v/direction position (:middle @target-cell))))))))
 
@@ -274,7 +264,7 @@
 
 #_(defn calculate-mouseover-body-colors [mouseoverbody]
   (when-let [body mouseoverbody]
-    (let [occupied-cell (get cell-grid (mapv int (:position @body)))
+    (let [occupied-cell (get-cell context (:position @body))
           own-dist (distance-to occupied-cell)
           adj-cells (cached-get-adjacent-cells cell-grid occupied-cell)
           potential-cells (filter distance-to

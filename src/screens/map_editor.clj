@@ -26,7 +26,7 @@
 ; TODO also highlight current mouseover tile !
 (defn- gui-render []
   #_(g/render-readable-text 0 60 {:shift true}
-                          (let [tile (mapv int (world/mouse-position))
+                          (let [tile (->tile (world/mouse-position))
                                 tiled-map @current-tiled-map]
                             [(str "Area coords:" (mapv (comp int /) (world/mouse-position) [32 20]))
                              (str "Map coords:" (world/mouse-position))

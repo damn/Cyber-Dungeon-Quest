@@ -1,6 +1,5 @@
 (ns game.components.position
   (:require [x.x :refer [defcomponent]]
-            [utils.core :refer [int-posi]]
             [context.ecs :as entity]
             [context.world-map :refer (put-entity-in-correct-content-field remove-entity-from-content-field)]))
 
@@ -11,5 +10,3 @@
     (remove-entity-from-content-field e))
   (entity/moved! [_ e context direction-vector] ; TODO needs context, also call it position-changed!
     (put-entity-in-correct-content-field context e)))
-
-(def get-tile (comp int-posi :position))

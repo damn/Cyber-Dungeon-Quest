@@ -9,8 +9,9 @@
             [gdl.math.vector :as v]
             [data.grid2d :as grid]
             [utils.core :refer [translate-to-tile-middle]]
+            [context.world.cell-grid :refer [create-cell-grid]]
             [game.context :refer [creature-entity ray-blocked?]]
-            [game.maps.cell-grid :as cell-grid]
+            [game.world.cell-grid :refer [circle->touched-cells cells->entities]]
             [mapgen.movement-property :refer (movement-property)]
             mapgen.module-gen))
 
@@ -121,10 +122,10 @@
                          (let [idx (get-player-content-field-idx context)]
                            (cons idx (grid/get-8-neighbour-positions idx)))))))
 
-  (entities-at-position [{:keys [context/world-map]} position]
-    (when-let [cell (get (:cell-grid world-map) (mapv int position))]
+  (entities-at-position [context position]
+    (when-let [cell (get-cell context position)]
       (filter #(geom/point-in-rect? position (:body @%))
-              (cell-grid/get-entities cell))))
+              (:entities @cell))))
 
   (in-line-of-sight? [context source* target*]
     (and (:z-order target*)  ; is even an entity which renders something
@@ -133,8 +134,9 @@
          (not (ray-blocked? context (:position source*) (:position target*)))))
 
   (circle->touched-entities [{:keys [context/world-map]} circle]
-    (->> (cell-grid/circle->touched-cells (:cell-grid world-map) circle)
-         cell-grid/get-entities-from-cells
+    (->> (circle->touched-cells (:cell-grid world-map) circle)
+         (map deref)
+         cells->entities
          (filter #(geom/collides? circle (:body @%)))))
 
   (ray-blocked? [{:keys [context/world-map]} start target]
@@ -151,7 +153,13 @@
     (get @(:explored-tile-corners world-map) position))
 
   (set-explored! [{:keys [context/world-map] :as context} position]
-    (swap! (:explored-tile-corners world-map) assoc (mapv int position) true)))
+    (swap! (:explored-tile-corners world-map) assoc (->tile position) true))
+
+  (get-cell-grid [{:keys [context/world-map]}]
+    (:cell-grid world-map))
+
+  (get-cell [{:keys [context/world-map]} position]
+    (get (:cell-grid world-map) (->tile position))))
 
 (defn- first-level [context]
   (let [{:keys [tiled-map start-positions]} (mapgen.module-gen/generate
@@ -166,48 +174,28 @@
      :tiled-map tiled-map
      :start-position start-position}))
 
-(defrecord Cell [position
-                 middle
-                 adjacent-cells
-                 movement
-                 entities
-                 occupied
-                 good
-                 evil])
-
-(defn- create-cell [position movement]
-  {:pre [(#{:none :air :all} movement)]}
-  (atom
-   (map->Cell
-    {:position position
-     :middle (translate-to-tile-middle position)
-     :movement movement
-     :entities #{}
-     :occupied #{}})))
-
 (defn- create-grid-from-tiledmap [tiled-map]
-  (grid/create-grid (tiled/width  tiled-map)
+  (create-cell-grid (tiled/width  tiled-map)
                     (tiled/height tiled-map)
                     (fn [position]
-                      (create-cell position
-                                   (case (movement-property tiled-map position)
-                                     "none" :none
-                                     "air"  :air
-                                     "all"  :all)))))
+                      (case (movement-property tiled-map position)
+                        "none" :none
+                        "air"  :air
+                        "all"  :all))))
 
-(defn- set-cell-blocked-boolean-array [arr cell]
-  (let [[x y] (:position @cell)]
+(defn- set-cell-blocked-boolean-array [arr cell*]
+  (let [[x y] (:position cell*)]
     (aset arr
           x
           y
-          (boolean (cell-grid/cell-blocked? cell {:is-flying true})))))
+          (boolean (cell/blocked? cell* {:is-flying true})))))
 
 (defn- create-cell-blocked-boolean-array [grid]
   (let [arr (make-array Boolean/TYPE
                         (grid/width grid)
                         (grid/height grid))]
     (doseq [cell (grid/cells grid)]
-      (set-cell-blocked-boolean-array arr cell))
+      (set-cell-blocked-boolean-array arr @cell))
     arr))
 
 (defn- create-world-map [{:keys [map-key

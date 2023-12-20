@@ -21,9 +21,9 @@
                      :shout (counter/create 200)}))
 
   (tick [this delta] this)
-  (tick! [_ {:keys [context/world-map] :as context} delta]
-    (let [cell-grid (:cell-grid world-map)
-          cell* @(get cell-grid (mapv int (:position @entity)))
+  (tick! [_ context delta]
+    ; TODO !!!
+    (let [cell* @(get-cell context (:position @entity))
           faction (faction/enemy (:faction @entity))]
       (when-let [distance (-> cell* faction :distance)]
         (when (<= distance (* aggro-range 10))

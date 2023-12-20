@@ -141,5 +141,5 @@
 ; => move here
 ; and rename to 'ecs' just
 
-; same maybe with cell-grids and potential field stuff ?
+; same maybe with and potential field stuff ?
 ; == internal data structure ....
