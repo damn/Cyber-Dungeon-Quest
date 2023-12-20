@@ -24,15 +24,15 @@
  ; keys: :faction(:source)/:target-position/:creature-id
  )
 
-(effect/defeffect :spawn
-  {:text (fn [creature-id _params _context]
+(effect/component :spawn
+  {:text (fn [_context creature-id _params]
            (str "Spawns a " creature-id)) ; pretty name
-   :valid-params? (fn [_effect-val {:keys [source target-position]} _context]
+   :valid-params? (fn [_context _effect-val {:keys [source target-position]}]
                     ; TODO line of sight ? / not blocked ..
                     (and source
                          (:faction @source)
                          target-position))
-   :do! (fn [creature-id {:keys [source target-position]} context]
+   :do! (fn [context creature-id {:keys [source target-position]}]
           (creature-entity context
                            creature-id
                            target-position

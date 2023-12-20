@@ -193,7 +193,7 @@
   ; TODO maxrange ?
   ; TODO make only common fields here
   (projectile-entity [context
-                      {:keys [position faction size animation movement-vector hit-effects speed maxtime piercing]}]
+                      {:keys [position faction size animation movement-vector hit-effect speed maxtime piercing]}]
     (create-entity! context
                     {:position position
                      :faction faction
@@ -210,5 +210,5 @@
                      :animation animation
                      :delete-after-duration maxtime
                      :projectile-collision {:piercing piercing
-                                            :hit-effects hit-effects
+                                            :hit-effect hit-effect
                                             :already-hit-bodies #{}}})))

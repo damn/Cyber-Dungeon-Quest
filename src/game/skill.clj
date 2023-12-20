@@ -2,7 +2,7 @@
   (:require [clojure.set :as set]
             [clojure.string :as str]
             [utils.core :refer [readable-number]]
-            [game.effect :as effect]))
+            [game.context :refer [effect-text]]))
 
 ; TODO  prepare-properties :skills
 ; add :image32x32 (g/get-scaled-copy image [32 32])
@@ -40,4 +40,5 @@
        (when cost (str "Cost " cost  "\n"))
        (if spell?  "Cast-Time " "Attack-time ") (ms->pprint-seconds action-time) " seconds\n"
        (when cooldown (str "Cooldown " (ms->pprint-seconds cooldown) "\n"))
-       (effect/text effect {:source entity} context)))
+       (effect-text (merge context {:effect/source entity})
+                    [effect])))

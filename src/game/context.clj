@@ -35,6 +35,11 @@
   (get-active-entities [_])
   (world-grid [_]))
 
+(defprotocol EffectInterpreter
+  (do-effect!    [_ effect])
+  (effect-text   [_ effect])
+  (valid-params? [_ effect]))
+
 (defprotocol Builder
   (creature-entity [_ creature-id position creature-params])
   (audiovisual [_ position property-id])
@@ -45,7 +50,7 @@
                                 size
                                 animation
                                 movement-vector
-                                hit-effects
+                                hit-effect
                                 speed
                                 maxtime
                                 piercing]}]))

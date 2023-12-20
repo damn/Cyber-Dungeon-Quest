@@ -4,10 +4,10 @@
             [game.context :refer [send-event!]]
             [game.effect :as effect]))
 
-(effect/defeffect :stun
-  {:text (fn [duration _params _context]
+(effect/component :stun
+  {:text (fn [_context duration _params]
            (str "Stuns for " (readable-number (/ duration 1000)) " seconds"))
-   :valid-params? (fn [_effect-val {:keys [source target]} _context]
+   :valid-params? (fn [_context _effect-val {:keys [source target]}]
                     (and target)) ; TODO target needs to have a state component so we can send events
-   :do! (fn [duration {:keys [target]} context]
+   :do! (fn [context duration {:keys [target]}]
           (send-event! context target :stun duration))})

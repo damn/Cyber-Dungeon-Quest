@@ -3,7 +3,7 @@
             [gdl.context :refer [draw-line]]
             [gdl.math.vector :as v]
             [gdl.graphics.color :as color]
-            [game.context :refer (audiovisual line-entity line-of-sight?)]
+            [game.context :refer (do-effect! effect-text audiovisual line-entity line-of-sight?)]
             [game.effect :as effect]))
 
 (defn- in-range? [entity* target* maxrange] ; == circle-collides?
@@ -31,7 +31,7 @@
                                (:position target*))
                   maxrange)))
 
-(defn- do-effect! [{:keys [hit-effects maxrange]} {:keys [source target]} context]
+(defn- do-effect! [context {:keys [hit-effect maxrange]} {:keys [source target]}]
   (if (in-range? @source @target maxrange)
     (do
      (line-entity context
@@ -40,7 +40,9 @@
                    :duration 50
                    :color (color/rgb 1 0 0 0.75)
                    :thick? true})
-     (effect/do-all! hit-effects {:source source :target target} context))
+     (do-effect! (merge context
+                        {:effect/source source :effect/target target})
+                 hit-effect ))
     (do
      ; * clicking on far away monster
      ; * hitting ground in front of you ( there is another monster )
@@ -58,17 +60,14 @@
                (color/rgb 1 0 0 0.5)
                (color/rgb 1 1 0 0.5))))
 
-(effect/defeffect :target-entity
-  {:text (fn [{:keys [maxrange hit-effects]} params context]
+(effect/component :target-entity
+  {:text (fn [context {:keys [maxrange hit-effect]} params]
            (str "Range " maxrange " meters\n"
-                (str/join "\n" ; TODO same as other effect multiple text -> effect/effects-text?
-                          ; maybr work with 'effect' as a list of effect-components
-                          ; so alsways 'effect' and not 'effects'
-                          (for [effect hit-effects]
-                            (effect/text effect params context)))))
+                ; TODO already merged before calling text? ... when are they coming from ?
+                (effect-text (merge context params) hit-effect)))
    :valid-params?
    ; TODO target still exists ?! necessary ? what if disappears/dead?
-   (fn [_effect-val {:keys [source target]} context]
+   (fn [context _effect-val {:keys [source target]}]
      (and source
           target
           (line-of-sight? context @source @target)

@@ -4,7 +4,7 @@
             [data.counter :as counter]
             [utils.core :refer [mapvals]]
             [context.ecs :as entity]
-            [game.effect :as effect]))
+            [game.context :refer [valid-params?]]))
 
 (defn- update-cooldown [skill delta]
   (if (:cooling-down? skill)
@@ -42,7 +42,7 @@
 
 (defn usable-state [{:keys [mana]}
                     {:keys [cost cooling-down? effect]}
-                    effect-params
+                    effect-params ; TODO namespaced keys
                     context]
   (cond
    cooling-down?
@@ -51,7 +51,8 @@
    (and cost (> cost (mana 0)))
    :not-enough-mana
 
-   (not (effect/valid-params? effect effect-params context))
+   (not (valid-params? (merge context effect-params)
+                       effect))
    :invalid-params
 
    :else

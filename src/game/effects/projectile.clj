@@ -3,7 +3,7 @@
             [gdl.math.vector :as v]
             [gdl.graphics.animation :as animation]
             [gdl.context :refer [get-sprite spritesheet]]
-            [game.context :refer [projectile-entity path-blocked?]]
+            [game.context :refer [effect-text projectile-entity path-blocked?]]
             [game.effect :as effect]))
 
 ; -> range needs to be smaller than potential field range
@@ -34,7 +34,7 @@
  (or (not chance)
      (random/percent-chance chance)))
 
-(def ^:private hit-effects
+(def ^:private hit-effect
   [[:damage [:magic [4 8]]]
    [:stun 500]
    ;[:stun {:duration 200} {:chance 100}]
@@ -46,24 +46,20 @@
                                  [1 12])]
                     :frame-duration 500))
 
-(defn- do-effect! [_ {:keys [source direction]} context]
-  (projectile-entity context
-                     {:position (:position @source)
-                      :faction  (:faction  @source)
-                      :size size
-                      :animation (black-projectile context)
-                      :speed speed
-                      :movement-vector direction
-                      :maxtime maxtime
-                      :piercing false
-                      :hit-effects hit-effects}))
-
-(effect/defeffect :projectile
-  {:text (fn [_effect-val params context]
-           (str/join "\n"
-                     (for [effect hit-effects] ; TODO make fn in effect/ for multiple text?
-                       (effect/text effect params context))))
+(effect/component :projectile
+  {:text (fn [context _effect-val params]
+           (effect-text (merge context params) hit-effect))
    ; TODO source,direction
-   :valid-params? (fn [_effect-val {:keys [target]} _context]
+   :valid-params? (fn [_context _effect-val {:keys [target]}]
                     target)
-   :do! do-effect!})
+   :do! (fn [context _ {:keys [source direction]}]
+          (projectile-entity context
+                             {:position (:position @source)
+                              :faction  (:faction  @source)
+                              :size size
+                              :animation (black-projectile context)
+                              :speed speed
+                              :movement-vector direction
+                              :maxtime maxtime
+                              :piercing false
+                              :hit-effect hit-effect}))})

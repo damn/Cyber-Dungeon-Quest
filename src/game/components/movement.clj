@@ -4,8 +4,7 @@
             [gdl.math.vector :as v]
             [utils.core :refer [find-first]]
             [context.ecs :as entity]
-            [game.context :refer [audiovisual world-grid]]
-            [game.effect :as effect]
+            [game.context :refer [do-effect! audiovisual world-grid]]
             [game.components.body :as body]
             [game.world.grid :refer [rectangle->cells valid-position?]]
             [game.world.cell :as cell :refer [cells->entities]]))
@@ -28,7 +27,7 @@
 ; TODO DRY with valid-position?
 (defn- update-position-projectile [context projectile delta v]
   (swap! projectile apply-delta-v delta v)
-  (let [{:keys [hit-effects
+  (let [{:keys [hit-effect
                 already-hit-bodies
                 piercing]} (:projectile-collision @projectile)
         grid (world-grid context)
@@ -41,10 +40,10 @@
         blocked (cond hit-entity
                       (do
                        (swap! projectile update-in [:projectile-collision :already-hit-bodies] conj hit-entity)
-                       (effect/do-all! hit-effects
-                                       {:source projectile
-                                        :target hit-entity}
-                                       context)
+                       (do-effect! (merge context
+                                         {:effect/source projectile
+                                          :effect/target hit-entity})
+                                  hit-effect)
                        (not piercing))
                       (some #(cell/blocked? @% @projectile) cells)
                       (do

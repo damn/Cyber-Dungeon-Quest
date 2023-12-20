@@ -27,6 +27,7 @@
                                                      %
                                                      effect-params
                                                      context))
+                     ; TODO render fns  ?!
                      (effect/ai-should-use? (:effect %) effect-params context entity*)))
        first))
 

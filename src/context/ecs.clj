@@ -71,6 +71,8 @@
 
 (defn- visible-entities* [{:keys [context/player-entity] :as context}]
   (->> (get-active-entities context)
+       ; TODO getting 3 times active entities: render, tick, potential-field =>
+       ; just 1 app/game render fn and calculate once ? & delta in context ?
        (map deref)
        (filter #(line-of-sight? context @player-entity %))))
 

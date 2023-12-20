@@ -116,7 +116,7 @@
 (defn- no-hp-left? [hp]
   (zero? (hp 0)))
 
-(defn- deal-damage! [{dmg-type 0 :as damage} {:keys [source target]} context]
+(defn- deal-damage! [context {dmg-type 0 :as damage} {:keys [source target]}]
   (cond
    (no-hp-left? (:hp @target))
    nil
@@ -143,13 +143,13 @@
 (defn- damage->text [[dmg-type [min-dmg max-dmg]]]
   (str min-dmg "-" max-dmg " " (name dmg-type) " damage"))
 
-(effect/defeffect :damage
-  {:text (fn modified-text [damage {:keys [source]} _context]
+(effect/component :damage
+  {:text (fn [_context damage {:keys [source]}]
            (let [modified (effective-damage damage @source)]
              (if (= damage modified)
                (damage->text damage)
                (str (damage->text damage) "\nModified: " (damage->text modified)))))
-   :valid-params? (fn [_effect-val {:keys [source target]} _context]
+   :valid-params? (fn [_context _effect-val {:keys [source target]}]
                     (and source
                          target
                          (:hp @target)))

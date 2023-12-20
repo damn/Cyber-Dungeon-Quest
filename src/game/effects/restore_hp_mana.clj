@@ -8,12 +8,12 @@
       (lower-than-max? (:hp   entity*))))
 
 ; TODO make with 'target' then can use as hit-effect too !
-(effect/defeffect :restore-hp-mana
-  {:text (fn [_effect-val _params _context]
+(effect/component :restore-hp-mana
+  {:text (fn [_context _effect-val _params]
            "Restores full hp and mana.")
-   :valid-params? (fn [_effect {:keys [source]} _context]
+   :valid-params? (fn [_context _effect {:keys [source]}]
                     source)
-   :do! (fn [_effect-val {:keys [source]} context]
+   :do! (fn [context _effect-val {:keys [source]}]
           (play-sound! context "sounds/bfxr_drugsuse.wav")
           (swap! source #(-> %
                              (update :hp set-to-max)

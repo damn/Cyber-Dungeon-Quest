@@ -3,8 +3,7 @@
             [gdl.context :refer [draw-filled-circle draw-sector draw-image play-sound!]]
             [data.counter :as counter]
             [data.val-max :refer [apply-val]]
-            [game.context :refer [send-event!]]
-            [game.effect :as effect]
+            [game.context :refer [valid-params? do-effect! send-event!]]
             [game.entity :as entity]
             [game.components.skills :as skills]))
 
@@ -47,12 +46,13 @@
   (tick! [_ context delta]
     (let [effect (:effect skill)]
       (cond
-       (not (effect/valid-params? effect effect-params context))
+       ; TODO Check namespaced params
+       (not (valid-params? (merge context effect-params) effect))
        (send-event! context entity :action-done)
 
        (counter/stopped? counter)
        (do
-        (effect/do! effect effect-params context)
+        (do-effect! (merge context effect-params) [effect])
         (send-event! context entity :action-done)))))
 
   (render-below [_ c entity*])
@@ -60,6 +60,7 @@
   (render-info [_ c {:keys [position] :as entity*}]
     (let [{:keys [image effect]} skill]
       (draw-skill-icon c image entity* position (counter/ratio counter))
+      ; TODO ? render fns ?!
       (effect/render-info c effect effect-params))))
 
 (defn- apply-action-speed-modifier [entity* skill action-time]
