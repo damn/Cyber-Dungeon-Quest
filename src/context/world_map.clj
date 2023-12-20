@@ -63,6 +63,15 @@
 (defn- get-player-content-field-idx [{:keys [context/player-entity]}]
   (:idx (get-content-field @player-entity)))
 
+(comment
+ (defn get-all-entities-of-current-map [context]
+   (mapcat #(deref (:entities %)) (grid/cells (get-contentfields context))))
+
+ (count
+  (get-all-entities-of-current-map @app.state/current-context))
+
+ )
+
 (defn- on-screen? [entity* {:keys [world-camera world-viewport-width world-viewport-height]}]
   (let [[x y] (:position entity*)
         x (float x)
@@ -100,15 +109,11 @@
                                       (:position source*)
                                       (:position target*))))))
 
-#_(defn get-all-entities-of-current-map [context]
-  (mapcat #(deref (:entities %)) (grid/cells (get-contentfields context))))
-
-
 (defn- first-level [context]
   (let [{:keys [tiled-map start-positions]} (mapgen.module-gen/generate
                                              ; TODO move to properties
                                              (assoc (edn/read-string (slurp "resources/maps/map.edn"))
-                                                    :creature-properties (all-properties context :species)))
+                                                    :creature-properties (all-properties context :creature)))
         start-position (translate-to-tile-middle
                         (rand-nth (filter #(= "all" (movement-property tiled-map %))
                                           start-positions)))]
@@ -183,7 +188,6 @@
 
 ; --> mach prozedural generierte maps mit prostprocessing (fill-singles/set-cells-behind-walls-nil/remove-nads/..?)
 ;& assertions 0 NADS z.b. ...?
-
 
 ; looping through all tiles of the map 3 times. but dont do it in 1 loop because player needs to be initialized before all monsters!
 (defn- place-entities! [context tiled-map]

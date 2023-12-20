@@ -121,7 +121,7 @@
   (let [{:keys [tiled-map
                 area-level-grid
                 start-positions]} (module-gen/generate (assoc properties
-                                                              :creature-properties (all-properties context :species)))]
+                                                              :creature-properties (all-properties context :creature)))]
     (.dispose ^TiledMap @current-tiled-map)
     (reset! current-tiled-map tiled-map)
     (reset! current-area-level-grid area-level-grid)

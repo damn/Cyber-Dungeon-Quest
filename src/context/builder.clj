@@ -1,12 +1,11 @@
 (ns context.builder
   (:require [gdl.context :refer [play-sound! get-property]]
-            [game.context :refer [create-entity!]])
-  )
+            [game.context :refer [create-entity!]]))
 
 (extend-type gdl.context.Context
   game.context/Builder
-  (audiovisual [context position property-id]
-    (let [{:keys [sound animation]} (get-property context property-id)]
+  (audiovisual [context position id]
+    (let [{:keys [sound animation]} (get-property context id)]
       (play-sound! context sound)
       (create-entity! context
                       {:position position
