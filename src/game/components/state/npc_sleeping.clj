@@ -1,7 +1,7 @@
 (ns game.components.state.npc-sleeping
   (:require [gdl.context :refer [draw-text draw-circle]]
             [data.counter :as counter]
-            [game.context :refer [create-entity!]]
+            [game.context :refer [create-entity! send-event!]]
             [game.components.state :as state]
             [game.components.string-effect :as string-effect]
             [game.components.faction :as faction])
@@ -27,7 +27,7 @@
           faction (faction/enemy (:faction @entity))]
       (when-let [distance (-> cell* faction :distance)]
         (when (<= distance (* aggro-range 10))
-          (state/send-event! context entity :alert)))))
+          (send-event! context entity :alert)))))
 
   (render-below [_ c entity*])
   (render-above [_ c {[x y] :position :keys [body]}]

@@ -2,6 +2,7 @@
   (:require [gdl.graphics.color :as color]
             [gdl.context :refer [draw-circle]]
             [data.counter :as counter]
+            [game.context :refer [send-event!]]
             [game.components.state :as state]))
 
 (defrecord State [entity counter]
@@ -16,7 +17,7 @@
     (update this :counter counter/tick delta))
   (tick! [_ context delta]
     (when (counter/stopped? counter)
-      (state/send-event! context entity :effect-wears-off)))
+      (send-event! context entity :effect-wears-off)))
   (render-below [_ c {:keys [position]}]
     (draw-circle c position 0.5 (color/rgb 1 1 1 0.6)))
   (render-above [_ c entity*])

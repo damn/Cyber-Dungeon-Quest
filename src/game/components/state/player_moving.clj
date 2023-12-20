@@ -1,5 +1,6 @@
 (ns game.components.state.player-moving
-  (:require [game.components.state :as state]
+  (:require [game.context :refer [send-event!]]
+            [game.components.state :as state]
             [game.components.state.wasd-movement :refer [WASD-movement-vector]]))
 
 (defrecord State [entity movement-vector]
@@ -16,7 +17,7 @@
   (tick! [_ context delta]
     (if-let [movement-vector (WASD-movement-vector)]
       (swap! entity assoc :movement-vector movement-vector)
-      (state/send-event! context entity :no-movement-input)))
+      (send-event! context entity :no-movement-input)))
   (render-below [_ c entity*])
   (render-above [_ c entity*])
   (render-info  [_ c entity*]))

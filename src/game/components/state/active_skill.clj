@@ -3,6 +3,7 @@
             [gdl.context :refer [draw-filled-circle draw-sector draw-image play-sound!]]
             [data.counter :as counter]
             [data.val-max :refer [apply-val]]
+            [game.context :refer [send-event!]]
             [game.effect :as effect]
             [game.components.state :as state]
             [game.components.skills :as skills]))
@@ -47,12 +48,12 @@
     (let [effect (:effect skill)]
       (cond
        (not (effect/valid-params? effect effect-params context))
-       (state/send-event! context entity :action-done)
+       (send-event! context entity :action-done)
 
        (counter/stopped? counter)
        (do
         (effect/do! effect effect-params context)
-        (state/send-event! context entity :action-done)))))
+        (send-event! context entity :action-done)))))
 
   (render-below [_ c entity*])
   (render-above [_ c entity*])
@@ -70,7 +71,7 @@
                                     1))]
     (max 0 (int modified-action-time))))
 
-(defn ->CreateWithCounter [entity skill effect-params]
+(defn ->CreateWithCounter [entity [skill effect-params]]
   (->State entity
            skill
            effect-params

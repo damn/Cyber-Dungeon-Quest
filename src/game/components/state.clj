@@ -1,6 +1,8 @@
 (ns game.components.state
   (:require [reduce-fsm :as fsm]
             [x.x :refer [defcomponent]]
+            gdl.context
+            game.context
             [context.ecs :as entity]))
 
 (defprotocol State
@@ -33,17 +35,26 @@
   (entity/render-above [_ c entity*] (render-above state-obj c entity*))
   (entity/render-info  [_ c entity*] (render-info  state-obj c entity*)))
 
-(defn send-event! [context entity event & args]
-  (let [{:keys [fsm
-                state-obj
-                state-obj-constructors]} (:components/state @entity)
-        old-state (:state fsm)
-        new-fsm (fsm/fsm-event fsm event)
-        new-state (:state new-fsm)]
-    (when (not= old-state new-state)
-      (exit state-obj context)
-      (let [new-state-obj (apply (new-state state-obj-constructors) (cons entity args))]
-        (enter new-state-obj context)
-        (swap! entity update :components/state #(assoc %
-                                                       :fsm new-fsm
-                                                       :state-obj new-state-obj))))))
+(extend-type gdl.context.Context
+  game.context/FiniteStateMachine
+  (send-event!
+    ([context entity event]
+     (game.context/send-event! context entity event nil))
+
+    ([context entity event params]
+     (let [{:keys [fsm
+                   state-obj
+                   state-obj-constructors]} (:components/state @entity)
+           old-state (:state fsm)
+           new-fsm (fsm/fsm-event fsm event)
+           new-state (:state new-fsm)]
+       (when (not= old-state new-state)
+         (exit state-obj context)
+         (let [constructor (new-state state-obj-constructors)
+               new-state-obj (if params
+                               (constructor entity params)
+                               (constructor entity))]
+           (enter new-state-obj context)
+           (swap! entity update :components/state #(assoc %
+                                                          :fsm new-fsm
+                                                          :state-obj new-state-obj))))))))

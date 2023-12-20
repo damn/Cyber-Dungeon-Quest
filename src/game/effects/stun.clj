@@ -1,8 +1,8 @@
 (ns game.effects.stun
   (:require [utils.core :refer [readable-number]]
             [data.counter :as counter]
-            [game.effect :as effect]
-            [game.components.state :as state]))
+            [game.context :refer [send-event!]]
+            [game.effect :as effect]))
 
 (effect/defeffect :stun
   {:text (fn [duration _params _context]
@@ -10,4 +10,4 @@
    :valid-params? (fn [_effect-val {:keys [source target]} _context]
                     (and target)) ; TODO target needs to have a state component so we can send events
    :do! (fn [duration {:keys [target]} context]
-          (state/send-event! context target :stun duration))})
+          (send-event! context target :stun duration))})

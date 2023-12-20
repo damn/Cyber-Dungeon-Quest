@@ -2,8 +2,7 @@
   (:require [x.x :refer [defcomponent]]
             [data.counter :as counter]
             [context.ecs :as entity]
-            [game.context :refer [in-line-of-sight? circle->touched-entities]]
-            [game.components.state :as state]))
+            [game.context :refer [in-line-of-sight? circle->touched-entities send-event!]]))
 
 (def ^:private shout-range 6)
 
@@ -23,4 +22,4 @@
     (when (counter/stopped? counter)
       (swap! entity assoc :destroyed? true)
       (doseq [entity (get-friendly-entities-in-line-of-sight context @entity shout-range)]
-        (state/send-event! context entity :alert)))))
+        (send-event! context entity :alert)))))

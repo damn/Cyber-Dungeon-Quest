@@ -1,9 +1,8 @@
 (ns game.effects.damage
   (:require [data.val-max :refer [apply-val apply-val-max-modifiers]]
             [utils.random :as random]
-            [game.context :refer [audiovisual]]
+            [game.context :refer [audiovisual send-event!]]
             [game.effect :as effect]
-            [game.components.state :as state]
             [game.components.modifiers :refer [effect-source-modifiers effect-target-modifiers]]
             [game.components.string-effect :as string-effect]))
 
@@ -138,9 +137,8 @@
                      (-> entity*
                          (update :hp apply-val #(- % dmg-amount))
                          (string-effect/add (str "[RED]" dmg-amount)))))
-     (state/send-event! context
-                        target
-                        (if (no-hp-left? (:hp @target)) :kill :alert)))))
+     (send-event! context target
+                  (if (no-hp-left? (:hp @target)) :kill :alert)))))
 
 (defn- damage->text [[dmg-type [min-dmg max-dmg]]]
   (str min-dmg "-" max-dmg " " (name dmg-type) " damage"))

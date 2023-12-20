@@ -42,3 +42,6 @@
 (defprotocol PotentialField
   (update-potential-fields [_])
   (potential-field-follow-to-enemy [_ entity]))
+
+(defprotocol FiniteStateMachine
+  (send-event! [_ entity event] [_ entity event params]))

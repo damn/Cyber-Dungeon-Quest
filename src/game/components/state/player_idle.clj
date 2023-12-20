@@ -2,7 +2,7 @@
   (:require [gdl.context :refer [play-sound! world-mouse-position get-property mouse-on-stage-actor?]]
             [gdl.math.vector :as v]
             [data.counter :as counter]
-            [game.context :refer [show-msg-to-player!]]
+            [game.context :refer [show-msg-to-player! send-event!]]
             [game.effect :as effect]
             [game.components.state :as state]
             [game.components.clickable :as clickable]
@@ -24,7 +24,7 @@
      (do
       (play-sound! context "sounds/bfxr_takeit.wav")
       (swap! clicked-entity assoc :destroyed? true)
-      (state/send-event! context player-entity :pickup-item item))
+      (send-event! context player-entity :pickup-item item))
 
      (inventory/try-pickup-item! player-entity item)
      (do
@@ -52,7 +52,7 @@
   (manual-tick! [_ {:keys [context/mouseover-entity] :as context} delta]
     (let [stage (:stage (:screens/game context))]  ; TODO hack FIXME
       (if-let [movement-vector (WASD-movement-vector)]
-        (state/send-event! context entity :movement-input movement-vector)
+        (send-event! context entity :movement-input movement-vector)
         (when (.isButtonJustPressed Gdx/input Input$Buttons/LEFT)
           (cond
            (mouse-on-stage-actor? context)
@@ -67,7 +67,7 @@
                    skill (get-property context skill-id)
                    state (skills/usable-state @entity skill effect-params context)]
                (if (= state :usable)
-                 (state/send-event! context entity :start-action skill effect-params)
+                 (send-event! context entity :start-action [skill effect-params])
                  (show-msg-to-player! context (str "Skill usable state not usable: " state))))
              (show-msg-to-player! context "No selected skill.")))))))
 

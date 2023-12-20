@@ -6,7 +6,7 @@
                                  play-sound! gui-mouse-position]]
             [gdl.scene2d.ui :as ui]
             [app.state :refer [current-context]]
-            [game.context :refer [show-msg-to-player!]]
+            [game.context :refer [show-msg-to-player! send-event!]]
             [game.modifier :as modifier]
             [game.components.state :as state]
             [game.components.inventory :as inventory])
@@ -37,7 +37,7 @@
           item)
      (do
       (play-sound! context "sounds/bfxr_takeit.wav")
-      (state/send-event! context entity :pickup-item item)
+      (send-event! context entity :pickup-item item)
       (inventory/remove-item! entity cell))
 
      item-on-cursor
@@ -51,7 +51,7 @@
          (play-sound! context "sounds/bfxr_itemput.wav")
          (inventory/set-item! entity cell item-on-cursor)
          (swap! entity dissoc :item-on-cursor)
-         (state/send-event! context entity :dropped-item)))
+         (send-event! context entity :dropped-item)))
 
       ; INCREMENT ITEM
       (and item
@@ -60,7 +60,7 @@
        (play-sound! context "sounds/bfxr_itemput.wav")
        (inventory/stack-item! entity cell item-on-cursor)
        (swap! entity dissoc :item-on-cursor)
-       (state/send-event! context entity :dropped-item))
+       (send-event! context entity :dropped-item))
 
       ; SWAP ITEMS
       (and item
@@ -71,7 +71,7 @@
          (play-sound! context "sounds/bfxr_itemput.wav")
          (inventory/remove-item! entity cell)
          (inventory/set-item! entity cell item-on-cursor)
-         (state/send-event! context entity :pickup-item item)))))))
+         (send-event! context entity :pickup-item item)))))))
 
 (declare ^:private slot->background
          ^:private ^Table table)
