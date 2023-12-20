@@ -2,20 +2,21 @@
   (:require [gdl.context :refer [draw-text draw-circle]]
             [data.counter :as counter]
             [game.context :refer [world-grid create-entity! send-event!]]
-            [game.components.state :as state]
+            [game.entity :as entity]
             [game.components.string-effect :as string-effect]
             [game.world.cell :as cell])
   (:import com.badlogic.gdx.graphics.Color))
 
+; TODO pass to creature data, also @ shout
 (def ^:private aggro-range 6)
 
 (defrecord State [entity]
-  state/State
+  entity/State
   (enter [_ _ctx])
 
   (exit [_ context]
     ; TODO make state = alerted, and shout at the end of that !
-    ; then nice alert '!' and different entities different altert time
+    ; then nice alert '!' and different entities different alert time
     (swap! entity string-effect/add "!")
     (create-entity! context
                     {:position (:position @entity)
@@ -28,7 +29,7 @@
     (let [cell (get (world-grid context)
                     (utils.core/->tile (:position @entity)))]
       (when-let [distance (cell/nearest-enemy-distance @cell (:faction @entity))]
-        (when (<= distance (* aggro-range 10))
+        (when (<= distance (* aggro-range 10)) ; TODO do @ cell/nearest-enemy-distance
           (send-event! context entity :alert)))))
 
   (render-below [_ c entity*])

@@ -4,7 +4,7 @@
             [data.counter :as counter]
             [game.context :refer [show-msg-to-player! send-event!]]
             [game.effect :as effect]
-            [game.components.state :as state]
+            [game.entity :as entity]
             [game.components.clickable :as clickable]
             [game.components.inventory :as inventory]
             [game.faction :as faction]
@@ -47,7 +47,7 @@
                              target-position)}))
 
 (defrecord State [entity]
-  state/PlayerState
+  entity/PlayerState
   (pause-game? [_] true)
   (manual-tick! [_ {:keys [context/mouseover-entity] :as context} delta]
     (let [stage (:stage (:screens/game context))]  ; TODO hack FIXME
@@ -71,7 +71,7 @@
                  (show-msg-to-player! context (str "Skill usable state not usable: " state))))
              (show-msg-to-player! context "No selected skill.")))))))
 
-  state/State
+  entity/State
   (enter [_ context])
   (exit  [_ context])
   (tick [this delta] this)

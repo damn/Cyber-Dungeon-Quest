@@ -1,7 +1,7 @@
 (ns game.components.state.player-item-on-cursor
   (:require [gdl.context :refer [play-sound! mouse-on-stage-actor?]]
             [game.context :refer [item-entity send-event!]]
-            [game.components.state :as state]
+            [game.entity :as entity]
             [game.components.inventory :as inventory])
   (:import (com.badlogic.gdx Gdx Input$Buttons)))
 
@@ -21,14 +21,14 @@
     (item-entity context posi (:item-on-cursor @player-entity))))
 
 (defrecord State [entity item]
-  state/PlayerState
+  entity/PlayerState
   (pause-game? [_] true)
   (manual-tick! [_ context delta]
     (when (and (.isButtonJustPressed Gdx/input Input$Buttons/LEFT)
                (not (mouse-on-stage-actor? context)))
       (send-event! context entity :drop-item)))
 
-  state/State
+  entity/State
   (enter [_ _ctx]
     (swap! entity assoc :item-on-cursor item))
   (exit [_ context]

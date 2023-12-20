@@ -5,7 +5,7 @@
             [data.val-max :refer [apply-val]]
             [game.context :refer [send-event!]]
             [game.effect :as effect]
-            [game.components.state :as state]
+            [game.entity :as entity]
             [game.components.skills :as skills]))
 
 (defn- draw-skill-icon [c icon entity* [x y] action-counter-ratio]
@@ -22,11 +22,11 @@
     (draw-image c icon [(- x radius) y])))
 
 (defrecord State [entity skill effect-params counter]
-  state/PlayerState
+  entity/PlayerState
   (pause-game? [_] false)
   (manual-tick! [_ context delta])
 
-  state/State
+  entity/State
   (enter [_ context]
     (play-sound! context (str "sounds/" (if (:spell? skill) "shoot.wav" "slash.wav")))
     (swap! entity update :skills skills/set-skill-to-cooldown skill)

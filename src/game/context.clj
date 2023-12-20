@@ -2,13 +2,19 @@
 
 (defprotocol EntityComponentSystem
   (get-entity [_ id])
+  ; TODO remove !
   (entity-exists? [_ entity])
   (create-entity! [_ components-map]
                   "Entities should not have :id component, will get added.
                   Calls entity/create system on the components-map
                   Then puts it into an atom and calls entity/create! system on all components.")
+
+  ; TODO pass entities, just tick!
   (tick-active-entities [_ delta])
+  ; TODO pass entities & check visible before, just render !
   (render-visible-entities [_])
+
+  ; TODO after tick do
   (destroy-to-be-removed-entities! [_]
                                    "Calls entity/destroy and entity/destroy! on all entities which are marked as ':destroyed?'"))
 
@@ -22,6 +28,7 @@
   (line-of-sight? [_ source* target*])
   (ray-blocked?  [_ start target])
   (path-blocked? [_ start target path-w] "path-w in tiles. casts two rays.")
+  ; TODO explored-grid
   (explored?     [_ position])
   (set-explored! [_ position])
   (content-grid [_])
@@ -43,6 +50,7 @@
                                 maxtime
                                 piercing]}]))
 
+; TODO get from world?
 (defprotocol PotentialField
   (update-potential-fields [_])
   (potential-field-follow-to-enemy [_ entity]))

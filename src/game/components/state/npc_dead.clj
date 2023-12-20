@@ -1,9 +1,9 @@
 (ns game.components.state.npc-dead
   (:require [game.context :refer [audiovisual]]
-            [game.components.state :as state]))
+            [game.entity :as entity]))
 
 (defrecord State [entity]
-  state/State
+  entity/State
   (enter [_ context]
     (swap! entity assoc :destroyed? true)
     (audiovisual context (:position @entity) :creature/die-effect))

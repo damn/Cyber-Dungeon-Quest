@@ -3,8 +3,8 @@
             [data.counter :as counter]
             [game.context :refer [world-grid potential-field-follow-to-enemy send-event!]]
             [game.effect :as effect]
+            [game.entity :as entity]
             [game.components.skills :as skills]
-            [game.components.state :as state]
             [game.world.cell :as cell]))
 
 (defn- make-effect-params [context entity]
@@ -31,7 +31,7 @@
        first))
 
 (defrecord State [entity]
-  state/State
+  entity/State
   (enter [_ context])
 
   (exit  [_ context]

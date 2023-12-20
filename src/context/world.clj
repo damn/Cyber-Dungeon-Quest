@@ -16,6 +16,9 @@
             [mapgen.movement-property :refer (movement-property)]
             mapgen.module-gen))
 
+; TODO Check rule context data only accessed in context ns. (even for properties)
+; => no dependency on implementation
+
 
   ; TODO (:grid world-map) dangerous ! => if multiple maps ! thats why world-map usage limit
   ; ! all context data internal limit & offer protocol !
@@ -109,6 +112,7 @@
   (content-grid [{:keys [context/world-map]}]
     (:content-grid world-map))
 
+  ; TODO move to content-grid only, not main context necessary
   (get-active-entities [context]
     (content-grid/get-active-entities (content-grid context)
                                       (:context/player-entity context)))

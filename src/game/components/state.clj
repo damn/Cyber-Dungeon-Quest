@@ -3,37 +3,25 @@
             [x.x :refer [defcomponent]]
             gdl.context
             game.context
-            [context.ecs :as entity]))
-
-(defprotocol State
-  (enter [_ context])
-  (exit  [_ context])
-  (tick [_ delta])
-  (tick! [_ context delta])
-  (render-below [_ c entity*])
-  (render-above [_ c entity*])
-  (render-info  [_ c entity*]))
-
-(defprotocol PlayerState
-  (pause-game? [_])
-  (manual-tick! [_ context delta]))
+            [context.ecs :as ecs]
+            [game.entity :as entity]))
 
 (defcomponent :entity/state {:keys [initial-state
                                     fsm
                                     state-obj
                                     state-obj-constructors]}
-  (entity/create! [_ entity _ctx]
+  (ecs/create! [_ entity _ctx]
     (swap! entity assoc :entity/state
            {:fsm (fsm initial-state nil) ; throws when initial-state is not part of states
             :state-obj ((initial-state state-obj-constructors) entity)
             :state-obj-constructors state-obj-constructors}))
-  (entity/tick [[_ v] delta]
-    (update v :state-obj tick delta))
-  (entity/tick! [_ context _entity delta]
-    (tick! state-obj context delta))
-  (entity/render-below [_ c entity*] (render-below state-obj c entity*))
-  (entity/render-above [_ c entity*] (render-above state-obj c entity*))
-  (entity/render-info  [_ c entity*] (render-info  state-obj c entity*)))
+  (ecs/tick [[_ v] delta]
+    (update v :state-obj entity/tick delta))
+  (ecs/tick! [_ context _entity delta]
+    (entity/tick! state-obj context delta))
+  (ecs/render-below [_ c entity*] (entity/render-below state-obj c entity*))
+  (ecs/render-above [_ c entity*] (entity/render-above state-obj c entity*))
+  (ecs/render-info  [_ c entity*] (entity/render-info  state-obj c entity*)))
 
 (extend-type gdl.context.Context
   game.context/FiniteStateMachine
@@ -51,12 +39,12 @@
              new-fsm (fsm/fsm-event fsm event)
              new-state (:state new-fsm)]
          (when (not= old-state new-state)
-           (exit state-obj context)
+           (entity/exit state-obj context)
            (let [constructor (new-state state-obj-constructors)
                  new-state-obj (if params
                                  (constructor entity params)
                                  (constructor entity))]
-             (enter new-state-obj context)
+             (entity/enter new-state-obj context)
              (swap! entity update :entity/state #(assoc %
                                                         :fsm new-fsm
                                                         :state-obj new-state-obj)))))))))

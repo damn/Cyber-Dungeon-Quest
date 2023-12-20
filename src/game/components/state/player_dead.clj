@@ -1,15 +1,15 @@
 (ns game.components.state.player-dead
   (:require [gdl.context :refer [play-sound!]]
             [game.context :refer [show-msg-to-player!]]
-            [game.components.state :as state]))
+            [game.entity :as entity]))
 
 (defrecord State [entity]
-  state/PlayerState
+  entity/PlayerState
   (pause-game? [_] true)
 
   (manual-tick! [_ context delta])
 
-  state/State
+  entity/State
   (enter [_ context]
     (play-sound! context "sounds/bfxr_playerdeath.wav")
     (show-msg-to-player! context "YOU DIED!. Press X to leave."))

@@ -3,14 +3,14 @@
             [gdl.context :refer [draw-circle]]
             [data.counter :as counter]
             [game.context :refer [send-event!]]
-            [game.components.state :as state]))
+            [game.entity :as entity]))
 
 (defrecord State [entity counter]
-  state/PlayerState
+  entity/PlayerState
   (pause-game? [_] false)
   (manual-tick! [_ context delta])
 
-  state/State
+  entity/State
   (enter [_ _ctx])
   (exit  [_ _ctx])
   (tick [this delta]

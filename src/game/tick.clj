@@ -5,7 +5,7 @@
             [game.context :refer [tick-active-entities destroy-to-be-removed-entities! update-mouseover-entity
                                   update-potential-fields]]
             [game.components.movement :as movement]
-            [game.components.state :as state]
+            [game.entity :as entity]
 
             ; => context
             [game.ui.action-bar :as action-bar])
@@ -69,9 +69,9 @@
                  delta]
   (action-bar/up-skill-hotkeys)
   (let [state (:state-obj (:entity/state @player-entity))
-        _ (state/manual-tick! state context delta)
+        _ (entity/manual-tick! state context delta)
         pause-game? (or @thrown-error
-                        (and pausing (state/pause-game? state)))
+                        (and pausing (entity/pause-game? state)))
         update? (reset! update-entities? (not pause-game?))
         delta (limit-delta delta)]
     (update-context-systems context delta)

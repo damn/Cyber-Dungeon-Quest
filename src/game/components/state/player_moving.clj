@@ -1,14 +1,14 @@
 (ns game.components.state.player-moving
   (:require [game.context :refer [send-event!]]
-            [game.components.state :as state]
+            [game.entity :as entity]
             [game.components.state.wasd-movement :refer [WASD-movement-vector]]))
 
 (defrecord State [entity movement-vector]
-  state/PlayerState
+  entity/PlayerState
   (pause-game? [_] false)
   (manual-tick! [_ context delta])
 
-  state/State
+  entity/State
   (enter [_ context]
     (swap! entity assoc :movement-vector movement-vector))
   (exit  [_ context]

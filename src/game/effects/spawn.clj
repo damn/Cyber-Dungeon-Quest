@@ -2,6 +2,8 @@
   (:require [game.effect :as effect]
             [game.context :refer [creature-entity]]))
 
+; TODO spawning on player both without error ?!
+
 ; BLOCKING PLAYER MOVEMENT !
 ; check not blocked position // line of sight.
 ; limit max. spawns
