@@ -11,18 +11,6 @@
   (:import com.badlogic.gdx.scenes.scene2d.Actor))
 
 (defn- item-on-cursor-render-actor []
-  #_(reify gdl.scene2d.actor/Actor
-    (draw [this {:keys [context/player-entity] :as context}]
-      (when (= :item-on-cursor
-               (:state (:fsm (:entity/state @player-entity))))
-        ; windows keep changing z-index when selected
-        (.toFront ^Actor this)
-        (draw-centered-image context
-                             (:image (:item-on-cursor @player-entity))
-                             (gui-mouse-position c))))
-    (act [_this _context]))
-
-
   (proxy [Actor] []
     (draw [_batch _parent-alpha]
       (let [{:keys [context/player-entity] :as c} @current-context]
