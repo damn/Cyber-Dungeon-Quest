@@ -1,7 +1,8 @@
 (ns game.ui.skill-window
-  (:require [gdl.context :refer [get-property]]
+  (:require [gdl.context :refer [->image-button]]
             [gdl.scene2d.ui :as ui]
             [app.state :refer [current-context]]
+            [game.context :refer [get-property ]]
             [game.skill :as skill]
             [game.components.skills :as skills]))
 
@@ -10,13 +11,12 @@
 ; 'skills' menu is a modifier menu ...
 ; you can have more general modifiers menus toggling on/off
 ; passives toggle-able ... wtf / stances ...
-(defn- pressed-on-skill-in-menu [skill]
-  (let [{:keys [context/player-entity]} @current-context]
-    (when (and (pos? (:free-skill-points @player-entity))
-               (not (skills/has-skill? (:skills @player-entity) skill)))
-      (swap! player-entity #(-> %
-                                (update :free-skill-points dec)
-                                (update :skills skills/add-skill skill))))))
+(defn- pressed-on-skill-in-menu [{:keys [context/player-entity]} skill]
+  (when (and (pos? (:free-skill-points @player-entity))
+             (not (skills/has-skill? (:skills @player-entity) skill)))
+    (swap! player-entity #(-> %
+                              (update :free-skill-points dec)
+                              (update :skills skills/add-skill skill)))))
 
 (defn create [context]
   (let [window (ui/window :title "Skills"
@@ -25,8 +25,9 @@
                 :spells/meditation
                 :spells/spawn]
             :let [skill (get-property context id)
-                  button (ui/image-button (:image skill)
-                                          #(pressed-on-skill-in-menu skill))]]
+                  button (->image-button context
+                                         (:image skill)
+                                         #(pressed-on-skill-in-menu % skill))]]
       (.addListener button (ui/text-tooltip (fn []
                                               (let [context @current-context]
                                                 (skill/text skill

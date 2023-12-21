@@ -1,6 +1,7 @@
 (ns screens.options-menu
   (:require gdl.screen
-            [gdl.context :refer [->stage-screen draw-centered-image render-gui-view create-image]]
+            [gdl.context :refer [->stage-screen draw-centered-image render-gui-view create-image
+                                 ->text-button ->check-box]]
             [gdl.scene2d.ui :as ui]
             [utils.core :refer [find-first]]
             [app.state :refer [change-screen!]]
@@ -71,20 +72,24 @@
          (get-state status)]))
     (initial-data [_])))
 
-(def ^:private exit #(change-screen! :screens/game))
+(defn- exit [_context]
+  (change-screen! :screens/game))
 
 (defn- create-table [context]
   (let [table (ui/table :rows (concat
                                (for [check-box @status-check-boxes]
-                                 [(ui/check-box (get-text check-box)
-                                                #(set-state check-box %)
-                                                (boolean (get-state check-box)))])
+                                 [(->check-box context
+                                               (get-text check-box)
+                                               #(set-state check-box %)
+                                               (boolean (get-state check-box)))])
                                (for [check-box debug-flags]
-                                 [(ui/check-box (get-text check-box)
-                                                #(set-state check-box %)
-                                                (boolean (get-state check-box)))])
-                               [[(ui/text-button "Resume" exit)]
-                                [(ui/text-button "Exit" #(change-screen! :screens/main-menu))]])
+                                 [(->check-box context
+                                               (get-text check-box)
+                                               #(set-state check-box %)
+                                               (boolean (get-state check-box)))])
+                               [[(->text-button context "Resume" exit)]
+                                [(->text-button context "Exit" (fn [_context]
+                                                                 (change-screen! :screens/main-menu)))]])
                         :fill-parent? true
                         :cell-defaults {:pad-bottom 25})
         padding 25]
@@ -105,7 +110,7 @@
                                              (/ gui-viewport-height 2)]))))
   (tick [_ _state delta]
     (when (.isKeyJustPressed Gdx/input Input$Keys/ESCAPE)
-      (exit))))
+      (exit _))))
 
 (defn screen [context]
   {:actors [(create-table context)]

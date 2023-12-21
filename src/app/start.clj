@@ -1,8 +1,6 @@
 (ns app.start
   (:require [gdl.app :as app]
             [gdl.context :refer [generate-ttf ->stage-screen]]
-            [gdl.context.default :as default-context]
-            [app.state :refer [current-context]]
             [context.properties :as properties]
             context.player-message
             context.builder
@@ -54,9 +52,8 @@
 
 ; TODO maybe use safe-merge for all my context stuff (only give warnings @ main-menu when overwriting?)
 
-(defn- create-context []
-  (let [context (default-context/->context :tile-size 48) ; TODO world-unit-scale !!! directly pass...
-        context (merge context
+(defn- create-context [context]
+  (let [context (merge context
                        (properties/->context context "resources/properties.edn"))]
     (game.ui.inventory-window/initialize! context)
     (game.ui.action-bar/initialize!)
@@ -72,15 +69,17 @@
             :screens/options-menu    (->stage-screen context (screens.options-menu/screen context))
             :screens/property-editor (->stage-screen context (screens.property-editor/screen context))})))
 
-(def app-config
+(def ^:private tile-size 48)
+
+(def ^:private app-config
   {:app {:title "Cyber Dungeon Quest"
          :width  1440 ; TODO when setting full screen, uses the window size not full w/h, this is MBP full screen w/h
          :height 900
          :full-screen? false
          :fps nil} ; TODO fix is set to 60 @ gdl
-   :current-context current-context
    :create-context create-context
-   :first-screen :screens/main-menu})
+   :first-screen :screens/main-menu
+   :world-unit-scale (/ tile-size)})
 
 (defn app []
   (app/start app-config))

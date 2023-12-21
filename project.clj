@@ -50,12 +50,34 @@
   {:sources #{"src"}
    :output "target/hiera"
    :layout :horizontal
-   :cluster-depth 3
+   :cluster-depth 0
    :external false
-   :ignore #{"data" "utils" "mapgen" "screens" "app"
+   :ignore #{"data"
+             "utils"
+             "mapgen"
              "game.context"
-             "game.effect"
-             "game.modifier"
-             }}
-  )
+             "context.ecs"
+             "game.entity"
+             "context.effect-interpreter"
+             "app.state"
+             "game.components.skills"
+             "game.components.clickable"
+             "game.ui.config"
+             "game.components.string-effect"
+             "game.components.inventory"
+             "game.ui.inventory-window"
+             "game.ui.action-bar"
+             "game.components.modifiers"
+             "context.properties"}})
+
+ ; Breaking depdencny graph:
+ ; game.components.skills
+ ; game.components.clickable
+ ; game.ui.config
+ ; game.components.string-effect
+ ; game.components.inventory
+ ; game.ui.inventory-window
+ ; game.ui.action-bar
+ ; game.components.modifiers
+ ; context.properties access to save -> make into protocol !
  )

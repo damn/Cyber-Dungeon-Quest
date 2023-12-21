@@ -1,5 +1,5 @@
 (ns screens.main-menu
-  (:require [gdl.context :refer [draw-centered-image render-gui-view create-image]]
+  (:require [gdl.context :refer [draw-centered-image render-gui-view create-image ->text-button]]
             gdl.screen
             [gdl.scene2d.ui :as ui]
             [app.state :refer [current-context change-screen!]]
@@ -40,15 +40,19 @@
       (.exit Gdx/app))))
 
 (defn screen [context {:keys [bg-image]}]
-  (let [table (ui/table :rows [[(ui/text-button "Start game"
-                                                #(do
-                                                  (swap! current-context init-context)
-                                                  (change-screen! :screens/game)))]
-                               [(ui/text-button "Map editor"
-                                                #(change-screen! :screens/map-editor))]
-                               [(ui/text-button "Property editor"
-                                                #(change-screen! :screens/property-editor))]
-                               [(ui/text-button "Exit" #(.exit Gdx/app))]]
+  (let [table (ui/table :rows [[(->text-button context "Start game"
+                                               (fn [_context]
+                                                 (swap! current-context init-context)
+                                                 (change-screen! :screens/game)))]
+                               [(->text-button context "Map editor"
+                                               (fn [_context]
+                                                 (change-screen! :screens/map-editor)))]
+                               [(->text-button context "Property editor"
+                                               (fn [_context]
+                                                 (change-screen! :screens/property-editor)))]
+                               [(->text-button context "Exit"
+                                               (fn [_context]
+                                                 (.exit Gdx/app)))]]
                         :cell-defaults {:pad-bottom 25}
                         :fill-parent? true)]
     (.center table)

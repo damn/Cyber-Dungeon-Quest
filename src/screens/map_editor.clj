@@ -3,11 +3,12 @@
             gdl.screen
             [gdl.graphics.color :as color]
             [gdl.graphics.camera :as camera]
-            [gdl.context :refer [draw-filled-rectangle draw-filled-circle draw-grid render-world-view all-properties]]
+            [gdl.context :refer [draw-filled-rectangle draw-filled-circle draw-grid render-world-view ->text-button]]
             gdl.disposable
             [gdl.maps.tiled :as tiled]
             [gdl.scene2d.ui :as ui]
-            [app.state :refer [current-context change-screen!]]
+            [app.state :refer [change-screen!]]
+            [game.context :refer [all-properties]]
             [mapgen.movement-property :refer (movement-property movement-properties)]
             [mapgen.module-gen :as module-gen])
   (:import (com.badlogic.gdx Gdx Input$Keys)
@@ -144,7 +145,7 @@
 ; save => show saved icon.
 ; TODO validation/schema (malli/clojure.spec)
 ; TODO see common stuff w. entity-editor/screen.
-(defn- edn-edit-form [edn-data-file]
+(defn- edn-edit-form [context edn-data-file]
   (let [properties (edn/read-string (slurp edn-data-file))
         table (ui/table)
         get-properties #(into {}
@@ -156,11 +157,13 @@
       (.add table (ui/label (name k)))
       (.add table ^com.badlogic.gdx.scenes.scene2d.Actor (edit-form [k v]))
       (.row table))
-    (.colspan (.add table (ui/text-button (str "Save to file")
-                                          #(spit edn-data-file
+    (.colspan (.add table (->text-button context
+                                         (str "Save to file")
+                                         (fn [_context]
+                                           (spit edn-data-file
                                                  (with-out-str
                                                   (clojure.pprint/pprint
-                                                   (get-properties))))))
+                                                   (get-properties)))))))
               2)
     [table get-properties]))
 
@@ -189,10 +192,10 @@
 (defn screen [context]
   (reset! current-tiled-map (tiled/load-map module-gen/modules-file))
   (let [window (ui/window :title "Properties")
-        [form get-properties] (edn-edit-form "resources/maps/map.edn")] ; TODO move to properties
+        [form get-properties] (edn-edit-form context "resources/maps/map.edn")] ; TODO move to properties
     (.add window ^com.badlogic.gdx.scenes.scene2d.Actor form)
     (.row window)
-    (.add window (ui/text-button "Generate" #(generate @current-context (get-properties))))
+    (.add window (->text-button context "Generate" #(generate % (get-properties))))
     (.pack window)
     {:actors [window]
      :sub-screen (->SubScreen)}))

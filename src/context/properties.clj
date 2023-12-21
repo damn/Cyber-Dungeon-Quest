@@ -2,7 +2,9 @@
   (:require [clojure.edn :as edn]
             [gdl.context :refer [get-sprite]]
             [gdl.graphics.animation :as animation]
-            [utils.core :refer [safe-get]]))
+            [utils.core :refer [safe-get]]
+            game.context
+            ))
 
 ; TODO new type => add data here
 (def ^:private prop-type-unique-key
@@ -19,7 +21,7 @@
         prop-type-unique-key))
 
 (extend-type gdl.context.Context
-  gdl.context/PropertyStore
+  game.context/PropertyStore
   (get-property [{:keys [context/properties]} id]
     (safe-get properties id))
   (all-properties [{:keys [context/properties]} type]

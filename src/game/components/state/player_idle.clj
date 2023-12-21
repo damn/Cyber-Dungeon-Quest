@@ -1,8 +1,8 @@
 (ns game.components.state.player-idle
-  (:require [gdl.context :refer [play-sound! world-mouse-position get-property mouse-on-stage-actor?]]
+  (:require [gdl.context :refer [play-sound! world-mouse-position mouse-on-stage-actor?]]
             [gdl.math.vector :as v]
             [data.counter :as counter]
-            [game.context :refer [show-msg-to-player! send-event!]]
+            [game.context :refer [show-msg-to-player! send-event! get-property]]
             [game.entity :as entity]
             [game.components.clickable :as clickable]
             [game.components.inventory :as inventory]

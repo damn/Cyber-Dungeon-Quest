@@ -1,6 +1,5 @@
 (ns context.world
   (:require [clojure.edn :as edn]
-            [gdl.context :refer [all-properties]]
             gdl.disposable
             [gdl.graphics.camera :as camera]
             [gdl.maps.tiled :as tiled]
@@ -10,7 +9,7 @@
             [utils.core :refer [->tile tile->middle]]
             [context.world.grid :refer [create-grid]]
             [context.world.content-grid :refer [->content-grid]]
-            [game.context :refer [creature-entity ray-blocked? content-grid world-grid]]
+            [game.context :refer [creature-entity ray-blocked? content-grid world-grid all-properties]]
             [game.world.content-grid :as content-grid]
             [game.world.cell :as cell]
             [mapgen.movement-property :refer (movement-property)]

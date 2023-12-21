@@ -11,6 +11,18 @@
   (:import com.badlogic.gdx.scenes.scene2d.Actor))
 
 (defn- item-on-cursor-render-actor []
+  #_(reify gdl.scene2d.actor/Actor
+    (draw [this {:keys [context/player-entity] :as context}]
+      (when (= :item-on-cursor
+               (:state (:fsm (:entity/state @player-entity))))
+        ; windows keep changing z-index when selected
+        (.toFront ^Actor this)
+        (draw-centered-image context
+                             (:image (:item-on-cursor @player-entity))
+                             (gui-mouse-position c))))
+    (act [_this _context]))
+
+
   (proxy [Actor] []
     (draw [_batch _parent-alpha]
       (let [{:keys [context/player-entity] :as c} @current-context]
@@ -36,13 +48,16 @@
 
         ^Actor entity-info-window (entity-info-window/create)
         skill-window (skill-window/create context)]
+
     (.setPosition inventory/window
                   gui-viewport-width
                   (- (/ gui-viewport-height 2)
                      (/ (.getHeight help-window) 2)))
+
     (.setPosition entity-info-window (.getX inventory/window) 0)
     (.setWidth entity-info-window (.getWidth inventory/window))
     (.setHeight entity-info-window (.getY inventory/window))
+
     [debug-window
      help-window
      entity-info-window

@@ -226,7 +226,7 @@
     (update-potential-fields* context))
 
   ; TODO work with entity* !? occupied-by-other? works with entity not entity* ... not with ids ... hmmm
-  (potential-field-follow-to-enemy [context entity]
+  (potential-field-follow-to-enemy [context entity] ; TODO pass faction here, one less dependency.
     (let [grid (world-grid context)
           position (:position @entity)
           own-cell (get grid (->tile position))

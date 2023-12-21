@@ -1,8 +1,8 @@
 (ns context.builder
   (:require [reduce-fsm :as fsm]
-            [gdl.context :refer [create-image play-sound! get-property]]
+            [gdl.context :refer [create-image play-sound!]]
             [gdl.graphics.animation :as animation]
-            [game.context :refer [create-entity!]]
+            [game.context :refer [create-entity! get-property]]
             [game.components.body :refer (assoc-left-bottom)]
             (game.components.state
              [active-skill :as active-skill]

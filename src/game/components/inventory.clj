@@ -1,9 +1,9 @@
 (ns game.components.inventory
   (:require [data.grid2d :as grid]
             [x.x :refer [defcomponent]]
-            [gdl.context :refer [get-property]]
             [utils.core :refer [find-first]]
             [context.ecs :as entity]
+            [game.context :refer [get-property]]
             [game.modifier :as modifier]
             [game.components.skills :as skills]))
 

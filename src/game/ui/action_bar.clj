@@ -1,5 +1,6 @@
 (ns game.ui.action-bar
-  (:require [gdl.scene2d.ui :as ui]
+  (:require [gdl.context :refer [->image-button]]
+            [gdl.scene2d.ui :as ui]
             [app.state :refer [current-context]]
             [game.skill :as skill])
   (:import (com.badlogic.gdx Gdx Input$Keys)
@@ -80,7 +81,7 @@
 
 (declare ^ButtonGroup button-group)
 
-(defn- reset-buttons! [{:keys [context/player-entity]}]
+(defn- reset-buttons! [{:keys [context/player-entity] :as context}]
   (.clearChildren horizontal-group)
   (.addActor horizontal-group (->hotbar-actualize-actor))
 
@@ -90,7 +91,10 @@
   ;(.setUncheckLast button-group true) ? needed ?
 
   (doseq [[id {:keys [image] :as skill}] (:skills @player-entity)
-          :let [button (ui/image-button image #(reset! selected-skill-id id))]]
+          :let [button (->image-button context
+                                       image
+                                       (fn [_context]
+                                         (reset! selected-skill-id id)))]]
     (.setName button (pr-str id))
     (.addListener button (ui/text-tooltip #(skill/text skill player-entity @current-context)))
     ; TODO HOTKEY

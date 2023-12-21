@@ -1,10 +1,9 @@
 (ns game.components.skills
   (:require [x.x :refer [defcomponent]]
-            [gdl.context :refer [get-property]]
             [data.counter :as counter]
             [utils.core :refer [mapvals]]
             [context.ecs :as entity]
-            [game.context :refer [valid-params?]]))
+            [game.context :refer [get-property valid-params?]]))
 
 (defn- update-cooldown [skill delta]
   (if (:cooling-down? skill)

@@ -1,7 +1,8 @@
 (ns app.state
-  (:require [gdl.context :refer [change-screen]]))
+  (:require gdl.app
+            [gdl.context :refer [change-screen]]))
 
-(def current-context (atom nil))
+(def current-context gdl.app/current-context)
 
 (defn change-screen!
   "change-screen is problematic, changes the current-context atom
