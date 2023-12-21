@@ -30,7 +30,7 @@
   :global-vars {*warn-on-reflection* true
                 *print-level* 3}
 
-  :aliases {"dev" ["run" "-m" "gdl.dev" "app.start" "app"]})
+  :aliases {"dev" ["run" "-m" "gdl.backends.libgdx.dev" "app.start" "app"]})
 
 ; * Notes
 

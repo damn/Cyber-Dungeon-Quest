@@ -1,8 +1,8 @@
 (ns app.state
-  (:require gdl.app
+  (:require [gdl.backends.libgdx.app :as app]
             [gdl.context :refer [change-screen]]))
 
-(def current-context gdl.app/current-context)
+(def current-context app/current-context)
 
 (defn change-screen!
   "change-screen is problematic, changes the current-context atom

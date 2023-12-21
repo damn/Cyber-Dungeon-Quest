@@ -1,5 +1,5 @@
 (ns app.start
-  (:require [gdl.app :as app]
+  (:require [gdl.backends.libgdx.app :as app]
             [gdl.context :refer [generate-ttf ->stage-screen]]
             [context.properties :as properties]
             context.player-message
