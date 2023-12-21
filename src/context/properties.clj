@@ -3,8 +3,7 @@
             [gdl.context :refer [get-sprite]]
             [gdl.graphics.animation :as animation]
             [utils.core :refer [safe-get]]
-            game.context
-            ))
+            game.context))
 
 ; TODO new type => add data here
 (def ^:private prop-type-unique-key
@@ -68,9 +67,8 @@
        (#(if (:animation %) (update % :animation serialize-animation) %))))
 
 ; TODO serialize / deserialize protocol !??!
-
 (defn- load-edn [context file]
-  (let [properties (-> file slurp edn/read-string)]
+  (let [properties (-> file slurp edn/read-string)] ; TODO use .internal Gdx/files  => part of context protocol
     (assert (apply distinct? (map :id properties)))
     (->> properties
          (map #(deserialize context %))
