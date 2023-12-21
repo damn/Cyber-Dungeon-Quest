@@ -1,22 +1,21 @@
 (ns app.start
   (:require [gdl.backends.libgdx.app :as app]
             [gdl.context :refer [generate-ttf ->stage-screen]]
-            [context.properties :as properties]
-            context.player-message
-            context.builder
-            context.potential-fields
+            (context [properties :as properties]
+                     builder
+                     potential-fields)
             game.modifiers.all
             game.components.require-all
             game.effects.require-all
-            game.ui.inventory-window
-            game.ui.action-bar
-            game.ui.hp-mana-bars
-            screens.game
-            screens.main-menu
-            screens.map-editor
-            screens.minimap
-            screens.options-menu
-            screens.property-editor))
+            (game.ui inventory-window
+                     action-bar
+                     hp-mana-bars)
+            (screens game
+                     main-menu
+                     map-editor
+                     minimap
+                     options-menu
+                     property-editor)))
 
 (defn- create-context [context]
   (let [context (merge context
@@ -42,7 +41,7 @@
          :width  1440
          :height 900
          :full-screen? false
-         :fps 60}
+         :fps 300}
    :create-context create-context
    :first-screen :screens/main-menu
    :world-unit-scale (/ tile-size)})

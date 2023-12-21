@@ -19,7 +19,8 @@
                                    "Calls entity/destroy and entity/destroy! on all entities which are marked as ':destroyed?'"))
 
 (defprotocol PlayerMessage
-  (show-msg-to-player! [_ message]))
+  (show-msg-to-player! [_ message])
+  (->player-message-actor [_]))
 
 (defprotocol MouseOverEntity
   (update-mouseover-entity [_]))

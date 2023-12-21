@@ -31,6 +31,7 @@
 
 (def ^:private pausing true)
 
+; TODO here not working anymore
 (defn- end-of-frame-checks [{:keys [context/player-entity] :as context}]
   (let [{:keys [debug-window
                 inventory-window
@@ -52,8 +53,8 @@
       (actor/toggle-visible! debug-window))
     (when (key-just-pressed? context input.keys/escape)
       (cond
-       (some #(.isVisible ^Actor %) windows)
-       (run! #(.setVisible ^Actor % false) windows)
+       ;(some #(.isVisible ^Actor %) windows)
+       ;(run! #(.setVisible ^Actor % false) windows)
        :else
        (change-screen! :screens/options-menu))))
   (when (key-just-pressed? context input.keys/tab)

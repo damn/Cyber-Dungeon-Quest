@@ -6,6 +6,7 @@
             [app.state :refer [current-context change-screen!]]
             context.ecs
             context.mouseover-entity
+            [context.player-message :as player-message]
             [context.world :as world]
             game.ui.action-bar
             game.ui.inventory-window))
@@ -20,7 +21,8 @@
                                                          :ground    ; creatures, player
                                                          :flying    ; flying creatures
                                                          :effect])  ; projectiles, nova
-                       (context.mouseover-entity/->context-map)
+                       (context.mouseover-entity/->context)
+                       (player-message/->context)
                        {:context/update-entities? (atom true)})]
     (world/merge->context context)))
 

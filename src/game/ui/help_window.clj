@@ -4,14 +4,8 @@
 ; TODO -> only open for first starting of the game or for every character only one time and save with save-game
 ; TODO -> hotkey
 (def ^:private controls-text
-  "* Moving: Leftmouse
-
-  * Use skills: Left & right mouse
-
-  * Set Skill hotkey: Press 0-9 while hovering
-  over a skill at the bottom left selection lists.
-
-  * Use items in actionbar: Q,W and E.
+  "* Moving: WASD-keys
+   * Use a skill: click leftmouse. Select in actionbar below.
 
   * S   - skillmenu
   * C   - character info

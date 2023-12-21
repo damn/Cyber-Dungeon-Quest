@@ -19,6 +19,7 @@
                                        clicked-entity]
   (let [item (:item @clicked-entity)]
     (cond
+     ; TODO here not working anymore !!! => add to context ?
      (.isVisible ^Actor (:inventory-window stage))
      (do
       (play-sound! context "sounds/bfxr_takeit.wav")

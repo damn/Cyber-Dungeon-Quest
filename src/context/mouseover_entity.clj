@@ -32,5 +32,5 @@
       (when entity
         (swap! entity assoc :mouseover? true)))))
 
-(defn ->context-map []
+(defn ->context []
   {:context/mouseover-entity (atom nil)})

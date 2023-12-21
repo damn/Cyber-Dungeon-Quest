@@ -6,11 +6,6 @@
             [game.skill :as skill]
             [game.components.skills :as skills]))
 
-; TODO this is actually two modifiers ... skill and free-skill-p
-; and can do modifier-text @ tooltip ....
-; 'skills' menu is a modifier menu ...
-; you can have more general modifiers menus toggling on/off
-; passives toggle-able ... wtf / stances ...
 (defn- pressed-on-skill-in-menu [{:keys [context/player-entity]} skill]
   (when (and (pos? (:free-skill-points @player-entity))
              (not (skills/has-skill? (:skills @player-entity) skill)))

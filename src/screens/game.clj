@@ -1,5 +1,5 @@
 (ns screens.game
-  (:require [gdl.context :refer [render-gui-view render-world-view delta-time]]
+  (:require [gdl.context :refer [render-gui-view render-world-view delta-time draw-text]]
             [gdl.screen :refer [Screen]]
             [gdl.maps.tiled :as tiled]
             [gdl.graphics.color :as color]
@@ -21,6 +21,7 @@
 ; => see with prformance check later
 ; => need to pass to orthogonaltiledmap bla
 ; or pass only necessary data structures  (explored grid)
+;=> the rays are more of a problem after sampling visualvm
 (defn- tile-color-setter [_ x y]
   (let [{:keys [world-camera] :as context} @current-context
         light-position (camera/position world-camera)
@@ -51,7 +52,7 @@
                          (render-visible-entities      c)
                          (debug/render-after-entities  c)))
     (render-gui-view context render-player-hp-mana)
-    (tick-game context (* (delta-time context) 1000))))
+    (tick-game context (* (delta-time context) 1000)))) ; TODO make in seconds ? no need to multiply by 1000 ?
 
 (defn screen [context]
   {:actors (game.ui.actors/create-actors context)
