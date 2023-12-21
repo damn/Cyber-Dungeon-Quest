@@ -1,9 +1,9 @@
 (ns game.components.state.player-item-on-cursor
-  (:require [gdl.context :refer [play-sound! mouse-on-stage-actor?]]
+  (:require [gdl.context :refer [play-sound! mouse-on-stage-actor? button-just-pressed?]]
+            [gdl.input.buttons :as buttons]
             [game.context :refer [item-entity send-event!]]
             [game.entity :as entity]
-            [game.components.inventory :as inventory])
-  (:import (com.badlogic.gdx Gdx Input$Buttons)))
+            [game.components.inventory :as inventory]))
 
 ; TODO ! important ! animation & dont put exactly hiding under player -> try neighbor cells first, simple.
 (defn- put-item-on-ground [{:keys [context/player-entity] :as context}]
@@ -24,7 +24,7 @@
   entity/PlayerState
   (pause-game? [_] true)
   (manual-tick! [_ context delta]
-    (when (and (.isButtonJustPressed Gdx/input Input$Buttons/LEFT)
+    (when (and (button-just-pressed? context buttons/left)
                (not (mouse-on-stage-actor? context)))
       (send-event! context entity :drop-item)))
 

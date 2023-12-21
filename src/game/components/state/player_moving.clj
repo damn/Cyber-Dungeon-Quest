@@ -15,7 +15,7 @@
     (swap! entity dissoc :movement-vector movement-vector))
   (tick [this delta] this)
   (tick! [_ context delta]
-    (if-let [movement-vector (WASD-movement-vector)]
+    (if-let [movement-vector (WASD-movement-vector context)]
       (swap! entity assoc :movement-vector movement-vector)
       (send-event! context entity :no-movement-input)))
   (render-below [_ c entity*])

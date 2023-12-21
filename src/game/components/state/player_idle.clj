@@ -1,5 +1,6 @@
 (ns game.components.state.player-idle
-  (:require [gdl.context :refer [play-sound! world-mouse-position mouse-on-stage-actor?]]
+  (:require [gdl.context :refer [play-sound! world-mouse-position mouse-on-stage-actor? button-just-pressed?]]
+            [gdl.input.buttons :as buttons]
             [gdl.math.vector :as v]
             [data.counter :as counter]
             [game.context :refer [show-msg-to-player! send-event! get-property]]
@@ -10,8 +11,7 @@
             [game.components.skills :as skills]
             [game.components.state.wasd-movement :refer [WASD-movement-vector]]
             [game.ui.action-bar :as action-bar])
-  (:import (com.badlogic.gdx Gdx Input$Buttons)
-           com.badlogic.gdx.scenes.scene2d.Actor))
+  (:import com.badlogic.gdx.scenes.scene2d.Actor))
 
 (defmethod clickable/on-clicked :item [{:keys [context/player-entity]
                                         :as context}
@@ -49,9 +49,9 @@
   (pause-game? [_] true)
   (manual-tick! [_ {:keys [context/mouseover-entity] :as context} delta]
     (let [stage (:stage (:screens/game context))]  ; TODO hack FIXME
-      (if-let [movement-vector (WASD-movement-vector)]
+      (if-let [movement-vector (WASD-movement-vector context)]
         (send-event! context entity :movement-input movement-vector)
-        (when (.isButtonJustPressed Gdx/input Input$Buttons/LEFT)
+        (when (button-just-pressed? context buttons/left)
           (cond
            (mouse-on-stage-actor? context)
            nil

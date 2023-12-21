@@ -1,9 +1,10 @@
 (ns screens.minimap
   (:require gdl.screen
+            [gdl.input.keys :as input.keys]
             [gdl.maps.tiled :as tiled]
             [gdl.graphics.color :as color]
             [gdl.graphics.camera :as camera]
-            [gdl.context :refer [draw-filled-circle render-world-view]]
+            [gdl.context :refer [draw-filled-circle render-world-view key-just-pressed?]]
             [app.state :refer [current-context change-screen!]]
             [game.context :refer [explored?]])
   (:import (com.badlogic.gdx Gdx Input$Keys)
@@ -61,8 +62,8 @@
                       tile-corner-color-setter)
     (render-world-view context
                        #(draw-filled-circle % (camera/position world-camera) 0.5 color/green)))
-  (tick [_ {:keys [world-camera]} delta]
-    (when (or (.isKeyJustPressed Gdx/input Input$Keys/TAB)
-              (.isKeyJustPressed Gdx/input Input$Keys/ESCAPE))
+  (tick [_ {:keys [world-camera] :as ctx} delta]
+    (when (or (key-just-pressed? ctx input.keys/tab)
+              (key-just-pressed? ctx input.keys/escape))
       (camera/set-zoom! world-camera 1)
       (change-screen! :screens/game))))

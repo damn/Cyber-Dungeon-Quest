@@ -1,5 +1,7 @@
 (ns screens.map-editor
   (:require [clojure.edn :as edn]
+            [gdl.context :refer [key-pressed? key-just-pressed?]]
+            [gdl.input.keys :as input.keys]
             gdl.screen
             [gdl.graphics.color :as color]
             [gdl.graphics.camera :as camera]
@@ -11,8 +13,7 @@
             [game.context :refer [all-properties]]
             [mapgen.movement-property :refer (movement-property movement-properties)]
             [mapgen.module-gen :as module-gen])
-  (:import (com.badlogic.gdx Gdx Input$Keys)
-           com.badlogic.gdx.graphics.OrthographicCamera
+  (:import com.badlogic.gdx.graphics.OrthographicCamera
            com.badlogic.gdx.maps.tiled.TiledMap
            com.badlogic.gdx.scenes.scene2d.ui.TextField))
 
@@ -59,18 +60,18 @@
 (def ^:private show-grid-lines (atom false))
 
 ; TODO textfield takes control !
-(defn- camera-controls [camera]
-  (if (.isKeyPressed Gdx/input Input$Keys/PLUS)  (adjust-zoom camera    zoom-speed)) ; TODO only pass + / -
-  (if (.isKeyPressed Gdx/input Input$Keys/MINUS) (adjust-zoom camera (- zoom-speed)))
+(defn- camera-controls [context camera]
+  (if (key-pressed? context input.keys/plus)  (adjust-zoom camera    zoom-speed)) ; TODO only pass + / -
+  (if (key-pressed? context input.keys/minus) (adjust-zoom camera (- zoom-speed)))
   (let [apply-position (fn [idx f]
                          (camera/set-position! camera
                                                (update (camera/position camera)
                                                        idx
                                                        #(f % camera-movement-speed))))]
-    (if (.isKeyPressed Gdx/input Input$Keys/LEFT)  (apply-position 0 -))
-    (if (.isKeyPressed Gdx/input Input$Keys/RIGHT) (apply-position 0 +))
-    (if (.isKeyPressed Gdx/input Input$Keys/UP)    (apply-position 1 +))
-    (if (.isKeyPressed Gdx/input Input$Keys/DOWN)  (apply-position 1 -))))
+    (if (key-pressed? context input.keys/left)  (apply-position 0 -))
+    (if (key-pressed? context input.keys/right) (apply-position 0 +))
+    (if (key-pressed? context input.keys/up)    (apply-position 1 +))
+    (if (key-pressed? context input.keys/down)  (apply-position 1 -))))
 
 (def ^:private current-start-positions (atom nil))
 
@@ -180,13 +181,13 @@
                       @current-tiled-map
                       (constantly color/white)) ; TODO colorsetter optional.
     (render-world-view context render-on-map))
-  (tick [_ {:keys [world-camera]} delta]
-    (if (.isKeyJustPressed Gdx/input Input$Keys/L)
+  (tick [_ {:keys [world-camera] :as context} delta]
+    (if (key-just-pressed? context input.keys/l)
       (swap! show-grid-lines not))
-    (if (.isKeyJustPressed Gdx/input Input$Keys/M)
+    (if (key-just-pressed? context input.keys/m)
       (swap! show-movement-properties not))
-    (camera-controls world-camera)
-    (when (.isKeyJustPressed Gdx/input Input$Keys/ESCAPE)
+    (camera-controls context world-camera)
+    (when (key-just-pressed? context input.keys/escape)
       (change-screen! :screens/main-menu))))
 
 (defn screen [context]

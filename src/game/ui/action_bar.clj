@@ -1,10 +1,10 @@
 (ns game.ui.action-bar
-  (:require [gdl.context :refer [->image-button]]
+  (:require [gdl.context :refer [->image-button key-just-pressed?]]
+            ;[gdl.input :as input] ; TODO
             [gdl.scene2d.ui :as ui]
             [app.state :refer [current-context]]
             [game.skill :as skill])
-  (:import (com.badlogic.gdx Gdx Input$Keys)
-           com.badlogic.gdx.scenes.scene2d.Actor
+  (:import com.badlogic.gdx.scenes.scene2d.Actor
            (com.badlogic.gdx.scenes.scene2d.ui HorizontalGroup ButtonGroup Button)))
 
 ; TODO when no selected-skill & new skill assoce'd (sword at start)
@@ -117,15 +117,15 @@
         (add-skill-to-hotbar skill-id))
       (reset-buttons! context))))
 
-(defn- number-str->input-key [number-str]
+#_(defn- number-str->input-key [number-str]
   (eval (symbol (str "com.badlogic.gdx.Input$Keys/NUM_" number-str))))
 
 (defn up-skill-hotkeys []
-  (doseq [slot slot-keys
+  #_(doseq [slot slot-keys
           :let [skill-id (slot @slot->skill-id)]
-          :when (and (.isKeyJustPressed Gdx/input (number-str->input-key (name slot)))
+          :when #_(and (key-just-pressed? context (number-str->input-key (name slot)))
                      skill-id)]
-    (.setChecked ^Button (.findActor horizontal-group (str skill-id)) true)))
+    #_(.setChecked ^Button (.findActor horizontal-group (str skill-id)) true)))
 
 (comment
  (.getChildren horizontal-group)

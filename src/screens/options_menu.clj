@@ -1,7 +1,8 @@
 (ns screens.options-menu
   (:require gdl.screen
             [gdl.context :refer [->stage-screen draw-centered-image render-gui-view create-image
-                                 ->text-button ->check-box]]
+                                 ->text-button ->check-box key-just-pressed?]]
+            [gdl.input.keys :as input.keys]
             [gdl.scene2d.ui :as ui]
             [utils.core :refer [find-first]]
             [app.state :refer [change-screen!]]
@@ -108,8 +109,8 @@
                                             menu-bg-image
                                             [(/ gui-viewport-width  2)
                                              (/ gui-viewport-height 2)]))))
-  (tick [_ _state delta]
-    (when (.isKeyJustPressed Gdx/input Input$Keys/ESCAPE)
+  (tick [_ ctx delta]
+    (when (key-just-pressed? ctx input.keys/escape)
       (exit _))))
 
 (defn screen [context]

@@ -1,15 +1,14 @@
 (ns game.ui.debug-window
-  (:require [gdl.context :refer [gui-mouse-position world-mouse-position]]
+  (:require [gdl.context :refer [gui-mouse-position world-mouse-position frames-per-second]]
             [gdl.scene2d.ui :as ui]
             [app.state :refer [current-context]])
-  (:import com.badlogic.gdx.Gdx
-           com.badlogic.gdx.scenes.scene2d.Actor))
+  (:import com.badlogic.gdx.scenes.scene2d.Actor))
 
 (defn- debug-infos [{:keys [context/update-entities?
                             context/player-entity
                             context/thrown-error] :as c}]
   (let [world-mouse (world-mouse-position c)]
-    (str "FPS: " (.getFramesPerSecond Gdx/graphics)  "\n"
+    (str "FPS: " (frames-per-second c)  "\n"
          "World: "(mapv int world-mouse) "\n"
          "X:" (world-mouse 0) "\n"
          "Y:" (world-mouse 1) "\n"

@@ -1,5 +1,6 @@
 (ns game.tick
-  (:require [gdl.context :refer [get-stage]]
+  (:require [gdl.context :refer [get-stage key-just-pressed?]]
+            [gdl.input.keys :as input.keys]
             [gdl.scene2d.actor :as actor]
             [app.state :refer [change-screen!]]
             [game.context :refer [tick-active-entities destroy-to-be-removed-entities! update-mouseover-entity
@@ -9,8 +10,7 @@
 
             ; => context
             [game.ui.action-bar :as action-bar])
-  (:import (com.badlogic.gdx Gdx Input$Keys Input$Buttons)
-           com.badlogic.gdx.scenes.scene2d.Actor))
+  (:import com.badlogic.gdx.scenes.scene2d.Actor))
 
 (defn- update-context-systems
   [{:keys [context/update-entities?] :as context} delta]
@@ -42,23 +42,23 @@
                  entity-info-window
                  inventory-window
                  skill-window]]
-    (when (.isKeyJustPressed Gdx/input Input$Keys/I)
+    (when (key-just-pressed? context input.keys/i)
       (actor/toggle-visible! inventory-window)
       (actor/toggle-visible! entity-info-window)
       (actor/toggle-visible! skill-window))
-    (when (.isKeyJustPressed Gdx/input Input$Keys/H)
+    (when (key-just-pressed? context input.keys/h)
       (actor/toggle-visible! help-window))
-    (when (.isKeyJustPressed Gdx/input Input$Keys/Z)
+    (when (key-just-pressed? context input.keys/z)
       (actor/toggle-visible! debug-window))
-    (when (.isKeyJustPressed Gdx/input Input$Keys/ESCAPE)
+    (when (key-just-pressed? context input.keys/escape)
       (cond
        (some #(.isVisible ^Actor %) windows)
        (run! #(.setVisible ^Actor % false) windows)
        :else
        (change-screen! :screens/options-menu))))
-  (when (.isKeyJustPressed Gdx/input Input$Keys/TAB)
+  (when (key-just-pressed? context input.keys/tab)
     (change-screen! :screens/minimap))
-  (when (and (.isKeyJustPressed Gdx/input Input$Keys/X)
+  (when (and (key-just-pressed? context input.keys/x)
              (= :dead (:state (:fsm (:entity/state @player-entity)))))
     (change-screen! :screens/main-menu)))
 
