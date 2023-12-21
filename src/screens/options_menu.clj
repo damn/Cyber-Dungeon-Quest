@@ -7,8 +7,7 @@
             [utils.core :refer [find-first]]
             [app.state :refer [change-screen!]]
             ;[game.line-of-sight :refer (player-line-of-sight-checks)]
-            [game.components.body :refer (show-body-bounds)])
-  (:import (com.badlogic.gdx Gdx Input$Keys)))
+            [game.components.body :refer (show-body-bounds)]))
 
 ; no protocol
 (defprotocol StatusCheckBox

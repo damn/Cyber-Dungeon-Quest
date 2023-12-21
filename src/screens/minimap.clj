@@ -7,8 +7,7 @@
             [gdl.context :refer [draw-filled-circle render-world-view key-just-pressed?]]
             [app.state :refer [current-context change-screen!]]
             [game.context :refer [explored?]])
-  (:import (com.badlogic.gdx Gdx Input$Keys)
-           com.badlogic.gdx.graphics.OrthographicCamera))
+  (:import com.badlogic.gdx.graphics.OrthographicCamera))
 
 ; 28.4 viewportwidth
 ; 16 viewportheight
