@@ -34,8 +34,7 @@
                        (draw-centered-image c
                                             bg-image
                                             [(/ gui-viewport-width  2)
-                                             (/ gui-viewport-height 2)]))))
-  (tick [_ context delta]
+                                             (/ gui-viewport-height 2)])))
     (when (key-just-pressed? context input.keys/escape)
       (exit-app context))))
 

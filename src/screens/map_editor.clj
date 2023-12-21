@@ -176,12 +176,11 @@
   (show [_ {:keys [world-camera]}]
     (center-world-camera world-camera))
   (hide [_ _ctx])
-  (render [_ context]
+  (render [_ {:keys [world-camera] :as context}]
     (tiled/render-map context
                       @current-tiled-map
                       (constantly color/white)) ; TODO colorsetter optional.
-    (render-world-view context render-on-map))
-  (tick [_ {:keys [world-camera] :as context} delta]
+    (render-world-view context render-on-map)
     (if (key-just-pressed? context input.keys/l)
       (swap! show-grid-lines not))
     (if (key-just-pressed? context input.keys/m)

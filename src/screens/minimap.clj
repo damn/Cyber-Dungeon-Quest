@@ -54,15 +54,16 @@
   (show [_ {:keys [world-camera] :as context}]
     (reset! zoom-setting (calculate-zoom context))
     (camera/set-zoom! world-camera @zoom-setting))
+
   (hide [_ _ctx])
+
   (render [_ {:keys [world-camera context/world-map] :as context}]
     (tiled/render-map context
                       (:tiled-map world-map)
                       tile-corner-color-setter)
     (render-world-view context
-                       #(draw-filled-circle % (camera/position world-camera) 0.5 color/green)))
-  (tick [_ {:keys [world-camera] :as ctx} delta]
-    (when (or (key-just-pressed? ctx input.keys/tab)
-              (key-just-pressed? ctx input.keys/escape))
+                       #(draw-filled-circle % (camera/position world-camera) 0.5 color/green))
+    (when (or (key-just-pressed? context input.keys/tab)
+              (key-just-pressed? context input.keys/escape))
       (camera/set-zoom! world-camera 1)
       (change-screen! :screens/game))))

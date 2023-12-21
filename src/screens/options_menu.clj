@@ -72,7 +72,7 @@
          (get-state status)]))
     (initial-data [_])))
 
-(defn- exit [_context]
+(defn- exit []
   (change-screen! :screens/game))
 
 (defn- create-table [context]
@@ -87,7 +87,7 @@
                                                (get-text check-box)
                                                #(set-state check-box %)
                                                (boolean (get-state check-box)))])
-                               [[(->text-button context "Resume" exit)]
+                               [[(->text-button context "Resume" (fn [_context] (exit)))]
                                 [(->text-button context "Exit" (fn [_context]
                                                                  (change-screen! :screens/main-menu)))]])
                         :fill-parent? true
@@ -107,10 +107,9 @@
                        (draw-centered-image c
                                             menu-bg-image
                                             [(/ gui-viewport-width  2)
-                                             (/ gui-viewport-height 2)]))))
-  (tick [_ ctx delta]
-    (when (key-just-pressed? ctx input.keys/escape)
-      (exit _))))
+                                             (/ gui-viewport-height 2)])))
+    (when (key-just-pressed? context input.keys/escape)
+      (exit))))
 
 (defn screen [context]
   {:actors [(create-table context)]
