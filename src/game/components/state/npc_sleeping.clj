@@ -1,11 +1,11 @@
 (ns game.components.state.npc-sleeping
   (:require [gdl.context :refer [draw-text draw-circle]]
+            [gdl.graphics.color :as color]
             [data.counter :as counter]
             [game.context :refer [world-grid create-entity! send-event!]]
             [game.entity :as entity]
             [game.components.string-effect :as string-effect]
-            [game.world.cell :as cell])
-  (:import com.badlogic.gdx.graphics.Color))
+            [game.world.cell :as cell]))
 
 ; TODO pass to creature data, also @ shout
 (def ^:private aggro-range 6)
@@ -41,4 +41,4 @@
                 :up? true}))
   (render-info [_ c {:keys [position mouseover?]}]
     (when mouseover? ; TODO is not exact, using tile distance, (remove ?)
-      (draw-circle c position aggro-range Color/YELLOW))))
+      (draw-circle c position aggro-range color/yellow))))

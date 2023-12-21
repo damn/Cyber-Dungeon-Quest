@@ -1,18 +1,18 @@
 (ns game.components.body
   (:require [x.x :refer [defcomponent]]
             [gdl.context :refer [draw-rectangle]]
+            [gdl.graphics.color :as color]
             [gdl.math.vector :as v]
             [context.ecs :as entity]
             [game.context :refer [world-grid]]
-            [game.world.grid :refer [add-entity! remove-entity! entity-position-changed!]])
-  (:import com.badlogic.gdx.graphics.Color))
+            [game.world.grid :refer [add-entity! remove-entity! entity-position-changed!]]))
 
 ; setting a min-size for colliding bodies so movement can set a max-speed for not
 ; skipping bodies at too fast movement
 (def min-solid-body-size 0.3)
 
 (defn- draw-bounds [c {[x y] :left-bottom :keys [width height is-solid]}]
-  (draw-rectangle c x y width height (if is-solid Color/WHITE Color/GRAY)))
+  (draw-rectangle c x y width height (if is-solid color/white color/gray)))
 
 (defn assoc-left-bottom [{:keys [body] [x y] :position :as entity*}]
   (assoc-in entity* [:body :left-bottom] [(- x (/ (:width body)  2))

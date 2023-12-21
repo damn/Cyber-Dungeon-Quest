@@ -4,8 +4,7 @@
             [gdl.graphics.color :as color]
             [gdl.graphics.camera :as camera]
             [game.context :refer [world-grid]]
-            [game.world.grid :refer [circle->cells]])
-  (:import com.badlogic.gdx.graphics.Color))
+            [game.world.grid :refer [circle->cells]]))
 
 ; TODO make check-buttons with debug-window or MENU top screen is good for debug I think
 
@@ -14,12 +13,12 @@
         grid (world-grid c)
         radius 0.8
         circle {:position position :radius radius}]
-    (draw-circle c position radius (color/rgb 1 0 0 0.5))
+    (draw-circle c position radius [1 0 0 0.5])
     (doseq [[x y] (map #(:position @%)
                        (circle->cells grid circle))]
-      (draw-rectangle c x y 1 1 (color/rgb 1 0 0 0.5)))
+      (draw-rectangle c x y 1 1 [1 0 0 0.5]))
     (let [{[x y] :left-bottom :keys [width height]} (gdl.math.geom/circle->outer-rectangle circle)]
-      (draw-rectangle c x y width height (color/rgb 0 0 1 1)))))
+      (draw-rectangle c x y width height [0 0 1 1]))))
 
 (defn- tile-debug [{:keys [world-camera
                            world-viewport-width
@@ -29,7 +28,7 @@
     (draw-grid c (int left-x) (int bottom-y)
                (inc (int world-viewport-width))
                (+ 2 (int world-viewport-height))
-               1 1 (color/rgb 0.5 0.5 0.5 0.5))
+               1 1 [0.5 0.5 0.5 0.5])
     (doseq [[x y] (camera/visible-tiles world-camera)
             :let [cell (get grid [x y])
                   faction :good
@@ -37,11 +36,11 @@
             :when distance]
       #_(draw-rectangle c (+ x 0.1) (+ y 0.1) 0.8 0.8
                         (if blocked?
-                          Color/RED
-                          Color/GREEN))
+                          color/red
+                          color/green))
       (let [ratio (/ (int (/ distance 10)) 15)]
         (draw-filled-rectangle c x y 1 1
-                               (color/rgb ratio (- 1 ratio) ratio 0.6)))
+                               [ratio (- 1 ratio) ratio 0.6]))
       #_(@#'g/draw-string x y (str distance) 1)
       #_(when (:monster @cell)
           (@#'g/draw-string x y (str (:id @(:monster @cell))) 1)))))
@@ -53,7 +52,7 @@
   #_(geom-test c)
   ; highlight current mouseover-tile
   #_(let [cell (get (world-grid c) (->tile (world-mouse-position c)))]
-      (draw-rectangle c x y 1 1 (color/rgb 0 1 0 0.5))
+      (draw-rectangle c x y 1 1 [0 1 0 0.5])
       #_(g/render-readable-text x y {:shift false}
                                 [color/white
                                  (str [x y])

@@ -1,7 +1,6 @@
 (ns game.effects.target-entity
   (:require [gdl.context :refer [draw-line]]
             [gdl.math.vector :as v]
-            [gdl.graphics.color :as color]
             [game.context :refer (do-effect! effect-text audiovisual line-entity line-of-sight?)]
             [context.effect-interpreter :as effect]))
 
@@ -39,8 +38,8 @@
              (start-point @source @target)
              (end-point   @source @target maxrange)
              (if (in-range? @source @target maxrange)
-               (color/rgb 1 0 0 0.5)
-               (color/rgb 1 1 0 0.5))))
+               [1 0 0 0.5]
+               [1 1 0 0.5])))
 
 (defmethod effect/text :effects/target-entity
   [context [_ {:keys [maxrange hit-effect]}]]
@@ -69,7 +68,7 @@
                   {:start (start-point @source @target)
                    :end (:position @target)
                    :duration 50
-                   :color (color/rgb 1 0 0 0.75)
+                   :color [1 0 0 0.75]
                    :thick? true})
      ; TODO => make new context with end-point ... and check on point entity
      ; friendly fire ?!

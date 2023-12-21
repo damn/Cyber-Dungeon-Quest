@@ -15,9 +15,9 @@
            com.badlogic.gdx.scenes.scene2d.utils.ClickListener))
 
 ; diablo2 unique gold rgb 144 136 88
-#_(color/defrgb ^:private gold-item-color 0.84 0.8 0.52)
+#_(def ^:private gold-item-color [0.84 0.8 0.52])
 ; diablo2 blue magic rgb 72 80 184
-#_(color/defrgb modifiers-text-color 0.38 0.47 1)
+#_(def modifiers-text-color [0.38 0.47 1])
 
 (declare ^Window window)
 
@@ -99,17 +99,17 @@
                             (-> (get-sprite context sheet [21 (+ y 2)])
                                 :texture
                                 ui/texture-region-drawable
-                                (.tint (color/rgb 1 1 1 0.4)))]))
+                                (.tint (Color. (float 1) (float 1) (float 1) (float 0.4))))]))
                     (into {})))))
 
 (def ^:private cell-size 48)
 
-(def ^:private droppable-color    (color/rgb 0   0.6 0 0.8))
-(def ^:private two-h-shield-color (color/rgb 0.6 0.6 0 0.8))
-(def ^:private not-allowed-color  (color/rgb 0.6 0   0 0.8))
+(def ^:private droppable-color    [0   0.6 0 0.8])
+(def ^:private two-h-shield-color [0.6 0.6 0 0.8])
+(def ^:private not-allowed-color  [0.6 0   0 0.8])
 
 (defn- draw-cell-rect [c player-entity x y mouseover? cell]
-  (draw-rectangle c x y cell-size cell-size Color/GRAY)
+  (draw-rectangle c x y cell-size cell-size color/gray)
   (when (and mouseover?
              (= :item-on-cursor
                 (:state (:fsm (:components/state @player-entity)))))

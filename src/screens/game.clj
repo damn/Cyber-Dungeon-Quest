@@ -9,10 +9,9 @@
             [game.tick :refer [tick-game]]
             game.ui.actors
             [game.ui.hp-mana-bars :refer [render-player-hp-mana]]
-            [game.render.debug :as debug])
-  (:import com.badlogic.gdx.graphics.Color))
+            [game.render.debug :as debug]))
 
-(def ^:private explored-tile-color (color/rgb 0.5 0.5 0.5))
+(def ^:private explored-tile-color [0.5 0.5 0.5])
 
 ; TODO performance - need to deref current-context at every tile corner !!
 ; => see with prformance check later
@@ -25,14 +24,14 @@
         explored? (explored? context position)
         base-color (if explored?
                      explored-tile-color
-                     Color/BLACK)
+                     color/black)
         blocked? (ray-blocked? context light-position position)]
     (if blocked?
       base-color
       (do
        (when-not explored?
          (set-explored! context position))
-       Color/WHITE))))
+       color/white))))
 
 (defrecord SubScreen []
   Screen

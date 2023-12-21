@@ -12,7 +12,7 @@
             [mapgen.movement-property :refer (movement-property movement-properties)]
             [mapgen.module-gen :as module-gen])
   (:import (com.badlogic.gdx Gdx Input$Keys)
-           (com.badlogic.gdx.graphics Color OrthographicCamera)
+           com.badlogic.gdx.graphics.OrthographicCamera
            com.badlogic.gdx.maps.tiled.TiledMap
            com.badlogic.gdx.scenes.scene2d.ui.TextField))
 
@@ -82,7 +82,7 @@
       (if @current-start-positions
         (doseq [[x y] visible-tiles
                 :when (@current-start-positions [x y])]
-          (draw-filled-rectangle c x y 1 1 (color/rgb 0 0 1 0.5))))
+          (draw-filled-rectangle c x y 1 1 [0 0 1 0.5])))
       (doseq [[x y] visible-tiles
               :let [movement-property (movement-property @current-tiled-map [x y])]]
         (when (= :all movement-property)
@@ -90,11 +90,11 @@
             (if (number? level)
               (draw-filled-rectangle c x y 1 1
                                      (if (= level 0)
-                                       nil;(color/rgb 0 0 1 0.5)
-                                       (color/rgb (/ level 9)
-                                                  (- 1 (/ level 9))
-                                                  0
-                                                  0.5))))))))
+                                       nil;[0 0 1 0.5]
+                                       [(/ level 9)
+                                        (- 1 (/ level 9))
+                                        0
+                                        0.5])))))))
 
     ; TODO move down to other doseq and make button
 
@@ -103,20 +103,20 @@
               :let [movement-property (movement-property @current-tiled-map [x y])]]
         (draw-filled-circle c [(+ x 0.5) (+ y 0.5)]
                             0.08
-                            Color/BLACK)
+                            color/black)
         (draw-filled-circle c [(+ x 0.5) (+ y 0.5)]
                             0.05
                             (case movement-property
-                              "all"   Color/GREEN
-                              "air"   Color/ORANGE
-                              "none"  Color/RED)))))
+                              "all"   color/green
+                              "air"   color/orange
+                              "none"  color/red)))))
 
   (when @show-grid-lines
     (draw-grid c 0 0
                (tiled/width  @current-tiled-map)
                (tiled/height @current-tiled-map)
                1 1
-               (color/rgb 1 1 1 0.5))))
+               [1 1 1 0.5])))
 
 (defn- generate [{:keys [world-camera] :as context} properties]
   (let [{:keys [tiled-map
@@ -178,7 +178,7 @@
   (render [_ context]
     (tiled/render-map context
                       @current-tiled-map
-                      (constantly Color/WHITE)) ; TODO colorsetter optional.
+                      (constantly color/white)) ; TODO colorsetter optional.
     (render-world-view context render-on-map))
   (tick [_ {:keys [world-camera]} delta]
     (if (.isKeyJustPressed Gdx/input Input$Keys/L)

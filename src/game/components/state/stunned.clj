@@ -1,6 +1,5 @@
 (ns game.components.state.stunned
-  (:require [gdl.graphics.color :as color]
-            [gdl.context :refer [draw-circle]]
+  (:require [gdl.context :refer [draw-circle]]
             [data.counter :as counter]
             [game.context :refer [send-event!]]
             [game.entity :as entity]))
@@ -19,7 +18,7 @@
     (when (counter/stopped? counter)
       (send-event! context entity :effect-wears-off)))
   (render-below [_ c {:keys [position]}]
-    (draw-circle c position 0.5 (color/rgb 1 1 1 0.6)))
+    (draw-circle c position 0.5 [1 1 1 0.6]))
   (render-above [_ c entity*])
   (render-info  [_ c entity*]))
 

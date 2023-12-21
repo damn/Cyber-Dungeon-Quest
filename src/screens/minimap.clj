@@ -7,7 +7,7 @@
             [app.state :refer [current-context change-screen!]]
             [game.context :refer [explored?]])
   (:import (com.badlogic.gdx Gdx Input$Keys)
-           (com.badlogic.gdx.graphics Color OrthographicCamera)))
+           com.badlogic.gdx.graphics.OrthographicCamera))
 
 ; 28.4 viewportwidth
 ; 16 viewportheight
@@ -46,8 +46,8 @@
 ; or prepare colors before
 (defn- tile-corner-color-setter [color x y]
   (if (explored? @current-context [x y])
-    Color/WHITE
-    Color/BLACK))
+    color/white
+    color/black))
 
 (deftype Screen []
   gdl.screen/Screen
@@ -60,7 +60,7 @@
                       (:tiled-map world-map)
                       tile-corner-color-setter)
     (render-world-view context
-                       #(draw-filled-circle % (camera/position world-camera) 0.5 Color/GREEN)))
+                       #(draw-filled-circle % (camera/position world-camera) 0.5 color/green)))
   (tick [_ {:keys [world-camera]} delta]
     (when (or (.isKeyJustPressed Gdx/input Input$Keys/TAB)
               (.isKeyJustPressed Gdx/input Input$Keys/ESCAPE))

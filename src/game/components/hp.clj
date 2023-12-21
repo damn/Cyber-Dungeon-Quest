@@ -4,14 +4,13 @@
             [gdl.context :refer [draw-filled-rectangle pixels->world-units]]
             [data.val-max :refer [val-max-ratio]]
             [context.ecs :as entity]
-            [game.ui.config :refer (hpbar-height-px)])
-  (:import com.badlogic.gdx.graphics.Color))
+            [game.ui.config :refer (hpbar-height-px)]))
 
 (def ^:private hpbar-colors
-  {:green     (color/rgb 0 0.8 0)
-   :darkgreen (color/rgb 0 0.5 0)
-   :yellow    (color/rgb 0.5 0.5 0)
-   :red       (color/rgb 0.5 0 0)})
+  {:green     [0 0.8 0]
+   :darkgreen [0 0.5 0]
+   :yellow    [0.5 0.5 0]
+   :red       [0.5 0 0]})
 
 (defn- hpbar-color [ratio]
   (let [ratio (float ratio)
@@ -36,7 +35,7 @@
               y (+ y half-height)
               height (pixels->world-units c hpbar-height-px) ; pre-calculate it maybe somehow, but will put too much stuff in properties?
               border (pixels->world-units c borders-px)] ; => can actually still use global state? idk
-          (draw-filled-rectangle c x y width height Color/BLACK)
+          (draw-filled-rectangle c x y width height color/black)
           (draw-filled-rectangle c
                                  (+ x border)
                                  (+ y border)

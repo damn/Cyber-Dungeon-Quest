@@ -1,6 +1,5 @@
 (ns game.components.state.active-skill
-  (:require [gdl.graphics.color :as color]
-            [gdl.context :refer [draw-filled-circle draw-sector draw-image play-sound!]]
+  (:require [gdl.context :refer [draw-filled-circle draw-sector draw-image play-sound!]]
             [data.counter :as counter]
             [data.val-max :refer [apply-val]]
             [game.context :refer [valid-params? do-effect! effect-render-info send-event!]]
@@ -13,11 +12,11 @@
         radius (/ width 2)
         y (+ y (:half-height (:body entity*)))
         center [x (+ y radius)]]
-    (draw-filled-circle c center radius (color/rgb 1 1 1 0.125))
+    (draw-filled-circle c center radius [1 1 1 0.125])
     (draw-sector c center radius
                  0 ; start-angle
                  (* action-counter-ratio 360) ; degree
-                 (color/rgb 1 1 1 0.5))
+                 [1 1 1 0.5])
     (draw-image c icon [(- x radius) y])))
 
 (defrecord State [entity skill effect-context counter]
