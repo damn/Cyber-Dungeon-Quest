@@ -51,13 +51,27 @@
 
 ; (update-map (map->Entity {:id 1 :position 2}) identity)
 ; => tick also etc. ...
-(defn update-mp
+(defn update-mp ; TODO do only for entity-keys which implement that functions, not assoc all ...
   "Updates every map-entry with (apply f [k v] args)."
   [m f & args]
-  (reduce-kv (fn [new-map k v]
-               (assoc new-map k (apply f [k v] args)))
-             {}
-             m))
+  (loop [ks (keys m)
+         m m]
+    (if (seq ks)
+      (recur (rest ks)
+             (let [k (first ks)]
+               (assoc m k (apply f [k (k m)] args))))
+      m)))
+
+(comment
+ (update-mp (map->Entity {:id :foo :position [2 3] :foo 1 :bar 2})
+            (fn [[k v]]
+              (if (number? v)
+                (inc v)
+                v
+                ))))
+
+; performance? => entity.tick is only used for counters , can remove counters
+; and create/destroy it doesnt really matter and most components use it
 
 
 (extend-type gdl.context.Context
@@ -70,7 +84,8 @@
            (:position components-map)]}
     (let [id (unique-number!)
           entity (-> (assoc components-map :id id)
-                     (update-map create)
+                     (update-mp create)
+                     map->Entity
                      atom
                      (doseq-entity create! context))]
       (println "Created entity: \n" @entity)
@@ -81,7 +96,7 @@
                 entity
                 delta]
     (try
-     (swap! entity update-map tick delta)
+     (swap! entity update-mp tick delta)
      (doseq-entity entity tick! context delta)
      (catch Throwable t
        (p/pretty-pst t)
@@ -107,7 +122,7 @@
 
   (remove-destroyed-entities [{:keys [context.entity/ids->entities] :as context}]
     (doseq [e (filter (comp :destroyed? deref) (vals @ids->entities))]
-      (swap! e update-map destroy)
+      (swap! e update-mp destroy)
       (doseq-entity e destroy! context)
       (swap! ids->entities dissoc (:id @e)))))
 
