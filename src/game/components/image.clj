@@ -4,7 +4,7 @@
             [context.ecs :as entity]))
 
 (defcomponent :image image
-  (entity/render-default [_ c {:keys [position body]}]
+  (entity/render-default [_ {:keys [position body]} c]
     (draw-rotated-centered-image c
                                  image
                                  (if body (:rotation-angle body) 0)

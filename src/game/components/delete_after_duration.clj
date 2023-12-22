@@ -8,6 +8,6 @@
     (counter/create duration))
   (entity/tick [_ delta]
     (counter/tick counter delta))
-  (entity/tick! [_ _ctx entity delta]
+  (entity/tick! [_ entity _ctx delta]
     (when (counter/stopped? counter)
       (swap! entity assoc :destroyed? true))))

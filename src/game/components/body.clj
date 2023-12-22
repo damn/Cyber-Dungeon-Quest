@@ -62,6 +62,6 @@
       (swap! entity assoc-in [:body :rotation-angle] (v/get-angle-from-vector direction-vector)))
     (entity-position-changed! (world-grid context) entity))
 
-  (entity/render-debug [_ c e*]
+  (entity/render-debug [_ e* context]
     (when show-body-bounds
       (draw-bounds c body))))

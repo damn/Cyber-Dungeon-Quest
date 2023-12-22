@@ -17,11 +17,11 @@
             :state-obj-constructors state-obj-constructors}))
   (ecs/tick [[_ v] delta]
     (update v :state-obj entity/tick delta))
-  (ecs/tick! [_ context _entity delta]
+  (ecs/tick! [_ _entity context delta]
     (entity/tick! state-obj context delta))
-  (ecs/render-below [_ c entity*] (entity/render-below state-obj c entity*))
-  (ecs/render-above [_ c entity*] (entity/render-above state-obj c entity*))
-  (ecs/render-info  [_ c entity*] (entity/render-info  state-obj c entity*)))
+  (ecs/render-below [_ entity* c] (entity/render-below state-obj c entity*))
+  (ecs/render-above [_ entity* c] (entity/render-above state-obj c entity*))
+  (ecs/render-info  [_ entity* c] (entity/render-info  state-obj c entity*)))
 
 (extend-type gdl.context.Context
   game.context/FiniteStateMachine

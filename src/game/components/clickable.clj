@@ -4,7 +4,7 @@
             [context.ecs :as entity]))
 
 (defcomponent :entity/clickable {:keys [text]}
-  (entity/render-default [_ c {[x y] :position :keys [mouseover? body]}]
+  (entity/render-default [_ {[x y] :position :keys [mouseover? body]} c]
     (when (and mouseover? text)
       (draw-text c
                  {:text text

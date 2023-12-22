@@ -8,10 +8,10 @@
 (defcomponent :string-effect {:keys [text counter] :as this}
   (entity/tick [_ delta]
     (update this :counter counter/tick delta))
-  (entity/tick! [[k _] _ctx e delta]
+  (entity/tick! [[k _] e _ctx delta]
     (when (counter/stopped? counter)
       (swap! e dissoc k)))
-  (entity/render-above [_ c {[x y] :position :keys [body]}]
+  (entity/render-above [_ {[x y] :position :keys [body]} c]
     (draw-text (update c :unit-scale * 2) ; TODO FIXME HACK implement :scale arg
                {:text text
                 :x x

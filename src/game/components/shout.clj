@@ -19,7 +19,7 @@
 (defcomponent :shout counter
   (entity/tick [_ delta]
     (counter/tick counter delta))
-  (entity/tick! [_ context entity delta]
+  (entity/tick! [_ entity context delta]
     (when (counter/stopped? counter)
       (swap! entity assoc :destroyed? true)
       (doseq [entity (get-friendly-entities-in-line-of-sight context @entity shout-range)]

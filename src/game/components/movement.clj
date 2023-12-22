@@ -82,7 +82,7 @@
     (assert (and (:body @e) (:position @e)))
     (swap! e assoc :entity/movement (/ speed-in-seconds 1000)))
 
-  (entity/tick! [_ context e delta]
+  (entity/tick! [_ e context delta]
     (when-let [direction (:movement-vector @e)]
       (assert (or (zero? (v/length direction)) ; TODO what is the point of zero length vectors?
                   (v/normalised? direction)))

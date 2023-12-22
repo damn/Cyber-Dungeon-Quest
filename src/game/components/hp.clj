@@ -26,9 +26,10 @@
 (defcomponent :hp hp
   (entity/create [[_ max-hp]]
     [max-hp max-hp])
-  (entity/render-info [_ c {[x y] :position
-                            {:keys [width half-width half-height]} :body
-                            :keys [mouseover?]}]
+  (entity/render-info [_ {[x y] :position
+                          {:keys [width half-width half-height]} :body
+                          :keys [mouseover?]}
+                       c]
     (let [ratio (val-max-ratio hp)]
       (when (or (< ratio 1) mouseover?)
         (let [x (- x half-width)

@@ -9,7 +9,7 @@
 (defcomponent :animation animation
   (entity/create! [_ e _ctx]
     (assoc-frame! e))
-  (entity/tick! [_ _ctx e _delta]
+  (entity/tick! [_ e _ctx _delta]
     (assoc-frame! e))
   (entity/tick [_ delta]
     (animation/tick animation delta)))

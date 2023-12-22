@@ -6,56 +6,42 @@
             [game.context :refer [get-entity entity-exists? get-active-entities line-of-sight?]]))
 
 (defsystem create [_])
-(defsystem create! [_ e c])
+(defsystem create! [_ entity context])
 
 (defsystem destroy [_])
-(defsystem destroy! [_ e c])
+(defsystem destroy! [_ entity context])
 
 (defsystem tick  [_ delta])
-(defsystem tick! [_ c e delta])
+(defsystem tick! [_ entity context delta])
 
-(defsystem moved! [_ e c direction-vector])
+(defsystem moved! [_ entity context direction-vector])
 
-(defsystem render-below   [_ c e*])
-(defsystem render-default [_ c e*])
-(defsystem render-above   [_ c e*])
-(defsystem render-info    [_ c e*])
-(defsystem render-debug   [_ c e*])
+(defsystem render-below   [_ entity* context])
+(defsystem render-default [_ entity* context])
+(defsystem render-above   [_ entity* context])
+(defsystem render-info    [_ entity* context])
+(defsystem render-debug   [_ entity* context])
 
-; if lightning => pass render-on-map argument 'colorsetter' by default
-; on all render-systems , has to be handled & everything has to have body then?
-; so all have line of sight check & colors applied as of position ?
-
-
-; TODO this is pretty printing error
-; but in gdl its only on first start ?!
-; no wait! it says 'app-start-failed' !! haha
-
-(defn- render-entity* [system {:keys [context/thrown-error] :as c} entity*]
+(defn- render-entity* [system
+                       entity*
+                       {:keys [context/thrown-error] :as context}]
   (doseq [component entity*]
     (try
-     (system component c entity*)
+     (system component entity* context)
      (catch Throwable t
        (when-not @thrown-error
          (println "Render error for: entity :id " (:id entity*) " \n component " component "\n system" system)
-         ; TODO pretty print error => same like tick => pass function through context? idk
-         ; or context/handle-error ... O.O
-         ; with environment ? clojure error oopts all args ? possible => can inspect then, even 'drawer' or 'context'  ?
          (p/pretty-pst t)
-         (reset! (:context/thrown-error c) t))
-       ; TODO highlight entity ? as mouseover?
-       ; TODO automatically open debug window
+         (reset! thrown-error t))
        (let [[x y] (:position entity*)]
-         (draw-text c {:text (str "Render error entity :id " (:id entity*) "\n" (component 0) "\n"system "\n" @(:context/thrown-error c))
-                       :x x
-                       :y y
-                       :up? true
-                       }))
-       ; TODO throw/catch renderfn missing & pass body ?
-       ; TODO I want to get multimethod name
-       ))))
+         (draw-text context {:text (str "Render error entity :id " (:id entity*) "\n" (component 0) "\n"system "\n" @thrown-error)
+                             :x x
+                             :y y
+                             :up? true}))))))
 
-(defn- render-entities* [{:keys [context/render-on-map-order] :as c} entities*]
+(defn- render-entities* [{:keys [context/render-on-map-order]
+                          :as context}
+                         entities*]
   (doseq [[_ entities*] (sort-by-order (group-by :z-order entities*)
                                        first
                                        render-on-map-order)
@@ -65,22 +51,20 @@
                   #'render-above
                   #'render-info]
           entity* entities*]
-    (render-entity* system c entity*))
+    (render-entity* system entity* context))
   (doseq [entity* entities*]
-    (render-entity* #'render-debug c entity*)))
+    (render-entity* #'render-debug entity* context)))
 
+; TODO getting 3 times active entities: render, tick, potential-field =>
+; just 1 app/game render fn and calculate once ? & delta in context ?
 (defn- visible-entities* [{:keys [context/player-entity] :as context}]
   (->> (get-active-entities context)
-       ; TODO getting 3 times active entities: render, tick, potential-field =>
-       ; just 1 app/game render fn and calculate once ? & delta in context ?
        (map deref)
        (filter #(line-of-sight? context @player-entity %))))
 
 (defn- tick-entity! [context entity delta]
   (swap! entity update-map tick delta)
-  ; (doseq-entity entity tick! context delta)
-  (doseq [k (keys @entity)] ; TODO FIXME
-    (tick! [k (k @entity)] context entity delta)))
+  (doseq-entity entity tick! context delta))
 
 (extend-type gdl.context.Context
   game.context/EntityComponentSystem
