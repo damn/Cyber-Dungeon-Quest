@@ -63,3 +63,9 @@
 (defprotocol PropertyStore
   (get-property [_ id])
   (all-properties [_ type]))
+
+(defprotocol InventoryWindow
+  (inventory-window-visible? [_])
+  (rebuild-inventory-widgets [_])
+  (set-item-image-in-widget [_ cell item])
+  (remove-item-from-widget [_ cell]))

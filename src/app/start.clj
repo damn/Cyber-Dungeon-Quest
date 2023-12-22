@@ -7,8 +7,8 @@
             game.modifiers.all
             game.components.require-all
             game.effects.require-all
-            (game.ui inventory-window
-                     action-bar
+            [game.ui.inventory-window :as inventory] ; move to context
+            (game.ui action-bar
                      hp-mana-bars)
             (screens game
                      main-menu
@@ -17,10 +17,16 @@
                      options-menu
                      property-editor)))
 
+
+; TODO check 'internal' data structure use anywhere (id comp..)
+; maybe namespaced keyword pattern '::' ?
+; => like ecs
+; context/world-map used @ render tiledmap screens/game & get explored tile grid @ minimap
+
 (defn- create-context [context]
   (let [context (merge context
-                       (properties/->context context "resources/properties.edn"))]
-    (game.ui.inventory-window/initialize! context)
+                       (properties/->context context "resources/properties.edn")
+                       (inventory/->context))]
     (game.ui.action-bar/initialize!)
     (game.ui.hp-mana-bars/initialize! context)
     (merge context
@@ -41,7 +47,7 @@
          :width  1440
          :height 900
          :full-screen? false
-         :fps 600}
+         :fps 60}
    :create-context create-context
    :first-screen :screens/main-menu
    :world-unit-scale (/ tile-size)})

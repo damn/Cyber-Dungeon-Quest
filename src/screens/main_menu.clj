@@ -8,11 +8,11 @@
             context.mouseover-entity
             [context.ui.player-message :as player-message]
             [context.world :as world]
-            game.ui.action-bar
-            game.ui.inventory-window))
+            [game.context :refer [rebuild-inventory-widgets]]
+            game.ui.action-bar))
 
 (defn- init-context [context]
-  (game.ui.inventory-window/rebuild-inventory-widgets!) ; before adding entities ( player gets items )
+  (rebuild-inventory-widgets context) ; before adding entities ( player gets items )
   (game.ui.action-bar/reset-skills!) ; empties skills -> before adding player
 
   ; TODO z-order namespaced keywords

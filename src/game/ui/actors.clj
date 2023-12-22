@@ -43,19 +43,20 @@
                            (/ (.getWidth help-window) 2))
                         gui-viewport-height)
         ^Actor entity-info-window (entity-info-window/create)
+        inventory-window (inventory/->inventory-window context)
         group (Group.)]
     (actor/set-id group :windows)
-    (.setPosition inventory/window
+    (.setPosition inventory-window
                   gui-viewport-width
                   (- (/ gui-viewport-height 2)
                      (/ (.getHeight help-window) 2)))
-    (.setPosition entity-info-window (.getX inventory/window) 0)
-    (.setWidth entity-info-window (.getWidth inventory/window))
-    (.setHeight entity-info-window (.getY inventory/window))
+    (.setPosition entity-info-window (.getX inventory-window) 0)
+    (.setWidth entity-info-window (.getWidth inventory-window))
+    (.setHeight entity-info-window (.getY inventory-window))
     (.addActor group debug-window)
     (.addActor group help-window)
     (.addActor group entity-info-window)
-    (.addActor group inventory/window)
+    (.addActor group inventory-window)
     (.addActor group (skill-window/create context))
     group))
 

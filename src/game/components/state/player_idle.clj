@@ -1,24 +1,16 @@
 (ns game.components.state.player-idle
-  (:require [gdl.context :refer [play-sound! world-mouse-position mouse-on-stage-actor? button-just-pressed? get-stage]]
+  (:require [gdl.context :refer [play-sound! world-mouse-position mouse-on-stage-actor? button-just-pressed?]]
             [gdl.input.buttons :as buttons]
             [gdl.math.vector :as v]
-            [gdl.scene2d.ui :refer [find-actor-with-id]]
             [data.counter :as counter]
-            [game.context :refer [show-msg-to-player! send-event! get-property]]
+            [game.context :refer [show-msg-to-player! send-event! get-property inventory-window-visible?]]
             [game.entity :as entity]
             [game.components.clickable :as clickable]
             [game.components.inventory :as inventory]
             [game.faction :as faction]
             [game.components.skills :as skills]
             [game.components.state.wasd-movement :refer [WASD-movement-vector]]
-            [game.ui.action-bar :as action-bar])
-  (:import com.badlogic.gdx.scenes.scene2d.Actor))
-
-(defn- get-inventory-window [context]
-  (-> context
-      get-stage
-      :windows
-      (find-actor-with-id :inventory-window)))
+            [game.ui.action-bar :as action-bar]))
 
 (defmulti on-clicked (fn [_context entity]
                        (:type (:entity/clickable @entity))))
@@ -27,13 +19,13 @@
   [{:keys [context/player-entity] :as context} clicked-entity]
   (let [item (:item @clicked-entity)]
     (cond
-     (.isVisible ^Actor (get-inventory-window context))
+     (inventory-window-visible? context)
      (do
       (play-sound! context "sounds/bfxr_takeit.wav")
       (swap! clicked-entity assoc :destroyed? true)
       (send-event! context player-entity :pickup-item item))
 
-     (inventory/try-pickup-item! player-entity item)
+     (inventory/try-pickup-item! context player-entity item)
      (do
       (play-sound! context "sounds/bfxr_pickup.wav")
       (swap! clicked-entity assoc :destroyed? true))

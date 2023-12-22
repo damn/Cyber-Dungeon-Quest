@@ -3,8 +3,8 @@
             [data.grid2d :as grid]
             [gdl.graphics.color :as color]
             [gdl.context :refer [draw-rectangle draw-filled-rectangle spritesheet get-sprite
-                                 play-sound! gui-mouse-position]]
-            [gdl.scene2d.ui :as ui]
+                                 play-sound! gui-mouse-position get-stage]]
+            [gdl.scene2d.ui :as ui :refer [find-actor-with-id]]
             [app.state :refer [current-context]]
             [game.entity :as entity]
             [game.context :refer [show-msg-to-player! send-event!]]
@@ -13,14 +13,13 @@
   (:import com.badlogic.gdx.graphics.Color
            (com.badlogic.gdx.scenes.scene2d Actor Group)
            (com.badlogic.gdx.scenes.scene2d.ui Widget Image TextTooltip Window Table)
-           com.badlogic.gdx.scenes.scene2d.utils.ClickListener))
+           com.badlogic.gdx.scenes.scene2d.utils.ClickListener
+           com.badlogic.gdx.math.Vector2))
 
 ; diablo2 unique gold rgb 144 136 88
 #_(def ^:private gold-item-color [0.84 0.8 0.52])
 ; diablo2 blue magic rgb 72 80 184
 #_(def modifiers-text-color [0.38 0.47 1])
-
-(declare ^Window window)
 
 (defn- complain-2h-weapon-and-shield! [context]
   ;(.play ^Sound (get assets "error.wav"))
@@ -38,7 +37,7 @@
      (do
       (play-sound! context "sounds/bfxr_takeit.wav")
       (send-event! context entity :pickup-item item)
-      (inventory/remove-item! entity cell))
+      (inventory/remove-item! context entity cell))
 
      item-on-cursor
      (cond
@@ -49,7 +48,7 @@
         (complain-2h-weapon-and-shield! context)
         (do
          (play-sound! context "sounds/bfxr_itemput.wav")
-         (inventory/set-item! entity cell item-on-cursor)
+         (inventory/set-item! context entity cell item-on-cursor)
          (swap! entity dissoc :item-on-cursor)
          (send-event! context entity :dropped-item)))
 
@@ -58,7 +57,7 @@
            (inventory/stackable? item item-on-cursor))
       (do
        (play-sound! context "sounds/bfxr_itemput.wav")
-       (inventory/stack-item! entity cell item-on-cursor)
+       (inventory/stack-item! context entity cell item-on-cursor)
        (swap! entity dissoc :item-on-cursor)
        (send-event! context entity :dropped-item))
 
@@ -69,39 +68,43 @@
         (complain-2h-weapon-and-shield! context)
         (do
          (play-sound! context "sounds/bfxr_itemput.wav")
-         (inventory/remove-item! entity cell)
-         (inventory/set-item! entity cell item-on-cursor)
+         (inventory/remove-item! context entity cell)
+         (inventory/set-item! context entity cell item-on-cursor)
          (send-event! context entity :pickup-item item)))))))
 
-(declare ^:private slot->background
-         ^:private ^Table table)
+; TODO swap item doesnt work
 
-(defn initialize! [context]
-  (.bindRoot #'window (ui/window :title "Inventory"
-                                 :id :inventory-window))
-  (.bindRoot #'table (ui/table))
-  (.pad table (float 2))
-  (.add window table)
-  (.bindRoot #'slot->background
-             (let [sheet (spritesheet context "items/images.png" 48 48)]
-               (->> {:weapon   0
-                     :shield   1
-                     :rings    2
-                     :necklace 3
-                     :helm     4
-                     :cloak    5
-                     :chest    6
-                     :leg      7
-                     :glove    8
-                     :boot     9
-                     :bag      10} ; transparent
-                    (map (fn [[slot y]]
-                           [slot
-                            (-> (get-sprite context sheet [21 (+ y 2)])
-                                :texture
-                                ui/texture-region-drawable
-                                (.tint (Color. (float 1) (float 1) (float 1) (float 0.4))))]))
-                    (into {})))))
+(defn- slot->background [context]
+  (let [sheet (spritesheet context "items/images.png" 48 48)]
+    (->> {:weapon   0
+          :shield   1
+          :rings    2
+          :necklace 3
+          :helm     4
+          :cloak    5
+          :chest    6
+          :leg      7
+          :glove    8
+          :boot     9
+          :bag      10} ; transparent
+         (map (fn [[slot y]]
+                [slot
+                 (-> (get-sprite context sheet [21 (+ y 2)])
+                     :texture
+                     ui/texture-region-drawable
+                     (.tint (Color. (float 1) (float 1) (float 1) (float 0.4))))]))
+         (into {}))))
+
+(defn ->inventory-window [{:keys [context/inventory] :as context}]
+  (let [window (ui/window :title "Inventory"
+                          :id :inventory-window)
+        table (ui/table)]
+    (reset! inventory {:window window
+                       :slot->background (slot->background context)
+                       :table table})
+    (.pad table (float 2))
+    (.add window table)
+    window))
 
 (def ^:private cell-size 48)
 
@@ -127,8 +130,6 @@
                  droppable-color)]
       (draw-filled-rectangle c (inc x) (inc y) (- cell-size 2) (- cell-size 2) color))))
 
-(import 'com.badlogic.gdx.math.Vector2)
-
 (defn- mouseover? [^Actor actor [x y]]
   (let [v (.stageToLocalCoordinates actor (Vector2. x y))]
     (.hit actor (.x v) (.y v) true)))
@@ -148,7 +149,8 @@
                         (mouseover? this (gui-mouse-position c))
                         (read-string (.getName (.getParent this))))))))
 
-(defn- cell-widget ^Group [slot & {:keys [position]}]
+(defn- cell-widget ^Group [slot->background slot & {:keys [position]}]
+  (println "cell-widget slot->background" slot->background)
   (let [cell [slot (or position [0 0])]]
     (doto (ui/stack)
       (.setName (pr-str cell)) ; TODO ! .setUserObject
@@ -159,34 +161,7 @@
       (.add (doto (ui/image (slot->background slot))
               (.setName "image"))))))
 
-(defn- redo-table []
-  (.clear table)
-  (doto table .add .add
-    (.add (cell-widget :helm))
-    (.add (cell-widget :necklace)) .row)
-  (doto table .add
-    (.add (cell-widget :weapon))
-    (.add (cell-widget :chest))
-    (.add (cell-widget :cloak))
-    (.add (cell-widget :shield)) .row)
-  (doto table .add .add
-    (.add (cell-widget :leg)) .row)
-  (doto table .add
-    (.add (cell-widget :glove))
-    (.add (cell-widget :rings :position [0 0]))
-    (.add (cell-widget :rings :position [1 0]))
-    (.add (cell-widget :boot)) .row)
-  (doseq [y (range (grid/height (:bag inventory/empty-inventory)))]
-    (doseq [x (range (grid/width (:bag inventory/empty-inventory)))]
-      (.add table (cell-widget :bag :position [x y])))
-    (.row table)))
-
-; TODO placed items are not serialized/loaded.
-(defn rebuild-inventory-widgets! []
-  (redo-table)
-  (.pack window))
-
-(defn- get-cell-widget ^Group [cell]
+(defn- get-cell-widget ^Group [table cell]
   (.findActor table (pr-str cell)))
 
 (defn- get-image-widget ^Image [cell-widget]
@@ -200,24 +175,59 @@
 
 ; TODO no weapon text action-time/effect ... 'text' protocol on items,weapons,skill, ? (creature for rightclick info, projectiles, ... ?)
 ; dispatch on property/type ?
+; or if weapon -> skill/text
 (defn- item-text [item]
   (str (str (item-name item) "\n")
        (str/join "\n" (map modifier/text (:modifiers item)))))
 
-(defn- set-item-image-in-widget! [cell item]
-  (let [cell-widget (get-cell-widget cell)
-        image-widget (get-image-widget cell-widget)]
-    (.setDrawable image-widget (ui/texture-region-drawable (:texture (:image item))))
-    (.addListener cell-widget (ui/text-tooltip #(item-text item)))))
+(defn- redo-table [{:keys [table slot->background]}]
+  (println "Redo table: " table " slot->background" slot->background)
+  (let [->cell (fn [& args]
+                 (apply cell-widget slot->background args))]
+    (.clear table)
+    (doto table .add .add
+      (.add (->cell :helm))
+      (.add (->cell :necklace)) .row)
+    (doto table .add
+      (.add (->cell :weapon))
+      (.add (->cell :chest))
+      (.add (->cell :cloak))
+      (.add (->cell :shield)) .row)
+    (doto table .add .add
+      (.add (->cell :leg)) .row)
+    (doto table .add
+      (.add (->cell :glove))
+      (.add (->cell :rings :position [0 0]))
+      (.add (->cell :rings :position [1 0]))
+      (.add (->cell :boot)) .row)
+    (doseq [y (range (grid/height (:bag inventory/empty-inventory)))]
+      (doseq [x (range (grid/width (:bag inventory/empty-inventory)))]
+        (.add table (->cell :bag :position [x y])))
+      (.row table))))
 
-(defn- remove-item-from-widget! [cell]
-  (let [cell-widget (get-cell-widget cell)
-        image-widget (get-image-widget cell-widget)
-        ^TextTooltip tooltip (first (filter #(instance? TextTooltip %)
-                                            (.getListeners cell-widget)))]
-    (.setDrawable image-widget (slot->background (cell 0)))
-    (.hide tooltip)
-    (.removeListener cell-widget tooltip)))
+(extend-type gdl.context.Context
+  game.context/InventoryWindow
+  (inventory-window-visible? [{:keys [context/inventory]}]
+    (.isVisible ^Actor (:window @inventory)))
 
-(intern 'game.components.inventory 'set-item-image-in-widget! set-item-image-in-widget!)
-(intern 'game.components.inventory 'remove-item-from-widget! remove-item-from-widget!)
+  (rebuild-inventory-widgets [{:keys [context/inventory]}]
+    (redo-table @inventory)
+    (.pack (:window @inventory)))
+
+  (set-item-image-in-widget [{:keys [context/inventory]} cell item]
+    (let [cell-widget (get-cell-widget (:table @inventory) cell)
+          image-widget (get-image-widget cell-widget)]
+      (.setDrawable image-widget (ui/texture-region-drawable (:texture (:image item))))
+      (.addListener cell-widget (ui/text-tooltip #(item-text item)))))
+
+  (remove-item-from-widget [{:keys [context/inventory]} cell]
+    (let [cell-widget (get-cell-widget (:table @inventory) cell)
+          image-widget (get-image-widget cell-widget)
+          ^TextTooltip tooltip (first (filter #(instance? TextTooltip %)
+                                              (.getListeners cell-widget)))]
+      (.setDrawable image-widget ((:slot->background @inventory) (cell 0)))
+      (.hide tooltip)
+      (.removeListener cell-widget tooltip))))
+
+(defn ->context []
+  {:context/inventory (atom nil)})
