@@ -4,10 +4,9 @@
             [gdl.math.vector :as v]
             [data.counter :as counter]
             [game.context :refer [show-msg-to-player! send-event! get-property inventory-window-visible?]]
-            [game.entity :as entity]
+            [context.entity.state :as state]
             [context.entity.clickable :as clickable]
             [context.entity.inventory :as inventory]
-            [game.faction :as faction]
             [context.entity.skills :as skills]
             [context.entity.state.wasd-movement :refer [WASD-movement-vector]]
             [context.ui.action-bar :as action-bar]))
@@ -57,8 +56,8 @@
   (play-sound! context "sounds/bfxr_denied.wav")
   (show-msg-to-player! context text))
 
-(defrecord State [entity]
-  entity/PlayerState
+(defrecord PlayerIdle [entity]
+  state/PlayerState
   (pause-game? [_] true)
   (manual-tick! [_ {:keys [context/mouseover-entity] :as context} delta]
     (if-let [movement-vector (WASD-movement-vector context)]
@@ -81,7 +80,7 @@
                (denied context (str "Skill usable state not usable: " state))))
            (denied context "No selected skill."))))))
 
-  entity/State
+  state/State
   (enter [_ context])
   (exit  [_ context])
   (tick [this delta] this)

@@ -3,7 +3,7 @@
             [data.counter :as counter]
             [data.val-max :refer [apply-val]]
             [game.context :refer [valid-params? do-effect! effect-render-info send-event!]]
-            [game.entity :as entity]
+            [context.entity.state :as state]
             [context.entity.skills :as skills]))
 
 (defn- draw-skill-icon [c icon entity* [x y] action-counter-ratio]
@@ -19,12 +19,12 @@
                  [1 1 1 0.5])
     (draw-image c icon [(- x radius) y])))
 
-(defrecord State [entity skill effect-context counter]
-  entity/PlayerState
+(defrecord ActiveSkill [entity skill effect-context counter]
+  state/PlayerState
   (pause-game? [_] false)
   (manual-tick! [_ context delta])
 
-  entity/State
+  state/State
   (enter [_ context]
     (play-sound! context (str "sounds/" (if (:spell? skill) "shoot.wav" "slash.wav")))
     (swap! entity update :skills skills/set-skill-to-cooldown skill)
@@ -75,10 +75,10 @@
   ; so we don't use an outdated 'context' in the State update
   ; on use we merge it with the main context
   (assert (every? #(= "effect" (namespace %)) (keys effect-context)))
-  (->State entity
-           skill
-           effect-context
-           (->> skill
-                :action-time
-                (apply-action-speed-modifier @entity skill)
-                counter/create)))
+  (->ActiveSkill entity
+                 skill
+                 effect-context
+                 (->> skill
+                      :action-time
+                      (apply-action-speed-modifier @entity skill)
+                      counter/create)))

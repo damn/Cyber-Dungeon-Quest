@@ -3,15 +3,15 @@
             [gdl.graphics.color :as color]
             [data.counter :as counter]
             [game.context :refer [world-grid create-entity! send-event!]]
-            [game.entity :as entity]
+            [context.entity.state :as state]
             [context.entity.string-effect :as string-effect]
             [game.world.cell :as cell]))
 
 ; TODO pass to creature data, also @ shout
 (def ^:private aggro-range 6)
 
-(defrecord State [entity]
-  entity/State
+(defrecord NpcSleeping [entity]
+  state/State
   (enter [_ _ctx])
 
   (exit [_ context]

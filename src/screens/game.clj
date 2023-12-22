@@ -12,6 +12,7 @@
                                   tick-entity remove-destroyed-entities update-mouseover-entity update-potential-fields]]
             [game.entity :as entity]
             [context.entity.movement :as movement]
+            [context.entity.state :as state]
             context.ui.actors
             [context.ui.hp-mana-bars :refer [render-player-hp-mana]]
             [context.ui.action-bar :as action-bar]
@@ -76,7 +77,7 @@
     (change-screen! :screens/minimap))
 
   (when (and (key-just-pressed? context input.keys/x)
-             (= :dead (entity/get-state @player-entity)))
+             (= :dead (entity/state @player-entity)))
     (change-screen! :screens/main-menu)))
 
 (defn- render-game [{:keys [context/world-map
@@ -108,9 +109,9 @@
                     delta]
   (action-bar/up-skill-hotkeys)
   (let [state (:state-obj (:entity/state @player-entity))
-        _ (entity/manual-tick! state context delta)
+        _ (state/manual-tick! state context delta)
         paused? (reset! game-paused? (or @thrown-error
-                                         (and pausing (entity/pause-game? state))))
+                                         (and pausing (state/pause-game? state))))
         delta (limit-delta delta)]
     ; this do always so can get debug info even when game not running
     (update-mouseover-entity context)

@@ -16,7 +16,7 @@
 
 (defn- draw-item-on-cursor [{:keys [context/player-entity] :as c}]
   (let [{:keys [context/player-entity] :as context} @current-context]
-    (when (= :item-on-cursor (entity/get-state @player-entity))
+    (when (= :item-on-cursor (entity/state @player-entity))
       (draw-centered-image context
                            (:image (:item-on-cursor @player-entity))
                            (gui-mouse-position context)))))

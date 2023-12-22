@@ -2,7 +2,7 @@
   (:require [gdl.context :refer [play-sound! mouse-on-stage-actor? button-just-pressed?]]
             [gdl.input.buttons :as buttons]
             [game.context :refer [item-entity send-event!]]
-            [game.entity :as entity]
+            [context.entity.state :as state]
             [context.entity.inventory :as inventory]))
 
 ; TODO ! important ! animation & dont put exactly hiding under player -> try neighbor cells first, simple.
@@ -20,15 +20,15 @@
         ]
     (item-entity context posi (:item-on-cursor @player-entity))))
 
-(defrecord State [entity item]
-  entity/PlayerState
+(defrecord PlayerItemOnCursor [entity item]
+  state/PlayerState
   (pause-game? [_] true)
   (manual-tick! [_ context delta]
     (when (and (button-just-pressed? context buttons/left)
                (not (mouse-on-stage-actor? context)))
       (send-event! context entity :drop-item)))
 
-  entity/State
+  state/State
   (enter [_ _ctx]
     (swap! entity assoc :item-on-cursor item))
   (exit [_ context]

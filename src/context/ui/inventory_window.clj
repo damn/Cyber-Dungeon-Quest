@@ -119,7 +119,7 @@
 (defn- draw-cell-rect [c player-entity x y mouseover? cell]
   (draw-rectangle c x y cell-size cell-size color/gray)
   (when (and mouseover?
-             (= :item-on-cursor (entity/get-state @player-entity)))
+             (= :item-on-cursor (entity/state @player-entity)))
     (let [item (:item-on-cursor @player-entity)
           color (cond
                  (not (inventory/valid-slot? cell item))

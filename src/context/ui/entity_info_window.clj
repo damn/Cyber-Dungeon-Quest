@@ -9,7 +9,7 @@
     (with-out-str
      (clojure.pprint/pprint
       {:id (:id entity*)
-       :state (entity/get-state entity*)}))))
+       :state (entity/state entity*)}))))
 
 (defn create []
   (let [window (ui/window :title "Info"

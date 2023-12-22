@@ -2,7 +2,7 @@
   (:require [gdl.math.vector :as v]
             [data.counter :as counter]
             [game.context :refer [effect-useful? world-grid potential-field-follow-to-enemy send-event!]]
-            [game.entity :as entity]
+            [context.entity.state :as state]
             [context.entity.skills :as skills]
             [game.world.cell :as cell]))
 
@@ -27,8 +27,8 @@
                      (effect-useful? effect-context (:effect %))))
        first))
 
-(defrecord State [entity]
-  entity/State
+(defrecord NpcIdle [entity]
+  state/State
   (enter [_ context])
 
   (exit  [_ context]

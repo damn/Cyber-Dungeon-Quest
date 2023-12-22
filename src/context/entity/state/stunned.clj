@@ -2,14 +2,14 @@
   (:require [gdl.context :refer [draw-circle]]
             [data.counter :as counter]
             [game.context :refer [send-event!]]
-            [game.entity :as entity]))
+            [context.entity.state :as state]))
 
-(defrecord State [entity counter]
-  entity/PlayerState
+(defrecord Stunned [entity counter]
+  state/PlayerState
   (pause-game? [_] false)
   (manual-tick! [_ context delta])
 
-  entity/State
+  state/State
   (enter [_ _ctx])
   (exit  [_ _ctx])
   (tick [this delta]
@@ -23,4 +23,4 @@
   (render-info  [_ c entity*]))
 
 (defn ->CreateWithCounter [entity duration]
-  (->State entity (counter/create duration)))
+  (->Stunned entity (counter/create duration)))

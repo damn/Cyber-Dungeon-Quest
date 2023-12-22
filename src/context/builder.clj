@@ -59,19 +59,19 @@
    [:dead]])
 
 (def ^:private npc-state-constructors
-  {:sleeping     npc-sleeping/->State
-   :idle         npc-idle/->State
+  {:sleeping     npc-sleeping/->NpcSleeping
+   :idle         npc-idle/->NpcIdle
    :active-skill active-skill/->CreateWithCounter
    :stunned      stunned/->CreateWithCounter
-   :dead         npc-dead/->State})
+   :dead         npc-dead/->NpcDead})
 
 (def ^:private player-state-constructors
-  {:item-on-cursor player-item-on-cursor/->State
-   :idle           player-idle/->State
-   :moving         player-moving/->State
+  {:item-on-cursor player-item-on-cursor/->PlayerItemOnCursor
+   :idle           player-idle/->PlayerIdle
+   :moving         player-moving/->PlayerMoving
    :active-skill   active-skill/->CreateWithCounter
    :stunned        stunned/->CreateWithCounter
-   :dead           player-dead/->State})
+   :dead           player-dead/->PlayerDead})
 
 (defn- ->state [& {:keys [is-player initial-state]}]
   {:initial-state (if is-player
