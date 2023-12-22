@@ -52,5 +52,5 @@
    :first-screen :screens/main-menu
    :world-unit-scale (/ tile-size)})
 
-(defn app []
+(defn -main []
   (app/start app-config))
