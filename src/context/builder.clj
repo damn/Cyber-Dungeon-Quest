@@ -58,22 +58,20 @@
     :dropped-item -> :idle]
    [:dead]])
 
-; TODO context param -> state-obj-constructors can be game-context-dependent.
-
 (def ^:private npc-state-constructors
-  {:sleeping     npc-sleeping/->NpcSleeping
-   :idle         npc-idle/->NpcIdle
+  {:sleeping     (fn [_ctx e] (npc-sleeping/->NpcSleeping e))
+   :idle         (fn [_ctx e] (npc-idle/->NpcIdle e))
    :active-skill active-skill/->CreateWithCounter
    :stunned      stunned/->CreateWithCounter
-   :dead         npc-dead/->NpcDead})
+   :dead         (fn [_ctx e] (npc-dead/->NpcDead e))})
 
 (def ^:private player-state-constructors
-  {:item-on-cursor player-item-on-cursor/->PlayerItemOnCursor
-   :idle           player-idle/->PlayerIdle
-   :moving         player-moving/->PlayerMoving
+  {:item-on-cursor (fn [_ctx e] (player-item-on-cursor/->PlayerItemOnCursor e))
+   :idle           (fn [_ctx e] (player-idle/->PlayerIdle e))
+   :moving         (fn [_ctx e] (player-moving/->PlayerMoving e))
    :active-skill   active-skill/->CreateWithCounter
    :stunned        stunned/->CreateWithCounter
-   :dead           player-dead/->PlayerDead})
+   :dead           (fn [_ctx e] (player-dead/->PlayerDead e))})
 
 (defn- ->state [& {:keys [is-player initial-state]}]
   {:initial-state (if is-player

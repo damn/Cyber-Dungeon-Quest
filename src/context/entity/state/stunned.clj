@@ -21,5 +21,5 @@
   (render-above [_ c entity*])
   (render-info  [_ c entity*]))
 
-(defn ->CreateWithCounter [entity duration] ; TODO CONTEXT
+(defn ->CreateWithCounter [context entity duration]
   (->Stunned entity (->counter context duration)))

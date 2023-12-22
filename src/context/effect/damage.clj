@@ -3,8 +3,7 @@
             [utils.random :as random]
             [game.context :refer [audiovisual send-event!]]
             [context.effect :as effect]
-            [context.entity.modifiers :refer [effect-source-modifiers effect-target-modifiers]]
-            [context.entity.string-effect :as string-effect]))
+            [context.entity.modifiers :refer [effect-source-modifiers effect-target-modifiers]]))
 
 ; example:
 ; [:effect/damage [:physical [5 6]]]
@@ -104,11 +103,11 @@
  [:physical [1 20]]
  )
 
-(defn- shield-blocked-effect [entity]
-  (swap! entity string-effect/add "SHIELD"))
+(defn- shield-blocked-effect [context entity]
+  (add-text-effect! context entity "SHIELD"))
 
-(defn- armor-blocked-effect [entity]
-  (swap! entity string-effect/add "ARMOR"))
+(defn- armor-blocked-effect [context entity]
+  (add-text-effect! context entity "ARMOR"))
 
 (defn- blocks? [block-rate]
   (< (rand) block-rate))
@@ -138,10 +137,10 @@
    nil
 
    (blocks? (effective-block-rate @source @target :shield dmg-type))
-   (shield-blocked-effect target)
+   (shield-blocked-effect context target)
 
    (blocks? (effective-block-rate @source @target :armor dmg-type))
-   (armor-blocked-effect target)
+   (armor-blocked-effect context target)
 
    :else
    (let [[dmg-type min-max-dmg] (effective-damage damage @source @target)
@@ -149,10 +148,8 @@
      (audiovisual context (:position @target)
                   (keyword (str "effects.damage." (name dmg-type))
                            "hit-effect"))
-     (swap! target (fn [entity*]
-                     (-> entity*
-                         (update :hp apply-val #(- % dmg-amount))
-                         (string-effect/add (str "[RED]" dmg-amount)))))
+     (swap! target update :hp apply-val #(- % dmg-amount))
+     (add-text-effect! context target (str "[RED]" dmg-amount))
      (send-event! context target
                   (if (no-hp-left? (:hp @target))
                     :kill

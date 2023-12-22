@@ -56,5 +56,3 @@
                     (if (:cost skill)
                       (update entity* :mana apply-val #(- % (:cost skill)))
                       entity*)))))
-
-

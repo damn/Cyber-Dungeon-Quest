@@ -2,7 +2,7 @@
   (:require gdl.context
             game.context))
 
-(defrecord ImmutableCounter [duration start-time stop-time])
+(defrecord ImmutableCounter [duration stop-time])
 
 (extend-type gdl.context.Context
   game.context/Counter
@@ -21,7 +21,7 @@
     (assoc counter :stop-time (+ @elapsed-game-time duration)))
 
   (finished-ratio [{:keys [context/elapsed-game-time] :as context}
-                   {:keys [duration start-time stop-time]}]
+                   {:keys [duration stop-time]}]
     {:post [(<= 0 % 1)]}
     (if (game.context/stopped? context counter)
       1

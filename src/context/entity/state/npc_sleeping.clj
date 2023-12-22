@@ -3,7 +3,6 @@
             [gdl.graphics.color :as color]
             [game.context :refer [world-grid create-entity! send-event! ->counter]]
             [context.entity.state :as state]
-            [context.entity.string-effect :as string-effect]
             [game.world.cell :as cell]))
 
 ; TODO pass to creature data, also @ shout
@@ -16,7 +15,7 @@
   (exit [_ context]
     ; TODO make state = alerted, and shout at the end of that !
     ; then nice alert '!' and different entities different alert time
-    (swap! entity string-effect/add "!")
+    (add-text-effect! context entity "!")
     (create-entity! context
                     {:position (:position @entity)
                      :faction (:faction  @entity)

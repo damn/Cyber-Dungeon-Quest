@@ -93,3 +93,6 @@
   (set-skill-to-cooldown! [_ entity skill])
   (pay-skill-mana-cost!   [_ entity skill])
   (skill-usable-state [effect-context entity* skill]))
+
+(defprotocol TextEffect
+  (add-text-effect! [_ entity text]))

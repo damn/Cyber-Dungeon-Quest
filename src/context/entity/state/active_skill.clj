@@ -26,6 +26,7 @@
 
   state/State
   (enter [_ context]
+    ; TODO all only called here => start-skill-bla
     ; make all this context context.entity.skill extension ?
     (play-sound! context (str "sounds/" (if (:spell? skill) "shoot.wav" "slash.wav")))
     (set-skill-to-cooldown! context entity skill)
@@ -65,7 +66,7 @@
                                     1))]
     (max 0 (int modified-action-time))))
 
-(defn ->CreateWithCounter [entity [skill effect-context]] ; TODO CONTEXT
+(defn ->CreateWithCounter [context entity [skill effect-context]]
   ; assert keys effect-context only with 'effect/'
   ; so we don't use an outdated 'context' in the State update
   ; when we call State protocol functions we call it with the current context

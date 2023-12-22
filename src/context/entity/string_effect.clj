@@ -2,11 +2,8 @@
   (:require [x.x :refer [defcomponent]]
             [gdl.context :refer [draw-text pixels->world-units]]
             [context.ui.config :refer [hpbar-height-px]]
-            [context.entity :as entity]))
-
-; TODO == damage effect
-; after enemy dies keep going as FX entity
-; used also for alert! ppl
+            [context.entity :as entity]
+            [game.context :refer [stopped? reset]]))
 
 (defcomponent :string-effect {:keys [text counter] :as this}
   (entity/tick! [[k _] e context delta]
@@ -20,10 +17,12 @@
                       (pixels->world-units c hpbar-height-px))
                 :up? true})))
 
-(defn add [entity* text]
-  (if (:string-effect entity*)
-    (update entity* :string-effect #(-> %
-                                        (update :text str "\n" text)
-                                        (update :counter counter/reset))) ; TODO RESET
-    (assoc entity* :string-effect {:text text
-                                   :counter (->counter context 400)})))
+(extend-type gdl.context.Context
+  game.context/TextEffect
+  (add-text-effect! [context entity text]
+    (if (:string-effect @entity)
+      (swap! entity update :string-effect #(-> %
+                                               (update :text str "\n" text)
+                                               (update :counter #(reset context %))))
+      (swap! entity assoc :string-effect {:text text
+                                          :counter (->counter context 400)}))))

@@ -25,7 +25,7 @@
   (entity/create! [_ entity _ctx] ; TODO just use create
     (swap! entity assoc :entity/state
            {:fsm (fsm initial-state nil) ; throws when initial-state is not part of states
-            :state-obj ((initial-state state-obj-constructors) entity)
+            :state-obj ((initial-state state-obj-constructors) context entity)
             :state-obj-constructors state-obj-constructors}))
 
   (entity/tick! [_ _entity context delta]
@@ -54,8 +54,8 @@
            (exit state-obj context)
            (let [constructor (new-state state-obj-constructors)
                  new-state-obj (if params
-                                 (constructor entity params)
-                                 (constructor entity))]
+                                 (constructor context entity params)
+                                 (constructor context entity))]
              (enter new-state-obj context)
              (swap! entity update :entity/state #(assoc %
                                                         :fsm new-fsm

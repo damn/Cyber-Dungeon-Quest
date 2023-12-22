@@ -12,4 +12,5 @@
             context.entity.position
             context.entity.shout
             context.entity.skills
-            context.entity.state))
+            context.entity.state
+            context.entity.string-effect))
