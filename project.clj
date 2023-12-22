@@ -64,6 +64,5 @@
  ; game.components.inventory
  ; game.ui.inventory-window
  ; game.ui.action-bar
- ; game.components.modifiers
  ; context.properties access to save -> make into protocol !
  )

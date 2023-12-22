@@ -35,9 +35,9 @@
   (effect-useful?     [_ effect]))
 
 (defprotocol Modifier
-  (apply-modifier   [_ entity modifier])
-  (reverse-modifier [_ entity modifier])
-  (modifier-text    [_ modifier]))
+  (apply-modifier!   [_ entity modifier])
+  (reverse-modifier! [_ entity modifier])
+  (modifier-text     [_ modifier]))
 
 (defprotocol Builder
   (creature-entity [_ creature-id position creature-params])

@@ -34,10 +34,10 @@
 
 (extend-type gdl.context.Context
   game.context/Modifier
-  (apply-modifier [_ entity modifier]
+  (apply-modifier! [_ entity modifier]
     (swap! entity apply-modifier modifier))
 
-  (reverse-modifier [_ entity modifier]
+  (reverse-modifier! [_ entity modifier]
     (swap! entity reverse-modifier modifier))
 
   (modifier-text [_ modifier]

@@ -73,7 +73,7 @@
 (defn ->CreateWithCounter [entity [skill effect-context]]
   ; assert keys effect-context only with 'effect/'
   ; so we don't use an outdated 'context' in the State update
-  ; on use we merge it with the main context
+  ; when we call State protocol functions we call it with the current context
   (assert (every? #(= "effect" (namespace %)) (keys effect-context)))
   (->ActiveSkill entity
                  skill
