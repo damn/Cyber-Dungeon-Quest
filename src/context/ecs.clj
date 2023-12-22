@@ -72,9 +72,10 @@
   (render-entities* [{:keys [context.ecs/render-on-map-order]
                       :as context}
                      entities*]
-    (doseq [entities* (second (sort-by-order (group-by :z-order entities*)
-                                             first
-                                             render-on-map-order))
+    (doseq [entities* (map second
+                           (sort-by-order (group-by :z-order entities*)
+                                          first
+                                          render-on-map-order))
             ; vars so I can see the function name @ error (can I do this with x.x? give multimethods names?)
             system [#'render-below
                     #'render-default

@@ -32,7 +32,7 @@
 ;=> the rays are more of a problem after sampling visualvm
 (defn- tile-color-setter [_ x y]
   (let [{:keys [world-camera] :as context} @current-context
-        light-position (camera/position world-camera)
+        light-position (camera/position world-camera) ; == player position use ?
         position [x y]
         explored? (explored? context position)
         base-color (if explored?
@@ -80,9 +80,11 @@
     (change-screen! :screens/main-menu)))
 
 (defn- render-game [{:keys [context/world-map
-                            context/player-entity]
+                            context/player-entity
+                            world-camera]
                      :as context}
                     active-entities]
+  (camera/set-position! world-camera (:position @player-entity))
   (tiled/render-map context
                     (:tiled-map world-map)
                     tile-color-setter)
