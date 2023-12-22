@@ -1,0 +1,13 @@
+(ns context.entity.all
+  "Requires all components not required anywhere"
+  (:require context.entity.animation
+            context.entity.delete-after-animation-stopped?
+            context.entity.delete-after-duration
+            context.entity.hp
+            context.entity.image
+            context.entity.line-render
+            context.entity.mana
+            context.entity.mouseover?
+            context.entity.position
+            context.entity.shout
+            context.entity.state))

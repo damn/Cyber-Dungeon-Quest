@@ -4,7 +4,7 @@
             [app.state :refer [current-context]]
             [game.context :refer [get-property ]]
             [game.skill :as skill]
-            [entity.skills :as skills]))
+            [context.entity.skills :as skills]))
 
 (defn- pressed-on-skill-in-menu [{:keys [context/player-entity]} skill]
   (when (and (pos? (:free-skill-points @player-entity))

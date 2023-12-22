@@ -9,7 +9,7 @@
             [game.entity :as entity]
             [game.context :refer [show-msg-to-player! send-event!]]
             [game.modifier :as modifier]
-            [entity.inventory :as inventory])
+            [context.entity.inventory :as inventory])
   (:import com.badlogic.gdx.graphics.Color
            (com.badlogic.gdx.scenes.scene2d Actor Group)
            (com.badlogic.gdx.scenes.scene2d.ui Widget Image TextTooltip Window Table)

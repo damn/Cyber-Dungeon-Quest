@@ -3,8 +3,8 @@
             [gdl.context :refer [create-image play-sound!]]
             [gdl.graphics.animation :as animation]
             [game.context :refer [create-entity! get-property]]
-            [entity.body :refer (assoc-left-bottom)]
-            (entity.state
+            [context.entity.body :refer (assoc-left-bottom)]
+            (context.entity.state
              [active-skill :as active-skill]
              [npc-dead :as npc-dead]
              [npc-idle :as npc-idle]

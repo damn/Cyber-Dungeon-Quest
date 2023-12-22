@@ -11,7 +11,7 @@
             [game.context :refer [render-entities* ray-blocked? explored? set-explored! line-of-sight? content-grid
                                   tick-entity remove-destroyed-entities update-mouseover-entity update-potential-fields]]
             [game.entity :as entity]
-            [entity.movement :as movement]
+            [context.entity.movement :as movement]
             context.ui.actors
             [context.ui.hp-mana-bars :refer [render-player-hp-mana]]
             [context.ui.action-bar :as action-bar]

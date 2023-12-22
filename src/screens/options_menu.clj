@@ -7,7 +7,7 @@
             [utils.core :refer [find-first]]
             [app.state :refer [change-screen!]]
             ;[game.line-of-sight :refer (player-line-of-sight-checks)]
-            [entity.body :refer (show-body-bounds)]))
+            [context.entity.body :refer (show-body-bounds)]))
 
 ; no protocol
 (defprotocol StatusCheckBox

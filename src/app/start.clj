@@ -1,15 +1,15 @@
 (ns app.start
   (:require [gdl.backends.libgdx.app :as app]
             [gdl.context :refer [generate-ttf ->stage-screen]]
-            (context [properties :as properties]
-                     builder
-                     potential-fields)
-            effect.all
-            entity.all
-            modifier.all
-            (context.ui [inventory-window :as inventory]
-                        action-bar
-                        hp-mana-bars)
+            [context.properties :as properties]
+            context.builder
+            context.potential-fields
+            context.effect.all
+            context.entity.all
+            context.modifier.all
+            [context.ui.inventory-window :as inventory]
+            context.ui.action-bar
+            context.ui.hp-mana-bars
             (screens game
                      main-menu
                      map-editor
