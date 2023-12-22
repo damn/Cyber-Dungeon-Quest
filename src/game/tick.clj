@@ -34,7 +34,7 @@
 
 (def ^:private hotkey->window
   {input.keys/i :inventory-window
-   input.keys/q :skill-window ; TODO s moves also !
+   input.keys/q :skill-window ; 's' moves also ! (WASD)
    input.keys/e :entity-info-window
    input.keys/h :help-window
    input.keys/z :debug-window})

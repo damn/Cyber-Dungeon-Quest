@@ -165,21 +165,18 @@
                        :z-order :effect
                        :delete-after-animation-stopped? true})))
 
-
   ; TODO use image w. shadows spritesheet
   (item-entity [context position item]
     (create-entity! context
                     {:position position
                      :body {:width 0.5 ; TODO use item-body-dimensions
                             :height 0.5
-                            :is-solid false} ; solid? collides?
+                            :is-solid false}
                      :z-order :on-ground
                      :image (:image item)
                      :item item
-                     ; :mouseover-text (:pretty-name item)
-                     ; :clickable :item
-                     :clickable {:type :item; TODO item-color also from text...? uniques/magic/... TODO namespaced keyword.
-                                 :text (:pretty-name item)}}))
+                     :entity/clickable {:type :clickable/item
+                                        :text (:pretty-name item)}}))
 
   (line-entity [context {:keys [start end duration color thick?]}]
     (create-entity! context
