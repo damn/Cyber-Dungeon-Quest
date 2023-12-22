@@ -9,7 +9,6 @@
   (->counter [{:keys [context/elapsed-game-time]} duration]
     {:pre [(>= duration 0)]}
     (->ImmutableCounter duration
-                        @elapsed-game-time
                         (+ @elapsed-game-time duration)))
 
   (stopped? [{:keys [context/elapsed-game-time]}
@@ -17,11 +16,11 @@
     (>= @elapsed-game-time stop-time))
 
   (reset [{:keys [context/elapsed-game-time]}
-          {:keys [duration]}]
+          {:keys [duration] :as counter}]
     (assoc counter :stop-time (+ @elapsed-game-time duration)))
 
   (finished-ratio [{:keys [context/elapsed-game-time] :as context}
-                   {:keys [duration stop-time]}]
+                   {:keys [duration stop-time] :as counter}]
     {:post [(<= 0 % 1)]}
     (if (game.context/stopped? context counter)
       1

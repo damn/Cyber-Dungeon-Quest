@@ -12,7 +12,7 @@
   (when (and (pos? (:free-skill-points @player-entity))
              (not (entity/has-skill? @player-entity skill)))
     (swap! player-entity update :free-skill-points dec)
-    (add-skill! context entity skill)))
+    (add-skill! context player-entity skill)))
 
 (defn create [context]
   (let [window (ui/window :title "Skills"

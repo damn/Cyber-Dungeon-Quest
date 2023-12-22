@@ -66,9 +66,11 @@
    :dead         (fn [_ctx e] (npc-dead/->NpcDead e))})
 
 (def ^:private player-state-constructors
-  {:item-on-cursor (fn [_ctx e] (player-item-on-cursor/->PlayerItemOnCursor e))
+  {:item-on-cursor (fn [_ctx e item]
+                     (player-item-on-cursor/->PlayerItemOnCursor e item))
    :idle           (fn [_ctx e] (player-idle/->PlayerIdle e))
-   :moving         (fn [_ctx e] (player-moving/->PlayerMoving e))
+   :moving         (fn [_ctx e v]
+                     (player-moving/->PlayerMoving e v))
    :active-skill   active-skill/->CreateWithCounter
    :stunned        stunned/->CreateWithCounter
    :dead           (fn [_ctx e] (player-dead/->PlayerDead e))})

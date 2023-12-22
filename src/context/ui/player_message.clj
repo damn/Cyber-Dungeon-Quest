@@ -1,7 +1,7 @@
 (ns context.ui.player-message
   (:require [gdl.context :refer [draw-text]]
             [app.state :refer [current-context]]
-            game.context)
+            [game.context :refer [stopped? ->counter]])
   (:import com.badlogic.gdx.scenes.scene2d.Actor))
 
 (defn- draw-player-message
@@ -26,7 +26,7 @@
 
 (extend-type gdl.context.Context
   game.context/PlayerMessage
-  (show-msg-to-player! [{:keys [context/player-message] :as counter}
+  (show-msg-to-player! [{:keys [context/player-message] :as context}
                         message]
     (reset! player-message {:message message
                             :counter (->counter context 3)})) ; stage gets updated in seconds

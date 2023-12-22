@@ -9,7 +9,8 @@
             [gdl.scene2d.ui :refer [find-actor-with-id]]
             [app.state :refer [current-context change-screen!]]
             [game.context :refer [render-entities* ray-blocked? explored? set-explored! line-of-sight? content-grid
-                                  tick-entity remove-destroyed-entities update-mouseover-entity update-potential-fields]]
+                                  tick-entity remove-destroyed-entities update-mouseover-entity update-potential-fields
+                                  update-elapsed-game-time]]
             [game.entity :as entity]
             [context.entity.movement :as movement]
             [context.entity.state :as state]

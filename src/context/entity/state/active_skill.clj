@@ -1,6 +1,5 @@
 (ns context.entity.state.active-skill
   (:require [gdl.context :refer [draw-filled-circle draw-sector draw-image play-sound!]]
-            [data.val-max :refer [apply-val]]
             [game.context :refer [valid-params? do-effect! effect-render-info send-event!
                                   stopped? finished-ratio ->counter set-skill-to-cooldown! pay-skill-mana-cost!]]
             [game.entity :as entity]

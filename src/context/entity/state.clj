@@ -22,7 +22,7 @@
                                     fsm
                                     state-obj
                                     state-obj-constructors]}
-  (entity/create! [_ entity _ctx] ; TODO just use create
+  (entity/create! [_ entity context]
     (swap! entity assoc :entity/state
            {:fsm (fsm initial-state nil) ; throws when initial-state is not part of states
             :state-obj ((initial-state state-obj-constructors) context entity)

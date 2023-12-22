@@ -81,7 +81,6 @@
                 entity
                 delta]
     (try
-     (swap! entity update-map tick delta)
      (doseq-entity entity tick! context delta)
      (catch Throwable t
        (p/pretty-pst t)

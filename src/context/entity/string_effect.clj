@@ -3,7 +3,7 @@
             [gdl.context :refer [draw-text pixels->world-units]]
             [context.ui.config :refer [hpbar-height-px]]
             [context.entity :as entity]
-            [game.context :refer [stopped? reset]]))
+            [game.context :refer [->counter stopped? reset]]))
 
 (defcomponent :string-effect {:keys [text counter] :as this}
   (entity/tick! [[k _] e context delta]
@@ -23,6 +23,7 @@
     (if (:string-effect @entity)
       (swap! entity update :string-effect #(-> %
                                                (update :text str "\n" text)
-                                               (update :counter #(reset context %))))
+                                               (update :counter (fn [cnt]
+                                                                  (reset context cnt)))))
       (swap! entity assoc :string-effect {:text text
                                           :counter (->counter context 400)}))))

@@ -57,10 +57,7 @@
              "mapgen"}})
 
  ; Breaking depdencny graph:
- ; game.components.skills
- ; game.components.clickable
  ; game.ui.config
- ; game.components.string-effect
  ; game.components.inventory
  ; game.ui.inventory-window
  ; game.ui.action-bar

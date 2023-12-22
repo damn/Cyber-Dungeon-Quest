@@ -1,6 +1,7 @@
 (ns context.entity.skills
   (:require [x.x :refer [defcomponent]]
             [utils.core :refer [mapvals]]
+            [data.val-max :refer [apply-val]]
             [context.entity :as entity]
             [game.context :refer [get-property valid-params? ->counter stopped?]]
             game.entity))
@@ -20,7 +21,7 @@
                                   (map #(get-property context %)
                                        skill-ids))))
 
-  (entity/tick! [_ context delta]
+  (entity/tick! [_ entity context delta]
     (mapvals #(update-cooldown context % delta) skills)))
 
 (extend-type context.entity.Entity

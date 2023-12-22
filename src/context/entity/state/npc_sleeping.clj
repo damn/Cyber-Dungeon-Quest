@@ -1,7 +1,7 @@
 (ns context.entity.state.npc-sleeping
   (:require [gdl.context :refer [draw-text draw-circle]]
             [gdl.graphics.color :as color]
-            [game.context :refer [world-grid create-entity! send-event! ->counter]]
+            [game.context :refer [world-grid create-entity! send-event! ->counter add-text-effect!]]
             [context.entity.state :as state]
             [game.world.cell :as cell]))
 
