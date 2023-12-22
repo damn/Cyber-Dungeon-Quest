@@ -48,9 +48,10 @@
   (get-entity [{:keys [context.ecs/ids->entities]} id]
     (get @ids->entities id))
 
-  (create-entity! [{:keys [context.ecs/ids->entities]} components-map]
+  (create-entity! [{:keys [context.ecs/ids->entities] :as context} components-map]
     {:pre [(not (contains? components-map :id))]}
-    (let [entity (-> (assoc components-map :id (unique-number!))
+    (let [id (unique-number!)
+          entity (-> (assoc components-map :id id)
                      (update-map create)
                      atom
                      (doseq-entity create! context))]

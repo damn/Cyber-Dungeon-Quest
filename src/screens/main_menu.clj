@@ -23,7 +23,7 @@
                                                          :effect])  ; projectiles, nova
                        (context.mouseover-entity/->context)
                        (player-message/->context)
-                       {:context/update-entities? (atom true)})]
+                       {:context/game-paused? (atom true)})]
     (world/merge->context context)))
 
 (defrecord SubScreen [bg-image]
