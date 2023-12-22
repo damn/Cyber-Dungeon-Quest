@@ -7,7 +7,7 @@
             [gdl.scene2d.ui :as ui :refer [find-actor-with-id]]
             [app.state :refer [current-context]]
             [game.entity :as entity]
-            [game.context :refer [show-msg-to-player! send-event! modifier-text]]
+            [game.context :refer [show-msg-to-player! send-event! modifier-text set-item! stack-item! remove-item!]]
             [context.entity.inventory :as inventory])
   (:import com.badlogic.gdx.graphics.Color
            (com.badlogic.gdx.scenes.scene2d Actor Group)
@@ -36,7 +36,7 @@
      (do
       (play-sound! context "sounds/bfxr_takeit.wav")
       (send-event! context entity :pickup-item item)
-      (inventory/remove-item! context entity cell))
+      (remove-item! context entity cell))
 
      item-on-cursor
      (cond
@@ -47,7 +47,7 @@
         (complain-2h-weapon-and-shield! context)
         (do
          (play-sound! context "sounds/bfxr_itemput.wav")
-         (inventory/set-item! context entity cell item-on-cursor)
+         (set-item! context entity cell item-on-cursor)
          (swap! entity dissoc :item-on-cursor)
          (send-event! context entity :dropped-item)))
 
@@ -56,7 +56,7 @@
            (inventory/stackable? item item-on-cursor))
       (do
        (play-sound! context "sounds/bfxr_itemput.wav")
-       (inventory/stack-item! context entity cell item-on-cursor)
+       (stack-item! context entity cell item-on-cursor)
        (swap! entity dissoc :item-on-cursor)
        (send-event! context entity :dropped-item))
 
@@ -67,8 +67,8 @@
         (complain-2h-weapon-and-shield! context)
         (do
          (play-sound! context "sounds/bfxr_itemput.wav")
-         (inventory/remove-item! context entity cell)
-         (inventory/set-item! context entity cell item-on-cursor)
+         (remove-item! context entity cell)
+         (set-item! context entity cell item-on-cursor)
          ; need to dissoc and drop otherwise state enter does not trigger picking it up again
          (swap! entity dissoc :item-on-cursor)
          (send-event! context entity :dropped-item)

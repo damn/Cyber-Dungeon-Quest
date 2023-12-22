@@ -73,3 +73,9 @@
   (rebuild-inventory-widgets [_])
   (set-item-image-in-widget [_ cell item])
   (remove-item-from-widget [_ cell]))
+
+(defprotocol Inventory
+  (set-item!        [_ entity cell item])
+  (remove-item!     [_ entity cell])
+  (stack-item!      [_ entity cell item])
+  (try-pickup-item! [_ entity item]))

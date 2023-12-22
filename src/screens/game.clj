@@ -108,7 +108,7 @@
                     active-entities
                     delta]
   (action-bar/up-skill-hotkeys)
-  (let [state (:state-obj (:entity/state @player-entity))
+  (let [state (:state-obj (:entity/state @player-entity)) ; ? Entity protocol?
         _ (state/manual-tick! state context delta)
         paused? (reset! game-paused? (or @thrown-error
                                          (and pausing (state/pause-game? state))))

@@ -1,10 +1,11 @@
 (ns context.entity.inventory
   (:require [data.grid2d :as grid]
             [x.x :refer [defcomponent]]
+            gdl.context
             [utils.core :refer [find-first]]
             [context.entity :as entity]
-            [game.context :refer [get-property set-item-image-in-widget remove-item-from-widget apply-modifier! reverse-modifier!]]
-            [context.entity.skills :as skills]))
+            [game.context :refer [get-property set-item-image-in-widget remove-item-from-widget apply-modifier! reverse-modifier! try-pickup-item! remove-item! set-item! stack-item!]]
+            game.entity))
 
 (def empty-inventory
   (->> {:bag      [6 4]
@@ -59,40 +60,16 @@
   {:pre [(get-in inventory cell)]}
   (assoc-in inventory cell nil))
 
-; TODO make context fns & ! inventory protocol ! valid-cell, etc.
+(defn- set-item [entity* cell item]
+  (update entity* :inventory inv-set-item cell item))
 
-(defn set-item! [context entity cell item]
-  (swap! entity update :inventory inv-set-item cell item)
-  (when (applies-modifiers? cell)
-    (apply-modifier! context entity (:modifier item))
-    (when (and (= (:slot item) :weapon))
-      (swap! entity update :skills skills/add-skill item)))
-  (when (:is-player @entity)
-    (set-item-image-in-widget context cell item)))
-
-(defn remove-item! [context entity cell]
-  (let [item (get-in (:inventory @entity) cell)]
-    (swap! entity update :inventory inv-remove-item cell)
-    (when (applies-modifiers? cell)
-      (reverse-modifier! context entity (:modifier item))
-      (when (= (:slot item) :weapon)
-        (swap! entity update :skills skills/remove-skill item)))
-    (when (:is-player @entity)
-      (remove-item-from-widget context cell))))
+(defn- remove-item [entity* cell]
+  (update entity* :inventory inv-remove-item cell))
 
 (defn stackable? [item-a item-b]
   (and (:count item-a)
        (:count item-b) ; TODO this is not required but can be asserted, all of one name should have count if others have count
        (= (:id item-a) (:id item-b))))
-
-; TODO no items which stack are available
-(defn stack-item! [context entity cell item]
-  (let [cell-item (get-in (:inventory @entity) cell)]
-    (assert (stackable? item cell-item))
-    ; TODO this doesnt make sense with modifiers ! (triggered 2 times if available)
-    ; first remove and then place, just update directly  item ...
-    (remove-item! context entity cell)
-    (set-item! context entity cell (update cell-item :count + (:count item)))))
 
 ; TODO doesnt exist, stackable, usable items with action/skillbar thingy
 #_(defn remove-one-item [entity cell]
@@ -123,15 +100,51 @@
                         true)))]
     picked-up))
 
-(defn try-pickup-item! [context entity item]
-  (let [slot (find-first #(= % (:slot item))
-                         (keys (:inventory @entity)))]
-    (or
-     (try-put-item-in! context entity slot item)
-     (try-put-item-in! context entity :bag item))))
+(extend-type gdl.context.Context
+  game.context/Inventory
+  (set-item! [context entity cell item]
+    (swap! entity set-item cell item)
+
+    (when (applies-modifiers? cell)
+      (apply-modifier! context entity (:modifier item))
+      (when (and (= (:slot item) :weapon))
+        (println "Add skill entity : \n\n" @entity)
+        (swap! entity game.entity/add-skill item)))
+
+    (when (:is-player @entity)
+      (set-item-image-in-widget context cell item)))
+
+  (remove-item! [context entity cell]
+    (let [item (get-in (:inventory @entity) cell)]
+      (swap! entity remove-item cell)
+
+      (when (applies-modifiers? cell)
+        (reverse-modifier! context entity (:modifier item))
+        (when (= (:slot item) :weapon)
+          (swap! entity game.entity/remove-skill item)))
+
+      (when (:is-player @entity)
+        (remove-item-from-widget context cell))))
+
+  ; TODO no items which stack are available
+  (stack-item! [context entity cell item]
+    (let [cell-item (get-in (:inventory @entity) cell)]
+      (assert (stackable? item cell-item))
+      ; TODO this doesnt make sense with modifiers ! (triggered 2 times if available)
+      ; first remove and then place, just update directly  item ...
+      (remove-item! context entity cell)
+      (set-item! context entity cell (update cell-item :count + (:count item)))))
+
+  (try-pickup-item! [context entity item]
+    (let [slot (find-first #(= % (:slot item))
+                           (keys (:inventory @entity)))]
+      (or
+       (try-put-item-in! context entity slot item)
+       (try-put-item-in! context entity :bag item)))))
 
 (defcomponent :items items
   (entity/create! [_ entity context]
+    (println "CREATE ITEM COMPONENT \n " @entity)
     (swap! entity assoc :inventory empty-inventory)
     ;(swap! entity dissoc :items)
     (doseq [id items]

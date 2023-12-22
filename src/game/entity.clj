@@ -1,6 +1,10 @@
 (ns game.entity)
 
-; this information 'fsm' should be local to components/state
-; => should extend entity record ( in ecs ) with entity protocol mentioned here
-(defn state [entity*]
-  (-> entity* :entity/state :fsm :state))
+(defprotocol State
+  (state [_]))
+
+(defprotocol Skills
+  (add-skill [_ skill])
+  (remove-skill [_ skill])
+  (has-skill? [_ skill])
+  (set-skill-to-cooldown [_ skill]))

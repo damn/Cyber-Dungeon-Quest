@@ -2,8 +2,9 @@
   (:require [reduce-fsm :as fsm]
             [x.x :refer [defcomponent]]
             gdl.context
+            [context.entity :as entity]
             game.context
-            [context.entity :as entity]))
+            game.entity))
 
 (defprotocol State
   (enter [_ context])
@@ -62,3 +63,8 @@
              (swap! entity update :entity/state #(assoc %
                                                         :fsm new-fsm
                                                         :state-obj new-state-obj)))))))))
+
+(extend-type context.entity.Entity
+  game.entity/State
+  (state [entity*]
+    (-> entity* :entity/state :fsm :state)))

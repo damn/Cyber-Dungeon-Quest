@@ -3,10 +3,8 @@
             [gdl.input.buttons :as buttons]
             [gdl.math.vector :as v]
             [data.counter :as counter]
-            [game.context :refer [show-msg-to-player! send-event! get-property inventory-window-visible?]]
+            [game.context :refer [show-msg-to-player! send-event! get-property inventory-window-visible? try-pickup-item!]]
             [context.entity.state :as state]
-            [context.entity.clickable :as clickable]
-            [context.entity.inventory :as inventory]
             [context.entity.skills :as skills]
             [context.entity.state.wasd-movement :refer [WASD-movement-vector]]
             [context.ui.action-bar :as action-bar]))
@@ -24,7 +22,7 @@
       (swap! clicked-entity assoc :destroyed? true)
       (send-event! context player-entity :pickup-item item))
 
-     (inventory/try-pickup-item! context player-entity item)
+     (try-pickup-item! context player-entity item)
      (do
       (play-sound! context "sounds/bfxr_pickup.wav")
       (swap! clicked-entity assoc :destroyed? true))

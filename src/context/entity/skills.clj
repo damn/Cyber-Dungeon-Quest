@@ -3,7 +3,8 @@
             [data.counter :as counter]
             [utils.core :refer [mapvals]]
             [context.entity :as entity]
-            [game.context :refer [get-property valid-params?]]))
+            [game.context :refer [get-property valid-params?]]
+            game.entity))
 
 (defn- update-cooldown [skill delta]
   (if (:cooling-down? skill)
@@ -23,21 +24,23 @@
   (entity/tick [_ delta]
     (mapvals #(update-cooldown % delta) skills)))
 
-(defn has-skill? [skills {:keys [id]}]
-  (contains? skills id))
+(extend-type context.entity.Entity
+  game.entity/Skills
+  (has-skill? [{:keys [skills]} {:keys [id]}]
+    (contains? skills id))
 
-(defn add-skill [skills {:keys [id] :as skill}]
-  (assert (not (has-skill? skills skill)))
-  (assoc skills id skill))
+  (add-skill [entity* {:keys [id] :as skill}]
+    (assert (not (game.entity/has-skill? entity* skill)))
+    (update entity* :skills assoc id skill))
 
-(defn remove-skill [skills {:keys [id] :as skill}]
-  (assert (has-skill? skills skill))
-  (dissoc skills id))
+  (remove-skill [entity* {:keys [id] :as skill}]
+    (assert (game.entity/has-skill? entity* skill))
+    (update entity* :skills dissoc id))
 
-(defn set-skill-to-cooldown [skills {:keys [id cooldown] :as skill}]
-  (if cooldown
-    (assoc-in skills [id :cooling-down?] (counter/create cooldown))
-    skills))
+  (set-skill-to-cooldown [entity* {:keys [id cooldown] :as skill}]
+    (if cooldown
+      (assoc-in entity* [:skills id :cooling-down?] (counter/create cooldown))
+      entity*)))
 
 (defn usable-state [effect-context
                     {:keys [mana]}

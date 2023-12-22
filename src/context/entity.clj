@@ -5,6 +5,12 @@
             [utils.core :refer [define-order sort-by-order]]
             [game.context :refer [get-entity]]))
 
+; TODO thrown-error => send red player message or modal window with copy error message
+; TODO doseq-entity - what if key is not available anymore ? check :when (k @entity)  ?
+
+(defrecord Entity [id position])
+; TODO could do here destroy!
+
 (defsystem create [_])
 (defsystem create! [_ entity context])
 
@@ -43,18 +49,31 @@
   (defn- unique-number! []
     (swap! cnt inc)))
 
+; (update-map (map->Entity {:id 1 :position 2}) identity)
+; => tick also etc. ...
+(defn update-mp
+  "Updates every map-entry with (apply f [k v] args)."
+  [m f & args]
+  (reduce-kv (fn [new-map k v]
+               (assoc new-map k (apply f [k v] args)))
+             {}
+             m))
+
+
 (extend-type gdl.context.Context
   game.context/EntityComponentSystem
   (get-entity [{:keys [context.entity/ids->entities]} id]
     (get @ids->entities id))
 
   (create-entity! [{:keys [context.entity/ids->entities] :as context} components-map]
-    {:pre [(not (contains? components-map :id))]}
+    {:pre [(not (contains? components-map :id))
+           (:position components-map)]}
     (let [id (unique-number!)
           entity (-> (assoc components-map :id id)
                      (update-map create)
                      atom
                      (doseq-entity create! context))]
+      (println "Created entity: \n" @entity)
       (swap! ids->entities assoc id entity)
       entity))
 

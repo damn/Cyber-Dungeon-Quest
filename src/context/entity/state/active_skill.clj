@@ -3,8 +3,8 @@
             [data.counter :as counter]
             [data.val-max :refer [apply-val]]
             [game.context :refer [valid-params? do-effect! effect-render-info send-event!]]
-            [context.entity.state :as state]
-            [context.entity.skills :as skills]))
+            [game.entity :as entity]
+            [context.entity.state :as state]))
 
 (defn- draw-skill-icon [c icon entity* [x y] action-counter-ratio]
   (let [[width height] (:world-unit-dimensions icon)
@@ -26,8 +26,9 @@
 
   state/State
   (enter [_ context]
+    ; TODO make all this context context.entity.skill extension ?
     (play-sound! context (str "sounds/" (if (:spell? skill) "shoot.wav" "slash.wav")))
-    (swap! entity update :skills skills/set-skill-to-cooldown skill)
+    (swap! entity entity/set-skill-to-cooldown skill)
     ; should assert enough mana
     ; but should also assert usable-state = :usable
     ; but do not want to call again valid-params? (expensive)

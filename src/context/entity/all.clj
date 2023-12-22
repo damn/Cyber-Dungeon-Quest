@@ -1,6 +1,7 @@
 (ns context.entity.all
-  "Requires all components not required anywhere"
+  "Requires all components not required anywhere" ; actually they all should not be required anywhere and use protocols & extend-type
   (:require context.entity.animation
+            context.entity.clickable
             context.entity.delete-after-animation-stopped
             context.entity.delete-after-duration
             context.entity.hp

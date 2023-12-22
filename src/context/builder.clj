@@ -102,12 +102,12 @@
    :mana 100
    :choose-skill-type :player
    :player-movement true
-   :render-on-minimap true
+   ;:render-on-minimap true
    :free-skill-points 3})
 
 (def ^:private npc-components
   {:faction :good
-   :default-monster-death true
+   ;:default-monster-death true
    :choose-skill-type :npc
    :move-towards-enemy true})
 
