@@ -7,8 +7,7 @@
             [gdl.scene2d.ui :as ui :refer [find-actor-with-id]]
             [app.state :refer [current-context]]
             [game.entity :as entity]
-            [game.context :refer [show-msg-to-player! send-event!]]
-            [context.modifier :as modifier]
+            [game.context :refer [show-msg-to-player! send-event! modifier-text]]
             [context.entity.inventory :as inventory])
   (:import com.badlogic.gdx.graphics.Color
            (com.badlogic.gdx.scenes.scene2d Actor Group)
@@ -176,12 +175,11 @@
        (when-let [cnt (:count item)]
          (str " (" cnt ")"))))
 
-; TODO no weapon text action-time/effect ... 'text' protocol on items,weapons,skill, ? (creature for rightclick info, projectiles, ... ?)
-; dispatch on property/type ?
-; or if weapon -> skill/text
-(defn- item-text [item]
-  (str (str (item-name item) "\n")
-       (str/join "\n" (map modifier/text (:modifier item)))))
+(defn- item-text [context item]
+  (->> item
+       :modifier
+       (modifier-text context)
+       (str (item-name item) "\n")))
 
 (defn- redo-table [{:keys [table slot->background]}]
   (let [->cell (fn [& args]
@@ -220,7 +218,7 @@
     (let [cell-widget (get-cell-widget (:table @inventory) cell)
           image-widget (get-image-widget cell-widget)]
       (.setDrawable image-widget (ui/texture-region-drawable (:texture (:image item))))
-      (.addListener cell-widget (ui/text-tooltip #(item-text item)))))
+      (.addListener cell-widget (ui/text-tooltip #(item-text @current-context item)))))
 
   (remove-item-from-widget [{:keys [context/inventory]} cell]
     (let [cell-widget (get-cell-widget (:table @inventory) cell)

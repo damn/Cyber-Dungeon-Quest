@@ -43,14 +43,7 @@
                     {:keys [mana]}
                     {:keys [cost cooling-down? effect]}]
   (cond
-   cooling-down?
-   :cooldown
-
-   (and cost (> cost (mana 0)))
-   :not-enough-mana
-
-   (not (valid-params? effect-context effect))
-   :invalid-params
-
-   :else
-   :usable))
+   cooling-down?                               :cooldown
+   (and cost (> cost (mana 0)))                :not-enough-mana
+   (not (valid-params? effect-context effect)) :invalid-params
+   :else                                       :usable))

@@ -3,8 +3,7 @@
             [x.x :refer [defcomponent]]
             [utils.core :refer [find-first]]
             [context.entity :as entity]
-            [game.context :refer [get-property set-item-image-in-widget remove-item-from-widget]]
-            [context.modifier :as modifier]
+            [game.context :refer [get-property set-item-image-in-widget remove-item-from-widget apply-modifier reverse-modifier]]
             [context.entity.skills :as skills]))
 
 (def empty-inventory
@@ -65,7 +64,7 @@
 (defn set-item! [context entity cell item]
   (swap! entity update :inventory inv-set-item cell item)
   (when (applies-modifiers? cell)
-    (swap! entity modifier/apply-modifiers (:modifier item))
+    (apply-modifier context entity (:modifier item))
     (when (and (= (:slot item) :weapon))
       (swap! entity update :skills skills/add-skill item)))
   (when (:is-player @entity)
@@ -75,7 +74,7 @@
   (let [item (get-in (:inventory @entity) cell)]
     (swap! entity update :inventory inv-remove-item cell)
     (when (applies-modifiers? cell)
-      (swap! entity modifier/reverse-modifiers (:modifier item))
+      (reverse-modifier context entity (:modifier item))
       (when (= (:slot item) :weapon)
         (swap! entity update :skills skills/remove-skill item)))
     (when (:is-player @entity)
