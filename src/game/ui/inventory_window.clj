@@ -9,7 +9,7 @@
             [game.entity :as entity]
             [game.context :refer [show-msg-to-player! send-event!]]
             [game.modifier :as modifier]
-            [game.components.inventory :as inventory])
+            [entity.inventory :as inventory])
   (:import com.badlogic.gdx.graphics.Color
            (com.badlogic.gdx.scenes.scene2d Actor Group)
            (com.badlogic.gdx.scenes.scene2d.ui Widget Image TextTooltip Window Table)
@@ -154,7 +154,6 @@
                         (read-string (.getName (.getParent this))))))))
 
 (defn- cell-widget ^Group [slot->background slot & {:keys [position]}]
-  (println "cell-widget slot->background" slot->background)
   (let [cell [slot (or position [0 0])]]
     (doto (ui/stack)
       (.setName (pr-str cell)) ; TODO ! .setUserObject
@@ -182,10 +181,9 @@
 ; or if weapon -> skill/text
 (defn- item-text [item]
   (str (str (item-name item) "\n")
-       (str/join "\n" (map modifier/text (:modifiers item)))))
+       (str/join "\n" (map modifier/text (:modifier item)))))
 
 (defn- redo-table [{:keys [table slot->background]}]
-  (println "Redo table: " table " slot->background" slot->background)
   (let [->cell (fn [& args]
                  (apply cell-widget slot->background args))]
     (.clear table)
