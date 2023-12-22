@@ -2,6 +2,7 @@
   (:require [gdl.context :refer [play-sound! world-mouse-position mouse-on-stage-actor? button-just-pressed?]]
             [gdl.input.buttons :as buttons]
             [gdl.math.vector :as v]
+            [gdl.scene2d.ui :refer [find-actor-with-id]]
             [data.counter :as counter]
             [game.context :refer [show-msg-to-player! send-event! get-property]]
             [game.entity :as entity]
@@ -17,10 +18,10 @@
                                         :as context}
                                        stage
                                        clicked-entity]
-  (let [item (:item @clicked-entity)]
+  (let [item (:item @clicked-entity)
+        inventory-window (find-actor-with-id (:windows stage) :inventory-window)]
     (cond
-     ; TODO here not working anymore !!! => add to context ?
-     (.isVisible ^Actor (:inventory-window stage))
+     (.isVisible ^Actor inventory-window)
      (do
       (play-sound! context "sounds/bfxr_takeit.wav")
       (swap! clicked-entity assoc :destroyed? true)

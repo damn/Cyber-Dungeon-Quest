@@ -6,7 +6,7 @@
             [app.state :refer [current-context change-screen!]]
             context.ecs
             context.mouseover-entity
-            [context.player-message :as player-message]
+            [context.ui.player-message :as player-message]
             [context.world :as world]
             game.ui.action-bar
             game.ui.inventory-window))

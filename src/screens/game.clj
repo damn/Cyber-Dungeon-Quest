@@ -55,5 +55,5 @@
     (tick-game context (* (delta-time context) 1000)))) ; TODO make in seconds ? no need to multiply by 1000 ?
 
 (defn screen [context]
-  {:actors (game.ui.actors/create-actors context)
+  {:actors (game.ui.actors/->ui-actors context)
    :sub-screen (screens.game/->SubScreen)})

@@ -2,6 +2,7 @@
   (:require [gdl.context :refer [get-stage key-just-pressed?]]
             [gdl.input.keys :as input.keys]
             [gdl.scene2d.actor :as actor]
+            [gdl.scene2d.ui :refer [find-actor-with-id]]
             [app.state :refer [change-screen!]]
             [game.context :refer [tick-active-entities destroy-to-be-removed-entities! update-mouseover-entity
                                   update-potential-fields]]
@@ -31,34 +32,32 @@
 
 (def ^:private pausing true)
 
-; TODO here not working anymore
+(def ^:private hotkey->window
+  {input.keys/i :inventory-window
+   input.keys/q :skill-window ; TODO s moves also !
+   input.keys/e :entity-info-window
+   input.keys/h :help-window
+   input.keys/z :debug-window})
+
+(defn- check-window-hotkeys [context group]
+  (doseq [[hotkey window] hotkey->window
+          :when (key-just-pressed? context hotkey)]
+    (actor/toggle-visible! (find-actor-with-id group window))))
+
 (defn- end-of-frame-checks [{:keys [context/player-entity] :as context}]
-  (let [{:keys [debug-window
-                inventory-window
-                entity-info-window
-                skill-window
-                help-window] :as stage} (get-stage context)
-        windows [debug-window
-                 help-window
-                 entity-info-window
-                 inventory-window
-                 skill-window]]
-    (when (key-just-pressed? context input.keys/i)
-      (actor/toggle-visible! inventory-window)
-      (actor/toggle-visible! entity-info-window)
-      (actor/toggle-visible! skill-window))
-    (when (key-just-pressed? context input.keys/h)
-      (actor/toggle-visible! help-window))
-    (when (key-just-pressed? context input.keys/z)
-      (actor/toggle-visible! debug-window))
+  (let [group (:windows (get-stage context))
+        windows (seq (.getChildren group))]
+    (check-window-hotkeys context group)
+
     (when (key-just-pressed? context input.keys/escape)
-      (cond
-       ;(some #(.isVisible ^Actor %) windows)
-       ;(run! #(.setVisible ^Actor % false) windows)
-       :else
-       (change-screen! :screens/options-menu))))
+      (cond (some #(.isVisible ^Actor %)        windows)
+            (run! #(.setVisible ^Actor % false) windows)
+            :else
+            (change-screen! :screens/options-menu))))
+
   (when (key-just-pressed? context input.keys/tab)
     (change-screen! :screens/minimap))
+
   (when (and (key-just-pressed? context input.keys/x)
              (= :dead (:state (:fsm (:entity/state @player-entity)))))
     (change-screen! :screens/main-menu)))

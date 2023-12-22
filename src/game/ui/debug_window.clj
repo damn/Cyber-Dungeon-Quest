@@ -17,19 +17,16 @@
          (when @thrown-error
            (str "\nERROR!\n " @thrown-error "\n\n"))
          "update-entities? " @update-entities? "\n"
-         "\nMouseover-Actor:\n"
-         (when-let [actor (mouse-on-stage-actor? c)]
+         ;"\nMouseover-Actor:\n"
+         #_(when-let [actor (mouse-on-stage-actor? c)]
            (str "TRUE - name:" (.getName actor)
                 "id: " (gdl.scene2d.actor/id actor)
                 )))))
 
 (defn create []
-  ; TODO just a self-updating window with textfn and title/id
-  ; textfn-window
   (let [window (ui/window :title "Debug"
                           :id :debug-window)
         label (ui/label "")]
-    ;(.setName window "debug-window")
     (.add window label)
     (.add window (proxy [Actor] []
                    (act [_delta]

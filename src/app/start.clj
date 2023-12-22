@@ -41,7 +41,7 @@
          :width  1440
          :height 900
          :full-screen? false
-         :fps 300}
+         :fps 60}
    :create-context create-context
    :first-screen :screens/main-menu
    :world-unit-scale (/ tile-size)})
