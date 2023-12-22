@@ -1,26 +1,23 @@
 (ns context.entity
   (:require [clj-commons.pretty.repl :as p]
-            [x.x :refer [defsystem update-map doseq-entity]]
+            [x.x :refer [defsystem doseq-entity]]
             [gdl.context :refer [draw-text]]
             [utils.core :refer [define-order sort-by-order]]
             [game.context :refer [get-entity]]))
 
-; TODO thrown-error => send red player message or modal window with copy error message
-; TODO doseq-entity - what if key is not available anymore ? check :when (k @entity)  ?
+; doseq-entity - what if key is not available anymore ? check :when (k @entity)  ?
 
 (defrecord Entity [id position])
-; TODO could do here destroy!
 
 (defsystem create [_])
 (defsystem create! [_ entity context])
 
-(defsystem destroy [_])
-(defsystem destroy! [_ entity context])
+(defsystem destroy! [_ entity context]) ; only used twice position/body
 
-(defsystem tick  [_ delta])
+(defsystem tick  [_ delta]) ; only counters
 (defsystem tick! [_ entity context delta])
 
-(defsystem moved! [_ entity context direction-vector])
+(defsystem moved! [_ entity context direction-vector]) ; body/position
 
 (defsystem render-below   [_ entity* context])
 (defsystem render-default [_ entity* context])
@@ -49,9 +46,11 @@
   (defn- unique-number! []
     (swap! cnt inc)))
 
-; (update-map (map->Entity {:id 1 :position 2}) identity)
-; => tick also etc. ...
-(defn update-mp ; TODO do only for entity-keys which implement that functions, not assoc all ...
+; using this because x.x/update-map with transients is destroying defrecords and
+; turning them into normal maps.
+; check (:methods system)
+; remove 'tick' / counters then this doesnt hurt so much anymore performance wise
+(defn- update-map
   "Updates every map-entry with (apply f [k v] args)."
   [m f & args]
   (loop [ks (keys m)
@@ -61,18 +60,6 @@
              (let [k (first ks)]
                (assoc m k (apply f [k (k m)] args))))
       m)))
-
-(comment
- (update-mp (map->Entity {:id :foo :position [2 3] :foo 1 :bar 2})
-            (fn [[k v]]
-              (if (number? v)
-                (inc v)
-                v
-                ))))
-
-; performance? => entity.tick is only used for counters , can remove counters
-; and create/destroy it doesnt really matter and most components use it
-
 
 (extend-type gdl.context.Context
   game.context/EntityComponentSystem
@@ -84,11 +71,10 @@
            (:position components-map)]}
     (let [id (unique-number!)
           entity (-> (assoc components-map :id id)
-                     (update-mp create)
+                     (update-map create)
                      map->Entity
                      atom
                      (doseq-entity create! context))]
-      (println "Created entity: \n" @entity)
       (swap! ids->entities assoc id entity)
       entity))
 
@@ -96,7 +82,7 @@
                 entity
                 delta]
     (try
-     (swap! entity update-mp tick delta)
+     (swap! entity update-map tick delta)
      (doseq-entity entity tick! context delta)
      (catch Throwable t
        (p/pretty-pst t)
@@ -122,7 +108,6 @@
 
   (remove-destroyed-entities [{:keys [context.entity/ids->entities] :as context}]
     (doseq [e (filter (comp :destroyed? deref) (vals @ids->entities))]
-      (swap! e update-mp destroy)
       (doseq-entity e destroy! context)
       (swap! ids->entities dissoc (:id @e)))))
 

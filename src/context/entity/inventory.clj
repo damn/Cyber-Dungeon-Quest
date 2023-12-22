@@ -108,7 +108,6 @@
     (when (applies-modifiers? cell)
       (apply-modifier! context entity (:modifier item))
       (when (and (= (:slot item) :weapon))
-        (println "Add skill entity : \n\n" @entity)
         (swap! entity game.entity/add-skill item)))
 
     (when (:is-player @entity)
@@ -144,7 +143,6 @@
 
 (defcomponent :items items
   (entity/create! [_ entity context]
-    (println "CREATE ITEM COMPONENT \n " @entity)
     (swap! entity assoc :inventory empty-inventory)
     ;(swap! entity dissoc :items)
     (doseq [id items]

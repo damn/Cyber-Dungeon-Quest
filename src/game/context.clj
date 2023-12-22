@@ -8,7 +8,7 @@
   (get-entity [_ id])
   (tick-entity [_ entity delta] "Calls tick/tick! on components")
   (render-entities* [_ entities*] "Draws entities* in the correct z-order and in the order of render-systems for each z-order.")
-  (remove-destroyed-entities [_] "Calls destroy/destroy! on all entities which are marked as ':destroyed?'"))
+  (remove-destroyed-entities [_] "Calls destroy! on all entities which are marked as ':destroyed?'"))
 
 (defprotocol PlayerMessage
   (show-msg-to-player! [_ message])
