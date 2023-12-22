@@ -5,17 +5,14 @@
             [game.world.grid :refer [point->entities]]))
 
 (defn- calculate-mouseover-entity [{:keys [context/player-entity
-                                           context/render-on-map-order]
+                                           context.ecs/render-on-map-order]
                                     :as context}]
   (when-let [hits (point->entities (world-grid context)
                                    (world-mouse-position context))]
     ; TODO needs z-order ? what if 'shout' element or FX ?
     (->> render-on-map-order
-         ; TODO re-use render-ingame code to-be-rendered-entities-on-map
          (sort-by-order hits #(:z-order @%))
-         ; topmost body selected first, reverse of render-order
          reverse
-         ; = same code @ which entities should get rendered...
          (filter #(line-of-sight? context @player-entity @%))
          first)))
 

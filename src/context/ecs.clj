@@ -24,7 +24,7 @@
 
 (defn- render-entity* [system
                        entity*
-                       {:keys [context/thrown-error] :as context}]
+                       {:keys [context.ecs/thrown-error] :as context}]
   (doseq [component entity*]
     (try
      (system component entity* context)
@@ -39,19 +39,25 @@
                              :y y
                              :up? true}))))))
 
+(let [cnt (atom 0)]
+  (defn- unique-number! []
+    (swap! cnt inc)))
+
 (extend-type gdl.context.Context
   game.context/EntityComponentSystem
-  (get-entity [{:keys [context/ids->entities]} id]
+  (get-entity [{:keys [context.ecs/ids->entities]} id]
     (get @ids->entities id))
 
-  (create-entity! [context components-map]
+  (create-entity! [{:keys [context.ecs/ids->entities]} components-map]
     {:pre [(not (contains? components-map :id))]}
-    (-> (assoc components-map :id nil)
-        (update-map create)
-        atom
-        (doseq-entity create! context)))
+    (let [entity (-> (assoc components-map :id (unique-number!))
+                     (update-map create)
+                     atom
+                     (doseq-entity create! context))]
+      (swap! ids->entities assoc id entity)
+      entity))
 
-  (tick-entity [{:keys [context/thrown-error] :as context}
+  (tick-entity [{:keys [context.ecs/thrown-error] :as context}
                 entity
                 delta]
     (try
@@ -62,12 +68,12 @@
        (println "Entity id: " (:id @entity))
        (reset! thrown-error t))))
 
-  (render-entities* [{:keys [context/render-on-map-order]
-                                       :as context}
-                                      entities*]
-    (doseq [[_ entities*] (sort-by-order (group-by :z-order entities*)
-                                         first
-                                         render-on-map-order)
+  (render-entities* [{:keys [context.ecs/render-on-map-order]
+                      :as context}
+                     entities*]
+    (doseq [entities* (second (sort-by-order (group-by :z-order entities*)
+                                             first
+                                             render-on-map-order))
             ; vars so I can see the function name @ error (can I do this with x.x? give multimethods names?)
             system [#'render-below
                     #'render-default
@@ -78,14 +84,13 @@
     (doseq [entity* entities*]
       (render-entity* #'render-debug entity* context)))
 
-  (remove-destroyed-entities [{:keys [context/ids->entities] :as context}]
+  (remove-destroyed-entities [{:keys [context.ecs/ids->entities] :as context}]
     (doseq [e (filter (comp :destroyed? deref) (vals @ids->entities))]
       (swap! e update-map destroy)
-      (doseq-entity e destroy! context))))
+      (doseq-entity e destroy! context)
+      (swap! ids->entities dissoc (:id @e)))))
 
-; TODO check 'internal' data structure use anywhere (id comp..)
-; maybe namespaced keyword pattern '::' ?
 (defn ->context [& {:keys [z-orders]}]
-  {:context/ids->entities (atom {})
-   :context/thrown-error (atom nil)
-   :context/render-on-map-order (define-order z-orders)})
+  {:context.ecs/ids->entities (atom {})
+   :context.ecs/thrown-error (atom nil)
+   :context.ecs/render-on-map-order (define-order z-orders)})

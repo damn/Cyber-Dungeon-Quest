@@ -4,7 +4,8 @@
   (create-entity! [_ components-map]
                   "Entities should not have :id component, will get added.
                   Calls create/create! system on the components-map
-                  Then puts it into an atom and calls entity/create! system on all components.")
+                  Then puts it into an atom and calls entity/create! system on all components.
+                  Returns the entity.")
   (get-entity [_ id])
   (tick-entity [_ entity delta] "Calls entity/tick on all components and then entity/tick!")
   (render-entities* [_ entities*] "In the correct z-order and in the order of render-systems for each z-order.")

@@ -5,9 +5,9 @@
             [app.state :refer [current-context]])
   (:import com.badlogic.gdx.scenes.scene2d.Actor))
 
-(defn- debug-infos [{:keys [context/update-entities?
+(defn- debug-infos [{:keys [context/game-paused?
                             context/player-entity
-                            context/thrown-error] :as c}]
+                            context.ecs/thrown-error] :as c}]
   (let [world-mouse (world-mouse-position c)]
     (str "FPS: " (frames-per-second c)  "\n"
          "World: "(mapv int world-mouse) "\n"
@@ -16,7 +16,7 @@
          "GUI: " (gui-mouse-position c) "\n"
          (when @thrown-error
            (str "\nERROR!\n " @thrown-error "\n\n"))
-         "update-entities? " @update-entities? "\n"
+         "game-paused? " @game-paused? "\n"
          ;"\nMouseover-Actor:\n"
          #_(when-let [actor (mouse-on-stage-actor? c)]
            (str "TRUE - name:" (.getName actor)

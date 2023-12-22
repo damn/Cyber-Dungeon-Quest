@@ -49,8 +49,6 @@
 (defn- limit-delta [delta]
   (min delta movement/max-delta))
 
-(def ^:private pausing true)
-
 (def ^:private hotkey->window
   {input.keys/i :inventory-window
    input.keys/q :skill-window ; 's' moves also ! (WASD)
@@ -98,22 +96,23 @@
                        (debug/render-after-entities context)))
   (render-gui-view context render-player-hp-mana))
 
+(def ^:private pausing true)
+
 (defn- update-game [{:keys [context/player-entity
-                            context/update-entities?
-                            context/thrown-error]
+                            context/game-paused?
+                            context.ecs/thrown-error]
                      :as context}
                     active-entities
                     delta]
   (action-bar/up-skill-hotkeys)
   (let [state (:state-obj (:entity/state @player-entity))
         _ (entity/manual-tick! state context delta)
-        pause-game? (or @thrown-error
-                        (and pausing (entity/pause-game? state)))
-        update? (reset! update-entities? (not pause-game?))
+        paused? (reset! game-paused? (or @thrown-error
+                                         (and pausing (entity/pause-game? state))))
         delta (limit-delta delta)]
     ; this do always so can get debug info even when game not running
     (update-mouseover-entity context)
-    (when update?
+    (when-not paused?
       ; sowieso keine bewegungen / kein update gemacht ? checkt nur tiles ?
       (update-potential-fields context active-entities)
       (doseq [entity active-entities]
