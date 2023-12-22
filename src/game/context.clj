@@ -25,7 +25,6 @@
   (explored?     [_ position])
   (set-explored! [_ position])
   (content-grid [_])
-  (get-active-entities [_])
   (world-grid [_]))
 
 (defprotocol EffectInterpreter

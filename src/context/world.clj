@@ -111,11 +111,6 @@
   (content-grid [{:keys [context/world-map]}]
     (:content-grid world-map))
 
-  ; TODO move to content-grid only, not main context necessary
-  (get-active-entities [context]
-    (content-grid/get-active-entities (content-grid context)
-                                      (:context/player-entity context)))
-
   (world-grid [{:keys [context/world-map]}]
     (:grid world-map)))
 
