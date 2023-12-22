@@ -32,7 +32,7 @@
   (enter [_ _ctx]
     (swap! entity assoc :item-on-cursor item))
   (exit [_ context]
-    ; at game.ui.inventory-window/clicked-cell when we put it into a inventory-cell
+    ; at context.ui.inventory-window/clicked-cell when we put it into a inventory-cell
     ; we do not want to drop it on the ground too additonally,
     ; so we dissoc it there manually. Otherwise it creates another item
     ; on the ground

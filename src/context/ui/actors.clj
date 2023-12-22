@@ -1,4 +1,4 @@
-(ns game.ui.actors
+(ns context.ui.actors
   (:require [gdl.context :refer [draw-centered-image gui-mouse-position draw-text]]
             [gdl.scene2d.ui :as ui]
             [gdl.scene2d.actor :as actor]
@@ -6,12 +6,12 @@
             [app.state :refer [current-context]]
             [game.context :refer [->player-message-actor]]
             [game.entity :as entity]
-            [game.ui.debug-window :as debug-window]
-            [game.ui.help-window :as help-window]
-            [game.ui.entity-info-window :as entity-info-window]
-            [game.ui.skill-window :as skill-window]
-            [game.ui.inventory-window :as inventory]
-            [game.ui.action-bar :as action-bar])
+            [context.ui.debug-window :as debug-window]
+            [context.ui.help-window :as help-window]
+            [context.ui.entity-info-window :as entity-info-window]
+            [context.ui.skill-window :as skill-window]
+            [context.ui.inventory-window :as inventory]
+            [context.ui.action-bar :as action-bar])
   (:import (com.badlogic.gdx.scenes.scene2d Actor Group)))
 
 (defn- draw-item-on-cursor [{:keys [context/player-entity] :as c}]

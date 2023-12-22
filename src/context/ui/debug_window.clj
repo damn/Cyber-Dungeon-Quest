@@ -1,4 +1,4 @@
-(ns game.ui.debug-window
+(ns context.ui.debug-window
   (:require [gdl.context :refer [gui-mouse-position world-mouse-position frames-per-second
                                  mouse-on-stage-actor?]]
             [gdl.scene2d.ui :as ui]

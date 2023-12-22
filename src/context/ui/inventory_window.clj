@@ -1,4 +1,4 @@
-(ns game.ui.inventory-window
+(ns context.ui.inventory-window
   (:require [clojure.string :as str]
             [data.grid2d :as grid]
             [gdl.graphics.color :as color]

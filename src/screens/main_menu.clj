@@ -9,11 +9,11 @@
             [context.ui.player-message :as player-message]
             [context.world :as world]
             [game.context :refer [rebuild-inventory-widgets]]
-            game.ui.action-bar))
+            context.ui.action-bar))
 
 (defn- init-context [context]
   (rebuild-inventory-widgets context) ; before adding entities ( player gets items )
-  (game.ui.action-bar/reset-skills!) ; empties skills -> before adding player
+  (context.ui.action-bar/reset-skills!) ; empties skills -> before adding player
 
   ; TODO z-order namespaced keywords
   (let [context (merge context

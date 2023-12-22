@@ -1,4 +1,4 @@
-(ns game.ui.config)
+(ns context.ui.config)
 
 ; TODO properties/safe-get :hpbar-height-px
 ; or properties as symbols ??

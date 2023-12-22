@@ -4,7 +4,7 @@
             [gdl.context :refer [draw-filled-rectangle pixels->world-units]]
             [data.val-max :refer [val-max-ratio]]
             [context.ecs :as entity]
-            [game.ui.config :refer (hpbar-height-px)]))
+            [context.ui.config :refer (hpbar-height-px)]))
 
 (def ^:private hpbar-colors
   {:green     [0 0.8 0]

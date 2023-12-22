@@ -10,7 +10,7 @@
             [game.faction :as faction]
             [entity.skills :as skills]
             [entity.state.wasd-movement :refer [WASD-movement-vector]]
-            [game.ui.action-bar :as action-bar]))
+            [context.ui.action-bar :as action-bar]))
 
 (defmulti on-clicked (fn [_context entity]
                        (:type (:entity/clickable @entity))))

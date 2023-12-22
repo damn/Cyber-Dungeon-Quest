@@ -1,4 +1,4 @@
-(ns game.ui.entity-info-window
+(ns context.ui.entity-info-window
   (:require [gdl.scene2d.ui :as ui]
             [app.state :refer [current-context]]
             [game.entity :as entity])

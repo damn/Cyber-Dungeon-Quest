@@ -12,9 +12,9 @@
                                   tick-entity remove-destroyed-entities update-mouseover-entity update-potential-fields]]
             [game.entity :as entity]
             [entity.movement :as movement]
-            game.ui.actors
-            [game.ui.hp-mana-bars :refer [render-player-hp-mana]]
-            [game.ui.action-bar :as action-bar]
+            context.ui.actors
+            [context.ui.hp-mana-bars :refer [render-player-hp-mana]]
+            [context.ui.action-bar :as action-bar]
             [game.render.debug :as debug]
             [game.world.content-grid :refer [active-entities]])
   (:import com.badlogic.gdx.graphics.Color
@@ -134,5 +134,5 @@
       (update-game context active-entities delta))))
 
 (defn screen [context]
-  {:actors (game.ui.actors/->ui-actors context)
+  {:actors (context.ui.actors/->ui-actors context)
    :sub-screen (screens.game/->SubScreen)})

@@ -1,4 +1,4 @@
-(ns game.ui.skill-window
+(ns context.ui.skill-window
   (:require [gdl.context :refer [->image-button]]
             [gdl.scene2d.ui :as ui]
             [app.state :refer [current-context]]

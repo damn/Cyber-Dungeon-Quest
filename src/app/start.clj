@@ -7,9 +7,9 @@
             effect.all
             entity.all
             modifier.all
-            [game.ui.inventory-window :as inventory] ; TODO move to context.ui => also game actors call context fns, the context knows how to build e.g. debug window etc.
-            (game.ui action-bar
-                     hp-mana-bars)
+            (context.ui [inventory-window :as inventory]
+                        action-bar
+                        hp-mana-bars)
             (screens game
                      main-menu
                      map-editor
@@ -27,8 +27,8 @@
   (let [context (merge context
                        (properties/->context context "resources/properties.edn")
                        (inventory/->context))]
-    (game.ui.action-bar/initialize!)
-    (game.ui.hp-mana-bars/initialize! context)
+    (context.ui.action-bar/initialize!)
+    (context.ui.hp-mana-bars/initialize! context)
     (merge context
            ; previous default-font overwritten
            {:default-font (generate-ttf context {:file "exocet/films.EXL_____.ttf"

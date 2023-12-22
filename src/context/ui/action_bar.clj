@@ -1,4 +1,4 @@
-(ns game.ui.action-bar
+(ns context.ui.action-bar
   (:require [gdl.context :refer [->image-button key-just-pressed?]]
             ;[gdl.input :as input] ; TODO
             [gdl.scene2d.ui :as ui]

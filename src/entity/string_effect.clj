@@ -2,7 +2,7 @@
   (:require [x.x :refer [defcomponent]]
             [gdl.context :refer [draw-text pixels->world-units]]
             [data.counter :as counter]
-            [game.ui.config :refer [hpbar-height-px]]
+            [context.ui.config :refer [hpbar-height-px]]
             [context.ecs :as entity]))
 
 (defcomponent :string-effect {:keys [text counter] :as this}
