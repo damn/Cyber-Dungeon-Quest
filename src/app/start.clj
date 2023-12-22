@@ -7,7 +7,7 @@
             game.modifiers.all
             game.components.require-all
             game.effects.require-all
-            [game.ui.inventory-window :as inventory] ; move to context
+            [game.ui.inventory-window :as inventory] ; TODO move to context.ui => also game actors call context fns, the context knows how to build e.g. debug window etc.
             (game.ui action-bar
                      hp-mana-bars)
             (screens game

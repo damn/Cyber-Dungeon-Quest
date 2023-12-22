@@ -31,7 +31,7 @@
         item (get-in inventory cell)
         item-on-cursor (:item-on-cursor @entity)]
     (cond
-     ; TRY PICK FROM CELL
+     ; PICKUP FROM CELL
      (and (not item-on-cursor)
           item)
      (do
@@ -41,7 +41,7 @@
 
      item-on-cursor
      (cond
-      ; PUT ITEM IN
+      ; PUT ITEM IN EMPTY CELL
       (and (not item)
            (inventory/valid-slot? cell item-on-cursor))
       (if (inventory/two-handed-weapon-and-shield-together? inventory cell item-on-cursor)
@@ -52,7 +52,7 @@
          (swap! entity dissoc :item-on-cursor)
          (send-event! context entity :dropped-item)))
 
-      ; INCREMENT ITEM
+      ; STACK ITEMS
       (and item
            (inventory/stackable? item item-on-cursor))
       (do
@@ -70,9 +70,13 @@
          (play-sound! context "sounds/bfxr_itemput.wav")
          (inventory/remove-item! context entity cell)
          (inventory/set-item! context entity cell item-on-cursor)
+         ; need to dissoc and drop otherwise state enter does not trigger picking it up again
+         (swap! entity dissoc :item-on-cursor)
+         (send-event! context entity :dropped-item)
          (send-event! context entity :pickup-item item)))))))
 
-; TODO swap item doesnt work
+; TODO swap item doesnt work => because already item in hand ... so nothing happens not entering the state
+; => move item-on-cursor code all together in the state component ns
 
 (defn- slot->background [context]
   (let [sheet (spritesheet context "items/images.png" 48 48)]

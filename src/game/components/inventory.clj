@@ -21,7 +21,7 @@
         :rings    [2 1]}
        (map (fn [[slot [width height]]]
               [slot
-               (grid/create-grid width height (constantly nil))]))
+               (grid/create-grid width height (constantly nil))])) ; simple hashmap grid?
        (into {})))
 
 (defn- cells-and-items [inventory slot]
@@ -60,7 +60,7 @@
   {:pre [(get-in inventory cell)]}
   (assoc-in inventory cell nil))
 
-; TODO make context fns
+; TODO make context fns & ! inventory protocol ! valid-cell, etc.
 
 (defn set-item! [context entity cell item]
   (swap! entity update :inventory inv-set-item cell item)
