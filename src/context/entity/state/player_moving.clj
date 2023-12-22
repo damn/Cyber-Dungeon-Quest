@@ -13,7 +13,6 @@
     (swap! entity assoc :movement-vector movement-vector))
   (exit  [_ context]
     (swap! entity dissoc :movement-vector movement-vector))
-  (tick [this delta] this)
   (tick! [_ context delta]
     (if-let [movement-vector (WASD-movement-vector context)]
       (swap! entity assoc :movement-vector movement-vector)

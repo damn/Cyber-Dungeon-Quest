@@ -4,7 +4,7 @@
             gdl.context
             [utils.core :refer [find-first]]
             [context.entity :as entity]
-            [game.context :refer [get-property set-item-image-in-widget remove-item-from-widget apply-modifier! reverse-modifier! try-pickup-item! remove-item! set-item! stack-item!]]
+            [game.context :refer [get-property set-item-image-in-widget remove-item-from-widget apply-modifier! reverse-modifier! try-pickup-item! remove-item! set-item! stack-item! add-skill! remove-skill!]]
             game.entity))
 
 (def empty-inventory
@@ -108,7 +108,7 @@
     (when (applies-modifiers? cell)
       (apply-modifier! context entity (:modifier item))
       (when (and (= (:slot item) :weapon))
-        (swap! entity game.entity/add-skill item)))
+        (add-skill! context entity item)))
 
     (when (:is-player @entity)
       (set-item-image-in-widget context cell item)))
@@ -120,7 +120,7 @@
       (when (applies-modifiers? cell)
         (reverse-modifier! context entity (:modifier item))
         (when (= (:slot item) :weapon)
-          (swap! entity game.entity/remove-skill item)))
+          (remove-skill! context entity item)))
 
       (when (:is-player @entity)
         (remove-item-from-widget context cell))))

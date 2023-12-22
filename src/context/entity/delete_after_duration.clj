@@ -1,13 +1,11 @@
 (ns context.entity.delete-after-duration
   (:require [x.x :refer [defcomponent]]
-            [data.counter :as counter]
-            [context.entity :as entity]))
+            [context.entity :as entity]
+            [game.context :refer [->counter stopped?]]))
 
 (defcomponent :delete-after-duration counter
-  (entity/create [[_ duration]]
-    (counter/create duration))
-  (entity/tick [_ delta]
-    (counter/tick counter delta))
-  (entity/tick! [_ entity _ctx delta]
-    (when (counter/stopped? counter)
+  (entity/create! [[k duration] entity context]
+    (swap! entity assoc k (->counter context duration)))
+  (entity/tick! [_ entity ctx delta]
+    (when (stopped? ctx counter)
       (swap! entity assoc :destroyed? true))))

@@ -7,7 +7,9 @@
 
 (defn- debug-infos [{:keys [context/game-paused?
                             context/player-entity
-                            context.entity/thrown-error] :as c}]
+                            context.entity/thrown-error
+                            context/elapsed-game-time
+                            ] :as c}]
   (let [world-mouse (world-mouse-position c)]
     (str "FPS: " (frames-per-second c)  "\n"
          "World: "(mapv int world-mouse) "\n"
@@ -17,6 +19,8 @@
          (when @thrown-error
            (str "\nERROR!\n " @thrown-error "\n\n"))
          "game-paused? " @game-paused? "\n"
+         "elapsed-game-time " (utils.core/readable-number
+                               (/ @elapsed-game-time 1000)) " seconds "
          ;"\nMouseover-Actor:\n"
          #_(when-let [actor (mouse-on-stage-actor? c)]
            (str "TRUE - name:" (.getName actor)

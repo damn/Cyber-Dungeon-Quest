@@ -14,7 +14,6 @@
 
 (defsystem destroy! [_ entity context]) ; only used twice position/body
 
-(defsystem tick  [_ delta]) ; only counters
 (defsystem tick! [_ entity context delta])
 
 (defsystem moved! [_ entity context direction-vector]) ; body/position
@@ -48,7 +47,7 @@
 
 ; using this because x.x/update-map with transients is destroying defrecords and
 ; turning them into normal maps.
-; check (:methods system)
+; check (keys (methods multimethod))
 ; remove 'tick' / counters then this doesnt hurt so much anymore performance wise
 (defn- update-map
   "Updates every map-entry with (apply f [k v] args)."

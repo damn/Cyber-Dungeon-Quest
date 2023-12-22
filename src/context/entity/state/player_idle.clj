@@ -2,10 +2,8 @@
   (:require [gdl.context :refer [play-sound! world-mouse-position mouse-on-stage-actor? button-just-pressed?]]
             [gdl.input.buttons :as buttons]
             [gdl.math.vector :as v]
-            [data.counter :as counter]
-            [game.context :refer [show-msg-to-player! send-event! get-property inventory-window-visible? try-pickup-item!]]
+            [game.context :refer [show-msg-to-player! send-event! get-property inventory-window-visible? try-pickup-item! skill-usable-state]]
             [context.entity.state :as state]
-            [context.entity.skills :as skills]
             [context.entity.state.wasd-movement :refer [WASD-movement-vector]]
             [context.ui.action-bar :as action-bar]))
 
@@ -72,7 +70,7 @@
          (if-let [skill-id @action-bar/selected-skill-id]
            (let [effect-context (effect-context context entity)
                  skill (get-property context skill-id)
-                 state (skills/usable-state (merge context effect-context) @entity skill)]
+                 state (skill-usable-state (merge context effect-context) @entity skill)]
              (if (= state :usable)
                (send-event! context entity :start-action [skill effect-context])
                (denied context (str "Skill usable state not usable: " state))))
@@ -81,7 +79,6 @@
   state/State
   (enter [_ context])
   (exit  [_ context])
-  (tick [this delta] this)
   (tick! [_ _context _delta])
   (render-below [_ c entity*])
   (render-above [_ c entity*])

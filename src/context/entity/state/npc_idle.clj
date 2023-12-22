@@ -1,9 +1,7 @@
 (ns context.entity.state.npc-idle
   (:require [gdl.math.vector :as v]
-            [data.counter :as counter]
-            [game.context :refer [effect-useful? world-grid potential-field-follow-to-enemy send-event!]]
+            [game.context :refer [effect-useful? world-grid potential-field-follow-to-enemy send-event! skill-usable-state]]
             [context.entity.state :as state]
-            [context.entity.skills :as skills]
             [game.world.cell :as cell]))
 
 (defn- effect-context [context entity]
@@ -23,7 +21,7 @@
        (sort-by #(or (:cost %) 0))
        reverse
        (filter #(and (= :usable
-                        (skills/usable-state effect-context entity* %))
+                        (skill-usable-state effect-context entity* %))
                      (effect-useful? effect-context (:effect %))))
        first))
 
@@ -33,8 +31,6 @@
 
   (exit  [_ context]
     (swap! entity assoc :movement-vector nil))
-
-  (tick [this delta] this)
 
   (tick! [_ context delta]
     (swap! entity assoc :movement-vector (potential-field-follow-to-enemy context entity))

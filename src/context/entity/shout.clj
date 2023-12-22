@@ -1,8 +1,7 @@
 (ns context.entity.shout
   (:require [x.x :refer [defcomponent]]
-            [data.counter :as counter]
             [context.entity :as entity]
-            [game.context :refer [world-grid line-of-sight? send-event!]]
+            [game.context :refer [world-grid line-of-sight? stopped? send-event!]]
             [game.world.grid :refer [circle->entities]]))
 
 (def ^:private shout-range 6)
@@ -17,10 +16,8 @@
                      (line-of-sight? context entity* @%)))))
 
 (defcomponent :shout counter
-  (entity/tick [_ delta]
-    (counter/tick counter delta))
   (entity/tick! [_ entity context delta]
-    (when (counter/stopped? counter)
+    (when (stopped? context counter)
       (swap! entity assoc :destroyed? true)
       (doseq [entity (get-friendly-entities-in-line-of-sight context @entity shout-range)]
         (send-event! context entity :alert)))))

@@ -11,4 +11,5 @@
             context.entity.mouseover
             context.entity.position
             context.entity.shout
+            context.entity.skills
             context.entity.state))

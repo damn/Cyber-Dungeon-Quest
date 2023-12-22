@@ -1,8 +1,7 @@
 (ns context.entity.state.npc-sleeping
   (:require [gdl.context :refer [draw-text draw-circle]]
             [gdl.graphics.color :as color]
-            [data.counter :as counter]
-            [game.context :refer [world-grid create-entity! send-event!]]
+            [game.context :refer [world-grid create-entity! send-event! ->counter]]
             [context.entity.state :as state]
             [context.entity.string-effect :as string-effect]
             [game.world.cell :as cell]))
@@ -21,9 +20,7 @@
     (create-entity! context
                     {:position (:position @entity)
                      :faction (:faction  @entity)
-                     :shout (counter/create 200)}))
-
-  (tick [this delta] this)
+                     :shout (->counter context 200)}))
 
   (tick! [_ context delta]
     (let [cell (get (world-grid context)

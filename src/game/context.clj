@@ -79,3 +79,17 @@
   (remove-item!     [_ entity cell])
   (stack-item!      [_ entity cell item])
   (try-pickup-item! [_ entity item]))
+
+(defprotocol Counter
+  (->counter [_ duration])
+  (stopped?       [_ counter])
+  (reset          [_ counter])
+  (finished-ratio [_ counter])
+  (update-elapsed-game-time [_ delta]))
+
+(defprotocol Skills
+  (add-skill!             [_ entity skill])
+  (remove-skill!          [_ entity skill])
+  (set-skill-to-cooldown! [_ entity skill])
+  (pay-skill-mana-cost!   [_ entity skill])
+  (skill-usable-state [effect-context entity* skill]))

@@ -1,52 +1,60 @@
 (ns context.entity.skills
   (:require [x.x :refer [defcomponent]]
-            [data.counter :as counter]
             [utils.core :refer [mapvals]]
             [context.entity :as entity]
-            [game.context :refer [get-property valid-params?]]
+            [game.context :refer [get-property valid-params? ->counter stopped?]]
             game.entity))
 
-(defn- update-cooldown [skill delta]
+(defn- update-cooldown [context skill delta]
   (if (:cooling-down? skill)
     (update skill :cooling-down?
-            #(let [counter (counter/tick % delta)]
-               (if (counter/stopped? counter)
-                 false
-                 counter)))
+            (fn [counter]
+              (if (stopped? context counter)
+                false
+                counter)))
     skill))
 
 (defcomponent :skills skills
-  (entity/create! [_ entity context]
-    (swap! entity update :skills
-           #(zipmap %
-                    (map (fn [skill-id] (get-property context skill-id))
-                         %))))
-  (entity/tick [_ delta]
-    (mapvals #(update-cooldown % delta) skills)))
+  (entity/create! [[k skill-ids] entity context]
+    (swap! entity assoc k (zipmap skill-ids
+                                  (map #(get-property context %)
+                                       skill-ids))))
+
+  (entity/tick! [_ context delta]
+    (mapvals #(update-cooldown context % delta) skills)))
 
 (extend-type context.entity.Entity
   game.entity/Skills
   (has-skill? [{:keys [skills]} {:keys [id]}]
-    (contains? skills id))
+    (contains? skills id)))
 
-  (add-skill [entity* {:keys [id] :as skill}]
-    (assert (not (game.entity/has-skill? entity* skill)))
-    (update entity* :skills assoc id skill))
+(extend-type gdl.context.Context
+  game.context/Skills
+  (add-skill! [_ entity {:keys [id] :as skill}]
+    (assert (not (game.entity/has-skill? @entity skill)))
+    (swap! entity update :skills assoc id skill))
 
-  (remove-skill [entity* {:keys [id] :as skill}]
-    (assert (game.entity/has-skill? entity* skill))
-    (update entity* :skills dissoc id))
+  (remove-skill! [_ entity {:keys [id] :as skill}]
+    (assert (game.entity/has-skill? @entity skill))
+    (swap! entity update :skills dissoc id))
 
-  (set-skill-to-cooldown [entity* {:keys [id cooldown] :as skill}]
-    (if cooldown
-      (assoc-in entity* [:skills id :cooling-down?] (counter/create cooldown))
-      entity*)))
+  (set-skill-to-cooldown! [context entity {:keys [id cooldown] :as skill}]
+    (when cooldown
+      (swap! entity assoc-in [:skills id :cooling-down?] (->counter context cooldown))))
 
-(defn usable-state [effect-context
-                    {:keys [mana]}
-                    {:keys [cost cooling-down? effect]}]
-  (cond
-   cooling-down?                               :cooldown
-   (and cost (> cost (mana 0)))                :not-enough-mana
-   (not (valid-params? effect-context effect)) :invalid-params
-   :else                                       :usable))
+  (skill-usable-state [effect-context
+                       {:keys [mana]}
+                       {:keys [cost cooling-down? effect]}]
+    (cond
+     cooling-down?                               :cooldown
+     (and cost (> cost (mana 0)))                :not-enough-mana
+     (not (valid-params? effect-context effect)) :invalid-params
+     :else                                       :usable))
+
+  (pay-skill-mana-cost! [_ entity skill]
+    (swap! entity (fn [entity*]
+                    (if (:cost skill)
+                      (update entity* :mana apply-val #(- % (:cost skill)))
+                      entity*)))))
+
+

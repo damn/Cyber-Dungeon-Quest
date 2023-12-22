@@ -40,7 +40,6 @@
       (put-item-on-ground context)
       (swap! entity dissoc :item-on-cursor)))
 
-  (tick [this delta] this)
   (tick! [_ _ctx _delta])
   (render-below [_ c entity*])
   (render-above [_ c entity*])

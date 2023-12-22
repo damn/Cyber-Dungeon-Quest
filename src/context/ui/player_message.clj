@@ -1,6 +1,5 @@
 (ns context.ui.player-message
   (:require [gdl.context :refer [draw-text]]
-            [data.counter :as counter]
             [app.state :refer [current-context]]
             game.context)
   (:import com.badlogic.gdx.scenes.scene2d.Actor))
@@ -10,16 +9,15 @@
            gui-viewport-width
            gui-viewport-height] :as context}]
   (when-let [{:keys [message]} @player-message]
-    (draw-text (update context :unit-scale * 2.5)
+    (draw-text (update context :unit-scale * 2.5) ; TODO add text scale & (background ?)
                {:x (/ gui-viewport-width  2)
                 :y (+ (/ gui-viewport-height 2) 200)
                 :text message})))
 
 (defn- update-check-counter
-  [{:keys [context/player-message]} delta]
+  [{:keys [context/player-message] :as context}]
   (when-let [{:keys [counter]} @player-message]
-    (swap! player-message update :counter counter/tick delta)
-    (when (counter/stopped? counter)
+    (when (stopped? context counter)
       (reset! player-message nil))))
 
 ; TODO player message triggers on enter game screen already => invalid skill params
@@ -28,17 +26,17 @@
 
 (extend-type gdl.context.Context
   game.context/PlayerMessage
-  (show-msg-to-player! [{:keys [context/player-message]}
+  (show-msg-to-player! [{:keys [context/player-message] :as counter}
                         message]
     (reset! player-message {:message message
-                            :counter (counter/create 3)})) ; stage gets updated in seconds
+                            :counter (->counter context 3)})) ; stage gets updated in seconds
 
   (->player-message-actor [_]
     (proxy [Actor] []
       (draw [_batch _parent-alpha]
         (draw-player-message @current-context))
       (act [delta]
-        (update-check-counter @current-context delta)))))
+        (update-check-counter @current-context)))))
 
 (defn ->context []
   {:context/player-message (atom nil)})

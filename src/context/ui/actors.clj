@@ -2,7 +2,6 @@
   (:require [gdl.context :refer [draw-centered-image gui-mouse-position draw-text]]
             [gdl.scene2d.ui :as ui]
             [gdl.scene2d.actor :as actor]
-            [data.counter :as counter]
             [app.state :refer [current-context]]
             [game.context :refer [->player-message-actor]]
             [game.entity :as entity]

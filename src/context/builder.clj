@@ -58,6 +58,8 @@
     :dropped-item -> :idle]
    [:dead]])
 
+; TODO context param -> state-obj-constructors can be game-context-dependent.
+
 (def ^:private npc-state-constructors
   {:sleeping     npc-sleeping/->NpcSleeping
    :idle         npc-idle/->NpcIdle

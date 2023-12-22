@@ -116,6 +116,7 @@
     ; this do always so can get debug info even when game not running
     (update-mouseover-entity context)
     (when-not paused?
+      (update-elapsed-game-time context delta)
       ; sowieso keine bewegungen / kein update gemacht ? checkt nur tiles ?
       (update-potential-fields context active-entities)
       (doseq [entity active-entities]

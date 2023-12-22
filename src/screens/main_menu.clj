@@ -4,6 +4,7 @@
             gdl.screen
             [gdl.scene2d.ui :as ui]
             [app.state :refer [current-context change-screen!]]
+            context.counter
             context.entity
             context.mouseover-entity
             [context.ui.player-message :as player-message]
@@ -23,6 +24,7 @@
                                                             :effect])  ; projectiles, nova
                        (context.mouseover-entity/->context)
                        (player-message/->context)
+                       (context.counter/->context)
                        {:context/game-paused? (atom true)})]
     (world/merge->context context)))
 

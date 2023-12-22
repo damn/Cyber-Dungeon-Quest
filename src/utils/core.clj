@@ -37,7 +37,7 @@
     (assert (distinct-seq? ks) (str "not distinct keys: " (apply str (interpose "," ks)))))
   (apply merge maps))
 
-(defn mapvals [f m]; in core !
+(defn mapvals [f m]
   (into {} (for [[k v] m]
              [k (f v)])))
 

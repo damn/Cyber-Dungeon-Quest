@@ -13,7 +13,6 @@
     (play-sound! context "sounds/bfxr_playerdeath.wav")
     (show-msg-to-player! context "YOU DIED!. Press X to leave."))
   (exit [_ _ctx])
-  (tick [this delta] this)
   (tick! [_ _ctx delta])
   (render-below [_ c entity*])
   (render-above [_ c entity*])
