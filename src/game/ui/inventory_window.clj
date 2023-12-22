@@ -6,6 +6,7 @@
                                  play-sound! gui-mouse-position]]
             [gdl.scene2d.ui :as ui]
             [app.state :refer [current-context]]
+            [game.entity :as entity]
             [game.context :refer [show-msg-to-player! send-event!]]
             [game.modifier :as modifier]
             [game.components.inventory :as inventory])
@@ -111,8 +112,7 @@
 (defn- draw-cell-rect [c player-entity x y mouseover? cell]
   (draw-rectangle c x y cell-size cell-size color/gray)
   (when (and mouseover?
-             (= :item-on-cursor
-                (:state (:fsm (:components/state @player-entity)))))
+             (= :item-on-cursor (entity/get-state @player-entity)))
     (let [item (:item-on-cursor @player-entity)
           color (cond
                  (not (inventory/valid-slot? cell item))

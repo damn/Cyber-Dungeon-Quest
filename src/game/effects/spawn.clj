@@ -2,7 +2,8 @@
   (:require [context.effect-interpreter :as effect]
             [game.context :refer [creature-entity]]))
 
-; TODO spawning on player both without error ?!
+; TODO spawning on player both without error ?! => not valid position checked
+; also what if someone moves on the target posi ? find nearby valid cell ?
 
 ; BLOCKING PLAYER MOVEMENT !
 ; check not blocked position // line of sight.

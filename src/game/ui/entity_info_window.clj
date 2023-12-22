@@ -1,6 +1,7 @@
 (ns game.ui.entity-info-window
   (:require [gdl.scene2d.ui :as ui]
-            [app.state :refer [current-context]])
+            [app.state :refer [current-context]]
+            [game.entity :as entity])
   (:import com.badlogic.gdx.scenes.scene2d.Actor))
 
 (defn- entity-info-text [entity*]
@@ -8,8 +9,7 @@
     (with-out-str
      (clojure.pprint/pprint
       {:id (:id entity*)
-       ; TODO entity/state accessors -> private -> protocol fn make on entity* ?
-       :state (:state (:fsm (:entity/state entity*)))}))))
+       :state (entity/get-state entity*)}))))
 
 (defn create []
   (let [window (ui/window :title "Info"

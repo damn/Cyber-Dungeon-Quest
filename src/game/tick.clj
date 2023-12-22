@@ -59,7 +59,7 @@
     (change-screen! :screens/minimap))
 
   (when (and (key-just-pressed? context input.keys/x)
-             (= :dead (:state (:fsm (:entity/state @player-entity)))))
+             (= :dead (entity/get-state @player-entity)))
     (change-screen! :screens/main-menu)))
 
 (defn tick-game [{:keys [context/player-entity

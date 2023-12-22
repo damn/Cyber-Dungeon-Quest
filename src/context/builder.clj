@@ -73,6 +73,17 @@
    :stunned        stunned/->CreateWithCounter
    :dead           player-dead/->State})
 
+(defn- ->state [& {:keys [is-player initial-state]}]
+  {:initial-state (if is-player
+                    :idle
+                    initial-state)
+   :fsm (if is-player
+          player-fsm
+          npc-fsm)
+   :state-obj-constructors (if is-player
+                             player-state-constructors
+                             npc-state-constructors)})
+
 (defn- create-images [context creature-name]
   (map #(create-image context
                       (str "creatures/animations/" creature-name "-" % ".png"))
@@ -130,21 +141,12 @@
             :mana 11
             :is-flying false
             :animation (animation/create images :frame-duration 250 :looping? true)
-            :entity/state {:initial-state (if is-player
-                                            :idle
-                                            initial-state)
-                           :fsm (if is-player
-                                  player-fsm
-                                  npc-fsm)
-                           :state-obj-constructors (if is-player
-                                                     player-state-constructors
-                                                     npc-state-constructors)}
+            :entity/state (->state :is-player is-player
+                                   :initial-state initial-state)
             :z-order (if (:is-flying creature-props)
                        :flying
                        :ground)}
            extra-params)))
-
-
 
 (extend-type gdl.context.Context
   game.context/Builder

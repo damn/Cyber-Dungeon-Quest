@@ -5,6 +5,7 @@
             [data.counter :as counter]
             [app.state :refer [current-context]]
             [game.context :refer [->player-message-actor]]
+            [game.entity :as entity]
             [game.ui.debug-window :as debug-window]
             [game.ui.help-window :as help-window]
             [game.ui.entity-info-window :as entity-info-window]
@@ -15,8 +16,7 @@
 
 (defn- draw-item-on-cursor [{:keys [context/player-entity] :as c}]
   (let [{:keys [context/player-entity] :as context} @current-context]
-    (when (= :item-on-cursor
-             (:state (:fsm (:entity/state @player-entity))))
+    (when (= :item-on-cursor (entity/get-state @player-entity))
       (draw-centered-image context
                            (:image (:item-on-cursor @player-entity))
                            (gui-mouse-position context)))))
