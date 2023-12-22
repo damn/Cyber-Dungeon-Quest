@@ -5,7 +5,7 @@
             [game.world.grid :refer [point->entities]]))
 
 (defn- calculate-mouseover-entity [{:keys [context/player-entity
-                                           context.ecs/render-on-map-order]
+                                           context.entity/render-on-map-order]
                                     :as context}]
   (when-let [hits (point->entities (world-grid context)
                                    (world-mouse-position context))]

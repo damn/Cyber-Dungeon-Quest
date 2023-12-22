@@ -1,7 +1,7 @@
 (ns context.entity.animation
   (:require [x.x :refer [defcomponent]]
             [gdl.graphics.animation :as animation]
-            [context.ecs :as entity]))
+            [context.entity :as entity]))
 
 (defn- assoc-frame! [e]
   (swap! e #(assoc % :image (animation/current-frame (:animation %)))))

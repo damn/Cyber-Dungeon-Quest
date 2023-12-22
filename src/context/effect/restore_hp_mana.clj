@@ -1,7 +1,7 @@
 (ns context.effect.restore-hp-mana
   (:require [gdl.context :refer [play-sound!]]
             [data.val-max :refer [lower-than-max? set-to-max]]
-            [context.effect-interpreter :as effect]))
+            [context.effect :as effect]))
 
 ; TODO make with 'target' then can use as hit-effect too !
 ; ==> choose self or allies (or enemies)

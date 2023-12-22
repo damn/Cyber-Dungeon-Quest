@@ -2,7 +2,7 @@
   (:require [data.val-max :refer [apply-val apply-val-max-modifiers]]
             [utils.random :as random]
             [game.context :refer [audiovisual send-event!]]
-            [context.effect-interpreter :as effect]
+            [context.effect :as effect]
             [context.entity.modifiers :refer [effect-source-modifiers effect-target-modifiers]]
             [context.entity.string-effect :as string-effect]))
 

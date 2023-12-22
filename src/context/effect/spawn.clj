@@ -1,5 +1,5 @@
 (ns context.effect.spawn
-  (:require [context.effect-interpreter :as effect]
+  (:require [context.effect :as effect]
             [game.context :refer [creature-entity]]))
 
 ; TODO spawning on player both without error ?! => not valid position checked

@@ -1,4 +1,4 @@
-(ns context.effect-interpreter
+(ns context.effect
   (:require [clojure.string :as str]
             gdl.context
             game.context))

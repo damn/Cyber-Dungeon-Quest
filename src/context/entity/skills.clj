@@ -2,7 +2,7 @@
   (:require [x.x :refer [defcomponent]]
             [data.counter :as counter]
             [utils.core :refer [mapvals]]
-            [context.ecs :as entity]
+            [context.entity :as entity]
             [game.context :refer [get-property valid-params?]]))
 
 (defn- update-cooldown [skill delta]

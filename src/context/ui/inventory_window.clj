@@ -8,7 +8,7 @@
             [app.state :refer [current-context]]
             [game.entity :as entity]
             [game.context :refer [show-msg-to-player! send-event!]]
-            [game.modifier :as modifier]
+            [context.modifier :as modifier]
             [context.entity.inventory :as inventory])
   (:import com.badlogic.gdx.graphics.Color
            (com.badlogic.gdx.scenes.scene2d Actor Group)

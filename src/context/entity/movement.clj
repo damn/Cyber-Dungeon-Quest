@@ -3,7 +3,7 @@
             [gdl.math.geom :as geom]
             [gdl.math.vector :as v]
             [utils.core :refer [find-first]]
-            [context.ecs :as entity]
+            [context.entity :as entity]
             [game.context :refer [do-effect! audiovisual world-grid]]
             [context.entity.body :as body]
             [game.world.grid :refer [rectangle->cells valid-position?]]

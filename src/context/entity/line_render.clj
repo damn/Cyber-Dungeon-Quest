@@ -1,7 +1,7 @@
 (ns context.entity.line-render
   (:require [x.x :refer [defcomponent]]
             [gdl.context :refer [with-shape-line-width draw-line]]
-            [context.ecs :as entity]))
+            [context.entity :as entity]))
 
 (defcomponent :line-render {:keys [thick? end color]}
   (entity/render-default [_ {:keys [position]} c]

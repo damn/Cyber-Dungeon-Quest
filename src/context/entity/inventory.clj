@@ -2,9 +2,9 @@
   (:require [data.grid2d :as grid]
             [x.x :refer [defcomponent]]
             [utils.core :refer [find-first]]
-            [context.ecs :as entity]
+            [context.entity :as entity]
             [game.context :refer [get-property set-item-image-in-widget remove-item-from-widget]]
-            [game.modifier :as modifier]
+            [context.modifier :as modifier]
             [context.entity.skills :as skills]))
 
 (def empty-inventory

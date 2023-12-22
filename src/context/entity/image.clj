@@ -1,7 +1,7 @@
 (ns context.entity.image
   (:require [x.x :refer [defcomponent]]
             [gdl.context :refer [draw-rotated-centered-image]]
-            [context.ecs :as entity]))
+            [context.entity :as entity]))
 
 (defcomponent :image image
   (entity/render-default [_ {:keys [position body]} c]

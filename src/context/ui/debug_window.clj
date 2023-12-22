@@ -7,7 +7,7 @@
 
 (defn- debug-infos [{:keys [context/game-paused?
                             context/player-entity
-                            context.ecs/thrown-error] :as c}]
+                            context.entity/thrown-error] :as c}]
   (let [world-mouse (world-mouse-position c)]
     (str "FPS: " (frames-per-second c)  "\n"
          "World: "(mapv int world-mouse) "\n"

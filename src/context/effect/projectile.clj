@@ -4,7 +4,7 @@
             [gdl.graphics.animation :as animation]
             [gdl.context :refer [get-sprite spritesheet]]
             [game.context :refer [effect-text projectile-entity path-blocked?]]
-            [context.effect-interpreter :as effect]))
+            [context.effect :as effect]))
 
 ; -> range needs to be smaller than potential field range
 ; -> first range check then ray ! otherwise somewhere in contentfield out of sight

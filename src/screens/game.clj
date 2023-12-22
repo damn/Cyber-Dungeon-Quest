@@ -102,7 +102,7 @@
 
 (defn- update-game [{:keys [context/player-entity
                             context/game-paused?
-                            context.ecs/thrown-error]
+                            context.entity/thrown-error]
                      :as context}
                     active-entities
                     delta]

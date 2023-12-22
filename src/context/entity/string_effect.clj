@@ -3,7 +3,7 @@
             [gdl.context :refer [draw-text pixels->world-units]]
             [data.counter :as counter]
             [context.ui.config :refer [hpbar-height-px]]
-            [context.ecs :as entity]))
+            [context.entity :as entity]))
 
 (defcomponent :string-effect {:keys [text counter] :as this}
   (entity/tick [_ delta]

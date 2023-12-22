@@ -3,7 +3,7 @@
             [x.x :refer [defcomponent]]
             gdl.context
             game.context
-            [context.ecs :as ecs]
+            [context.entity :as ecs]
             [game.entity :as entity]))
 
 (defcomponent :entity/state {:keys [initial-state

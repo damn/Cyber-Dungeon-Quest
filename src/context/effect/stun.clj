@@ -1,7 +1,7 @@
 (ns context.effect.stun
   (:require [utils.core :refer [readable-number]]
             [game.context :refer [send-event!]]
-            [context.effect-interpreter :as effect]))
+            [context.effect :as effect]))
 
 (defmethod effect/text :effect/stun
   [_context [_ duration]]

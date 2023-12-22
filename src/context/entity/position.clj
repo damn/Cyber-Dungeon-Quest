@@ -1,6 +1,6 @@
 (ns context.entity.position
   (:require [x.x :refer [defcomponent]]
-            [context.ecs :as entity]
+            [context.entity :as entity]
             [game.context :refer [content-grid]]
             [game.world.content-grid :refer [update-entity! remove-entity!]]))
 

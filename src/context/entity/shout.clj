@@ -1,7 +1,7 @@
 (ns context.entity.shout
   (:require [x.x :refer [defcomponent]]
             [data.counter :as counter]
-            [context.ecs :as entity]
+            [context.entity :as entity]
             [game.context :refer [world-grid line-of-sight? send-event!]]
             [game.world.grid :refer [circle->entities]]))
 

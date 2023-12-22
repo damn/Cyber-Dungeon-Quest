@@ -3,7 +3,7 @@
             [gdl.graphics.color :as color]
             [gdl.context :refer [draw-filled-rectangle pixels->world-units]]
             [data.val-max :refer [val-max-ratio]]
-            [context.ecs :as entity]
+            [context.entity :as entity]
             [context.ui.config :refer (hpbar-height-px)]))
 
 (def ^:private hpbar-colors

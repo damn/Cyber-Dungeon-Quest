@@ -4,7 +4,7 @@
             gdl.screen
             [gdl.scene2d.ui :as ui]
             [app.state :refer [current-context change-screen!]]
-            context.ecs
+            context.entity
             context.mouseover-entity
             [context.ui.player-message :as player-message]
             [context.world :as world]
@@ -17,10 +17,10 @@
 
   ; TODO z-order namespaced keywords
   (let [context (merge context
-                       (context.ecs/->context :z-orders [:on-ground ; items
-                                                         :ground    ; creatures, player
-                                                         :flying    ; flying creatures
-                                                         :effect])  ; projectiles, nova
+                       (context.entity/->context :z-orders [:on-ground ; items
+                                                            :ground    ; creatures, player
+                                                            :flying    ; flying creatures
+                                                            :effect])  ; projectiles, nova
                        (context.mouseover-entity/->context)
                        (player-message/->context)
                        {:context/game-paused? (atom true)})]

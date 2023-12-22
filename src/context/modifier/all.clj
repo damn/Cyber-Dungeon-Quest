@@ -1,7 +1,7 @@
 (ns context.modifier.all
   (:require [utils.core :refer [readable-number]]
             [data.val-max :refer [apply-max]]
-            [game.modifier :as modifier]))
+            [context.modifier :as modifier]))
 
 ; TODO dissoc again if value == default value -> into modifier logic, e.g. modifiers blocks 0 , just dissoc then ?
 ; TODO fix max-hp like max-mana

@@ -3,7 +3,7 @@
             [gdl.context :refer [draw-rectangle]]
             [gdl.graphics.color :as color]
             [gdl.math.vector :as v]
-            [context.ecs :as entity]
+            [context.entity :as entity]
             [game.context :refer [world-grid]]
             [game.world.grid :refer [add-entity! remove-entity! entity-position-changed!]]))
 

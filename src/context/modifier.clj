@@ -1,5 +1,5 @@
 ; TODO schema - parse valid modifiers @ read properties !
-(ns game.modifier)
+(ns context.modifier)
 
 (def modifier-definitions {})
 

@@ -1,7 +1,7 @@
 (ns context.entity.delete-after-duration
   (:require [x.x :refer [defcomponent]]
             [data.counter :as counter]
-            [context.ecs :as entity]))
+            [context.entity :as entity]))
 
 (defcomponent :delete-after-duration counter
   (entity/create [[_ duration]]
