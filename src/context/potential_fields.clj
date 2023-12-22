@@ -9,7 +9,7 @@
             gdl.context
             [gdl.math.vector :as v]
             [utils.core :refer :all]
-            [game.context :refer (get-active-entities world-grid)]
+            [game.context :refer (world-grid)]
             [game.faction :as faction]
             [game.world.grid :refer [cached-adjacent-cells rectangle->cells]]
             [game.world.cell :as cell]))
@@ -115,7 +115,7 @@
     (zipmap (map #(->tile (:position @%)) entities)
             entities)))
 
-(def ^:private cache (atom nil))
+(def ^:private cache (atom nil)) ; TODO move to context?
 
 (defn- update-faction-potential-field [grid faction entities]
   (let [tiles->entities (tiles->entities entities faction)
@@ -130,9 +130,8 @@
                                           faction
                                           tiles->entities)))))
 
-(defn- update-potential-fields* [context]
-  (let [entities (get-active-entities context) ; TODO move out, pass only entities
-        grid (world-grid context)]
+(defn- update-potential-fields* [context entities] ; TODO call on world-grid ?!..
+  (let [grid (world-grid context)]
     (doseq [faction [:good :evil]] ; TODO :faction/foo
       (update-faction-potential-field grid faction entities))))
 
@@ -222,8 +221,8 @@
 
 (extend-type gdl.context.Context ; TODO only on grid this ?!
   game.context/PotentialField
-  (update-potential-fields [context]
-    (update-potential-fields* context))
+  (update-potential-fields [context entities]
+    (update-potential-fields* context entities))
 
   ; TODO work with entity* !? occupied-by-other? works with entity not entity* ... not with ids ... hmmm
   (potential-field-follow-to-enemy [context entity] ; TODO pass faction here, one less dependency.

@@ -3,6 +3,7 @@
                                  world-mouse-position]]
             [gdl.graphics.color :as color]
             [gdl.graphics.camera :as camera]
+            gdl.math.geom
             [game.context :refer [world-grid]]
             [game.world.grid :refer [circle->cells]]))
 

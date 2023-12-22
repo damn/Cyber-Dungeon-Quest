@@ -1,22 +1,14 @@
 (ns game.context)
 
 (defprotocol EntityComponentSystem
-  (get-entity [_ id])
-  ; TODO remove !
-  (entity-exists? [_ entity])
   (create-entity! [_ components-map]
                   "Entities should not have :id component, will get added.
-                  Calls entity/create system on the components-map
+                  Calls create/create! system on the components-map
                   Then puts it into an atom and calls entity/create! system on all components.")
-
-  ; TODO pass entities, just tick!
-  (tick-active-entities [_ delta])
-  ; TODO pass entities & check visible before, just render !
-  (render-visible-entities [_])
-
-  ; TODO after tick do
-  (destroy-to-be-removed-entities! [_]
-                                   "Calls entity/destroy and entity/destroy! on all entities which are marked as ':destroyed?'"))
+  (get-entity [_ id])
+  (tick-entity [_ entity delta] "Calls entity/tick on all components and then entity/tick!")
+  (render-entities* [_ entities*] "In the correct z-order and in the order of render-systems for each z-order.")
+  (remove-destroyed-entities [_] "Calls entity/destroy and entity/destroy! on all entities which are marked as ':destroyed?'"))
 
 (defprotocol PlayerMessage
   (show-msg-to-player! [_ message])
@@ -60,7 +52,7 @@
 
 ; TODO get from world?
 (defprotocol PotentialField
-  (update-potential-fields [_])
+  (update-potential-fields [_ entities])
   (potential-field-follow-to-enemy [_ entity]))
 
 (defprotocol FiniteStateMachine

@@ -3,7 +3,7 @@
             [x.x :refer [defsystem update-map doseq-entity]]
             [gdl.context :refer [draw-text]]
             [utils.core :refer [define-order sort-by-order]]
-            [game.context :refer [get-entity entity-exists? get-active-entities line-of-sight?]]))
+            [game.context :refer [get-entity]]))
 
 (defsystem create [_])
 (defsystem create! [_ entity context])
@@ -39,40 +39,10 @@
                              :y y
                              :up? true}))))))
 
-(defn- render-entities* [{:keys [context/render-on-map-order]
-                          :as context}
-                         entities*]
-  (doseq [[_ entities*] (sort-by-order (group-by :z-order entities*)
-                                       first
-                                       render-on-map-order)
-          ; vars so I can see the function name @ error (can I do this with x.x? give multimethods names?)
-          system [#'render-below
-                  #'render-default
-                  #'render-above
-                  #'render-info]
-          entity* entities*]
-    (render-entity* system entity* context))
-  (doseq [entity* entities*]
-    (render-entity* #'render-debug entity* context)))
-
-; TODO getting 3 times active entities: render, tick, potential-field =>
-; just 1 app/game render fn and calculate once ? & delta in context ?
-(defn- visible-entities* [{:keys [context/player-entity] :as context}]
-  (->> (get-active-entities context)
-       (map deref)
-       (filter #(line-of-sight? context @player-entity %))))
-
-(defn- tick-entity! [context entity delta]
-  (swap! entity update-map tick delta)
-  (doseq-entity entity tick! context delta))
-
 (extend-type gdl.context.Context
   game.context/EntityComponentSystem
   (get-entity [{:keys [context/ids->entities]} id]
     (get @ids->entities id))
-
-  (entity-exists? [context e]
-    (get-entity context (:id @e)))
 
   (create-entity! [context components-map]
     {:pre [(not (contains? components-map :id))]}
@@ -81,37 +51,41 @@
         atom
         (doseq-entity create! context)))
 
-  (tick-active-entities
-    [{:keys [context/thrown-error] :as context} delta]
-    (doseq [entity (get-active-entities context)]
-      (try
-       (tick-entity! context entity delta)
-       (catch Throwable t
-         (p/pretty-pst t)
-         (println "Entity id: " (:id @entity))
-         (reset! thrown-error t)))))
+  (tick-entity [{:keys [context/thrown-error] :as context}
+                entity
+                delta]
+    (try
+     (swap! entity update-map tick delta)
+     (doseq-entity entity tick! context delta)
+     (catch Throwable t
+       (p/pretty-pst t)
+       (println "Entity id: " (:id @entity))
+       (reset! thrown-error t))))
 
-  (render-visible-entities [c]
-    (render-entities* c (visible-entities* c)))
+  (render-entities* [{:keys [context/render-on-map-order]
+                                       :as context}
+                                      entities*]
+    (doseq [[_ entities*] (sort-by-order (group-by :z-order entities*)
+                                         first
+                                         render-on-map-order)
+            ; vars so I can see the function name @ error (can I do this with x.x? give multimethods names?)
+            system [#'render-below
+                    #'render-default
+                    #'render-above
+                    #'render-info]
+            entity* entities*]
+      (render-entity* system entity* context))
+    (doseq [entity* entities*]
+      (render-entity* #'render-debug entity* context)))
 
-  (destroy-to-be-removed-entities!
-    [{:keys [context/ids->entities] :as context}]
-    (doseq [e (filter (comp :destroyed? deref) (vals @ids->entities))
-            :when (entity-exists? context e)] ; TODO why is this ?, maybe assert ?
+  (remove-destroyed-entities [{:keys [context/ids->entities] :as context}]
+    (doseq [e (filter (comp :destroyed? deref) (vals @ids->entities))]
       (swap! e update-map destroy)
       (doseq-entity e destroy! context))))
 
-; TODO use only locally?
-; with higher up context/ecs key or something like that
-; then I can call function on ecs, but it requires also context ...
+; TODO check 'internal' data structure use anywhere (id comp..)
+; maybe namespaced keyword pattern '::' ?
 (defn ->context [& {:keys [z-orders]}]
   {:context/ids->entities (atom {})
-   :context/thrown-error (atom nil) ; naming ? context/ecs ? so know error is from ecs ?
+   :context/thrown-error (atom nil)
    :context/render-on-map-order (define-order z-orders)})
-
-; TODO ids->entities used in :id component
-; => move here
-; and rename to 'ecs' just
-
-; same maybe with and potential field stuff ?
-; == internal data structure ....

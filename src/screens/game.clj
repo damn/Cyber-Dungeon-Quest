@@ -5,7 +5,7 @@
             [gdl.graphics.color :as color]
             [gdl.graphics.camera :as camera]
             [app.state :refer [current-context]]
-            [game.context :refer [render-visible-entities ray-blocked? explored? set-explored!]]
+            [game.context :refer [render-entities* ray-blocked? explored? set-explored! get-active-entities line-of-sight?]]
             [game.tick :refer [tick-game]]
             game.ui.actors
             [game.ui.hp-mana-bars :refer [render-player-hp-mana]]
@@ -42,17 +42,26 @@
   Screen
   (show [_ _context])
   (hide [_ _context])
-  (render [_ {:keys [context/world-map] :as context}]
+  (render [_ {:keys [context/world-map
+                     context/player-entity]
+              :as context}]
     (tiled/render-map context
                       (:tiled-map world-map)
                       tile-color-setter)
-    (render-world-view context
-                       (fn [c]
-                         (debug/render-before-entities c)
-                         (render-visible-entities      c)
-                         (debug/render-after-entities  c)))
-    (render-gui-view context render-player-hp-mana)
-    (tick-game context (* (delta-time context) 1000)))) ; TODO make in seconds ? no need to multiply by 1000 ?
+    (let [active-entities (get-active-entities context)] ; TODO call on content-grid ?
+      (render-world-view context
+                         (fn [context]
+                           (debug/render-before-entities context)
+                           (render-entities* context
+                                             (->> active-entities
+                                                  (map deref)
+                                                  (filter #(line-of-sight? context @player-entity %))))
+                           (debug/render-after-entities context)))
+      (render-gui-view context
+                       render-player-hp-mana)
+      (tick-game context
+                 active-entities
+                 (* (delta-time context) 1000))))) ; TODO make in seconds ? no need to multiply by 1000 ?
 
 (defn screen [context]
   {:actors (game.ui.actors/->ui-actors context)

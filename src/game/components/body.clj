@@ -64,4 +64,4 @@
 
   (entity/render-debug [_ e* context]
     (when show-body-bounds
-      (draw-bounds c body))))
+      (draw-bounds context body))))

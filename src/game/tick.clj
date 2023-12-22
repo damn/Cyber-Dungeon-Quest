@@ -4,28 +4,11 @@
             [gdl.scene2d.actor :as actor]
             [gdl.scene2d.ui :refer [find-actor-with-id]]
             [app.state :refer [change-screen!]]
-            [game.context :refer [tick-active-entities destroy-to-be-removed-entities! update-mouseover-entity
-                                  update-potential-fields]]
+            [game.context :refer [tick-entity remove-destroyed-entities update-mouseover-entity update-potential-fields]]
             [game.components.movement :as movement]
             [game.entity :as entity]
-
-            ; => context
             [game.ui.action-bar :as action-bar])
-  (:import com.badlogic.gdx.scenes.scene2d.Actor))
-
-(defn- update-context-systems
-  [{:keys [context/update-entities?] :as context} delta]
-  ; destroy here not @ tick, because when game is paused
-  ; for example pickup item, should be destroyed. TODO fix - weird ! I want to do just context/tick ...
-  ; => finally the whole context just swap , but we like atoms?
-  ; => should use a removelist and after tick immediately remove, not next frame ....
-  (destroy-to-be-removed-entities! context)
-
-  ; this do always so can get debug info even when game not running
-  (update-mouseover-entity context)
-
-  (when @update-entities? ; sowieso keine bewegungen / kein update gemacht ? checkt nur tiles ?
-    (update-potential-fields context)))
+  (:import (com.badlogic.gdx.scenes.scene2d Actor Group)))
 
 (defn- limit-delta [delta]
   (min delta movement/max-delta))
@@ -44,9 +27,10 @@
           :when (key-just-pressed? context hotkey)]
     (actor/toggle-visible! (find-actor-with-id group window))))
 
+; TODO rename check-change-screen
 (defn- end-of-frame-checks [{:keys [context/player-entity] :as context}]
   (let [group (:windows (get-stage context))
-        windows (seq (.getChildren group))]
+        windows (seq (.getChildren ^Group group))]
     (check-window-hotkeys context group)
 
     (when (key-just-pressed? context input.keys/escape)
@@ -66,6 +50,7 @@
                          context/update-entities?
                          context/thrown-error]
                   :as context}
+                 active-entities
                  delta]
   (action-bar/up-skill-hotkeys)
   (let [state (:state-obj (:entity/state @player-entity))
@@ -74,7 +59,13 @@
                         (and pausing (entity/pause-game? state)))
         update? (reset! update-entities? (not pause-game?))
         delta (limit-delta delta)]
-    (update-context-systems context delta)
+    ; this do always so can get debug info even when game not running
+    (update-mouseover-entity context)
     (when update?
-      (tick-active-entities context delta)))
+      ; sowieso keine bewegungen / kein update gemacht ? checkt nur tiles ?
+      (update-potential-fields context active-entities)
+      (doseq [entity active-entities]
+        (tick-entity context entity delta))))
+  ; do not pause this as for example pickup item, should be destroyed.
+  (remove-destroyed-entities context)
   (end-of-frame-checks context))
