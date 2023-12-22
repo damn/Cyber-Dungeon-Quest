@@ -3,13 +3,12 @@
 (defprotocol EntityComponentSystem
   (create-entity! [_ components-map]
                   "Entities should not have :id component, will get added.
-                  Calls create/create! system on the components-map
-                  Then puts it into an atom and calls entity/create! system on all components.
+                  Calls create/create! on components.
                   Returns the entity.")
   (get-entity [_ id])
-  (tick-entity [_ entity delta] "Calls entity/tick on all components and then entity/tick!")
-  (render-entities* [_ entities*] "In the correct z-order and in the order of render-systems for each z-order.")
-  (remove-destroyed-entities [_] "Calls entity/destroy and entity/destroy! on all entities which are marked as ':destroyed?'"))
+  (tick-entity [_ entity delta] "Calls tick/tick! on components")
+  (render-entities* [_ entities*] "Draws entities* in the correct z-order and in the order of render-systems for each z-order.")
+  (remove-destroyed-entities [_] "Calls destroy/destroy! on all entities which are marked as ':destroyed?'"))
 
 (defprotocol PlayerMessage
   (show-msg-to-player! [_ message])

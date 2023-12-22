@@ -1,4 +1,4 @@
-(ns context.entity.mouseover?
+(ns context.entity.mouseover
   (:require [x.x :refer [defcomponent]]
             [gdl.context :refer [with-shape-line-width draw-ellipse]]
             [context.entity :as entity]))

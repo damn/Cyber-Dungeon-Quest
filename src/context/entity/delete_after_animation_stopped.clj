@@ -1,4 +1,4 @@
-(ns context.entity.delete-after-animation-stopped?
+(ns context.entity.delete-after-animation-stopped
   (:require [x.x :refer [defcomponent]]
             [gdl.graphics.animation :as animation]
             [context.entity :as entity]))
