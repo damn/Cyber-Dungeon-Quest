@@ -54,21 +54,7 @@
    :external false
    :ignore #{"data"
              "utils"
-             "mapgen"
-             "game.context"
-             "context.ecs"
-             "game.entity"
-             "context.effect-interpreter"
-             "app.state"
-             "game.components.skills"
-             "game.components.clickable"
-             "game.ui.config"
-             "game.components.string-effect"
-             "game.components.inventory"
-             "game.ui.inventory-window"
-             "game.ui.action-bar"
-             "game.components.modifiers"
-             "context.properties"}})
+             "mapgen"}})
 
  ; Breaking depdencny graph:
  ; game.components.skills
