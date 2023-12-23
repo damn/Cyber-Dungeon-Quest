@@ -9,10 +9,12 @@
            gui-viewport-width
            gui-viewport-height] :as context}]
   (when-let [{:keys [message]} @player-message]
-    (draw-text (update context :unit-scale * 2.5) ; TODO add text scale & (background ?)
+    (draw-text context
                {:x (/ gui-viewport-width  2)
-                :y (+ (/ gui-viewport-height 2) 200)
-                :text message})))
+                :y (/ gui-viewport-height 2)
+                :text message
+                :scale 2.5
+                :up? true})))
 
 (defn- update-check-counter
   [{:keys [context/player-message] :as context}]

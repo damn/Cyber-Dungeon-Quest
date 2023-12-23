@@ -17,12 +17,6 @@
                      options-menu
                      property-editor)))
 
-
-; TODO check 'internal' data structure use anywhere (id comp..)
-; maybe namespaced keyword pattern '::' ?
-; => like ecs
-; context/world-map used @ render tiledmap screens/game & get explored tile grid @ minimap
-
 (defn- create-context [context]
   (let [context (merge context
                        (properties/->context context "resources/properties.edn")

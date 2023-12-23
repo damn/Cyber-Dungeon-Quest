@@ -10,11 +10,12 @@
     (when (stopped? context counter)
       (swap! e dissoc k)))
   (entity/render-above [_ {[x y] :position :keys [body]} c]
-    (draw-text (update c :unit-scale * 2) ; TODO FIXME HACK implement :scale arg
+    (draw-text c
                {:text text
                 :x x
                 :y (+ y (:half-height body)
                       (pixels->world-units c hpbar-height-px))
+                :scale 2
                 :up? true})))
 
 (extend-type gdl.context.Context
