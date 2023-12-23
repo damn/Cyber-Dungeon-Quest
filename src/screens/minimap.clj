@@ -1,11 +1,11 @@
 (ns screens.minimap
-  (:require gdl.screen
+  (:require [gdl.app :refer [current-context change-screen!]]
+            gdl.screen
             [gdl.input.keys :as input.keys]
             [gdl.maps.tiled :as tiled]
             [gdl.graphics.color :as color]
             [gdl.graphics.camera :as camera]
             [gdl.context :refer [draw-filled-circle render-world-view key-just-pressed?]]
-            [app.state :refer [current-context change-screen!]]
             [game.context :refer [explored?]])
   (:import com.badlogic.gdx.graphics.OrthographicCamera))
 

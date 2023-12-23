@@ -48,6 +48,6 @@
            (grid2d/cells (game.context/content-grid context))))
 
  (count
-  (get-all-entities-of-current-map @app.state/current-context))
+  (get-all-entities-of-current-map @gdl.app/current-context))
 
  )

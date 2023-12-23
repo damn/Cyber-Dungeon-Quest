@@ -1,6 +1,6 @@
 (ns context.ui.player-message
-  (:require [gdl.context :refer [draw-text]]
-            [app.state :refer [current-context]]
+  (:require [gdl.app :refer [current-context]]
+            [gdl.context :refer [draw-text]]
             [game.context :refer [stopped? ->counter]])
   (:import com.badlogic.gdx.scenes.scene2d.Actor))
 

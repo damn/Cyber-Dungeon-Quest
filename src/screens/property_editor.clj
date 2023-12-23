@@ -1,9 +1,9 @@
 (ns screens.property-editor
   (:require [clojure.edn :as edn]
+            [gdl.app :refer [change-screen!]]
             [gdl.context :refer [get-stage ->text-button ->image-button]]
             [gdl.scene2d.actor :as actor]
             [gdl.scene2d.ui :as ui]
-            [app.state :refer [change-screen!]]
             [game.context :refer [get-property all-properties]]
             context.properties)
   (:import com.badlogic.gdx.scenes.scene2d.Stage

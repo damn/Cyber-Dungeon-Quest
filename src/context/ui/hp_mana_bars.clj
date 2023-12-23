@@ -1,8 +1,8 @@
 (ns context.ui.hp-mana-bars
-  (:require [gdl.context :refer [draw-text draw-image create-image get-sub-image]]
+  (:require [gdl.app :refer [current-context]]
+            [gdl.context :refer [draw-text draw-image create-image get-sub-image]]
             [utils.core :refer [readable-number]]
-            [data.val-max :refer [val-max-ratio]]
-            [app.state :refer [current-context]])
+            [data.val-max :refer [val-max-ratio]])
   (:import com.badlogic.gdx.scenes.scene2d.Actor))
 
 (defn- render-infostr-on-bar [{:keys [gui-viewport-width] :as c} infostr y h]

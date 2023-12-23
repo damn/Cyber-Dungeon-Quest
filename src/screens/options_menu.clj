@@ -1,11 +1,11 @@
 (ns screens.options-menu
-  (:require gdl.screen
+  (:require [gdl.app :refer [change-screen!]]
+            gdl.screen
             [gdl.context :refer [->stage-screen draw-centered-image render-gui-view create-image
                                  ->text-button ->check-box key-just-pressed?]]
             [gdl.input.keys :as input.keys]
             [gdl.scene2d.ui :as ui]
             [utils.core :refer [find-first]]
-            [app.state :refer [change-screen!]]
             ;[game.line-of-sight :refer (player-line-of-sight-checks)]
             [context.entity.body :refer (show-body-bounds)]))
 

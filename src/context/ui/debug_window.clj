@@ -1,8 +1,8 @@
 (ns context.ui.debug-window
-  (:require [gdl.context :refer [gui-mouse-position world-mouse-position frames-per-second
+  (:require [gdl.app :refer [current-context]]
+            [gdl.context :refer [gui-mouse-position world-mouse-position frames-per-second
                                  mouse-on-stage-actor?]]
-            [gdl.scene2d.ui :as ui]
-            [app.state :refer [current-context]])
+            [gdl.scene2d.ui :as ui])
   (:import com.badlogic.gdx.scenes.scene2d.Actor))
 
 (defn- debug-infos [{:keys [context/game-paused?

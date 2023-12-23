@@ -1,5 +1,6 @@
 (ns screens.map-editor
   (:require [clojure.edn :as edn]
+            [gdl.app :refer [change-screen!]]
             [gdl.context :refer [key-pressed? key-just-pressed?]]
             [gdl.input.keys :as input.keys]
             gdl.screen
@@ -9,7 +10,6 @@
             gdl.disposable
             [gdl.maps.tiled :as tiled]
             [gdl.scene2d.ui :as ui]
-            [app.state :refer [change-screen!]]
             [game.context :refer [all-properties]]
             [mapgen.movement-property :refer (movement-property movement-properties)]
             [mapgen.module-gen :as module-gen])

@@ -1,8 +1,8 @@
 (ns context.ui.actors
-  (:require [gdl.context :refer [draw-centered-image gui-mouse-position draw-text]]
+  (:require [gdl.app :refer [current-context]]
+            [gdl.context :refer [draw-centered-image gui-mouse-position draw-text]]
             [gdl.scene2d.ui :as ui]
             [gdl.scene2d.actor :as actor]
-            [app.state :refer [current-context]]
             [game.context :refer [->player-message-actor
                                   ->action-bar]]
             [game.entity :as entity]

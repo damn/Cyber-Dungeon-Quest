@@ -1,9 +1,9 @@
 (ns context.ui.action-bar
-  (:require [gdl.context :refer [->image-button key-just-pressed?]]
+  (:require [gdl.app :refer [current-context]]
+            [gdl.context :refer [->image-button key-just-pressed?]]
             ;[gdl.input :as input] ; TODO
             [gdl.scene2d.actor :as actor]
             [gdl.scene2d.ui :as ui]
-            [app.state :refer [current-context]]
             game.context
             [game.skill :as skill])
   (:import com.badlogic.gdx.scenes.scene2d.Actor

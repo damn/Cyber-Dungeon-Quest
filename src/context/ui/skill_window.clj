@@ -1,7 +1,7 @@
 (ns context.ui.skill-window
-  (:require [gdl.context :refer [->image-button]]
+  (:require [gdl.app :refer [current-context]]
+            [gdl.context :refer [->image-button]]
             [gdl.scene2d.ui :as ui]
-            [app.state :refer [current-context]]
             [game.context :refer [get-property add-skill!]]
             [game.entity :as entity]
             [game.skill :as skill]))

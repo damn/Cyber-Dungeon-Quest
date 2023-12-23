@@ -1,6 +1,6 @@
 (ns context.ui.entity-info-window
-  (:require [gdl.scene2d.ui :as ui]
-            [app.state :refer [current-context]]
+  (:require [gdl.app :refer [current-context]]
+            [gdl.scene2d.ui :as ui]
             [game.entity :as entity])
   (:import com.badlogic.gdx.scenes.scene2d.Actor))
 

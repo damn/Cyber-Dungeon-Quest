@@ -1,11 +1,11 @@
 (ns context.ui.inventory-window
   (:require [clojure.string :as str]
             [data.grid2d :as grid]
+            [gdl.app :refer [current-context]]
             [gdl.graphics.color :as color]
             [gdl.context :refer [draw-rectangle draw-filled-rectangle spritesheet get-sprite
                                  play-sound! gui-mouse-position get-stage]]
             [gdl.scene2d.ui :as ui :refer [find-actor-with-id]]
-            [app.state :refer [current-context]]
             [game.entity :as entity]
             [game.context :refer [show-msg-to-player! send-event! modifier-text set-item! stack-item! remove-item!]]
             [context.entity.inventory :as inventory])

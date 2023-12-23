@@ -1,9 +1,9 @@
 (ns screens.main-menu
-  (:require [gdl.context :refer [exit-app draw-centered-image render-gui-view create-image ->text-button key-just-pressed?]]
+  (:require [gdl.app :refer [current-context change-screen!]]
+            [gdl.context :refer [exit-app draw-centered-image render-gui-view create-image ->text-button key-just-pressed?]]
             [gdl.input.keys :as input.keys]
             gdl.screen
             [gdl.scene2d.ui :as ui]
-            [app.state :refer [current-context change-screen!]]
             context.counter
             context.entity
             context.mouseover-entity

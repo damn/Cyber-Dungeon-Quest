@@ -1,5 +1,6 @@
 (ns screens.game
-  (:require [gdl.context :refer [get-stage render-world-view delta-time draw-text key-just-pressed?]]
+  (:require [gdl.app :refer [current-context change-screen!]]
+            [gdl.context :refer [get-stage render-world-view delta-time draw-text key-just-pressed?]]
             [gdl.screen :refer [Screen]]
             [gdl.maps.tiled :as tiled]
             [gdl.graphics.color :as color]
@@ -7,7 +8,6 @@
             [gdl.input.keys :as input.keys]
             [gdl.scene2d.actor :as actor]
             [gdl.scene2d.ui :refer [find-actor-with-id]]
-            [app.state :refer [current-context change-screen!]]
             [game.context :refer [render-entities* ray-blocked? explored? set-explored! line-of-sight? content-grid
                                   tick-entity remove-destroyed-entities update-mouseover-entity update-potential-fields
                                   update-elapsed-game-time debug-render-after-entities debug-render-before-entities]]
