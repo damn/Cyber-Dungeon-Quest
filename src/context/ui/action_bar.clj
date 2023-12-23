@@ -73,8 +73,7 @@
     (when-let [skill-button (.getChecked (:button-group @action-bar))]
       (actor/id skill-button)))
 
-  (actionbar-add-skill [{:keys [context.ui/action-bar]
-                         :as ctx}
+  (actionbar-add-skill [{:keys [context.ui/action-bar] :as ctx}
                         {:keys [id image] :as skill}]
     (let [button (->image-button ctx image (fn [_context] ))]
       (actor/set-id button id)

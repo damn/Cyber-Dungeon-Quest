@@ -8,8 +8,7 @@
             context.entity.all
             context.modifier.all
             (context.ui [action-bar :as action-bar]
-                        [inventory-window :as inventory]
-                        hp-mana-bars)
+                        [inventory-window :as inventory])
             (screens game
                      main-menu
                      map-editor
@@ -28,7 +27,6 @@
                        (properties/->context context "resources/properties.edn")
                        (inventory/->context)
                        (action-bar/->context))]
-    (context.ui.hp-mana-bars/initialize! context)
     (merge context
            ; previous default-font overwritten
            {:default-font (generate-ttf context {:file "exocet/films.EXL_____.ttf"

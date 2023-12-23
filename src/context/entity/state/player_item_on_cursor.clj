@@ -2,8 +2,7 @@
   (:require [gdl.context :refer [play-sound! mouse-on-stage-actor? button-just-pressed?]]
             [gdl.input.buttons :as buttons]
             [game.context :refer [item-entity send-event!]]
-            [context.entity.state :as state]
-            [context.entity.inventory :as inventory]))
+            [context.entity.state :as state]))
 
 ; TODO ! important ! animation & dont put exactly hiding under player -> try neighbor cells first, simple.
 (defn- put-item-on-ground [{:keys [context/player-entity] :as context}]

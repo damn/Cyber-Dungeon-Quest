@@ -6,6 +6,7 @@
             [game.context :refer [->player-message-actor
                                   ->action-bar]]
             [game.entity :as entity]
+            [context.ui.hp-mana-bars :refer [->hp-mana-bars]]
             [context.ui.debug-window :as debug-window]
             [context.ui.help-window :as help-window]
             [context.ui.entity-info-window :as entity-info-window]
@@ -61,6 +62,7 @@
 
 (defn ->ui-actors [context]
   [(->base-table context)
+   (->hp-mana-bars context)
    (->windows context)
    (->item-on-cursor-actor)
    (->player-message-actor context)])

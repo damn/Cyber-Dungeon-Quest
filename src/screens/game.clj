@@ -1,5 +1,5 @@
 (ns screens.game
-  (:require [gdl.context :refer [get-stage render-gui-view render-world-view delta-time draw-text key-just-pressed?]]
+  (:require [gdl.context :refer [get-stage render-world-view delta-time draw-text key-just-pressed?]]
             [gdl.screen :refer [Screen]]
             [gdl.maps.tiled :as tiled]
             [gdl.graphics.color :as color]
@@ -15,7 +15,6 @@
             [context.entity.movement :as movement]
             [context.entity.state :as state]
             context.ui.actors
-            [context.ui.hp-mana-bars :refer [render-player-hp-mana]]
             [game.render.debug :as debug]
             [game.world.content-grid :refer [active-entities]])
   (:import com.badlogic.gdx.graphics.Color
@@ -96,8 +95,7 @@
                                          (->> active-entities
                                               (map deref)
                                               (filter #(line-of-sight? context @player-entity %))))
-                       (debug/render-after-entities context)))
-  (render-gui-view context render-player-hp-mana))
+                       (debug/render-after-entities context))))
 
 (def ^:private pausing true)
 

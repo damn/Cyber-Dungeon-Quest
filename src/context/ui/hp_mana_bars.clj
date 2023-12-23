@@ -1,7 +1,9 @@
 (ns context.ui.hp-mana-bars
   (:require [gdl.context :refer [draw-text draw-image create-image get-sub-image]]
             [utils.core :refer [readable-number]]
-            [data.val-max :refer [val-max-ratio]]))
+            [data.val-max :refer [val-max-ratio]]
+            [app.state :refer [current-context]])
+  (:import com.badlogic.gdx.scenes.scene2d.Actor))
 
 (defn- render-infostr-on-bar [{:keys [gui-viewport-width] :as c} infostr y h]
   (draw-text c
@@ -10,25 +12,25 @@
               :y (+ y 2)
               :up? true}))
 
-(defn initialize! [context]
-  (let [scale 2]
-    (def ^:private rahmen (create-image context "ui/rahmen.png"))
-    (def ^:private rahmenw (first  (:pixel-dimensions rahmen)))
-    (def ^:private rahmenh (second (:pixel-dimensions rahmen)))
-    (def ^:private hpcontent   (create-image context "ui/hp.png"))
-    (def ^:private manacontent (create-image context "ui/mana.png"))))
-
-(defn- render-hpmana-bar [c x y contentimg minmaxval name]
-  (draw-image c rahmen [x y])
-  (draw-image c
-              (get-sub-image c (assoc contentimg :sub-image-bounds [0 0 (* rahmenw (val-max-ratio minmaxval)) rahmenh]))
-              [x y])
-  (render-infostr-on-bar c (str (readable-number (minmaxval 0)) "/" (minmaxval 1) " " name) y rahmenh))
-
-(defn render-player-hp-mana [{:keys [gui-viewport-width context/player-entity] :as c}]
-  (let [x (- (/ gui-viewport-width 2)
-             (/ rahmenw 2))
-        y-hp 54
-        y-mana (+ y-hp rahmenh)]
-    (render-hpmana-bar c x y-hp   hpcontent   (:hp   @player-entity) "HP")
-    (render-hpmana-bar c x y-mana manacontent (:mana @player-entity) "MP")))
+(defn ->hp-mana-bars [context]
+  (let [scale 2
+        rahmen (create-image context "ui/rahmen.png")
+        rahmenw (first  (:pixel-dimensions rahmen))
+        rahmenh (second (:pixel-dimensions rahmen))
+        hpcontent   (create-image context "ui/hp.png")
+        manacontent (create-image context "ui/mana.png")
+        render-hpmana-bar (fn [ctx x y contentimg minmaxval name]
+                            (draw-image ctx rahmen [x y])
+                            (draw-image ctx
+                                        (get-sub-image ctx (assoc contentimg :sub-image-bounds [0 0 (* rahmenw (val-max-ratio minmaxval)) rahmenh]))
+                                        [x y])
+                            (render-infostr-on-bar ctx (str (readable-number (minmaxval 0)) "/" (minmaxval 1) " " name) y rahmenh))]
+    (proxy [Actor] []
+      (draw [_batch _parent-alpha]
+        (let [{:keys [gui-viewport-width context/player-entity] :as c} @current-context
+              x (- (/ gui-viewport-width 2)
+                   (/ rahmenw 2))
+              y-hp 54
+              y-mana (+ y-hp rahmenh)]
+          (render-hpmana-bar c x y-hp   hpcontent   (:hp   @player-entity) "HP")
+          (render-hpmana-bar c x y-mana manacontent (:mana @player-entity) "MP"))))))
