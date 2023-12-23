@@ -48,7 +48,10 @@
 (defn- limit-delta [delta]
   (min delta movement/max-delta))
 
-(def ^:private hotkey->window
+; for now a function, see gdl.backends.libgdx.context.input reload bug
+; otherwise keys in dev mode may be unbound because dependency order not reflected
+; because bind-roots
+(defn- hotkey->window []
   {input.keys/i :inventory-window
    input.keys/q :skill-window ; 's' moves also ! (WASD)
    input.keys/e :entity-info-window
@@ -56,7 +59,7 @@
    input.keys/z :debug-window})
 
 (defn- check-window-hotkeys [context group]
-  (doseq [[hotkey window] hotkey->window
+  (doseq [[hotkey window] (hotkey->window)
           :when (key-just-pressed? context hotkey)]
     (actor/toggle-visible! (find-actor-with-id group window))))
 
