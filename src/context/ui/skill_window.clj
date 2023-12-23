@@ -24,7 +24,7 @@
                   button (->image-button context
                                          (:image skill)
                                          #(pressed-on-skill-in-menu % skill))]]
-      (.addListener button (ui/text-tooltip (fn []
+      (.addListener button (ui/text-tooltip (fn [] ; duplicated @ action-bar
                                               (let [context @current-context]
                                                 (skill/text skill
                                                             (:context/player-entity context)

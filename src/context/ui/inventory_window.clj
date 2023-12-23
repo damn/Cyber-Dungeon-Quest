@@ -176,10 +176,10 @@
          (str " (" cnt ")"))))
 
 (defn- item-text [context item]
-  (->> item
-       :modifier
-       (modifier-text context)
-       (str (item-name item) "\n")))
+  (str (item-name item) "\n"
+       (->> item
+            :modifier
+            (modifier-text context))))
 
 (defn- redo-table [{:keys [table slot->background]}]
   (let [->cell (fn [& args]

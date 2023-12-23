@@ -43,6 +43,7 @@
   (reset! slot->skill-id (empty-slot->skill-id)))
 
 
+; duplicated @ skill-menu
 (defn- skill-tooltip-text [{:keys [context/player-entity] :as context} skill]
   (skill/text skill player-entity context))
 
