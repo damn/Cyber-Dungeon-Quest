@@ -1,9 +1,7 @@
 (ns context.ui.debug-window
-  (:require [gdl.app :refer [current-context]]
-            [gdl.context :refer [gui-mouse-position world-mouse-position frames-per-second
-                                 mouse-on-stage-actor?]]
-            [gdl.scene2d.ui :as ui])
-  (:import com.badlogic.gdx.scenes.scene2d.Actor))
+  (:require [gdl.context :refer [gui-mouse-position world-mouse-position frames-per-second
+                                 mouse-on-stage-actor? ->actor]]
+            [gdl.scene2d.ui :as ui]))
 
 (defn- debug-infos [{:keys [context/game-paused?
                             context/player-entity
@@ -27,13 +25,14 @@
                 "id: " (gdl.scene2d.actor/id actor)
                 )))))
 
-(defn create []
+(defn create [context]
   (let [window (ui/window :title "Debug"
                           :id :debug-window)
         label (ui/label "")]
     (.add window label)
-    (.add window (proxy [Actor] []
-                   (act [_delta]
-                     (ui/set-text label (debug-infos @current-context))
-                     (.pack window))))
+    (.add window (->actor context
+                          {:act
+                           (fn [context]
+                             (ui/set-text label (debug-infos context))
+                             (.pack window))}))
     window))

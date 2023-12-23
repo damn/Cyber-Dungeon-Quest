@@ -4,7 +4,8 @@
             (context [properties :as properties]
                      builder
                      potential-fields
-                     render-debug)
+                     render-debug
+                     skill-info)
             context.effect.all
             context.entity.all
             context.modifier.all

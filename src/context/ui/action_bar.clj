@@ -1,11 +1,9 @@
 (ns context.ui.action-bar
-  (:require [gdl.app :refer [current-context]]
-            [gdl.context :refer [->image-button key-just-pressed?]]
-            ;[gdl.input :as input] ; TODO
+  (:require [gdl.context :refer [->image-button key-just-pressed? ->text-tooltip]]
+            ;[gdl.input.keys :as input.keys]
             [gdl.scene2d.actor :as actor]
             [gdl.scene2d.ui :as ui]
-            game.context
-            [game.skill :as skill])
+            [game.context :refer [skill-text]])
   (:import com.badlogic.gdx.scenes.scene2d.Actor
            (com.badlogic.gdx.scenes.scene2d.ui HorizontalGroup ButtonGroup Button)))
 
@@ -42,11 +40,6 @@
   (reset! selected-skill-id nil)
   (reset! slot->skill-id (empty-slot->skill-id)))
 
-
-; duplicated @ skill-menu
-(defn- skill-tooltip-text [{:keys [context/player-entity] :as context} skill]
-  (skill/text skill player-entity context))
-
 (defn- ->button-group []
   (let [button-group (ButtonGroup.)]
     (.setMaxCheckCount button-group 1)
@@ -78,9 +71,7 @@
                         {:keys [id image] :as skill}]
     (let [button (->image-button ctx image (fn [_context] ))]
       (actor/set-id button id)
-      (.addListener button (ui/text-tooltip (fn []
-                                              (skill-tooltip-text @current-context
-                                                                  skill))))
+      (.addListener button (->text-tooltip ctx #(skill-text % skill)))
       (.addActor (:horizontal-group @action-bar) button)
       (.add      (:button-group     @action-bar) button)))
 

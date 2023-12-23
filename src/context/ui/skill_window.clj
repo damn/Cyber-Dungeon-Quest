@@ -1,10 +1,8 @@
 (ns context.ui.skill-window
-  (:require [gdl.app :refer [current-context]]
-            [gdl.context :refer [->image-button]]
+  (:require [gdl.context :refer [->image-button ->text-tooltip]]
             [gdl.scene2d.ui :as ui]
-            [game.context :refer [get-property add-skill!]]
-            [game.entity :as entity]
-            [game.skill :as skill]))
+            [game.context :refer [get-property add-skill! skill-text]]
+            [game.entity :as entity]))
 
 (defn- pressed-on-skill-in-menu [{:keys [context/player-entity]
                                   :as context}
@@ -24,11 +22,8 @@
                   button (->image-button context
                                          (:image skill)
                                          #(pressed-on-skill-in-menu % skill))]]
-      (.addListener button (ui/text-tooltip (fn [] ; duplicated @ action-bar
-                                              (let [context @current-context]
-                                                (skill/text skill
-                                                            (:context/player-entity context)
-                                                            context)))))
+      ; duplicated @ action-bar
+      (.addListener button (->text-tooltip context #(skill-text % skill)))
       (.add window button))
     ; TODO render text label free-skill-points
     ; (str "Free points: " (:free-skill-points @player-entity))

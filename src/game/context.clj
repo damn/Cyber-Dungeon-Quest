@@ -107,3 +107,6 @@
 (defprotocol DebugRender
   (debug-render-before-entities [_])
   (debug-render-after-entities  [_]))
+
+(defprotocol SkillInfo
+  (skill-text [_ skill]))

@@ -3,15 +3,6 @@
             gdl.context
             game.context))
 
-; TODO spell effect-text only effect/source
-; @ game.skill/text ... o.o,need to know that @ texts
-; TODO no default - make sure is no typo - better have to implement all ?
-; => make macro defmethods
-; TODO @do-effecT! validparam check
-; checking line of sight, etc again here , should already be checked
-; maybe just checks required-keys , list of required keys
-; we also need to check the effect-value too (for property editor also)
-
 (defn- by-type [_context [type value]]
   (assert (keyword? type)
           (str "Type is not a keyword: " type " and value: " value))
@@ -32,7 +23,7 @@
 (extend-type gdl.context.Context
   game.context/EffectInterpreter
   (do-effect! [context effect]
-    (assert (game.context/valid-params? context effect))
+    (assert (game.context/valid-params? context effect)) ; extra line of sight checks TODO performance issue?
     (doseq [component effect]
       (do! context component)))
 

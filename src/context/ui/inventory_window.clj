@@ -4,7 +4,7 @@
             [gdl.app :refer [current-context]]
             [gdl.graphics.color :as color]
             [gdl.context :refer [draw-rectangle draw-filled-rectangle spritesheet get-sprite
-                                 play-sound! gui-mouse-position get-stage]]
+                                 play-sound! gui-mouse-position get-stage ->text-tooltip]]
             [gdl.scene2d.ui :as ui :refer [find-actor-with-id]]
             [game.entity :as entity]
             [game.context :refer [show-msg-to-player! send-event! modifier-text set-item! stack-item! remove-item!]]
@@ -214,11 +214,11 @@
     (redo-table @inventory)
     (.pack (:window @inventory)))
 
-  (set-item-image-in-widget [{:keys [context/inventory]} cell item]
+  (set-item-image-in-widget [{:keys [context/inventory] :as ctx} cell item]
     (let [cell-widget (get-cell-widget (:table @inventory) cell)
           image-widget (get-image-widget cell-widget)]
       (.setDrawable image-widget (ui/texture-region-drawable (:texture (:image item))))
-      (.addListener cell-widget (ui/text-tooltip #(item-text @current-context item)))))
+      (.addListener cell-widget (->text-tooltip ctx #(item-text % item)))))
 
   (remove-item-from-widget [{:keys [context/inventory]} cell]
     (let [cell-widget (get-cell-widget (:table @inventory) cell)

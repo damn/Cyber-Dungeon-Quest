@@ -1,9 +1,7 @@
 (ns context.ui.hp-mana-bars
-  (:require [gdl.app :refer [current-context]]
-            [gdl.context :refer [draw-text draw-image create-image get-sub-image]]
+  (:require [gdl.context :refer [draw-text draw-image create-image get-sub-image ->actor]]
             [utils.core :refer [readable-number]]
-            [data.val-max :refer [val-max-ratio]])
-  (:import com.badlogic.gdx.scenes.scene2d.Actor))
+            [data.val-max :refer [val-max-ratio]]))
 
 (defn- render-infostr-on-bar [{:keys [gui-viewport-width] :as c} infostr y h]
   (draw-text c
@@ -25,12 +23,11 @@
                                         (get-sub-image ctx (assoc contentimg :sub-image-bounds [0 0 (* rahmenw (val-max-ratio minmaxval)) rahmenh]))
                                         [x y])
                             (render-infostr-on-bar ctx (str (readable-number (minmaxval 0)) "/" (minmaxval 1) " " name) y rahmenh))]
-    (proxy [Actor] []
-      (draw [_batch _parent-alpha]
-        (let [{:keys [gui-viewport-width context/player-entity] :as c} @current-context
-              x (- (/ gui-viewport-width 2)
-                   (/ rahmenw 2))
-              y-hp 54
-              y-mana (+ y-hp rahmenh)]
-          (render-hpmana-bar c x y-hp   hpcontent   (:hp   @player-entity) "HP")
-          (render-hpmana-bar c x y-mana manacontent (:mana @player-entity) "MP"))))))
+    (->actor context
+             {:draw (fn [{:keys [gui-viewport-width context/player-entity] :as c}]
+                      (let [x (- (/ gui-viewport-width 2)
+                                 (/ rahmenw 2))
+                            y-hp 54
+                            y-mana (+ y-hp rahmenh)]
+                        (render-hpmana-bar c x y-hp   hpcontent   (:hp   @player-entity) "HP")
+                        (render-hpmana-bar c x y-mana manacontent (:mana @player-entity) "MP")))})))
