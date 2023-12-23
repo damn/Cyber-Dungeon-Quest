@@ -9,6 +9,7 @@
             context.entity.line-render
             context.entity.mana
             context.entity.mouseover
+            context.entity.modifiers
             context.entity.position
             context.entity.shout
             context.entity.skills

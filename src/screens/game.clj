@@ -10,12 +10,11 @@
             [app.state :refer [current-context change-screen!]]
             [game.context :refer [render-entities* ray-blocked? explored? set-explored! line-of-sight? content-grid
                                   tick-entity remove-destroyed-entities update-mouseover-entity update-potential-fields
-                                  update-elapsed-game-time]]
+                                  update-elapsed-game-time debug-render-after-entities debug-render-before-entities]]
             [game.entity :as entity]
             [context.entity.movement :as movement]
             [context.entity.state :as state]
             context.ui.actors
-            [game.render.debug :as debug]
             [game.world.content-grid :refer [active-entities]])
   (:import com.badlogic.gdx.graphics.Color
            (com.badlogic.gdx.scenes.scene2d Actor Group)))
@@ -90,12 +89,12 @@
                     tile-color-setter)
   (render-world-view context
                      (fn [context]
-                       (debug/render-before-entities context)
+                       (debug-render-before-entities context)
                        (render-entities* context
                                          (->> active-entities
                                               (map deref)
                                               (filter #(line-of-sight? context @player-entity %))))
-                       (debug/render-after-entities context))))
+                       (debug-render-after-entities context))))
 
 (def ^:private pausing true)
 

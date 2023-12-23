@@ -3,7 +3,8 @@
             [gdl.context :refer [generate-ttf ->stage-screen]]
             (context [properties :as properties]
                      builder
-                     potential-fields)
+                     potential-fields
+                     render-debug)
             context.effect.all
             context.entity.all
             context.modifier.all

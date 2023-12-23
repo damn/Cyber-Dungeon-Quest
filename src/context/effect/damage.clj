@@ -1,9 +1,9 @@
 (ns context.effect.damage
   (:require [data.val-max :refer [apply-val apply-val-max-modifiers]]
             [utils.random :as random]
-            [game.context :refer [audiovisual send-event! add-text-effect!]]
             [context.effect :as effect]
-            [context.entity.modifiers :refer [effect-source-modifiers effect-target-modifiers]]))
+            [game.context :refer [audiovisual send-event! add-text-effect!]]
+            [game.entity :as entity]))
 
 ; example:
 ; [:effect/damage [:physical [5 6]]]
@@ -17,10 +17,10 @@
  )
 
 (defn- source-block-ignore [entity* block-type damage-type]
-  (-> entity* (effect-source-modifiers block-type) damage-type))
+  (-> entity* (entity/effect-source-modifiers block-type) damage-type))
 
 (defn- target-block-rate [entity* block-type damage-type]
-  (-> entity* (effect-target-modifiers block-type) damage-type))
+  (-> entity* (entity/effect-target-modifiers block-type) damage-type))
 
 (defn- effective-block-rate [source* target* block-type damage-type]
   (max (- (or (target-block-rate   target* block-type damage-type) 0)
@@ -48,11 +48,11 @@
 
 (defn- apply-source-modifiers [{damage-type 0 :as damage} source*]
   (apply-damage-modifiers damage
-                          (-> source* (effect-source-modifiers :effect/damage) damage-type)))
+                          (-> source* (entity/effect-source-modifiers :effect/damage) damage-type)))
 
 (defn- apply-target-modifiers [{damage-type 0 :as damage} target*]
   (apply-damage-modifiers damage
-                          (-> target* (effect-target-modifiers :effect/damage) damage-type)))
+                          (-> target* (entity/effect-target-modifiers :effect/damage) damage-type)))
 
 (comment
  (set! *print-level* nil)

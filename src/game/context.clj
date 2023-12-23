@@ -103,3 +103,7 @@
   (selected-skill  [_])
   (actionbar-add-skill    [_ skill])
   (actionbar-remove-skill [_ skill]))
+
+(defprotocol DebugRender
+  (debug-render-before-entities [_])
+  (debug-render-after-entities  [_]))
