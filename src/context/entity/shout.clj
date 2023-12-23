@@ -1,8 +1,8 @@
 (ns context.entity.shout
   (:require [x.x :refer [defcomponent]]
             [context.entity :as entity]
-            [game.context :refer [world-grid line-of-sight? stopped? send-event!]]
-            [game.world.grid :refer [circle->entities]]))
+            [cdq.context :refer [world-grid line-of-sight? stopped? send-event!]]
+            [cdq.world.grid :refer [circle->entities]]))
 
 (def ^:private shout-range 6)
 

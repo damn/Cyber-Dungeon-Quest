@@ -1,4 +1,4 @@
-(ns game.world.content-grid)
+(ns cdq.world.content-grid)
 
 (defprotocol ContentGrid
   (update-entity! [_ entity])

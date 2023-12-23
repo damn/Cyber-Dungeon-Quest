@@ -1,7 +1,7 @@
 (ns context.modifier
   (:require [clojure.string :as str]
             gdl.context
-            game.context))
+            cdq.context))
 
 (def modifier-definitions {})
 
@@ -33,7 +33,7 @@
    value))
 
 (extend-type gdl.context.Context
-  game.context/Modifier
+  cdq.context/Modifier
   (apply-modifier! [_ entity modifier]
     (swap! entity apply-modifier modifier))
 

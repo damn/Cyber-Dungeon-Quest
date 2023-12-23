@@ -1,4 +1,4 @@
-(ns game.entity)
+(ns cdq.entity)
 
 (defprotocol State
   (state [_]))

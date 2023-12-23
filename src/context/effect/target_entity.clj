@@ -1,7 +1,7 @@
 (ns context.effect.target-entity
   (:require [gdl.context :refer [draw-line]]
             [gdl.math.vector :as v]
-            [game.context :refer (do-effect! effect-text audiovisual line-entity line-of-sight?)]
+            [cdq.context :refer (do-effect! effect-text audiovisual line-entity line-of-sight?)]
             [context.effect :as effect]))
 
 (defn- in-range? [entity* target* maxrange] ; == circle-collides?

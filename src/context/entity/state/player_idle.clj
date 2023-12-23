@@ -2,7 +2,7 @@
   (:require [gdl.context :refer [play-sound! world-mouse-position mouse-on-stage-actor? button-just-pressed?]]
             [gdl.input.buttons :as buttons]
             [gdl.math.vector :as v]
-            [game.context :refer [show-msg-to-player! send-event! get-property inventory-window-visible? try-pickup-item! skill-usable-state selected-skill]]
+            [cdq.context :refer [show-msg-to-player! send-event! get-property inventory-window-visible? try-pickup-item! skill-usable-state selected-skill]]
             [context.entity.state :as state]
             [context.entity.state.wasd-movement :refer [WASD-movement-vector]]))
 

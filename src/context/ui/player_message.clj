@@ -1,6 +1,6 @@
 (ns context.ui.player-message
   (:require [gdl.context :refer [draw-text ->actor]]
-            [game.context :refer [stopped? ->counter]]))
+            [cdq.context :refer [stopped? ->counter]]))
 
 (defn- draw-player-message
   [{:keys [context/player-message
@@ -25,7 +25,7 @@
 ; TODO when you died, keep message there , add duration param
 
 (extend-type gdl.context.Context
-  game.context/PlayerMessage
+  cdq.context/PlayerMessage
   (show-msg-to-player! [{:keys [context/player-message] :as context}
                         message]
     (reset! player-message {:message message

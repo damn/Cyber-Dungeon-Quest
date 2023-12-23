@@ -1,7 +1,7 @@
 (ns context.ui.entity-info-window
   (:require [gdl.context :refer [->actor]]
             [gdl.scene2d.ui :as ui]
-            [game.entity :as entity]))
+            [cdq.entity :as entity]))
 
 (defn- entity-info-text [entity*]
   (binding [*print-level* nil]

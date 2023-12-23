@@ -9,9 +9,9 @@
             [utils.core :refer [->tile tile->middle]]
             [context.world.grid :refer [create-grid]]
             [context.world.content-grid :refer [->content-grid]]
-            [game.context :refer [creature-entity ray-blocked? content-grid world-grid all-properties]]
-            [game.world.content-grid :as content-grid]
-            [game.world.cell :as cell]
+            [cdq.context :refer [creature-entity ray-blocked? content-grid world-grid all-properties]]
+            [cdq.world.content-grid :as content-grid]
+            [cdq.world.cell :as cell]
             [mapgen.movement-property :refer (movement-property)]
             mapgen.module-gen))
 
@@ -41,7 +41,7 @@
 
 ;;;
 
-; TODO world-map context , all access to that data game.context fn
+; TODO world-map context , all access to that data cdq.context fn
 ; check also other contexts keep private
 
 ; ONLY HERE context/world-map !!!
@@ -49,7 +49,7 @@
 
 ; maybe call context/world ?? world protocol
 
-; ! entities creation fns and audiovisual also game.context protocols !
+; ! entities creation fns and audiovisual also cdq.context protocols !
 ; idk how to call it
 
 (defn- on-screen? [entity* {:keys [world-camera world-viewport-width world-viewport-height]}]
@@ -83,7 +83,7 @@
     [start1,target1,start2,target2]))
 
 (extend-type gdl.context.Context
-  game.context/World
+  cdq.context/World
   (line-of-sight? [context source* target*]
     (and (:z-order target*)  ; is even an entity which renders something
          (or (not (:is-player source*))

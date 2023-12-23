@@ -4,7 +4,7 @@
             context.mouseover-entity
             [context.ui.player-message :as player-message]
             [context.world :as world]
-            [game.context :refer [rebuild-inventory-widgets reset-actionbar]]))
+            [cdq.context :refer [rebuild-inventory-widgets reset-actionbar]]))
 
 (defn start-game-context [context]
   (rebuild-inventory-widgets context) ; before adding entities ( player gets items )

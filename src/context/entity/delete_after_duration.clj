@@ -1,7 +1,7 @@
 (ns context.entity.delete-after-duration
   (:require [x.x :refer [defcomponent]]
             [context.entity :as entity]
-            [game.context :refer [->counter stopped?]]))
+            [cdq.context :refer [->counter stopped?]]))
 
 (defcomponent :delete-after-duration counter
   (entity/create! [[k duration] entity context]

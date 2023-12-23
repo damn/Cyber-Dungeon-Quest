@@ -1,6 +1,6 @@
 (ns context.effect.spawn
   (:require [context.effect :as effect]
-            [game.context :refer [creature-entity]]))
+            [cdq.context :refer [creature-entity]]))
 
 ; TODO spawning on player both without error ?! => not valid position checked
 ; also what if someone moves on the target posi ? find nearby valid cell ?

@@ -8,14 +8,14 @@
             [gdl.input.keys :as input.keys]
             [gdl.scene2d.actor :as actor]
             [gdl.scene2d.ui :refer [find-actor-with-id]]
-            [game.context :refer [render-entities* ray-blocked? explored? set-explored! line-of-sight? content-grid
+            [cdq.context :refer [render-entities* ray-blocked? explored? set-explored! line-of-sight? content-grid
                                   tick-entity remove-destroyed-entities update-mouseover-entity update-potential-fields
                                   update-elapsed-game-time debug-render-after-entities debug-render-before-entities]]
-            [game.entity :as entity]
+            [cdq.entity :as entity]
             [context.entity.movement :as movement]
             [context.entity.state :as state]
             context.ui.actors
-            [game.world.content-grid :refer [active-entities]])
+            [cdq.world.content-grid :refer [active-entities]])
   (:import com.badlogic.gdx.graphics.Color
            (com.badlogic.gdx.scenes.scene2d Actor Group)))
 

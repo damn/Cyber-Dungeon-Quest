@@ -1,9 +1,9 @@
 (ns context.entity.faction
   (:require context.entity
-            game.entity))
+            cdq.entity))
 
 (extend-type context.entity.Entity
-  game.entity/Faction
+  cdq.entity/Faction
   (enemy-faction [{:keys [faction]}]
     (case faction
       :evil :good

@@ -3,7 +3,7 @@
             [gdl.math.vector :as v]
             [gdl.graphics.animation :as animation]
             [gdl.context :refer [get-sprite spritesheet]]
-            [game.context :refer [effect-text projectile-entity path-blocked?]]
+            [cdq.context :refer [effect-text projectile-entity path-blocked?]]
             [context.effect :as effect]))
 
 ; -> range needs to be smaller than potential field range

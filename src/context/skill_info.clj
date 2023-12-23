@@ -3,13 +3,13 @@
             [clojure.string :as str]
             gdl.context
             [utils.core :refer [readable-number]]
-            [game.context :refer [effect-text]]))
+            [cdq.context :refer [effect-text]]))
 
 (defn- ms->pprint-seconds [ms]
   (readable-number (/ ms 1000)))
 
 (extend-type gdl.context.Context
-  game.context/SkillInfo
+  cdq.context/SkillInfo
   (skill-text [{:keys [context/player-entity] :as context}
                {:keys [id
                        cost

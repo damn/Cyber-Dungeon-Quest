@@ -1,11 +1,11 @@
 (ns context.counter
   (:require gdl.context
-            game.context))
+            cdq.context))
 
 (defrecord ImmutableCounter [duration stop-time])
 
 (extend-type gdl.context.Context
-  game.context/Counter
+  cdq.context/Counter
   (->counter [{:keys [context/elapsed-game-time]} duration]
     {:pre [(>= duration 0)]}
     (->ImmutableCounter duration
@@ -22,7 +22,7 @@
   (finished-ratio [{:keys [context/elapsed-game-time] :as context}
                    {:keys [duration stop-time] :as counter}]
     {:post [(<= 0 % 1)]}
-    (if (game.context/stopped? context counter)
+    (if (cdq.context/stopped? context counter)
       1
       (/ (- stop-time @elapsed-game-time)
          duration)))

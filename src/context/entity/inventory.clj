@@ -4,8 +4,8 @@
             gdl.context
             [utils.core :refer [find-first]]
             [context.entity :as entity]
-            [game.context :refer [get-property set-item-image-in-widget remove-item-from-widget apply-modifier! reverse-modifier! try-pickup-item! remove-item! set-item! stack-item! add-skill! remove-skill!]]
-            game.entity))
+            [cdq.context :refer [get-property set-item-image-in-widget remove-item-from-widget apply-modifier! reverse-modifier! try-pickup-item! remove-item! set-item! stack-item! add-skill! remove-skill!]]
+            cdq.entity))
 
 (def empty-inventory
   (->> {:bag      [6 4]
@@ -101,7 +101,7 @@
     picked-up))
 
 (extend-type gdl.context.Context
-  game.context/Inventory
+  cdq.context/Inventory
   (set-item! [context entity cell item]
     (swap! entity set-item cell item)
 

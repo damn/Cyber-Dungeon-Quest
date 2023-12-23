@@ -1,4 +1,4 @@
-(ns game.world.grid)
+(ns cdq.world.grid)
 
 (defprotocol Grid
   (cached-adjacent-cells [_ cell])

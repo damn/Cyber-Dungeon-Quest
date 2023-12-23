@@ -3,7 +3,7 @@
             ;[gdl.input.keys :as input.keys]
             [gdl.scene2d.actor :as actor]
             [gdl.scene2d.ui :as ui]
-            [game.context :refer [skill-text]])
+            [cdq.context :refer [skill-text]])
   (:import com.badlogic.gdx.scenes.scene2d.Actor
            (com.badlogic.gdx.scenes.scene2d.ui HorizontalGroup ButtonGroup Button)))
 
@@ -51,7 +51,7 @@
   {:context.ui/action-bar (atom nil)})
 
 (extend-type gdl.context.Context
-  game.context/Actionbar
+  cdq.context/Actionbar
   (->action-bar [{:keys [context.ui/action-bar]}]
     (let [horizontal-group (HorizontalGroup.)
           button-group (->button-group)]

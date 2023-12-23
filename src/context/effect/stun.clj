@@ -1,6 +1,6 @@
 (ns context.effect.stun
   (:require [utils.core :refer [readable-number]]
-            [game.context :refer [send-event!]]
+            [cdq.context :refer [send-event!]]
             [context.effect :as effect]))
 
 (defmethod effect/text :effect/stun

@@ -2,7 +2,7 @@
   (:require [reduce-fsm :as fsm]
             [gdl.context :refer [create-image play-sound!]]
             [gdl.graphics.animation :as animation]
-            [game.context :refer [create-entity! get-property]]
+            [cdq.context :refer [create-entity! get-property]]
             [context.entity.body :refer (assoc-left-bottom)]
             (context.entity.state
              [active-skill :as active-skill]
@@ -149,7 +149,7 @@
            extra-params)))
 
 (extend-type gdl.context.Context
-  game.context/Builder
+  cdq.context/Builder
   (creature-entity [context creature-id position creature-params]
     (let [entity* (-> context
                       (get-property creature-id)

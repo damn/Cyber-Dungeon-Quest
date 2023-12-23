@@ -3,7 +3,7 @@
             [gdl.context :refer [draw-text pixels->world-units]]
             [context.ui.config :refer [hpbar-height-px]]
             [context.entity :as entity]
-            [game.context :refer [->counter stopped? reset]]))
+            [cdq.context :refer [->counter stopped? reset]]))
 
 (defcomponent :string-effect {:keys [text counter] :as this}
   (entity/tick! [[k _] e context delta]
@@ -19,7 +19,7 @@
                 :up? true})))
 
 (extend-type gdl.context.Context
-  game.context/TextEffect
+  cdq.context/TextEffect
   (add-text-effect! [context entity text]
     (if (:string-effect @entity)
       (swap! entity update :string-effect #(-> %

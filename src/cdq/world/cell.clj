@@ -1,4 +1,4 @@
-(ns game.world.cell)
+(ns cdq.world.cell)
 
 ; is cell* actually
 (defprotocol Cell

@@ -1,7 +1,7 @@
 (ns context.entity.state.player-item-on-cursor
   (:require [gdl.context :refer [play-sound! mouse-on-stage-actor? button-just-pressed?]]
             [gdl.input.buttons :as buttons]
-            [game.context :refer [item-entity send-event!]]
+            [cdq.context :refer [item-entity send-event!]]
             [context.entity.state :as state]))
 
 ; TODO ! important ! animation & dont put exactly hiding under player -> try neighbor cells first, simple.

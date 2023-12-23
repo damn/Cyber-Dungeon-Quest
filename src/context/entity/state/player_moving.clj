@@ -1,5 +1,5 @@
 (ns context.entity.state.player-moving
-  (:require [game.context :refer [send-event!]]
+  (:require [cdq.context :refer [send-event!]]
             [context.entity.state :as state]
             [context.entity.state.wasd-movement :refer [WASD-movement-vector]]))
 

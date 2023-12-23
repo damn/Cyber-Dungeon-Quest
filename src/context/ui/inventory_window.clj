@@ -6,8 +6,8 @@
             [gdl.context :refer [draw-rectangle draw-filled-rectangle spritesheet get-sprite
                                  play-sound! gui-mouse-position get-stage ->text-tooltip]]
             [gdl.scene2d.ui :as ui :refer [find-actor-with-id]]
-            [game.entity :as entity]
-            [game.context :refer [show-msg-to-player! send-event! modifier-text set-item! stack-item! remove-item!]]
+            [cdq.entity :as entity]
+            [cdq.context :refer [show-msg-to-player! send-event! modifier-text set-item! stack-item! remove-item!]]
             [context.entity.inventory :as inventory])
   (:import com.badlogic.gdx.graphics.Color
            (com.badlogic.gdx.scenes.scene2d Actor Group)
@@ -206,7 +206,7 @@
       (.row table))))
 
 (extend-type gdl.context.Context
-  game.context/InventoryWindow
+  cdq.context/InventoryWindow
   (inventory-window-visible? [{:keys [context/inventory]}]
     (.isVisible ^Actor (:window @inventory)))
 

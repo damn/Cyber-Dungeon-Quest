@@ -5,8 +5,8 @@
             [gdl.graphics.camera :as camera]
             gdl.math.geom
             [utils.core :refer [->tile]]
-            [game.context :refer [world-grid]]
-            [game.world.grid :refer [circle->cells]]))
+            [cdq.context :refer [world-grid]]
+            [cdq.world.grid :refer [circle->cells]]))
 
 ; TODO make check-buttons with debug-window or MENU top screen is good for debug I think
 
@@ -48,7 +48,7 @@
           (@#'g/draw-string x y (str (:id @(:monster @cell))) 1)))))
 
 (extend-type gdl.context.Context
-  game.context/DebugRender
+  cdq.context/DebugRender
   (debug-render-before-entities [c]
     #_(tile-debug c))
 

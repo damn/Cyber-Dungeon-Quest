@@ -1,5 +1,5 @@
 (ns context.entity.state.npc-dead
-  (:require [game.context :refer [audiovisual]]
+  (:require [cdq.context :refer [audiovisual]]
             [context.entity.state :as state]))
 
 (defrecord NpcDead [entity]

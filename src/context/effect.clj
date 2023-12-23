@@ -1,7 +1,7 @@
 (ns context.effect
   (:require [clojure.string :as str]
             gdl.context
-            game.context))
+            cdq.context))
 
 (defn- by-type [_context [type value]]
   (assert (keyword? type)
@@ -21,9 +21,9 @@
 (defmethod useful? :default [_ _] true)
 
 (extend-type gdl.context.Context
-  game.context/EffectInterpreter
+  cdq.context/EffectInterpreter
   (do-effect! [context effect]
-    (assert (game.context/valid-params? context effect)) ; extra line of sight checks TODO performance issue?
+    (assert (cdq.context/valid-params? context effect)) ; extra line of sight checks TODO performance issue?
     (doseq [component effect]
       (do! context component)))
 

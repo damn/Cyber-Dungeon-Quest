@@ -3,8 +3,8 @@
             [x.x :refer [defcomponent]]
             gdl.context
             [context.entity :as entity]
-            game.context
-            game.entity))
+            cdq.context
+            cdq.entity))
 
 (defprotocol State
   (enter [_ context])
@@ -36,10 +36,10 @@
   (entity/render-info  [_ entity* c] (render-info  state-obj c entity*)))
 
 (extend-type gdl.context.Context
-  game.context/FiniteStateMachine
+  cdq.context/FiniteStateMachine
   (send-event!
     ([context entity event]
-     (game.context/send-event! context entity event nil))
+     (cdq.context/send-event! context entity event nil))
 
     ([context entity event params]
      ; 'when' because e.g. sending events to projectiles at wakeup (same faction filter)
@@ -62,6 +62,6 @@
                                                         :state-obj new-state-obj)))))))))
 
 (extend-type context.entity.Entity
-  game.entity/State
+  cdq.entity/State
   (state [entity*]
     (-> entity* :entity/state :fsm :state)))

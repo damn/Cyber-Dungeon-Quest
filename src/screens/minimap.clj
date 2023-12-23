@@ -6,7 +6,7 @@
             [gdl.graphics.color :as color]
             [gdl.graphics.camera :as camera]
             [gdl.context :refer [draw-filled-circle render-world-view key-just-pressed?]]
-            [game.context :refer [explored?]])
+            [cdq.context :refer [explored?]])
   (:import com.badlogic.gdx.graphics.OrthographicCamera))
 
 ; 28.4 viewportwidth

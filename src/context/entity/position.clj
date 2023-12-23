@@ -1,8 +1,8 @@
 (ns context.entity.position
   (:require [x.x :refer [defcomponent]]
             [context.entity :as entity]
-            [game.context :refer [content-grid]]
-            [game.world.content-grid :refer [update-entity! remove-entity!]]))
+            [cdq.context :refer [content-grid]]
+            [cdq.world.content-grid :refer [update-entity! remove-entity!]]))
 
 (defcomponent :position _
   (entity/create!  [_ e ctx]      (update-entity! (content-grid ctx) e))

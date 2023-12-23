@@ -2,8 +2,8 @@
   (:require [data.grid2d :as grid2d]
             [gdl.math.geom :as geom]
             [utils.core :refer [->tile tile->middle]]
-            [game.world.grid :refer [rectangle->cells circle->cells valid-position?]]
-            [game.world.cell :as cell :refer [cells->entities]]))
+            [cdq.world.grid :refer [rectangle->cells circle->cells valid-position?]]
+            [cdq.world.cell :as cell :refer [cells->entities]]))
 
 (defn- rectangle->tiles
   [{[x y] :left-bottom :keys [left-bottom width height]}]
@@ -70,7 +70,7 @@
   (set-occupied-cells! grid entity))
 
 (extend-type data.grid2d.Grid2D
-  game.world.grid/Grid
+  cdq.world.grid/Grid
   (cached-adjacent-cells [grid cell]
     (if-let [result (:adjacent-cells @cell)]
       result
@@ -137,7 +137,7 @@
                  ; TODO potential-field ? PotentialFieldCell ?
                  good
                  evil]
-  game.world.cell/Cell
+  cdq.world.cell/Cell
   (add-entity [this entity]
     (assert (not (get entities entity)))
     (update this :entities conj entity))

@@ -9,10 +9,10 @@
             gdl.context
             [gdl.math.vector :as v]
             [utils.core :refer :all]
-            [game.context :refer (world-grid)]
-            [game.entity :as entity]
-            [game.world.grid :refer [cached-adjacent-cells rectangle->cells]]
-            [game.world.cell :as cell]))
+            [cdq.context :refer (world-grid)]
+            [cdq.entity :as entity]
+            [cdq.world.grid :refer [cached-adjacent-cells rectangle->cells]]
+            [cdq.world.cell :as cell]))
 
 (def ^:private max-iterations 15)
 
@@ -220,7 +220,7 @@
          (= cell (first cells)))))
 
 (extend-type gdl.context.Context ; TODO only on grid this ?!
-  game.context/PotentialField
+  cdq.context/PotentialField
   (update-potential-fields [context entities]
     (update-potential-fields* context entities))
 
@@ -243,7 +243,7 @@
          (when-not (inside-cell? grid @entity target-cell)
            (v/direction position (:middle @target-cell))))))))
 
-;; DEBUG RENDER TODO not working in old map debug game.maps.render_
+;; DEBUG RENDER TODO not working in old map debug cdq.maps.render_
 
 ; -> render on-screen tile stuff
 ; -> I just use render-on-map and use tile coords

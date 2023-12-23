@@ -2,9 +2,9 @@
   (:require [gdl.context :refer [draw-text draw-circle]]
             [gdl.graphics.color :as color]
             [context.entity.state :as state]
-            [game.context :refer [world-grid create-entity! send-event! ->counter add-text-effect!]]
-            [game.entity :as entity]
-            [game.world.cell :as cell]))
+            [cdq.context :refer [world-grid create-entity! send-event! ->counter add-text-effect!]]
+            [cdq.entity :as entity]
+            [cdq.world.cell :as cell]))
 
 ; TODO pass to creature data, also @ shout
 (def ^:private aggro-range 6)

@@ -2,9 +2,9 @@
   (:require [gdl.context :refer [draw-centered-image gui-mouse-position draw-text ->actor]]
             [gdl.scene2d.ui :as ui]
             [gdl.scene2d.actor :as actor]
-            [game.context :refer [->player-message-actor
+            [cdq.context :refer [->player-message-actor
                                   ->action-bar]]
-            [game.entity :as entity]
+            [cdq.entity :as entity]
             [context.ui.hp-mana-bars :refer [->hp-mana-bars]]
             [context.ui.debug-window :as debug-window]
             [context.ui.help-window :as help-window]

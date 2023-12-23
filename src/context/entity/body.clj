@@ -4,8 +4,8 @@
             [gdl.graphics.color :as color]
             [gdl.math.vector :as v]
             [context.entity :as entity]
-            [game.context :refer [world-grid]]
-            [game.world.grid :refer [add-entity! remove-entity! entity-position-changed!]]))
+            [cdq.context :refer [world-grid]]
+            [cdq.world.grid :refer [add-entity! remove-entity! entity-position-changed!]]))
 
 ; setting a min-size for colliding bodies so movement can set a max-speed for not
 ; skipping bodies at too fast movement

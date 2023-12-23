@@ -1,6 +1,6 @@
 (ns context.entity.state.player-dead
   (:require [gdl.context :refer [play-sound!]]
-            [game.context :refer [show-msg-to-player!]]
+            [cdq.context :refer [show-msg-to-player!]]
             [context.entity.state :as state]))
 
 (defrecord PlayerDead [entity]

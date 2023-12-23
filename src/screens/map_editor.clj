@@ -10,7 +10,7 @@
             gdl.disposable
             [gdl.maps.tiled :as tiled]
             [gdl.scene2d.ui :as ui]
-            [game.context :refer [all-properties]]
+            [cdq.context :refer [all-properties]]
             [mapgen.movement-property :refer (movement-property movement-properties)]
             [mapgen.module-gen :as module-gen])
   (:import com.badlogic.gdx.graphics.OrthographicCamera
@@ -278,7 +278,7 @@
 
 ;;; set creature tiles as of area-levels
 ;;; use creature tileset & map-layer 'creatures'
-;;; read @ game.maps.load
+;;; read @ cdq.maps.load
 ;;; -> can also manually add creatures in modules then???
 
 

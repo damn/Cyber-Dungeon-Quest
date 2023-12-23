@@ -1,12 +1,12 @@
 (ns context.entity.modifiers
   (:require context.entity
-            game.entity))
+            cdq.entity))
 
 (defn- effect-modifiers [entity* effect-type]
   (-> entity* :modifiers effect-type))
 
 (extend-type context.entity.Entity
-  game.entity/EffectModifiers
+  cdq.entity/EffectModifiers
   (effect-source-modifiers [entity* effect-type]
     (-> entity* (effect-modifiers effect-type) :effect/source))
 

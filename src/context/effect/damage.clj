@@ -2,8 +2,8 @@
   (:require [data.val-max :refer [apply-val apply-val-max-modifiers]]
             [utils.random :as random]
             [context.effect :as effect]
-            [game.context :refer [audiovisual send-event! add-text-effect!]]
-            [game.entity :as entity]))
+            [cdq.context :refer [audiovisual send-event! add-text-effect!]]
+            [cdq.entity :as entity]))
 
 ; example:
 ; [:effect/damage [:physical [5 6]]]

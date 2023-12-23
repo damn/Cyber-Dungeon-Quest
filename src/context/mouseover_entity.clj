@@ -1,8 +1,8 @@
 (ns context.mouseover-entity
   (:require [gdl.context :refer [world-mouse-position mouse-on-stage-actor?]]
             [utils.core :refer [sort-by-order]]
-            [game.context :refer [world-grid line-of-sight?]]
-            [game.world.grid :refer [point->entities]]))
+            [cdq.context :refer [world-grid line-of-sight?]]
+            [cdq.world.grid :refer [point->entities]]))
 
 (defn- calculate-mouseover-entity [{:keys [context/player-entity
                                            context.entity/render-on-map-order]
@@ -17,7 +17,7 @@
          first)))
 
 (extend-type gdl.context.Context
-  game.context/MouseOverEntity
+  cdq.context/MouseOverEntity
   (update-mouseover-entity [{:keys [context/mouseover-entity]
                              :as context}]
     (when-let [entity @mouseover-entity]

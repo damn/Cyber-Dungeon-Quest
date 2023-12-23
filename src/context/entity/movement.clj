@@ -4,10 +4,10 @@
             [gdl.math.vector :as v]
             [utils.core :refer [find-first]]
             [context.entity :as entity]
-            [game.context :refer [do-effect! audiovisual world-grid]]
+            [cdq.context :refer [do-effect! audiovisual world-grid]]
             [context.entity.body :as body]
-            [game.world.grid :refer [rectangle->cells valid-position?]]
-            [game.world.cell :as cell :refer [cells->entities]]))
+            [cdq.world.grid :refer [rectangle->cells valid-position?]]
+            [cdq.world.cell :as cell :refer [cells->entities]]))
 
 ; TODO check max-speed for not skipping min-size-bodies
 ; (* speed multiplier delta )

@@ -6,7 +6,7 @@
             [gdl.input.keys :as input.keys]
             [gdl.scene2d.ui :as ui]
             [utils.core :refer [find-first]]
-            ;[game.line-of-sight :refer (player-line-of-sight-checks)]
+            ;[cdq.line-of-sight :refer (player-line-of-sight-checks)]
             [context.entity.body :refer (show-body-bounds)]))
 
 ; no protocol

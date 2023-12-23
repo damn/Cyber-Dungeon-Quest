@@ -1,8 +1,8 @@
 (ns context.entity.state.active-skill
   (:require [gdl.context :refer [draw-filled-circle draw-sector draw-image play-sound!]]
-            [game.context :refer [valid-params? do-effect! effect-render-info send-event!
+            [cdq.context :refer [valid-params? do-effect! effect-render-info send-event!
                                   stopped? finished-ratio ->counter set-skill-to-cooldown! pay-skill-mana-cost!]]
-            [game.entity :as entity]
+            [cdq.entity :as entity]
             [context.entity.state :as state]))
 
 (defn- draw-skill-icon [c icon entity* [x y] action-counter-ratio]

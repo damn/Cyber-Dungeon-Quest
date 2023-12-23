@@ -4,7 +4,7 @@
             [gdl.context :refer [get-stage ->text-button ->image-button]]
             [gdl.scene2d.actor :as actor]
             [gdl.scene2d.ui :as ui]
-            [game.context :refer [get-property all-properties]]
+            [cdq.context :refer [get-property all-properties]]
             context.properties)
   (:import com.badlogic.gdx.scenes.scene2d.Stage
            (com.badlogic.gdx.scenes.scene2d.ui WidgetGroup)))

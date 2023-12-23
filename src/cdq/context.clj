@@ -1,4 +1,4 @@
-(ns game.context)
+(ns cdq.context)
 
 (defprotocol EntityComponentSystem
   (create-entity! [_ components-map]
@@ -63,7 +63,7 @@
   (send-event! [_ entity event]
                [_ entity event params]))
 
-; TODO add update-and-write and move to game.context
+; TODO add update-and-write and move to cdq.context
 (defprotocol PropertyStore
   (get-property [_ id])
   (all-properties [_ type]))

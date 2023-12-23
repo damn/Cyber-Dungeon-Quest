@@ -1,8 +1,8 @@
 (ns context.ui.skill-window
   (:require [gdl.context :refer [->image-button ->text-tooltip]]
             [gdl.scene2d.ui :as ui]
-            [game.context :refer [get-property add-skill! skill-text]]
-            [game.entity :as entity]))
+            [cdq.context :refer [get-property add-skill! skill-text]]
+            [cdq.entity :as entity]))
 
 (defn- pressed-on-skill-in-menu [{:keys [context/player-entity]
                                   :as context}

@@ -3,7 +3,7 @@
             [x.x :refer [defsystem doseq-entity]]
             [gdl.context :refer [draw-text]]
             [utils.core :refer [define-order sort-by-order]]
-            [game.context :refer [get-entity]]))
+            [cdq.context :refer [get-entity]]))
 
 ; doseq-entity - what if key is not available anymore ? check :when (k @entity)  ?
 ; but for now accepting nil value at components, so have to check first.
@@ -60,7 +60,7 @@
       m)))
 
 (extend-type gdl.context.Context
-  game.context/EntityComponentSystem
+  cdq.context/EntityComponentSystem
   (get-entity [{:keys [context.entity/ids->entities]} id]
     (get @ids->entities id))
 
