@@ -2,6 +2,7 @@
   (:require [gdl.backends.libgdx.app :as app]
             [gdl.context :refer [generate-ttf ->stage-screen]]
             (context [properties :as properties]
+                     [cursor :as cursor]
                      builder
                      potential-fields
                      render-debug
@@ -22,7 +23,8 @@
   (let [context (merge context
                        (properties/->context context "resources/properties.edn")
                        (inventory/->context)
-                       (action-bar/->context))]
+                       (action-bar/->context)
+                       (cursor/->context context))]
     (merge context
            ; previous default-font overwritten
            {:default-font (generate-ttf context {:file "exocet/films.EXL_____.ttf"
