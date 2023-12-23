@@ -7,9 +7,9 @@
             context.effect.all
             context.entity.all
             context.modifier.all
-            (context.ui [inventory-window :as inventory]
-                        action-bar
-                        hp-mana-bars )
+            (context.ui [action-bar :as action-bar]
+                        [inventory-window :as inventory]
+                        hp-mana-bars)
             (screens game
                      main-menu
                      map-editor
@@ -26,8 +26,8 @@
 (defn- create-context [context]
   (let [context (merge context
                        (properties/->context context "resources/properties.edn")
-                       (inventory/->context))]
-    (context.ui.action-bar/initialize!)
+                       (inventory/->context)
+                       (action-bar/->context))]
     (context.ui.hp-mana-bars/initialize! context)
     (merge context
            ; previous default-font overwritten

@@ -96,3 +96,10 @@
 
 (defprotocol TextEffect
   (add-text-effect! [_ entity text]))
+
+(defprotocol Actionbar
+  (->action-bar    [_])
+  (reset-actionbar [_])
+  (selected-skill  [_])
+  (actionbar-add-skill    [_ skill])
+  (actionbar-remove-skill [_ skill]))

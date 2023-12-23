@@ -3,14 +3,14 @@
             [gdl.scene2d.ui :as ui]
             [gdl.scene2d.actor :as actor]
             [app.state :refer [current-context]]
-            [game.context :refer [->player-message-actor]]
+            [game.context :refer [->player-message-actor
+                                  ->action-bar]]
             [game.entity :as entity]
             [context.ui.debug-window :as debug-window]
             [context.ui.help-window :as help-window]
             [context.ui.entity-info-window :as entity-info-window]
             [context.ui.skill-window :as skill-window]
-            [context.ui.inventory-window :as inventory]
-            [context.ui.action-bar :as action-bar])
+            [context.ui.inventory-window :as inventory])
   (:import (com.badlogic.gdx.scenes.scene2d Actor Group)))
 
 (defn- draw-item-on-cursor [{:keys [context/player-entity] :as c}]
@@ -25,8 +25,8 @@
     (draw [_batch _parent-alpha]
       (draw-item-on-cursor @current-context))))
 
-(defn- ->action-bar []
-  (ui/table :rows [[{:actor action-bar/horizontal-group
+(defn- ->base-table [context]
+  (ui/table :rows [[{:actor (->action-bar context)
                      :expand? true
                      :bottom? true}]]
             :fill-parent? true))
@@ -60,7 +60,7 @@
     group))
 
 (defn ->ui-actors [context]
-  [(->action-bar)
+  [(->base-table context)
    (->windows context)
    (->item-on-cursor-actor)
    (->player-message-actor context)])

@@ -16,7 +16,6 @@
             [context.entity.state :as state]
             context.ui.actors
             [context.ui.hp-mana-bars :refer [render-player-hp-mana]]
-            [context.ui.action-bar :as action-bar]
             [game.render.debug :as debug]
             [game.world.content-grid :refer [active-entities]])
   (:import com.badlogic.gdx.graphics.Color
@@ -108,7 +107,6 @@
                      :as context}
                     active-entities
                     delta]
-  (action-bar/up-skill-hotkeys)
   (let [state (:state-obj (:entity/state @player-entity)) ; ? Entity protocol?
         _ (state/manual-tick! state context delta)
         paused? (reset! game-paused? (or @thrown-error

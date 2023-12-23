@@ -2,13 +2,12 @@
   (:require [gdl.context :refer [play-sound! world-mouse-position mouse-on-stage-actor? button-just-pressed?]]
             [gdl.input.buttons :as buttons]
             [gdl.math.vector :as v]
-            [game.context :refer [show-msg-to-player! send-event! get-property inventory-window-visible? try-pickup-item! skill-usable-state]]
+            [game.context :refer [show-msg-to-player! send-event! get-property inventory-window-visible? try-pickup-item! skill-usable-state selected-skill]]
             [context.entity.state :as state]
-            [context.entity.state.wasd-movement :refer [WASD-movement-vector]]
-            [context.ui.action-bar :as action-bar]))
+            [context.entity.state.wasd-movement :refer [WASD-movement-vector]]))
 
-(defmulti on-clicked (fn [_context entity]
-                       (:type (:entity/clickable @entity))))
+(defmulti ^:private on-clicked (fn [_context entity]
+                                 (:type (:entity/clickable @entity))))
 
 (defmethod on-clicked :clickable/item
   [{:keys [context/player-entity] :as context} clicked-entity]
@@ -67,7 +66,7 @@
          (on-clicked context @mouseover-entity)
 
          :else
-         (if-let [skill-id @action-bar/selected-skill-id]
+         (if-let [skill-id (selected-skill context)]
            (let [effect-context (effect-context context entity)
                  skill (get-property context skill-id)
                  state (skill-usable-state (merge context effect-context) @entity skill)]

@@ -3,7 +3,8 @@
             [utils.core :refer [mapvals]]
             [data.val-max :refer [apply-val]]
             [context.entity :as entity]
-            [game.context :refer [get-property valid-params? ->counter stopped?]]
+            [game.context :refer [get-property valid-params? ->counter stopped?
+                                  actionbar-add-skill actionbar-remove-skill]]
             game.entity))
 
 (defn- update-cooldown [context skill delta]
@@ -31,13 +32,17 @@
 
 (extend-type gdl.context.Context
   game.context/Skills
-  (add-skill! [_ entity {:keys [id] :as skill}]
+  (add-skill! [ctx entity {:keys [id] :as skill}]
     (assert (not (game.entity/has-skill? @entity skill)))
-    (swap! entity update :skills assoc id skill))
+    (swap! entity update :skills assoc id skill)
+    (when (:is-player @entity)
+      (actionbar-add-skill ctx skill)))
 
-  (remove-skill! [_ entity {:keys [id] :as skill}]
+  (remove-skill! [ctx entity {:keys [id] :as skill}]
     (assert (game.entity/has-skill? @entity skill))
-    (swap! entity update :skills dissoc id))
+    (swap! entity update :skills dissoc id)
+    (when (:is-player @entity)
+      (actionbar-remove-skill ctx skill)))
 
   (set-skill-to-cooldown! [context entity {:keys [id cooldown] :as skill}]
     (when cooldown

@@ -1,134 +1,126 @@
 (ns context.ui.action-bar
   (:require [gdl.context :refer [->image-button key-just-pressed?]]
             ;[gdl.input :as input] ; TODO
+            [gdl.scene2d.actor :as actor]
             [gdl.scene2d.ui :as ui]
             [app.state :refer [current-context]]
+            game.context
             [game.skill :as skill])
   (:import com.badlogic.gdx.scenes.scene2d.Actor
            (com.badlogic.gdx.scenes.scene2d.ui HorizontalGroup ButtonGroup Button)))
 
-; TODO when no selected-skill & new skill assoce'd (sword at start)
-; => set selected (or : on click  and no skill selected -> show error / sound ' no skill selected'
-; actualizer doesnt do that ?
-; TODO actually only weapon skill can be dissoc'ed
-; so no need to redo all and can keep idx. 1.
-; all get re-shuffled.
-; -> first check any skills in actionbar not has-skill? anymore -> just remove them at that index
-; -> then check player-skills not in actionbar -> add at an index.
-; keep index 1 for item ?
-; TODO what if selected skill gets removed
-; -> no more selected skill (no wait gets updated)
-
-; if 1 gets removed, keep 2,3,4
-; now everything gets re-shuffled
-; only remove the one which is removed
-; keep empty slot ?
 ; TODO
-; * add imageChecked to style ( for cooldown / selected ) -> make red cooldown / otherwise diff. color
+; * cooldown / not usable -> diff. colors ? disable on not able to use skills (stunned?)
 ; * or even sector circling for cooldown like in WoW (clipped !)
-
 ; * tooltips ! with hotkey-number !
 ;  ( (skills/text skill-id player-entity))
+; * add hotkey number to tooltips
+; * hotkeys => select button
+  ; when no selected-skill & new skill assoce'd (sword at start)
+  ; => set selected
+  ; keep weapon at position 1 always ?
 
+#_(def ^:private slot-keys {:1 input.keys.num-1
+                          :2 input.keys.num-2
+                          :3 input.keys.num-3
+                          :4 input.keys.num-4
+                          :5 input.keys.num-5
+                          :6 input.keys.num-6
+                          :7 input.keys.num-7
+                          :8 input.keys.num-8
+                          :9 input.keys.num-9})
 
-; * TODO add hotkey number to tooltips
-; * TODO hotkeys => select button
-
-(def ^:private slot-keys [:1 :2 :3 :4 :5 :6 :7 :8 :9])
-
-(defn- empty-slot->skill-id []
+#_(defn- empty-slot->skill-id []
   (apply sorted-map
          (interleave slot-keys
                      (repeat nil))))
 
-(def selected-skill-id (atom nil))
-(def ^:private slot->skill-id (atom nil))
+#_(def selected-skill-id (atom nil))
+#_(def ^:private slot->skill-id (atom nil))
 
-(defn reset-skills! []
+#_(defn reset-skills! []
   (reset! selected-skill-id nil)
   (reset! slot->skill-id (empty-slot->skill-id)))
 
-; TODO gui-state is not restored (widgets)
-#_(def state (reify session/State
-             (load! [_ {:keys [selected-skill
-                               actionbar]}]
-               (reset! selected-skill-id nil)
-               (reset! slot->skill-id (empty-slot->skill-id)))
-             (serialize [_]
-               {:selected-skill @selected-skill-id
-                :actionbar      @slot->skill-id})
-             (initial-data [_]
-               {:selected-skill nil
-                :actionbar (empty-slot->skill-id)})))
 
-(defn- add-skill-to-hotbar [skill-id]
-  (let [unused-index (first (filter #(nil? (get @slot->skill-id %))
-                                    slot-keys))]
-    (assert unused-index)
-    (swap! slot->skill-id assoc unused-index skill-id)))
+(defn- skill-tooltip-text [{:keys [context/player-entity] :as context} skill]
+  (skill/text skill player-entity context))
 
-(declare check-hotbar-actualize
-         ^HorizontalGroup horizontal-group) ; TODO == action-bar
+(defn- ->button-group []
+  (let [button-group (ButtonGroup.)]
+    (.setMaxCheckCount button-group 1)
+    (.setMinCheckCount button-group 0)
+    ;(.setUncheckLast button-group true) ? needed ?
+    button-group))
 
-(defn- ->hotbar-actualize-actor []
-  (proxy [Actor] []
-    (act [_delta]
-      (check-hotbar-actualize @current-context))))
+(defn ->context []
+  {:context.ui/action-bar (atom nil)})
 
-(defn initialize! []
-  (.bindRoot #'horizontal-group (HorizontalGroup.))
-  (.addActor horizontal-group (->hotbar-actualize-actor)))
+(extend-type gdl.context.Context
+  game.context/Actionbar
+  (->action-bar [{:keys [context.ui/action-bar]}]
+    (let [horizontal-group (HorizontalGroup.)
+          button-group (->button-group)]
+      (reset! action-bar {:horizontal-group horizontal-group
+                          :button-group button-group})
+      horizontal-group))
 
-(declare ^ButtonGroup button-group)
+  (reset-actionbar [{:keys [context.ui/action-bar]}]
+    (.clearChildren (:horizontal-group @action-bar))
+    (.clear         (:button-group     @action-bar)))
 
-(defn- reset-buttons! [{:keys [context/player-entity] :as context}]
-  (.clearChildren horizontal-group)
-  (.addActor horizontal-group (->hotbar-actualize-actor))
+  (selected-skill [{:keys [context.ui/action-bar]}]
+    (when-let [skill-button (.getChecked (:button-group @action-bar))]
+      (actor/id skill-button)))
 
-  (.bindRoot #'button-group (ButtonGroup.))
-  (.setMaxCheckCount button-group 1)
-  (.setMinCheckCount button-group 0)
-  ;(.setUncheckLast button-group true) ? needed ?
+  (actionbar-add-skill [{:keys [context.ui/action-bar]
+                         :as ctx}
+                        {:keys [id image] :as skill}]
+    (let [button (->image-button ctx image (fn [_context] ))]
+      (actor/set-id button id)
+      (.addListener button (ui/text-tooltip (fn []
+                                              (skill-tooltip-text @current-context
+                                                                  skill))))
+      (.addActor (:horizontal-group @action-bar) button)
+      (.add      (:button-group     @action-bar) button)))
 
-  (doseq [[id {:keys [image] :as skill}] (:skills @player-entity)
-          :let [button (->image-button context
-                                       image
-                                       (fn [_context]
-                                         (reset! selected-skill-id id)))]]
-    (.setName button (pr-str id))
-    (.addListener button (ui/text-tooltip #(skill/text skill player-entity @current-context)))
-    ; TODO HOTKEY
-    (.addActor horizontal-group button)
-    (.add button-group button)))
+  (actionbar-remove-skill [{:keys [context.ui/action-bar]
+                            :as ctx}
+                           {:keys [id]}]
+    (let [button (ui/find-actor-with-id (:horizontal-group @action-bar) id)]
+      (.remove button))))
+
 
 (comment
  (def sword-button (.getChecked button-group))
  (.setChecked sword-button false)
  )
 
-(defn- check-hotbar-actualize [{:keys [context/player-entity] :as context}]
-  (let [player-skills (:skills @player-entity)]
-    (when-not (= (set (keys player-skills))
-                 (set (vals @slot->skill-id)))
-      (reset! slot->skill-id nil)
-      (when-not (contains? player-skills @selected-skill-id)
-        (reset! selected-skill-id nil))
-      (doseq [skill-id (keys player-skills)]
-        (add-skill-to-hotbar skill-id))
-      (reset-buttons! context))))
-
 #_(defn- number-str->input-key [number-str]
   (eval (symbol (str "com.badlogic.gdx.Input$Keys/NUM_" number-str))))
 
+; TODO do with an actor
+; .getChildren horizontal-group => in order
 (defn up-skill-hotkeys []
   #_(doseq [slot slot-keys
           :let [skill-id (slot @slot->skill-id)]
-          :when #_(and (key-just-pressed? context (number-str->input-key (name slot)))
+          :when (and (key-just-pressed? context (number-str->input-key (name slot)))
                      skill-id)]
-    #_(.setChecked ^Button (.findActor horizontal-group (str skill-id)) true)))
+    (.setChecked ^Button (.findActor horizontal-group (str skill-id)) true)))
 
 (comment
+
+
+ ; https://javadoc.io/doc/com.badlogicgames.gdx/gdx/latest/com/badlogic/gdx/scenes/scene2d/ui/Button.html
+ (.setProgrammaticChangeEvents ^Button (.findActor horizontal-group ":spells/spawn") true)
+ ; but doesn't toggle:
+ (.toggle ^Button (.findActor horizontal-group ":spells/spawn"))
+ (.setChecked ^Button (.findActor horizontal-group ":spells/spawn") true)
+ ; Toggles the checked state. This method changes the checked state, which fires a ChangeListener.ChangeEvent (if programmatic change events are enabled), so can be used to simulate a button click.
+
+ ; => it _worked_ => active skill changed
+ ; only button is not highlighted idk why
+
  (.getChildren horizontal-group)
- ;#object[com.badlogic.gdx.utils.SnapshotArray 0x5d081309 "[Actor$ff19274a, :sword, :projectile, :meditation, :spawn]"]
 
  )

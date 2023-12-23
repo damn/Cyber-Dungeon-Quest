@@ -8,7 +8,8 @@
 ; doseq-entity - what if key is not available anymore ? check :when (k @entity)  ?
 ; but for now accepting nil value at components, so have to check first.
 
-(defrecord Entity [id position])
+(defrecord Entity [id position]) ; position only required for render, actually we dont need to know about that here?
+; can be used for non-positional entities, skills, items, ?
 
 (defsystem create   [_])
 (defsystem create!  [_ entity context])
