@@ -10,7 +10,7 @@
             [gdl.math.vector :as v]
             [utils.core :refer :all]
             [game.context :refer (world-grid)]
-            [game.faction :as faction]
+            [game.entity :as entity]
             [game.world.grid :refer [cached-adjacent-cells rectangle->cells]]
             [game.world.cell :as cell]))
 
@@ -132,7 +132,7 @@
 
 (defn- update-potential-fields* [context entities] ; TODO call on world-grid ?!..
   (let [grid (world-grid context)]
-    (doseq [faction [:good :evil]] ; TODO :faction/foo
+    (doseq [faction [:good :evil]]
       (update-faction-potential-field grid faction entities))))
 
 ;; MOVEMENT AI
@@ -183,7 +183,7 @@
 (defn- find-next-cell
   "returns {:target-entity entity} or {:target-cell cell}. Cell can be nil."
   [grid entity own-cell]
-  (let [faction (faction/enemy (:faction @entity))
+  (let [faction (entity/enemy-faction @entity)
         distance-to    #(get-in @% [faction :distance])
         nearest-entity #(get-in @% [faction :entity])
         own-dist (distance-to own-cell)

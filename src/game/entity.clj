@@ -9,3 +9,6 @@
 (defprotocol EffectModifiers
   (effect-source-modifiers [_ effect-type])
   (effect-target-modifiers [_ effect-type]))
+
+(defprotocol Faction
+  (enemy-faction [_]))

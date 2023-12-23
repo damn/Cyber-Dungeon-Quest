@@ -1,8 +1,9 @@
 (ns context.entity.state.npc-sleeping
   (:require [gdl.context :refer [draw-text draw-circle]]
             [gdl.graphics.color :as color]
-            [game.context :refer [world-grid create-entity! send-event! ->counter add-text-effect!]]
             [context.entity.state :as state]
+            [game.context :refer [world-grid create-entity! send-event! ->counter add-text-effect!]]
+            [game.entity :as entity]
             [game.world.cell :as cell]))
 
 ; TODO pass to creature data, also @ shout
@@ -24,7 +25,8 @@
   (tick! [_ context delta]
     (let [cell (get (world-grid context)
                     (utils.core/->tile (:position @entity)))]
-      (when-let [distance (cell/nearest-enemy-distance @cell (:faction @entity))]
+      (when-let [distance (cell/nearest-entity-distance @cell
+                                                        (entity/enemy-faction @entity))]
         (when (<= distance (* aggro-range 10)) ; TODO do @ cell/nearest-enemy-distance
           (send-event! context entity :alert)))))
 

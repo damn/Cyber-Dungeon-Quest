@@ -1,13 +1,14 @@
 (ns context.entity.state.npc-idle
   (:require [gdl.math.vector :as v]
-            [game.context :refer [effect-useful? world-grid potential-field-follow-to-enemy send-event! skill-usable-state]]
             [context.entity.state :as state]
+            [game.context :refer [effect-useful? world-grid potential-field-follow-to-enemy send-event! skill-usable-state]]
+            [game.entity :as entity]
             [game.world.cell :as cell]))
 
 (defn- effect-context [context entity]
   (let [cell (get (world-grid context)
                   (utils.core/->tile (:position @entity)))
-        target (cell/nearest-enemy-entity @cell (:faction @entity))]
+        target (cell/nearest-entity @cell (entity/enemy-faction @entity))]
     {:effect/source entity
      :effect/target target
      :effect/direction (when target
