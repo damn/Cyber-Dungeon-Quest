@@ -6,17 +6,15 @@
             [game.context :refer [get-entity]]))
 
 ; doseq-entity - what if key is not available anymore ? check :when (k @entity)  ?
+; but for now accepting nil value at components, so have to check first.
 
 (defrecord Entity [id position])
 
-(defsystem create [_])
-(defsystem create! [_ entity context])
-
+(defsystem create   [_])
+(defsystem create!  [_ entity context])
 (defsystem destroy! [_ entity context]) ; only used twice position/body
-
-(defsystem tick! [_ entity context delta])
-
-(defsystem moved! [_ entity context direction-vector]) ; body/position
+(defsystem tick!    [_ entity context delta])
+(defsystem moved!   [_ entity context direction-vector]) ; body/position
 
 (defsystem render-below   [_ entity* context])
 (defsystem render-default [_ entity* context])

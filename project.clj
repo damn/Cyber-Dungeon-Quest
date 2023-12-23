@@ -43,23 +43,16 @@
 
 (comment
  ; https://github.com/greglook/clj-hiera/blob/main/src/hiera/main.clj
- (require '[hiera.main :as hiera])
- (hiera/main-)
+ (do
+  (require '[hiera.main :as hiera])
 
- (hiera/graph
-  {:sources #{"src"}
-   :output "target/hiera"
-   :layout :horizontal
-   :cluster-depth 0
-   :external false
-   :ignore #{"data"
-             "utils"
-             "mapgen"}})
-
- ; Breaking depdencny graph:
- ; game.ui.config
- ; game.components.inventory
- ; game.ui.inventory-window
- ; game.ui.action-bar
- ; context.properties access to save -> make into protocol !
+  (hiera/graph
+   {:sources #{"src"}
+    :output "target/hiera"
+    :layout :horizontal
+    :cluster-depth 0
+    :external false
+    :ignore #{"data"
+              "utils"
+              "mapgen"}}))
  )
