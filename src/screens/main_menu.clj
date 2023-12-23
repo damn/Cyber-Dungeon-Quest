@@ -4,29 +4,7 @@
             [gdl.input.keys :as input.keys]
             gdl.screen
             [gdl.scene2d.ui :as ui]
-            context.counter
-            context.entity
-            context.mouseover-entity
-            [context.ui.player-message :as player-message]
-            [context.world :as world]
-            [game.context :refer [rebuild-inventory-widgets
-                                  reset-actionbar]]))
-
-(defn- init-context [context]
-  (rebuild-inventory-widgets context) ; before adding entities ( player gets items )
-  (reset-actionbar context) ; empties skills -> before adding player
-
-  ; TODO z-order namespaced keywords
-  (let [context (merge context
-                       (context.entity/->context :z-orders [:on-ground ; items
-                                                            :ground    ; creatures, player
-                                                            :flying    ; flying creatures
-                                                            :effect])  ; projectiles, nova
-                       (context.mouseover-entity/->context)
-                       (player-message/->context)
-                       (context.counter/->context)
-                       {:context/game-paused? (atom true)})]
-    (world/merge->context context)))
+            [context.game :refer [start-game-context]]))
 
 (defrecord SubScreen [bg-image]
   gdl.screen/Screen
@@ -45,7 +23,7 @@
 (defn screen [context {:keys [bg-image]}]
   (let [table (ui/table :rows [[(->text-button context "Start game"
                                                (fn [_context]
-                                                 (swap! current-context init-context)
+                                                 (swap! current-context start-game-context)
                                                  (change-screen! :screens/game)))]
                                [(->text-button context "Map editor"
                                                (fn [_context]
