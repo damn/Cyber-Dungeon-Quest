@@ -1,6 +1,5 @@
 (ns context.ui.skill-window
-  (:require [gdl.context :refer [->image-button ->text-tooltip]]
-            [gdl.scene2d.ui :as ui]
+  (:require [gdl.context :refer [->window ->image-button ->text-tooltip]]
             [cdq.context :refer [get-property add-skill! skill-text]]
             [cdq.entity :as entity]))
 
@@ -13,8 +12,9 @@
     (add-skill! context player-entity skill)))
 
 (defn create [context]
-  (let [window (ui/window :title "Skills"
-                          :id :skill-window)]
+  (let [window (->window context
+                         {:title "Skills"
+                          :id :skill-window})]
     (doseq [id [:spells/projectile
                 :spells/meditation
                 :spells/spawn]

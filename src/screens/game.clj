@@ -1,13 +1,14 @@
 (ns screens.game
   (:require [gdl.app :refer [current-context change-screen!]]
-            [gdl.context :refer [get-stage render-world-view delta-time draw-text key-just-pressed?]]
+            [gdl.context :refer [get-stage render-world-view delta-time draw-text key-just-pressed?
+                                 ->color]]
             [gdl.screen :refer [Screen]]
             [gdl.maps.tiled :as tiled]
             [gdl.graphics.color :as color]
             [gdl.graphics.camera :as camera]
             [gdl.input.keys :as input.keys]
-            [gdl.scene2d.actor :as actor]
-            [gdl.scene2d.ui :refer [find-actor-with-id]]
+            [gdl.scene2d.actor :refer [visible? set-visible! toggle-visible!]]
+            [gdl.scene2d.group :refer [children find-actor-with-id]]
             [cdq.context :refer [render-entities* ray-blocked? explored? set-explored! line-of-sight? content-grid
                                   tick-entity remove-destroyed-entities update-mouseover-entity update-potential-fields
                                   update-elapsed-game-time debug-render-after-entities debug-render-before-entities]]
@@ -15,14 +16,12 @@
             [context.entity.movement :as movement]
             [context.entity.state :as state]
             context.ui.actors
-            [cdq.world.content-grid :refer [active-entities]])
-  (:import com.badlogic.gdx.graphics.Color
-           (com.badlogic.gdx.scenes.scene2d Actor Group)))
+            [cdq.world.content-grid :refer [active-entities]]))
 
-(def ^:private explored-tile-color (Color. (float 0.5)
-                                           (float 0.5)
-                                           (float 0.5)
-                                           (float 1)))
+(declare ^:private explored-tile-color)
+
+(defn- init-explored-tile-color [ctx]
+  (.bindRoot #'explored-tile-color (->color ctx 0.5 0.5 0.5 1)))
 
 ; TODO performance - need to deref current-context at every tile corner !!
 ; => see with prformance check later
@@ -61,16 +60,16 @@
 (defn- check-window-hotkeys [context group]
   (doseq [[hotkey window] (hotkey->window)
           :when (key-just-pressed? context hotkey)]
-    (actor/toggle-visible! (find-actor-with-id group window))))
+    (toggle-visible! (find-actor-with-id group window))))
 
 (defn- end-of-frame-checks [{:keys [context/player-entity] :as context}]
   (let [group (:windows (get-stage context))
-        windows (seq (.getChildren ^Group group))]
+        windows (children group)]
     (check-window-hotkeys context group)
 
     (when (key-just-pressed? context input.keys/escape)
-      (cond (some #(.isVisible ^Actor %)        windows)
-            (run! #(.setVisible ^Actor % false) windows)
+      (cond (some visible? windows)
+            (run! #(set-visible! % false) windows)
             :else
             (change-screen! :screens/options-menu))))
 
@@ -135,5 +134,6 @@
       (update-game context active-entities delta))))
 
 (defn screen [context]
+  (init-explored-tile-color context)
   {:actors (context.ui.actors/->ui-actors context)
    :sub-screen (screens.game/->SubScreen)})

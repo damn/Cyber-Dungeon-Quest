@@ -1,17 +1,15 @@
 (ns context.ui.actors
-  (:require [gdl.context :refer [draw-centered-image gui-mouse-position draw-text ->actor]]
-            [gdl.scene2d.ui :as ui]
+  (:require [gdl.context :refer [draw-centered-image gui-mouse-position draw-text ->actor ->table
+                                 ->group]]
             [gdl.scene2d.actor :as actor]
-            [cdq.context :refer [->player-message-actor
-                                  ->action-bar]]
+            [cdq.context :refer [->player-message-actor ->action-bar]]
             [cdq.entity :as entity]
             [context.ui.hp-mana-bars :refer [->hp-mana-bars]]
             [context.ui.debug-window :as debug-window]
             [context.ui.help-window :as help-window]
             [context.ui.entity-info-window :as entity-info-window]
             [context.ui.skill-window :as skill-window]
-            [context.ui.inventory-window :as inventory])
-  (:import (com.badlogic.gdx.scenes.scene2d Actor Group)))
+            [context.ui.inventory-window :as inventory]))
 
 (defn- draw-item-on-cursor [{:keys [context/player-entity] :as context}]
   (when (= :item-on-cursor (entity/state @player-entity))
@@ -23,25 +21,24 @@
   (->actor context {:draw draw-item-on-cursor}))
 
 (defn- ->base-table [context]
-  (ui/table :rows [[{:actor (->action-bar context)
-                     :expand? true
-                     :bottom? true}]]
-            :fill-parent? true))
+  (->table context
+           {:rows [[{:actor (->action-bar context) :expand? true :bottom? true}]]
+            :fill-parent? true}))
 
 (defn- ->windows [{:keys [gui-viewport-width
                           gui-viewport-height]
                    :as context}]
-  (let [^Actor debug-window (debug-window/create context)
+  (let [debug-window (debug-window/create context)
         _ (.setPosition debug-window 0 gui-viewport-height)
-        ^Actor help-window (help-window/create)
+        help-window (help-window/create context)
         _ (.setPosition help-window
                         (- (/ gui-viewport-width 2)
                            (/ (.getWidth help-window) 2))
                         gui-viewport-height)
-        ^Actor entity-info-window (entity-info-window/create context)
+        entity-info-window (entity-info-window/create context)
         inventory-window (inventory/->inventory-window context)
-        group (Group.)]
-    (actor/set-id group :windows)
+        group (->group context)]
+    (actor/set-id! group :windows)
     (.setPosition inventory-window
                   gui-viewport-width
                   (- (/ gui-viewport-height 2)

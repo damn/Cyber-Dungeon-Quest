@@ -1,11 +1,10 @@
 (ns context.ui.action-bar
-  (:require [gdl.context :refer [->image-button key-just-pressed? ->text-tooltip]]
+  (:require [gdl.context :refer [->image-button key-just-pressed? ->text-tooltip ->button-group
+                                 ->horizontal-group]]
             ;[gdl.input.keys :as input.keys]
             [gdl.scene2d.actor :as actor]
-            [gdl.scene2d.ui :as ui]
-            [cdq.context :refer [skill-text]])
-  (:import com.badlogic.gdx.scenes.scene2d.Actor
-           (com.badlogic.gdx.scenes.scene2d.ui HorizontalGroup ButtonGroup Button)))
+            [gdl.scene2d.group :refer [find-actor-with-id]]
+            [cdq.context :refer [skill-text]]))
 
 ; TODO
 ; * cooldown / not usable -> diff. colors ? disable on not able to use skills (stunned?)
@@ -40,21 +39,18 @@
   (reset! selected-skill-id nil)
   (reset! slot->skill-id (empty-slot->skill-id)))
 
-(defn- ->button-group []
-  (let [button-group (ButtonGroup.)]
-    (.setMaxCheckCount button-group 1)
-    (.setMinCheckCount button-group 0)
-    ;(.setUncheckLast button-group true) ? needed ?
-    button-group))
-
 (defn ->context []
   {:context.ui/action-bar (atom nil)})
 
 (extend-type gdl.context.Context
   cdq.context/Actionbar
-  (->action-bar [{:keys [context.ui/action-bar]}]
-    (let [horizontal-group (HorizontalGroup.)
-          button-group (->button-group)]
+  (->action-bar [{:keys [context.ui/action-bar] :as ctx}]
+    (let [horizontal-group (->horizontal-group ctx)
+          button-group (let [button-group (->button-group ctx)]
+                         (.setMaxCheckCount button-group 1)
+                         (.setMinCheckCount button-group 0)
+                         ;(.setUncheckLast button-group true) ? needed ?
+                         button-group)]
       (reset! action-bar {:horizontal-group horizontal-group
                           :button-group button-group})
       horizontal-group))
@@ -70,7 +66,7 @@
   (actionbar-add-skill [{:keys [context.ui/action-bar] :as ctx}
                         {:keys [id image] :as skill}]
     (let [button (->image-button ctx image (fn [_context] ))]
-      (actor/set-id button id)
+      (actor/set-id! button id)
       (.addListener button (->text-tooltip ctx #(skill-text % skill)))
       (.addActor (:horizontal-group @action-bar) button)
       (.add      (:button-group     @action-bar) button)))
@@ -78,7 +74,7 @@
   (actionbar-remove-skill [{:keys [context.ui/action-bar]
                             :as ctx}
                            {:keys [id]}]
-    (let [button (ui/find-actor-with-id (:horizontal-group @action-bar) id)]
+    (let [button (find-actor-with-id (:horizontal-group @action-bar) id)]
       (.remove button))))
 
 

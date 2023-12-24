@@ -1,27 +1,15 @@
 (ns screens.main-menu
   (:require [gdl.app :refer [current-context change-screen!]]
-            [gdl.context :refer [exit-app draw-centered-image render-gui-view create-image ->text-button key-just-pressed?]]
+            [gdl.context :refer [exit-app draw-centered-image render-gui-view create-image ->text-button key-just-pressed? draw-text ->table ->actor
+                                 ->image-widget ->texture-region-drawable]]
+            context.cursor
             [gdl.input.keys :as input.keys]
             gdl.screen
-            [gdl.scene2d.ui :as ui]
             [context.game :refer [start-game-context]]))
 
-(defrecord SubScreen [bg-image]
-  gdl.screen/Screen
-  (show [_ _ctx])
-  (hide [_ _ctx])
-  (render [_ {:keys [gui-viewport-width gui-viewport-height] :as context}]
-    (render-gui-view context
-                     (fn [c]
-                       (draw-centered-image c
-                                            bg-image
-                                            [(/ gui-viewport-width  2)
-                                             (/ gui-viewport-height 2)])))
-    (when (key-just-pressed? context input.keys/escape)
-      (exit-app context))))
-
 (defn screen [context {:keys [bg-image]}]
-  (let [table (ui/table :rows [[(->text-button context "Start game"
+  (let [table (->table context
+                       {:rows [[(->text-button context "Start game"
                                                (fn [_context]
                                                  (swap! current-context start-game-context)
                                                  (change-screen! :screens/game)))]
@@ -33,7 +21,15 @@
                                                  (change-screen! :screens/property-editor)))]
                                [(->text-button context "Exit" exit-app)]]
                         :cell-defaults {:pad-bottom 25}
-                        :fill-parent? true)]
+                        :fill-parent? true})]
     (.center table)
-    {:actors [table]
-     :sub-screen (->SubScreen (create-image context bg-image))}))
+    {:actors [(->image-widget context  ; TODO use visimage, pass directly textureregion
+                              (->texture-region-drawable context (:texture (create-image context bg-image)))
+                              {})
+              ; align = center
+              ; scaling =
+              table
+              (->actor context {:act (fn [ctx]
+                                       (when (key-just-pressed? ctx input.keys/escape)
+                                         (exit-app ctx)))})
+              (context.cursor/->cursor-update-actor context)]}))

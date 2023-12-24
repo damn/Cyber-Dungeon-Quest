@@ -1,6 +1,22 @@
 (ns context.cursor
   (:require [gdl.context :refer [->actor ->cursor mouse-on-stage-actor?]]))
 
+; cursor states
+
+; * first of all look PLAYER STATE
+
+; then item-on-cursor state & idle mostly, others are 'busy' or 'dead'
+; => cursor state keyword namespaced
+
+; then
+; * mouse-on-stage-actor? -> there check also more stuff dep. on what is hit (button, drag window, idk, inventory can take or not, actionbar )
+
+; * clickable-mouseover-entity?
+
+; * then SKILL USABLE STATE / show skill info if you WOULD do your skill ! or not enough mana etc.
+; (draw your own cursors?)
+
+
 (defn- set-cursor! [{:keys [context/cursors] :as ctx} cursor-key]
   (gdl.context/set-cursor! ctx (get cursors cursor-key)))
 

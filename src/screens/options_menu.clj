@@ -2,9 +2,8 @@
   (:require [gdl.app :refer [change-screen!]]
             gdl.screen
             [gdl.context :refer [->stage-screen draw-centered-image render-gui-view create-image
-                                 ->text-button ->check-box key-just-pressed?]]
+                                 ->text-button ->check-box key-just-pressed? ->table]]
             [gdl.input.keys :as input.keys]
-            [gdl.scene2d.ui :as ui]
             [utils.core :refer [find-first]]
             ;[cdq.line-of-sight :refer (player-line-of-sight-checks)]
             [context.entity.body :refer (show-body-bounds)]))
@@ -76,7 +75,8 @@
   (change-screen! :screens/game))
 
 (defn- create-table [context]
-  (let [table (ui/table :rows (concat
+  (let [table (->table context
+                       {:rows (concat
                                (for [check-box @status-check-boxes]
                                  [(->check-box context
                                                (get-text check-box)
@@ -91,7 +91,7 @@
                                 [(->text-button context "Exit" (fn [_context]
                                                                  (change-screen! :screens/main-menu)))]])
                         :fill-parent? true
-                        :cell-defaults {:pad-bottom 25})
+                        :cell-defaults {:pad-bottom 25}})
         padding 25]
     (.center table) ; ? TODO don't understand
     (def menu-bg-image (create-image context "ui/moon_background.png"))

@@ -1,7 +1,8 @@
 (ns screens.map-editor
   (:require [clojure.edn :as edn]
             [gdl.app :refer [change-screen!]]
-            [gdl.context :refer [key-pressed? key-just-pressed?]]
+            [gdl.context :refer [key-pressed? key-just-pressed? ->text-field ->table
+                                 ->label ->window]]
             [gdl.input.keys :as input.keys]
             gdl.screen
             [gdl.graphics.color :as color]
@@ -9,7 +10,6 @@
             [gdl.context :refer [draw-filled-rectangle draw-filled-circle draw-grid render-world-view ->text-button]]
             gdl.disposable
             [gdl.maps.tiled :as tiled]
-            [gdl.scene2d.ui :as ui]
             [cdq.context :refer [all-properties]]
             [mapgen.movement-property :refer (movement-property movement-properties)]
             [mapgen.module-gen :as module-gen])
@@ -134,8 +134,8 @@
 ; -> form
 ; and from table how to get the value
 
-(defn edit-form [[k v]]
-  (doto (ui/text-field (str v))
+(defn edit-form [ctx [k v]]
+  (doto (->text-field ctx (str v) {})
     (.setName (str k))))
 
 (defn form-value [^com.badlogic.gdx.scenes.scene2d.ui.Table forms-table k]
@@ -148,15 +148,15 @@
 ; TODO see common stuff w. entity-editor/screen.
 (defn- edn-edit-form [context edn-data-file]
   (let [properties (edn/read-string (slurp edn-data-file))
-        table (ui/table)
+        table (->table context {})
         get-properties #(into {}
                               (for [k (keys properties)]
                                 [k (edn/read-string (form-value table k))]))]
-    (.colspan (.add table (ui/label edn-data-file)) 2)
+    (.colspan (.add table (->label context edn-data-file)) 2)
     (.row table)
     (doseq [[k v] properties]
-      (.add table (ui/label (name k)))
-      (.add table ^com.badlogic.gdx.scenes.scene2d.Actor (edit-form [k v]))
+      (.add table (->label context (name k)))
+      (.add table ^com.badlogic.gdx.scenes.scene2d.Actor (edit-form context [k v]))
       (.row table))
     (.colspan (.add table (->text-button context
                                          (str "Save to file")
@@ -191,7 +191,7 @@
 
 (defn screen [context]
   (reset! current-tiled-map (tiled/load-map module-gen/modules-file))
-  (let [window (ui/window :title "Properties")
+  (let [window (->window context {:title "Properties"})
         [form get-properties] (edn-edit-form context "resources/maps/map.edn")] ; TODO move to properties
     (.add window ^com.badlogic.gdx.scenes.scene2d.Actor form)
     (.row window)

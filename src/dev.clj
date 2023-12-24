@@ -17,6 +17,8 @@
      avar))
 
 (comment
+ (gdl.backends.libgdx.dev/restart!)
+
  (spit "app-values-tree.clj"
        (with-out-str
         (pprint
