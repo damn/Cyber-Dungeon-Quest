@@ -148,15 +148,12 @@
                                           button (if (:image props)
                                                    (->image-button context (:image props) on-clicked)
                                                    (->text-button context (name id) on-clicked))
-                                          _ (println "Build label with context" context )
                                           top-widget (or (and extra-infos-widget
                                                               (extra-infos-widget context props))
-                                                         (->label context ""))
-                                          stack (->stack context)]]
-                                (do (actor/set-touchable! top-widget :disabled)
-                                    (.add stack button)
-                                    (.add stack top-widget)
-                                    stack))))})))
+                                                         (->label context ""))]]
+                                (do
+                                 (actor/set-touchable! top-widget :disabled)
+                                 (->stack context [button top-widget])))))})))
 
 (defn- add-one-to-many-rows [context ^com.kotcrab.vis.ui.widget.VisTable table property-type property-ids]
   (.addSeparator table)

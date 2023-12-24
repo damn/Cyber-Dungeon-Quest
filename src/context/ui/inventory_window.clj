@@ -6,12 +6,13 @@
                                  play-sound! gui-mouse-position get-stage ->text-tooltip ->table ->window
                                  ->texture-region-drawable ->color ->stack ->image-widget]]
             [gdl.graphics.color :as color]
-            [gdl.scene2d.actor :refer [visible?]]
+            [gdl.scene2d.actor :as actor :refer [set-id! visible? add-listener!]]
             [context.entity.inventory :as inventory]
             [cdq.entity :as entity]
             [cdq.context :refer [show-msg-to-player! send-event! modifier-text set-item! stack-item! remove-item!]])
-  (:import (com.badlogic.gdx.scenes.scene2d Actor Group)
+  (:import com.badlogic.gdx.scenes.scene2d.Actor
            (com.badlogic.gdx.scenes.scene2d.ui Widget Image TextTooltip Window Table)
+           com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
            com.badlogic.gdx.scenes.scene2d.utils.ClickListener
            com.badlogic.gdx.math.Vector2))
 
@@ -118,24 +119,18 @@
                         (.getX this)
                         (.getY this)
                         (mouseover? this (gui-mouse-position c))
-                        (read-string (.getName (.getParent this))))))))
+                        (actor/id (.getParent this)))))))
 
-(defn- cell-widget ^Group [ctx slot->background slot & {:keys [position]}]
-  (let [cell [slot (or position [0 0])]]
-    (doto (->stack ctx)
-      (.setName (pr-str cell)) ; TODO ! .setUserObject
-      (.addListener (proxy [ClickListener] []
-                      (clicked [event x y]
-                        (clicked-cell @current-context cell))))
-      (.add (draw-rect-actor))
-      (.add (doto (->image-widget ctx (slot->background slot) {})
-              (.setName "image"))))))
-
-(defn- get-cell-widget ^Group [table cell]
-  (.findActor table (pr-str cell)))
-
-(defn- get-image-widget ^Image [cell-widget]
-  (.findActor ^Group cell-widget "image"))
+(defn- ->cell [ctx slot->background slot & {:keys [position]}]
+  (let [cell [slot (or position [0 0])]
+        image-widget (->image-widget ctx (slot->background slot) {})
+        stack (->stack ctx [(draw-rect-actor) image-widget])]
+    (set-id! stack cell)
+    (set-id! image-widget :image)
+    (add-listener! stack (proxy [ClickListener] []
+                           (clicked [event x y]
+                             (clicked-cell @current-context cell))))
+    stack))
 
 ; TODO write 'two handed' at weapon info -> key-to-pretty-tooltip-text function for keywords (extend-c?)
 (defn- item-name [item]
@@ -148,29 +143,38 @@
        (->> item
             :modifier
             (modifier-text context))))
+(comment
+ ; doesnt work need bag idx :positions
+ (add-rows table
+           [[nil nil nil nil (cell :bag) (cell :bag) (cell :bag) (cell :bag)]
+            [nil (cell :weapon) nil (cell :glove) (cell :bag) (cell :bag) (cell :bag) (cell :bag)]
+            [(cell :helm) (cell :chest) (cell :leg) (cell :rings :position [0 0]) (cell :bag) (cell :bag) (cell :bag) (cell :bag)]
+            [(cell :necklace) (cell :cloak) nil (cell :rings :position [1 0]) (cell :bag) (cell :bag) (cell :bag) (cell :bag)]
+            [nil (cell :shield) nil (cell :boot) (cell :bag) (cell :bag) (cell :bag) (cell :bag)]
+            [nil nil nil nil (cell :bag) (cell :bag) (cell :bag) (cell :bag)]])
+ )
 
-(defn- redo-table [ctx {:keys [table slot->background]}]
-  (let [->cell (fn [& args]
-                 (apply cell-widget ctx slot->background args))]
+(defn- redo-table [ctx {:keys [^Table table slot->background]}]
+  (let [cell (fn [& args] (apply ->cell ctx slot->background args))]
     (.clear table)
     (doto table .add .add
-      (.add (->cell :helm))
-      (.add (->cell :necklace)) .row)
+      (.add ^Actor (cell :helm))
+      (.add ^Actor (cell :necklace)) .row)
     (doto table .add
-      (.add (->cell :weapon))
-      (.add (->cell :chest))
-      (.add (->cell :cloak))
-      (.add (->cell :shield)) .row)
+      (.add ^Actor (cell :weapon))
+      (.add ^Actor (cell :chest))
+      (.add ^Actor (cell :cloak))
+      (.add ^Actor (cell :shield)) .row)
     (doto table .add .add
-      (.add (->cell :leg)) .row)
+      (.add ^Actor (cell :leg)) .row)
     (doto table .add
-      (.add (->cell :glove))
-      (.add (->cell :rings :position [0 0]))
-      (.add (->cell :rings :position [1 0]))
-      (.add (->cell :boot)) .row)
+      (.add ^Actor (cell :glove))
+      (.add ^Actor (cell :rings :position [0 0]))
+      (.add ^Actor (cell :rings :position [1 0]))
+      (.add ^Actor (cell :boot)) .row)
     (doseq [y (range (grid/height (:bag inventory/empty-inventory)))]
       (doseq [x (range (grid/width (:bag inventory/empty-inventory)))]
-        (.add table (->cell :bag :position [x y])))
+        (.add table ^Actor (cell :bag :position [x y])))
       (.row table))))
 
 (extend-type gdl.context.Context
@@ -178,21 +182,21 @@
   (inventory-window-visible? [{{:keys [window]} :context/inventory}]
     (visible? window))
 
-  (rebuild-inventory-widgets [{{:keys [window] :as inventory} :context/inventory :as ctx}]
+  (rebuild-inventory-widgets [{{:keys [^Window window] :as inventory} :context/inventory :as ctx}]
     (redo-table ctx inventory)
     (.pack window))
 
   (set-item-image-in-widget [{{:keys [table]} :context/inventory :as ctx}
                              cell
                              item]
-    (let [cell-widget (get-cell-widget table cell)
-          image-widget (get-image-widget cell-widget)]
+    (let [^Actor cell-widget (get table cell)
+          ^Image image-widget (get cell-widget :image)]
       (.setDrawable image-widget (->texture-region-drawable ctx (:texture (:image item))))
       (.addListener cell-widget (->text-tooltip ctx #(item-text % item)))))
 
   (remove-item-from-widget [{{:keys [table slot->background]} :context/inventory :as ctx} cell]
-    (let [cell-widget (get-cell-widget table cell)
-          image-widget (get-image-widget cell-widget)
+    (let [^Actor cell-widget (get table cell)
+          ^Image image-widget (get cell-widget :image)
           ^TextTooltip tooltip (first (filter #(instance? TextTooltip %)
                                               (.getListeners cell-widget)))]
       (.setDrawable image-widget (slot->background (cell 0)))
@@ -214,7 +218,8 @@
           :bag      10} ; transparent
          (map (fn [[slot y]]
                 [slot
-                 (.tint (->texture-region-drawable context
+                 (.tint ^TextureRegionDrawable
+                        (->texture-region-drawable context
                                                    (:texture (get-sprite context sheet [21 (+ y 2)])))
                         (->color context 1 1 1 0.4))]))
          (into {}))))
@@ -223,9 +228,9 @@
   window)
 
 (defn ->context [context]
-  {:context/inventory (let [window (->window context {:title "Inventory"
-                                                      :id :inventory-window})
-                            table (->table context {})]
+  {:context/inventory (let [^Table window (->window context {:title "Inventory"
+                                                             :id :inventory-window})
+                            ^Table table (->table context {})]
                         (.pad table (float 2))
                         (.add window table)
                         {:window window
