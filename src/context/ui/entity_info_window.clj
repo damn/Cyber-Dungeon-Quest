@@ -2,6 +2,7 @@
   (:require [gdl.context :refer [->actor ->window ->label]]
             [gdl.scene2d.ui.label :refer [set-text!]]
             [gdl.scene2d.group :refer [add-actor!]]
+            [gdl.scene2d.ui.widget-group :refer [pack!]]
             [cdq.entity :as entity]))
 
 (defn- entity-info-text [entity*]
@@ -23,5 +24,5 @@
                                         (set-text! label
                                                    (when-let [entity @(:context/mouseover-entity context)]
                                                      (entity-info-text @entity)))
-                                        (.pack window))}))
+                                        (pack! window))}))
     window))

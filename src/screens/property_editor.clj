@@ -3,9 +3,11 @@
             [gdl.app :refer [change-screen!]]
             [gdl.context :refer [get-stage ->text-button ->image-button ->label ->text-field
                                  ->image-widget ->texture-region-drawable ->table ->stack ->window]]
-            [gdl.scene2d.actor :as actor]
-            [gdl.scene2d.ui.table :refer [add-rows cells]]
+            [gdl.scene2d.actor :as actor :refer [remove! set-touchable!]]
+            [gdl.scene2d.group :refer [add-actor! clear-children! children]]
+            [gdl.scene2d.ui.table :refer [add! add-rows cells]]
             [gdl.scene2d.ui.cell :refer [set-actor!]]
+            [gdl.scene2d.ui.widget-group :refer [pack!]]
             context.properties
             [cdq.context :refer [get-property all-properties]]))
 
@@ -51,19 +53,21 @@
 ; * non-toggle ->image-button at overview => VisImageButton
 ; * missing widgets for keys / one-to-many not implemented
 
+(defn- add-to-stage-and-center! [{:keys [gui-viewport-width
+                                         gui-viewport-height] :as context}
+                                 actor]
+  (add-actor! (get-stage context) actor)
+  (actor/set-center! actor
+                     (/ gui-viewport-width  2)
+                     (/ gui-viewport-height 2)))
+
 (declare property-editor-window) ; ->property-editor-window or ->property-window
 
-(defn- open-property-editor-window [{:keys [gui-viewport-width
-                                            gui-viewport-height] :as context}
-                                    property-id]
-  (let [window (property-editor-window context property-id)]
-    (.addActor (get-stage context) window)
-    (actor/set-center! window
-                       (/ gui-viewport-width  2)
-                       (/ gui-viewport-height 2))))
+(defn- open-property-editor-window [context property-id]
+  (add-to-stage-and-center! context (property-editor-window context property-id)))
 
 (defn- get-child-with-id [group id]
-  (->> (.getChildren ^com.badlogic.gdx.scenes.scene2d.Group group)
+  (->> (children group)
        (filter #(= id (actor/id %)))
        first))
 
@@ -131,7 +135,7 @@
                  (name id)
                  #(open-property-editor-window % id)))
 
-(defn- overview-table ^com.badlogic.gdx.scenes.scene2d.ui.Table [context property-type clicked-id-fn]
+(defn- overview-table [context property-type clicked-id-fn]
   (let [{:keys [title
                 sort-by-fn
                 extra-infos-widget]} (:overview (get property-types property-type))
@@ -152,13 +156,13 @@
                                                               (extra-infos-widget context props))
                                                          (->label context ""))]]
                                 (do
-                                 (actor/set-touchable! top-widget :disabled)
+                                 (set-touchable! top-widget :disabled)
                                  (->stack context [button top-widget])))))})))
 
 (defn- add-one-to-many-rows [context ^com.kotcrab.vis.ui.widget.VisTable table property-type property-ids]
   (.addSeparator table)
   (let [redo-rows (fn [context property-ids]
-                    (.clearChildren ^com.badlogic.gdx.scenes.scene2d.ui.Table table)
+                    (clear-children! table)
                     (add-one-to-many-rows context table property-type property-ids))]
     (add-rows table (concat
                      (for [prop-id property-ids]
@@ -170,22 +174,18 @@
                                        #(redo-rows % (disj (set property-ids) prop-id)))])
                      [[(->text-button context
                                       " + "
-                                      (fn [{:keys [gui-viewport-width gui-viewport-height]}]
+                                      (fn [context]
                                         (let [window (->window context {:title "Choose"
                                                                         :modal? true})
                                               clicked-id-fn (fn [context id]
-                                                              (.remove window)
+                                                              (remove! window)
                                                               (redo-rows context
                                                                          (conj (set property-ids) id)))]
-                                          (.add window (overview-table context property-type clicked-id-fn))
-                                          (.pack window)
-                                          ; TODO fn above -> open in center .. ?
-                                          (.addActor (get-stage context) window)
-                                          (actor/set-center! window
-                                                             (/ gui-viewport-width  2)
-                                                             (/ gui-viewport-height 2)))))]])))
+                                          (add! window (overview-table context property-type clicked-id-fn))
+                                          (pack! window)
+                                          (add-to-stage-and-center! context window))))]])))
   (when-let [parent (.getParent table)]
-    (.pack parent)))
+    (pack! parent)))
 
 (defmethod property-widget :one-to-many [context attribute property-ids]
   (let [table (->table context {})]
@@ -215,14 +215,14 @@
                                 [(->label context (name k)) widget]))
                              ; TODO doesnt do anything, need to swap on current context
                              [[(->text-button context "Save" #(context.properties/update-and-write-to-file! % (get-data)))
-                               (->text-button context "Cancel" (fn [_context] (.remove window)))]]))
-    (.pack window)
+                               (->text-button context "Cancel" (fn [_context] (remove! window)))]]))
+    (pack! window)
     window))
 
 (defn- set-second-widget [context widget]
   (let [table (:main-table (get-stage context))]
     (set-actor! (second (cells table)) widget)
-    (.pack table)))
+    (pack! table)))
 
 (defn- left-widget [context]
   (->table context {:cell-defaults {:pad 5}

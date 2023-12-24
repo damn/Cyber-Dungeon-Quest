@@ -1,8 +1,9 @@
 (ns context.ui.debug-window
   (:require [gdl.context :refer [gui-mouse-position world-mouse-position frames-per-second
                                  mouse-on-stage-actor? ->actor ->window ->label]]
+            [gdl.scene2d.group :refer [add-actor!]]
             [gdl.scene2d.ui.label :refer [set-text!]]
-            [gdl.scene2d.group :refer [add-actor!]]))
+            [gdl.scene2d.ui.widget-group :refer [pack!]]))
 
 (defn- debug-infos [{:keys [context/game-paused?
                             context/player-entity
@@ -34,5 +35,5 @@
                                 {:act
                                  #(do
                                    (set-text! label (debug-infos %))
-                                   (.pack window))}))
+                                   (pack! window))}))
     window))
