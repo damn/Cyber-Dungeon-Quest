@@ -8,21 +8,27 @@
 
 (defn screen [context {:keys [bg-image]}]
   (let [table (->table context
-                       {:rows [[(->text-button context "Start game"
-                                               (fn [_context]
-                                                 (swap! current-context start-game-context)
-                                                 (change-screen! :screens/game)))]
-                               [(->text-button context "Map editor"
-                                               (fn [_context]
-                                                 (change-screen! :screens/map-editor)))]
-                               [(->text-button context "Property editor"
-                                               (fn [_context]
-                                                 (change-screen! :screens/property-editor)))]
+                       {:rows [[(->text-button context "Start game" (fn [_context]
+                                                                      (swap! current-context start-game-context)
+                                                                      (change-screen! :screens/game)))]
+
+                               ; deactivate for deployment ?
+                               [(->text-button context "Map editor" (fn [_context]
+                                                                      (change-screen! :screens/map-editor)))]
+                               [(->text-button context "Property editor" (fn [_context]
+                                                                           (change-screen! :screens/property-editor)))]
+
                                [(->text-button context "Exit" exit-app)]]
                         :cell-defaults {:pad-bottom 25}
                         :fill-parent? true})]
     (.center table)
-    {:actors [(->image-widget context (create-image context bg-image) {})
+    ; => reuse image @ options menu / property ?
+    {:actors [(let [image (->image-widget context (create-image context bg-image) {})]
+                (.setScaling image com.badlogic.gdx.utils.Scaling/fill)
+                (.setAlign image com.badlogic.gdx.utils.Align/center)
+                (.setFillParent image true)
+                image)
+              ; setScaling image com.badlogic.gdx.utils.Scaling/fill
               ; align = center
               ; scaling =
               ; add opts for this

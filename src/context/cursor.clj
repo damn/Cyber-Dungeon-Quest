@@ -8,6 +8,8 @@
 ; then item-on-cursor state & idle mostly, others are 'busy' or 'dead'
 ; => cursor state keyword namespaced
 
+; item-on-cursor can put the item as cursor directly with hotspot in the middle?
+
 ; then
 ; * mouse-on-stage-actor? -> there check also more stuff dep. on what is hit (button, drag window, idk, inventory can take or not, actionbar )
 
