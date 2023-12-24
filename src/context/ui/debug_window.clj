@@ -1,13 +1,13 @@
 (ns context.ui.debug-window
   (:require [gdl.context :refer [gui-mouse-position world-mouse-position frames-per-second
                                  mouse-on-stage-actor? ->actor ->window ->label]]
-            [gdl.scene2d.ui.label :refer [set-text!]]))
+            [gdl.scene2d.ui.label :refer [set-text!]]
+            [gdl.scene2d.group :refer [add-actor!]]))
 
 (defn- debug-infos [{:keys [context/game-paused?
                             context/player-entity
                             context.entity/thrown-error
-                            context/elapsed-game-time
-                            ] :as c}]
+                            context/elapsed-game-time] :as c}]
   (let [world-mouse (world-mouse-position c)]
     (str "FPS: " (frames-per-second c)  "\n"
          "World: "(mapv int world-mouse) "\n"
@@ -26,14 +26,13 @@
                 )))))
 
 (defn create [context]
-  (let [window (->window context
-                         {:title "Debug"
-                          :id :debug-window})
-        label (->label context "")]
-    (.add window label)
-    (.add window (->actor context
-                          {:act
-                           (fn [context]
-                             (set-text! label (debug-infos context))
-                             (.pack window))}))
+  (let [label (->label context "")
+        window (->window context {:title "Debug"
+                                  :id :debug-window
+                                  :rows [[label]]})]
+    (add-actor! window (->actor context
+                                {:act
+                                 #(do
+                                   (set-text! label (debug-infos %))
+                                   (.pack window))}))
     window))

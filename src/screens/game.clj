@@ -8,7 +8,7 @@
             [gdl.graphics.camera :as camera]
             [gdl.input.keys :as input.keys]
             [gdl.scene2d.actor :refer [visible? set-visible! toggle-visible!]]
-            [gdl.scene2d.group :refer [children find-actor-with-id]]
+            [gdl.scene2d.group :refer [children]]
             [cdq.context :refer [render-entities* ray-blocked? explored? set-explored! line-of-sight? content-grid
                                   tick-entity remove-destroyed-entities update-mouseover-entity update-potential-fields
                                   update-elapsed-game-time debug-render-after-entities debug-render-before-entities]]
@@ -60,7 +60,7 @@
 (defn- check-window-hotkeys [context group]
   (doseq [[hotkey window] (hotkey->window)
           :when (key-just-pressed? context hotkey)]
-    (toggle-visible! (find-actor-with-id group window))))
+    (toggle-visible! (get group window))))
 
 (defn- end-of-frame-checks [{:keys [context/player-entity] :as context}]
   (let [group (:windows (get-stage context))

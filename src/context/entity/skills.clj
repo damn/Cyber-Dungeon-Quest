@@ -22,8 +22,10 @@
                                   (map #(get-property context %)
                                        skill-ids))))
 
-  (entity/tick! [_ entity context delta]
-    (mapvals #(update-cooldown context % delta) skills)))
+  (entity/tick! [[k _] entity context delta]
+    (swap! entity update k
+           (fn [skills]
+             (mapvals #(update-cooldown context % delta) skills)))))
 
 (extend-type context.entity.Entity
   cdq.entity/Skills

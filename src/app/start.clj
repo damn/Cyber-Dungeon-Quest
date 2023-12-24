@@ -21,14 +21,13 @@
 
 (defn- create-context [context]
   (let [context (merge context
+                       (cursor/->context context)
                        (properties/->context context "resources/properties.edn")
                        (inventory/->context)
-                       (action-bar/->context)
-                       (cursor/->context context))]
+                       (action-bar/->context context))]
     (merge context
            ; previous default-font overwritten
-           {:default-font (generate-ttf context {:file "exocet/films.EXL_____.ttf"
-                                                 :size 16})
+           {:default-font (generate-ttf context {:file "exocet/films.EXL_____.ttf" :size 16})
             :screens/game            (->stage-screen context (screens.game/screen context))
             :screens/main-menu       (->stage-screen context (screens.main-menu/screen context {:bg-image "ui/moon_background.png"}))
             :screens/map-editor      (->stage-screen context (screens.map-editor/screen context))

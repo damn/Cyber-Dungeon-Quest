@@ -21,9 +21,8 @@
   (->actor context {:draw draw-item-on-cursor}))
 
 (defn- ->base-table [context]
-  (->table context
-           {:rows [[{:actor (->action-bar context) :expand? true :bottom? true}]]
-            :fill-parent? true}))
+  (->table context {:rows [[{:actor (->action-bar context) :expand? true :bottom? true}]]
+                    :fill-parent? true}))
 
 (defn- ->windows [{:keys [gui-viewport-width
                           gui-viewport-height]

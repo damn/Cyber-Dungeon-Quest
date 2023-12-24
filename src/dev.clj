@@ -26,4 +26,17 @@
                                 (get-namespaces))
                :let [value-vars (get-non-fn-vars nmspace)]
                :when (seq value-vars)]
-           [(ns-name nmspace) (map (comp symbol name symbol) value-vars)])))))
+           [(ns-name nmspace) (map (comp symbol name symbol) value-vars)]))))
+
+
+
+ (let [entity* @(cdq.context/get-entity @gdl.app/current-context 49)]
+   (:mana entity*)
+   )
+
+ )
+
+
+
+
+

@@ -93,7 +93,7 @@
                         :fill-parent? true
                         :cell-defaults {:pad-bottom 25}})
         padding 25]
-    (.center table) ; ? TODO don't understand
+    (.center table) ; :alignment :center ?
     (def menu-bg-image (create-image context "ui/moon_background.png"))
     table))
 
