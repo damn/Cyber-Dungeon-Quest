@@ -26,18 +26,21 @@
   (all-properties [{:keys [context/properties]} type]
     (filter (prop-type-unique-key type) (vals properties))))
 
+(require 'gdl.backends.libgdx.context.image-drawer-creator)
+
 ; could just use sprite-idx directly?
 (defn- deserialize-image [context {:keys [file sub-image-bounds]}]
   {:pre [file sub-image-bounds]}
   (let [[sprite-x sprite-y] (take 2 sub-image-bounds)
         [tilew tileh]       (drop 2 sub-image-bounds)]
     ; TODO is not the image record itself, check how to do @ image itself.
-    (get-sprite context
-                {:file file
-                 :tilew tileh
-                 :tileh tilew}
-                [(int (/ sprite-x tilew))
-                 (int (/ sprite-y tileh))])))
+    (gdl.backends.libgdx.context.image-drawer-creator/map->Image
+     (get-sprite context
+                 {:file file
+                  :tilew tileh
+                  :tileh tilew}
+                 [(int (/ sprite-x tilew))
+                  (int (/ sprite-y tileh))]))))
 
 (defn- serialize-image [image]
   (select-keys image [:file :sub-image-bounds]))

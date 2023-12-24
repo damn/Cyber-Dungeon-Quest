@@ -1,7 +1,6 @@
 (ns screens.main-menu
   (:require [gdl.app :refer [current-context change-screen!]]
-            [gdl.context :refer [exit-app draw-centered-image render-gui-view create-image ->text-button key-just-pressed? draw-text ->table ->actor
-                                 ->image-widget ->texture-region-drawable]]
+            [gdl.context :refer [exit-app draw-centered-image render-gui-view create-image ->text-button key-just-pressed? draw-text ->table ->actor ->image-widget]]
             context.cursor
             [gdl.input.keys :as input.keys]
             gdl.screen
@@ -23,11 +22,11 @@
                         :cell-defaults {:pad-bottom 25}
                         :fill-parent? true})]
     (.center table)
-    {:actors [(->image-widget context  ; TODO use visimage, pass directly textureregion
-                              (->texture-region-drawable context (:texture (create-image context bg-image)))
-                              {})
+    {:actors [(->image-widget context (create-image context bg-image) {})
               ; align = center
               ; scaling =
+              ; add opts for this
+              ; => add also opts for the drawable thing itself then ? no not necessary i guess
               table
               (->actor context {:act (fn [ctx]
                                        (when (key-just-pressed? ctx input.keys/escape)

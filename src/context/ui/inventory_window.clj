@@ -203,8 +203,8 @@
       (.hide tooltip)
       (.removeListener cell-widget tooltip))))
 
-(defn- slot->background [context]
-  (let [sheet (spritesheet context "items/images.png" 48 48)]
+(defn- slot->background [ctx]
+  (let [sheet (spritesheet ctx "items/images.png" 48 48)]
     (->> {:weapon   0
           :shield   1
           :rings    2
@@ -219,9 +219,9 @@
          (map (fn [[slot y]]
                 [slot
                  (.tint ^TextureRegionDrawable
-                        (->texture-region-drawable context
-                                                   (:texture (get-sprite context sheet [21 (+ y 2)])))
-                        (->color context 1 1 1 0.4))]))
+                        (->texture-region-drawable ctx
+                                                   (:texture (get-sprite ctx sheet [21 (+ y 2)])))
+                        (->color ctx 1 1 1 0.4))]))
          (into {}))))
 
 (defn ->inventory-window [{{:keys [window] :as inventory} :context/inventory}]

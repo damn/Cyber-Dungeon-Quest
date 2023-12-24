@@ -23,6 +23,7 @@
 ; TODO player message triggers on enter game screen already => invalid skill params
 ; => check when triggered or why (key just pressed ?)
 ; TODO when you died, keep message there , add duration param
+; => use modal window !
 
 (extend-type gdl.context.Context
   cdq.context/PlayerMessage

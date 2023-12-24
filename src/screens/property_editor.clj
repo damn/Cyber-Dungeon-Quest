@@ -2,7 +2,7 @@
   (:require [clojure.edn :as edn]
             [gdl.app :refer [change-screen!]]
             [gdl.context :refer [get-stage ->text-button ->image-button ->label ->text-field
-                                 ->image-widget ->texture-region-drawable ->table ->stack ->window]]
+                                 ->image-widget ->table ->stack ->window]]
             [gdl.scene2d.actor :as actor :refer [remove! set-touchable!]]
             [gdl.scene2d.group :refer [add-actor! clear-children! children]]
             [gdl.scene2d.ui.table :refer [add! add-rows cells]]
@@ -119,9 +119,7 @@
   nil)
 
 (defmethod property-widget :image [ctx _ image]
-  (->image-widget ctx
-                  (->texture-region-drawable ctx (:texture image))
-                  {}))
+  (->image-widget ctx image {}))
 
 (defmethod property-widget :text-field [ctx _ v]
   (->text-field ctx (pr-str v) {}))
@@ -167,7 +165,7 @@
     (add-rows table (concat
                      (for [prop-id property-ids]
                        [(->image-widget context
-                                        (->texture-region-drawable context (:texture (:image (get-property context prop-id))))
+                                        (:image (get-property context prop-id))
                                         {:id prop-id})
                         (->text-button context
                                        " - "
