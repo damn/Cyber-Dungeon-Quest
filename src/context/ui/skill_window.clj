@@ -1,5 +1,6 @@
 (ns context.ui.skill-window
   (:require [gdl.context :refer [->window ->image-button ->text-tooltip]]
+            [gdl.scene2d.actor :refer [add-listener!]]
             [cdq.context :refer [get-property add-skill! skill-text]]
             [cdq.entity :as entity]))
 
@@ -11,21 +12,21 @@
     (swap! player-entity update :free-skill-points dec)
     (add-skill! context player-entity skill)))
 
+; TODO render text label free-skill-points
+; (str "Free points: " (:free-skill-points @player-entity))
 (defn create [context]
-  (let [window (->window context
-                         {:title "Skills"
-                          :id :skill-window})]
-    (doseq [id [:spells/projectile
-                :spells/meditation
-                :spells/spawn]
-            :let [skill (get-property context id)
-                  button (->image-button context
-                                         (:image skill)
-                                         #(pressed-on-skill-in-menu % skill))]]
-      ; duplicated @ action-bar
-      (.addListener button (->text-tooltip context #(skill-text % skill)))
-      (.add window button))
-    ; TODO render text label free-skill-points
-    ; (str "Free points: " (:free-skill-points @player-entity))
-    (.pack window)
-    window))
+  (->window context
+            {:title "Skills"
+             :id :skill-window
+             :rows [(for [id [:spells/projectile
+                              :spells/meditation
+                              :spells/spawn]
+                          :let [skill (get-property context id)
+                                button (->image-button context
+                                                       (:image skill)
+                                                       #(pressed-on-skill-in-menu % skill))]]
+                      ; duplicated @ action-bar => not skill-text but skill-button ... ? with different on-clicked
+                      (do
+                       (add-listener! button (->text-tooltip context #(skill-text % skill)))
+                       button))]
+             :pack? true}))
