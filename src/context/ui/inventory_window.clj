@@ -2,13 +2,14 @@
   (:require [clojure.string :as str]
             [data.grid2d :as grid]
             [gdl.app :refer [current-context]]
-            [gdl.graphics.color :as color]
             [gdl.context :refer [draw-rectangle draw-filled-rectangle spritesheet get-sprite
                                  play-sound! gui-mouse-position get-stage ->text-tooltip ->table ->window
                                  ->texture-region-drawable ->color ->stack ->image-widget]]
+            [gdl.graphics.color :as color]
+            [gdl.scene2d.actor :refer [visible?]]
+            [context.entity.inventory :as inventory]
             [cdq.entity :as entity]
-            [cdq.context :refer [show-msg-to-player! send-event! modifier-text set-item! stack-item! remove-item!]]
-            [context.entity.inventory :as inventory])
+            [cdq.context :refer [show-msg-to-player! send-event! modifier-text set-item! stack-item! remove-item!]])
   (:import (com.badlogic.gdx.scenes.scene2d Actor Group)
            (com.badlogic.gdx.scenes.scene2d.ui Widget Image TextTooltip Window Table)
            com.badlogic.gdx.scenes.scene2d.utils.ClickListener
@@ -75,37 +76,6 @@
 
 ; TODO swap item doesnt work => because already item in hand ... so nothing happens not entering the state
 ; => move item-on-cursor code all together in the state component ns
-
-(defn- slot->background [context]
-  (let [sheet (spritesheet context "items/images.png" 48 48)]
-    (->> {:weapon   0
-          :shield   1
-          :rings    2
-          :necklace 3
-          :helm     4
-          :cloak    5
-          :chest    6
-          :leg      7
-          :glove    8
-          :boot     9
-          :bag      10} ; transparent
-         (map (fn [[slot y]]
-                [slot
-                 (.tint (->texture-region-drawable context
-                                                   (:texture (get-sprite context sheet [21 (+ y 2)])))
-                        (->color context 1 1 1 0.4))]))
-         (into {}))))
-
-(defn ->inventory-window [{:keys [context/inventory] :as context}]
-  (let [window (->window context {:title "Inventory"
-                                  :id :inventory-window})
-        table (->table context {})]
-    (reset! inventory {:window window
-                       :slot->background (slot->background context)
-                       :table table})
-    (.pad table (float 2))
-    (.add window table)
-    window))
 
 (def ^:private cell-size 48)
 
@@ -205,27 +175,59 @@
 
 (extend-type gdl.context.Context
   cdq.context/InventoryWindow
-  (inventory-window-visible? [{:keys [context/inventory]}]
-    (.isVisible ^Actor (:window @inventory)))
+  (inventory-window-visible? [{{:keys [window]} :context/inventory}]
+    (visible? window))
 
-  (rebuild-inventory-widgets [{:keys [context/inventory] :as ctx}]
-    (redo-table ctx @inventory)
-    (.pack (:window @inventory)))
+  (rebuild-inventory-widgets [{{:keys [window] :as inventory} :context/inventory :as ctx}]
+    (redo-table ctx inventory)
+    (.pack window))
 
-  (set-item-image-in-widget [{:keys [context/inventory] :as ctx} cell item]
-    (let [cell-widget (get-cell-widget (:table @inventory) cell)
+  (set-item-image-in-widget [{{:keys [table]} :context/inventory :as ctx}
+                             cell
+                             item]
+    (let [cell-widget (get-cell-widget table cell)
           image-widget (get-image-widget cell-widget)]
       (.setDrawable image-widget (->texture-region-drawable ctx (:texture (:image item))))
       (.addListener cell-widget (->text-tooltip ctx #(item-text % item)))))
 
-  (remove-item-from-widget [{:keys [context/inventory]} cell]
-    (let [cell-widget (get-cell-widget (:table @inventory) cell)
+  (remove-item-from-widget [{{:keys [table slot->background]} :context/inventory :as ctx} cell]
+    (let [cell-widget (get-cell-widget table cell)
           image-widget (get-image-widget cell-widget)
           ^TextTooltip tooltip (first (filter #(instance? TextTooltip %)
                                               (.getListeners cell-widget)))]
-      (.setDrawable image-widget ((:slot->background @inventory) (cell 0)))
+      (.setDrawable image-widget (slot->background (cell 0)))
       (.hide tooltip)
       (.removeListener cell-widget tooltip))))
 
-(defn ->context []
-  {:context/inventory (atom nil)})
+(defn- slot->background [context]
+  (let [sheet (spritesheet context "items/images.png" 48 48)]
+    (->> {:weapon   0
+          :shield   1
+          :rings    2
+          :necklace 3
+          :helm     4
+          :cloak    5
+          :chest    6
+          :leg      7
+          :glove    8
+          :boot     9
+          :bag      10} ; transparent
+         (map (fn [[slot y]]
+                [slot
+                 (.tint (->texture-region-drawable context
+                                                   (:texture (get-sprite context sheet [21 (+ y 2)])))
+                        (->color context 1 1 1 0.4))]))
+         (into {}))))
+
+(defn ->inventory-window [{{:keys [window] :as inventory} :context/inventory}]
+  window)
+
+(defn ->context [context]
+  {:context/inventory (let [window (->window context {:title "Inventory"
+                                                      :id :inventory-window})
+                            table (->table context {})]
+                        (.pad table (float 2))
+                        (.add window table)
+                        {:window window
+                         :slot->background (slot->background context)
+                         :table table})})

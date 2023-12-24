@@ -11,7 +11,7 @@
             context.entity.all
             context.modifier.all
             (context.ui [action-bar :as action-bar]
-                        [inventory-window :as inventory])
+                        [inventory-window :as inventory-window])
             (screens game
                      main-menu
                      map-editor
@@ -23,7 +23,7 @@
   (let [context (merge context
                        (cursor/->context context)
                        (properties/->context context "resources/properties.edn")
-                       (inventory/->context)
+                       (inventory-window/->context context)
                        (action-bar/->context context))]
     (merge context
            ; previous default-font overwritten

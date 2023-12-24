@@ -29,14 +29,9 @@
            [(ns-name nmspace) (map (comp symbol name symbol) value-vars)]))))
 
 
-
- (let [entity* @(cdq.context/get-entity @gdl.app/current-context 49)]
+ (require '[cdq.context :refer [get-entity]])
+ (let [entity* @(get-entity @gdl.app/current-context 49)]
    (:mana entity*)
    )
 
  )
-
-
-
-
-
