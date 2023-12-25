@@ -3,7 +3,7 @@
             [gdl.app :refer [change-screen!]]
             [gdl.context :refer [get-stage ->text-button ->image-button ->label ->text-field
                                  ->image-widget ->table ->stack ->window]]
-            [gdl.scene2d.actor :as actor :refer [remove! set-touchable!]]
+            [gdl.scene2d.actor :as actor :refer [remove! set-touchable! parent]]
             [gdl.scene2d.group :refer [add-actor! clear-children! children]]
             [gdl.scene2d.ui.table :refer [add! add-rows cells]]
             [gdl.scene2d.ui.cell :refer [set-actor!]]
@@ -182,7 +182,7 @@
                                           (add! window (overview-table context property-type clicked-id-fn))
                                           (pack! window)
                                           (add-to-stage-and-center! context window))))]])))
-  (when-let [parent (.getParent table)]
+  (when-let [parent (parent table)]
     (pack! parent)))
 
 (defmethod property-widget :one-to-many [context attribute property-ids]

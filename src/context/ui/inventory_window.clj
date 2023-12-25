@@ -119,7 +119,7 @@
                         (.getX this)
                         (.getY this)
                         (mouseover? this (gui-mouse-position c))
-                        (actor/id (.getParent this)))))))
+                        (actor/id (actor/parent this)))))))
 
 (defn- ->cell [ctx slot->background slot & {:keys [position]}]
   (let [cell [slot (or position [0 0])]

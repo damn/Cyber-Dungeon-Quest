@@ -1,43 +1,45 @@
 (ns context.cursor
-  (:require [gdl.context :refer [->actor ->cursor mouse-on-stage-actor?]]))
+  (:require [gdl.context :refer [->actor ->cursor mouse-on-stage-actor?]]
+            [gdl.scene2d.actor :refer [parent]]))
 
 ; cursor states
 
 ; * first of all look PLAYER STATE
 
-; then item-on-cursor state & idle mostly, others are 'busy' or 'dead'
-; => cursor state keyword namespaced
-
-; item-on-cursor can put the item as cursor directly with hotspot in the middle?
+; * active-skill
+; * player dead
+; * player-idle
+    ; * clickable-mouseover-entity?
+    ; * then SKILL USABLE STATE / show skill info if you WOULD do your skill ! or not enough mana etc.
+    ; (draw your own cursors?)
+; * context.entity.state.player-item-on-cursor
+    ; * make item as cursor itself, see how to handle not over gui stage, fix drop (clear ), cannot put on enemies
+; * context.entity.state.player-moving
+; * context.entity.state.stunned
 
 ; then
 ; * mouse-on-stage-actor? -> there check also more stuff dep. on what is hit (button, drag window, idk, inventory can take or not, actionbar )
-
-; * clickable-mouseover-entity?
-
-; * then SKILL USABLE STATE / show skill info if you WOULD do your skill ! or not enough mana etc.
-; (draw your own cursors?)
 
 
 (defn- set-cursor! [{:keys [context/cursors] :as ctx} cursor-key]
   (gdl.context/set-cursor! ctx (get cursors cursor-key)))
 
-(defn- button? [actor]
+(defn- button-class? [actor]
   (some #(= com.badlogic.gdx.scenes.scene2d.ui.Button %)
         (supers (class actor))))
 
+(defn- button? [actor]
+  (or (button-class? actor)
+      (and (parent actor)
+           (button-class? (parent actor)))))
+
 (defn ->cursor-update-actor [{:keys [context/cursors] :as ctx}]
   (->actor ctx {:act (fn [ctx]
-                       #_(set-cursor! ctx
+                       (set-cursor! ctx
                                     (if-let [actor (mouse-on-stage-actor? ctx)]
-                                      (cond (button? actor)
-                                            :mouse-on-stage-actor?
-                                            (.getParent actor)
-                                            (if (button? (.getParent actor))
-                                              :mouse-on-stage-actor?
-                                              :default)
-                                            :else
-                                            :default)
+                                      (if (button? actor)
+                                        :button
+                                        :default)
                                       :default)))}))
 
 (comment
@@ -48,7 +50,7 @@
  )
 
 (defn ->context [ctx]
-  (let [cursors {:mouse-on-stage-actor?  (->cursor ctx "button.png")
+  (let [cursors {:button  (->cursor ctx "button.png")
                  :default (->cursor ctx "default.png")}]
     {:context/cursors cursors}))
 
