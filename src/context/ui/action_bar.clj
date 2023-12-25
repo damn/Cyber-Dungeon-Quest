@@ -6,24 +6,24 @@
             [cdq.context :refer [skill-text]]))
 
 (defn ->context [ctx]
-  {::action-bar {:horizontal-group (->horizontal-group ctx)
-                 :button-group (->button-group ctx {:max-check-count 1
-                                                    :min-check-count 0})}})
+  {::data {:horizontal-group (->horizontal-group ctx)
+           :button-group (->button-group ctx {:max-check-count 1
+                                              :min-check-count 0})}})
 
 (extend-type gdl.context.Context
   cdq.context/Actionbar
-  (->action-bar [{{:keys [horizontal-group]} ::action-bar}]
+  (->action-bar [{{:keys [horizontal-group]} ::data}]
     horizontal-group)
 
-  (reset-actionbar [{{:keys [horizontal-group button-group]} ::action-bar}]
+  (reset-actionbar [{{:keys [horizontal-group button-group]} ::data}]
     (clear-children! horizontal-group)
     (clear! button-group))
 
-  (selected-skill [{{:keys [button-group]} ::action-bar}]
+  (selected-skill [{{:keys [button-group]} ::data}]
     (when-let [skill-button (checked button-group)]
       (actor/id skill-button)))
 
-  (actionbar-add-skill [{{:keys [horizontal-group button-group]} ::action-bar :as ctx}
+  (actionbar-add-skill [{{:keys [horizontal-group button-group]} ::data :as ctx}
                         {:keys [id image] :as skill}]
     (let [button (->image-button ctx image (fn [_]))]
       (actor/set-id! button id)
@@ -31,7 +31,7 @@
       (add-actor! horizontal-group button)
       (add! button-group button)))
 
-  (actionbar-remove-skill [{{:keys [horizontal-group button-group]} ::action-bar}
+  (actionbar-remove-skill [{{:keys [horizontal-group button-group]} ::data}
                            {:keys [id]}]
     (let [button (get horizontal-group id)]
       (remove! button)
