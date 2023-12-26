@@ -20,13 +20,13 @@
 
 (defrecord ActiveSkill [entity skill effect-context counter]
   state/PlayerState
+  (player-enter [ctx] (set-cursor! ctx :cursors/sandclock))
   (pause-game? [_] false)
   (manual-tick! [_ context delta])
   (allow-ui-clicks? [_] false)
 
   state/State
   (enter [_ context]
-    (set-cursor! context :cursors/sandclock)
     ; TODO all only called here => start-skill-bla
     ; make all this context context.entity.skill extension ?
     (play-sound! context (str "sounds/" (if (:spell? skill) "shoot.wav" "slash.wav")))

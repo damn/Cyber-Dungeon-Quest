@@ -5,13 +5,13 @@
 
 (defrecord PlayerDead [entity]
   state/PlayerState
+  (player-enter [ctx] (set-cursor! ctx :cursors/black-x))
   (pause-game? [_] true)
   (manual-tick! [_ context delta])
   (allow-ui-clicks? [_] false)
 
   state/State
   (enter [_ context]
-    (set-cursor! context :cursors/black-x)
     (play-sound! context "sounds/bfxr_playerdeath.wav")
     (show-msg-to-player! context "YOU DIED!\nPress X to leave."))
   (exit [_ _ctx])

@@ -1,7 +1,7 @@
 (ns context.entity.state.player-idle
   (:require [gdl.context :refer [play-sound! world-mouse-position mouse-on-stage-actor? button-just-pressed?]]
             [gdl.input.buttons :as buttons]
-            [gdl.scene2d.actor :refer [visible? toggle-visible!]]
+            [gdl.scene2d.actor :refer [visible? toggle-visible! parent] :as actor]
             [gdl.math.vector :as v]
             [context.entity.state :as state]
             [context.entity.state.wasd-movement :refer [WASD-movement-vector]]
@@ -56,28 +56,37 @@
   (play-sound! context "sounds/bfxr_denied.wav")
   (show-msg-to-player! context text))
 
-(comment
- (.getName (.getParent (mouse-on-stage-actor? @gdl.app/current-context)))
- ; => id
- ; [:cloak [0 0]]
- ; .getName ?
- ; inventory cell = textureregion & parent = the stack
+(defn- inventory-cell-with-item? [{:keys [context/player-entity]} actor]
+  (and (parent actor)
+       (= "inventory-cell" (.getName (parent actor)))
+       (get-in (:inventory @player-entity)
+               (actor/id (parent actor)))))
 
- (.getParent (mouse-on-stage-actor? @gdl.app/current-context))
- )
+(defn- window-title-bar? [actor]
+  (and (instance? com.badlogic.gdx.scenes.scene2d.ui.Label
+                  actor)
+       (parent actor)
+       (parent (parent actor))
+       (instance? com.kotcrab.vis.ui.widget.VisWindow
+                  (parent (parent actor)))))
+
+(defn- mouseover-actor-cursor [ctx]
+  (let [actor (mouse-on-stage-actor? ctx)]
+    (cond
+     (inventory-cell-with-item? ctx actor) :cursors/hand-before-grab
+     (window-title-bar? actor) :cursors/move-window
+     :else :cursors/default)))
 
 (defn- ->interaction-state [{:keys [context/mouseover-entity] :as context} entity]
   (cond
    (mouse-on-stage-actor? context)
-   ; TODO depending on what ! (window drag, button?)
-   ; INVENTORY CELLS ! -> can pickup
-   [:cursors/default
+   [(mouseover-actor-cursor context)
     (fn [] nil)]
 
    (and @mouseover-entity
         (clickable-mouseover-entity? @entity @@mouseover-entity))
    [(case (:type (:entity/clickable @@mouseover-entity))
-      :clickable/item :cursors/hand
+      :clickable/item :cursors/hand-before-grab
       :clickable/player :cursors/bag)
     (fn []
       (on-clicked context @mouseover-entity))]
@@ -116,6 +125,7 @@
 
 (defrecord PlayerIdle [entity]
   state/PlayerState
+  (player-enter [_])
   (pause-game? [_] true)
 
   (manual-tick! [_ context _delta]

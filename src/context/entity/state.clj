@@ -15,9 +15,9 @@
   (render-info  [_ context entity*]))
 
 (defprotocol PlayerState
+  (player-enter [_])
   (pause-game? [_])
   (allow-ui-clicks? [_])
-  ; (cursor [_]) either this & cursor-update-actor or  PlayerState/enter
   (manual-tick! [_ context delta]))
 
 (defcomponent :entity/state {:keys [initial-state
@@ -59,6 +59,8 @@
                                  (constructor context entity params)
                                  (constructor context entity))]
              (enter new-state-obj context)
+             (when (:is-player @entity)
+               (player-enter new-state-obj context))
              (swap! entity update :entity/state #(assoc %
                                                         :fsm new-fsm
                                                         :state-obj new-state-obj)))))))))

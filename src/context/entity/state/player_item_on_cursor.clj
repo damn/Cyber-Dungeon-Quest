@@ -27,16 +27,19 @@
 
 (defrecord PlayerItemOnCursor [entity item]
   state/PlayerState
+  (player-enter [_])
   (pause-game? [_] true)
+
   (manual-tick! [_ context delta]
     (when (and (button-just-pressed? context buttons/left)
                (not (mouse-on-stage-actor? context)))
       (send-event! context entity :drop-item)))
+
   (allow-ui-clicks? [_] true) ; TODO only inventory ? no skillmenu ? extra check for inventory?
 
   state/State
   (enter [_ ctx]
-    (set-cursor! ctx :cursors/hand)
+    (set-cursor! ctx :cursors/hand-grab)
     (swap! entity assoc :item-on-cursor item))
   (exit [_ context]
     ; at context.ui.inventory-window/clicked-cell when we put it into a inventory-cell

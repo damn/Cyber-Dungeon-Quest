@@ -5,13 +5,13 @@
 
 (defrecord PlayerMoving [entity movement-vector]
   state/PlayerState
+  (player-enter [ctx] (set-cursor! ctx :cursors/walking))
   (pause-game? [_] false)
   (manual-tick! [_ context delta])
   (allow-ui-clicks? [_] false)
 
   state/State
   (enter [_ context]
-    (set-cursor! context :cursors/walking)
     (swap! entity assoc :movement-vector movement-vector))
   (exit  [_ context]
     (swap! entity dissoc :movement-vector movement-vector))
