@@ -5,10 +5,11 @@
 
 (defrecord PlayerDead [entity]
   state/PlayerState
-  (player-enter [ctx] (set-cursor! ctx :cursors/black-x))
+  (player-enter [_ ctx]
+    (set-cursor! ctx :cursors/black-x))
+
   (pause-game? [_] true)
   (manual-tick! [_ context delta])
-  (allow-ui-clicks? [_] false)
 
   state/State
   (enter [_ context]

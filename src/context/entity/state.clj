@@ -15,9 +15,8 @@
   (render-info  [_ context entity*]))
 
 (defprotocol PlayerState
-  (player-enter [_])
+  (player-enter [_ context])
   (pause-game? [_])
-  (allow-ui-clicks? [_])
   (manual-tick! [_ context delta]))
 
 (defcomponent :entity/state {:keys [initial-state

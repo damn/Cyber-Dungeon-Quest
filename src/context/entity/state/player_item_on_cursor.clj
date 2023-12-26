@@ -4,12 +4,6 @@
             [context.entity.state :as state]
             [cdq.context :refer [item-entity send-event! set-cursor!]]))
 
-; * item-on-cursor
-    ; * fix hotspot
-    ; * make item as cursor itself, see how to handle not over gui stage, fix drop (clear ), cannot put on enemies
-    ; * better visualization drop
-    ; code in inventory-window etc. from item-on-cursor ...
-
 ; TODO ! important ! animation & dont put exactly hiding under player -> try neighbor cells first, simple.
 (defn- put-item-on-ground [{:keys [context/player-entity] :as context}]
   {:pre [(:item-on-cursor @player-entity)]}
@@ -25,9 +19,15 @@
         ]
     (item-entity context posi (:item-on-cursor @player-entity))))
 
+; TODO visualize not mouse-on-stage-actor?
+; WHERE item would be placed somehow
+; => choose location even around player in certain radius distance?
+; => 2 cursors ?
+; hand open cursor & render item around player hovering (?)
+
 (defrecord PlayerItemOnCursor [entity item]
   state/PlayerState
-  (player-enter [_])
+  (player-enter [_ _ctx])
   (pause-game? [_] true)
 
   (manual-tick! [_ context delta]
@@ -35,12 +35,11 @@
                (not (mouse-on-stage-actor? context)))
       (send-event! context entity :drop-item)))
 
-  (allow-ui-clicks? [_] true) ; TODO only inventory ? no skillmenu ? extra check for inventory?
-
   state/State
   (enter [_ ctx]
     (set-cursor! ctx :cursors/hand-grab)
     (swap! entity assoc :item-on-cursor item))
+
   (exit [_ context]
     ; at context.ui.inventory-window/clicked-cell when we put it into a inventory-cell
     ; we do not want to drop it on the ground too additonally,

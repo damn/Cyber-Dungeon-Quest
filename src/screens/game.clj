@@ -108,8 +108,6 @@
                     delta]
   (let [state (:state-obj (:entity/state @player-entity))
         _ (state/manual-tick! state context delta)
-
-
         paused? (reset! game-paused? (or @thrown-error
                                          (and pausing (state/pause-game? state))))
         delta (limit-delta delta)]

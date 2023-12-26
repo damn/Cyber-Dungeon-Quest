@@ -8,7 +8,6 @@
             [gdl.graphics.color :as color]
             [gdl.scene2d.actor :as actor :refer [set-id! add-listener!]]
             [context.entity.inventory :as inventory]
-            [context.entity.state :as state]
             [cdq.context :refer [show-msg-to-player! send-event! modifier-text set-item! stack-item! remove-item!]]
             [cdq.entity :as entity])
   (:import com.badlogic.gdx.scenes.scene2d.Actor
@@ -115,7 +114,6 @@
     (draw [_batch _parent-alpha]
       (let [{:keys [context/player-entity] :as c} @current-context
             ^Widget this this]
-        ; TODO check draw ? in different player state?
         (draw-cell-rect c
                         player-entity
                         (.getX this)
@@ -134,8 +132,7 @@
     (add-listener! stack (proxy [ClickListener] []
                            (clicked [event x y]
                              (let [{:keys [context/player-entity] :as ctx} @current-context]
-                               ; TODO DRY with skill menu
-                               (when (state/allow-ui-clicks? (:state-obj (:entity/state @player-entity)))
+                               (when (#{:item-on-cursor :idle} (entity/state @player-entity))
                                  (clicked-cell ctx cell))))))
     stack))
 

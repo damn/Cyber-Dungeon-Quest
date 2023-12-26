@@ -186,8 +186,7 @@
   (tiled/remove-layer! tiled-map :creatures))
 
 (defn- create-entities-from-tiledmap! [{:keys [context/world-map] :as context}]
-  ; TODO they need player entity context ?!
-  ;(place-entities! context (:tiled-map world-map))
+  (place-entities! context (:tiled-map world-map))
   (creature-entity context
                    :vampire
                    (:start-position world-map)

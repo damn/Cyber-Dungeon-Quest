@@ -35,6 +35,11 @@
   [ctx _clicked-entity]
   (toggle-visible! (inventory-window ctx)))
 
+(defn- clickable->cursor [mouseover-entity*]
+  (case (:type (:entity/clickable mouseover-entity*))
+    :clickable/item :cursors/hand-before-grab
+    :clickable/player :cursors/bag))
+
 (def ^:private click-distance-tiles 1.5)
 
 (defn- clickable-mouseover-entity? [player-entity* mouseover-entity*]
@@ -70,24 +75,34 @@
        (instance? com.kotcrab.vis.ui.widget.VisWindow
                   (parent (parent actor)))))
 
-(defn- mouseover-actor-cursor [ctx]
+(defn- button-class? [actor]
+  (some #(= com.badlogic.gdx.scenes.scene2d.ui.Button %)
+        (supers (class actor))))
+
+(defn- button? [actor]
+  (or (button-class? actor)
+      (and (parent actor)
+           (button-class? (parent actor)))))
+
+
+(defn- mouseover-actor->cursor [ctx]
   (let [actor (mouse-on-stage-actor? ctx)]
     (cond
      (inventory-cell-with-item? ctx actor) :cursors/hand-before-grab
      (window-title-bar? actor) :cursors/move-window
+     (button? actor) :cursors/over-button
      :else :cursors/default)))
 
 (defn- ->interaction-state [{:keys [context/mouseover-entity] :as context} entity]
   (cond
    (mouse-on-stage-actor? context)
-   [(mouseover-actor-cursor context)
-    (fn [] nil)]
+   [(mouseover-actor->cursor context)
+    (fn []
+      nil)] ; handled by actors themself, they check player state
 
    (and @mouseover-entity
         (clickable-mouseover-entity? @entity @@mouseover-entity))
-   [(case (:type (:entity/clickable @@mouseover-entity))
-      :clickable/item :cursors/hand-before-grab
-      :clickable/player :cursors/bag)
+   [(clickable->cursor @@mouseover-entity)
     (fn []
       (on-clicked context @mouseover-entity))]
 
@@ -103,10 +118,7 @@
           ; => e.g. meditation no TARGET .. etc.
           [:cursors/use-skill
            (fn []
-             (send-event! context entity :start-action [skill effect-context])
-             )
-           ]
-          )
+             (send-event! context entity :start-action [skill effect-context]))])
          (do
           ; TODO cursor as of usable state
           ; cooldown -> sanduhr kleine
@@ -114,18 +126,14 @@
           ; invalid-params -> depends on params ...
           [:cursors/skill-not-usable
            (fn []
-             (denied context (str "Skill usable state not usable: " state))
-             )
-           ]
-          )))
+             (denied context (str "Skill usable state not usable: " state)))])))
      [:cursors/no-skill-selected
       (fn []
-        (denied context "No selected skill."))
-      ])))
+        (denied context "No selected skill."))])))
 
 (defrecord PlayerIdle [entity]
   state/PlayerState
-  (player-enter [_])
+  (player-enter [_ _ctx])
   (pause-game? [_] true)
 
   (manual-tick! [_ context _delta]
@@ -135,8 +143,6 @@
         (set-cursor! context cursor)
         (when (button-just-pressed? context buttons/left)
           (on-click)))))
-
-  (allow-ui-clicks? [_] true)
 
   state/State
   (enter [_ context])
