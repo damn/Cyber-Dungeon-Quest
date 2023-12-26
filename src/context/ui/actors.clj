@@ -1,7 +1,7 @@
 (ns context.ui.actors
   (:require [gdl.context :refer [draw-centered-image gui-mouse-position draw-text ->actor ->table
                                  ->group]]
-            [gdl.scene2d.actor :as actor :refer [set-position! get-x get-y width height set-width! set-height!]]
+            [gdl.scene2d.actor :as actor :refer [set-position! get-x get-y width height set-width! set-height! set-visible!]]
             [gdl.scene2d.group :refer [add-actor!]]
             [context.ui.hp-mana-bars :refer [->hp-mana-bars]]
             [context.ui.debug-window :as debug-window]
@@ -26,7 +26,8 @@
                     :fill-parent? true}))
 
 (defn- ->windows [{:keys [gui-viewport-width
-                          gui-viewport-height]
+                          gui-viewport-height
+                          context/config]
                    :as context}]
   (let [debug-window (debug-window/create context)
         _ (set-position! debug-window 0 gui-viewport-height)
@@ -37,7 +38,8 @@
                         gui-viewport-height)
         entity-info-window (entity-info-window/create context)
         inventory-window (inventory/->inventory-window context)
-        group (->group context)]
+        group (->group context)
+        skill-window (skill-window/create context)]
     (actor/set-id! group :windows)
     (set-position! inventory-window
                   gui-viewport-width
@@ -46,11 +48,18 @@
     (set-position! entity-info-window (get-x inventory-window) 0)
     (set-width! entity-info-window (width inventory-window))
     (set-height! entity-info-window (get-y inventory-window))
+
+    (set-visible! debug-window false)
+    (set-visible! help-window false)
+    (set-visible! entity-info-window false)
+    (set-visible! inventory-window false)
+    (set-visible! skill-window false)
+
     (add-actor! group debug-window)
     (add-actor! group help-window)
     (add-actor! group entity-info-window)
     (add-actor! group inventory-window)
-    (add-actor! group (skill-window/create context))
+    (add-actor! group skill-window)
     group))
 
 (defn ->ui-actors [ctx]

@@ -1,6 +1,7 @@
 (ns app.start
   (:require [gdl.backends.libgdx.app :as app]
             [gdl.context :refer [generate-ttf ->stage-screen]]
+            [utils.core :refer [safe-get]]
             (context [properties :as properties]
                      [cursor :as cursor]
                      builder
@@ -20,12 +21,29 @@
                      property-editor)
             [cdq.context :refer [set-cursor!]]))
 
+(def ^:private production-config
+  {:full-screen? true
+   :map-editor? false
+   :property-editor? false
+   :debug-windows? false
+   :debug-options? false})
+
+(def ^:private dev-config
+  {:full-screen? false
+   :map-editor? true
+   :property-editor? true
+   :debug-windows? true
+   :debug-options? true})
+
+(def ^:private config production-config)
+
 (defn- create-context [context]
   (let [context (merge context
                        (cursor/->context context)
                        (properties/->context context "resources/properties.edn")
                        (inventory-window/->context context)
-                       (action-bar/->context context))]
+                       (action-bar/->context context)
+                       {:context/config config})]
     (set-cursor! context :cursors/default)
     (merge context
            ; previous default-font overwritten
@@ -43,7 +61,7 @@
   {:app {:title "Cyber Dungeon Quest"
          :width  1440
          :height 900
-         :full-screen? false
+         :full-screen? (safe-get production-config :full-screen?)
          :fps 60}
    :create-context create-context
    :first-screen :screens/main-menu

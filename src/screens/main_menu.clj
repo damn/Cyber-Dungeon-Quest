@@ -3,19 +3,21 @@
             [gdl.context :refer [exit-app draw-centered-image render-gui-view create-image ->text-button key-just-pressed? draw-text ->table ->actor ->image-widget]]
             [gdl.input.keys :as input.keys]
             gdl.screen
+            [utils.core :refer [safe-get]]
             [context.game :refer [start-game-context]]))
 
-(defn screen [context {:keys [bg-image]}]
+(defn screen [{:keys [context/config] :as context} {:keys [bg-image]}]
   (let [table (->table context
                        {:rows [[(->text-button context "Start game" (fn [_context]
                                                                       (swap! current-context start-game-context)
                                                                       (change-screen! :screens/game)))]
 
-                               ; deactivate for deployment ?
-                               [(->text-button context "Map editor" (fn [_context]
-                                                                      (change-screen! :screens/map-editor)))]
-                               [(->text-button context "Property editor" (fn [_context]
-                                                                           (change-screen! :screens/property-editor)))]
+                               [(when (safe-get config :map-editor?)
+                                  (->text-button context "Map editor" (fn [_context]
+                                                                        (change-screen! :screens/map-editor))))]
+                               [(when (safe-get config :property-editor?)
+                                  (->text-button context "Property editor" (fn [_context]
+                                                                             (change-screen! :screens/property-editor))))]
 
                                [(->text-button context "Exit" exit-app)]]
                         :cell-defaults {:pad-bottom 25}

@@ -126,10 +126,11 @@
           ; invalid-params -> depends on params ...
           [:cursors/skill-not-usable
            (fn []
-             (denied context (str "Skill usable state not usable: " state)))])))
+             (denied context "Cannot use skill here"
+                     #_(str "Skill usable state not usable: " state)))])))
      [:cursors/no-skill-selected
       (fn []
-        (denied context "No selected skill."))])))
+        (denied context "No selected skill"))])))
 
 (defrecord PlayerIdle [entity]
   state/PlayerState

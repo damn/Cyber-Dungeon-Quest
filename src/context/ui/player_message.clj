@@ -9,7 +9,7 @@
   (when-let [{:keys [message]} @player-message]
     (draw-text context
                {:x (/ gui-viewport-width  2)
-                :y (/ gui-viewport-height 2)
+                :y (+ (/ gui-viewport-height 2) 200)
                 :text message
                 :scale 2.5
                 :up? true})))

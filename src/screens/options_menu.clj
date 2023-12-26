@@ -4,7 +4,7 @@
             [gdl.context :refer [->stage-screen draw-centered-image render-gui-view create-image
                                  ->text-button ->check-box key-just-pressed? ->table]]
             [gdl.input.keys :as input.keys]
-            [utils.core :refer [find-first]]
+            [utils.core :refer [find-first safe-get]]
             ;[cdq.line-of-sight :refer (player-line-of-sight-checks)]
             [context.entity.body :refer (show-body-bounds)]))
 
@@ -74,19 +74,21 @@
 (defn- exit []
   (change-screen! :screens/game))
 
-(defn- create-table [context]
+(defn- create-table [{:keys [context/config] :as context}]
   (let [table (->table context
                        {:rows (concat
-                               (for [check-box @status-check-boxes]
+                               ; TODO doesn't work yet.
+                               #_(for [check-box @status-check-boxes]
                                  [(->check-box context
                                                (get-text check-box)
                                                #(set-state check-box %)
                                                (boolean (get-state check-box)))])
-                               (for [check-box debug-flags]
-                                 [(->check-box context
-                                               (get-text check-box)
-                                               #(set-state check-box %)
-                                               (boolean (get-state check-box)))])
+                               (when (safe-get config :debug-options?)
+                                 (for [check-box debug-flags]
+                                   [(->check-box context
+                                                 (get-text check-box)
+                                                 #(set-state check-box %)
+                                                 (boolean (get-state check-box)))]))
                                [[(->text-button context "Resume" (fn [_context] (exit)))]
                                 [(->text-button context "Exit" (fn [_context]
                                                                  (change-screen! :screens/main-menu)))]])

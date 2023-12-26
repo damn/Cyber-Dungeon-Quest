@@ -9,6 +9,7 @@
             [gdl.input.keys :as input.keys]
             [gdl.scene2d.actor :refer [visible? set-visible! toggle-visible!]]
             [gdl.scene2d.group :refer [children]]
+            [utils.core :refer [safe-get]]
             [cdq.context :refer [render-entities* ray-blocked? explored? set-explored! line-of-sight? content-grid
                                   tick-entity remove-destroyed-entities update-mouseover-entity update-potential-fields
                                   update-elapsed-game-time debug-render-after-entities debug-render-before-entities set-cursor!]]
@@ -62,10 +63,12 @@
           :when (key-just-pressed? context hotkey)]
     (toggle-visible! (get group window))))
 
-(defn- end-of-frame-checks [{:keys [context/player-entity] :as context}]
+(defn- end-of-frame-checks [{:keys [context/player-entity
+                                    context/config] :as context}]
   (let [group (:windows (get-stage context))
         windows (children group)]
-    (check-window-hotkeys context group)
+    (when (safe-get config :debug-windows?)
+      (check-window-hotkeys context group))
 
     (when (key-just-pressed? context input.keys/escape)
       (cond (some visible? windows)
