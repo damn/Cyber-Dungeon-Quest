@@ -135,11 +135,9 @@
       (set-item! context entity cell (update cell-item :count + (:count item)))))
 
   (try-pickup-item! [context entity item]
-    (let [slot (find-first #(= % (:slot item))
-                           (keys (:inventory @entity)))]
-      (or
-       (try-put-item-in! context entity slot item)
-       (try-put-item-in! context entity :bag item)))))
+    (or
+     (try-put-item-in! context entity (:slot item) item)
+     (try-put-item-in! context entity :bag item))))
 
 (defcomponent :items items
   (entity/create! [_ entity context]
