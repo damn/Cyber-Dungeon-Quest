@@ -1,5 +1,5 @@
 (ns context.entity.state.npc-sleeping
-  (:require [gdl.context :refer [draw-text draw-circle]]
+  (:require [gdl.context :refer [draw-text]]
             [gdl.graphics.color :as color]
             [context.entity.state :as state]
             [cdq.context :refer [world-grid create-entity! send-event! ->counter add-text-effect!]]
@@ -37,6 +37,4 @@
                 :x x
                 :y (+ y (:half-height body))
                 :up? true}))
-  (render-info [_ c {:keys [position mouseover?]}]
-    (when mouseover? ; TODO is not exact, using tile distance, (remove ?)
-      (draw-circle c position aggro-range color/yellow))))
+  (render-info [_ c entity*]))
