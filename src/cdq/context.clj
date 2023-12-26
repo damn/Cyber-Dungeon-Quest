@@ -69,7 +69,7 @@
   (all-properties [_ type]))
 
 (defprotocol InventoryWindow
-  (inventory-window-visible? [_])
+  (inventory-window [_])
   (rebuild-inventory-widgets [_])
   (set-item-image-in-widget [_ cell item])
   (remove-item-from-widget [_ cell]))
@@ -110,3 +110,6 @@
 
 (defprotocol SkillInfo
   (skill-text [_ skill]))
+
+(defprotocol Cursor
+  (set-cursor! [_ cursor-key]))

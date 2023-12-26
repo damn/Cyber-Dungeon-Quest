@@ -6,10 +6,11 @@
                                  play-sound! gui-mouse-position get-stage ->text-tooltip ->table ->window
                                  ->texture-region-drawable ->color ->stack ->image-widget]]
             [gdl.graphics.color :as color]
-            [gdl.scene2d.actor :as actor :refer [set-id! visible? add-listener!]]
+            [gdl.scene2d.actor :as actor :refer [set-id! add-listener!]]
             [context.entity.inventory :as inventory]
-            [cdq.entity :as entity]
-            [cdq.context :refer [show-msg-to-player! send-event! modifier-text set-item! stack-item! remove-item!]])
+            [context.entity.state :as state]
+            [cdq.context :refer [show-msg-to-player! send-event! modifier-text set-item! stack-item! remove-item!]]
+            [cdq.entity :as entity])
   (:import com.badlogic.gdx.scenes.scene2d.Actor
            (com.badlogic.gdx.scenes.scene2d.ui Widget Image TextTooltip Window Table)
            com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
@@ -114,6 +115,7 @@
     (draw [_batch _parent-alpha]
       (let [{:keys [context/player-entity] :as c} @current-context
             ^Widget this this]
+        ; TODO check draw ? in different player state?
         (draw-cell-rect c
                         player-entity
                         (.getX this)
@@ -124,12 +126,17 @@
 (defn- ->cell [ctx slot->background slot & {:keys [position]}]
   (let [cell [slot (or position [0 0])]
         image-widget (->image-widget ctx (slot->background slot) {})
-        stack (->stack ctx [(draw-rect-actor) image-widget])]
+        stack (->stack ctx [(draw-rect-actor)
+                            image-widget])]
+    (.setName stack "inventory-cell")
     (set-id! stack cell)
     (set-id! image-widget :image)
     (add-listener! stack (proxy [ClickListener] []
                            (clicked [event x y]
-                             (clicked-cell @current-context cell))))
+                             (let [{:keys [context/player-entity] :as ctx} @current-context]
+                               ; TODO DRY with skill menu
+                               (when (state/allow-ui-clicks? (:state-obj (:entity/state @player-entity)))
+                                 (clicked-cell ctx cell))))))
     stack))
 
 ; TODO write 'two handed' at weapon info -> key-to-pretty-tooltip-text function for keywords (extend-c?)
@@ -179,8 +186,8 @@
 
 (extend-type gdl.context.Context
   cdq.context/InventoryWindow
-  (inventory-window-visible? [{{:keys [window]} :context/inventory}]
-    (visible? window))
+  (inventory-window [{{:keys [window]} :context/inventory}]
+    window)
 
   (rebuild-inventory-widgets [{{:keys [^Window window] :as inventory} :context/inventory :as ctx}]
     (redo-table ctx inventory)

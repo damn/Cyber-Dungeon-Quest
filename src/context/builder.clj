@@ -104,7 +104,8 @@
    :mana 100
    :choose-skill-type :player
    :player-movement true
-   :free-skill-points 3})
+   :free-skill-points 3
+   :entity/clickable {:type :clickable/player}})
 
 (def ^:private npc-components
   {:faction :good

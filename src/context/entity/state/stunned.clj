@@ -1,15 +1,17 @@
 (ns context.entity.state.stunned
   (:require [gdl.context :refer [draw-circle]]
-            [cdq.context :refer [stopped? send-event! ->counter]]
+            [cdq.context :refer [stopped? send-event! ->counter set-cursor!]]
             [context.entity.state :as state]))
 
 (defrecord Stunned [entity counter]
   state/PlayerState
   (pause-game? [_] false)
   (manual-tick! [_ context delta])
+  (allow-ui-clicks? [_] false)
 
   state/State
-  (enter [_ _ctx])
+  (enter [_ ctx]
+    (set-cursor! ctx :cursors/denied)) ; TODO npcs set for player ...
   (exit  [_ _ctx])
   (tick! [_ context delta]
     (when (stopped? context counter)

@@ -3,14 +3,14 @@
                                  ->group]]
             [gdl.scene2d.actor :as actor :refer [set-position! get-x get-y width height set-width! set-height!]]
             [gdl.scene2d.group :refer [add-actor!]]
-            [cdq.context :refer [->player-message-actor ->action-bar]]
-            [cdq.entity :as entity]
             [context.ui.hp-mana-bars :refer [->hp-mana-bars]]
             [context.ui.debug-window :as debug-window]
             [context.ui.help-window :as help-window]
             [context.ui.entity-info-window :as entity-info-window]
             [context.ui.skill-window :as skill-window]
-            [context.ui.inventory-window :as inventory]))
+            [context.ui.inventory-window :as inventory]
+            [cdq.context :refer [->player-message-actor ->action-bar]]
+            [cdq.entity :as entity]))
 
 (defn- draw-item-on-cursor [{:keys [context/player-entity] :as context}]
   (when (= :item-on-cursor (entity/state @player-entity))
@@ -53,9 +53,9 @@
     (add-actor! group (skill-window/create context))
     group))
 
-(defn ->ui-actors [context]
-  [(->base-table           context)
-   (->hp-mana-bars         context)
-   (->windows              context)
-   (->item-on-cursor-actor context)
-   (->player-message-actor context)])
+(defn ->ui-actors [ctx]
+  [(->base-table           ctx)
+   (->hp-mana-bars         ctx)
+   (->windows              ctx)
+   (->item-on-cursor-actor ctx)
+   (->player-message-actor ctx)])

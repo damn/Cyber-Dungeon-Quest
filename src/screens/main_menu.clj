@@ -1,7 +1,6 @@
 (ns screens.main-menu
   (:require [gdl.app :refer [current-context change-screen!]]
             [gdl.context :refer [exit-app draw-centered-image render-gui-view create-image ->text-button key-just-pressed? draw-text ->table ->actor ->image-widget]]
-            context.cursor
             [gdl.input.keys :as input.keys]
             gdl.screen
             [context.game :refer [start-game-context]]))
@@ -36,5 +35,4 @@
               table
               (->actor context {:act (fn [ctx]
                                        (when (key-just-pressed? ctx input.keys/escape)
-                                         (exit-app ctx)))})
-              (context.cursor/->cursor-update-actor context)]}))
+                                         (exit-app ctx)))})]}))

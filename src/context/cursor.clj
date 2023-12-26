@@ -1,46 +1,41 @@
 (ns context.cursor
-  (:require [gdl.context :refer [->actor ->cursor mouse-on-stage-actor?]]
-            [gdl.scene2d.actor :refer [parent]]))
+  (:require [gdl.context :refer [->cursor mouse-on-stage-actor?]]
+            [gdl.scene2d.actor :refer [parent]]
+            [utils.core :refer [mapvals]]
+            [context.entity.state :as state]
+            [cdq.context :refer [set-cursor!]]))
 
-; cursor states
+ ;TODO
+; * add to trello: moving,etc, clicks not allowed & click -> soft-denied-sound, X cross appearing?
+; e.g. I thought clicks don't work but I was moving
 
-; * first of all look PLAYER STATE
+; * add to trello: play-sound in cdq you send a sound-id not file ?
+; (same?)
 
-; * active-skill
-; * player dead
-; * player-idle
-    ; * clickable-mouseover-entity?
-    ; * then SKILL USABLE STATE / show skill info if you WOULD do your skill ! or not enough mana etc.
-    ; (draw your own cursors?)
-; * context.entity.state.player-item-on-cursor
-    ; * make item as cursor itself, see how to handle not over gui stage, fix drop (clear ), cannot put on enemies
-; * context.entity.state.player-moving
-; * context.entity.state.stunned
+; * ask the cursor creator in FB !
 
-; then
-; * mouse-on-stage-actor? -> there check also more stuff dep. on what is hit (button, drag window, idk, inventory can take or not, actionbar )
+(extend-type gdl.context.Context
+  cdq.context/Cursor
+  (set-cursor! [{:keys [context/cursors] :as ctx} cursor-key]
+    ; TODO assert , safe-get
+    (gdl.context/set-cursor! ctx (get cursors cursor-key))))
 
-
-(defn- set-cursor! [{:keys [context/cursors] :as ctx} cursor-key]
-  (gdl.context/set-cursor! ctx (get cursors cursor-key)))
-
-(defn- button-class? [actor]
+#_(defn- button-class? [actor]
   (some #(= com.badlogic.gdx.scenes.scene2d.ui.Button %)
         (supers (class actor))))
 
-(defn- button? [actor]
+#_(defn- button? [actor]
   (or (button-class? actor)
       (and (parent actor)
            (button-class? (parent actor)))))
 
-(defn ->cursor-update-actor [{:keys [context/cursors] :as ctx}]
-  (->actor ctx {:act (fn [ctx]
-                       (set-cursor! ctx
-                                    (if-let [actor (mouse-on-stage-actor? ctx)]
-                                      (if (button? actor)
-                                        :button
-                                        :default)
-                                      :default)))}))
+; TODO add to _all_ screens / or just on enter set default?
+; => many screens dont have on-enter anymore.
+#_(if-let [actor (mouse-on-stage-actor? ctx)]
+    (if (button? actor)
+      :button
+      :default)
+    :default)
 
 (comment
 
@@ -49,16 +44,17 @@
  ; ui/label ... ?
  )
 
+; TODO dispose cursors ( do @ gdl ? )
 (defn ->context [ctx]
-  (let [cursors {:button  (->cursor ctx "button.png")
-                 :default (->cursor ctx "default.png")}]
-    {:context/cursors cursors}))
-
-; all screens cursor actor ....
-; conj @ app.start to :actors ?
-
-; _all_ screens have to have a cursor actor => _CdqScreen_ ?
-; otherwise we keep the last selected cursor (e.g. mouse over button)
-
-; FIXME buttons not working and image not stretched all the way?
-;=> for image use a widget and pass the same image through only once.
+  {:context/cursors (->> {:cursors/default ["default" 0 0]
+                          :cursors/black-x ["black_x" 0 0]
+                          :cursors/denied ["denied" 16 16]
+                          :cursors/hand ["hand" 4 16]
+                          :cursors/sandclock ["sandclock" 16 16]
+                          :cursors/walking ["walking" 16 16]
+                          :cursors/no-skill-selected ["denied003" 0 0]
+                          :cursors/use-skill ["pointer004" 0 0]
+                          :cursors/skill-not-usable ["x007" 0 0]
+                          :cursors/bag ["bag001" 0 0]}
+                         (mapvals (fn [[file x y]]
+                                    (->cursor ctx (str "cursors/" file ".png") x y))))})

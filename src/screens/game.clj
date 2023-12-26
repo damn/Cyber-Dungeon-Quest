@@ -11,7 +11,7 @@
             [gdl.scene2d.group :refer [children]]
             [cdq.context :refer [render-entities* ray-blocked? explored? set-explored! line-of-sight? content-grid
                                   tick-entity remove-destroyed-entities update-mouseover-entity update-potential-fields
-                                  update-elapsed-game-time debug-render-after-entities debug-render-before-entities]]
+                                  update-elapsed-game-time debug-render-after-entities debug-render-before-entities set-cursor!]]
             [cdq.entity :as entity]
             [context.entity.movement :as movement]
             [context.entity.state :as state]
@@ -106,8 +106,10 @@
                      :as context}
                     active-entities
                     delta]
-  (let [state (:state-obj (:entity/state @player-entity)) ; ? Entity protocol?
+  (let [state (:state-obj (:entity/state @player-entity))
         _ (state/manual-tick! state context delta)
+
+
         paused? (reset! game-paused? (or @thrown-error
                                          (and pausing (state/pause-game? state))))
         delta (limit-delta delta)]
@@ -126,7 +128,10 @@
 (defrecord SubScreen []
   Screen
   (show [_ _context])
-  (hide [_ _context])
+
+  (hide [_ ctx]
+    (set-cursor! ctx :cursors/default))
+
   (render [_ {:keys [context/player-entity] :as context}]
     (let [active-entities (active-entities (content-grid context) player-entity)
           delta (* (delta-time context) 1000)] ; TODO make in seconds ? no need to multiply by 1000 ?

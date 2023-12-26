@@ -16,6 +16,8 @@
 
 (defprotocol PlayerState
   (pause-game? [_])
+  (allow-ui-clicks? [_])
+  ; (cursor [_]) either this & cursor-update-actor or  PlayerState/enter
   (manual-tick! [_ context delta]))
 
 (defcomponent :entity/state {:keys [initial-state

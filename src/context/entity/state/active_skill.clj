@@ -1,9 +1,9 @@
 (ns context.entity.state.active-skill
   (:require [gdl.context :refer [draw-filled-circle draw-sector draw-image play-sound!]]
+            [context.entity.state :as state]
             [cdq.context :refer [valid-params? do-effect! effect-render-info send-event!
-                                  stopped? finished-ratio ->counter set-skill-to-cooldown! pay-skill-mana-cost!]]
-            [cdq.entity :as entity]
-            [context.entity.state :as state]))
+                                  stopped? finished-ratio ->counter set-skill-to-cooldown! pay-skill-mana-cost! set-cursor!]]
+            [cdq.entity :as entity]))
 
 (defn- draw-skill-icon [c icon entity* [x y] action-counter-ratio]
   (let [[width height] (:world-unit-dimensions icon)
@@ -22,9 +22,11 @@
   state/PlayerState
   (pause-game? [_] false)
   (manual-tick! [_ context delta])
+  (allow-ui-clicks? [_] false)
 
   state/State
   (enter [_ context]
+    (set-cursor! context :cursors/sandclock)
     ; TODO all only called here => start-skill-bla
     ; make all this context context.entity.skill extension ?
     (play-sound! context (str "sounds/" (if (:spell? skill) "shoot.wav" "slash.wav")))

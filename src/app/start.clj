@@ -17,7 +17,8 @@
                      map-editor
                      minimap
                      options-menu
-                     property-editor)))
+                     property-editor)
+            [cdq.context :refer [set-cursor!]]))
 
 (defn- create-context [context]
   (let [context (merge context
@@ -25,6 +26,7 @@
                        (properties/->context context "resources/properties.edn")
                        (inventory-window/->context context)
                        (action-bar/->context context))]
+    (set-cursor! context :cursors/default)
     (merge context
            ; previous default-font overwritten
            {:default-font (generate-ttf context {:file "exocet/films.EXL_____.ttf" :size 16})
