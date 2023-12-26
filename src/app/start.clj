@@ -61,7 +61,7 @@
   {:app {:title "Cyber Dungeon Quest"
          :width  1440
          :height 900
-         :full-screen? (safe-get production-config :full-screen?)
+         :full-screen? (safe-get config :full-screen?)
          :fps 60}
    :create-context create-context
    :first-screen :screens/main-menu

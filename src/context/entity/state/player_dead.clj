@@ -14,7 +14,7 @@
   state/State
   (enter [_ context]
     (play-sound! context "sounds/bfxr_playerdeath.wav")
-    (show-msg-to-player! context "YOU DIED!\nPress X to leave."))
+    (show-msg-to-player! context "YOU DIED!\nPress X to leave"))
   (exit [_ _ctx])
   (tick! [_ _ctx delta])
   (render-below [_ c entity*])

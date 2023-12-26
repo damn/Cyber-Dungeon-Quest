@@ -126,8 +126,11 @@
           ; invalid-params -> depends on params ...
           [:cursors/skill-not-usable
            (fn []
-             (denied context "Cannot use skill here"
-                     #_(str "Skill usable state not usable: " state)))])))
+             (denied context
+                     (case state
+                       :cooldown "Skill is still on cooldown"
+                       :not-enough-mana "Not enough mana"
+                       :invalid-params "Cannot use this here")))])))
      [:cursors/no-skill-selected
       (fn []
         (denied context "No selected skill"))])))
