@@ -35,7 +35,7 @@
    :debug-windows? true
    :debug-options? true})
 
-(def ^:private config production-config)
+(def ^:private config dev-config)
 
 (defn- create-context [context]
   (let [context (merge context

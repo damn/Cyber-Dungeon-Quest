@@ -10,6 +10,7 @@
              [npc-idle :as npc-idle]
              [npc-sleeping :as npc-sleeping]
              [player-dead :as player-dead]
+             [player-found-princess :as player-found-princess]
              [player-idle :as player-idle]
              [player-item-on-cursor :as player-item-on-cursor]
              [player-moving :as player-moving]
@@ -39,7 +40,9 @@
     :stun -> :stunned
     :start-action -> :active-skill
     :pickup-item -> :item-on-cursor
-    :movement-input -> :moving]
+    :movement-input -> :moving
+    :found-princess -> :princess-saved
+    ]
    [:moving
     :kill -> :dead
     :stun -> :stunned
@@ -56,6 +59,7 @@
     :stun -> :stunned
     :drop-item -> :idle
     :dropped-item -> :idle]
+   [:princess-saved]
    [:dead]])
 
 (def ^:private npc-state-constructors
@@ -73,7 +77,9 @@
                      (player-moving/->PlayerMoving e v))
    :active-skill   active-skill/->CreateWithCounter
    :stunned        stunned/->CreateWithCounter
-   :dead           (fn [_ctx e] (player-dead/->PlayerDead e))})
+   :dead           (fn [_ctx e] (player-dead/->PlayerDead e))
+   :princess-saved (fn [_ctx e] (player-found-princess/->PlayerFoundPrincess e))
+   })
 
 (defn- ->state [& {:keys [is-player initial-state]}]
   {:initial-state (if is-player
@@ -102,15 +108,26 @@
   {:is-player true
    :faction :evil
    :mana 100
-   :choose-skill-type :player
    :player-movement true
    :free-skill-points 3
    :entity/clickable {:type :clickable/player}})
 
 (def ^:private npc-components
   {:faction :good
-   :choose-skill-type :npc
    :move-towards-enemy true})
+
+(def ^:private lady-props
+  {:faction :evil
+   :entity/clickable {:type :clickable/princess}
+   }
+  )
+
+(comment
+ (let [ctx @gdl.app/current-context]
+
+    (deref (cdq.context/get-entity ctx 831))
+   )
+ )
 
 (defn- species-properties [species-props]
   (let [multiplier {:id :species/multiplier,
@@ -124,17 +141,20 @@
                              {:keys [is-player
                                      initial-state] :as extra-params}
                              context]
-  (let [creature-name (name (:id creature-props))
+  (let [creature-id (:id creature-props)
+        creature-name (name creature-id)
         creature-props (dissoc creature-props :id)
         creature-props (update creature-props :skills #(or % []))
         images (create-images context creature-name)
         [width height] (images->world-unit-dimensions images)
         {:keys [speed hp]} (species-properties (get-property context (:species creature-props)))]
     (merge (dissoc creature-props :image)
-           (if is-player
-             player-components
-             npc-components)
-           {:body {:width width
+           (cond
+            is-player               player-components
+            (= creature-id :lady-a) lady-props
+            :else                   npc-components)
+           {:creature/name creature-name
+            :body {:width width
                    :height height
                    :is-solid true}
             :entity/movement speed
@@ -142,22 +162,25 @@
             :mana 11
             :is-flying false
             :animation (animation/create images :frame-duration 250 :looping? true)
-            :entity/state (->state :is-player is-player
-                                   :initial-state initial-state)
+
             :z-order (if (:is-flying creature-props)
                        :flying
                        :ground)}
+           (cond
+            (= creature-id :lady-a) nil
+            :else {:entity/state (->state :is-player is-player
+                                          :initial-state initial-state)})
            extra-params)))
 
 (extend-type gdl.context.Context
   cdq.context/Builder
   (creature-entity [context creature-id position creature-params]
-    (let [entity* (-> context
-                      (get-property creature-id)
-                      (create-creature-data creature-params context)
-                      (assoc :position position)
-                      assoc-left-bottom)]
-      (create-entity! context entity*)))
+    (create-entity! context
+                    (-> context
+                        (get-property creature-id)
+                        (create-creature-data creature-params context)
+                        (assoc :position position)
+                        assoc-left-bottom)))
 
   (audiovisual [context position id]
     (let [{:keys [sound animation]} (get-property context id)]

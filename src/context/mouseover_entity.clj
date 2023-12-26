@@ -13,7 +13,7 @@
     (->> render-on-map-order
          (sort-by-order hits #(:z-order @%))
          reverse
-         (filter #(line-of-sight? context @player-entity @%))
+         #_(filter #(line-of-sight? context @player-entity @%))
          first)))
 
 (extend-type gdl.context.Context

@@ -39,7 +39,7 @@
                      color/black)
         blocked? (ray-blocked? context light-position position)]
     (if blocked?
-      base-color
+      color/white ;base-color
       (do
        (when-not explored?
          (set-explored! context position))
@@ -80,7 +80,7 @@
     (change-screen! :screens/minimap))
 
   (when (and (key-just-pressed? context input.keys/x)
-             (= :dead (entity/state @player-entity)))
+             (#{:princess-saved :dead} (entity/state @player-entity)))
     (change-screen! :screens/main-menu)))
 
 (defn- render-game [{:keys [context/world-map
@@ -98,7 +98,8 @@
                        (render-entities* context
                                          (->> active-entities
                                               (map deref)
-                                              (filter #(line-of-sight? context @player-entity %))))
+                                              (filter :z-order)
+                                              #_(filter #(line-of-sight? context @player-entity %))))
                        (debug-render-after-entities context))))
 
 (def ^:private pausing true)

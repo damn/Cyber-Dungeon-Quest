@@ -211,9 +211,15 @@
 (def ^:private creature->tile
   (memoize
    (fn [{:keys [id image]}]
+     (assert (and id image))
      (let [tile (StaticTiledMapTile. ^TextureRegion (:texture image))]
        (.put (.getProperties tile) "id" id)
        tile))))
+
+; highest lvl area
+; one free tile
+; place princess TILE
+; so can see in mapgen test
 
 (defn- creature-spawn-positions [creature-properties spawn-rate tiled-map area-level-grid]
   (keep (fn [[position area-level]]
@@ -238,10 +244,11 @@
   (let [layer (add-layer! tiled-map
                           :name "creatures"
                           :visible true)]
-    (doseq [[position tile] (creature-spawn-positions creature-properties spawn-rate tiled-map area-level-grid)]
+    #_(doseq [[position tile] (creature-spawn-positions creature-properties spawn-rate tiled-map area-level-grid)]
       (set-tile! layer position tile))))
 
-(defn generate [{:keys [creature-properties
+(defn generate [ctx
+                {:keys [creature-properties
                         map-size
                         max-area-level
                         spawn-rate]}]
@@ -275,11 +282,31 @@
                              (filter (fn [[position area-level]]
                                        (and (number? area-level)
                                             (zero? area-level)))
-                                     area-level-grid))]
+                                     area-level-grid))
+        princess-position (rand-nth
+                           (map first
+                                (filter (fn [[position area-level]]
+                                          (and (number? area-level)
+                                               (= max-area-level area-level)
+                                               (#{:no-cell :undefined}
+                                                (tiled/property-value position
+                                                                      tiled-map
+                                                                      :creatures
+                                                                      :id))))
+                                        area-level-grid)))]
     (place-creatures! creature-properties
                       spawn-rate
                       tiled-map ; TODO move out of this ns, use area-level-grid still
                       area-level-grid)
+
+    (println "princess " princess-position)
+
+    (if princess-position
+      (set-tile! (tiled/get-layer tiled-map "creatures")
+                 princess-position
+                 (creature->tile (cdq.context/get-property ctx :lady-a)))
+      (println "NO PRINCESS POSITION FOUND") ; TODO map too small for max area level ! assert !
+      )
     {:tiled-map tiled-map
      :start-positions start-positions
      :area-level-grid area-level-grid}))

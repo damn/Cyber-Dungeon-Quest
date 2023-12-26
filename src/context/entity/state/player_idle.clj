@@ -35,13 +35,20 @@
   [ctx _clicked-entity]
   (toggle-visible! (inventory-window ctx)))
 
+(defmethod on-clicked :clickable/princess
+  [ctx _clicked-entity]
+  (send-event! ctx (:context/player-entity ctx) :found-princess))
+
 (defn- clickable->cursor [mouseover-entity*]
   (case (:type (:entity/clickable mouseover-entity*))
     :clickable/item :cursors/hand-before-grab
-    :clickable/player :cursors/bag))
+    :clickable/player :cursors/bag
+    :clickable/princess :cursors/princess
+    ))
 
 (def ^:private click-distance-tiles 1.5)
 
+; TODO TOO FAR DISTANCE SHOW SPECIAL CURSOR ? OR SAME ? or error, too far
 (defn- clickable-mouseover-entity? [player-entity* mouseover-entity*]
   (and (:entity/clickable mouseover-entity*)
        (< (v/distance (:position player-entity*)

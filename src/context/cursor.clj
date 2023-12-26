@@ -21,7 +21,8 @@
    :cursors/use-skill ["pointer004" 0 0]
    :cursors/skill-not-usable ["x007" 0 0]
    :cursors/bag ["bag001" 0 0]
-   :cursors/move-window ["move002" 16 16]})
+   :cursors/move-window ["move002" 16 16]
+   :cursors/princess ["exclamation001" 0 0]})
 
 ; TODO dispose cursors ( do @ gdl ? )
 (defn ->context [ctx]
