@@ -295,9 +295,7 @@
                       spawn-rate
                       tiled-map ; TODO move out of this ns, use area-level-grid still
                       area-level-grid)
-
     (println "princess " princess-position)
-
     (if princess-position
       (set-tile! (tiled/get-layer tiled-map "creatures")
                  princess-position

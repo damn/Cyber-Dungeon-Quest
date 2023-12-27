@@ -116,12 +116,11 @@
 
 (defn- first-level [context]
   (let [{:keys [tiled-map
-                start-positions
-                princess-positions]} (mapgen.module-gen/generate
-                                      context
-                                      ; TODO move to properties
-                                      (assoc (edn/read-string (slurp "resources/maps/map.edn"))
-                                             :creature-properties (all-properties context :creature)))
+                start-positions]} (mapgen.module-gen/generate
+                                   context
+                                   ; TODO move to properties
+                                   (assoc (edn/read-string (slurp "resources/maps/map.edn"))
+                                          :creature-properties (all-properties context :creature)))
         start-position (tile->middle
                         (rand-nth (filter #(= "all" (movement-property tiled-map %))
                                           start-positions)))]
