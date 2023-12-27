@@ -61,7 +61,7 @@
 (defn- open-property-editor-window! [context property-id]
   (add-to-stage! context (->property-editor-window context property-id)))
 
-(defn- get-child-with-id [group id]
+(defn- get-child-with-id [group id];  use ilookup ?
   (->> (children group)
        (filter #(= id (actor/id %)))
        first))

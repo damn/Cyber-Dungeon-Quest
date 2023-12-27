@@ -13,7 +13,7 @@
 
 ; TODO HERE
 ; * only spawn in reachable tiles (flood fill)
-; * spawn in transition tiles / set area levels too
+; * spawn in transition tiles / set area levels too => use adjacent-wall-positions also for area lvls
 ; * unique max 16 modules, not random take @ #'floor->module-index
 ; * check not using start module with hill and spawning on hill ?
 ; * weird how to get princess position
@@ -22,7 +22,7 @@
  ; TODO use same codepath here as in 'generate'
  ; just with logging enabled
  ; => can make sure to debug it
- (let [{:keys [start grid]} (make-grid :size 150)
+ (let [{:keys [start grid]} (->cave-grid :size 15)
        _ (println "BASE GRID:\n")
        _ (utils/printgrid grid)
        _ (println)
@@ -43,14 +43,71 @@
        _ (utils/printgrid grid)])
  )
 
+; TODO generates 51,52. not max 50
+; TODO can use different turn-ratio/depth/etc. params
+(defn- ->cave-grid [& {:keys [size]}]
+  (let [{:keys [start grid]} (cave-gen/cave-gridgen (Random.) size size :wide)
+        grid (nad/fix-not-allowed-diagonals grid)]
+    {:start start
+     :grid grid}))
+
+; can adjust:
+; * split percentage , for higher level areas may scale faster (need to be more careful)
+; * not 4 neighbors but just 1 tile randomwalk -> possible to have lvl 9 area next to lvl 1 ?
+; * adds metagame to the game , avoid/or fight higher level areas, which areas to go next , etc...
+; -> up to the player not step by step level increase like D2
+; can not only take first of added-p but multiples also
+; can make parameter how fast it scales
+; area-level-grid works better with more wide grids
+; if the cave is very straight then it is just a continous progression and area-level-grid is useless
+(defn- area-level-grid
+  "Expands from start position by adding one random adjacent neighbor.
+  Each random walk is a step and is assigned a level as of max-level.
+  (Levels are scaled, for example grid has 100 ground cells, so steps would be 0 to 100(99?)
+  and max-level will smooth it out over 0 to max-level.
+  The point of this is to randomize the levels so player does not have a smooth progression
+  but can encounter higher level areas randomly around but there is always a path which goes from
+  level 0 to max-level, so the player has to decide which areas to do in which order."
+  [& {:keys [grid start max-level]}]
+  (let [maxcount (->> grid
+                      grid/cells
+                      (filter #(= :ground %))
+                      count)
+        ; -> assume all :ground cells can be reached from start
+        ; later check steps count == maxcount assert
+        level-step (/ maxcount max-level)
+        step->level #(int (Math/ceil (/ % level-step)))
+        walkable-neighbours (fn [grid position]
+                              (filter #(= (get grid %) :ground)
+                                      (grid/get-4-neighbour-positions position)))]
+    (loop [next-positions #{start}
+           steps          [[0 start]]
+           grid           (assoc grid start 0)]
+      (let [next-positions (set
+                            (filter #(seq (walkable-neighbours grid %))
+                                    next-positions))]
+        (if (seq next-positions)
+          (let [p (rand-nth (seq next-positions))
+                added-p (rand-nth (walkable-neighbours grid p))]
+            (if added-p
+              (let [area-level (step->level (count steps))]
+                (recur (conj next-positions added-p)
+                       (conj steps [area-level added-p])
+                       (assoc grid added-p area-level)))
+              (recur next-positions
+                     steps
+                     grid)))
+          {:steps steps
+           :grid  grid})))))
+
 (def modules-file "maps/modules.tmx")
 (def module-width  32)
 (def module-height 20)
 (def ^:private number-modules-x 8)
 (def ^:private number-modules-y 4)
 (def ^:private module-offset-tiles 1)
-(def ^:private transition-modules-row-width 4) ; in one row in the modules-tiled-map
-(def ^:private transition-modules-row-height 4) ; in one row in the modules-tiled-map
+(def ^:private transition-modules-row-width 4)
+(def ^:private transition-modules-row-height 4)
 (def ^:private transition-modules-offset-x 4)
 (def ^:private floor-modules-row-width 4)
 (def ^:private floor-modules-row-height 4)
@@ -120,63 +177,6 @@
                           (adjacent-wall-positions unscaled-grid)))]
     (grid->tiled-map modules-tiled-map grid)))
 
-(defn- make-grid [& {:keys [size]}]
-  ; TODO generates 51,52. not max 50
-  ; TODO can use different turn-ratio/depth/etc. params
-  (let [{:keys [start grid]} (cave-gen/cave-gridgen (Random.) size size :wide)
-        grid (nad/fix-not-allowed-diagonals grid)]
-    {:start start
-     :grid grid}))
-
-; can adjust:
-; * split percentage , for higher level areas may scale faster (need to be more careful)
-; * not 4 neighbors but just 1 tile randomwalk -> possible to have lvl 9 area next to lvl 1 ?
-; * adds metagame to the game , avoid/or fight higher level areas, which areas to go next , etc...
-; -> up to the player not step by step level increase like D2
-; can not only take first of added-p but multiples also
-; can make parameter how fast it scales
-; area-level-grid works better with more wide grids
-; if the cave is very straight then it is just a continous progression and area-level-grid is useless
-(defn- area-level-grid
-  "Expands from start position by adding one random adjacent neighbor.
-  Each random walk is a step and is assigned a level as of max-level.
-  (Levels are scaled, for example grid has 100 ground cells, so steps would be 0 to 100(99?)
-  and max-level will smooth it out over 0 to max-level.
-  The point of this is to randomize the levels so player does not have a smooth progression
-  but can encounter higher level areas randomly around but there is always a path which goes from
-  level 0 to max-level, so the player has to decide which areas to do in which order."
-  [& {:keys [grid start max-level]}]
-  (let [maxcount (->> grid
-                      grid/cells
-                      (filter #(= :ground %))
-                      count)
-        ; -> assume all :ground cells can be reached from start
-        ; later check steps count == maxcount assert
-        level-step (/ maxcount max-level)
-        step->level #(int (Math/ceil (/ % level-step)))
-        walkable-neighbours (fn [grid position]
-                              (filter #(= (get grid %) :ground)
-                                      (grid/get-4-neighbour-positions position)))]
-    (loop [next-positions #{start}
-           steps          [[0 start]]
-           grid           (assoc grid start 0)]
-      (let [next-positions (set
-                            (filter #(seq (walkable-neighbours grid %))
-                                    next-positions))]
-        (if (seq next-positions)
-          (let [p (rand-nth (seq next-positions))
-                added-p (rand-nth (walkable-neighbours grid p))]
-            (if added-p
-              (let [area-level (step->level (count steps))]
-                (recur (conj next-positions added-p)
-                       (conj steps [area-level added-p])
-                       (assoc grid added-p area-level)))
-              (recur next-positions
-                     steps
-                     grid)))
-          {:steps steps
-           :grid  grid})))))
-
 (defn- creatures-with-level [creature-properties level]
   (filter #(= level (:level %)) creature-properties))
 
@@ -210,7 +210,7 @@
   "The generated tiled-map needs to be disposed."
   [context {:keys [map-size max-area-level spawn-rate]}]
   (assert (<= max-area-level map-size))
-  (let [{:keys [start grid]} (make-grid :size map-size)
+  (let [{:keys [start grid]} (->cave-grid :size map-size)
         ;_ (utils/printgrid grid)
         ;_ (println)
         {:keys [steps grid]} (area-level-grid :grid grid
