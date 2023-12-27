@@ -41,8 +41,7 @@
     :start-action -> :active-skill
     :pickup-item -> :item-on-cursor
     :movement-input -> :moving
-    :found-princess -> :princess-saved
-    ]
+    :found-princess -> :princess-saved]
    [:moving
     :kill -> :dead
     :stun -> :stunned
@@ -70,16 +69,13 @@
    :dead         (fn [_ctx e] (npc-dead/->NpcDead e))})
 
 (def ^:private player-state-constructors
-  {:item-on-cursor (fn [_ctx e item]
-                     (player-item-on-cursor/->PlayerItemOnCursor e item))
+  {:item-on-cursor (fn [_ctx e item] (player-item-on-cursor/->PlayerItemOnCursor e item))
    :idle           (fn [_ctx e] (player-idle/->PlayerIdle e))
-   :moving         (fn [_ctx e v]
-                     (player-moving/->PlayerMoving e v))
+   :moving         (fn [_ctx e v] (player-moving/->PlayerMoving e v))
    :active-skill   active-skill/->CreateWithCounter
    :stunned        stunned/->CreateWithCounter
    :dead           (fn [_ctx e] (player-dead/->PlayerDead e))
-   :princess-saved (fn [_ctx e] (player-found-princess/->PlayerFoundPrincess e))
-   })
+   :princess-saved (fn [_ctx e] (player-found-princess/->PlayerFoundPrincess e))})
 
 (defn- ->state [& {:keys [is-player initial-state]}]
   {:initial-state (if is-player

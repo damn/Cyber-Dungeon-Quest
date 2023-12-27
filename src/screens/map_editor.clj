@@ -62,47 +62,6 @@
                                             (pack! window))}))
     window))
 
-
-(comment
- (map first
-      (filter (fn [[position area-level]]
-                (and (number? area-level)
-                     (= 3 area-level)
-                     (#{:no-cell :undefined}
-                      (tiled/property-value position
-                                            tiled-map
-                                            :creatures
-                                            :id))))
-              area-level-grid))
-
- (let [tiled-map @current-tiled-map
-       area-level-grid @current-area-level-grid
-       position [59 41]
-       set-tile! @#'mapgen.module-gen/set-tile!
-       creature->tile @#'mapgen.module-gen/creature->tile
-       ctx @gdl.app/current-context
-       lady (cdq.context/get-property ctx :lady-a)
-       ]
-   ;(first area-level-grid)
-   #_(rand-nth
-      (map first (filter (fn [[position area-level]]
-                           (and (number? area-level)
-                                (= 3 area-level)
-                                (#{:no-cell :undefined}
-                                 (tiled/property-value position
-                                                       tiled-map
-                                                       :creatures
-                                                       :id))))
-                         area-level-grid)))
-
-
-
-   (set-tile! (tiled/get-layer tiled-map "creatures")
-                position
-                (creature->tile lady)))
-
- )
-
 ; TODO try camera rotate also
 ; TODO clamp movement / zoom / zoom from max zoom rate (see whole map , to see 1 tile, percentage based )
 ; maybe even a slider?
@@ -118,14 +77,6 @@
 
 (def ^:private show-movement-properties (atom false))
 (def ^:private show-grid-lines (atom false))
-
-(comment
- (let [world-camera (:world-camera @gdl.app/current-context)]
-   #_(adjust-zoom world-camera 0.1)
-   (set! (.zoom world-camera) 1.0)
-   )
- ; 1.0
- )
 
 ; TODO textfield takes control !
 (defn- camera-controls [context camera]

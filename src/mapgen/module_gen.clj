@@ -216,11 +216,6 @@
        (.put (.getProperties tile) "id" id)
        tile))))
 
-; highest lvl area
-; one free tile
-; place princess TILE
-; so can see in mapgen test
-
 (defn- creature-spawn-positions [creature-properties spawn-rate tiled-map area-level-grid]
   (keep (fn [[position area-level]]
           (if (and (number? area-level)
@@ -285,9 +280,6 @@
                                      area-level-grid))
 
         ; ! TODO PRINCESS WAS ON THE HILL !
-        ; they ATTACK HER !
-        ; SHE DOES NOT DIE !
-        ; SHE WOKE THEM UP !
         princess-position (rand-nth
                            (map first
                                 (filter (fn [[position area-level]]
