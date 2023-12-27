@@ -19,6 +19,7 @@
 
 (def ^:private zoom-setting (atom nil))
 
+; DRY map-editor
 (defn- calculate-zoom [{:keys [^OrthographicCamera world-camera
                                context/world-map]}]
   (let [positions-explored (map first
@@ -37,7 +38,7 @@
         vp-ratio-w (/ (* x-diff 2) viewport-width)
         vp-ratio-h (/ (* y-diff 2) viewport-height)
         new-zoom (max vp-ratio-w vp-ratio-h)]
-    new-zoom ))
+    new-zoom))
 
 ; TODO FIXME deref'fing current-context at each tile corner
 ; massive performance issue - probably

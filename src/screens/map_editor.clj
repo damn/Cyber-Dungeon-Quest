@@ -3,14 +3,14 @@
             [clojure.string :as str]
             [gdl.app :refer [change-screen!]]
             [gdl.context :refer [key-pressed? key-just-pressed? ->text-field ->table
-                                 ->label ->window world-mouse-position ->actor ->tiled-map render-tiled-map]]
+                                 ->label ->window world-mouse-position ->actor ->tiled-map render-tiled-map
+                                 draw-filled-rectangle draw-filled-circle draw-grid render-world-view ->text-button
+                                 current-screen draw-rectangle]]
             [gdl.disposable :refer [dispose]]
             [gdl.input.keys :as input.keys]
             gdl.screen
             [gdl.graphics.color :as color]
             [gdl.graphics.camera :as camera]
-            [gdl.context :refer [draw-filled-rectangle draw-filled-circle draw-grid render-world-view ->text-button]]
-            gdl.disposable
             [gdl.maps.tiled :as tiled]
             [gdl.scene2d.group :refer [add-actor!]]
             [gdl.scene2d.ui.widget-group :refer [pack!]]
@@ -22,36 +22,64 @@
   (:import com.badlogic.gdx.graphics.OrthographicCamera
            com.badlogic.gdx.scenes.scene2d.ui.TextField))
 
-(def ^:private current-tiled-map (atom nil))
-(def ^:private current-area-level-grid (atom nil))
+; DRY minimap
+(defn- calculate-zoom [^OrthographicCamera world-camera tiled-map]
+  (let [viewport-width  (.viewportWidth  world-camera)
+        viewport-height (.viewportHeight world-camera)
+        [px py] (camera/position world-camera)
+        left   [0 0]
+        top    [0 (tiled/height tiled-map)]
+        right  [(tiled/width tiled-map) 0]
+        bottom [0 0]
+        x-diff (max (- px (left 0)) (- (right 0) px))
+        y-diff (max (- (top 1) py) (- py (bottom 1)))
+        vp-ratio-w (/ (* x-diff 2) viewport-width)
+        vp-ratio-h (/ (* y-diff 2) viewport-height)
+        new-zoom (max vp-ratio-w vp-ratio-h)]
+    new-zoom))
 
-(defn- center-world-camera [world-camera]
+(defn- center-world-camera! [world-camera tiled-map]
   (camera/set-position! world-camera
-                        [(/ (tiled/width  @current-tiled-map) 2)
-                         (/ (tiled/height @current-tiled-map) 2)]))
+                        [(/ (tiled/width  tiled-map) 2)
+                         (/ (tiled/height tiled-map) 2)])
+  (camera/set-zoom! world-camera
+                    (calculate-zoom world-camera tiled-map)))
 
-; TODO also highlight current mouseover tile !
+(defn- current-data [ctx]
+  (-> ctx
+      current-screen
+      :sub-screen
+      :current-data))
+
+(def ^:private infotext
+  "L: grid lines
+M: movement properties
+zoom: shift-left,minus
+ESCAPE: leave
+direction keys: move")
+
 (defn- debug-infos [ctx]
   (let [tile (->tile (world-mouse-position ctx))
-        tiled-map @current-tiled-map]
+        {:keys [tiled-map
+                area-level-grid]} @(current-data ctx)]
     (str/join "\n"
-              [(str "Area coords:" (mapv (comp int /) (world-mouse-position ctx)
-                                         [32 20]))
-               (str "Map coords:" (world-mouse-position ctx))
-               (str "Tile coords:" tile)
-               ;(str "Visible tiles: " (world/camera-frustum))
-
-               (str "Creature id: " (tiled/property-value tiled-map :creatures tile :id))
-
-               (when @current-area-level-grid
-                 (let [level (get @current-area-level-grid tile)]
-                   (when (number? level)
-                     (str "Area level:" level))))
-
-               #_(when tiled-map
-                   (str "Movement properties: " (apply vector (movement-properties tiled-map tile))))
-               #_(when tiled-map
-                   (str "Movement property: " (movement-property tiled-map tile)))])))
+              (remove nil?
+                      [infotext
+                       "\n"
+                       (when area-level-grid
+                         (str "Area coords:" (mapv (comp int /) (world-mouse-position ctx)
+                                                   [32 20])))
+                       (str "Tile coords:" tile)
+                       (when area-level-grid
+                         (str "Creature id: " (tiled/property-value tiled-map :creatures tile :id)))
+                       (when area-level-grid
+                         (let [level (get area-level-grid tile)]
+                           (when (number? level)
+                             (str "Area level:" level))))
+                       (when tiled-map
+                         (str "Movement properties: " (apply vector (movement-properties tiled-map tile))))
+                       (when tiled-map
+                         (str "Movement property: " (movement-property tiled-map tile)))]))))
 
 ; same as debug-window
 (defn- ->info-window [ctx]
@@ -68,18 +96,17 @@
 ; https://libgdx.com/wiki/graphics/2d/orthographic-camera
 ; TODO move to gdl
 (defn adjust-zoom [^OrthographicCamera camera by] ; TODO minimap also not necessary to @var
-  (set! (.zoom camera) (+ (.zoom camera) by))
+  (let [new-zoom (max 0.1 (+ (.zoom camera) by))]
+    (set! (.zoom camera) new-zoom))
   (.update camera))
 
 (defn- reset-zoom! [^OrthographicCamera camera]
   (set! (.zoom camera) 1.0))
 
+
 ; TODO movement-speed scales with zoom value for big maps useful
 (def ^:private camera-movement-speed 1)
-(def ^:private zoom-speed 0.05)
-
-(def ^:private show-movement-properties (atom false))
-(def ^:private show-grid-lines (atom false))
+(def ^:private zoom-speed 0.1)
 
 ; TODO textfield takes control !
 (defn- camera-controls [context camera]
@@ -98,35 +125,27 @@
     (if (key-pressed? context input.keys/up)    (apply-position 1 +))
     (if (key-pressed? context input.keys/down)  (apply-position 1 -))))
 
-(def ^:private current-start-positions (atom nil))
-
 (def ^:private show-area-level-colors true)
 
+; TODO also draw numbers of area levels big as module size...
+
 (defn- render-on-map [{:keys [world-camera] :as c}]
-  (let [visible-tiles (camera/visible-tiles world-camera)]
-    (when show-area-level-colors
-      (if @current-start-positions
-        (doseq [[x y] visible-tiles
-                :when (@current-start-positions [x y])]
-          (draw-filled-rectangle c x y 1 1 [0 0 1 0.5])))
+  (let [{:keys [tiled-map
+                area-level-grid
+                start-positions
+                show-movement-properties
+                show-grid-lines]} @(current-data c)
+        visible-tiles (camera/visible-tiles world-camera)
+        [x y] (->tile (world-mouse-position c))]
+    (draw-rectangle c x y 1 1 color/white)
+    (when start-positions ; TODO checkbox
       (doseq [[x y] visible-tiles
-              :let [movement-property (movement-property @current-tiled-map [x y])]]
-        (when (= :all movement-property)
-          (let [level (get @current-area-level-grid [x y])]
-            (if (number? level)
-              (draw-filled-rectangle c x y 1 1
-                                     (if (= level 0)
-                                       nil;[0 0 1 0.5]
-                                       [(/ level 9)
-                                        (- 1 (/ level 9))
-                                        0
-                                        0.5])))))))
-
+              :when (start-positions [x y])]
+        (draw-filled-rectangle c x y 1 1 [1 1 1 0.5])))
     ; TODO move down to other doseq and make button
-
-    (when @show-movement-properties
+    (when show-movement-properties
       (doseq [[x y] visible-tiles
-              :let [movement-property (movement-property @current-tiled-map [x y])]]
+              :let [movement-property (movement-property tiled-map [x y])]]
         (draw-filled-circle c [(+ x 0.5) (+ y 0.5)]
                             0.08
                             color/black)
@@ -135,26 +154,23 @@
                             (case movement-property
                               "all"   color/green
                               "air"   color/orange
-                              "none"  color/red)))))
-
-  (when @show-grid-lines
-    (draw-grid c 0 0
-               (tiled/width  @current-tiled-map)
-               (tiled/height @current-tiled-map)
-               1 1
-               [1 1 1 0.5])))
+                              "none"  color/red))))
+    (when show-grid-lines
+      (draw-grid c 0 0 (tiled/width  tiled-map) (tiled/height tiled-map) 1 1 [1 1 1 0.5]))))
 
 (defn- generate [{:keys [world-camera] :as context} properties]
   (let [{:keys [tiled-map
                 area-level-grid
                 start-positions]} (module-gen/generate context
                                                        (assoc properties
-                                                              :creature-properties (all-properties context :creature)))]
-    (dispose @current-tiled-map)
-    (reset! current-tiled-map tiled-map)
-    (reset! current-area-level-grid area-level-grid)
-    (reset! current-start-positions (set start-positions))
-    (center-world-camera world-camera)))
+                                                              :creature-properties (all-properties context :creature)))
+        atom-data (current-data context)]
+    (dispose (:tiled-map @atom-data))
+    (swap! atom-data assoc
+           :tiled-map tiled-map
+           :area-level-grid area-level-grid
+           :start-positions (set start-positions))
+    (center-world-camera! world-camera tiled-map)))
 
 ; for each key k and value v  define
 ; -> form
@@ -194,30 +210,32 @@
               2)
     [table get-properties]))
 
-(defrecord SubScreen []
+(defrecord SubScreen [current-data]
   gdl.disposable/Disposable
   (dispose [_]
-    (dispose @current-tiled-map))
+    (dispose (:tiled-map @current-data)))
+
   gdl.screen/Screen
   (show [_ {:keys [world-camera]}]
-    (center-world-camera world-camera))
+    (center-world-camera! world-camera (:tiled-map @current-data)))
+
   (hide [_ {:keys [world-camera]}]
     (reset-zoom! world-camera))
+
   (render [_ {:keys [world-camera] :as context}]
     (render-tiled-map context
-                      @current-tiled-map
+                      (:tiled-map @current-data)
                       (constantly color/white)) ; TODO colorsetter optional.
     (render-world-view context render-on-map)
     (if (key-just-pressed? context input.keys/l)
-      (swap! show-grid-lines not))
+      (swap! current-data update :show-grid-lines not))
     (if (key-just-pressed? context input.keys/m)
-      (swap! show-movement-properties not))
+      (swap! current-data update :show-movement-properties not))
     (camera-controls context world-camera)
     (when (key-just-pressed? context input.keys/escape)
       (change-screen! :screens/main-menu))))
 
 (defn screen [context]
-  (reset! current-tiled-map (->tiled-map context module-gen/modules-file))
   (let [window (->window context {:title "Properties"})
         [form get-properties] (edn-edit-form context "resources/maps/map.edn")] ; TODO move to properties
     (.add window ^com.badlogic.gdx.scenes.scene2d.Actor form)
@@ -226,7 +244,9 @@
     (.pack window)
     {:actors [window
               (->info-window context)]
-     :sub-screen (->SubScreen)}))
+     :sub-screen (->SubScreen (atom {:tiled-map (->tiled-map context module-gen/modules-file)
+                                     :show-movement-properties false
+                                     :show-grid-lines false}))}))
 
 ; TODO remove key controls , add checkboxes
 ; TODO fix mouse movement etc
