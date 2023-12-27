@@ -71,38 +71,28 @@
 ; TODO glaubich einziger unterschied noch: openpaths wird bei jeder cell neu berechnet?
 ; TODO max-tries wenn er nie �ber min-cells kommt? -> im let dazu definieren vlt max 30 sekunden -> in tries umgerechnet??
 (defn cave-gridgen [random min-cells max-cells adjnum-type]
-
   ; move up where its used only
   (reset! current-order (create-order random))
-
   (let [start [0 0]
-
         start-grid (assoc {} start :ground) ; grid of posis to :ground or no entry for walls
-
         finished (fn [grid end cell-cnt]
                    ;(println "Reached cells: " cell-cnt) ; TODO cell-cnt stimmt net genau
-
                    ; TODO already called there down ... make mincells check there
                    (if (< cell-cnt min-cells)
                      (cave-gridgen random min-cells max-cells adjnum-type) ; recur?
-
                      (let [[grid convert] (grid/mapgrid->vectorgrid grid
                                                                     #(if (nil? %) :wall :ground))]
                        {:grid  grid
                         :start (convert start)
                         :end   (convert end)})))]
-
     (loop [posi-seq [start]
            grid     start-grid
            cell-cnt 0]
-
       ; TODO min cells check !?
       (if (>= cell-cnt max-cells)
-
         (finished grid
                   (last posi-seq)
                   cell-cnt)
-
         (let [try-carve-posis (create-rand-4-neighbour-posis
                                 (last posi-seq) ; TODO take random ! at corner ... hmm
                                 ((get-adj-num adjnum-type) (count posi-seq) random)
@@ -115,6 +105,5 @@
                      (assoc-ks grid carve-posis :ground)
                      grid)
                    (+ cell-cnt (count carve-posis)))
-
             ; TODO here min-cells check ?
             (finished grid (last posi-seq) cell-cnt)))))))

@@ -130,19 +130,17 @@
 
 (def ^:private floor-idxvalue 0)
 
-(defn- place-module [unscaled-grid grid position & {:keys [is-floor]}]
+(defn- place-module [unscaled-grid grid position & {:keys [transition?]}]
   (let [unscaled-position (mapv (comp int /) position [module-width module-height])
-        ; wrong name, its 'wall?/other-tileset-thigny'
-        position->transition? #(= :wall (get unscaled-grid %))
-        idxvalue (if is-floor
-                   floor-idxvalue
-                   (transitions/index-value unscaled-position
-                                            position->transition?))
-        ; wrong name not local-position but modules-tiled-map-position
+        wall? #(= :wall (get unscaled-grid %))
+        idxvalue (if transition?
+                   (transitions/index-value unscaled-position wall?)
+                   floor-idxvalue)
+        ; wrong name not local-position but modules-tiled-map-position?
         local-positions (module-index->local-positions
-                         (if is-floor
-                           (floor->module-index)
-                           (transition-idxvalue->module-index idxvalue)))
+                         (if transition?
+                           (transition-idxvalue->module-index idxvalue)
+                           (floor->module-index)))
         offsets (for [x (range module-width)
                       y (range module-height)]
                   [x y])
@@ -166,12 +164,12 @@
                        (= (tiled/height modules-tiled-map)
                           (* number-modules-y (+ module-height module-offset-tiles)))))
         grid (reduce (fn [grid position]
-                       (place-module unscaled-grid grid position :is-floor true))
+                       (place-module unscaled-grid grid position :transition? false))
                      grid
                      positions)
         ;_ (println "adjacent walls: " (adjacent-wall-positions grid))
         grid (reduce (fn [grid position]
-                       (place-module unscaled-grid grid position :is-floor false))
+                       (place-module unscaled-grid grid position :transition? true))
                      grid
                      (map #(mapv * % [module-width module-height])
                           (adjacent-wall-positions unscaled-grid)))]
@@ -199,9 +197,7 @@
         area-level-grid))
 
 (defn- place-creatures! [context spawn-rate tiled-map area-level-grid]
-  (let [layer (add-layer! tiled-map
-                          :name "creatures"
-                          :visible true)
+  (let [layer (add-layer! tiled-map :name "creatures" :visible true)
         creature-properties (all-properties context :creature)]
     (doseq [[position tile] (creature-spawn-positions creature-properties spawn-rate tiled-map area-level-grid)]
       (set-tile! layer position tile))))
@@ -211,11 +207,17 @@
   [context {:keys [map-size max-area-level spawn-rate]}]
   (assert (<= max-area-level map-size))
   (let [{:keys [start grid]} (->cave-grid :size map-size)
+        ; TODO write/assert 'this is a grid of :wall/:ground ?!
+        ; TODO has also 'end' ...
         ;_ (utils/printgrid grid)
         ;_ (println)
         {:keys [steps grid]} (area-level-grid :grid grid
                                               :start start
                                               :max-level max-area-level)
+        ; TODO write/assert this is a grid of numbers/wall/?
+        ; => :wall / and a number
+        ; => TODO so the bug with grid->tiled-map is because of :ground, not :wall ...
+        ; why wall ?
         area-level-grid grid
         ;_ (utils/printgrid area-level-grid)
         scale [module-width module-height]
@@ -223,6 +225,7 @@
         module-placement-posis (map scale-position steps)
         unscaled-area-level-grid area-level-grid
         area-level-grid (utils/scale-grid area-level-grid scale)
+        ; TODO one of those two grids is just used for checking wall, maybe not necessary
         tiled-map (place-modules (->tiled-map context modules-file)
                                  area-level-grid ; = scaled area level gri
                                  unscaled-area-level-grid ; => scaling happends inside place-modules !

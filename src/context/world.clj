@@ -191,19 +191,10 @@
                    (:start-position world-map)
                    {:is-player true}))
 
-(deftype Disposable-State [] ; TODO let world-map record implement this so tiledmaps get disposed
-  gdl.disposable/Disposable
-  (dispose [_]
-    ; TODO dispose tiledmap of context/world-map => make disposable record
-    ; TODO dispose maps when starting a new session
-    ; => newly loaded tiledmaps
-    #_(when (bound? #'world-maps)
-      (doseq [[mapkey mapdata] world-maps
-              :let [tiled-map (:tiled-map mapdata)]
-              :when tiled-map]
-        (tiled/dispose tiled-map)))))
-
 (defn merge->context [context]
+  ; TODO when (:context/world-map context)
+  ; dispose (:tiled-map ... )
+  ; check if it works
   (let [context (merge context
                        {:context/world-map (create-world-map (first-level context))})]
     (merge context
