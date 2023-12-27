@@ -3,7 +3,7 @@
             [gdl.maps.tiled :as tiled]
             [gdl.context :refer [->tiled-map]]
             [mapgen.utils :as utils]
-            [mapgen.tiled-utils :refer [copy-tile ->static-tiled-map-tile set-tile! cell->tile ->empty-tiled-map put! put-all! visible?  add-layer!]]
+            [mapgen.tiled-utils :refer [->static-tiled-map-tile set-tile! put! add-layer! grid->tiled-map]]
             [mapgen.transitions :as transitions]
             [mapgen.movement-property :refer (movement-property)]
             [mapgen.cave-gen :as cave-gen]
@@ -13,61 +13,72 @@
 ; TODO HERE
 ; * spawn in transition tiles / set area levels too
 ; * only spawn in reachable tiles (flood fill)
-; * unique max 16 modules, not random take
+; * unique max 16 modules, not random take @ #'floor->module-index
 
-(defn- generate-tiled-map
-  "Creates an empty new tiled-map with same layers and properties as modules-tiled-map.
-The size of the map is as of the grid, which contains also the tile information from the modules-tiled-map."
-  [modules-tiled-map grid]
-  (let [tiled-map (->empty-tiled-map)
-        properties (tiled/properties tiled-map)]
-    (put-all! properties (tiled/properties modules-tiled-map))
-    (put! properties "width"  (grid/width  grid))
-    (put! properties "height" (grid/height grid))
-    (doseq [layer (tiled/layers modules-tiled-map)
-            :let [new-layer (add-layer! tiled-map
-                                        :name (tiled/layer-name layer)
-                                        :visible (visible? layer)
-                                        :properties (tiled/properties layer))]]
-      (doseq [position (grid/posis grid)
-              :let [local-position (get grid position)]
-              :when local-position]
-        (when-let [cell (tiled/cell-at modules-tiled-map layer local-position)]
-          (set-tile! new-layer
-                     position
-                     (copy-tile (cell->tile cell))))))
-    tiled-map))
+(comment
+ ; TODO use same codepath here as in 'generate'
+ ; just with logging enabled
+ ; => can make sure to debug it
+ (let [{:keys [start grid]} (make-grid :size 150)
+       _ (println "BASE GRID:\n")
+       _ (utils/printgrid grid)
+       _ (println)
+       _ (println "WITH START POSITION (0) :\n")
+       _ (utils/printgrid (assoc grid start 0))
+       _ (println "\nwidth:  " (grid/width  grid)
+                  "height: " (grid/height grid)
+                  "start " start "\n")
+       ;_ (println (grid/posis grid))
+       _ (println "With adjacent-wall-positions marked:\n")
+       _ (utils/printgrid (reduce #(assoc %1 %2 nil)
+                                  grid
+                                  (adjacent-wall-positions grid)))
+       {:keys [steps grid]} (area-level-grid :grid grid
+                                             :start start
+                                             :max-level 9)
+       _ (println "\n With area levels: \n")
+       _ (utils/printgrid grid)])
+ )
 
 (def modules-file "maps/modules.tmx")
 (def module-width  32)
 (def module-height 20)
-(def ^:private module-offset 1)
+(def ^:private number-modules-x 8)
+(def ^:private number-modules-y 4)
+(def ^:private module-offset-tiles 1)
+(def ^:private transition-modules-x 4) ; in one row in the modules-tiled-map
+(def ^:private transition-modules-y 4) ; in one row in the modules-tiled-map
 (def ^:private transition-modules-offset-x 4)
+(def ^:private floor-modules-x 4)
+(def ^:private floor-modules-y 4)
 
 (defn- module-index->local-positions [[module-x module-y]]
-  (let [start-x (* module-x (+ module-width  module-offset))
-        start-y (* module-y (+ module-height module-offset))]
+  (let [start-x (* module-x (+ module-width  module-offset-tiles))
+        start-y (* module-y (+ module-height module-offset-tiles))]
     (for [x (range start-x (+ start-x module-width))
           y (range start-y (+ start-y module-height))]
       [x y])))
 
 (defn- floor->module-index []
-  ; TODO map consists of ~20 floor modules => shuffle (range 4) (range 4)
-  ; -> no duplicates
-  [(rand-int 4) ; !
-   (rand-int 4)])
+  [(rand-int floor-modules-x)
+   (rand-int floor-modules-y)])
 
 (defn- transition-idxvalue->module-index [idxvalue]
-  [(+ (rem idxvalue 4) ; !
+  [(+ (rem idxvalue transition-modules-x)
       transition-modules-offset-x)
-   (int (/ idxvalue 4))])
+   (int (/ idxvalue transition-modules-y))])
 
-(defn- place-module [unscaled-grid grid position {:keys [is-floor]}]
+(def ^:private floor-idxvalue 0)
+
+(defn- place-module [unscaled-grid grid position & {:keys [is-floor]}]
   (let [unscaled-position (mapv (comp int /) position [module-width module-height])
+        ; wrong name, its 'wall?/other-tileset-thigny'
+        position->transition? #(= :wall (get unscaled-grid %))
         idxvalue (if is-floor
-                   0 ; !
+                   floor-idxvalue
                    (transitions/index-value unscaled-position
-                                            #(= :wall (get unscaled-grid %))))
+                                            position->transition?))
+        ; wrong name not local-position but modules-tiled-map-position
         local-positions (module-index->local-positions
                          (if is-floor
                            (floor->module-index)
@@ -75,8 +86,7 @@ The size of the map is as of the grid, which contains also the tile information 
         offsets (for [x (range module-width)
                       y (range module-height)]
                   [x y])
-        offset->local-position (zipmap offsets
-                                       local-positions)]
+        offset->local-position (zipmap offsets local-positions)]
     (reduce (fn [grid offset]
               (assoc grid
                      (mapv + position offset)
@@ -90,19 +100,22 @@ The size of the map is as of the grid, which contains also the tile information 
                              (grid/get-8-neighbour-positions p))))
           (grid/posis grid)))
 
-(defn- place-modules [ctx grid unscaled-grid positions]
-  (let [modules (->tiled-map ctx modules-file)
-        _ (assert (and (= (tiled/width  modules) (* 8 (+ module-width  module-offset))) ; TODO hardcoded 8/4
-                       (= (tiled/height modules) (* 4 (+ module-height module-offset)))))
-        grid (reduce (fn [grid position] (place-module unscaled-grid grid position {:is-floor true}))
+(defn- place-modules [modules-tiled-map grid unscaled-grid positions] ; <= scaled-area-level-grid unscaled-area-level-grid
+  (let [_ (assert (and (= (tiled/width  modules-tiled-map)
+                          (* number-modules-x (+ module-width  module-offset-tiles)))
+                       (= (tiled/height modules-tiled-map)
+                          (* number-modules-y (+ module-height module-offset-tiles)))))
+        grid (reduce (fn [grid position]
+                       (place-module unscaled-grid grid position :is-floor true))
                      grid
                      positions)
         ;_ (println "adjacent walls: " (adjacent-wall-positions grid))
-        grid (reduce (fn [grid position] (place-module unscaled-grid grid position {:is-floor false}))
+        grid (reduce (fn [grid position]
+                       (place-module unscaled-grid grid position :is-floor false))
                      grid
                      (map #(mapv * % [module-width module-height])
                           (adjacent-wall-positions unscaled-grid)))]
-    (generate-tiled-map modules grid)))
+    (grid->tiled-map modules-tiled-map grid)))
 
 (defn- make-grid [& {:keys [size]}]
   ; TODO generates 51,52. not max
@@ -112,13 +125,15 @@ The size of the map is as of the grid, which contains also the tile information 
     {:start start
      :grid grid}))
 
-; TODO can adjust:
+; can adjust:
 ; * split percentage , for higher level areas may scale faster (need to be more careful)
 ; * not 4 neighbors but just 1 tile randomwalk -> possible to have lvl 9 area next to lvl 1 ?
 ; * adds metagame to the game , avoid/or fight higher level areas, which areas to go next , etc...
 ; -> up to the player not step by step level increase like D2
-; TODO can not only take first of added-p but multiples also
+; can not only take first of added-p but multiples also
 ; can make parameter how fast it scales
+; area-level-grid works better with more wide grids
+; if the cave is very straight then it is just a continous progression and area-level-grid is useless
 (defn- area-level-grid
   "Expands from start position by adding one random adjacent neighbor.
   Each random walk is a step and is assigned a level as of max-level.
@@ -159,30 +174,7 @@ The size of the map is as of the grid, which contains also the tile information 
           {:steps steps
            :grid  grid})))))
 
-(comment
-
- ; TODO keep this working always for test !!
- ; pass max-size for printable here also
- ; TODO area-level-grid works better with more wide grids
- ; if the cave is very straight then it is just a continous progression and area-level-grid is useless
-
- (let [{:keys [start grid]} (make-grid :size 17)
-       _ (utils/printgrid grid)
-       _ (println)
-       _ (utils/printgrid (assoc grid start 0))
-       _ (println "width:  " (grid/width  grid)
-                  "height: " (grid/height grid)
-                  "start " start)
-       _ (println (grid/posis grid)) ; TODO keys grid ?
-       _ (utils/printgrid (reduce #(assoc %1 %2 nil)
-                           grid
-                           (adjacent-wall-positions grid)))
-       {:keys [steps grid]} (area-level-grid :grid grid
-                                             :start start
-                                             :max-level 9)
-       _ (utils/printgrid grid)])
-)
-
+; TODO take from ctx properties directly dont assoc this always
 (defn- creatures-with-level [creature-properties level]
   (filter #(= level (:level %)) creature-properties))
 
@@ -221,37 +213,29 @@ The size of the map is as of the grid, which contains also the tile information 
       (set-tile! layer position tile))))
 
 ; TODO assert max-area-level <= map-size (check map size again if correct # of cells)
+; TODO map too small for max area level ! assert !
 (defn generate
   "The generated tiled-map needs to be disposed."
-  [ctx
+  [context
    {:keys [creature-properties
            map-size
            max-area-level
            spawn-rate]}]
-  (let [{:keys [start grid]} (make-grid :size map-size) ; TODO pass as arg
-        ;_ (utils/printgrid grid) ; TODO logging where it is passed as arg
+  (let [{:keys [start grid]} (make-grid :size map-size)
+        ;_ (utils/printgrid grid)
         ;_ (println)
-
-        ; TODO even area-level-grid make into separate ns
-        ; -> call @ world-gen-editor -> first make-grid (can render it too !)
-        ; then area-level-grid -> render / show it
-        ; then tiledmap (can randomize it also for same grid/area-level-grid
-        ; then place creatures (also can keep randomizing)
-
         {:keys [steps grid]} (area-level-grid :grid grid
                                               :start start
                                               :max-level max-area-level)
         area-level-grid grid
         ;_ (utils/printgrid area-level-grid)
         scale [module-width module-height]
-
         scale-position #(mapv * (% 1) scale) ; step: [area-level position]
         module-placement-posis (map scale-position steps)
         unscaled-area-level-grid area-level-grid
-        area-level-grid (utils/scale-grid area-level-grid
-                                          scale)
-        tiled-map (place-modules ctx
-                                 area-level-grid
+        area-level-grid (utils/scale-grid area-level-grid scale)
+        tiled-map (place-modules (->tiled-map context modules-file)
+                                 area-level-grid ; = scaled area level gri
                                  unscaled-area-level-grid ; => scaling happends inside place-modules !
                                  module-placement-posis)
         ; start-positions = positions in area level 0 (the starting module all positions)
@@ -260,8 +244,6 @@ The size of the map is as of the grid, which contains also the tile information 
                                        (and (number? area-level)
                                             (zero? area-level)))
                                      area-level-grid))
-
-        ; ! TODO PRINCESS WAS ON THE HILL !
         princess-position (rand-nth
                            (map first
                                 (filter (fn [[position area-level]]
@@ -275,15 +257,14 @@ The size of the map is as of the grid, which contains also the tile information 
                                         area-level-grid)))]
     (place-creatures! creature-properties
                       spawn-rate
-                      tiled-map ; TODO move out of this ns, use area-level-grid still
+                      tiled-map
                       area-level-grid)
     (println "princess " princess-position)
     (if princess-position
       (set-tile! (tiled/get-layer tiled-map "creatures")
                  princess-position
-                 (creature->tile (cdq.context/get-property ctx :lady-a)))
-      (println "NO PRINCESS POSITION FOUND") ; TODO map too small for max area level ! assert !
-      )
+                 (creature->tile (cdq.context/get-property context :lady-a)))
+      (println "NO PRINCESS POSITION FOUND"))
     {:tiled-map tiled-map
      :start-positions start-positions
      :area-level-grid area-level-grid}))

@@ -51,21 +51,20 @@ direction keys: move")
         {:keys [tiled-map
                 area-level-grid]} @(current-data ctx)]
     (->> [infotext
-          "\n"
-          (str "Tile coords:" tile)
+          (str "Tile " tile)
           (when-not area-level-grid
-            (str "Module index:" (mapv (comp int /)
-                                       (world-mouse-position ctx)
-                                       [mapgen.module-gen/module-width
-                                        mapgen.module-gen/module-height])))
+            (str "Module " (mapv (comp int /)
+                                 (world-mouse-position ctx)
+                                 [mapgen.module-gen/module-width
+                                  mapgen.module-gen/module-height])))
           (when area-level-grid
             (str "Creature id: " (tiled/property-value tiled-map :creatures tile :id)))
           (when area-level-grid
             (let [level (get area-level-grid tile)]
               (when (number? level)
                 (str "Area level:" level))))
-          (str "Movement properties: \n" (apply vector (movement-properties tiled-map tile))
-               "\nResult: " (movement-property tiled-map tile))]
+          (str "Movement properties " (movement-property tiled-map tile) "\n"
+               (apply vector (movement-properties tiled-map tile)))]
          (remove nil?)
          (str/join "\n"))))
 
@@ -81,8 +80,7 @@ direction keys: move")
     window))
 
 (defn- adjust-zoom [camera by]
-  (camera/set-zoom! camera
-                    (max 0.1 (+ (camera/zoom camera) by))))
+  (camera/set-zoom! camera (max 0.1 (+ (camera/zoom camera) by))))
 
 ; TODO movement-speed scales with zoom value for big maps useful
 (def ^:private camera-movement-speed 1)
