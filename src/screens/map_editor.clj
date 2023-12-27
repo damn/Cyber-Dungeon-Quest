@@ -19,31 +19,18 @@
             [cdq.context :refer [all-properties]]
             [mapgen.movement-property :refer (movement-property movement-properties)]
             [mapgen.module-gen :as module-gen])
-  (:import com.badlogic.gdx.graphics.OrthographicCamera
-           com.badlogic.gdx.scenes.scene2d.ui.TextField))
+  (:import com.badlogic.gdx.scenes.scene2d.ui.TextField))
 
-; DRY minimap
-(defn- calculate-zoom [^OrthographicCamera world-camera tiled-map]
-  (let [viewport-width  (.viewportWidth  world-camera)
-        viewport-height (.viewportHeight world-camera)
-        [px py] (camera/position world-camera)
-        left   [0 0]
-        top    [0 (tiled/height tiled-map)]
-        right  [(tiled/width tiled-map) 0]
-        bottom [0 0]
-        x-diff (max (- px (left 0)) (- (right 0) px))
-        y-diff (max (- (top 1) py) (- py (bottom 1)))
-        vp-ratio-w (/ (* x-diff 2) viewport-width)
-        vp-ratio-h (/ (* y-diff 2) viewport-height)
-        new-zoom (max vp-ratio-w vp-ratio-h)]
-    new-zoom))
-
-(defn- center-world-camera! [world-camera tiled-map]
-  (camera/set-position! world-camera
+(defn- show-whole-map! [camera tiled-map]
+  (camera/set-position! camera
                         [(/ (tiled/width  tiled-map) 2)
                          (/ (tiled/height tiled-map) 2)])
-  (camera/set-zoom! world-camera
-                    (calculate-zoom world-camera tiled-map)))
+  (camera/set-zoom! camera
+                    (camera/calculate-zoom camera
+                                           :left [0 0]
+                                           :top [0 (tiled/height tiled-map)]
+                                           :right [(tiled/width tiled-map) 0]
+                                           :bottom [0 0])))
 
 (defn- current-data [ctx]
   (-> ctx
@@ -90,18 +77,9 @@ direction keys: move")
                                             (pack! window))}))
     window))
 
-; TODO try camera rotate also
-; TODO clamp movement / zoom / zoom from max zoom rate (see whole map , to see 1 tile, percentage based )
-; maybe even a slider?
-; https://libgdx.com/wiki/graphics/2d/orthographic-camera
-; TODO move to gdl
-(defn adjust-zoom [^OrthographicCamera camera by] ; TODO minimap also not necessary to @var
-  (let [new-zoom (max 0.1 (+ (.zoom camera) by))]
-    (set! (.zoom camera) new-zoom))
-  (.update camera))
-
-(defn- reset-zoom! [^OrthographicCamera camera]
-  (set! (.zoom camera) 1.0))
+(defn- adjust-zoom [camera by]
+  (camera/set-zoom! camera
+                    (max 0.1 (+ (camera/zoom camera) by))))
 
 ; TODO movement-speed scales with zoom value for big maps useful
 (def ^:private camera-movement-speed 1)
@@ -169,7 +147,7 @@ direction keys: move")
            :tiled-map tiled-map
            :area-level-grid area-level-grid
            :start-positions (set start-positions))
-    (center-world-camera! world-camera tiled-map)))
+    (show-whole-map! world-camera tiled-map)))
 
 (defn edit-form [ctx [k v]]
   (doto (->text-field ctx (str v) {})
@@ -208,10 +186,10 @@ direction keys: move")
 
   gdl.screen/Screen
   (show [_ {:keys [world-camera]}]
-    (center-world-camera! world-camera (:tiled-map @current-data)))
+    (show-whole-map! world-camera (:tiled-map @current-data)))
 
   (hide [_ {:keys [world-camera]}]
-    (reset-zoom! world-camera))
+    (camera/reset-zoom! world-camera))
 
   (render [_ {:keys [world-camera] :as context}]
     (render-tiled-map context

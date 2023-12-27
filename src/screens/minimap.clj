@@ -5,8 +5,7 @@
             [gdl.graphics.color :as color]
             [gdl.graphics.camera :as camera]
             [gdl.context :refer [draw-filled-circle render-world-view key-just-pressed? render-tiled-map]]
-            [cdq.context :refer [explored?]])
-  (:import com.badlogic.gdx.graphics.OrthographicCamera))
+            [cdq.context :refer [explored?]]))
 
 ; 28.4 viewportwidth
 ; 16 viewportheight
@@ -17,28 +16,21 @@
 
 ; we want min/max explored tiles X / Y and show the whole explored area....
 
-(def ^:private zoom-setting (atom nil))
-
-; DRY map-editor
-(defn- calculate-zoom [{:keys [^OrthographicCamera world-camera
+(defn- calculate-zoom [{:keys [world-camera
                                context/world-map]}]
   (let [positions-explored (map first
                                 (remove (fn [[position value]]
                                           (false? value))
                                         (seq @(:explored-tile-corners world-map))))
-        viewport-width  (.viewportWidth  world-camera)
-        viewport-height (.viewportHeight world-camera)
-        [px py] (camera/position world-camera)
         left   (apply min-key (fn [[x y]] x) positions-explored)
         top    (apply max-key (fn [[x y]] y) positions-explored)
         right  (apply max-key (fn [[x y]] x) positions-explored)
-        bottom (apply min-key (fn [[x y]] y) positions-explored)
-        x-diff (max (- px (left 0)) (- (right 0) px))
-        y-diff (max (- (top 1) py) (- py (bottom 1)))
-        vp-ratio-w (/ (* x-diff 2) viewport-width)
-        vp-ratio-h (/ (* y-diff 2) viewport-height)
-        new-zoom (max vp-ratio-w vp-ratio-h)]
-    new-zoom))
+        bottom (apply min-key (fn [[x y]] y) positions-explored)]
+    (camera/calculate-zoom world-camera
+                           :left left
+                           :top top
+                           :right right
+                           :bottom bottom)))
 
 ; TODO FIXME deref'fing current-context at each tile corner
 ; massive performance issue - probably
@@ -52,10 +44,10 @@
 (deftype Screen []
   gdl.screen/Screen
   (show [_ {:keys [world-camera] :as context}]
-    (reset! zoom-setting (calculate-zoom context))
-    (camera/set-zoom! world-camera @zoom-setting))
+    (camera/set-zoom! world-camera (calculate-zoom context)))
 
-  (hide [_ _ctx])
+  (hide [_ {:keys [world-camera]}]
+    (camera/reset-zoom! world-camera))
 
   (render [_ {:keys [world-camera context/world-map] :as context}]
     (render-tiled-map context
@@ -65,5 +57,4 @@
                        #(draw-filled-circle % (camera/position world-camera) 0.5 color/green))
     (when (or (key-just-pressed? context input.keys/tab)
               (key-just-pressed? context input.keys/escape))
-      (camera/set-zoom! world-camera 1)
       (change-screen! :screens/game))))
