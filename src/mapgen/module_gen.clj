@@ -59,8 +59,8 @@
     tiled-map))
 
 (def modules-file "maps/modules.tmx")
-(def ^:private module-width  32)
-(def ^:private module-height 20)
+(def module-width  32)
+(def module-height 20)
 (def ^:private module-offset 1)
 (def ^:private transition-modules-offset-x 4)
 
@@ -242,6 +242,7 @@
     (doseq [[position tile] (creature-spawn-positions creature-properties spawn-rate tiled-map area-level-grid)]
       (set-tile! layer position tile))))
 
+; TODO assert max-area-level <= map-size (check map size again if correct # of cells)
 (defn generate
   "The generated tiled-map needs to be disposed."
   [ctx

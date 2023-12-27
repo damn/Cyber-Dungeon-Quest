@@ -12,6 +12,7 @@
             [gdl.graphics.color :as color]
             [gdl.graphics.camera :as camera]
             [gdl.maps.tiled :as tiled]
+            [gdl.scene2d.actor :refer [set-position!]]
             [gdl.scene2d.group :refer [add-actor!]]
             [gdl.scene2d.ui.widget-group :refer [pack!]]
             [gdl.scene2d.ui.label :refer [set-text!]]
@@ -49,24 +50,24 @@ direction keys: move")
   (let [tile (->tile (world-mouse-position ctx))
         {:keys [tiled-map
                 area-level-grid]} @(current-data ctx)]
-    (str/join "\n"
-              (remove nil?
-                      [infotext
-                       "\n"
-                       (str "Tile coords:" tile)
-                       (when area-level-grid
-                         (str "Area coords:" (mapv (comp int /) (world-mouse-position ctx)
-                                                   [32 20])))
-                       (when area-level-grid
-                         (str "Creature id: " (tiled/property-value tiled-map :creatures tile :id)))
-                       (when area-level-grid
-                         (let [level (get area-level-grid tile)]
-                           (when (number? level)
-                             (str "Area level:" level))))
-                       (when tiled-map
-                         (str "Movement properties: " (apply vector (movement-properties tiled-map tile))))
-                       (when tiled-map
-                         (str "Movement property: " (movement-property tiled-map tile)))]))))
+    (->> [infotext
+          "\n"
+          (str "Tile coords:" tile)
+          (when-not area-level-grid
+            (str "Module index:" (mapv (comp int /)
+                                       (world-mouse-position ctx)
+                                       [mapgen.module-gen/module-width
+                                        mapgen.module-gen/module-height])))
+          (when area-level-grid
+            (str "Creature id: " (tiled/property-value tiled-map :creatures tile :id)))
+          (when area-level-grid
+            (let [level (get area-level-grid tile)]
+              (when (number? level)
+                (str "Area level:" level))))
+          (str "Movement properties: \n" (apply vector (movement-properties tiled-map tile))
+               "\nResult: " (movement-property tiled-map tile))]
+         (remove nil?)
+         (str/join "\n"))))
 
 ; same as debug-window
 (defn- ->info-window [ctx]
@@ -75,6 +76,7 @@ direction keys: move")
     (add-actor! window (->actor ctx {:act #(do
                                             (set-text! label (debug-infos %))
                                             (pack! window))}))
+    (set-position! window 500 500)
     window))
 
 (defn- adjust-zoom [camera by]
@@ -169,7 +171,7 @@ direction keys: move")
       (.add table (->label context (name k)))
       (.add table ^com.badlogic.gdx.scenes.scene2d.Actor (edit-form context [k v]))
       (.row table))
-    (.colspan (.add table (->text-button context
+    #_(.colspan (.add table (->text-button context
                                          (str "Save to file")
                                          (fn [_context]
                                            (spit edn-data-file
@@ -204,6 +206,7 @@ direction keys: move")
     (when (key-just-pressed? context input.keys/escape)
       (change-screen! :screens/main-menu))))
 
+; TODO breaks when max-area-lvl > map-size
 (defn screen [context]
   (let [window (->window context {:title "Properties"})
         [form get-properties] (edn-edit-form context "resources/maps/map.edn")] ; TODO move to properties
