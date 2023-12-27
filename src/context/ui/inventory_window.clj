@@ -6,7 +6,7 @@
                                  play-sound! gui-mouse-position get-stage ->text-tooltip ->table ->window
                                  ->texture-region-drawable ->color ->stack ->image-widget]]
             [gdl.graphics.color :as color]
-            [gdl.scene2d.actor :as actor :refer [set-id! add-listener!]]
+            [gdl.scene2d.actor :as actor :refer [set-id! add-listener! set-name!]]
             [context.entity.inventory :as inventory]
             [cdq.context :refer [show-msg-to-player! send-event! modifier-text set-item! stack-item! remove-item!]]
             [cdq.entity :as entity])
@@ -126,7 +126,7 @@
         image-widget (->image-widget ctx (slot->background slot) {})
         stack (->stack ctx [(draw-rect-actor)
                             image-widget])]
-    (.setName stack "inventory-cell")
+    (set-name! stack "inventory-cell")
     (set-id! stack cell)
     (set-id! image-widget :image)
     (add-listener! stack (proxy [ClickListener] []

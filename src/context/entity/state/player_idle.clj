@@ -1,7 +1,7 @@
 (ns context.entity.state.player-idle
   (:require [gdl.context :refer [play-sound! world-mouse-position mouse-on-stage-actor? button-just-pressed?]]
             [gdl.input.buttons :as buttons]
-            [gdl.scene2d.actor :refer [visible? toggle-visible! parent] :as actor]
+            [gdl.scene2d.actor :refer [visible? toggle-visible! parent actor-name] :as actor]
             [gdl.math.vector :as v]
             [context.entity.state :as state]
             [context.entity.state.wasd-movement :refer [WASD-movement-vector]]
@@ -73,7 +73,7 @@
 
 (defn- inventory-cell-with-item? [{:keys [context/player-entity]} actor]
   (and (parent actor)
-       (= "inventory-cell" (.getName (parent actor)))
+       (= "inventory-cell" (actor-name (parent actor)))
        (get-in (:inventory @player-entity)
                (actor/id (parent actor)))))
 
