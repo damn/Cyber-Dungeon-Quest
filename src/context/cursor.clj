@@ -24,7 +24,6 @@
    :cursors/move-window ["move002" 16 16]
    :cursors/princess ["exclamation001" 0 0]})
 
-; TODO dispose cursors
 (defn ->context [ctx]
   {:context/cursors (mapvals (fn [[file x y]]
                                (->cursor ctx (str "cursors/" file ".png") x y))

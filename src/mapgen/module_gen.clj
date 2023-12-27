@@ -1,6 +1,7 @@
 (ns mapgen.module-gen
   (:require [data.grid2d :as grid]
             [gdl.maps.tiled :as tiled]
+            [gdl.context :refer [->tiled-map]]
             [mapgen.utils :as utils]
             [mapgen.transitions :as transitions]
             [mapgen.movement-property :refer (movement-property)]
@@ -109,9 +110,8 @@
                              (grid/get-8-neighbour-positions p))))
           (grid/posis grid)))
 
-; TODO move this into gdl.module-tiledmap
-(defn- place-modules [grid unscaled-grid positions]
-  (let [modules (tiled/load-map modules-file) ; TODO not disposed
+(defn- place-modules [ctx grid unscaled-grid positions]
+  (let [modules (->tiled-map ctx modules-file)
         _ (assert (and (= (tiled/width  modules) (* 8 (+ module-width  module-offset))) ; TODO hardcoded 8/4
                        (= (tiled/height modules) (* 4 (+ module-height module-offset)))))
         grid (reduce (fn [grid position] (place-module modules unscaled-grid grid position {:is-floor true}))
@@ -123,7 +123,6 @@
                      (map #(mapv * % [module-width module-height])
                            (adjacent-wall-positions unscaled-grid)))
         tiled-map (make-tiled-map grid modules)]
-    ;(.dispose modules) ; TODO disposes of textures of tiles ...
     tiled-map))
 
 (defn- make-grid [& {:keys [size]}]
@@ -242,11 +241,13 @@
     (doseq [[position tile] (creature-spawn-positions creature-properties spawn-rate tiled-map area-level-grid)]
       (set-tile! layer position tile))))
 
-(defn generate [ctx
-                {:keys [creature-properties
-                        map-size
-                        max-area-level
-                        spawn-rate]}]
+(defn generate
+  "The generated tiled-map needs to be disposed."
+  [ctx
+   {:keys [creature-properties
+           map-size
+           max-area-level
+           spawn-rate]}]
   (let [{:keys [start grid]} (make-grid :size map-size) ; TODO pass as arg
         ;_ (utils/printgrid grid) ; TODO logging where it is passed as arg
         ;_ (println)
@@ -269,7 +270,8 @@
         unscaled-area-level-grid area-level-grid
         area-level-grid (utils/scale-grid area-level-grid
                                           scale)
-        tiled-map (place-modules area-level-grid
+        tiled-map (place-modules ctx
+                                 area-level-grid
                                  unscaled-area-level-grid ; => scaling happends inside place-modules !
                                  module-placement-posis)
         ; start-positions = positions in area level 0 (the starting module all positions)

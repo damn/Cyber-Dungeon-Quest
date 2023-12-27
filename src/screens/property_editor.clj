@@ -53,6 +53,7 @@
 ; * non-toggle ->image-button at overview => VisImageButton
 ; * missing widgets for keys / one-to-many not implemented
 
+; => VisWindow has a function for that already.
 (defn- add-to-stage-and-center! [{:keys [gui-viewport-width
                                          gui-viewport-height] :as context}
                                  actor]

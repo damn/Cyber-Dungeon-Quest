@@ -3,7 +3,8 @@
             [clojure.string :as str]
             [gdl.app :refer [change-screen!]]
             [gdl.context :refer [key-pressed? key-just-pressed? ->text-field ->table
-                                 ->label ->window world-mouse-position ->actor]]
+                                 ->label ->window world-mouse-position ->actor ->tiled-map]]
+            [gdl.disposable :refer [dispose]]
             [gdl.input.keys :as input.keys]
             gdl.screen
             [gdl.graphics.color :as color]
@@ -19,7 +20,6 @@
             [mapgen.movement-property :refer (movement-property movement-properties)]
             [mapgen.module-gen :as module-gen])
   (:import com.badlogic.gdx.graphics.OrthographicCamera
-           com.badlogic.gdx.maps.tiled.TiledMap
            com.badlogic.gdx.scenes.scene2d.ui.TextField))
 
 (def ^:private current-tiled-map (atom nil))
@@ -150,7 +150,7 @@
                 start-positions]} (module-gen/generate context
                                                        (assoc properties
                                                               :creature-properties (all-properties context :creature)))]
-    (.dispose ^TiledMap @current-tiled-map)
+    (dispose @current-tiled-map)
     (reset! current-tiled-map tiled-map)
     (reset! current-area-level-grid area-level-grid)
     (reset! current-start-positions (set start-positions))
@@ -197,7 +197,7 @@
 (defrecord SubScreen []
   gdl.disposable/Disposable
   (dispose [_]
-    (.dispose ^TiledMap @current-tiled-map))
+    (dispose @current-tiled-map))
   gdl.screen/Screen
   (show [_ {:keys [world-camera]}]
     (center-world-camera world-camera))
@@ -217,7 +217,7 @@
       (change-screen! :screens/main-menu))))
 
 (defn screen [context]
-  (reset! current-tiled-map (tiled/load-map module-gen/modules-file))
+  (reset! current-tiled-map (->tiled-map context module-gen/modules-file))
   (let [window (->window context {:title "Properties"})
         [form get-properties] (edn-edit-form context "resources/maps/map.edn")] ; TODO move to properties
     (.add window ^com.badlogic.gdx.scenes.scene2d.Actor form)
