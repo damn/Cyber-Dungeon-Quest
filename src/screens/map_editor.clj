@@ -12,7 +12,7 @@
             [gdl.graphics.color :as color]
             [gdl.graphics.camera :as camera]
             [gdl.maps.tiled :as tiled]
-            [gdl.scene2d.actor :refer [set-position!]]
+            [gdl.scene2d.actor :refer [set-position! set-name!]]
             [gdl.scene2d.group :refer [add-actor!]]
             [gdl.scene2d.ui.widget-group :refer [pack!]]
             [gdl.scene2d.ui.label :refer [set-text!]]
@@ -156,23 +156,21 @@ direction keys: move")
            :start-positions (set start-positions))
     (show-whole-map! world-camera tiled-map)))
 
-(defn edit-form [ctx [k v]]
+(defn ->edit-text-field [ctx [k v]]
   (doto (->text-field ctx (str v) {})
-    (.setName (str k))))
+    (set-name! (str k))))
 
-(defn form-value [^com.badlogic.gdx.scenes.scene2d.ui.Table forms-table k]
-  (.getText ^com.kotcrab.vis.ui.widget.VisTextField (.findActor forms-table (str k))))
+(defn key->value [^com.badlogic.gdx.scenes.scene2d.ui.Table forms-table k]
+  (edn/read-string
+   (.getText ^com.kotcrab.vis.ui.widget.VisTextField
+             (.findActor forms-table (str k)))))
 
-(defn- ->params-form-table [context properties]
-  (let [table (->table context {})
-        get-properties #(into {}
-                              (for [k (keys properties)]
-                                [k (edn/read-string (form-value table k))]))]
-    (.row table)
-    (doseq [[k v] properties]
-      (.add table (->label context (name k)))
-      (.add table ^com.badlogic.gdx.scenes.scene2d.Actor (edit-form context [k v]))
-      (.row table))
+(defn- ->params-form-table [ctx properties]
+  (let [table (->table ctx {:rows (for [[k v] properties]
+                                    [(->label ctx (name k))
+                                     (->edit-text-field ctx [k v])])})
+        get-properties #(into {} (for [k (keys properties)]
+                                   [k (key->value table k)]))]
     [table get-properties]))
 
 (defrecord SubScreen [current-data]
@@ -209,18 +207,20 @@ direction keys: move")
                              :center? true
                              :pack? true})))
 
+(defn ->generate-map-window [ctx]
+  (let [[form-table get-properties] (->params-form-table ctx (get-property ctx :world/first-level))]
+    (->window ctx {:title "Properties"
+                   :rows [[form-table]
+                          [(->text-button ctx
+                                          "Generate"
+                                          #(try (generate % (get-properties))
+                                                (catch Throwable t
+                                                  (->error-window! % t))))]]
+                   :pack? true})))
+
 (defn screen [context]
-  (let [window (->window context {:title "Properties"})
-        [form get-properties] (->params-form-table context
-                                                   (get-property context :world/first-level))]
-    (.add window ^com.badlogic.gdx.scenes.scene2d.Actor form)
-    (.row window)
-    (.add window (->text-button context "Generate" #(try (generate % (get-properties))
-                                                         (catch Throwable t
-                                                           (->error-window! % t)))))
-    (.pack window)
-    {:actors [window
-              (->info-window context)]
-     :sub-screen (->SubScreen (atom {:tiled-map (->tiled-map context module-gen/modules-file)
-                                     :show-movement-properties false
-                                     :show-grid-lines false}))}))
+  {:actors [(->generate-map-window context)
+            (->info-window context)]
+   :sub-screen (->SubScreen (atom {:tiled-map (->tiled-map context module-gen/modules-file)
+                                   :show-movement-properties false
+                                   :show-grid-lines false}))})
