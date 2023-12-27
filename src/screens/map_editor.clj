@@ -71,6 +71,9 @@
   (set! (.zoom camera) (+ (.zoom camera) by))
   (.update camera))
 
+(defn- reset-zoom! [^OrthographicCamera camera]
+  (set! (.zoom camera) 1.0))
+
 ; TODO movement-speed scales with zoom value for big maps useful
 (def ^:private camera-movement-speed 1)
 (def ^:private zoom-speed 0.05)
@@ -81,10 +84,9 @@
 ; TODO textfield takes control !
 (defn- camera-controls [context camera]
   (when (key-pressed? context input.keys/shift-left)
-    (println "shift left pressed") ; TODO not registered ?!
+    ; TODO PLUS symbol shift & = symbol on keyboard not registered
     (adjust-zoom camera    zoom-speed)) ; TODO only pass + / -
   (when (key-pressed? context input.keys/minus)
-    (println "minus pressed")
     (adjust-zoom camera (- zoom-speed)))
   (let [apply-position (fn [idx f]
                          (camera/set-position! camera
@@ -199,10 +201,8 @@
   gdl.screen/Screen
   (show [_ {:keys [world-camera]}]
     (center-world-camera world-camera))
-  (hide [_ _ctx]
-    ; reset zoom
-
-    )
+  (hide [_ {:keys [world-camera]}]
+    (reset-zoom! world-camera))
   (render [_ {:keys [world-camera] :as context}]
     (tiled/render-map context
                       @current-tiled-map
