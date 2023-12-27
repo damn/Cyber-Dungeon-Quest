@@ -33,7 +33,7 @@
         grid (world-grid context)
         cells (rectangle->cells grid (:body @projectile))
         hit-entity (find-first #(and (not (contains? already-hit-bodies %))
-                                     (not= (:faction @projectile) (:faction @%))
+                                     (not= (:faction @projectile) (:faction @%)) ; TODO FIXME princess can die ... not=faction ...
                                      (:is-solid (:body @%))
                                      (geom/collides? (:body @projectile) (:body @%)))
                                (cells->entities (map deref cells)))

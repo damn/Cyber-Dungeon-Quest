@@ -117,7 +117,7 @@
    :move-towards-enemy true})
 
 (def ^:private lady-props
-  {;:faction :evil
+  {:faction :good
    :entity/clickable {:type :clickable/princess}})
 
 (defn- species-properties [species-props]

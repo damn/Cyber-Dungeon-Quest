@@ -13,7 +13,7 @@
     (->> render-on-map-order
          (sort-by-order hits #(:z-order @%))
          reverse
-         #_(filter #(line-of-sight? context @player-entity @%))
+         (filter #(line-of-sight? context @player-entity @%)) ; TODO here disable LoS for debug
          first)))
 
 (extend-type gdl.context.Context

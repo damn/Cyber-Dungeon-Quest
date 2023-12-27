@@ -30,13 +30,6 @@
                         [(/ (tiled/width  @current-tiled-map) 2)
                          (/ (tiled/height @current-tiled-map) 2)]))
 
-(comment
- (let [ctx @gdl.app/current-context
-       tile (->tile (world-mouse-position ctx))
-       ]
-   (tiled/property-value tile @current-tiled-map :creatures :id))
- )
-
 ; TODO also highlight current mouseover tile !
 (defn- debug-infos [ctx]
   (let [tile (->tile (world-mouse-position ctx))

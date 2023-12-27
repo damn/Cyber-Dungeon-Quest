@@ -39,7 +39,7 @@
                      color/black)
         blocked? (ray-blocked? context light-position position)]
     (if blocked?
-      color/white ;base-color
+      base-color ; color/white TODO here set view all tiles debug
       (do
        (when-not explored?
          (set-explored! context position))
@@ -99,7 +99,7 @@
                                          (->> active-entities
                                               (map deref)
                                               (filter :z-order)
-                                              #_(filter #(line-of-sight? context @player-entity %))))
+                                              (filter #(line-of-sight? context @player-entity %)))) ; TODO here debug los disable
                        (debug-render-after-entities context))))
 
 (def ^:private pausing true)
