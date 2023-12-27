@@ -16,11 +16,20 @@
             [gdl.scene2d.group :refer [add-actor!]]
             [gdl.scene2d.ui.widget-group :refer [pack!]]
             [gdl.scene2d.ui.label :refer [set-text!]]
+            [cdq.context :refer [get-property]]
             [utils.core :refer [->tile]]
-            [cdq.context :refer [all-properties]]
             [mapgen.movement-property :refer (movement-property movement-properties)]
             [mapgen.module-gen :as module-gen])
   (:import com.badlogic.gdx.scenes.scene2d.ui.TextField))
+
+; TODO map-coords are clamped ? thats why showing 0 under and left of the map?
+; make more explicit clamped-map-coords ?
+
+; TODO
+; leftest two tiles are 0 coordinate x
+; and rightest is 16, not possible -> check clamping
+; depends on screen resize or something, changes,
+; maybe update viewport not called on resize sometimes
 
 (defn- show-whole-map! [camera tiled-map]
   (camera/set-position! camera
@@ -139,9 +148,7 @@ direction keys: move")
 (defn- generate [{:keys [world-camera] :as context} properties]
   (let [{:keys [tiled-map
                 area-level-grid
-                start-positions]} (module-gen/generate context
-                                                       (assoc properties
-                                                              :creature-properties (all-properties context :creature)))
+                start-positions]} (module-gen/generate context properties)
         atom-data (current-data context)]
     (dispose (:tiled-map @atom-data))
     (swap! atom-data assoc
@@ -156,28 +163,17 @@ direction keys: move")
 
 (defn form-value [^com.badlogic.gdx.scenes.scene2d.ui.Table forms-table k]
   (.getText ^com.kotcrab.vis.ui.widget.VisTextField (.findActor forms-table (str k))))
-; TODO reuse exactly property-editor window ( & generate separate window/button ?)
 
-(defn- edn-edit-form [context edn-data-file]
-  (let [properties (edn/read-string (slurp edn-data-file))
-        table (->table context {})
+(defn- ->params-form-table [context properties]
+  (let [table (->table context {})
         get-properties #(into {}
                               (for [k (keys properties)]
                                 [k (edn/read-string (form-value table k))]))]
-    (.colspan (.add table (->label context edn-data-file)) 2)
     (.row table)
     (doseq [[k v] properties]
       (.add table (->label context (name k)))
       (.add table ^com.badlogic.gdx.scenes.scene2d.Actor (edit-form context [k v]))
       (.row table))
-    #_(.colspan (.add table (->text-button context
-                                         (str "Save to file")
-                                         (fn [_context]
-                                           (spit edn-data-file
-                                                 (with-out-str
-                                                  (clojure.pprint/pprint
-                                                   (get-properties)))))))
-              2)
     [table get-properties]))
 
 (defrecord SubScreen [current-data]
@@ -208,23 +204,14 @@ direction keys: move")
 ; TODO breaks when max-area-lvl > map-size
 (defn screen [context]
   (let [window (->window context {:title "Properties"})
-        [form get-properties] (edn-edit-form context "resources/maps/map.edn")] ; TODO move to properties
+        [form get-properties] (->params-form-table context
+                                                   (get-property context :world/first-level))]
     (.add window ^com.badlogic.gdx.scenes.scene2d.Actor form)
     (.row window)
     (.add window (->text-button context "Generate" #(generate % (get-properties))))
     (.pack window)
     {:actors [window
               (->info-window context)]
-     ; TODO checkboxes
      :sub-screen (->SubScreen (atom {:tiled-map (->tiled-map context module-gen/modules-file)
                                      :show-movement-properties false
                                      :show-grid-lines false}))}))
-
-; TODO map-coords are clamped ? thats why showing 0 under and left of the map?
-; make more explicit clamped-map-coords ?
-
-; TODO
-; leftest two tiles are 0 coordinate x
-; and rightest is 16, not possible -> check clamping
-; depends on screen resize or something, changes,
-; maybe update viewport not called on resize sometimes

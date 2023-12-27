@@ -1925,4 +1925,5 @@
     {:file "fx/uf_FX_impact.png", :sub-image-bounds (384 48 48 48)}),
    :frame-duration 50,
    :looping? nil},
-  :id :effects.damage.magic/hit-effect})
+  :id :effects.damage.magic/hit-effect}
+ {:id :world/first-level :map-size 3, :max-area-level 3, :spawn-rate 0.05})

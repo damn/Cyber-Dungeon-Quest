@@ -2,6 +2,7 @@
   (:require [data.grid2d :as grid]
             [gdl.maps.tiled :as tiled]
             [gdl.context :refer [->tiled-map]]
+            [cdq.context :refer [all-properties]]
             [mapgen.utils :as utils]
             [mapgen.tiled-utils :refer [->static-tiled-map-tile set-tile! put! add-layer! grid->tiled-map]]
             [mapgen.transitions :as transitions]
@@ -11,9 +12,10 @@
   (:import java.util.Random))
 
 ; TODO HERE
-; * spawn in transition tiles / set area levels too
 ; * only spawn in reachable tiles (flood fill)
+; * spawn in transition tiles / set area levels too
 ; * unique max 16 modules, not random take @ #'floor->module-index
+; * check not using start module with hill and spawning on hill ?
 
 (comment
  ; TODO use same codepath here as in 'generate'
@@ -46,11 +48,11 @@
 (def ^:private number-modules-x 8)
 (def ^:private number-modules-y 4)
 (def ^:private module-offset-tiles 1)
-(def ^:private transition-modules-x 4) ; in one row in the modules-tiled-map
-(def ^:private transition-modules-y 4) ; in one row in the modules-tiled-map
+(def ^:private transition-modules-row-width 4) ; in one row in the modules-tiled-map
+(def ^:private transition-modules-row-height 4) ; in one row in the modules-tiled-map
 (def ^:private transition-modules-offset-x 4)
-(def ^:private floor-modules-x 4)
-(def ^:private floor-modules-y 4)
+(def ^:private floor-modules-row-width 4)
+(def ^:private floor-modules-row-height 4)
 
 (defn- module-index->local-positions [[module-x module-y]]
   (let [start-x (* module-x (+ module-width  module-offset-tiles))
@@ -60,13 +62,13 @@
       [x y])))
 
 (defn- floor->module-index []
-  [(rand-int floor-modules-x)
-   (rand-int floor-modules-y)])
+  [(rand-int floor-modules-row-width)
+   (rand-int floor-modules-row-height)])
 
 (defn- transition-idxvalue->module-index [idxvalue]
-  [(+ (rem idxvalue transition-modules-x)
+  [(+ (rem idxvalue transition-modules-row-width)
       transition-modules-offset-x)
-   (int (/ idxvalue transition-modules-y))])
+   (int (/ idxvalue transition-modules-row-height))])
 
 (def ^:private floor-idxvalue 0)
 
@@ -118,7 +120,7 @@
     (grid->tiled-map modules-tiled-map grid)))
 
 (defn- make-grid [& {:keys [size]}]
-  ; TODO generates 51,52. not max
+  ; TODO generates 51,52. not max 50
   ; TODO can use different turn-ratio/depth/etc. params
   (let [{:keys [start grid]} (cave-gen/cave-gridgen (Random.) size size :wide)
         grid (nad/fix-not-allowed-diagonals grid)]
@@ -174,7 +176,6 @@
           {:steps steps
            :grid  grid})))))
 
-; TODO take from ctx properties directly dont assoc this always
 (defn- creatures-with-level [creature-properties level]
   (filter #(= level (:level %)) creature-properties))
 
@@ -189,38 +190,25 @@
 (defn- creature-spawn-positions [creature-properties spawn-rate tiled-map area-level-grid]
   (keep (fn [[position area-level]]
           (if (and (number? area-level)
-                   (= "all" (movement-property tiled-map position)))
-            ; module size 14x14 = 196 tiles, ca 5 monsters = 5/200 = 1/40
-            (if (<= (rand) spawn-rate)
-              (let [creatures (creatures-with-level creature-properties area-level)]
-                #_(println "Spawn creature with level " area-level)
-                (when (seq creatures)
-                  (let [creature (rand-nth creatures)
-                        tile (creature->tile creature)]
-                    [position
-                     tile
-                     ; get random monster with level
-                     ; get tile of the monster
-                     ]))))))
+                   (= "all" (movement-property tiled-map position))
+                   (<= (rand) spawn-rate))
+            (let [creatures (creatures-with-level creature-properties area-level)]
+              (when (seq creatures)
+                [position (creature->tile (rand-nth creatures))]))))
         area-level-grid))
 
-; TODO use 'steps' ?
-(defn- place-creatures! [creature-properties spawn-rate tiled-map area-level-grid]
+(defn- place-creatures! [context spawn-rate tiled-map area-level-grid]
   (let [layer (add-layer! tiled-map
                           :name "creatures"
-                          :visible true)]
+                          :visible true)
+        creature-properties (all-properties context :creature)]
     (doseq [[position tile] (creature-spawn-positions creature-properties spawn-rate tiled-map area-level-grid)]
       (set-tile! layer position tile))))
 
-; TODO assert max-area-level <= map-size (check map size again if correct # of cells)
-; TODO map too small for max area level ! assert !
 (defn generate
   "The generated tiled-map needs to be disposed."
-  [context
-   {:keys [creature-properties
-           map-size
-           max-area-level
-           spawn-rate]}]
+  [context {:keys [map-size max-area-level spawn-rate]}]
+  (assert (<= max-area-level map-size))
   (let [{:keys [start grid]} (make-grid :size map-size)
         ;_ (utils/printgrid grid)
         ;_ (println)
@@ -250,15 +238,9 @@
                                           (and (number? area-level)
                                                (= max-area-level area-level)
                                                (#{:no-cell :undefined}
-                                                (tiled/property-value tiled-map
-                                                                      :creatures
-                                                                      position
-                                                                      :id))))
+                                                (tiled/property-value tiled-map :creatures position :id))))
                                         area-level-grid)))]
-    (place-creatures! creature-properties
-                      spawn-rate
-                      tiled-map
-                      area-level-grid)
+    (place-creatures! context spawn-rate tiled-map area-level-grid)
     (println "princess " princess-position)
     (if princess-position
       (set-tile! (tiled/get-layer tiled-map "creatures")

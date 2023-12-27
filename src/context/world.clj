@@ -1,6 +1,5 @@
 (ns context.world
-  (:require [clojure.edn :as edn]
-            gdl.disposable
+  (:require gdl.disposable
             [gdl.graphics.camera :as camera]
             [gdl.maps.tiled :as tiled]
             [gdl.math.raycaster :as raycaster]
@@ -9,7 +8,7 @@
             [utils.core :refer [->tile tile->middle]]
             [context.world.grid :refer [create-grid]]
             [context.world.content-grid :refer [->content-grid]]
-            [cdq.context :refer [creature-entity ray-blocked? content-grid world-grid all-properties]]
+            [cdq.context :refer [creature-entity ray-blocked? content-grid world-grid get-property]]
             [cdq.world.content-grid :as content-grid]
             [cdq.world.cell :as cell]
             [mapgen.movement-property :refer (movement-property)]
@@ -118,9 +117,7 @@
   (let [{:keys [tiled-map
                 start-positions]} (mapgen.module-gen/generate
                                    context
-                                   ; TODO move to properties
-                                   (assoc (edn/read-string (slurp "resources/maps/map.edn"))
-                                          :creature-properties (all-properties context :creature)))
+                                   (get-property context :world/first-level))
         start-position (tile->middle
                         (rand-nth (filter #(= "all" (movement-property tiled-map %))
                                           start-positions)))]
