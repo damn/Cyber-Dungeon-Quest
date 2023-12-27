@@ -3,7 +3,7 @@
             [clojure.string :as str]
             [gdl.app :refer [change-screen!]]
             [gdl.context :refer [key-pressed? key-just-pressed? ->text-field ->table
-                                 ->label ->window world-mouse-position ->actor ->tiled-map]]
+                                 ->label ->window world-mouse-position ->actor ->tiled-map render-tiled-map]]
             [gdl.disposable :refer [dispose]]
             [gdl.input.keys :as input.keys]
             gdl.screen
@@ -41,7 +41,7 @@
                (str "Tile coords:" tile)
                ;(str "Visible tiles: " (world/camera-frustum))
 
-               (str "Creature id: " (tiled/property-value tile tiled-map :creatures :id))
+               (str "Creature id: " (tiled/property-value tiled-map :creatures tile :id))
 
                (when @current-area-level-grid
                  (let [level (get @current-area-level-grid tile)]
@@ -204,7 +204,7 @@
   (hide [_ {:keys [world-camera]}]
     (reset-zoom! world-camera))
   (render [_ {:keys [world-camera] :as context}]
-    (tiled/render-map context
+    (render-tiled-map context
                       @current-tiled-map
                       (constantly color/white)) ; TODO colorsetter optional.
     (render-world-view context render-on-map)

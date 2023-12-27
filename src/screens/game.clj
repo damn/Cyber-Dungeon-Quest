@@ -1,9 +1,8 @@
 (ns screens.game
   (:require [gdl.app :refer [current-context change-screen!]]
             [gdl.context :refer [get-stage render-world-view delta-time draw-text key-just-pressed?
-                                 ->color]]
+                                 ->color render-tiled-map]]
             [gdl.screen :refer [Screen]]
-            [gdl.maps.tiled :as tiled]
             [gdl.graphics.color :as color]
             [gdl.graphics.camera :as camera]
             [gdl.input.keys :as input.keys]
@@ -89,7 +88,7 @@
                      :as context}
                     active-entities]
   (camera/set-position! world-camera (:position @player-entity))
-  (tiled/render-map context
+  (render-tiled-map context
                     (:tiled-map world-map)
                     tile-color-setter)
   (render-world-view context

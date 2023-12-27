@@ -9,6 +9,7 @@
             [mapgen.nad :as nad])
   (:import java.util.Random
            com.badlogic.gdx.graphics.g2d.TextureRegion
+           [com.badlogic.gdx.maps MapProperties MapLayers]
            [com.badlogic.gdx.maps.tiled TiledMap TiledMapTileLayer TiledMapTileLayer$Cell]
            [com.badlogic.gdx.maps.tiled.tiles StaticTiledMapTile]))
 
@@ -32,29 +33,29 @@
                                   (tiled/get-property tiled-map :tileheight))]
     (.setName layer name)
     (when properties
-      (.putAll (.getProperties layer) properties))
+      (.putAll ^MapProperties (tiled/properties layer) properties))
     (.setVisible layer visible)
-    (.add (tiled/layers tiled-map) layer)
+    (.add ^MapLayers (tiled/layers tiled-map) layer)
     layer))
 
 (defn- make-tiled-map [grid ^TiledMap modules-tiled-map]
   (let [tiled-map (TiledMap.)
-        properties (.getProperties tiled-map)]
-    (.putAll properties (.getProperties modules-tiled-map)) ; tilewidth/tileheight
+        ^MapProperties properties (tiled/properties tiled-map)]
+    (.putAll properties (tiled/properties modules-tiled-map)) ; tilewidth/tileheight
     (.put properties "width"  (grid/width  grid))
     (.put properties "height" (grid/height grid))
     (doseq [^TiledMapTileLayer layer (tiled/layers modules-tiled-map)
             :let [new-layer (add-layer! tiled-map
                                         :name (tiled/layer-name layer)
                                         :visible (.isVisible layer)
-                                        :properties (.getProperties layer))]]
+                                        :properties (tiled/properties layer))]]
       (doseq [position (grid/posis grid)
               :let [{:keys [local-position tiled-map]} (get grid position)]
               :when local-position]
-        (when-let [cell (tiled/cell-at local-position tiled-map layer)]
+        (when-let [cell (tiled/cell-at tiled-map layer local-position)]
           (set-tile! new-layer
                      position
-                     (copy-tile (.getTile cell))))))
+                     (copy-tile (.getTile ^TiledMapTileLayer$Cell cell))))))
     tiled-map))
 
 (def modules-file "maps/modules.tmx")
@@ -212,7 +213,7 @@
    (fn [{:keys [id image]}]
      (assert (and id image))
      (let [tile (StaticTiledMapTile. ^TextureRegion (:texture image))]
-       (.put (.getProperties tile) "id" id)
+       (.put ^MapProperties (tiled/properties tile) "id" id)
        tile))))
 
 (defn- creature-spawn-positions [creature-properties spawn-rate tiled-map area-level-grid]
@@ -288,9 +289,9 @@
                                           (and (number? area-level)
                                                (= max-area-level area-level)
                                                (#{:no-cell :undefined}
-                                                (tiled/property-value position
-                                                                      tiled-map
+                                                (tiled/property-value tiled-map
                                                                       :creatures
+                                                                      position
                                                                       :id))))
                                         area-level-grid)))]
     (place-creatures! creature-properties

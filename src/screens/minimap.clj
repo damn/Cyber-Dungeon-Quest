@@ -2,10 +2,9 @@
   (:require [gdl.app :refer [current-context change-screen!]]
             gdl.screen
             [gdl.input.keys :as input.keys]
-            [gdl.maps.tiled :as tiled]
             [gdl.graphics.color :as color]
             [gdl.graphics.camera :as camera]
-            [gdl.context :refer [draw-filled-circle render-world-view key-just-pressed?]]
+            [gdl.context :refer [draw-filled-circle render-world-view key-just-pressed? render-tiled-map]]
             [cdq.context :refer [explored?]])
   (:import com.badlogic.gdx.graphics.OrthographicCamera))
 
@@ -58,7 +57,7 @@
   (hide [_ _ctx])
 
   (render [_ {:keys [world-camera context/world-map] :as context}]
-    (tiled/render-map context
+    (render-tiled-map context
                       (:tiled-map world-map)
                       tile-corner-color-setter)
     (render-world-view context

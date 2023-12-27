@@ -1,14 +1,11 @@
 (ns mapgen.movement-property
-  (:require [gdl.maps.tiled :as tiled]
-            [data.grid2d :refer :all]))
+  (:require [gdl.maps.tiled :as tiled]))
 
-; TODO performance bottleneck -> every time getting layers, zipmapping properties etc.
-; probably good to do in java directly
-
+; TODO performance bottleneck -> every time getting same layers
 ; takes 600 ms to read movement-properties
 
 (defn- tile-movement-property [tiled-map layer position]
-  (let [value (tiled/property-value position tiled-map layer :movement)]
+  (let [value (tiled/property-value tiled-map layer position :movement)]
     (assert (not= value :undefined)
             (str "Value for :movement at position "
                  position  " / mapeditor inverted position: " [(position 0)
