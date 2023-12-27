@@ -66,10 +66,10 @@ direction keys: move")
               (remove nil?
                       [infotext
                        "\n"
+                       (str "Tile coords:" tile)
                        (when area-level-grid
                          (str "Area coords:" (mapv (comp int /) (world-mouse-position ctx)
                                                    [32 20])))
-                       (str "Tile coords:" tile)
                        (when area-level-grid
                          (str "Creature id: " (tiled/property-value tiled-map :creatures tile :id)))
                        (when area-level-grid
@@ -103,7 +103,6 @@ direction keys: move")
 (defn- reset-zoom! [^OrthographicCamera camera]
   (set! (.zoom camera) 1.0))
 
-
 ; TODO movement-speed scales with zoom value for big maps useful
 (def ^:private camera-movement-speed 1)
 (def ^:private zoom-speed 0.1)
@@ -125,8 +124,8 @@ direction keys: move")
     (if (key-pressed? context input.keys/up)    (apply-position 1 +))
     (if (key-pressed? context input.keys/down)  (apply-position 1 -))))
 
-(def ^:private show-area-level-colors true)
-
+#_(def ^:private show-area-level-colors true)
+; TODO unused
 ; TODO also draw numbers of area levels big as module size...
 
 (defn- render-on-map [{:keys [world-camera] :as c}]
@@ -138,10 +137,10 @@ direction keys: move")
         visible-tiles (camera/visible-tiles world-camera)
         [x y] (->tile (world-mouse-position c))]
     (draw-rectangle c x y 1 1 color/white)
-    (when start-positions ; TODO checkbox
+    (when start-positions
       (doseq [[x y] visible-tiles
               :when (start-positions [x y])]
-        (draw-filled-rectangle c x y 1 1 [1 1 1 0.5])))
+        (draw-filled-rectangle c x y 1 1 [1 1 1 0.1])))
     ; TODO move down to other doseq and make button
     (when show-movement-properties
       (doseq [[x y] visible-tiles
@@ -172,22 +171,14 @@ direction keys: move")
            :start-positions (set start-positions))
     (center-world-camera! world-camera tiled-map)))
 
-; for each key k and value v  define
-; -> form
-; and from table how to get the value
-
 (defn edit-form [ctx [k v]]
   (doto (->text-field ctx (str v) {})
     (.setName (str k))))
 
 (defn form-value [^com.badlogic.gdx.scenes.scene2d.ui.Table forms-table k]
   (.getText ^com.kotcrab.vis.ui.widget.VisTextField (.findActor forms-table (str k))))
-; => or reuse exactly entity-editor window
+; TODO reuse exactly property-editor window ( & generate separate window/button ?)
 
-; TODO any key typed and not saved -> show 'unsaved' icon
-; save => show saved icon.
-; TODO validation/schema (malli/clojure.spec)
-; TODO see common stuff w. entity-editor/screen.
 (defn- edn-edit-form [context edn-data-file]
   (let [properties (edn/read-string (slurp edn-data-file))
         table (->table context {})
@@ -225,7 +216,7 @@ direction keys: move")
   (render [_ {:keys [world-camera] :as context}]
     (render-tiled-map context
                       (:tiled-map @current-data)
-                      (constantly color/white)) ; TODO colorsetter optional.
+                      (constantly color/white))
     (render-world-view context render-on-map)
     (if (key-just-pressed? context input.keys/l)
       (swap! current-data update :show-grid-lines not))
@@ -244,96 +235,16 @@ direction keys: move")
     (.pack window)
     {:actors [window
               (->info-window context)]
+     ; TODO checkboxes
      :sub-screen (->SubScreen (atom {:tiled-map (->tiled-map context module-gen/modules-file)
                                      :show-movement-properties false
                                      :show-grid-lines false}))}))
 
-; TODO remove key controls , add checkboxes
-; TODO fix mouse movement etc
-; TODO back to main menu
-; TODO confirmation saved/edited/??
-; TODO fix zoom touchpad / show whole map
-
-
-; TODO  bug zoomed out and mouse under the last down tiles
-; still shows 0 tiles
-; left also and down is one more row which gets map-coords of 0
-; paint the background color different than the viewport-black-stripes
-; so no misunderstanding
-
 ; TODO map-coords are clamped ? thats why showing 0 under and left of the map?
 ; make more explicit clamped-map-coords ?
-
 
 ; TODO
 ; leftest two tiles are 0 coordinate x
 ; and rightest is 16, not possible -> check clamping
 ; depends on screen resize or something, changes,
 ; maybe update viewport not called on resize sometimes
-
-; (flood-fill grid start :opt :steps :opt-def :label nil)
-; [grid labeled labeled-ordered]
-
-
-
-; for distance -> use this
-; for multiple possible paths ( level 3 enemies next to starting area ... etc.)
-; do not use all positions for making the next step but only part of it
-; (also need to test -> 0.5, 0.7 , 0.9 ??
-; for now with backtracking when 2 directions then you get very high level very fast and
-; have to go other direction, meeting lower level enemies ...
-
-
-
-#_(defn- color-flood-fill-heatmap [grid start]
-  (let [[_ _ labeled-ordered] (flood-fill grid start)
-        ]
-
-    @agrid))
-; TODO what label (assoc -ks )
-; TODO what is ground check = get grid posi :ground ?
-; -> then place entities -> how / rand chance, increasing, can make more than 3 lvls
-; where increasing also the chance and also the chance which level enemy
-; -> can make 10+ levels / 99 levels (full of enemies)
-
-; -> need to place enemies & render them -> & read them
-; place random lvl1 enemy ? get lvl1 enemies ? creature data move out of 'game' ?! !!
-
-
-; -> use creature TSX tileset and add to tilemap as layer also
-; there is all information names - pictures
-; -> import tileset to manually created TiledMap
-
-
-; -> need to get creatures with lvl X
-; and also get their image (use tsx ?!)
-
-; start with very slow opponents, very low hp, damage
-; and increase slowly as of level
-; so there can be an enemy next to you at start
-
-; also can use heatmap lvl for calculating lvl ? but what about max-lvl ?
-; can be a function of dist-to-player itself
-; but then backtracking is stupid
-; -> make linear ?!
-
-
-
-;;;;;;
-
-
-;;; set creature tiles as of area-levels
-;;; use creature tileset & map-layer 'creatures'
-;;; read @ cdq.maps.load
-;;; -> can also manually add creatures in modules then???
-
-
-
-;;; -> spawn-groups, what can/should spawn together ?
-; no goblins & elves ?
-; define groups ?
-; define group-type & weight and define groups through that
-; group-type 'elves' -> all with that type , and weight is added also
-; use existing spawn group code, do not throw away ?
-
-; spawn spaces ?
