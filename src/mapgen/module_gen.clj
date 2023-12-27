@@ -16,6 +16,7 @@
 ; * spawn in transition tiles / set area levels too
 ; * unique max 16 modules, not random take @ #'floor->module-index
 ; * check not using start module with hill and spawning on hill ?
+; * weird how to get princess position
 
 (comment
  ; TODO use same codepath here as in 'generate'

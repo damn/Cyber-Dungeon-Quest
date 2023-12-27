@@ -78,14 +78,13 @@ direction keys: move")
          (str/join "\n"))))
 
 ; same as debug-window
-(defn- ->info-window [ctx]
+(defn- ->info-window [{:keys [gui-viewport-height] :as ctx}]
   (let [label (->label ctx "")
         window (->window ctx {:title "Info" :rows [[label]]})]
     (add-actor! window (->actor ctx {:act #(do
                                             (set-text! label (debug-infos %))
                                             (pack! window))}))
-    ;(set-position! window 500 500)
-    (.centerWindow window)
+    (set-position! window 0 gui-viewport-height)
     window))
 
 (defn- adjust-zoom [camera by]
@@ -201,14 +200,24 @@ direction keys: move")
     (when (key-just-pressed? context input.keys/escape)
       (change-screen! :screens/main-menu))))
 
-; TODO breaks when max-area-lvl > map-size
+(defn- ->error-window! [ctx throwable]
+  (add-actor! (gdl.context/get-stage ctx)
+              (->window ctx {:title "Error"
+                             :rows [[(->label ctx (str throwable))]]
+                             :modal? true
+                             :close-button? true
+                             :center? true
+                             :pack? true})))
+
 (defn screen [context]
   (let [window (->window context {:title "Properties"})
         [form get-properties] (->params-form-table context
                                                    (get-property context :world/first-level))]
     (.add window ^com.badlogic.gdx.scenes.scene2d.Actor form)
     (.row window)
-    (.add window (->text-button context "Generate" #(generate % (get-properties))))
+    (.add window (->text-button context "Generate" #(try (generate % (get-properties))
+                                                         (catch Throwable t
+                                                           (->error-window! % t)))))
     (.pack window)
     {:actors [window
               (->info-window context)]

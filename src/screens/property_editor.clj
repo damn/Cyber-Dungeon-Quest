@@ -53,20 +53,13 @@
 ; * non-toggle ->image-button at overview => VisImageButton
 ; * missing widgets for keys / one-to-many not implemented
 
-; => VisWindow has a function for that already.
-(defn- add-to-stage-and-center! [{:keys [gui-viewport-width
-                                         gui-viewport-height] :as context}
-                                 actor]
-  ;(.centerWindow actor) ; use this from VisWindow (or make props of window itself)
-  (add-actor! (get-stage context) actor)
-  (actor/set-center! actor
-                       (/ gui-viewport-width  2)
-                       (/ gui-viewport-height 2)))
+(defn- add-to-stage! [ctx actor]
+  (-> ctx get-stage (add-actor! actor)))
 
-(declare property-editor-window) ; ->property-editor-window or ->property-window
+(declare ->property-editor-window)
 
-(defn- open-property-editor-window [context property-id]
-  (add-to-stage-and-center! context (property-editor-window context property-id)))
+(defn- open-property-editor-window! [context property-id]
+  (add-to-stage! context (->property-editor-window context property-id)))
 
 (defn- get-child-with-id [group id]
   (->> (children group)
@@ -133,9 +126,9 @@
 (defmethod property-widget :link-button [context _ id]
   (->text-button context
                  (name id)
-                 #(open-property-editor-window % id)))
+                 #(open-property-editor-window! % id)))
 
-(defn- overview-table [context property-type clicked-id-fn]
+(defn- ->overview-table [context property-type clicked-id-fn]
   (let [{:keys [title
                 sort-by-fn
                 extra-infos-widget]} (:overview (get property-types property-type))
@@ -176,14 +169,18 @@
                                       " + "
                                       (fn [context]
                                         (let [window (->window context {:title "Choose"
-                                                                        :modal? true})
+                                                                        :modal? true
+                                                                        :close-button? true
+                                                                        :center? true
+                                                                        ;:pack? true
+                                                                        })
                                               clicked-id-fn (fn [context id]
                                                               (remove! window)
                                                               (redo-rows context
                                                                          (conj (set property-ids) id)))]
-                                          (add! window (overview-table context property-type clicked-id-fn))
+                                          (add! window (->overview-table context property-type clicked-id-fn))
                                           (pack! window)
-                                          (add-to-stage-and-center! context window))))]])))
+                                          (add-to-stage! context window))))]])))
   (when-let [parent (parent table)]
     (pack! parent)))
 
@@ -197,11 +194,13 @@
        (keep actor/id)
        set))
 
-(defn- property-editor-window [context id]
+(defn- ->property-editor-window [context id]
   (let [props (get-property context id)
         {:keys [title property-keys]} (get property-types (context.properties/property-type props))
         window (->window context {:title title
                                   :modal? true
+                                  :close-button? true
+                                  :center? true
                                   :cell-defaults {:pad 5}})
         get-data #(into {}
                         (for [k property-keys
@@ -219,22 +218,22 @@
     (pack! window)
     window))
 
-(defn- set-second-widget [context widget]
+(defn- set-second-widget! [context widget]
   (let [table (:main-table (get-stage context))]
     (set-actor! (second (cells table)) widget)
     (pack! table)))
 
-(defn- left-widget [context]
+(defn- ->left-widget [context]
   (->table context {:cell-defaults {:pad 5}
                     :rows (concat
                            (for [[property-type {:keys [overview]}] (select-keys property-types [:creature :item :skill :weapon])]
                              [(->text-button context
                                              (:title overview)
-                                             #(set-second-widget % (overview-table % property-type open-property-editor-window)))])
+                                             #(set-second-widget! % (->overview-table % property-type open-property-editor-window!)))])
                            [[(->text-button context "Back to Main Menu" (fn [_context]
                                                                           (change-screen! :screens/main-menu)))]])}))
 
 (defn screen [context]
   {:actors [(->table context {:id :main-table
-                              :rows [[(left-widget context) nil]]
+                              :rows [[(->left-widget context) nil]]
                               :fill-parent? true})]})
