@@ -76,7 +76,8 @@ direction keys: move")
     (add-actor! window (->actor ctx {:act #(do
                                             (set-text! label (debug-infos %))
                                             (pack! window))}))
-    (set-position! window 500 500)
+    ;(set-position! window 500 500)
+    (.centerWindow window)
     window))
 
 (defn- adjust-zoom [camera by]

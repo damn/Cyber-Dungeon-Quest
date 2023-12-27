@@ -57,10 +57,11 @@
 (defn- add-to-stage-and-center! [{:keys [gui-viewport-width
                                          gui-viewport-height] :as context}
                                  actor]
+  ;(.centerWindow actor) ; use this from VisWindow (or make props of window itself)
   (add-actor! (get-stage context) actor)
   (actor/set-center! actor
-                     (/ gui-viewport-width  2)
-                     (/ gui-viewport-height 2)))
+                       (/ gui-viewport-width  2)
+                       (/ gui-viewport-height 2)))
 
 (declare property-editor-window) ; ->property-editor-window or ->property-window
 

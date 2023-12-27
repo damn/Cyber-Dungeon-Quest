@@ -3,59 +3,39 @@
             [gdl.maps.tiled :as tiled]
             [gdl.context :refer [->tiled-map]]
             [mapgen.utils :as utils]
+            [mapgen.tiled-utils :refer [copy-tile ->static-tiled-map-tile set-tile! cell->tile ->empty-tiled-map put! put-all! visible?  add-layer!]]
             [mapgen.transitions :as transitions]
             [mapgen.movement-property :refer (movement-property)]
             [mapgen.cave-gen :as cave-gen]
             [mapgen.nad :as nad])
-  (:import java.util.Random
-           com.badlogic.gdx.graphics.g2d.TextureRegion
-           [com.badlogic.gdx.maps MapProperties MapLayers]
-           [com.badlogic.gdx.maps.tiled TiledMap TiledMapTileLayer TiledMapTileLayer$Cell]
-           [com.badlogic.gdx.maps.tiled.tiles StaticTiledMapTile]))
+  (:import java.util.Random))
 
-; "Tiles are usually shared by multiple cells."
-; https://libgdx.com/wiki/graphics/2d/tile-maps#cells
-; No copied-tile for AnimatedTiledMapTile yet (there was no copy constructor/method)
-(def ^:private copy-tile
-  (memoize
-   (fn [^StaticTiledMapTile tile]
-     (StaticTiledMapTile. tile))))
+; TODO HERE
+; * spawn in transition tiles / set area levels too
+; * only spawn in reachable tiles (flood fill)
+; * unique max 16 modules, not random take
 
-(defn- set-tile! [^TiledMapTileLayer layer [x y] tile]
-  (let [cell (TiledMapTileLayer$Cell.)]
-    (.setTile cell tile)
-    (.setCell layer x y cell)))
-
-(defn- add-layer! [tiled-map & {:keys [name visible properties]}]
-  (let [layer (TiledMapTileLayer. (tiled/width  tiled-map)
-                                  (tiled/height tiled-map)
-                                  (tiled/get-property tiled-map :tilewidth)
-                                  (tiled/get-property tiled-map :tileheight))]
-    (.setName layer name)
-    (when properties
-      (.putAll ^MapProperties (tiled/properties layer) properties))
-    (.setVisible layer visible)
-    (.add ^MapLayers (tiled/layers tiled-map) layer)
-    layer))
-
-(defn- make-tiled-map [grid ^TiledMap modules-tiled-map]
-  (let [tiled-map (TiledMap.)
-        ^MapProperties properties (tiled/properties tiled-map)]
-    (.putAll properties (tiled/properties modules-tiled-map)) ; tilewidth/tileheight
-    (.put properties "width"  (grid/width  grid))
-    (.put properties "height" (grid/height grid))
-    (doseq [^TiledMapTileLayer layer (tiled/layers modules-tiled-map)
+(defn- generate-tiled-map
+  "Creates an empty new tiled-map with same layers and properties as modules-tiled-map.
+The size of the map is as of the grid, which contains also the tile information from the modules-tiled-map."
+  [modules-tiled-map grid]
+  (let [tiled-map (->empty-tiled-map)
+        properties (tiled/properties tiled-map)]
+    (put-all! properties (tiled/properties modules-tiled-map))
+    (put! properties "width"  (grid/width  grid))
+    (put! properties "height" (grid/height grid))
+    (doseq [layer (tiled/layers modules-tiled-map)
             :let [new-layer (add-layer! tiled-map
                                         :name (tiled/layer-name layer)
-                                        :visible (.isVisible layer)
+                                        :visible (visible? layer)
                                         :properties (tiled/properties layer))]]
       (doseq [position (grid/posis grid)
-              :let [{:keys [local-position tiled-map]} (get grid position)]
+              :let [local-position (get grid position)]
               :when local-position]
-        (when-let [cell (tiled/cell-at tiled-map layer local-position)]
+        (when-let [cell (tiled/cell-at modules-tiled-map layer local-position)]
           (set-tile! new-layer
                      position
-                     (copy-tile (.getTile ^TiledMapTileLayer$Cell cell))))))
+                     (copy-tile (cell->tile cell))))))
     tiled-map))
 
 (def modules-file "maps/modules.tmx")
@@ -82,7 +62,7 @@
       transition-modules-offset-x)
    (int (/ idxvalue 4))])
 
-(defn- place-module [modules unscaled-grid grid position {:keys [is-floor]}]
+(defn- place-module [unscaled-grid grid position {:keys [is-floor]}]
   (let [unscaled-position (mapv (comp int /) position [module-width module-height])
         idxvalue (if is-floor
                    0 ; !
@@ -100,8 +80,7 @@
     (reduce (fn [grid offset]
               (assoc grid
                      (mapv + position offset)
-                     {:local-position (offset->local-position offset)
-                      :tiled-map modules}))
+                     (offset->local-position offset)))
             grid
             offsets)))
 
@@ -115,16 +94,15 @@
   (let [modules (->tiled-map ctx modules-file)
         _ (assert (and (= (tiled/width  modules) (* 8 (+ module-width  module-offset))) ; TODO hardcoded 8/4
                        (= (tiled/height modules) (* 4 (+ module-height module-offset)))))
-        grid (reduce (fn [grid position] (place-module modules unscaled-grid grid position {:is-floor true}))
+        grid (reduce (fn [grid position] (place-module unscaled-grid grid position {:is-floor true}))
                      grid
                      positions)
         ;_ (println "adjacent walls: " (adjacent-wall-positions grid))
-        grid (reduce (fn [grid position] (place-module modules unscaled-grid grid position {:is-floor false}))
+        grid (reduce (fn [grid position] (place-module unscaled-grid grid position {:is-floor false}))
                      grid
                      (map #(mapv * % [module-width module-height])
-                           (adjacent-wall-positions unscaled-grid)))
-        tiled-map (make-tiled-map grid modules)]
-    tiled-map))
+                          (adjacent-wall-positions unscaled-grid)))]
+    (generate-tiled-map modules grid)))
 
 (defn- make-grid [& {:keys [size]}]
   ; TODO generates 51,52. not max
@@ -212,8 +190,8 @@
   (memoize
    (fn [{:keys [id image]}]
      (assert (and id image))
-     (let [tile (StaticTiledMapTile. ^TextureRegion (:texture image))]
-       (.put ^MapProperties (tiled/properties tile) "id" id)
+     (let [tile (->static-tiled-map-tile (:texture image))]
+       (put! (tiled/properties tile) "id" id)
        tile))))
 
 (defn- creature-spawn-positions [creature-properties spawn-rate tiled-map area-level-grid]
