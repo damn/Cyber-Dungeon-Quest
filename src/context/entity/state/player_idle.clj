@@ -7,6 +7,10 @@
             [context.entity.state.wasd-movement :refer [WASD-movement-vector]]
             [cdq.context :refer [show-msg-to-player! send-event! get-property inventory-window try-pickup-item! skill-usable-state selected-skill set-cursor!]]))
 
+(defn- denied [context text]
+  (play-sound! context "sounds/bfxr_denied.wav")
+  (show-msg-to-player! context text))
+
 (defmulti ^:private on-clicked
   (fn [_context entity]
     (:type (:entity/clickable @entity))))
@@ -39,21 +43,23 @@
   [ctx _clicked-entity]
   (send-event! ctx (:context/player-entity ctx) :found-princess))
 
+; TODO need greyed out versions of these cursors
 (defn- clickable->cursor [mouseover-entity*]
   (case (:type (:entity/clickable mouseover-entity*))
     :clickable/item :cursors/hand-before-grab
     :clickable/player :cursors/bag
-    :clickable/princess :cursors/princess
-    ))
+    :clickable/princess :cursors/princess))
 
 (def ^:private click-distance-tiles 1.5)
 
-; TODO TOO FAR DISTANCE SHOW SPECIAL CURSOR ? OR SAME ? or error, too far
-(defn- clickable-mouseover-entity? [player-entity* mouseover-entity*]
-  (and (:entity/clickable mouseover-entity*)
-       (< (v/distance (:position player-entity*)
-                      (:position mouseover-entity*))
-          click-distance-tiles)))
+(defn- ->clickable-mouseover-entity-interaction [ctx player-entity* mouseover-entity]
+  (if (and (< (v/distance (:position player-entity*)
+                          (:position @mouseover-entity))
+              click-distance-tiles))
+    [(clickable->cursor @mouseover-entity)
+     (fn [] (on-clicked ctx mouseover-entity))]
+    [(clickable->cursor @mouseover-entity) ; TODO make it little bit transparent ?
+     (fn [] (denied ctx "Too far away"))]))
 
 (defn- effect-context [{:keys [context/mouseover-entity] :as context} entity]
   (let [target @mouseover-entity
@@ -64,9 +70,6 @@
      :effect/target-position target-position
      :effect/direction (v/direction (:position @entity) target-position)}))
 
-(defn- denied [context text]
-  (play-sound! context "sounds/bfxr_denied.wav")
-  (show-msg-to-player! context text))
 
 (defn- inventory-cell-with-item? [{:keys [context/player-entity]} actor]
   (and (parent actor)
@@ -91,7 +94,6 @@
       (and (parent actor)
            (button-class? (parent actor)))))
 
-
 (defn- mouseover-actor->cursor [ctx]
   (let [actor (mouse-on-stage-actor? ctx)]
     (cond
@@ -108,10 +110,8 @@
       nil)] ; handled by actors themself, they check player state
 
    (and @mouseover-entity
-        (clickable-mouseover-entity? @entity @@mouseover-entity))
-   [(clickable->cursor @@mouseover-entity)
-    (fn []
-      (on-clicked context @mouseover-entity))]
+        (:entity/clickable @@mouseover-entity))
+   (->clickable-mouseover-entity-interaction context @entity @mouseover-entity)
 
    :else
    (if-let [skill-id (selected-skill context)]

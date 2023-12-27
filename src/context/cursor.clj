@@ -25,6 +25,9 @@
    :cursors/princess ["exclamation001" 0 0]})
 
 ; TODO dispose cursors ( do @ gdl ? )
+; => tilemap,cursors,stages,etc.
+; @ gdl just (swap! (:context/disposables ctx) conj item )
+; ! => don't worry about it anymore ...
 (defn ->context [ctx]
   {:context/cursors (mapvals (fn [[file x y]]
                                (->cursor ctx (str "cursors/" file ".png") x y))

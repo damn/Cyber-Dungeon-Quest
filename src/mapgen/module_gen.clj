@@ -244,7 +244,7 @@
   (let [layer (add-layer! tiled-map
                           :name "creatures"
                           :visible true)]
-    #_(doseq [[position tile] (creature-spawn-positions creature-properties spawn-rate tiled-map area-level-grid)]
+    (doseq [[position tile] (creature-spawn-positions creature-properties spawn-rate tiled-map area-level-grid)]
       (set-tile! layer position tile))))
 
 (defn generate [ctx
@@ -283,6 +283,11 @@
                                        (and (number? area-level)
                                             (zero? area-level)))
                                      area-level-grid))
+
+        ; ! TODO PRINCESS WAS ON THE HILL !
+        ; they ATTACK HER !
+        ; SHE DOES NOT DIE !
+        ; SHE WOKE THEM UP !
         princess-position (rand-nth
                            (map first
                                 (filter (fn [[position area-level]]

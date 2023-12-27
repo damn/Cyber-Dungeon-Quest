@@ -117,17 +117,8 @@
    :move-towards-enemy true})
 
 (def ^:private lady-props
-  {:faction :evil
-   :entity/clickable {:type :clickable/princess}
-   }
-  )
-
-(comment
- (let [ctx @gdl.app/current-context]
-
-    (deref (cdq.context/get-entity ctx 831))
-   )
- )
+  {;:faction :evil
+   :entity/clickable {:type :clickable/princess}})
 
 (defn- species-properties [species-props]
   (let [multiplier {:id :species/multiplier,
