@@ -36,9 +36,10 @@
        _ (utils/printgrid (reduce #(assoc %1 %2 nil)
                                   grid
                                   (adjacent-wall-positions grid)))
-       {:keys [steps grid]} (area-level-grid :grid grid
-                                             :start start
-                                             :max-level 9)
+       {:keys [steps grid]} (->area-level-grid :grid grid
+                                               :start start
+                                               :max-level 9
+                                               :walk-on #{:ground})
        _ (println "\n With area levels: \n")
        _ (utils/printgrid grid)])
  )
@@ -60,7 +61,7 @@
 ; can make parameter how fast it scales
 ; area-level-grid works better with more wide grids
 ; if the cave is very straight then it is just a continous progression and area-level-grid is useless
-(defn- area-level-grid
+(defn- ->area-level-grid
   "Expands from start position by adding one random adjacent neighbor.
   Each random walk is a step and is assigned a level as of max-level.
   (Levels are scaled, for example grid has 100 ground cells, so steps would be 0 to 100(99?)
@@ -68,17 +69,17 @@
   The point of this is to randomize the levels so player does not have a smooth progression
   but can encounter higher level areas randomly around but there is always a path which goes from
   level 0 to max-level, so the player has to decide which areas to do in which order."
-  [& {:keys [grid start max-level]}]
+  [& {:keys [grid start max-level walk-on]}]
   (let [maxcount (->> grid
                       grid/cells
-                      (filter #(= :ground %))
+                      (filter walk-on)
                       count)
         ; -> assume all :ground cells can be reached from start
         ; later check steps count == maxcount assert
         level-step (/ maxcount max-level)
         step->level #(int (Math/ceil (/ % level-step)))
         walkable-neighbours (fn [grid position]
-                              (filter #(= (get grid %) :ground)
+                              (filter #(walk-on (get grid %))
                                       (grid/get-4-neighbour-positions position)))]
     (loop [next-positions #{start}
            steps          [[0 start]]
@@ -207,13 +208,13 @@
   [context {:keys [map-size max-area-level spawn-rate]}]
   (assert (<= max-area-level map-size))
   (let [{:keys [start grid]} (->cave-grid :size map-size)
-        ; TODO write/assert 'this is a grid of :wall/:ground ?!
-        ; TODO has also 'end' ...
+        _ (assert (every? #{:wall :ground} (grid/cells grid)))
         ;_ (utils/printgrid grid)
         ;_ (println)
-        {:keys [steps grid]} (area-level-grid :grid grid
-                                              :start start
-                                              :max-level max-area-level)
+        {:keys [steps grid]} (->area-level-grid :grid grid
+                                                :start start
+                                                :max-level max-area-level
+                                                :walk-on #{:ground})
         ; TODO write/assert this is a grid of numbers/wall/?
         ; => :wall / and a number
         ; => TODO so the bug with grid->tiled-map is because of :ground, not :wall ...
