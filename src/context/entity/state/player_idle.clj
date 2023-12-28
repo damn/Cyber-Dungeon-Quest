@@ -53,7 +53,7 @@
                           :cursors/princess-gray
                           :cursors/princess)))
 
-(def ^:private click-distance-tiles 1.5)
+(def click-distance-tiles 1.5)
 
 (defn- ->clickable-mouseover-entity-interaction [ctx player-entity* mouseover-entity]
   (if (and (< (v/distance (:position player-entity*)

@@ -4,14 +4,13 @@
             [gdl.input.buttons :as buttons]
             [gdl.math.vector :as v]
             [context.entity.state :as state]
+            [context.entity.state.player-idle :refer [click-distance-tiles]]
             [cdq.context :refer [item-entity send-event! set-cursor!]]
             [cdq.entity :as entity]))
 
-; => placed it in not in line of sight tile -> hidden ! because not corner check for los show
-; => its actually OK if they are not valid position , put on rocks, etc. is fine
-; => its also funny its like you threw your item up the hill...
-; can put somewhere where can't click -> little bit less than max click range make
-; * put on player mouseover => move back to inventory?
+; It is possible to put items out of sight, losing them.
+; Because line of sight checks center of entity only, not corners
+; this is okay, you have thrown the item over a hill, thats possible.
 
 (defn- put-item-on-ground! [{:keys [context/player-entity] :as context} position]
   {:pre [(:item-on-cursor @player-entity)]}
@@ -25,7 +24,13 @@
                        (v/distance player target)))))
 
 (defn- item-place-position [ctx entity]
-  (placement-point (:position @entity) (world-mouse-position ctx) 1.5))
+  (placement-point (:position @entity)
+                   (world-mouse-position ctx)
+                   ; so you cannot put it out of your own reach
+                   (- context.entity.state.player-idle/click-distance-tiles 0.1)))
+
+(defn- world-item? [ctx]
+  (not (mouse-on-stage-actor? ctx)))
 
 (defrecord PlayerItemOnCursor [entity item]
   state/PlayerState
@@ -34,7 +39,7 @@
 
   (manual-tick! [_ context delta]
     (when (and (button-just-pressed? context buttons/left)
-               (not (mouse-on-stage-actor? context)))
+               (world-item? context))
       (send-event! context entity :drop-item)))
 
   state/State
@@ -53,14 +58,14 @@
 
   (tick! [_ _ctx _delta])
   (render-below [_ ctx entity*]
-    (when (not (mouse-on-stage-actor? ctx))
+    (when (world-item? ctx)
       (draw-centered-image ctx (:image item) (item-place-position ctx entity))))
   (render-above [_ ctx entity*])
   (render-info  [_ ctc entity*]))
 
 (defn draw-item-on-cursor [{:keys [context/player-entity] :as context}]
   (when (and (= :item-on-cursor (entity/state @player-entity))
-             (mouse-on-stage-actor? context))
+             (not (world-item? context)))
     (draw-centered-image context
                          (:image (:item-on-cursor @player-entity))
                          (gui-mouse-position context))))
