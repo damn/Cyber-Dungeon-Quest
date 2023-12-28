@@ -215,10 +215,10 @@
                                                 :start start
                                                 :max-level max-area-level
                                                 :walk-on #{:ground})
-        ; TODO write/assert this is a grid of numbers/wall/?
-        ; => :wall / and a number
-        ; => TODO so the bug with grid->tiled-map is because of :ground, not :wall ...
-        ; why wall ?
+        _ (assert (every? (set (concat [:wall :ground]
+                                       (range max-area-level)
+                                       [max-area-level]))
+                          (grid/cells grid)))
         area-level-grid grid
         ;_ (printgrid area-level-grid)
         scale [module-width module-height]
