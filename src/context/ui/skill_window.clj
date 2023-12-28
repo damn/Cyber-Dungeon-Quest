@@ -18,6 +18,7 @@
   (->window context
             {:title "Skills"
              :id :skill-window
+             :visible? false
              :rows [(for [id [:spells/projectile
                               :spells/meditation
                               :spells/spawn]

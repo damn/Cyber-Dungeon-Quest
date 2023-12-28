@@ -123,12 +123,13 @@
 
 (defn- ->cell [ctx slot->background slot & {:keys [position]}]
   (let [cell [slot (or position [0 0])]
-        image-widget (->image-widget ctx (slot->background slot) {})
+        image-widget (->image-widget ctx
+                                     (slot->background slot)
+                                     {:id :image})
         stack (->stack ctx [(draw-rect-actor)
                             image-widget])]
     (set-name! stack "inventory-cell")
     (set-id! stack cell)
-    (set-id! image-widget :image)
     (add-listener! stack (proxy [ClickListener] []
                            (clicked [event x y]
                              (let [{:keys [context/player-entity] :as ctx} @current-context]

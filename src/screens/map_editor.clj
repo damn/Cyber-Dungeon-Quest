@@ -12,7 +12,7 @@
             [gdl.graphics.color :as color]
             [gdl.graphics.camera :as camera]
             [gdl.maps.tiled :as tiled]
-            [gdl.scene2d.actor :refer [set-position! set-name!]]
+            [gdl.scene2d.actor :refer [set-position!]]
             [gdl.scene2d.group :refer [add-actor!]]
             [gdl.scene2d.ui.widget-group :refer [pack!]]
             [gdl.scene2d.ui.label :refer [set-text!]]
@@ -155,13 +155,12 @@ direction keys: move")
     (show-whole-map! world-camera tiled-map)))
 
 (defn ->edit-text-field [ctx [k v]]
-  (doto (->text-field ctx (str v) {})
-    (set-name! (str k))))
+  (->text-field ctx (str v) {:id k}))
 
 (defn key->value [^com.badlogic.gdx.scenes.scene2d.ui.Table forms-table k]
   (edn/read-string
    (.getText ^com.kotcrab.vis.ui.widget.VisTextField
-             (.findActor forms-table (str k)))))
+             (k forms-table))))
 
 (defn- ->params-form-table [ctx properties]
   (let [table (->table ctx {:rows (for [[k v] properties]

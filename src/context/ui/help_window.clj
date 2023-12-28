@@ -16,5 +16,6 @@
   (->window context
             {:id :help-window
              :title "Controls"
+             :visible? false
              :rows [[(->label context controls-text)]]
              :pack? true}))

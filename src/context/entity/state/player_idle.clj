@@ -1,7 +1,9 @@
 (ns context.entity.state.player-idle
   (:require [gdl.context :refer [play-sound! world-mouse-position mouse-on-stage-actor? button-just-pressed?]]
             [gdl.input.buttons :as buttons]
-            [gdl.scene2d.actor :refer [visible? toggle-visible! parent actor-name] :as actor]
+            [gdl.scene2d.actor :refer [visible? toggle-visible! parent] :as actor]
+            [gdl.scene2d.ui.button :refer [button?]]
+            [gdl.scene2d.ui.window :refer [window-title-bar?]]
             [gdl.math.vector :as v]
             [context.entity.state :as state]
             [context.entity.state.wasd-movement :refer [WASD-movement-vector]]
@@ -73,29 +75,12 @@
      :effect/target-position target-position
      :effect/direction (v/direction (:position @entity) target-position)}))
 
-
+; TODO move to inventory-window extend Context
 (defn- inventory-cell-with-item? [{:keys [context/player-entity]} actor]
   (and (parent actor)
-       (= "inventory-cell" (actor-name (parent actor)))
+       (= "inventory-cell" (actor/name (parent actor)))
        (get-in (:inventory @player-entity)
                (actor/id (parent actor)))))
-
-(defn- window-title-bar? [actor]
-  (and (instance? com.badlogic.gdx.scenes.scene2d.ui.Label
-                  actor)
-       (parent actor)
-       (parent (parent actor))
-       (instance? com.kotcrab.vis.ui.widget.VisWindow
-                  (parent (parent actor)))))
-
-(defn- button-class? [actor]
-  (some #(= com.badlogic.gdx.scenes.scene2d.ui.Button %)
-        (supers (class actor))))
-
-(defn- button? [actor]
-  (or (button-class? actor)
-      (and (parent actor)
-           (button-class? (parent actor)))))
 
 (defn- mouseover-actor->cursor [ctx]
   (let [actor (mouse-on-stage-actor? ctx)]

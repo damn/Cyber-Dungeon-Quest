@@ -30,6 +30,7 @@
   (let [label (->label context "")
         window (->window context {:title "Debug"
                                   :id :debug-window
+                                  :visible? false
                                   :rows [[label]]})]
     (add-actor! window (->actor context
                                 {:act

@@ -16,6 +16,7 @@
   (let [label (->label context "")
         window (->window context {:title "Info"
                                   :id :entity-info-window
+                                  :visible? false
                                   :rows [[{:actor label :expand? true}]]})]
     ; TODO do not change window size ... -> no need to invalidate layout, set the whole stage up again
     ; => fix size somehow.
