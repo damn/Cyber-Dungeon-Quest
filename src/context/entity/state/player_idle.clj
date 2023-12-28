@@ -43,12 +43,15 @@
   [ctx _clicked-entity]
   (send-event! ctx (:context/player-entity ctx) :found-princess))
 
-; TODO need greyed out versions of these cursors
-(defn- clickable->cursor [mouseover-entity*]
+(defn- clickable->cursor [mouseover-entity* too-far-away?]
   (case (:type (:entity/clickable mouseover-entity*))
-    :clickable/item :cursors/hand-before-grab
+    :clickable/item (if too-far-away?
+                      :cursors/hand-before-grab-gray
+                      :cursors/hand-before-grab)
     :clickable/player :cursors/bag
-    :clickable/princess :cursors/princess))
+    :clickable/princess (if too-far-away?
+                          :cursors/princess-gray
+                          :cursors/princess)))
 
 (def ^:private click-distance-tiles 1.5)
 
@@ -56,9 +59,9 @@
   (if (and (< (v/distance (:position player-entity*)
                           (:position @mouseover-entity))
               click-distance-tiles))
-    [(clickable->cursor @mouseover-entity)
+    [(clickable->cursor @mouseover-entity false)
      (fn [] (on-clicked ctx mouseover-entity))]
-    [(clickable->cursor @mouseover-entity) ; TODO make it little bit transparent ?
+    [(clickable->cursor @mouseover-entity true)
      (fn [] (denied ctx "Too far away"))]))
 
 (defn- effect-context [{:keys [context/mouseover-entity] :as context} entity]
