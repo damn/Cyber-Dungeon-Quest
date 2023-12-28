@@ -12,7 +12,8 @@
             context.entity.all
             context.modifier.all
             (context.ui [action-bar :as action-bar]
-                        [inventory-window :as inventory-window])
+                        [inventory-window :as inventory-window]
+                        player-modal)
             (screens game
                      main-menu
                      map-editor

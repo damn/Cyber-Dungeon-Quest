@@ -1,7 +1,8 @@
 (ns context.entity.state.player-dead
-  (:require [gdl.context :refer [play-sound!]]
+  (:require [gdl.app :refer [change-screen!]]
+            [gdl.context :refer [play-sound!]]
             [context.entity.state :as state]
-            [cdq.context :refer [show-msg-to-player! set-cursor!]]))
+            [cdq.context :refer [set-cursor! show-player-modal!]]))
 
 (defrecord PlayerDead [entity]
   state/PlayerState
@@ -12,9 +13,13 @@
   (manual-tick! [_ context delta])
 
   state/State
-  (enter [_ context]
-    (play-sound! context "sounds/bfxr_playerdeath.wav")
-    (show-msg-to-player! context "YOU DIED!\nPress X to leave"))
+  (enter [_ ctx]
+    (play-sound! ctx "sounds/bfxr_playerdeath.wav")
+    (show-player-modal! ctx {:title "YOU DIED"
+                             :text "\nGood luck next time"
+                             :button-text ":("
+                             :on-click (fn [_ctx]
+                                         (change-screen! :screens/main-menu))}))
   (exit [_ _ctx])
   (tick! [_ _ctx delta])
   (render-below [_ c entity*])

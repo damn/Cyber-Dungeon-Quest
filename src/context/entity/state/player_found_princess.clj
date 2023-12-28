@@ -1,20 +1,25 @@
 (ns context.entity.state.player-found-princess
-  (:require [gdl.context :refer [play-sound!]]
+  (:require [gdl.app :refer [change-screen!]]
+            [gdl.context :refer [play-sound!]]
             [context.entity.state :as state]
-            [cdq.context :refer [show-msg-to-player! set-cursor!]]))
+            [cdq.context :refer [set-cursor! show-player-modal!]]))
 
 (defrecord PlayerFoundPrincess [entity]
   state/PlayerState
   (player-enter [_ ctx]
-    (set-cursor! ctx :cursors/black-x)) ; TODO cursor/ sound?
+    (set-cursor! ctx :cursors/black-x))
 
   (pause-game? [_] true)
   (manual-tick! [_ context delta])
 
   state/State
-  (enter [_ context]
-    ;(play-sound! context "sounds/bfxr_playerdeath.wav")
-    (show-msg-to-player! context "YOU FOUND THE PRINCESS!\nPress X to leave"))
+  (enter [_ ctx]
+    (play-sound! ctx "sounds/bfxr_playerdeath.wav")
+    (show-player-modal! ctx {:title "YOU WON!"
+                             :text "\nYou found the princess!"
+                             :button-text ":)"
+                             :on-click (fn [_ctx]
+                                         (change-screen! :screens/main-menu))}))
   (exit [_ _ctx])
   (tick! [_ _ctx delta])
   (render-below [_ c entity*])

@@ -1,6 +1,7 @@
 (ns context.ui.player-message
-  (:require [gdl.context :refer [draw-text ->actor]]
-            [cdq.context :refer [stopped? ->counter]]))
+  (:require [gdl.context :refer [draw-text ->actor delta-time]]))
+
+(def ^:private duration-seconds 1.5)
 
 (defn- draw-player-message
   [{:keys [context/player-message
@@ -17,15 +18,15 @@
 (defn- check-remove-message
   [{:keys [context/player-message] :as context}]
   (when-let [{:keys [counter]} @player-message]
-    (when (stopped? context counter)
+    (swap! player-message update :counter + (delta-time context))
+    (when (>= counter duration-seconds)
       (reset! player-message nil))))
 
 (extend-type gdl.context.Context
   cdq.context/PlayerMessage
   (show-msg-to-player! [{:keys [context/player-message] :as context}
                         message]
-    (reset! player-message {:message message
-                            :counter (->counter context 1500)}))
+    (reset! player-message {:message message :counter 0}))
 
   (->player-message-actor [context]
     (->actor context

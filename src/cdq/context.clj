@@ -14,6 +14,9 @@
   (show-msg-to-player! [_ message])
   (->player-message-actor [_]))
 
+(defprotocol PlayerModal
+  (show-player-modal! [_ {:keys [title text button-text on-click]}]))
+
 (defprotocol MouseOverEntity
   (update-mouseover-entity [_]))
 

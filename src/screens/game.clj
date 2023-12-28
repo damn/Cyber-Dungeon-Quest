@@ -12,7 +12,6 @@
             [cdq.context :refer [render-entities* ray-blocked? explored? set-explored! line-of-sight? content-grid
                                   tick-entity remove-destroyed-entities update-mouseover-entity update-potential-fields
                                   update-elapsed-game-time debug-render-after-entities debug-render-before-entities set-cursor!]]
-            [cdq.entity :as entity]
             [context.entity.movement :as movement]
             [context.entity.state :as state]
             context.ui.actors
@@ -62,8 +61,7 @@
           :when (key-just-pressed? context hotkey)]
     (toggle-visible! (get group window))))
 
-(defn- end-of-frame-checks [{:keys [context/player-entity
-                                    context/config] :as context}]
+(defn- end-of-frame-checks [{:keys [context/config] :as context}]
   (let [group (:windows (get-stage context))
         windows (children group)]
     (when (safe-get config :debug-windows?)
@@ -76,11 +74,7 @@
             (change-screen! :screens/options-menu))))
 
   (when (key-just-pressed? context input.keys/tab)
-    (change-screen! :screens/minimap))
-
-  (when (and (key-just-pressed? context input.keys/x)
-             (#{:princess-saved :dead} (entity/state @player-entity)))
-    (change-screen! :screens/main-menu)))
+    (change-screen! :screens/minimap)))
 
 (defn- render-game [{:keys [context/world-map
                             context/player-entity
