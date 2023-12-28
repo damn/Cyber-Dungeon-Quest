@@ -11,8 +11,7 @@
               :up? true}))
 
 (defn ->hp-mana-bars [context]
-  (let [scale 2
-        rahmen (create-image context "ui/rahmen.png")
+  (let [rahmen (create-image context "ui/rahmen.png")
         rahmenw (first  (:pixel-dimensions rahmen))
         rahmenh (second (:pixel-dimensions rahmen))
         hpcontent   (create-image context "ui/hp.png")

@@ -68,10 +68,8 @@
       (check-window-hotkeys context group))
 
     (when (key-just-pressed? context input.keys/escape)
-      (cond (some visible? windows)
-            (run! #(set-visible! % false) windows)
-            :else
-            (change-screen! :screens/options-menu))))
+      (cond (some visible? windows) (run! #(set-visible! % false) windows)
+            :else (change-screen! :screens/options-menu))))
 
   (when (key-just-pressed? context input.keys/tab)
     (change-screen! :screens/minimap)))

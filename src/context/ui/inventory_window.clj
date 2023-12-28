@@ -238,18 +238,12 @@
                         {:window (->window context {:title "Inventory"
                                                     :id :inventory-window
                                                     :visible? false
-                                                    :rows [[{:actor table :pad 2 :colspan 4}]
-                                                           ; stage .act before render
-                                                           ; what if it does change-screen?
-                                                           ; queue change-screen ?
-                                                           ; :book-latch
+                                                    :rows [[{:actor table :pad 2 :colspan 2}]
                                                            [(->image-button context (:image (get-property context :book-latch))
                                                                             (fn [_]
                                                                               (gdl.app/change-screen! :screens/minimap)))
                                                             (->image-button context  (:image (get-property context :key-bone))
                                                                             (fn [_]
-                                                                              (gdl.app/change-screen! :screens/options-menu)))
-                                                            nil
-                                                            nil]]})
+                                                                              (gdl.app/change-screen! :screens/options-menu)))]]})
                          :slot->background (slot->background context)
                          :table table})})
