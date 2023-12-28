@@ -50,6 +50,7 @@
       :rotate-in-movement-direction? rotate-in-movement-direction?}))
 
   (entity/create! [_ entity context]
+    ; TODO VALID POSITION CHECK
     (assert (:position @entity))
     (swap! entity assoc-left-bottom)
     (add-entity! (world-grid context) entity))

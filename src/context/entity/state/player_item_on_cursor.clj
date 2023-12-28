@@ -1,29 +1,31 @@
 (ns context.entity.state.player-item-on-cursor
-  (:require [gdl.context :refer [play-sound! mouse-on-stage-actor? button-just-pressed?]]
+  (:require [gdl.context :refer [play-sound! mouse-on-stage-actor? button-just-pressed? draw-centered-image
+                                 world-mouse-position gui-mouse-position]]
             [gdl.input.buttons :as buttons]
+            [gdl.math.vector :as v]
             [context.entity.state :as state]
-            [cdq.context :refer [item-entity send-event! set-cursor!]]))
+            [cdq.context :refer [item-entity send-event! set-cursor!]]
+            [cdq.entity :as entity]))
 
-; TODO ! important ! animation & dont put exactly hiding under player -> try neighbor cells first, simple.
-(defn- put-item-on-ground [{:keys [context/player-entity] :as context}]
+; => placed it in not in line of sight tile -> hidden ! because not corner check for los show
+; => its actually OK if they are not valid position , put on rocks, etc. is fine
+; => its also funny its like you threw your item up the hill...
+; can put somewhere where can't click -> little bit less than max click range make
+; * put on player mouseover => move back to inventory?
+
+(defn- put-item-on-ground! [{:keys [context/player-entity] :as context} position]
   {:pre [(:item-on-cursor @player-entity)]}
   (play-sound! context "sounds/bfxr_itemputground.wav")
-  (let [{x 0 y 1 :as posi} (:position @player-entity)
-        ; [w _] item-body-dimensions
-        ; half-size (/ w tile-width 2)
-        ; below-posi [x (+ 0.7 y)] ; put here so player sees that item is put on ground (confusing trying to put heal pot on player)
-        ; blocked (blocked-location? below-posi half-size half-size :ground)
-        ; blocked location checks if other solid bodies ... if put under player would block from player
-        ;_ (println "BLOCKED? " (boolean blocked))
-        ;position (if-not blocked below-posi posi)
-        ]
-    (item-entity context posi (:item-on-cursor @player-entity))))
+  (item-entity context position (:item-on-cursor @player-entity)))
 
-; TODO visualize not mouse-on-stage-actor?
-; WHERE item would be placed somehow
-; => choose location even around player in certain radius distance?
-; => 2 cursors ?
-; hand open cursor & render item around player hovering (?)
+(defn- placement-point [player target maxrange]
+  (v/add player
+         (v/scale (v/direction player target)
+                  (min maxrange
+                       (v/distance player target)))))
+
+(defn- item-place-position [ctx entity]
+  (placement-point (:position @entity) (world-mouse-position ctx) 1.5))
 
 (defrecord PlayerItemOnCursor [entity item]
   state/PlayerState
@@ -40,16 +42,25 @@
     (set-cursor! ctx :cursors/hand-grab)
     (swap! entity assoc :item-on-cursor item))
 
-  (exit [_ context]
+  (exit [_ ctx]
     ; at context.ui.inventory-window/clicked-cell when we put it into a inventory-cell
     ; we do not want to drop it on the ground too additonally,
     ; so we dissoc it there manually. Otherwise it creates another item
     ; on the ground
     (when (:item-on-cursor @entity)
-      (put-item-on-ground context)
+      (put-item-on-ground! ctx (item-place-position ctx entity))
       (swap! entity dissoc :item-on-cursor)))
 
   (tick! [_ _ctx _delta])
-  (render-below [_ c entity*])
-  (render-above [_ c entity*])
-  (render-info  [_ c entity*]))
+  (render-below [_ ctx entity*]
+    (when (not (mouse-on-stage-actor? ctx))
+      (draw-centered-image ctx (:image item) (item-place-position ctx entity))))
+  (render-above [_ ctx entity*])
+  (render-info  [_ ctc entity*]))
+
+(defn draw-item-on-cursor [{:keys [context/player-entity] :as context}]
+  (when (and (= :item-on-cursor (entity/state @player-entity))
+             (mouse-on-stage-actor? context))
+    (draw-centered-image context
+                         (:image (:item-on-cursor @player-entity))
+                         (gui-mouse-position context))))

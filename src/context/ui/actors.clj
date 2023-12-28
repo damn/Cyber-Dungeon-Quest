@@ -1,6 +1,5 @@
 (ns context.ui.actors
-  (:require [gdl.context :refer [draw-centered-image gui-mouse-position draw-text ->actor ->table
-                                 ->group]]
+  (:require [gdl.context :refer [draw-text ->actor ->table ->group]]
             [gdl.scene2d.actor :as actor :refer [set-position! get-x get-y width height set-width! set-height! set-visible!]]
             [gdl.scene2d.group :refer [add-actor!]]
             [context.ui.hp-mana-bars :refer [->hp-mana-bars]]
@@ -9,14 +8,8 @@
             [context.ui.entity-info-window :as entity-info-window]
             [context.ui.skill-window :as skill-window]
             [context.ui.inventory-window :as inventory]
-            [cdq.context :refer [->player-message-actor ->action-bar]]
-            [cdq.entity :as entity]))
-
-(defn- draw-item-on-cursor [{:keys [context/player-entity] :as context}]
-  (when (= :item-on-cursor (entity/state @player-entity))
-    (draw-centered-image context
-                         (:image (:item-on-cursor @player-entity))
-                         (gui-mouse-position context))))
+            [context.entity.state.player-item-on-cursor :refer [draw-item-on-cursor]]
+            [cdq.context :refer [->player-message-actor ->action-bar]]))
 
 (defn- ->item-on-cursor-actor [context]
   (->actor context {:draw draw-item-on-cursor}))
