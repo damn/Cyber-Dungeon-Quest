@@ -3,6 +3,7 @@
             [gdl.maps.tiled :as tiled]
             [gdl.context :refer [->tiled-map]]
             [cdq.context :refer [all-properties]]
+            [utils.core :refer [assoc-ks]]
             [mapgen.utils :refer [printgrid scale-grid]]
             [mapgen.tiled-utils :refer [->static-tiled-map-tile set-tile! put! add-layer! grid->tiled-map]]
             [mapgen.transitions :as transitions]
@@ -17,6 +18,9 @@
 ; * unique max 16 modules, not random take @ #'floor->module-index
 ; * check not using start module with hill and spawning on hill ?
 ; * weird how to get princess position
+; * flood-fill gets 8 neighbour posis -> no NADs on modules !
+; * borders in each module walkable ? whats the assumption here? => or put extra borders around?
+; => assert
 
 (comment
  ; TODO use same codepath here as in 'generate'
@@ -32,16 +36,10 @@
        ;           "height: " (grid/height grid)
        ;           "start " start "\n")
        ;_ (println (grid/posis grid))
-       _ (println "With adjacent-wall-positions marked:\n")
-       _ (printgrid (reduce #(assoc %1 %2 nil)
-                                  grid
-                                  (adjacent-wall-positions grid)))
-       {:keys [steps area-level-grid]} (->area-level-grid :grid grid
-                                                          :start start
-                                                          :max-level 9
-                                                          :walk-on #{:ground})
-       _ (println "\n With area levels: \n")
-       _ (printgrid area-level-grid)])
+       _ (println "\n\n")
+       filled (flood-fill grid start (fn [p] (= :ground (get grid p))))
+       _ (printgrid (reduce #(assoc %1 %2 nil) grid filled))
+       ])
  )
 
 ; TODO generates 51,52. not max 50
@@ -128,10 +126,26 @@
                             unscaled-floor-positions)
         scaled-grid (reduce (fn [scaled-grid unscaled-position]
                               (place-module scaled-grid unscaled-position :transition? true
-                                            :transition-neighbor? #(#{:transition :wall} (get unscaled-grid %)) ))
+                                            :transition-neighbor? #(#{:transition :wall}
+                                                                    (get unscaled-grid %))))
                             scaled-grid
                             unscaled-transition-positions)]
     (grid->tiled-map modules-tiled-map scaled-grid)))
+
+(defn- flood-fill [grid start walk-on-position?]
+  (loop [next-positions [start]
+         filled []
+         grid grid]
+    (if (seq next-positions)
+      (recur (filter #(and (get grid %)
+                           (walk-on-position? %))
+                     (distinct
+                      (mapcat grid/get-8-neighbour-positions
+                              next-positions)))
+             (concat filled next-positions)
+             (assoc-ks grid next-positions nil))
+      filled)))
+
 
 ; can adjust:
 ; * split percentage , for higher level areas may scale faster (need to be more careful)
@@ -180,7 +194,7 @@
                      steps
                      grid)))
           {:steps steps
-           :area-level-grid  grid})))))
+           :area-level-grid grid})))))
 
 (defn- creatures-with-level [creature-properties level]
   (filter #(= level (:level %)) creature-properties))
@@ -193,21 +207,16 @@
        (put! (tiled/properties tile) "id" id)
        tile))))
 
-(defn- creature-spawn-positions [creature-properties spawn-rate tiled-map area-level-grid]
-  (keep (fn [[position area-level]]
-          (if (and (number? area-level)
-                   (= "all" (movement-property tiled-map position))
-                   (<= (rand) spawn-rate))
-            (let [creatures (creatures-with-level creature-properties area-level)]
-              (when (seq creatures)
-                [position (creature->tile (rand-nth creatures))]))))
-        area-level-grid))
-
-(defn- place-creatures! [context spawn-rate tiled-map area-level-grid]
+(defn- place-creatures! [context spawn-rate tiled-map spawn-positions area-level-grid]
   (let [layer (add-layer! tiled-map :name "creatures" :visible true)
         creature-properties (all-properties context :creature)]
-    (doseq [[position tile] (creature-spawn-positions creature-properties spawn-rate tiled-map area-level-grid)]
-      (set-tile! layer position tile))))
+    (doseq [position spawn-positions
+            :let [area-level (get area-level-grid position)]
+            :when (and (number? area-level)
+                       (<= (rand) spawn-rate))]
+      (let [creatures (creatures-with-level creature-properties area-level)]
+        (when (seq creatures)
+          (set-tile! layer position (creature->tile (rand-nth creatures))))))))
 
 (defn generate
   "The generated tiled-map needs to be disposed."
@@ -215,28 +224,34 @@
   (assert (<= max-area-level map-size))
   (let [{:keys [start grid]} (->cave-grid :size map-size)
         _ (assert (= #{:wall :ground} (set (grid/cells grid))))
-        _ (printgrid grid)
-        _ (println " - ")
+        ;_ (printgrid grid)
+        ;_ (println " - ")
         grid (reduce #(assoc %1 %2 :transition) grid (adjacent-wall-positions grid))
-        _ (printgrid grid)
-        _ (println " - ")
-        ; TODO remove unreachable places -> will be used for areas instead
-        ; and cannot reach
-        ; then make flood fill and place entities only where reachable !
+        ;_ (printgrid grid)
+        ;_ (println " - ")
         _ (assert (or
                    (= #{:wall :ground :transition} (set (grid/cells grid)))
                    (= #{:ground :transition} (set (grid/cells grid))))
                   (str "(set (grid/cells grid)): " (set (grid/cells grid))))
+        scaled-grid (scale-grid grid scale)
         tiled-map (place-modules (->tiled-map context modules-file)
-                                 (scale-grid grid scale)
+                                 scaled-grid
                                  grid
                                  (filter #(= :ground     (get grid %)) (grid/posis grid))
                                  (filter #(= :transition (get grid %)) (grid/posis grid)))
+
+        start-position (mapv * start scale) ; hoping bottom left is movable
+        can-spawn? #(= "all" (movement-property tiled-map %))
+        _ (assert (can-spawn? start-position))
+        spawn-positions (flood-fill scaled-grid start-position can-spawn?)
+        ;_ (println "scaled grid with filled nil: '?' \n")
+        ;_ (printgrid (reduce #(assoc %1 %2 nil) scaled-grid spawn-positions))
+        ;_ (println "\n")
         {:keys [steps area-level-grid]} (->area-level-grid :grid grid
                                                            :start start
                                                            :max-level max-area-level
                                                            :walk-on #{:ground :transition})
-        _ (printgrid area-level-grid)
+        ;_ (printgrid area-level-grid)
         _ (assert (or
                    (= (set (concat [max-area-level] (range max-area-level)))
                       (set (grid/cells area-level-grid)))
@@ -244,11 +259,14 @@
                       (set (grid/cells area-level-grid)))))
         scaled-area-level-grid (scale-grid area-level-grid scale)
         ; start-positions = positions in area level 0 (the starting module all positions)
+        ; TODO just take first of steps, also check movement-property all & reachable
+        ; TODO should be mor ein the middle right ... set it maybe special starting module?
         start-positions (map first
                              (filter (fn [[position area-level]]
                                        (and (number? area-level)
                                             (zero? area-level)))
                                      scaled-area-level-grid))
+        ; TODO doing this before creatures makes no sense
         princess-position (rand-nth
                            (map first
                                 (filter (fn [[position area-level]]
@@ -257,7 +275,7 @@
                                                (#{:no-cell :undefined}
                                                 (tiled/property-value tiled-map :creatures position :id))))
                                         scaled-area-level-grid)))]
-    (place-creatures! context spawn-rate tiled-map scaled-area-level-grid)
+    (place-creatures! context spawn-rate tiled-map spawn-positions scaled-area-level-grid)
     (println "princess " princess-position)
     (if princess-position
       (set-tile! (tiled/get-layer tiled-map "creatures")
