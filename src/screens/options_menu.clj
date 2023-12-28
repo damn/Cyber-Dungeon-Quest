@@ -113,6 +113,7 @@
     (when (key-just-pressed? context input.keys/escape)
       (exit))))
 
-(defn screen [context]
-  {:actors [(create-table context)]
+(defn screen [context background-image-fn]
+  {:actors [(background-image-fn)
+            (create-table context)]
    :sub-screen (->SubScreen)})

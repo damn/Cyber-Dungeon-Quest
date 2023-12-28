@@ -1,6 +1,6 @@
 (ns app.start
   (:require [gdl.backends.libgdx.app :as app]
-            [gdl.context :refer [generate-ttf ->stage-screen]]
+            [gdl.context :refer [generate-ttf ->stage-screen ->image-widget create-image]]
             [utils.core :refer [safe-get]]
             (context [properties :as properties]
                      [cursor :as cursor]
@@ -46,17 +46,22 @@
                        (cursor/->context context)
                        (inventory-window/->context context)
                        (action-bar/->context context)
-                       {:context/config config})]
+                       {:context/config config})
+        background-image-fn #(->image-widget context ; fn because cannot add actor to different stages...
+                                             (create-image context "ui/moon_background.png")
+                                             {:fill-parent? true
+                                              :scaling :fill
+                                              :align :center})]
     (set-cursor! context :cursors/default)
     (merge context
            ; previous default-font overwritten
            {:default-font (generate-ttf context {:file "exocet/films.EXL_____.ttf" :size 16})
             :screens/game            (->stage-screen context (screens.game/screen context))
-            :screens/main-menu       (->stage-screen context (screens.main-menu/screen context {:bg-image "ui/moon_background.png"}))
+            :screens/main-menu       (->stage-screen context (screens.main-menu/screen context background-image-fn))
             :screens/map-editor      (->stage-screen context (screens.map-editor/screen context))
             :screens/minimap         (screens.minimap/->Screen)
-            :screens/options-menu    (->stage-screen context (screens.options-menu/screen context))
-            :screens/property-editor (->stage-screen context (screens.property-editor/screen context))})))
+            :screens/options-menu    (->stage-screen context (screens.options-menu/screen context background-image-fn))
+            :screens/property-editor (->stage-screen context (screens.property-editor/screen context background-image-fn))})))
 
 (def ^:private tile-size 48)
 
