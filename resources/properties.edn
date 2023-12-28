@@ -1926,4 +1926,4 @@
    :frame-duration 50,
    :looping? nil},
   :id :effects.damage.magic/hit-effect}
- {:id :world/first-level :map-size 3, :max-area-level 3, :spawn-rate 0.05})
+ {:id :world/first-level :map-size 1, :max-area-level 1, :spawn-rate 0.02})

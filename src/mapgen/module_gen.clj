@@ -13,10 +13,10 @@
   (:import java.util.Random))
 
 ; TODO HERE
-; * unique max 16 modules, not random take @ #'floor->module-index
+; * unique max 16 modules, not random take @ #'floor->module-index, also special start, end modules, rare modules...
 ; * at the beginning enemies very close, different area different spawn-rate !
 ; beginning slow enemies low hp low dmg etc.
-; * flood-fill gets 8 neighbour posis -> no NADs on modules !
+; * flood-fill gets 8 neighbour posis -> no NADs on modules ! assert !
 ; * assuming bottom left in floor module is walkable
 ; whats the assumption here? => or put extra borders around? / assert!
 
