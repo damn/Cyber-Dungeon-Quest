@@ -3,7 +3,7 @@
             [gdl.maps.tiled :as tiled]
             [gdl.context :refer [->tiled-map]]
             [cdq.context :refer [all-properties]]
-            [mapgen.utils :as utils]
+            [mapgen.utils :refer [printgrid scale-grid]]
             [mapgen.tiled-utils :refer [->static-tiled-map-tile set-tile! put! add-layer! grid->tiled-map]]
             [mapgen.transitions :as transitions]
             [mapgen.movement-property :refer (movement-property)]
@@ -24,16 +24,16 @@
  ; => can make sure to debug it
  (let [{:keys [start grid]} (->cave-grid :size 15)
        _ (println "BASE GRID:\n")
-       _ (utils/printgrid grid)
+       _ (printgrid grid)
        _ (println)
        _ (println "WITH START POSITION (0) :\n")
-       _ (utils/printgrid (assoc grid start 0))
+       _ (printgrid (assoc grid start 0))
        _ (println "\nwidth:  " (grid/width  grid)
                   "height: " (grid/height grid)
                   "start " start "\n")
        ;_ (println (grid/posis grid))
        _ (println "With adjacent-wall-positions marked:\n")
-       _ (utils/printgrid (reduce #(assoc %1 %2 nil)
+       _ (printgrid (reduce #(assoc %1 %2 nil)
                                   grid
                                   (adjacent-wall-positions grid)))
        {:keys [steps grid]} (->area-level-grid :grid grid
@@ -41,7 +41,7 @@
                                                :max-level 9
                                                :walk-on #{:ground})
        _ (println "\n With area levels: \n")
-       _ (utils/printgrid grid)])
+       _ (printgrid grid)])
  )
 
 ; TODO generates 51,52. not max 50
@@ -209,7 +209,7 @@
   (assert (<= max-area-level map-size))
   (let [{:keys [start grid]} (->cave-grid :size map-size)
         _ (assert (every? #{:wall :ground} (grid/cells grid)))
-        ;_ (utils/printgrid grid)
+        ;_ (printgrid grid)
         ;_ (println)
         {:keys [steps grid]} (->area-level-grid :grid grid
                                                 :start start
@@ -220,12 +220,12 @@
         ; => TODO so the bug with grid->tiled-map is because of :ground, not :wall ...
         ; why wall ?
         area-level-grid grid
-        ;_ (utils/printgrid area-level-grid)
+        ;_ (printgrid area-level-grid)
         scale [module-width module-height]
         scale-position #(mapv * (% 1) scale) ; step: [area-level position]
         module-placement-posis (map scale-position steps)
         unscaled-area-level-grid area-level-grid
-        area-level-grid (utils/scale-grid area-level-grid scale)
+        area-level-grid (scale-grid area-level-grid scale)
         ; TODO one of those two grids is just used for checking wall, maybe not necessary
         tiled-map (place-modules (->tiled-map context modules-file)
                                  area-level-grid ; = scaled area level gri
