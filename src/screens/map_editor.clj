@@ -215,7 +215,8 @@ direction keys: move")
                                           "Generate"
                                           #(try (generate % (get-properties))
                                                 (catch Throwable t
-                                                  (->error-window! % t))))]]
+                                                  (->error-window! % t)
+                                                  (println t))))]]
                    :pack? true})))
 
 (defn screen [context]
