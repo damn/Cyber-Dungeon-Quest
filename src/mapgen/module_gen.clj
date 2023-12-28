@@ -36,12 +36,12 @@
        _ (printgrid (reduce #(assoc %1 %2 nil)
                                   grid
                                   (adjacent-wall-positions grid)))
-       {:keys [steps grid]} (->area-level-grid :grid grid
-                                               :start start
-                                               :max-level 9
-                                               :walk-on #{:ground})
+       {:keys [steps area-level-grid]} (->area-level-grid :grid grid
+                                                          :start start
+                                                          :max-level 9
+                                                          :walk-on #{:ground})
        _ (println "\n With area levels: \n")
-       _ (printgrid grid)])
+       _ (printgrid area-level-grid)])
  )
 
 ; TODO generates 51,52. not max 50
@@ -99,7 +99,7 @@
                      steps
                      grid)))
           {:steps steps
-           :grid  grid})))))
+           :area-level-grid  grid})))))
 
 (def modules-file "maps/modules.tmx")
 (def module-width  32)
@@ -132,12 +132,12 @@
 (def ^:private floor-idxvalue 0)
 (def ^:private scale [module-width module-height])
 
-(defn- place-module [wall-in-unscaled-grid?
-                     scaled-area-level-grid
-                     unscaled-module-placement-position
-                     & {:keys [transition?]}]
+(defn- place-module [scaled-grid
+                     unscaled-position
+                     & {:keys [transition?
+                               wall-in-unscaled-grid?]}]
   (let [idxvalue (if transition?
-                   (transitions/index-value unscaled-module-placement-position
+                   (transitions/index-value unscaled-position
                                             wall-in-unscaled-grid?)
                    floor-idxvalue)
         tiled-map-positions (module-index->tiled-map-positions
@@ -148,12 +148,12 @@
                       y (range module-height)]
                   [x y])
         offset->tiled-map-position (zipmap offsets tiled-map-positions)
-        scaled-position (mapv * unscaled-module-placement-position scale)]
+        scaled-position (mapv * unscaled-position scale)]
     (reduce (fn [grid offset]
               (assoc grid
                      (mapv + scaled-position offset)
                      (offset->tiled-map-position offset)))
-            scaled-area-level-grid
+            scaled-grid
             offsets)))
 
 (defn- adjacent-wall-positions [grid]
@@ -163,24 +163,23 @@
           (grid/posis grid)))
 
 (defn- place-modules [modules-tiled-map
-                      scaled-area-level-grid
-                      unscaled-area-level-grid
-                      unscaled-module-placement-posis]
+                      scaled-grid
+                      unscaled-grid
+                      unscaled-floor-positions]
   (let [_ (assert (and (= (tiled/width modules-tiled-map)
                           (* number-modules-x (+ module-width module-offset-tiles)))
                        (= (tiled/height modules-tiled-map)
                           (* number-modules-y (+ module-height module-offset-tiles)))))
-        wall-in-unscaled-grid? #(= :wall (get unscaled-area-level-grid %))
-        grid (reduce (fn [grid position]
-                       (place-module wall-in-unscaled-grid? grid position :transition? false))
-                     scaled-area-level-grid
-                     unscaled-module-placement-posis)
-        ;_ (println "adjacent walls: " (adjacent-wall-positions grid))
-        grid (reduce (fn [grid position]
-                       (place-module wall-in-unscaled-grid? grid position :transition? true))
-                     grid
-                     (adjacent-wall-positions unscaled-area-level-grid))]
-    (grid->tiled-map modules-tiled-map grid)))
+        scaled-grid (reduce (fn [scaled-grid unscaled-position]
+                              (place-module scaled-grid unscaled-position :transition? false))
+                            scaled-grid
+                            unscaled-floor-positions)
+        scaled-grid (reduce (fn [scaled-grid unscaled-position]
+                              (place-module scaled-grid unscaled-position :transition? true
+                                            :wall-in-unscaled-grid? #(= :wall (get unscaled-grid %)) ))
+                            scaled-grid
+                            (adjacent-wall-positions unscaled-grid))]
+    (grid->tiled-map modules-tiled-map scaled-grid)))
 
 (defn- creatures-with-level [creature-properties level]
   (filter #(= level (:level %)) creature-properties))
@@ -216,30 +215,21 @@
   (let [{:keys [start grid]} (->cave-grid :size map-size)
         _ (assert (= #{:wall :ground}
                      (set (grid/cells grid))))
-        _ (println "GRID: " (grid/width grid) "," (grid/height grid))
-
         ; TODO mark transition-cells as :transition and also walk on them
-
-        {:keys [steps grid]} (->area-level-grid :grid grid
-                                                :start start
-                                                :max-level max-area-level
-                                                :walk-on #{:ground})
-        _ (assert (= (set (concat [:wall max-area-level] (range max-area-level)))
-                     (set (grid/cells grid))))
-
-        unscaled-module-placement-posis (map #(% 1) steps) ; step: [area-level position]
-        _ (println "unscaled-module-placement-posis\n" unscaled-module-placement-posis)
-
-        unscaled-area-level-grid grid
-        scaled-area-level-grid (scale-grid unscaled-area-level-grid scale)
-        _ (println "scaled-area-level-grid " (grid/width scaled-area-level-grid) "," (grid/height scaled-area-level-grid))
-
-        ; TODO one of those two grids is just used for checking wall, maybe not necessary
         tiled-map (place-modules (->tiled-map context modules-file)
-                                 scaled-area-level-grid
-                                 unscaled-area-level-grid
-                                 unscaled-module-placement-posis)
+                                 (scale-grid grid scale)
+                                 grid
+                                 (filter #(= :ground (get grid %)) (grid/posis grid)))
 
+        {:keys [steps area-level-grid]} (->area-level-grid :grid grid
+                                                           :start start
+                                                           :max-level max-area-level
+                                                           :walk-on #{:ground})
+        _ (assert (= (set (concat [:wall max-area-level] (range max-area-level)))
+                     (set (grid/cells grid)))
+                  (str "(set (grid/cells grid)): " (set (grid/cells grid)))
+                  )
+        scaled-area-level-grid (scale-grid area-level-grid scale)
         ; start-positions = positions in area level 0 (the starting module all positions)
         start-positions (map first
                              (filter (fn [[position area-level]]
