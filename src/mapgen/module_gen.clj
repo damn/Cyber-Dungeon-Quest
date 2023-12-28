@@ -214,7 +214,8 @@
   [context {:keys [map-size max-area-level spawn-rate]}]
   (assert (<= max-area-level map-size))
   (let [{:keys [start grid]} (->cave-grid :size map-size)
-        _ (assert (every? #{:wall :ground} (grid/cells grid)))
+        _ (assert (= #{:wall :ground}
+                     (set (grid/cells grid))))
         _ (println "GRID: " (grid/width grid) "," (grid/height grid))
 
         ; TODO mark transition-cells as :transition and also walk on them
@@ -223,10 +224,8 @@
                                                 :start start
                                                 :max-level max-area-level
                                                 :walk-on #{:ground})
-        _ (assert (every? (set (concat [:wall :ground]
-                                       (range max-area-level)
-                                       [max-area-level]))
-                          (grid/cells grid)))
+        _ (assert (= (set (concat [:wall max-area-level] (range max-area-level)))
+                     (set (grid/cells grid))))
 
         unscaled-module-placement-posis (map #(% 1) steps) ; step: [area-level position]
         _ (println "unscaled-module-placement-posis\n" unscaled-module-placement-posis)
