@@ -75,7 +75,8 @@
              :wall             "#"
              :airwalkable      "."
              :module-placement "X"
-             :start-module     "@"))))
+             :start-module     "@"
+             :transition       "+"))))
 
 ; print-grid in data.grid2d is y-down
 (defn printgrid
