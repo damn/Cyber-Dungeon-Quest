@@ -132,13 +132,13 @@
 (def ^:private floor-idxvalue 0)
 (def ^:private scale [module-width module-height])
 
-(defn- place-module [unscaled-area-level-grid
+(defn- place-module [wall-in-unscaled-grid?
                      scaled-area-level-grid
                      unscaled-module-placement-position
                      & {:keys [transition?]}]
-  (let [wall? #(= :wall (get unscaled-area-level-grid %))
-        idxvalue (if transition?
-                   (transitions/index-value unscaled-module-placement-position wall?)
+  (let [idxvalue (if transition?
+                   (transitions/index-value unscaled-module-placement-position
+                                            wall-in-unscaled-grid?)
                    floor-idxvalue)
         tiled-map-positions (module-index->tiled-map-positions
                              (if transition?
@@ -149,9 +149,6 @@
                   [x y])
         offset->tiled-map-position (zipmap offsets tiled-map-positions)
         scaled-position (mapv * unscaled-module-placement-position scale)]
-    (println "scale" scale)
-    (println "unscaled-module-placement-position" unscaled-module-placement-position)
-    (println "scaled position " scaled-position)
     (reduce (fn [grid offset]
               (assoc grid
                      (mapv + scaled-position offset)
@@ -173,13 +170,14 @@
                           (* number-modules-x (+ module-width module-offset-tiles)))
                        (= (tiled/height modules-tiled-map)
                           (* number-modules-y (+ module-height module-offset-tiles)))))
+        wall-in-unscaled-grid? #(= :wall (get unscaled-area-level-grid %))
         grid (reduce (fn [grid position]
-                       (place-module unscaled-area-level-grid grid position :transition? false))
+                       (place-module wall-in-unscaled-grid? grid position :transition? false))
                      scaled-area-level-grid
                      unscaled-module-placement-posis)
         ;_ (println "adjacent walls: " (adjacent-wall-positions grid))
         grid (reduce (fn [grid position]
-                       (place-module unscaled-area-level-grid grid position :transition? true))
+                       (place-module wall-in-unscaled-grid? grid position :transition? true))
                      grid
                      (adjacent-wall-positions unscaled-area-level-grid))]
     (grid->tiled-map modules-tiled-map grid)))
