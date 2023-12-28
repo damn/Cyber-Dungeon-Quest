@@ -4,11 +4,11 @@
             [gdl.app :refer [current-context]]
             [gdl.context :refer [draw-rectangle draw-filled-rectangle spritesheet get-sprite
                                  play-sound! gui-mouse-position get-stage ->text-tooltip ->table ->window
-                                 ->texture-region-drawable ->color ->stack ->image-widget]]
+                                 ->texture-region-drawable ->color ->stack ->image-widget ->image-button]]
             [gdl.graphics.color :as color]
             [gdl.scene2d.actor :as actor :refer [set-id! add-listener! set-name!]]
             [context.entity.inventory :as inventory]
-            [cdq.context :refer [show-msg-to-player! send-event! modifier-text set-item! stack-item! remove-item!]]
+            [cdq.context :refer [show-msg-to-player! send-event! modifier-text set-item! stack-item! remove-item! get-property]]
             [cdq.entity :as entity])
   (:import com.badlogic.gdx.scenes.scene2d.Actor
            (com.badlogic.gdx.scenes.scene2d.ui Widget Image TextTooltip Window Table)
@@ -233,11 +233,23 @@
   window)
 
 (defn ->context [context]
-  {:context/inventory (let [^Table window (->window context {:title "Inventory"
-                                                             :id :inventory-window})
-                            ^Table table (->table context {})]
-                        (.pad table (float 2))
-                        (.add window table)
-                        {:window window
+  ; TODO use ::data ?
+  {:context/inventory (let [table (->table context {})]
+                        {:window (->window context {:title "Inventory"
+                                                    :id :inventory-window
+                                                    :visible? false
+                                                    :rows [[{:actor table :pad 2 :colspan 4}]
+                                                           ; stage .act before render
+                                                           ; what if it does change-screen?
+                                                           ; queue change-screen ?
+                                                           ; :book-latch
+                                                           [(->image-button context (:image (get-property context :book-latch))
+                                                                            (fn [_]
+                                                                              (gdl.app/change-screen! :screens/minimap)))
+                                                            (->image-button context  (:image (get-property context :key-bone))
+                                                                            (fn [_]
+                                                                              (gdl.app/change-screen! :screens/options-menu)))
+                                                            nil
+                                                            nil]]})
                          :slot->background (slot->background context)
                          :table table})})

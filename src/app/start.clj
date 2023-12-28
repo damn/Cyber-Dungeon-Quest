@@ -41,8 +41,9 @@
 
 (defn- create-context [context]
   (let [context (merge context
+                       (properties/->context context "resources/properties.edn"))
+        context (merge context
                        (cursor/->context context)
-                       (properties/->context context "resources/properties.edn")
                        (inventory-window/->context context)
                        (action-bar/->context context)
                        {:context/config config})]
