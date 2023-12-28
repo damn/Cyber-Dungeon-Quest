@@ -13,19 +13,14 @@
   (:import java.util.Random))
 
 ; TODO HERE
-; * only spawn in reachable tiles (flood fill)
-; * spawn in transition tiles / set area levels too => use adjacent-wall-positions also for area lvls
 ; * unique max 16 modules, not random take @ #'floor->module-index
-; * check not using start module with hill and spawning on hill ?
-; * weird how to get princess position
+; * at the beginning enemies very close, different area different spawn-rate !
+; beginning slow enemies low hp low dmg etc.
 ; * flood-fill gets 8 neighbour posis -> no NADs on modules !
-; * borders in each module walkable ? whats the assumption here? => or put extra borders around?
-; => assert
+; * assuming bottom left in floor module is walkable
+; whats the assumption here? => or put extra borders around? / assert!
 
 (comment
- ; TODO use same codepath here as in 'generate'
- ; just with logging enabled
- ; => can make sure to debug it
  (let [{:keys [start grid]} (->cave-grid :size 15)
        _ (println "BASE GRID:\n")
        _ (printgrid grid)
@@ -38,8 +33,7 @@
        ;_ (println (grid/posis grid))
        _ (println "\n\n")
        filled (flood-fill grid start (fn [p] (= :ground (get grid p))))
-       _ (printgrid (reduce #(assoc %1 %2 nil) grid filled))
-       ])
+       _ (printgrid (reduce #(assoc %1 %2 nil) grid filled))])
  )
 
 ; TODO generates 51,52. not max 50
@@ -146,7 +140,6 @@
              (assoc-ks grid next-positions nil))
       filled)))
 
-
 ; can adjust:
 ; * split percentage , for higher level areas may scale faster (need to be more careful)
 ; * not 4 neighbors but just 1 tile randomwalk -> possible to have lvl 9 area next to lvl 1 ?
@@ -218,6 +211,11 @@
         (when (seq creatures)
           (set-tile! layer position (creature->tile (rand-nth creatures))))))))
 
+(defn- place-princess! [context tiled-map position]
+  (set-tile! (tiled/get-layer tiled-map "creatures")
+             position
+             (creature->tile (cdq.context/get-property context :lady-a))))
+
 (defn generate
   "The generated tiled-map needs to be disposed."
   [context {:keys [map-size max-area-level spawn-rate]}]
@@ -239,10 +237,9 @@
                                  grid
                                  (filter #(= :ground     (get grid %)) (grid/posis grid))
                                  (filter #(= :transition (get grid %)) (grid/posis grid)))
-
-        start-position (mapv * start scale) ; hoping bottom left is movable
+        start-position (mapv * start scale)
         can-spawn? #(= "all" (movement-property tiled-map %))
-        _ (assert (can-spawn? start-position))
+        _ (assert (can-spawn? start-position)) ; assuming hoping bottom left is movable
         spawn-positions (flood-fill scaled-grid start-position can-spawn?)
         ;_ (println "scaled grid with filled nil: '?' \n")
         ;_ (printgrid (reduce #(assoc %1 %2 nil) scaled-grid spawn-positions))
@@ -258,30 +255,16 @@
                    (= (set (concat [:wall max-area-level] (range max-area-level)))
                       (set (grid/cells area-level-grid)))))
         scaled-area-level-grid (scale-grid area-level-grid scale)
-        ; start-positions = positions in area level 0 (the starting module all positions)
-        ; TODO just take first of steps, also check movement-property all & reachable
-        ; TODO should be mor ein the middle right ... set it maybe special starting module?
-        start-positions (map first
-                             (filter (fn [[position area-level]]
-                                       (and (number? area-level)
-                                            (zero? area-level)))
-                                     scaled-area-level-grid))
-        ; TODO doing this before creatures makes no sense
-        princess-position (rand-nth
-                           (map first
-                                (filter (fn [[position area-level]]
-                                          (and (number? area-level)
-                                               (= max-area-level area-level)
-                                               (#{:no-cell :undefined}
-                                                (tiled/property-value tiled-map :creatures position :id))))
-                                        scaled-area-level-grid)))]
+        get-free-position-in-area-level (fn [area-level]
+                                          (rand-nth
+                                           (filter
+                                            (fn [p]
+                                              (and (= area-level (get scaled-area-level-grid p))
+                                                   (#{:no-cell :undefined}
+                                                    (tiled/property-value tiled-map :creatures p :id))))
+                                            spawn-positions)))]
     (place-creatures! context spawn-rate tiled-map spawn-positions scaled-area-level-grid)
-    (println "princess " princess-position)
-    (if princess-position
-      (set-tile! (tiled/get-layer tiled-map "creatures")
-                 princess-position
-                 (creature->tile (cdq.context/get-property context :lady-a)))
-      (println "NO PRINCESS POSITION FOUND"))
+    (place-princess! context tiled-map (get-free-position-in-area-level max-area-level))
     {:tiled-map tiled-map
-     :start-positions start-positions
+     :start-position (get-free-position-in-area-level 0)
      :area-level-grid scaled-area-level-grid}))

@@ -118,16 +118,14 @@ direction keys: move")
 (defn- render-on-map [{:keys [world-camera] :as c}]
   (let [{:keys [tiled-map
                 area-level-grid
-                start-positions
+                start-position
                 show-movement-properties
                 show-grid-lines]} @(current-data c)
         visible-tiles (camera/visible-tiles world-camera)
         [x y] (->tile (world-mouse-position c))]
     (draw-rectangle c x y 1 1 color/white)
-    (when start-positions
-      (doseq [[x y] visible-tiles
-              :when (start-positions [x y])]
-        (draw-filled-rectangle c x y 1 1 [1 1 1 0.1])))
+    (when start-position
+      (draw-filled-rectangle c (start-position 0) (start-position 1) 1 1 [1 0 1 0.9]))
     ; TODO move down to other doseq and make button
     (when show-movement-properties
       (doseq [[x y] visible-tiles
@@ -147,13 +145,13 @@ direction keys: move")
 (defn- generate [{:keys [world-camera] :as context} properties]
   (let [{:keys [tiled-map
                 area-level-grid
-                start-positions]} (module-gen/generate context properties)
+                start-position]} (module-gen/generate context properties)
         atom-data (current-data context)]
     (dispose (:tiled-map @atom-data))
     (swap! atom-data assoc
            :tiled-map tiled-map
            :area-level-grid area-level-grid
-           :start-positions (set start-positions))
+           :start-position start-position)
     (show-whole-map! world-camera tiled-map)))
 
 (defn ->edit-text-field [ctx [k v]]

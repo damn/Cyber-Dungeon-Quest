@@ -115,25 +115,22 @@
 
 (defn- first-level [context]
   (let [{:keys [tiled-map
-                start-positions]} (mapgen.module-gen/generate
-                                   context
-                                   (get-property context :world/first-level))
-        start-position (tile->middle
-                        (rand-nth (filter #(= "all" (movement-property tiled-map %))
-                                          start-positions)))]
+                start-position]} (mapgen.module-gen/generate
+                                  context
+                                  (get-property context :world/first-level))]
     {:map-key :first-level
      :pretty-name "First Level"
      :tiled-map tiled-map
-     :start-position start-position}))
+     :start-position (tile->middle start-position)}))
 
 (defn- create-grid-from-tiledmap [tiled-map]
   (create-grid (tiled/width  tiled-map)
-                    (tiled/height tiled-map)
-                    (fn [position]
-                      (case (movement-property tiled-map position)
-                        "none" :none
-                        "air"  :air
-                        "all"  :all))))
+               (tiled/height tiled-map)
+               (fn [position]
+                 (case (movement-property tiled-map position)
+                   "none" :none
+                   "air"  :air
+                   "all"  :all))))
 
 (defn- set-cell-blocked-boolean-array [arr cell*]
   (let [[x y] (:position cell*)]
