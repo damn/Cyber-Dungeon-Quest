@@ -1740,9 +1740,9 @@
   :id :flask-red,
   :pretty-name "Red Flask"}
  {:id :world/first-level,
-  :map-size 1,
-  :max-area-level 1,
-  :spawn-rate 0.02}
+  :map-size 3,
+  :max-area-level 3,
+  :spawn-rate 0.03}
  {:image {:file "items/images.png", :sub-image-bounds [144 0 48 48]},
   :id :key-blue,
   :pretty-name "Blue Key"}
