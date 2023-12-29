@@ -84,10 +84,10 @@
   (entity/create! [[k _] entity _ctx]
     (assert (and (:body     @entity)
                  (:position @entity)))
-    (swap! e assoc k (/ speed-in-seconds 1000)))
+    (swap! entity assoc k (/ speed-in-seconds 1000)))
 
   (entity/tick! [_ entity ctx]
-    (when-let [direction (:entity/movement-vector @e)]
+    (when-let [direction (:entity/movement-vector @entity)]
       (assert (or (zero? (v/length direction)) ; TODO what is the point of zero length vectors?
                   (v/normalised? direction)))
       (when-not (zero? (v/length direction))
