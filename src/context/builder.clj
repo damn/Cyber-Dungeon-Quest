@@ -216,7 +216,7 @@
                      ; blocked by stones which I can see over
                      :z-order :effect
                      :entity/movement speed
-                     :movement-vector movement-vector
+                     :entity/movement-vector movement-vector
                      :animation animation
                      :delete-after-duration maxtime
                      :projectile-collision {:piercing piercing

@@ -13,12 +13,12 @@
 
   state/State
   (enter [_ context]
-    (swap! entity assoc :movement-vector movement-vector))
+    (swap! entity assoc :entity/movement-vector movement-vector))
   (exit  [_ context]
-    (swap! entity dissoc :movement-vector movement-vector))
+    (swap! entity dissoc :entity/movement-vector movement-vector))
   (tick! [_ context]
     (if-let [movement-vector (WASD-movement-vector context)]
-      (swap! entity assoc :movement-vector movement-vector)
+      (swap! entity assoc :entity/movement-vector movement-vector)
       (send-event! context entity :no-movement-input)))
   (render-below [_ c entity*])
   (render-above [_ c entity*])

@@ -26,15 +26,16 @@
                      (effect-useful? effect-context (:effect %))))
        first))
 
+; TODO == NpcMoving !!
 (defrecord NpcIdle [entity]
   state/State
   (enter [_ context])
 
   (exit  [_ context]
-    (swap! entity assoc :movement-vector nil))
+    (swap! entity assoc :entity/movement-vector nil))
 
   (tick! [_ context]
-    (swap! entity assoc :movement-vector (potential-field-follow-to-enemy context entity))
+    (swap! entity assoc :entity/movement-vector (potential-field-follow-to-enemy context entity))
     (let [effect-context (effect-context context entity)]
       (when-let [skill (npc-choose-skill (merge context effect-context) @entity)]
         (send-event! context entity :start-action [skill effect-context]))))

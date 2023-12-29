@@ -9,6 +9,19 @@
             [cdq.world.grid :refer [rectangle->cells valid-position?]]
             [cdq.world.cell :as cell :refer [cells->entities]]))
 
+; TODO
+; * max speed @ creation not checked & with movement speed modifiers @ update-position
+
+; das spiel soll bei 20fps noch "schnell" sein,d.h. net langsamer werden (max-delta wirkt -> game wird langsamer)
+; TODO makes no sense why should it be fast then
+; 1000/20 = 50
+(def max-delta 50)
+
+; max speed damit kleinere bodies beim direkten dr�berfliegen nicht �bersprungen werden (an den ecken werden sie trotzdem �bersprungen..)
+; schnellere speeds m�ssten in mehreren steps sich bewegen.
+(def ^:private max-speed (* 1000 (/ body/min-solid-body-size max-delta))) ; TODO is not checked
+; => world-units / second
+
 ; TODO check max-speed for not skipping min-size-bodies
 ; (* speed multiplier delta )
 ; probably fixed timestep 17 ms or something
@@ -23,12 +36,14 @@
         (update-in [:body :left-bottom] apply-delta))))
 
 ; TODO DRY with valid-position?
-(defn- update-position-projectile [{:keys [context/delta-time] :as context} projectile v]
-  (swap! projectile update-position delta-time v)
+(defn- update-position-projectile! [{:keys [context/delta-time] :as ctx}
+                                    projectile
+                                    direction]
+  (swap! projectile update-position delta-time direction)
   (let [{:keys [hit-effect
                 already-hit-bodies
                 piercing]} (:projectile-collision @projectile)
-        grid (world-grid context)
+        grid (world-grid ctx)
         cells (rectangle->cells grid (:body @projectile))
         hit-entity (find-first #(and (not (contains? already-hit-bodies %))
                                      (not= (:faction @projectile) (:faction @%))
@@ -38,13 +53,13 @@
         blocked (cond hit-entity
                       (do
                        (swap! projectile update-in [:projectile-collision :already-hit-bodies] conj hit-entity)
-                       (do-effect! (merge context {:effect/source projectile
-                                                   :effect/target hit-entity})
-                                  hit-effect)
+                       (do-effect! (merge ctx {:effect/source projectile
+                                               :effect/target hit-entity})
+                                   hit-effect)
                        (not piercing))
                       (some #(cell/blocked? @% @projectile) cells)
                       (do
-                       (audiovisual context (:position @projectile) :projectile/hit-wall-effect)
+                       (audiovisual ctx (:position @projectile) :projectile/hit-wall-effect)
                        true))]
     (if blocked
       (do
@@ -52,40 +67,34 @@
        false) ; not moved
       true))) ; moved
 
-(defn- try-move [{:keys [context/delta-time] :as ctx} entity v]
-  (let [entity* (update-position @entity delta-time v)]
+(defn- try-move! [{:keys [context/delta-time] :as ctx} entity direction]
+  (let [entity* (update-position @entity delta-time direction)]
     (when (valid-position? (world-grid ctx) entity*)
       (reset! entity entity*)
       true)))
 
-(defn- update-position-solid [ctx entity {vx 0 vy 1 :as v}]
+(defn- update-position-solid! [ctx entity {vx 0 vy 1 :as direction}]
   (let [xdir (Math/signum (float vx))
         ydir (Math/signum (float vy))]
-    (or (try-move ctx entity v)
-        (try-move ctx entity [xdir 0])
-        (try-move ctx entity [0 ydir]))))
-
-; das spiel soll bei 20fps noch "schnell" sein,d.h. net langsamer werden (max-delta wirkt -> game wird langsamer)
-; TODO makes no sense why should it be fast then
-; 1000/20 = 50
-(def max-delta 50)
-
-; max speed damit kleinere bodies beim direkten dr�berfliegen nicht �bersprungen werden (an den ecken werden sie trotzdem �bersprungen..)
-; schnellere speeds m�ssten in mehreren steps sich bewegen.
-(def ^:private max-speed (* 1000 (/ body/min-solid-body-size max-delta))) ; TODO is not checked
-; => world-units / second
+    (or (try-move! ctx entity direction)
+        (try-move! ctx entity [xdir 0])
+        (try-move! ctx entity [0 ydir]))))
 
 (defcomponent :entity/movement speed-in-seconds
-  (entity/create! [[k _] e _ctx]
-    (assert (and (:body @e) (:position @e)))
+  (entity/create! [[k _] entity _ctx]
+    (assert (and (:body     @entity)
+                 (:position @entity)))
     (swap! e assoc k (/ speed-in-seconds 1000)))
 
-  (entity/tick! [_ e context]
-    (when-let [direction (:movement-vector @e)]
+  (entity/tick! [_ entity ctx]
+    (when-let [direction (:entity/movement-vector @e)]
       (assert (or (zero? (v/length direction)) ; TODO what is the point of zero length vectors?
                   (v/normalised? direction)))
       (when-not (zero? (v/length direction))
-        (when-let [moved? (if (:projectile-collision @e)
-                            (update-position-projectile context e direction)
-                            (update-position-solid      context e direction))]
-          (doseq-entity e entity/moved! context direction))))))
+        (when-let [moved? (if (:projectile-collision @entity)
+                            (update-position-projectile! ctx entity direction)
+                            (update-position-solid!      ctx entity direction))]
+          (doseq-entity entity
+                        entity/moved!
+                        ctx
+                        direction))))))
