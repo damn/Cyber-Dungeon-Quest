@@ -41,8 +41,8 @@
 ; (or teleported?)
 (defn- step [grid faction last-marked-cells]
   (let [marked-cells (transient [])
-        distance       #(get-in % [faction :distance])
-        nearest-entity #(get-in % [faction :entity])
+        distance       #(-> % faction :distance) ; profiled, faster than get-in
+        nearest-entity #(-> % faction :entity)
         marked? faction]
     ; sorting important because of diagonal-cell values, flow from lower dist first for correct distance
     (doseq [cell (sort-by #(distance @%) last-marked-cells)
