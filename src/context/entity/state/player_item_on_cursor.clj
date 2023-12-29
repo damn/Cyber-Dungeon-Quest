@@ -37,7 +37,7 @@
   (player-enter [_ _ctx])
   (pause-game? [_] true)
 
-  (manual-tick! [_ context delta]
+  (manual-tick! [_ context]
     (when (and (button-just-pressed? context buttons/left)
                (world-item? context))
       (send-event! context entity :drop-item)))
@@ -56,7 +56,7 @@
       (put-item-on-ground! ctx (item-place-position ctx entity))
       (swap! entity dissoc :item-on-cursor)))
 
-  (tick! [_ _ctx _delta])
+  (tick! [_ _ctx])
   (render-below [_ ctx entity*]
     (when (world-item? ctx)
       (draw-centered-image ctx (:image item) (item-place-position ctx entity))))

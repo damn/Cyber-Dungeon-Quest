@@ -6,6 +6,6 @@
 (defcomponent :delete-after-duration counter
   (entity/create! [[k duration] entity context]
     (swap! entity assoc k (->counter context duration)))
-  (entity/tick! [_ entity ctx delta]
+  (entity/tick! [_ entity ctx]
     (when (stopped? ctx counter)
       (swap! entity assoc :destroyed? true))))

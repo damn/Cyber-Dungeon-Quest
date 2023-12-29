@@ -16,7 +16,7 @@
                      (line-of-sight? context entity* @%)))))
 
 (defcomponent :shout counter
-  (entity/tick! [_ entity context delta]
+  (entity/tick! [_ entity context]
     (when (stopped? context counter)
       (swap! entity assoc :destroyed? true)
       (doseq [entity (get-friendly-entities-in-line-of-sight context @entity shout-range)]

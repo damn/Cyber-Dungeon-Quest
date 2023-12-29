@@ -8,7 +8,7 @@
     (swap! entity assoc :destroyed? true)
     (audiovisual context (:position @entity) :creature/die-effect))
   (exit [_ context])
-  (tick! [_ context delta])
+  (tick! [_ context])
   (render-below [_ c entity*])
   (render-above [_ c entity*])
   (render-info  [_ c entity*]))

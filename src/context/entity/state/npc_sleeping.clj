@@ -22,7 +22,7 @@
                      :faction (:faction  @entity)
                      :shout (->counter context 200)}))
 
-  (tick! [_ context delta]
+  (tick! [_ context]
     (let [cell (get (world-grid context)
                     (utils.core/->tile (:position @entity)))]
       (when-let [distance (cell/nearest-entity-distance @cell

@@ -6,7 +6,7 @@
                   Calls create/create! on components.
                   Returns the entity.")
   (get-entity [_ id])
-  (tick-entity [_ entity delta] "Calls tick/tick! on components")
+  (tick-entity [_ entity] "Calls tick/tick! on components")
   (render-entities* [_ entities*] "Draws entities* in the correct z-order and in the order of render-systems for each z-order.")
   (remove-destroyed-entities [_] "Calls destroy! on all entities which are marked as ':destroyed?'"))
 
@@ -88,7 +88,7 @@
   (stopped?       [_ counter])
   (reset          [_ counter])
   (finished-ratio [_ counter])
-  (update-elapsed-game-time [_ delta]))
+  (update-elapsed-game-time [_]))
 
 (defprotocol Skills
   (add-skill!             [_ entity skill])

@@ -9,12 +9,12 @@
     (set-cursor! ctx :cursors/denied))
 
   (pause-game? [_] false)
-  (manual-tick! [_ context delta])
+  (manual-tick! [_ context])
 
   state/State
   (enter [_ _ctx])
   (exit  [_ _ctx])
-  (tick! [_ context delta]
+  (tick! [_ context]
     (when (stopped? context counter)
       (send-event! context entity :effect-wears-off)))
 

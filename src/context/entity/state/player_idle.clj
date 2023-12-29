@@ -135,7 +135,7 @@
   (player-enter [_ _ctx])
   (pause-game? [_] true)
 
-  (manual-tick! [_ context _delta]
+  (manual-tick! [_ context]
     (if-let [movement-vector (WASD-movement-vector context)]
       (send-event! context entity :movement-input movement-vector)
       (let [[cursor on-click] (->interaction-state context entity)]
@@ -146,7 +146,7 @@
   state/State
   (enter [_ context])
   (exit  [_ context])
-  (tick! [_ _context _delta])
+  (tick! [_ _context])
   (render-below [_ c entity*])
   (render-above [_ c entity*])
   (render-info  [_ c entity*]))

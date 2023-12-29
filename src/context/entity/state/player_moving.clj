@@ -9,14 +9,14 @@
     (set-cursor! ctx :cursors/walking))
 
   (pause-game? [_] false)
-  (manual-tick! [_ context delta])
+  (manual-tick! [_ context])
 
   state/State
   (enter [_ context]
     (swap! entity assoc :movement-vector movement-vector))
   (exit  [_ context]
     (swap! entity dissoc :movement-vector movement-vector))
-  (tick! [_ context delta]
+  (tick! [_ context]
     (if-let [movement-vector (WASD-movement-vector context)]
       (swap! entity assoc :movement-vector movement-vector)
       (send-event! context entity :no-movement-input)))

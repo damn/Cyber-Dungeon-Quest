@@ -33,7 +33,7 @@
   (exit  [_ context]
     (swap! entity assoc :movement-vector nil))
 
-  (tick! [_ context delta]
+  (tick! [_ context]
     (swap! entity assoc :movement-vector (potential-field-follow-to-enemy context entity))
     (let [effect-context (effect-context context entity)]
       (when-let [skill (npc-choose-skill (merge context effect-context) @entity)]

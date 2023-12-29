@@ -24,7 +24,7 @@
     (set-cursor! ctx :cursors/sandclock))
 
   (pause-game? [_] false)
-  (manual-tick! [_ context delta])
+  (manual-tick! [_ context])
 
   state/State
   (enter [_ context]
@@ -40,7 +40,7 @@
 
   (exit [_ _ctx])
 
-  (tick! [_ context delta]
+  (tick! [_ context]
     (let [effect (:effect skill)
           effect-context (merge context effect-context)]
       (cond

@@ -10,7 +10,7 @@
     (set-cursor! ctx :cursors/black-x))
 
   (pause-game? [_] true)
-  (manual-tick! [_ context delta])
+  (manual-tick! [_ context])
 
   state/State
   (enter [_ ctx]
@@ -21,7 +21,7 @@
                              :on-click (fn [_ctx]
                                          (change-screen! :screens/main-menu))}))
   (exit [_ _ctx])
-  (tick! [_ _ctx delta])
+  (tick! [_ _ctx])
   (render-below [_ c entity*])
   (render-above [_ c entity*])
   (render-info  [_ c entity*]))

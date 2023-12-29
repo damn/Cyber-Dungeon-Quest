@@ -14,7 +14,7 @@
 (defsystem create   [_])
 (defsystem create!  [_ entity context])
 (defsystem destroy! [_ entity context]) ; only used twice position/body
-(defsystem tick!    [_ entity context delta])
+(defsystem tick!    [_ entity context])
 (defsystem moved!   [_ entity context direction-vector]) ; body/position
 
 (defsystem render-below   [_ entity* context])
@@ -76,11 +76,9 @@
       (swap! ids->entities assoc id entity)
       entity))
 
-  (tick-entity [{:keys [context.entity/thrown-error] :as context}
-                entity
-                delta]
+  (tick-entity [{:keys [context.entity/thrown-error] :as context} entity]
     (try
-     (doseq-entity entity tick! context delta)
+     (doseq-entity entity tick! context)
      (catch Throwable t
        (p/pretty-pst t)
        (println "Entity id: " (:id @entity))

@@ -27,9 +27,9 @@
       (/ (- stop-time @elapsed-game-time)
          duration)))
 
-  (update-elapsed-game-time [{:keys [context/elapsed-game-time]}
-                             delta]
-    (swap! elapsed-game-time + delta)))
+  (update-elapsed-game-time [{:keys [context/elapsed-game-time
+                                     context/delta-time]}]
+    (swap! elapsed-game-time + delta-time)))
 
 (defn ->context []
   {:context/elapsed-game-time (atom 0)})

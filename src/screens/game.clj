@@ -43,9 +43,6 @@
          (set-explored! context position))
        color/white))))
 
-(defn- limit-delta [delta]
-  (min delta movement/max-delta))
-
 ; for now a function, see gdl.backends.libgdx.context.input reload bug
 ; otherwise keys in dev mode may be unbound because dependency order not reflected
 ; because bind-roots
@@ -95,25 +92,28 @@
 
 (def ^:private pausing true)
 
+(defn- assoc-delta-time [ctx]
+  (assoc ctx :context/delta-time (min (* (delta-time ctx) 1000)
+                                      movement/max-delta)))
+
 (defn- update-game [{:keys [context/player-entity
                             context/game-paused?
                             context.entity/thrown-error]
                      :as context}
-                    active-entities
-                    delta]
+                    active-entities]
   (let [state (:state-obj (:entity/state @player-entity))
-        _ (state/manual-tick! state context delta)
+        _ (state/manual-tick! state context)
         paused? (reset! game-paused? (or @thrown-error
                                          (and pausing (state/pause-game? state))))
-        delta (limit-delta delta)]
+        context (assoc-delta-time context)]
     ; this do always so can get debug info even when game not running
     (update-mouseover-entity context)
     (when-not paused?
-      (update-elapsed-game-time context delta)
+      (update-elapsed-game-time context)
       ; sowieso keine bewegungen / kein update gemacht ? checkt nur tiles ?
       (update-potential-fields context active-entities)
       (doseq [entity active-entities]
-        (tick-entity context entity delta))))
+        (tick-entity context entity))))
   ; do not pause this as for example pickup item, should be destroyed.
   (remove-destroyed-entities context)
   (end-of-frame-checks context))
@@ -126,10 +126,9 @@
     (set-cursor! ctx :cursors/default))
 
   (render [_ {:keys [context/player-entity] :as context}]
-    (let [active-entities (active-entities (content-grid context) player-entity)
-          delta (* (delta-time context) 1000)] ; TODO make in seconds ? no need to multiply by 1000 ?
+    (let [active-entities (active-entities (content-grid context) player-entity)]
       (render-game context active-entities)
-      (update-game context active-entities delta))))
+      (update-game context active-entities))))
 
 (defn screen [context]
   (init-explored-tile-color context)

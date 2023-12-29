@@ -9,7 +9,7 @@
 (defprotocol State
   (enter [_ context])
   (exit  [_ context])
-  (tick! [_ context delta])
+  (tick! [_ context])
   (render-below [_ context entity*])
   (render-above [_ context entity*])
   (render-info  [_ context entity*]))
@@ -17,7 +17,7 @@
 (defprotocol PlayerState
   (player-enter [_ context])
   (pause-game? [_])
-  (manual-tick! [_ context delta]))
+  (manual-tick! [_ context]))
 
 (defcomponent :entity/state {:keys [initial-state
                                     fsm
@@ -29,8 +29,8 @@
             :state-obj ((initial-state state-obj-constructors) context entity)
             :state-obj-constructors state-obj-constructors}))
 
-  (entity/tick! [_ _entity context delta]
-    (tick! state-obj context delta))
+  (entity/tick! [_ _entity context]
+    (tick! state-obj context))
 
   (entity/render-below [_ entity* c] (render-below state-obj c entity*))
   (entity/render-above [_ entity* c] (render-above state-obj c entity*))

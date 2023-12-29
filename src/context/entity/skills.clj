@@ -7,7 +7,7 @@
                                   actionbar-add-skill actionbar-remove-skill]]
             cdq.entity))
 
-(defn- update-cooldown [context skill delta]
+(defn- update-cooldown [context skill]
   (if (:cooling-down? skill)
     (update skill :cooling-down?
             (fn [counter]
@@ -22,10 +22,10 @@
                                   (map #(get-property context %)
                                        skill-ids))))
 
-  (entity/tick! [[k _] entity context delta]
+  (entity/tick! [[k _] entity context]
     (swap! entity update k
            (fn [skills]
-             (mapvals #(update-cooldown context % delta) skills)))))
+             (mapvals #(update-cooldown context %) skills)))))
 
 (extend-type context.entity.Entity
   cdq.entity/Skills
