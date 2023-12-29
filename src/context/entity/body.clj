@@ -9,7 +9,7 @@
 
 ; setting a min-size for colliding bodies so movement can set a max-speed for not
 ; skipping bodies at too fast movement
-(def min-solid-body-size 0.3)
+(def min-solid-body-size 0.4)
 
 (defn- draw-bounds [c {[x y] :left-bottom :keys [width height is-solid]}]
   (draw-rectangle c x y width height (if is-solid color/white color/gray)))

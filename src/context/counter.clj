@@ -31,10 +31,5 @@
                                      context/delta-time]}]
     (swap! elapsed-game-time + delta-time)))
 
-(comment
- (let [ctx @gdl.app/current-context
-       counter (:counter (:state-obj (:entity/state @(cdq.context/get-entity ctx 2672))))]
-   (cdq.context/finished-ratio ctx counter)))
-
 (defn ->context []
   {:context/elapsed-game-time (atom 0)})

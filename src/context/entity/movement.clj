@@ -9,24 +9,14 @@
             [cdq.world.grid :refer [rectangle->cells valid-position?]]
             [cdq.world.cell :as cell :refer [cells->entities]]))
 
-; TODO
-; * max speed @ creation not checked & with movement speed modifiers @ update-position
+(def fixed-delta-time (float (/ 60)))
 
-; das spiel soll bei 20fps noch "schnell" sein,d.h. net langsamer werden (max-delta wirkt -> game wird langsamer)
-; TODO makes no sense why should it be fast then
-; 1000/20 = 50
-(def max-delta 0.05)
+; set max speed so small entities are not skipped by projectiles
+; could set faster than max-speed if I just do multiple smaller movement steps in one frame
+; (not necessary yet)
+(def ^:private max-speed (/ body/min-solid-body-size fixed-delta-time))
 
-; max speed damit kleinere bodies beim direkten dr�berfliegen nicht �bersprungen werden (an den ecken werden sie trotzdem �bersprungen..)
-; schnellere speeds m�ssten in mehreren steps sich bewegen.
-(def ^:private max-speed (/ body/min-solid-body-size max-delta)) ; TODO is not checked
-; => world-units / second
-
-; TODO check max-speed for not skipping min-size-bodies
-; (* speed multiplier delta )
-; probably fixed timestep 17 ms or something
-; if speed > max speed, then make multiple smaller updates
-; -> any kind of speed possible (fast arrows)
+; for adding SPEED MULTIPLIER MODIFIER -> need to take max-speed into account!
 (defn- update-position [entity* delta direction-vector]
   (let [speed (:entity/movement entity*)
         apply-delta (fn [position]
@@ -82,20 +72,21 @@
         (try-move! ctx entity [xdir 0])
         (try-move! ctx entity [0 ydir]))))
 
-(defcomponent :entity/movement speed-in-seconds
+(defcomponent :entity/movement tiles-per-second
   (entity/create! [[k _] entity _ctx]
     (assert (and (:body     @entity)
                  (:position @entity)))
-    (swap! entity assoc k speed-in-seconds))
+    (assert (<= tiles-per-second max-speed))
+    (swap! entity assoc k tiles-per-second))
 
   (entity/tick! [_ entity ctx]
     (when-let [direction (:entity/movement-vector @entity)]
-      (assert (or (zero? (v/length direction)) ; TODO what is the point of zero length vectors?
+      (assert (or (zero? (v/length direction))
                   (v/normalised? direction)))
       (when-not (zero? (v/length direction))
-        (when-let [moved? (if (:projectile-collision @entity)
-                            (update-position-projectile! ctx entity direction)
-                            (update-position-solid!      ctx entity direction))]
+        (when (if (:projectile-collision @entity)
+                (update-position-projectile! ctx entity direction)
+                (update-position-solid!      ctx entity direction))
           (doseq-entity entity
                         entity/moved!
                         ctx
