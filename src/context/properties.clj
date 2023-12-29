@@ -5,14 +5,11 @@
             [utils.core :refer [safe-get]]
             cdq.context))
 
-; TODO new type => add data here
 (def ^:private prop-type-unique-key
   {:species :hp
    :creature :species
    :item :slot
    :skill :effect
-   ; TODO spells => only part skills with spell? ....
-   ; its more like 'views' not fixed exclusive types
    :weapon (fn [{:keys [slot]}] (and slot (= slot :weapon)))})
 
 (defn property-type [props]
@@ -23,17 +20,17 @@
   cdq.context/PropertyStore
   (get-property [{:keys [context/properties]} id]
     (safe-get properties id))
+
   (all-properties [{:keys [context/properties]} type]
     (filter (prop-type-unique-key type) (vals properties))))
 
 (require 'gdl.backends.libgdx.context.image-drawer-creator)
 
-; could just use sprite-idx directly?
 (defn- deserialize-image [context {:keys [file sub-image-bounds]}]
   {:pre [file sub-image-bounds]}
   (let [[sprite-x sprite-y] (take 2 sub-image-bounds)
         [tilew tileh]       (drop 2 sub-image-bounds)]
-    ; TODO is not the image record itself, check how to do @ image itself.
+    ; TODO get-sprite does not return Image record => do @ image itself.
     (gdl.backends.libgdx.context.image-drawer-creator/map->Image
      (get-sprite context
                  {:file file
@@ -64,12 +61,16 @@
            (update % :animation (fn [anim] (deserialize-animation context anim)))
            %))))
 
+; Other approaches to serialization:
+; * multimethod & postwalk like cdq & use records ... or metadata hmmm , but then have these records there with nil fields etc.
+; * print-dup prints weird stuff like #Float 0.5
+; * print-method fucks up console printing, would have to add methods and remove methods during save/load
+; => simplest way: just define keys which are assets (which are all the same anyway at the moment)
 (defn- serialize [data]
   (->> data
        (#(if (:image     %) (update % :image     serialize-image)     %))
        (#(if (:animation %) (update % :animation serialize-animation) %))))
 
-; TODO serialize / deserialize protocol !??!
 (defn- load-edn [context file]
   (let [properties (-> file slurp edn/read-string)] ; TODO use .internal Gdx/files  => part of context protocol
     (assert (apply distinct? (map :id properties)))
@@ -80,26 +81,6 @@
 (defn ->context [context file]
   {:context/properties (load-edn context file)
    :context/properties-file file})
-
-; usage types:
-; safe-get one property with id
-; get all properties of a type
-; 'get-property' ?
-; or just 'property' ?
-
-; Other approaches :
-; multimethod & postwalk like cdq & use records ... or metadata hmmm , but then have these records there with nil fields etc.
-; print-dup prints weird stuff like #Float 0.5
-; print-method fucks up console printing, would have to add methods and remove methods during save/load
-; => simplest way: just define keys which are assets (which are all the same anyway at the moment)
-
-; TODO
-; 1. simply add for :sound / :animation serialization/deserializeation like image
-; 2. add :property/type required attribute which leads to clearly defined schema/specs which are checked etc..
-; 3. add spec validation on load, save, change, make it work .
-; 4. add other hardcoded stuff like projectiles, etc.
-
-
 
 (defn- save-edn [file data]
   (binding [*print-level* nil]
