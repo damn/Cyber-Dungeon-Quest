@@ -1,7 +1,9 @@
 (ns context.builder
-  (:require [reduce-fsm :as fsm]
+  (:require [x.x :refer [defcomponent]]
+            [reduce-fsm :as fsm]
             [gdl.context :refer [create-image play-sound!]]
             [gdl.graphics.animation :as animation]
+            [gdl.math.vector :as v]
             [cdq.context :refer [create-entity! get-property]]
             [context.entity.body :refer (assoc-left-bottom)]
             (context.entity.state
@@ -157,6 +159,10 @@
                                           :initial-state initial-state)})
            extra-params)))
 
+(defcomponent :entity/plop _
+  (context.entity/destroy! [_ entity ctx]
+    (cdq.context/audiovisual ctx (:position @entity) :projectile/hit-wall-effect)))
+
 (extend-type gdl.context.Context
   cdq.context/Builder
   (creature-entity [context creature-id position creature-params]
@@ -208,7 +214,7 @@
                      :body {:width size
                             :height size
                             :is-solid false
-                            :rotation-angle 0
+                            :rotation-angle (v/get-angle-from-vector movement-vector)
                             :rotate-in-movement-direction? true}
                      ; TODO forgot to add :is-flying true !!!
                      ; blocked by stones which I can see over
@@ -217,6 +223,7 @@
                      :entity/movement-vector movement-vector
                      :animation animation
                      :delete-after-duration maxtime
+                     :entity/plop true
                      :projectile-collision {:piercing piercing
                                             :hit-effect hit-effect
                                             :already-hit-bodies #{}}})))

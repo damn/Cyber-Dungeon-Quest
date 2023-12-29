@@ -59,12 +59,17 @@
    _effect]
   (and source target direction)) ; faction @ source also ?
 
+(defn- start-point [entity* direction]
+  (v/add (:position entity*)
+         (v/scale direction
+                  (+ (:radius (:body entity*)) size 0.1))))
+
 (defmethod effect/do! :effect/projectile
   [{:keys [effect/source
            effect/direction] :as context}
    _effect]
   (projectile-entity context
-                     {:position (:position @source)
+                     {:position (start-point @source direction)
                       :faction  (:faction  @source)
                       :size size
                       :animation (black-projectile context)

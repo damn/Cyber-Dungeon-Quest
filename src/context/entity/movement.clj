@@ -4,7 +4,7 @@
             [gdl.math.vector :as v]
             [utils.core :refer [find-first]]
             [context.entity :as entity]
-            [cdq.context :refer [do-effect! audiovisual world-grid]]
+            [cdq.context :refer [do-effect! world-grid]]
             [context.entity.body :as body]
             [cdq.world.grid :refer [rectangle->cells valid-position?]]
             [cdq.world.cell :as cell :refer [cells->entities]]))
@@ -35,28 +35,23 @@
                 already-hit-bodies
                 piercing]} (:projectile-collision @projectile)
         grid (world-grid ctx)
-        cells (rectangle->cells grid (:body @projectile))
-        hit-entity (find-first #(and (not (contains? already-hit-bodies %))
+        cells* (map deref (rectangle->cells grid (:body @projectile)))
+        hit-entity (find-first #(and (not (contains? already-hit-bodies %)) ; not filtering out own id
                                      (not= (:faction @projectile) (:faction @%))
                                      (:is-solid (:body @%))
                                      (geom/collides? (:body @projectile) (:body @%)))
-                               (cells->entities (map deref cells)))
-        blocked (cond hit-entity
-                      (do
-                       (swap! projectile update-in [:projectile-collision :already-hit-bodies] conj hit-entity)
-                       (do-effect! (merge ctx {:effect/source projectile
-                                               :effect/target hit-entity})
-                                   hit-effect)
-                       (not piercing))
-                      (some #(cell/blocked? @% @projectile) cells)
-                      (do
-                       ; TODO make this @ projectile destroy, also after maxtime makes 'plop'
-                       (audiovisual ctx (:position @projectile) :projectile/hit-wall-effect)
-                       true))]
-    (if blocked
-      (do
-       (swap! projectile assoc :destroyed? true)
-       false) ; not moved
+                               (cells->entities cells*))
+        blocked? (cond hit-entity
+                       (do
+                        (swap! projectile update-in [:projectile-collision :already-hit-bodies] conj hit-entity)
+                        (do-effect! (merge ctx {:effect/source projectile
+                                                :effect/target hit-entity})
+                                    hit-effect)
+                        (not piercing))
+                       (some #(cell/blocked? % @projectile) cells*)
+                       true)]
+    (if blocked?
+      (do (swap! projectile assoc :destroyed? true) false) ; not moved
       true))) ; moved
 
 (defn- try-move! [{:keys [context/delta-time] :as ctx} entity direction]
