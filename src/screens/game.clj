@@ -93,7 +93,8 @@
 (def ^:private pausing true)
 
 (defn- assoc-delta-time [ctx]
-  (assoc ctx :context/delta-time movement/fixed-delta-time))
+  (assoc ctx :context/delta-time (min (delta-time ctx)
+                                      movement/max-delta-time)))
 
 (defn- update-game [{:keys [context/player-entity
                             context/game-paused?

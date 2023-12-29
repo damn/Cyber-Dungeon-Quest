@@ -9,14 +9,14 @@
             [cdq.world.grid :refer [rectangle->cells valid-position?]]
             [cdq.world.cell :as cell :refer [cells->entities]]))
 
-(def fixed-delta-time (float (/ 60)))
+(def frames-per-second 60)
+(def max-delta-time 0.04)
 
 ; set max speed so small entities are not skipped by projectiles
 ; could set faster than max-speed if I just do multiple smaller movement steps in one frame
-; (not necessary yet)
-(def ^:private max-speed (/ body/min-solid-body-size fixed-delta-time))
+(def ^:private max-speed (/ body/min-solid-body-size max-delta-time))
 
-; for adding SPEED MULTIPLIER MODIFIER -> need to take max-speed into account!
+; for adding speed multiplier modifier -> need to take max-speed into account!
 (defn- update-position [entity* delta direction-vector]
   (let [speed (:entity/movement entity*)
         apply-delta (fn [position]

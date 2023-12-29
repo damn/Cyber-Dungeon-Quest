@@ -10,6 +10,7 @@
                      skill-info)
             context.effect.all
             context.entity.all
+            [context.entity.movement :refer [frames-per-second]]
             context.modifier.all
             (context.ui [action-bar :as action-bar]
                         [inventory-window :as inventory-window]
@@ -70,7 +71,7 @@
          :width  1440
          :height 900
          :full-screen? (safe-get config :full-screen?)
-         :fps 60}
+         :fps frames-per-second}
    :create-context create-context
    :first-screen :screens/main-menu
    :world-unit-scale (/ tile-size)})
