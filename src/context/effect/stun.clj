@@ -5,7 +5,7 @@
 
 (defmethod effect/text :effect/stun
   [_context [_ duration]]
-  (str "Stuns for " (readable-number (/ duration 1000)) " seconds"))
+  (str "Stuns for " (readable-number duration) " seconds"))
 
 ; TODO target needs to have a state component so we can send events) (actually no then just nothing happens)
 (defmethod effect/valid-params? :effect/stun

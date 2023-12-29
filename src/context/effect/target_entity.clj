@@ -67,7 +67,7 @@
      (line-entity context
                   {:start (start-point @source @target)
                    :end (:position @target)
-                   :duration 50
+                   :duration 0.05
                    :color [1 0 0 0.75]
                    :thick? true})
      ; TODO => make new context with end-point ... and check on point entity

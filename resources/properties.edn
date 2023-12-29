@@ -1,26 +1,26 @@
 ({:id :spells/projectile,
   :spell? true,
-  :action-time 400,
+  :action-time 0.4,
   :cooldown 0,
   :cost 4,
   :effect [[:effect/projectile true]],
   :image {:file "skills/images.png", :sub-image-bounds [96 32 32 32]}}
  {:id :spells/nova,
   :spell? true,
-  :action-time 300,
+  :action-time 0.3,
   :cooldown 0,
   :effect [[:effect/nova true]],
   :image {:file "skills/images.png", :sub-image-bounds [0 64 32 32]}}
  {:id :spells/spawn,
   :spell? true,
-  :action-time 400,
+  :action-time 0.4,
   :cooldown 0,
   :cost 0,
   :effect [[:effect/spawn :bat]],
   :image {:file "skills/images.png", :sub-image-bounds [160 64 32 32]}}
  {:id :spells/meditation,
   :spell? true,
-  :action-time 7000,
+  :action-time 7,
   :cooldown 0,
   :cost 1,
   :effect [[:effect/restore-hp-mana true]],
@@ -841,7 +841,7 @@
  {:slot :weapon,
   :two-handed? true,
   :pretty-name "Staff",
-  :action-time 500,
+  :action-time 0.5,
   :id :staff,
   :image {:file "items/images.png", :sub-image-bounds [528 144 48 48]},
   :effect
@@ -859,7 +859,7 @@
  {:slot :weapon,
   :two-handed? true,
   :pretty-name "Axe",
-  :action-time 500,
+  :action-time 0.5,
   :id :axe,
   :image {:file "items/images.png", :sub-image-bounds [336 96 48 48]},
   :effect
@@ -881,7 +881,7 @@
  {:slot :weapon,
   :two-handed? false,
   :pretty-name "Dagger",
-  :action-time 250,
+  :action-time 0.25,
   :id :dagger,
   :image {:file "items/images.png", :sub-image-bounds [48 96 48 48]},
   :effect
@@ -1179,7 +1179,7 @@
  {:slot :weapon,
   :two-handed? false,
   :pretty-name "Sword",
-  :action-time 500,
+  :action-time 0.5,
   :id :sword,
   :image {:file "items/images.png", :sub-image-bounds [0 96 48 48]},
   :effect
@@ -1237,7 +1237,7 @@
  {:slot :weapon,
   :two-handed? true,
   :pretty-name "Ankh Staff",
-  :action-time 500,
+  :action-time 0.5,
   :id :staff-ankh,
   :image {:file "items/images.png", :sub-image-bounds [624 144 48 48]},
   :effect
@@ -1260,7 +1260,7 @@
  {:slot :weapon,
   :two-handed? false,
   :pretty-name "Vorpal Sword Magic",
-  :action-time 500,
+  :action-time 0.5,
   :id :magic-sword-vorpal,
   :image {:file "items/images.png", :sub-image-bounds [0 192 48 48]},
   :effect
@@ -1291,7 +1291,7 @@
  {:slot :weapon,
   :two-handed? true,
   :pretty-name "Quarterstaff",
-  :action-time 450,
+  :action-time 0.45,
   :id :quarterstaff,
   :image {:file "items/images.png", :sub-image-bounds [192 144 48 48]},
   :effect
@@ -1325,7 +1325,7 @@
  {:slot :weapon,
   :two-handed? false,
   :pretty-name "Falchion",
-  :action-time 375,
+  :action-time 0.375,
   :id :falchion,
   :image {:file "items/images.png", :sub-image-bounds [192 96 48 48]},
   :effect
@@ -1383,7 +1383,7 @@
  {:slot :weapon,
   :two-handed? false,
   :pretty-name "Sling",
-  :action-time 1000,
+  :action-time 1,
   :id :sling,
   :image {:file "items/images.png", :sub-image-bounds [384 144 48 48]},
   :effect
@@ -1401,7 +1401,7 @@
  {:slot :weapon,
   :two-handed? false,
   :pretty-name "Hammer",
-  :action-time 650,
+  :action-time 0.65,
   :id :hammer,
   :image {:file "items/images.png", :sub-image-bounds [528 96 48 48]},
   :effect
@@ -1483,7 +1483,7 @@
  {:slot :weapon,
   :two-handed? true,
   :pretty-name "Longbow",
-  :action-time 1500,
+  :action-time 1.5,
   :id :longbow,
   :image {:file "items/images.png", :sub-image-bounds [240 144 48 48]},
   :effect
@@ -1525,7 +1525,7 @@
  {:slot :weapon,
   :two-handed? false,
   :pretty-name "Club",
-  :action-time 700,
+  :action-time 0.7,
   :id :club,
   :image {:file "items/images.png", :sub-image-bounds [624 96 48 48]},
   :effect
@@ -1539,7 +1539,7 @@
  {:slot :weapon,
   :two-handed? true,
   :pretty-name "Branch Staff",
-  :action-time 500,
+  :action-time 0.5,
   :id :staff-branch,
   :image {:file "items/images.png", :sub-image-bounds [480 144 48 48]},
   :effect
@@ -1549,7 +1549,7 @@
  {:slot :weapon,
   :two-handed? true,
   :pretty-name "Jeweled Staff",
-  :action-time 500,
+  :action-time 0.5,
   :id :staff-jeweled,
   :image {:file "items/images.png", :sub-image-bounds [576 144 48 48]},
   :effect
@@ -1559,7 +1559,7 @@
  {:slot :weapon,
   :two-handed? false,
   :pretty-name "Trident",
-  :action-time 550,
+  :action-time 0.55,
   :id :trident,
   :image {:file "items/images.png", :sub-image-bounds [96 144 48 48]},
   :effect
@@ -1625,7 +1625,7 @@
  {:slot :weapon,
   :two-handed? true,
   :pretty-name "Greatspear",
-  :action-time 650,
+  :action-time 0.65,
   :id :greatspear,
   :image {:file "items/images.png", :sub-image-bounds [48 144 48 48]},
   :effect
@@ -1639,7 +1639,7 @@
  {:slot :weapon,
   :two-handed? false,
   :pretty-name "Broadsword",
-  :action-time 600,
+  :action-time 0.6,
   :id :broadsword,
   :image {:file "items/images.png", :sub-image-bounds [240 96 48 48]},
   :effect
@@ -1794,7 +1794,7 @@
    ({:file "fx/uf_FX_impact.png", :sub-image-bounds [0 48 48 48]}
     {:file "fx/uf_FX_impact.png", :sub-image-bounds [48 48 48 48]}
     {:file "fx/uf_FX_impact.png", :sub-image-bounds [96 48 48 48]}),
-   :frame-duration 50,
+   :frame-duration 0.05,
    :looping? nil},
   :id :effects.target-entity/hit-ground-effect}
  {:image {:file "items/images.png", :sub-image-bounds [0 48 48 48]},
@@ -1818,7 +1818,7 @@
    ({:file "fx/uf_FX_impact.png", :sub-image-bounds [144 0 48 48]}
     {:file "fx/uf_FX_impact.png", :sub-image-bounds [192 0 48 48]}
     {:file "fx/uf_FX_impact.png", :sub-image-bounds [240 0 48 48]}),
-   :frame-duration 50,
+   :frame-duration 0.05,
    :looping? nil},
   :id :effects.damage.physical/hit-effect}
  {:image {:file "items/images.png", :sub-image-bounds [720 336 48 48]},
@@ -1848,7 +1848,7 @@
     {:file "fx/uf_FX.png", :sub-image-bounds [72 168 24 24]}
     {:file "fx/uf_FX.png", :sub-image-bounds [96 168 24 24]}
     {:file "fx/uf_FX.png", :sub-image-bounds [120 168 24 24]}),
-   :frame-duration 25,
+   :frame-duration 0.025,
    :looping? nil},
   :id :projectile/hit-wall-effect}
  {:image {:file "items/images.png", :sub-image-bounds [528 0 48 48]},
@@ -1869,7 +1869,7 @@
     {:file "fx/uf_FX.png", :sub-image-bounds [168 144 24 24]}
     {:file "fx/uf_FX.png", :sub-image-bounds [192 144 24 24]}
     {:file "fx/uf_FX.png", :sub-image-bounds [216 144 24 24]}),
-   :frame-duration 50,
+   :frame-duration 0.05,
    :looping? nil},
   :id :creature/die-effect}
  {:image {:file "items/images.png", :sub-image-bounds [912 48 48 48]},
@@ -1944,6 +1944,6 @@
    ({:file "fx/uf_FX_impact.png", :sub-image-bounds [288 48 48 48]}
     {:file "fx/uf_FX_impact.png", :sub-image-bounds [336 48 48 48]}
     {:file "fx/uf_FX_impact.png", :sub-image-bounds [384 48 48 48]}),
-   :frame-duration 50,
+   :frame-duration 0.05,
    :looping? nil},
   :id :effects.damage.magic/hit-effect})

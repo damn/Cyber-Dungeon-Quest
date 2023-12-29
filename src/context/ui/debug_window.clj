@@ -18,8 +18,7 @@
          (when @thrown-error
            (str "\nERROR!\n " @thrown-error "\n\n"))
          "game-paused? " @game-paused? "\n"
-         "elapsed-game-time " (utils.core/readable-number
-                               (/ @elapsed-game-time 1000)) " seconds "
+         "elapsed-game-time " (utils.core/readable-number @elapsed-game-time) " seconds "
          ;"\nMouseover-Actor:\n"
          #_(when-let [actor (mouse-on-stage-actor? c)]
            (str "TRUE - name:" (.getName actor)

@@ -1,6 +1,6 @@
 (ns context.counter
   (:require gdl.context
-            cdq.context))
+            [cdq.context :refer [stopped?]]))
 
 (defrecord ImmutableCounter [duration stop-time])
 
@@ -22,14 +22,19 @@
   (finished-ratio [{:keys [context/elapsed-game-time] :as context}
                    {:keys [duration stop-time] :as counter}]
     {:post [(<= 0 % 1)]}
-    (if (cdq.context/stopped? context counter)
-      1
-      (/ (- stop-time @elapsed-game-time)
-         duration)))
+    (if (stopped? context counter)
+      0
+      ; min 1 because floating point math inaccuracies
+      (min 1 (/ (- stop-time @elapsed-game-time) duration))))
 
   (update-elapsed-game-time [{:keys [context/elapsed-game-time
                                      context/delta-time]}]
     (swap! elapsed-game-time + delta-time)))
+
+(comment
+ (let [ctx @gdl.app/current-context
+       counter (:counter (:state-obj (:entity/state @(cdq.context/get-entity ctx 2672))))]
+   (cdq.context/finished-ratio ctx counter)))
 
 (defn ->context []
   {:context/elapsed-game-time (atom 0)})

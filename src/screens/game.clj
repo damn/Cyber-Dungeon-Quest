@@ -93,8 +93,7 @@
 (def ^:private pausing true)
 
 (defn- assoc-delta-time [ctx]
-  (assoc ctx :context/delta-time (min (* (delta-time ctx) 1000)
-                                      movement/max-delta)))
+  (assoc ctx :context/delta-time (min (delta-time ctx) movement/max-delta)))
 
 (defn- update-game [{:keys [context/player-entity
                             context/game-paused?
@@ -113,10 +112,10 @@
       ; sowieso keine bewegungen / kein update gemacht ? checkt nur tiles ?
       (update-potential-fields context active-entities)
       (doseq [entity active-entities]
-        (tick-entity context entity))))
-  ; do not pause this as for example pickup item, should be destroyed.
-  (remove-destroyed-entities context)
-  (end-of-frame-checks context))
+        (tick-entity context entity)))
+    ; do not pause this as for example pickup item, should be destroyed.
+    (remove-destroyed-entities context)
+    (end-of-frame-checks context)))
 
 (defrecord SubScreen []
   Screen

@@ -13,7 +13,7 @@
         center [x (+ y radius)]]
     (draw-filled-circle c center radius [1 1 1 0.125])
     (draw-sector c center radius
-                 0 ; start-angle
+                 90 ; start-angle
                  (* action-counter-ratio 360) ; degree
                  [1 1 1 0.5])
     (draw-image c icon [(- x radius) y])))
@@ -66,7 +66,7 @@
                                       cast-speed
                                       attack-speed)
                                     1))]
-    (max 0 (int modified-action-time))))
+    (max 0 modified-action-time)))
 
 (defn ->CreateWithCounter [context entity [skill effect-context]]
   ; assert keys effect-context only with 'effect/'

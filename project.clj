@@ -2,7 +2,7 @@
   :repositories [["jitpack" "https://jitpack.io"]]
   :dependencies [[org.clojure/clojure "1.11.1"]
                  [com.github.damn/grid2d "1.0"]
-                 [com.github.damn/gdl "3e580d8"]
+                 [com.github.damn/gdl "bb2b454"]
                  [com.github.damn/x.x "195784a"]
                  [reduce-fsm "0.1.4"]
                  ;[lein-hiera "2.0.0"]

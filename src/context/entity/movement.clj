@@ -15,11 +15,11 @@
 ; das spiel soll bei 20fps noch "schnell" sein,d.h. net langsamer werden (max-delta wirkt -> game wird langsamer)
 ; TODO makes no sense why should it be fast then
 ; 1000/20 = 50
-(def max-delta 50)
+(def max-delta 0.05)
 
 ; max speed damit kleinere bodies beim direkten dr�berfliegen nicht �bersprungen werden (an den ecken werden sie trotzdem �bersprungen..)
 ; schnellere speeds m�ssten in mehreren steps sich bewegen.
-(def ^:private max-speed (* 1000 (/ body/min-solid-body-size max-delta))) ; TODO is not checked
+(def ^:private max-speed (/ body/min-solid-body-size max-delta)) ; TODO is not checked
 ; => world-units / second
 
 ; TODO check max-speed for not skipping min-size-bodies
@@ -39,6 +39,7 @@
 (defn- update-position-projectile! [{:keys [context/delta-time] :as ctx}
                                     projectile
                                     direction]
+  ; TODO only 1 swap
   (swap! projectile update-position delta-time direction)
   (let [{:keys [hit-effect
                 already-hit-bodies
@@ -59,6 +60,7 @@
                        (not piercing))
                       (some #(cell/blocked? @% @projectile) cells)
                       (do
+                       ; TODO make this @ projectile destroy, also after maxtime makes 'plop'
                        (audiovisual ctx (:position @projectile) :projectile/hit-wall-effect)
                        true))]
     (if blocked
@@ -84,7 +86,7 @@
   (entity/create! [[k _] entity _ctx]
     (assert (and (:body     @entity)
                  (:position @entity)))
-    (swap! entity assoc k (/ speed-in-seconds 1000)))
+    (swap! entity assoc k speed-in-seconds))
 
   (entity/tick! [_ entity ctx]
     (when-let [direction (:entity/movement-vector @entity)]

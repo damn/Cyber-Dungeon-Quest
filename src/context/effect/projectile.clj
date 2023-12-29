@@ -12,7 +12,7 @@
 (def ^:private size 0.5)
 (def ^:private maxrange 10)
 (def ^:private speed 10)
-(def ^:private maxtime (/ maxrange (/ speed 1000)))
+(def ^:private maxtime (/ maxrange speed))
 
 ; TODO valid params direction has to be  non-nil (entities not los player ) ?
 (defmethod effect/useful? :effect/projectile
@@ -38,15 +38,15 @@
 
 (def ^:private hit-effect
   [[:effect/damage [:magic [4 8]]]
-   [:effect/stun 500]
-   ;[:stun {:duration 200} {:chance 100}]
+   [:effect/stun 0.5]
+   ;[:stun {:duration 0.2} {:chance 100}]
    ])
 
 (defn- black-projectile [context]
   (animation/create [(get-sprite context
                                  (spritesheet context "fx/uf_FX.png" 24 24)
                                  [1 12])]
-                    :frame-duration 500))
+                    :frame-duration 0.5))
 
 (defmethod effect/text :effect/projectile
   [context _effect]

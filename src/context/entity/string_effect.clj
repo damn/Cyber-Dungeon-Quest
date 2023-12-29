@@ -27,4 +27,4 @@
                                                (update :counter (fn [cnt]
                                                                   (reset context cnt)))))
       (swap! entity assoc :string-effect {:text text
-                                          :counter (->counter context 400)}))))
+                                          :counter (->counter context 0.4)}))))
