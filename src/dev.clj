@@ -2,6 +2,15 @@
   (:require [clojure.pprint :refer :all]
             [clojure.string :as str]))
 
+(comment
+ (let [ctx @gdl.app/current-context
+       entity (cdq.context/get-entity ctx 2672)
+       ]
+
+   )
+
+ )
+
 (defn- get-namespaces []
    (filter #(#{"data" "game" "mapgen" "property-editor" "utils"}
              (first (str/split (name (ns-name %)) #"\.")))
