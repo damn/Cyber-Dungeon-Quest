@@ -25,11 +25,12 @@
                 "id: " (gdl.scene2d.actor/id actor)
                 )))))
 
-(defn create [context]
+(defn create [{:keys [gui-viewport-height] :as context}]
   (let [label (->label context "")
         window (->window context {:title "Debug"
                                   :id :debug-window
                                   :visible? false
+                                  :position [0 gui-viewport-height]
                                   :rows [[label]]})]
     (add-actor! window (->actor context
                                 {:act

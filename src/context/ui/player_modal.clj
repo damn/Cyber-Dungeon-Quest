@@ -5,23 +5,25 @@
             cdq.context))
 
 ; TODO no window movable type cursor appears here like in player idle
-; TODO id not unique ... check not adding more than one / check on add-actor! ?
 ; inventory still working, other stuff not, because custom listener to keypresses ? use actor listeners?
-
-; TODO put center middle top (layouting with/without table?)
+; => input events handling
+; hmmm interesting ... can disable @ item in cursor  / moving / etc.
 
 (extend-type gdl.context.Context
   cdq.context/PlayerModal
-  (show-player-modal! [ctx {:keys [title text button-text on-click]}]
+  (show-player-modal! [{:keys [gui-viewport-width gui-viewport-height] :as ctx}
+                       {:keys [title text button-text on-click]}]
+    (assert (not (::modal (get-stage ctx))))
     (add-actor! (get-stage ctx)
                 (->window ctx {:title title
                                :rows [[(->label ctx text)]
                                       [(->text-button ctx
                                                       button-text
                                                       (fn [ctx]
-                                                        (remove! (:player-modal (get-stage ctx)))
+                                                        (remove! (::modal (get-stage ctx)))
                                                         (on-click ctx)))]]
-                               :id :player-modal
+                               :id ::modal
                                :modal? true
-                               :center? true
+                               :center-position [(/ gui-viewport-width 2)
+                                                 (* gui-viewport-height (/ 3 4))]
                                :pack? true}))))

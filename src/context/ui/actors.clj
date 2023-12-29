@@ -1,6 +1,6 @@
 (ns context.ui.actors
-  (:require [gdl.context :refer [draw-text ->actor ->table ->group]]
-            [gdl.scene2d.actor :as actor :refer [set-position! get-x get-y width height set-width! set-height!]]
+  (:require [gdl.context :refer [->actor ->table ->group]]
+            [gdl.scene2d.actor :as actor]
             [gdl.scene2d.group :refer [add-actor!]]
             [context.ui.hp-mana-bars :refer [->hp-mana-bars]]
             [context.ui.debug-window :as debug-window]
@@ -18,35 +18,14 @@
   (->table context {:rows [[{:actor (->action-bar context) :expand? true :bottom? true}]]
                     :fill-parent? true}))
 
-(defn- ->windows [{:keys [gui-viewport-width
-                          gui-viewport-height
-                          context/config]
-                   :as context}]
-  (let [debug-window (debug-window/create context)
-        _ (set-position! debug-window 0 gui-viewport-height)
-        help-window (help-window/create context)
-        _ (set-position! help-window
-                        (- (/ gui-viewport-width 2)
-                           (/ (width help-window) 2))
-                        gui-viewport-height)
-        entity-info-window (entity-info-window/create context)
-        inventory-window (inventory/->inventory-window context)
-        group (->group context)
-        skill-window (skill-window/create context)]
+(defn- ->windows [context]
+  (let [group (->group context)]
     (actor/set-id! group :windows)
-    (set-position! inventory-window
-                  gui-viewport-width
-                  (- (/ gui-viewport-height 2)
-                     (/ (height help-window) 2)))
-    (set-position! entity-info-window (get-x inventory-window) 0)
-    (set-width! entity-info-window (width inventory-window))
-    (set-height! entity-info-window (get-y inventory-window))
-
-    (add-actor! group debug-window)
-    (add-actor! group help-window)
-    (add-actor! group entity-info-window)
-    (add-actor! group inventory-window)
-    (add-actor! group skill-window)
+    (add-actor! group (debug-window/create context))
+    (add-actor! group (help-window/create context))
+    (add-actor! group (entity-info-window/create context))
+    (add-actor! group (inventory/->inventory-window context))
+    (add-actor! group (skill-window/create context))
     group))
 
 (defn ->ui-actors [ctx]

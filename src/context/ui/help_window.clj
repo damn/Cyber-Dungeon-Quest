@@ -12,10 +12,13 @@
   * ESC - exit/close menu
   * P   - Pause the game")
 
-(defn create [context]
+(defn create [{:keys [gui-viewport-width
+                      gui-viewport-height] :as context}]
   (->window context
             {:id :help-window
              :title "Controls"
              :visible? false
+             :center-position [(/ gui-viewport-width 2)
+                               gui-viewport-height]
              :rows [[(->label context controls-text)]]
              :pack? true}))

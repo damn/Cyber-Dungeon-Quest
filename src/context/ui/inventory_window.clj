@@ -232,12 +232,15 @@
 (defn ->inventory-window [{{:keys [window] :as inventory} :context/inventory}]
   window)
 
-(defn ->context [context]
+(defn ->context [{:keys [gui-viewport-width
+                         gui-viewport-height] :as context}]
   ; TODO use ::data ?
   {:context/inventory (let [table (->table context {})]
                         {:window (->window context {:title "Inventory"
                                                     :id :inventory-window
                                                     :visible? false
+                                                    :position [gui-viewport-width
+                                                               gui-viewport-height]
                                                     :rows [[{:actor table :pad 2 :colspan 2}]
                                                            [(->image-button context (:image (get-property context :book-latch))
                                                                             (fn [_]

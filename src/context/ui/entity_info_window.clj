@@ -12,11 +12,12 @@
       {:id (:id entity*)
        :state (entity/state entity*)}))))
 
-(defn create [context]
+(defn create [{:keys [gui-viewport-width] :as context}]
   (let [label (->label context "")
         window (->window context {:title "Info"
                                   :id :entity-info-window
                                   :visible? false
+                                  :position [gui-viewport-width 0]
                                   :rows [[{:actor label :expand? true}]]})]
     ; TODO do not change window size ... -> no need to invalidate layout, set the whole stage up again
     ; => fix size somehow.
