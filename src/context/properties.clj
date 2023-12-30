@@ -49,7 +49,8 @@
 ; open tmx file, tiled editor
 ; components editor creatures, etc. & builder
 ; * also item needs to be in certain slot, each slot only once, etc. also max-items ...?
-; TODO aggro range wakup time, etc what else is hidden?!
+; TODO aggro range wakup time, etc what else is hidden?!, unique death animation/sound/attacksound each weapon/spell etc.
+; alert sound, etc., mana, hp, speed.... default block modifiers
 
 (def ^:private prop-type-unique-key
   {:species :hp

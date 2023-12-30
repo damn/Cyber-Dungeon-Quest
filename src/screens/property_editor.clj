@@ -16,6 +16,9 @@
 ; LET ME EDIT for example spawn which creature
 ; => SCHEMA
 
+; => let me ADD effect components like sound & SELECT sound ! file chooser
+; do it properly right do it with your editor not text ....
+
 ; TODO refresh overview table after property-editor save something (callback ?)
 ; remove species, directly hp/speed ( no multiplier )
 
@@ -79,7 +82,8 @@
    :skills :one-to-many
    :items :one-to-many
    :effect :nested-map
-   :effect/sound :sound})
+   :effect/sound :sound
+   :modifier :nested-map})
 
 ;;
 
@@ -117,15 +121,45 @@
 
 ;;
 
+; TODO add/remove effect components
+
 (declare ->attribute-widgets
          attribute-widgets->all-data)
 
-(defmethod ->attribute-widget :nested-map [ctx [_k props]]
-  (->table ctx {:cell-defaults {:pad 5}
-                :rows (->attribute-widgets ctx props)}))
+(declare redo-nested-map-rows!)
 
-(defmethod attribute-widget->data :nested-map [widget [_k props]]
-  (attribute-widgets->all-data widget props))
+(defn- ->nested-map-rows [k ctx table widget-rows]
+  (conj (for [row widget-rows]
+          (conj row (->text-button ctx "Remove" #(redo-nested-map-rows! k % table (disj widget-rows row)))))
+        [{:actor (->text-button ctx "Add"
+                                (fn [ctx]
+                                  (let [window (->window ctx {:title "Choose"
+                                                              :modal? true
+                                                              :close-button? true
+                                                              :center? true
+                                                              :close-on-escape? true})
+                                        clicked-id-fn (fn [ctx id]
+                                                        (remove! window)
+                                                        #_(redo-nested-map-rows! k % table (conj widget-rows row)))]
+                                    (add-rows window (for [k (case k
+                                                               :modifier (keys context.modifier/modifier-definitions)
+                                                               :effect (keys (methods context.effect/do!)))]
+                                                       [(->label ctx (name k))]))
+                                    (pack! window)
+                                    (add-to-stage! ctx window))))
+          :colspan 3}]))
+
+(defn- redo-nested-map-rows! [k ctx table widget-rows]
+  (clear-children! table)
+  (add-rows table (->nested-map-rows k ctx table widget-rows)))
+
+(defmethod ->attribute-widget :nested-map [ctx [k props]]
+  (let [table (->table ctx {:cell-defaults {:pad 5}})]
+    (add-rows table (->nested-map-rows k ctx table (set (->attribute-widgets ctx props))))
+    table))
+
+(defmethod attribute-widget->data :nested-map [table [_k props]]
+  (attribute-widgets->all-data table props))
 
 ;;
 
@@ -168,6 +202,8 @@
                                    (add-listener! button (->text-tooltip ctx #(tooltip-text-fn % props))))
                                  (set-touchable! top-widget :disabled)
                                  stack))))})))
+
+;;
 
 (defn- add-one-to-many-rows [ctx table property-type property-ids]
   (add-separator! table)
@@ -219,6 +255,9 @@
 
 ;;
 
+; TODO here interleave separators
+; but for nested map I can check a boolean no separators ?
+; TODO sort them in specific way, id, image first, etc.
 (defn- ->attribute-widgets [ctx props]
   (for [[k v] props
         :let [widget (->attribute-widget ctx [k v])]]
@@ -229,7 +268,8 @@
 (defn- attribute-widgets->all-data [parent props]
   (into {}
         (for [[k v] props
-              :let [widget (k parent)]]
+              :let [widget (k parent)]
+              :when widget]
           [k (or (attribute-widget->data widget [k v])
                  v)])))
 
