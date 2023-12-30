@@ -62,6 +62,8 @@
                                               (catch Throwable t
                                                 (default-property-tooltip-text ctx props))))}}})
 
+;;
+
 (defn- one-to-many-attribute->linked-property-type [k]
   (case k
     :skills :skill
@@ -77,46 +79,63 @@
    :skills :one-to-many
    :items :one-to-many
    :effect :nested-map
-   :effect/sound :sound
-   })
+   :effect/sound :sound})
 
-; TODO make a protocol / defrecord w. constructor
+;;
 
-(defmulti ->attribute-widget (fn [_context k _v] (get attribute->attribute-widget k)))
-(defmulti attribute-widget->data (fn [k _widget] (get attribute->attribute-widget k)))
+(defmulti ->attribute-widget
+  (fn [_context [k _v]]
+    (get attribute->attribute-widget k)))
 
-(defmethod ->attribute-widget :default [ctx _ v]
+(defmethod ->attribute-widget :default [ctx [_k v]]
   (->label ctx (pr-str v))) ; TODO print-level set to nil ! not showing all effect -> print-fn?
 
-(defmethod attribute-widget->data :default [_ _]
+(defmulti attribute-widget->data
+  (fn [_widget [k _v]]
+    (get attribute->attribute-widget k)))
+
+(defmethod attribute-widget->data :default [_widget _kv]
   nil)
 
-(defmethod ->attribute-widget :image [ctx _ image]
+;;
+
+(defmethod ->attribute-widget :image [ctx [_ image]]
   (->image-widget ctx image {}))
 
-(defmethod ->attribute-widget :text-field [ctx _ v]
+;;
+
+(defmethod ->attribute-widget :text-field [ctx [_ v]]
   (->text-field ctx (pr-str v) {}))
 
-(defmethod attribute-widget->data :text-field [_ widget]
+(defmethod attribute-widget->data :text-field [widget _kv]
   (edn/read-string (text-field/text widget)))
 
-(defmethod ->attribute-widget :link-button [context _ id]
-  (->text-button context (name id) #(open-property-editor-window! % id)))
+;;
 
-(declare ->attribute-widgets)
+(defmethod ->attribute-widget :link-button [context [_ prop-id]]
+  (->text-button context (name prop-id) #(open-property-editor-window! % prop-id)))
 
-(defmethod ->attribute-widget :nested-map [ctx _ map-data]
-  (let [[widgets get-data] (->attribute-widgets ctx nil map-data)]
-    (->table ctx {:cell-defaults {:pad 5} :rows widgets})))
+;;
 
-(defmethod attribute-widget->data :nested-map [_ widget]
-  ::TODO)
+(declare ->attribute-widgets
+         attribute-widgets->all-data)
 
-(defmethod ->attribute-widget :sound [ctx _ sound-file]
+(defmethod ->attribute-widget :nested-map [ctx [_k props]]
+  (->table ctx {:cell-defaults {:pad 5}
+                :rows (->attribute-widgets ctx props)}))
+
+(defmethod attribute-widget->data :nested-map [widget [_k props]]
+  (attribute-widgets->all-data widget props))
+
+;;
+
+(defmethod ->attribute-widget :sound [ctx [_ sound-file]]
   (->text-button ctx (name sound-file) #(gdl.context/play-sound! % sound-file)))
 
-(defmethod attribute-widget->data :sound [_ widget]
+(defmethod attribute-widget->data :sound [widget _]
   nil)
+
+;;
 
 (defn- ->overview-table
   "Creates a table with all-properties of property-type and buttons for each id
@@ -187,7 +206,7 @@
   (when-let [parent (parent table)]
     (pack! parent)))
 
-(defmethod ->attribute-widget :one-to-many [context attribute property-ids]
+(defmethod ->attribute-widget :one-to-many [context [attribute property-ids]]
   (let [table (->table context {})]
     (add-one-to-many-rows context
                           table
@@ -195,21 +214,26 @@
                           property-ids)
     table))
 
-(defmethod attribute-widget->data :one-to-many [_ widget]
+(defmethod attribute-widget->data :one-to-many [widget _]
   (->> (children widget) (keep actor/id) set))
 
-(defn- ->attribute-widgets [ctx parent props]
-  (let [widgets (for [[k v] props
-                      :let [widget (->attribute-widget ctx k v)]]
-                  (do
-                   (actor/set-id! widget k)
-                   [(->label ctx (name k)) widget]))
-        get-data #(into {}
-                        (for [[k v] props
-                              :let [widget (k parent)]]
-                          [k (or (attribute-widget->data k widget)
-                                 v)]))]
-    [widgets get-data]))
+;;
+
+(defn- ->attribute-widgets [ctx props]
+  (for [[k v] props
+        :let [widget (->attribute-widget ctx [k v])]]
+    (do
+     (actor/set-id! widget k)
+     [(->label ctx (name k)) widget])))
+
+(defn- attribute-widgets->all-data [parent props]
+  (into {}
+        (for [[k v] props
+              :let [widget (k parent)]]
+          [k (or (attribute-widget->data widget [k v])
+                 v)])))
+
+;;
 
 (defn- ->property-editor-window [context id]
   (let [props (get-property context id)
@@ -220,7 +244,8 @@
                                   :center? true
                                   :close-on-escape? true
                                   :cell-defaults {:pad 5}})
-        [widgets get-data] (->attribute-widgets context window props)]
+        widgets (->attribute-widgets context props)
+        get-data #(attribute-widgets->all-data window props)]
     (add-rows window (concat widgets
                              [[(->text-button context "Save"
                                               (fn [_ctx]
@@ -233,6 +258,8 @@
                                                                  (remove! window)))]]))
     (pack! window)
     window))
+
+;;
 
 (defn- set-second-widget! [context widget]
   (let [table (:main-table (get-stage context))]
