@@ -1,10 +1,6 @@
 (ns context.effect.restore-hp-mana
-  (:require [gdl.context :refer [play-sound!]]
-            [data.val-max :refer [lower-than-max? set-to-max]]
+  (:require [data.val-max :refer [lower-than-max? set-to-max]]
             [context.effect :as effect]))
-
-; TODO make with 'target' then can use as hit-effect too !
-; ==> choose self or allies (or enemies)
 
 (defmethod effect/useful? :effect/restore-hp-mana
   [{:keys [effect/source]} _effect]
@@ -21,7 +17,6 @@
 
 (defmethod effect/do! :effect/restore-hp-mana
   [{:keys [effect/source] :as context} _effect]
-  (play-sound! context "sounds/bfxr_drugsuse.wav")
   (swap! source #(-> %
                      (update :hp set-to-max)
                      (update :mana set-to-max))))

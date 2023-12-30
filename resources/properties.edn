@@ -23,7 +23,8 @@
   :action-time 7,
   :cooldown 0,
   :cost 1,
-  :effect [[:effect/restore-hp-mana true]],
+  :effect #:effect{:restore-hp-mana true
+                   :sound "sounds/bfxr_drugsuse.wav"},
   :image {:file "skills/images.png", :sub-image-bounds [64 96 32 32]}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds [336 48 48 48]},

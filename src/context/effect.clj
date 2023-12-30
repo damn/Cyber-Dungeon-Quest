@@ -28,8 +28,7 @@
       (do! context component)))
 
   (effect-text [context effect]
-    (->> (for [component effect]
-           (text context component))
+    (->> (keep #(text context %) effect)
          (str/join "\n")))
 
   (valid-params? [context effect]
