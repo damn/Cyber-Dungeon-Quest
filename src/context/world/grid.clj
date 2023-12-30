@@ -115,16 +115,19 @@
   (add-entity! [grid entity]
     ;(assert (valid-position? grid @entity)) ; TODO deactivate because projectile no left-bottom remove that field or update properly for all
     (set-cells! grid entity)
-    (when (:is-solid @entity) (set-occupied-cells! grid entity)))
+    (when (:is-solid (:body @entity))
+      (set-occupied-cells! grid entity)))
 
   (remove-entity! [_ entity]
     (remove-from-cells! entity)
-    (when (:is-solid @entity) (remove-from-occupied-cells! entity)))
+    (when (:is-solid (:body @entity))
+      (remove-from-occupied-cells! entity)))
 
   (entity-position-changed! [grid entity]
     ;(assert (valid-position? grid @entity)) ; TODO deactivate because projectile no left-bottom remove that field or update properly for all
     (update-cells! grid entity)
-    (when (:is-solid @entity) (update-occupied-cells! grid entity))))
+    (when (:is-solid (:body @entity))
+      (update-occupied-cells! grid entity))))
 
 ; TODO separate ns?
 
