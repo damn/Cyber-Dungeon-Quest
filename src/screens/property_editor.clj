@@ -82,8 +82,8 @@
    :skills :one-to-many
    :items :one-to-many
    :effect :nested-map
-   :effect/sound :sound
-   :modifier :nested-map})
+   :modifier :nested-map
+   :effect/sound :sound})
 
 ;;
 
@@ -121,7 +121,8 @@
 
 ;;
 
-; TODO add/remove effect components
+; TODO add effect/modifier components
+; => data schema for all modifiers/effects & value ranges?
 
 (declare ->attribute-widgets
          attribute-widgets->all-data)
@@ -130,8 +131,8 @@
 
 (defn- ->nested-map-rows [k ctx table widget-rows]
   (conj (for [row widget-rows]
-          (conj row (->text-button ctx "Remove" #(redo-nested-map-rows! k % table (disj widget-rows row)))))
-        [{:actor (->text-button ctx "Add"
+          (conj row (->text-button ctx "-" #(redo-nested-map-rows! k % table (disj widget-rows row)))))
+        [{:actor (->text-button ctx (str "Add " (name k))
                                 (fn [ctx]
                                   (let [window (->window ctx {:title "Choose"
                                                               :modal? true
