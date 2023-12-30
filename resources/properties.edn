@@ -3,20 +3,20 @@
   :action-time 0.4,
   :cooldown 0,
   :cost 4,
-  :effect [[:effect/projectile true]],
+  :effect #:effect{:projectile true},
   :image {:file "skills/images.png", :sub-image-bounds [96 32 32 32]}}
  {:id :spells/nova,
   :spell? true,
   :action-time 0.3,
   :cooldown 0,
-  :effect [[:effect/nova true]],
+  :effect #:effect{:nova true},
   :image {:file "skills/images.png", :sub-image-bounds [0 64 32 32]}}
  {:id :spells/spawn,
   :spell? true,
   :action-time 0.4,
   :cooldown 0,
   :cost 0,
-  :effect [[:effect/spawn :golem-mud]],
+  :effect #:effect{:spawn :golem-mud},
   :image {:file "skills/images.png", :sub-image-bounds [160 64 32 32]}}
  {:id :spells/meditation,
   :spell? true,

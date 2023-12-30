@@ -12,6 +12,10 @@
             context.properties
             [cdq.context :refer [get-property all-properties]]))
 
+; ADD SOUNDS TO SPELLS MANDATORY - move out of restoration - also hp / mana separate
+; LET ME EDIT for example spawn which creature
+; => SCHEMA
+
 ; TODO refresh overview table after property-editor save something (callback ?)
 ; remove species, directly hp/speed ( no multiplier )
 
@@ -71,7 +75,12 @@
    :hp :text-field
    :speed :text-field
    :skills :one-to-many
-   :items :one-to-many})
+   :items :one-to-many
+   :effect :nested-map
+   :effect/sound :sound
+   })
+
+; TODO make a protocol / defrecord w. constructor
 
 (defmulti ->attribute-widget (fn [_context k _v] (get attribute->attribute-widget k)))
 (defmulti attribute-widget->data (fn [k _widget] (get attribute->attribute-widget k)))
@@ -94,6 +103,21 @@
 (defmethod ->attribute-widget :link-button [context _ id]
   (->text-button context (name id) #(open-property-editor-window! % id)))
 
+(declare ->attribute-widgets)
+
+(defmethod ->attribute-widget :nested-map [ctx _ map-data]
+  (let [[widgets get-data] (->attribute-widgets ctx nil map-data)]
+    (->table ctx {:cell-defaults {:pad 5} :rows widgets})))
+
+(defmethod attribute-widget->data :nested-map [_ widget]
+  ::TODO)
+
+(defmethod ->attribute-widget :sound [ctx _ sound-file]
+  (->text-button ctx (name sound-file) #(gdl.context/play-sound! % sound-file)))
+
+(defmethod attribute-widget->data :sound [_ widget]
+  nil)
+
 (defn- ->overview-table
   "Creates a table with all-properties of property-type and buttons for each id
   which on-clicked calls clicked-id-fn."
@@ -108,7 +132,8 @@
                    entities)
         number-columns 20]
     (->table ctx
-             {:rows (concat [[{:actor (->label ctx title) :colspan number-columns}]]
+             {:cell-defaults {:pad 2}
+              :rows (concat [[{:actor (->label ctx title) :colspan number-columns}]]
                             (for [entities (partition-all number-columns entities)]
                               (for [{:keys [id] :as props} entities
                                     :let [on-clicked #(clicked-id-fn % id)
@@ -173,6 +198,19 @@
 (defmethod attribute-widget->data :one-to-many [_ widget]
   (->> (children widget) (keep actor/id) set))
 
+(defn- ->attribute-widgets [ctx parent props]
+  (let [widgets (for [[k v] props
+                      :let [widget (->attribute-widget ctx k v)]]
+                  (do
+                   (actor/set-id! widget k)
+                   [(->label ctx (name k)) widget]))
+        get-data #(into {}
+                        (for [[k v] props
+                              :let [widget (k parent)]]
+                          [k (or (attribute-widget->data k widget)
+                                 v)]))]
+    [widgets get-data]))
+
 (defn- ->property-editor-window [context id]
   (let [props (get-property context id)
         {:keys [title property-keys]} (get property-types (context.properties/property-type props))
@@ -182,25 +220,17 @@
                                   :center? true
                                   :close-on-escape? true
                                   :cell-defaults {:pad 5}})
-        get-data #(into {}
-                        (for [k property-keys
-                              :let [widget (k window)]]
-                          [k (or (attribute-widget->data k widget)
-                                 (get props k))]))]
-    (add-rows window (concat (for [k property-keys
-                                   :let [widget (->attribute-widget context k (get props k))]]
-                               (do
-                                (actor/set-id! widget k)
-                                [(->label context (name k)) widget]))
+        [widgets get-data] (->attribute-widgets context window props)]
+    (add-rows window (concat widgets
                              [[(->text-button context "Save"
                                               (fn [_ctx]
                                                 ; TODO error modal like map editor?
+                                                ; TODO redo/close overview ?
                                                 (swap! gdl.app/current-context
                                                        context.properties/update-and-write-to-file! (get-data))
-                                                (remove! window)
-                                                ; TODO redo/close overview ?
-                                                ))
-                               (->text-button context "Cancel" (fn [_context] (remove! window)))]]))
+                                                (remove! window)))
+                               (->text-button context "Cancel" (fn [_ctx]
+                                                                 (remove! window)))]]))
     (pack! window)
     window))
 
