@@ -119,7 +119,7 @@
    :entity/clickable {:type :clickable/princess}})
 
 (defn- species-properties [species-props]
-  (let [multiplier {:id :species/multiplier, :speed 3, :hp 10}]
+  (let [multiplier {:id :species/multiplier, :speed 2, :hp 10}]
     (-> species-props
         (update :speed * (:speed multiplier))
         (update :hp #(int (* % (:hp multiplier)))))))
@@ -148,7 +148,7 @@
             :hp hp
             :mana 11
             :is-flying false
-            :animation (animation/create images :frame-duration 0.25 :looping? true)
+            :animation (animation/create images :frame-duration 0.1 :looping? true)
             :z-order (if (:is-flying creature-props) :flying :ground)}
            (cond
             (= creature-id :lady-a) nil

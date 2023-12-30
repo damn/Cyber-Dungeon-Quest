@@ -95,10 +95,10 @@ direction keys: move")
 (def ^:private zoom-speed 0.1)
 
 ; TODO textfield takes control !
+; TODO PLUS symbol shift & = symbol on keyboard not registered
 (defn- camera-controls [context camera]
   (when (key-pressed? context input.keys/shift-left)
-    ; TODO PLUS symbol shift & = symbol on keyboard not registered
-    (adjust-zoom camera    zoom-speed)) ; TODO only pass + / -
+    (adjust-zoom camera    zoom-speed))
   (when (key-pressed? context input.keys/minus)
     (adjust-zoom camera (- zoom-speed)))
   (let [apply-position (fn [idx f]

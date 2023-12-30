@@ -1,7 +1,6 @@
 (ns screens.game
   (:require [gdl.app :refer [current-context change-screen!]]
-            [gdl.context :refer [get-stage render-world-view delta-time draw-text key-just-pressed?
-                                 ->color render-tiled-map]]
+            [gdl.context :refer [get-stage render-world-view delta-time draw-text key-just-pressed? key-pressed? ->color render-tiled-map]]
             [gdl.screen :refer [Screen]]
             [gdl.graphics.color :as color]
             [gdl.graphics.camera :as camera]
@@ -58,7 +57,18 @@
           :when (key-just-pressed? context hotkey)]
     (toggle-visible! (get group window))))
 
-(defn- end-of-frame-checks [{:keys [context/config] :as context}]
+(defn- adjust-zoom [camera by] ; DRY map editor
+  (camera/set-zoom! camera (max 0.1 (+ (camera/zoom camera) by))))
+
+(def ^:private zoom-speed 0.05)
+
+(defn- end-of-frame-checks [{:keys [context/config world-camera] :as context}]
+  (when (key-pressed? context input.keys/shift-left)
+    (adjust-zoom world-camera  zoom-speed))
+
+  (when (key-pressed? context input.keys/minus)
+    (adjust-zoom world-camera (- zoom-speed)))
+
   (let [group (:windows (get-stage context))
         windows (children group)]
     (when (safe-get config :debug-windows?)

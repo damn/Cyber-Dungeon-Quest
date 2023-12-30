@@ -200,16 +200,19 @@
        (put! (tiled/properties tile) "id" id)
        tile))))
 
+(def ^:private spawn-creatures? true)
+
 (defn- place-creatures! [context spawn-rate tiled-map spawn-positions area-level-grid]
   (let [layer (add-layer! tiled-map :name "creatures" :visible true)
         creature-properties (all-properties context :creature)]
-    (doseq [position spawn-positions
-            :let [area-level (get area-level-grid position)]
-            :when (and (number? area-level)
-                       (<= (rand) spawn-rate))]
-      (let [creatures (creatures-with-level creature-properties area-level)]
-        (when (seq creatures)
-          (set-tile! layer position (creature->tile (rand-nth creatures))))))))
+    (when spawn-creatures?
+      (doseq [position spawn-positions
+              :let [area-level (get area-level-grid position)]
+              :when (and (number? area-level)
+                         (<= (rand) spawn-rate))]
+        (let [creatures (creatures-with-level creature-properties area-level)]
+          (when (seq creatures)
+            (set-tile! layer position (creature->tile (rand-nth creatures)))))))))
 
 (defn- place-princess! [context tiled-map position]
   (set-tile! (tiled/get-layer tiled-map "creatures")

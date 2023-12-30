@@ -192,10 +192,9 @@
                                (do
                                 (actor/set-id! widget k)
                                 [(->label context (name k)) widget]))
-                             ; TODO doesnt do anything, need to swap on current context
-                             ; TODO error modal like map editor?
                              [[(->text-button context "Save"
                                               (fn [_ctx]
+                                                ; TODO error modal like map editor?
                                                 (swap! gdl.app/current-context
                                                        context.properties/update-and-write-to-file! (get-data))
                                                 (remove! window)
