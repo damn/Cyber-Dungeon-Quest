@@ -120,10 +120,12 @@
 
 (defmethod effect/text :effect/damage
   [{:keys [effect/source]} [_ damage]]
-  (let [modified (effective-damage damage @source)]
-    (if (= damage modified)
-      (damage->text damage)
-      (str (damage->text damage) "\nModified: " (damage->text modified)))) )
+  (if source
+    (let [modified (effective-damage damage @source)]
+      (if (= damage modified)
+        (damage->text damage)
+        (str (damage->text damage) "\nModified: " (damage->text modified))))
+    (damage->text damage))) ; property menu no source,modifiers
 
 (defmethod effect/valid-params? :effect/damage
   [{:keys [effect/source effect/target]} _effect]

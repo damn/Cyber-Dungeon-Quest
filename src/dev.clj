@@ -4,12 +4,14 @@
 
 (comment
  (let [ctx @gdl.app/current-context
-       entity (cdq.context/get-entity ctx 2672)
+       entity (cdq.context/get-entity ctx 2)
        ]
 
-   )
+   (clojure.pprint/pprint
+    (sort
+     (keys @entity)))
 
- )
+   ))
 
 (defn- get-namespaces []
    (filter #(#{"data" "game" "mapgen" "property-editor" "utils"}

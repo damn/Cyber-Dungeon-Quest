@@ -1,5 +1,5 @@
 (ns context.entity.state.player-idle
-  (:require [gdl.context :refer [play-sound! world-mouse-position mouse-on-stage-actor? button-just-pressed?]]
+  (:require [gdl.context :refer [play-sound! world-mouse-position mouse-on-stage-actor? button-just-pressed? button-pressed?]]
             [gdl.input.buttons :as buttons]
             [gdl.scene2d.actor :refer [visible? toggle-visible! parent] :as actor]
             [gdl.scene2d.ui.button :refer [button?]]

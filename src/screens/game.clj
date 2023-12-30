@@ -90,7 +90,7 @@
                                               (filter #(line-of-sight? context @player-entity %)))) ; TODO here debug los disable
                        (debug-render-after-entities context))))
 
-(def ^:private pausing true)
+(def ^:private pausing? true)
 
 (defn- assoc-delta-time [ctx]
   (assoc ctx :context/delta-time (min (delta-time ctx)
@@ -104,7 +104,7 @@
   (let [state (:state-obj (:entity/state @player-entity))
         _ (state/manual-tick! state context)
         paused? (reset! game-paused? (or @thrown-error
-                                         (and pausing (state/pause-game? state))))
+                                         (and pausing? (state/pause-game? state))))
         context (assoc-delta-time context)]
     ; this do always so can get debug info even when game not running
     (update-mouseover-entity context)

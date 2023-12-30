@@ -5,7 +5,7 @@
 ; TODO spawning on player both without error ?! => not valid position checked
 ; also what if someone moves on the target posi ? find nearby valid cell ?
 
-; BLOCKING PLAYER MOVEMENT !
+; BLOCKING PLAYER MOVEMENT ! (summons no-clip with player ?)
 ; check not blocked position // line of sight.
 ; limit max. spawns
 ; animation/sound

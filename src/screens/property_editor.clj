@@ -2,56 +2,18 @@
   (:require [clojure.edn :as edn]
             [gdl.app :refer [change-screen!]]
             [gdl.context :refer [get-stage ->text-button ->image-button ->label ->text-field
-                                 ->image-widget ->table ->stack ->window]]
-            [gdl.scene2d.actor :as actor :refer [remove! set-touchable! parent]]
+                                 ->image-widget ->table ->stack ->window ->text-tooltip]]
+            [gdl.scene2d.actor :as actor :refer [remove! set-touchable! parent add-listener!]]
             [gdl.scene2d.group :refer [add-actor! clear-children! children]]
-            [gdl.scene2d.ui.table :refer [add! add-rows cells]]
+            [gdl.scene2d.ui.text-field :as text-field]
+            [gdl.scene2d.ui.table :refer [add! add-rows cells add-separator!]]
             [gdl.scene2d.ui.cell :refer [set-actor!]]
             [gdl.scene2d.ui.widget-group :refer [pack!]]
             context.properties
             [cdq.context :refer [get-property all-properties]]))
 
-(comment
- (get-property @current-context :dragon-shadow)
-
- ; FIXME could not save dragon level input because the key was not in data
- ; so he complains at overwrite and save...
-
- ; TODO schema !
- ; cannot  save spider as it doesnt have :level ! ...
-
- (def win (first (filter #(instance? com.kotcrab.vis.ui.widget.VisWindow %) (.getActors (stage)))))
-
- (.layout (get-child-with-id win :skills))
-
- (.pack (.getParent (get-child-with-id win :skills)))
-
- (let [window (first (filter #(instance? com.kotcrab.vis.ui.widget.VisWindow %) (.getActors (stage))))
-       props (properties/get :wizard)
-       new-props (into {}
-                       (for [k (:property-keys (get property-types :creature))
-                             :let [widget (get-child-with-id window k)]]
-                         [k (or (widget-data k widget)
-                                (get props k))]))
-       ]
-   (= (set (keys props))
-      (set (keys new-props)))
-
-   )
- )
-
-; Idea;
-; during running game each entity has property/id
-; can right click and edit the properties on the fly of _everything_
-; in non-debug mode only presenting, otherwise editable.
-
-; * validation on load all properties / save property/properties
-; => spec => key spec
-; * items => skill & item both , duplicate pretty-name & image hmmm ....
-; or special case for weapon?
-; * also item needs to be in certain slot, each slot only once, etc. also max-items ...?
-; * non-toggle ->image-button at overview => VisImageButton
-; * missing widgets for keys / one-to-many not implemented
+; TODO refresh overview table after property-editor save something (callback ?)
+; remove species, directly hp/speed ( no multiplier )
 
 (defn- add-to-stage! [ctx actor]
   (-> ctx get-stage (add-actor! actor)))
@@ -61,10 +23,10 @@
 (defn- open-property-editor-window! [context property-id]
   (add-to-stage! context (->property-editor-window context property-id)))
 
-(defn- get-child-with-id [group id];  use ilookup ?
-  (->> (children group)
-       (filter #(= id (actor/id %)))
-       first))
+(defn- default-property-tooltip-text [context props]
+  (binding [*print-level* nil]
+    (with-out-str
+     (clojure.pprint/pprint (dissoc props :image)))))
 
 (def ^:private property-types
   {:species {:title "Species"
@@ -74,24 +36,34 @@
               :property-keys [:id :image :species :level :skills :items]
               :overview {:title "Creatures"
                          :sort-by-fn #(vector (or (:level %) 9) (name (:species %)) (name (:id %)))
-                         :extra-infos-widget #(->label %1 (or (str (:level %2) "-")))}}
+                         :extra-infos-widget #(->label %1 (or (str (:level %2)) "-"))
+                         :tooltip-text-fn default-property-tooltip-text}}
    :item {:title "Item"
-          :property-keys [:id :image :slot :pretty-name :modifiers]
+          :property-keys [:id :image :slot :pretty-name :modifier]
           :overview {:title "Items"
-                     :sort-by-fn #(vector (if-let [slot (:slot %)] (name slot) "") (name (:id %)))}}
-   :skill {:title "Skill"
+                     :sort-by-fn #(vector (if-let [slot (:slot %)] (name slot) "") (name (:id %)))
+                     :tooltip-text-fn default-property-tooltip-text}}
+   :skill {:title "Spell"
            :property-keys [:id :image :action-time :cooldown :cost :effect]
-           :overview {:title "Skills"}}
+           :overview {:title "Spells"
+                      :tooltip-text-fn (fn [ctx props]
+                                         (try (cdq.context/skill-text ctx props)
+                                              (catch Throwable t
+                                                (default-property-tooltip-text ctx props))))}}
    :weapon {:title "Weapon"
             :property-keys [:id :image :pretty-name :action-time :effect]
-            :overview {:title "Weapons"}}})
+            :overview {:title "Weapons"
+                       :tooltip-text-fn (fn [ctx props]
+                                          (try (cdq.context/skill-text ctx props)
+                                              (catch Throwable t
+                                                (default-property-tooltip-text ctx props))))}}})
 
-(defn- attribute->property-type [k]
+(defn- one-to-many-attribute->linked-property-type [k]
   (case k
     :skills :skill
     :items :item))
 
-(def ^:private attribute-widget
+(def ^:private attribute->attribute-widget
   {:id :label
    :image :image
    :level :text-field
@@ -101,98 +73,105 @@
    :skills :one-to-many
    :items :one-to-many})
 
-; property-key->create-widget
-(defmulti property-widget (fn [_context k _v] (get attribute-widget k)))
+(defmulti ->attribute-widget (fn [_context k _v] (get attribute->attribute-widget k)))
+(defmulti attribute-widget->data (fn [k _widget] (get attribute->attribute-widget k)))
 
-; widget->data
-(defmulti widget-data (fn [k _widget] (get attribute-widget k)))
-
-(defmethod property-widget :default [ctx _ v]
+(defmethod ->attribute-widget :default [ctx _ v]
   (->label ctx (pr-str v))) ; TODO print-level set to nil ! not showing all effect -> print-fn?
 
-(defmethod widget-data :default [_ _]
+(defmethod attribute-widget->data :default [_ _]
   nil)
 
-(defmethod property-widget :image [ctx _ image]
+(defmethod ->attribute-widget :image [ctx _ image]
   (->image-widget ctx image {}))
 
-(defmethod property-widget :text-field [ctx _ v]
+(defmethod ->attribute-widget :text-field [ctx _ v]
   (->text-field ctx (pr-str v) {}))
 
-(defmethod widget-data :text-field [_ widget]
-  (edn/read-string
-   (.getText ^com.kotcrab.vis.ui.widget.VisTextField widget)))
+(defmethod attribute-widget->data :text-field [_ widget]
+  (edn/read-string (text-field/text widget)))
 
-(defmethod property-widget :link-button [context _ id]
-  (->text-button context
-                 (name id)
-                 #(open-property-editor-window! % id)))
+(defmethod ->attribute-widget :link-button [context _ id]
+  (->text-button context (name id) #(open-property-editor-window! % id)))
 
-(defn- ->overview-table [context property-type clicked-id-fn]
+(defn- ->overview-table
+  "Creates a table with all-properties of property-type and buttons for each id
+  which on-clicked calls clicked-id-fn."
+  [ctx property-type clicked-id-fn]
   (let [{:keys [title
                 sort-by-fn
-                extra-infos-widget]} (:overview (get property-types property-type))
-        entities (all-properties context property-type)
+                extra-infos-widget
+                tooltip-text-fn]} (:overview (get property-types property-type))
+        entities (all-properties ctx property-type)
         entities (if sort-by-fn
                    (sort-by sort-by-fn entities)
                    entities)
         number-columns 20]
-    (->table context
-             {:rows (concat [[{:actor (->label context title) :colspan number-columns}]]
+    (->table ctx
+             {:rows (concat [[{:actor (->label ctx title) :colspan number-columns}]]
                             (for [entities (partition-all number-columns entities)]
                               (for [{:keys [id] :as props} entities
                                     :let [on-clicked #(clicked-id-fn % id)
                                           button (if (:image props)
-                                                   (->image-button context (:image props) on-clicked)
-                                                   (->text-button context (name id) on-clicked))
+                                                   (->image-button ctx (:image props) on-clicked)
+                                                   (->text-button ctx (name id) on-clicked))
                                           top-widget (or (and extra-infos-widget
-                                                              (extra-infos-widget context props))
-                                                         (->label context ""))]]
+                                                              (extra-infos-widget ctx props))
+                                                         (->label ctx ""))
+                                          stack (->stack ctx [button top-widget])]]
                                 (do
+                                 (when tooltip-text-fn
+                                   (add-listener! button (->text-tooltip ctx #(tooltip-text-fn % props))))
                                  (set-touchable! top-widget :disabled)
-                                 (->stack context [button top-widget])))))})))
+                                 stack))))})))
 
-(defn- add-one-to-many-rows [context ^com.kotcrab.vis.ui.widget.VisTable table property-type property-ids]
-  (.addSeparator table)
-  (let [redo-rows (fn [context property-ids]
+(defn- add-one-to-many-rows [ctx table property-type property-ids]
+  (add-separator! table)
+  (let [redo-rows (fn [ctx property-ids]
                     (clear-children! table)
-                    (add-one-to-many-rows context table property-type property-ids))]
+                    (add-one-to-many-rows ctx table property-type property-ids))]
     (add-rows table (concat
                      (for [prop-id property-ids]
-                       [(->image-widget context
-                                        (:image (get-property context prop-id))
-                                        {:id prop-id})
-                        (->text-button context
+                       [(let [props (get-property ctx prop-id)
+                              image-widget (->image-widget ctx
+                                                           (:image props)
+                                                           {:id (:id props)})]
+                          (add-listener! image-widget (->text-tooltip ctx #((-> property-types
+                                                                                property-type
+                                                                                :overview
+                                                                                :tooltip-text-fn) % props)))
+                          image-widget)
+                        (->text-button ctx
                                        " - "
                                        #(redo-rows % (disj (set property-ids) prop-id)))])
-                     [[(->text-button context
+                     [[(->text-button ctx
                                       " + "
-                                      (fn [context]
-                                        (let [window (->window context {:title "Choose"
-                                                                        :modal? true
-                                                                        :close-button? true
-                                                                        :center? true
-                                                                        ;:pack? true
-                                                                        })
-                                              clicked-id-fn (fn [context id]
+                                      (fn [ctx]
+                                        (let [window (->window ctx {:title "Choose"
+                                                                    :modal? true
+                                                                    :close-button? true
+                                                                    :center? true
+                                                                    :close-on-escape? true})
+                                              clicked-id-fn (fn [ctx id]
                                                               (remove! window)
-                                                              (redo-rows context
+                                                              (redo-rows ctx
                                                                          (conj (set property-ids) id)))]
-                                          (add! window (->overview-table context property-type clicked-id-fn))
+                                          (add! window (->overview-table ctx property-type clicked-id-fn))
                                           (pack! window)
-                                          (add-to-stage! context window))))]])))
+                                          (add-to-stage! ctx window))))]])))
   (when-let [parent (parent table)]
     (pack! parent)))
 
-(defmethod property-widget :one-to-many [context attribute property-ids]
+(defmethod ->attribute-widget :one-to-many [context attribute property-ids]
   (let [table (->table context {})]
-    (add-one-to-many-rows context table (attribute->property-type attribute) property-ids)
+    (add-one-to-many-rows context
+                          table
+                          (one-to-many-attribute->linked-property-type attribute)
+                          property-ids)
     table))
 
-(defmethod widget-data :one-to-many [_ widget]
-  (->> (.getChildren ^com.badlogic.gdx.scenes.scene2d.Group widget)
-       (keep actor/id)
-       set))
+(defmethod attribute-widget->data :one-to-many [_ widget]
+  (->> (children widget) (keep actor/id) set))
 
 (defn- ->property-editor-window [context id]
   (let [props (get-property context id)
@@ -201,19 +180,27 @@
                                   :modal? true
                                   :close-button? true
                                   :center? true
+                                  :close-on-escape? true
                                   :cell-defaults {:pad 5}})
         get-data #(into {}
                         (for [k property-keys
-                              :let [widget (get-child-with-id window k)]]
-                          [k (or (widget-data k widget)
+                              :let [widget (k window)]]
+                          [k (or (attribute-widget->data k widget)
                                  (get props k))]))]
     (add-rows window (concat (for [k property-keys
-                                   :let [widget (property-widget context k (get props k))]]
+                                   :let [widget (->attribute-widget context k (get props k))]]
                                (do
                                 (actor/set-id! widget k)
                                 [(->label context (name k)) widget]))
                              ; TODO doesnt do anything, need to swap on current context
-                             [[(->text-button context "Save" #(context.properties/update-and-write-to-file! % (get-data)))
+                             ; TODO error modal like map editor?
+                             [[(->text-button context "Save"
+                                              (fn [_ctx]
+                                                (swap! gdl.app/current-context
+                                                       context.properties/update-and-write-to-file! (get-data))
+                                                (remove! window)
+                                                ; TODO redo/close overview ?
+                                                ))
                                (->text-button context "Cancel" (fn [_context] (remove! window)))]]))
     (pack! window)
     window))

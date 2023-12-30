@@ -5,11 +5,57 @@
             [utils.core :refer [safe-get]]
             cdq.context))
 
+(comment
+
+ (require '[malli.provider :as mp])
+
+ (set! *print-level* nil)
+ (let [ctx @gdl.app/current-context
+       properties (:context/properties ctx)
+       creatures (cdq.context/all-properties ctx :creature)
+       ]
+
+
+   (mp/provide creatures))
+ [:map
+  [:image
+   [:map
+    [:file :string]
+    [:texture :some]
+    [:sub-image-bounds [:vector :int]]
+    [:scale :int]
+    [:pixel-dimensions [:vector :int]]
+    [:world-unit-dimensions [:vector integer?]]
+    [:tilew :int]
+    [:tileh :int]]]
+  [:id :keyword]
+  [:species :qualified-keyword]
+  [:skills [:set :qualified-keyword]]
+  [:items [:set :keyword]]
+  [:level {:optional true} :int]]
+ )
+
+; Idea;
+; during running game each entity has property/id
+; can right click and edit the properties on the fly of _everything_
+; in non-debug mode only presenting, otherwise editable.
+
+; Validation at: read, write
+; Each property type => keys for editing
+; Each key: what is it -> widget, validation
+; Weapon both item and skill possible? normalized & denormalized data
+; (creature animations, weapons, spritesheet indices)
+; sounds play/open bfxr
+; open tmx file, tiled editor
+; components editor creatures, etc. & builder
+; * also item needs to be in certain slot, each slot only once, etc. also max-items ...?
+; TODO aggro range wakup time, etc what else is hidden?!
+
 (def ^:private prop-type-unique-key
   {:species :hp
    :creature :species
    :item :slot
-   :skill :effect
+   :skill (fn [{:keys [slot effect]}] (and (not slot) effect))
    :weapon (fn [{:keys [slot]}] (and slot (= slot :weapon)))})
 
 (defn property-type [props]
@@ -119,3 +165,19 @@
   (let [properties (update properties id merge data)]
     (write-to-file! properties properties-file)
     (assoc context :context/properties properties)))
+
+(comment
+ (let [ctx @gdl.app/current-context
+       creatures (cdq.context/all-properties ctx :creature)
+       creatures (map #(if (:level %)
+                        %
+                        (assoc % :level nil)) creatures )
+       properties (reduce
+                   (fn [properties creature]
+                     (assoc properties (:id creature) creature))
+                   (:context/properties ctx)
+                   creatures)]
+   (write-to-file! properties (:context/properties-file ctx))
+
+   )
+ )

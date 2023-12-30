@@ -68,11 +68,10 @@
         (try-move! ctx entity [0 ydir]))))
 
 (defcomponent :entity/movement tiles-per-second
-  (entity/create! [[k _] entity _ctx]
+  (entity/create! [_ entity _ctx]
     (assert (and (:body     @entity)
                  (:position @entity)))
-    (assert (<= tiles-per-second max-speed))
-    (swap! entity assoc k tiles-per-second))
+    (assert (<= tiles-per-second max-speed)))
 
   (entity/tick! [_ entity ctx]
     (when-let [direction (:entity/movement-vector @entity)]

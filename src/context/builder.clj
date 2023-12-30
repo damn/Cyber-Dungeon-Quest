@@ -149,10 +149,7 @@
             :mana 11
             :is-flying false
             :animation (animation/create images :frame-duration 0.25 :looping? true)
-
-            :z-order (if (:is-flying creature-props)
-                       :flying
-                       :ground)}
+            :z-order (if (:is-flying creature-props) :flying :ground)}
            (cond
             (= creature-id :lady-a) nil
             :else {:entity/state (->state :is-player is-player
