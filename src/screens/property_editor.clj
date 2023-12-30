@@ -165,11 +165,47 @@
 
 ;;
 
+(defn ->list [items]
+  (let [vis-list (com.kotcrab.vis.ui.widget.VisList.)]
+    (.setItems vis-list (into-array items))
+    (com.kotcrab.vis.ui.widget.VisScrollPane. vis-list)))
+
+; TODO only wavs ... ALL SOUNDS =>  save in assets !!
+(defn- all-sounds []
+  (map #(clojure.string/replace-first % "resources/" "")
+       (map (memfn path)
+            (seq (.list (.internal com.badlogic.gdx.Gdx/files "resources/sounds/"))))))
+
+; TODO grep play-sound! and move configurable to properties
+; state enter alert, die, etc. for creatures
+; for each creature different sounds death sound, etc. !
+; movement sounds!
+; find good sound FX library
+
+(defn- sound-rows [ctx]
+  (for [sounds (partition-all 5 (all-sounds))]
+    (for [sound sounds]
+      (->text-button ctx (clojure.string/replace-first sound "sounds/" "") #(gdl.context/play-sound! % sound)))))
+
+(defn ->list-sounds-window [ctx]
+  (->window ctx {:title "Choose"
+                 :modal? true
+                 :close-button? true
+                 :center? true
+                 :close-on-escape? true
+                 :rows (sound-rows ctx)
+                 :pack? true
+                 }))
+
 (defmethod ->attribute-widget :sound [ctx [_ sound-file]]
-  (->text-button ctx (name sound-file) #(gdl.context/play-sound! % sound-file)))
+  (->table ctx {:cell-defaults {:pad 5}
+                :rows [[(->text-button ctx (name sound-file) #(add-to-stage! % (->list-sounds-window %)))
+                        (->text-button ctx "play" #(gdl.context/play-sound! % sound-file))]]}))
 
 ; select from all sounds (see length, waveform, if already used ?)
 ; can play all sounds from list and also select
+
+
 
 (defmethod attribute-widget->data :sound [widget _]
   nil) ; TODO needs to pass value?
@@ -192,7 +228,7 @@
     (->table ctx
              {:cell-defaults {:pad 2}
               :rows (concat [[{:actor (->label ctx title) :colspan number-columns}]]
-                            (for [entities (partition-all number-columns entities)]
+                            (for [entities (partition-all number-columns entities)] ; TODO can just do 1 for?
                               (for [{:keys [id] :as props} entities
                                     :let [on-clicked #(clicked-id-fn % id)
                                           button (if (:image props)
@@ -283,7 +319,10 @@
 
 (defn- ->property-editor-window [context id]
   (let [props (get-property context id)
-        {:keys [title property-keys]} (get property-types (context.properties/property-type props))
+        {:keys [title
+                ; unused
+                property-keys
+                ]} (get property-types (context.properties/property-type props))
         window (->window context {:title title
                                   :modal? true
                                   :close-button? true
