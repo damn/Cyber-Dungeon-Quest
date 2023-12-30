@@ -22,13 +22,9 @@
 ; TODO refresh overview table after property-editor save something (callback ?)
 ; remove species, directly hp/speed ( no multiplier )
 
+; used @ player-modal / error-window , can move to gdl.context
 (defn- add-to-stage! [ctx actor]
   (-> ctx get-stage (add-actor! actor)))
-
-(declare ->property-editor-window)
-
-(defn- open-property-editor-window! [context property-id]
-  (add-to-stage! context (->property-editor-window context property-id)))
 
 (defn- default-property-tooltip-text [context props]
   (binding [*print-level* nil]
@@ -116,6 +112,11 @@
 
 ;;
 
+(declare ->property-editor-window)
+
+(defn- open-property-editor-window! [context property-id]
+  (add-to-stage! context (->property-editor-window context property-id)))
+
 (defmethod ->attribute-widget :link-button [context [_ prop-id]]
   (->text-button context (name prop-id) #(open-property-editor-window! % prop-id)))
 
@@ -123,9 +124,6 @@
 
 ; TODO add effect/modifier components
 ; => data schema for all modifiers/effects & value ranges?
-
-(declare ->attribute-widgets
-         attribute-widgets->all-data)
 
 (declare redo-nested-map-rows!)
 
@@ -154,6 +152,9 @@
   (clear-children! table)
   (add-rows table (->nested-map-rows k ctx table widget-rows)))
 
+(declare ->attribute-widgets
+         attribute-widgets->all-data)
+
 (defmethod ->attribute-widget :nested-map [ctx [k props]]
   (let [table (->table ctx {:cell-defaults {:pad 5}})]
     (add-rows table (->nested-map-rows k ctx table (set (->attribute-widgets ctx props))))
@@ -167,8 +168,11 @@
 (defmethod ->attribute-widget :sound [ctx [_ sound-file]]
   (->text-button ctx (name sound-file) #(gdl.context/play-sound! % sound-file)))
 
+; select from all sounds (see length, waveform, if already used ?)
+; can play all sounds from list and also select
+
 (defmethod attribute-widget->data :sound [widget _]
-  nil)
+  nil) ; TODO needs to pass value?
 
 ;;
 
@@ -257,6 +261,7 @@
 ;;
 
 ; TODO here interleave separators
+; https://github.com/kotcrab/vis-ui/blob/4a1e267e80cc38a9467f9bfa67be66902c78b6ef/ui/src/main/java/com/kotcrab/vis/ui/widget/VisTable.java#L45
 ; but for nested map I can check a boolean no separators ?
 ; TODO sort them in specific way, id, image first, etc.
 (defn- ->attribute-widgets [ctx props]
