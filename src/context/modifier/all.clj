@@ -41,7 +41,7 @@
 (defn- check-damage-block-modifier-value [[source-or-target
                                            damage-type
                                            value-delta]]
-  (and (#{:source :target} source-or-target)
+  (and (#{:effect/source :effect/target} source-or-target)
        (#{:physical :magic} damage-type)))
 
 ; TODO make shield or armor part of the modifier data ...
@@ -59,7 +59,7 @@
    :reverse (fn [component value]
               (update-in component (drop-last value) - (last value)))})
 
-; Example: [:shield [:target :physical 0.3]]
+; Example: [:modifier/shield [:effect/target :physical 0.3]]
 (modifier/defmodifier :modifier/shield
   (damage-block-modifier :shield))
 
@@ -74,7 +74,7 @@
                                      damage-type
                                      application-type
                                      value-delta]]
-  (and (#{:source :target} source-or-target)
+  (and (#{:effect/source :effect/target} source-or-target)
        (#{:physical :magic} damage-type)
        (let [[val-or-max inc-or-mult] application-type] ; TODO this is schema for val-max-modifiers !
          (and (#{:val :max} val-or-max)
@@ -94,7 +94,7 @@
        (when (:target source-or-target)
          " received ")))
 
-; example: [:damage [:source :physical [:max :mult] 3]]
+; example: [:damage [:effect/source :physical [:max :mult] 3]]
 ; TODO => effect-modifier-modifier
 (modifier/defmodifier :modifier/damage
   {:text (fn [value]
