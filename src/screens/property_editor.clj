@@ -6,7 +6,7 @@
             [gdl.scene2d.actor :as actor :refer [remove! set-touchable! parent add-listener!]]
             [gdl.scene2d.group :refer [add-actor! clear-children! children]]
             [gdl.scene2d.ui.text-field :as text-field]
-            [gdl.scene2d.ui.table :refer [add! add-rows cells add-separator!]]
+            [gdl.scene2d.ui.table :refer [add! add-rows cells]]
             [gdl.scene2d.ui.cell :refer [set-actor!]]
             [gdl.scene2d.ui.widget-group :refer [pack!]]
             [context.properties :as properties]
@@ -99,8 +99,10 @@
                        :tooltip-text-fn (fn [ctx props]
                                           (try (cdq.context/skill-text ctx props)
                                               (catch Throwable t
-                                                (default-property-tooltip-text ctx props))))}}})
-
+                                                (default-property-tooltip-text ctx props))))}}
+   :misc {:title "Misc"
+          :overview {:title "Misc"
+                     :tooltip-text-fn default-property-tooltip-text}}})
 ;;
 
 (defn- one-to-many-attribute->linked-property-type [k]
@@ -375,14 +377,13 @@
 ;;
 
 (defn- add-one-to-many-rows [ctx table property-type property-ids]
-  (add-separator! table)
   (let [redo-rows (fn [ctx property-ids]
                     (clear-children! table)
                     (add-one-to-many-rows ctx table property-type property-ids))]
     (add-rows table (concat
                      (for [prop-id property-ids]
                        [(let [props (get-property ctx prop-id)
-                              image-widget (->image-widget ctx
+                              image-widget (->image-widget ctx ; TODO image-button (link)
                                                            (:image props)
                                                            {:id (:id props)})]
                           (add-listener! image-widget (->text-tooltip ctx #((-> property-types
@@ -424,16 +425,36 @@
 
 ;;
 
+; TODO separators don't work with nested yet, also probably fucking up children actor id
+; also they are removable o.o
+
+(defn- ->horizontal-separator-cell []
+  {:actor (com.kotcrab.vis.ui.widget.Separator. "default")
+   :pad-top 2
+   :pad-bottom 2
+   :colspan 3
+   :fill-x? true
+   :expand-x? true})
+
+(defn- ->vertical-separator-cell []
+  {:actor (com.kotcrab.vis.ui.widget.Separator. "vertical")
+   :pad-top 2
+   :pad-bottom 2
+   :fill-y? true
+   :expand-y? true})
+
 ; TODO sort them in specific way, id, image first, etc.
 ; TODO here interleave separators as cells with colspan?
 ; but for nested map I can check a boolean no separators ?
 ; https://github.com/kotcrab/vis-ui/blob/4a1e267e80cc38a9467f9bfa67be66902c78b6ef/ui/src/main/java/com/kotcrab/vis/ui/widget/VisTable.java#L45
 (defn- ->attribute-widgets [ctx props]
-  (for [[k v] (sort-attributes props)
-        :let [widget (->attribute-widget ctx [k v])]]
-    (do
-     (actor/set-id! widget k)
-     [(->label ctx (name k)) widget])))
+  (rest
+   (interleave (repeatedly (fn [] [(->horizontal-separator-cell)]))
+               (for [[k v] (sort-attributes props)
+                     :let [widget (->attribute-widget ctx [k v])]]
+                 (do
+                  (actor/set-id! widget k)
+                  [(->label ctx (name k)) (->vertical-separator-cell) widget])))))
 
 (defn- attribute-widgets->all-data [parent props]
   (into {} (for [[k v] props
@@ -464,6 +485,7 @@
                                                 ; TODO refresh overview creatures lvls,etc. ?
                                                 (swap! app/current-context properties/update-and-write-to-file! (get-data))
                                                 (remove! window)))
+                               nil
                                (->text-button context "Cancel" (fn [_ctx]
                                                                  (remove! window)))]]))
     (pack! window)
@@ -479,7 +501,7 @@
 (defn- ->left-widget [context]
   (->table context {:cell-defaults {:pad 5}
                     :rows (concat
-                           (for [[property-type {:keys [overview]}] (select-keys property-types [:creature :item :skill :weapon])]
+                           (for [[property-type {:keys [overview]}] (select-keys property-types [:creature :item :skill :weapon :misc])]
                              [(->text-button context
                                              (:title overview)
                                              #(set-second-widget! % (->overview-table % property-type open-property-editor-window!)))])

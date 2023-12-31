@@ -3,20 +3,20 @@
   :action-time 0.4,
   :cooldown 0,
   :cost 4,
-  :effect #:effect{:projectile true},
+  :effect {:effect/projectile true},
   :image {:file "skills/images.png", :sub-image-bounds [96 32 32 32]}}
  {:id :spells/nova,
   :spell? true,
   :action-time 0.3,
   :cooldown 0,
-  :effect #:effect{:nova true},
+  :effect {:effect/nova true},
   :image {:file "skills/images.png", :sub-image-bounds [0 64 32 32]}}
  {:id :spells/spawn,
   :spell? true,
   :action-time 0.4,
   :cooldown 0,
   :cost 0,
-  :effect #:effect{:spawn :bat},
+  :effect {:effect/spawn :bat},
   :image {:file "skills/images.png", :sub-image-bounds [160 64 32 32]}}
  {:id :spells/meditation,
   :spell? true,
@@ -24,7 +24,8 @@
   :cooldown 0,
   :cost 1,
   :effect
-  #:effect{:restore-hp-mana true, :sound "sounds/bfxr_drugsuse.wav"},
+  {:effect/restore-hp-mana true,
+   :effect/sound "sounds/bfxr_drugsuse.wav"},
   :image {:file "skills/images.png", :sub-image-bounds [64 96 32 32]}}
  {:image
   {:file "creatures/images.png", :sub-image-bounds [336 48 48 48]},
@@ -1402,7 +1403,7 @@
  {:image {:file "items/images.png", :sub-image-bounds [480 624 48 48]},
   :slot :cloak,
   :id :cloak-blood,
-  :modifier #:modifier{:max-mana 100},
+  :modifier {:modifier/max-mana 100},
   :pretty-name "Blood Cloak"}
  {:image {:file "items/images.png", :sub-image-bounds [0 240 48 48]},
   :slot :shield,
@@ -1749,9 +1750,8 @@
   :id :greatspear,
   :image {:file "items/images.png", :sub-image-bounds [48 144 48 48]},
   :effect
-  [[:effect/target-entity
-    {:maxrange 1.0,
-     :hit-effect [[:effect/damage [:physical [6 13]]]]}]]}
+  {:effect/target-entity
+   {:hit-effect {:effect/damage [:physical [6 13]]}, :maxrange 1.0}}}
  {:image {:file "items/images.png", :sub-image-bounds [288 288 48 48]},
   :slot :shield,
   :id :shield-ice-kite,

@@ -57,7 +57,9 @@
    :creature :species
    :item :slot
    :skill (fn [{:keys [slot effect]}] (and (not slot) effect))
-   :weapon (fn [{:keys [slot]}] (and slot (= slot :weapon)))})
+   :weapon (fn [{:keys [slot]}] (and slot (= slot :weapon)))
+   :misc (fn [{:keys [hp species slot effect]}]
+           (not (or hp species slot effect)))})
 
 (defn property-type [props]
   (some (fn [[prop-type k]] (when (k props) prop-type))
