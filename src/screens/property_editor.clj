@@ -52,8 +52,9 @@
 (comment
  {:property/id :staff,
   ; property/image ?? used @ skill & item ...
-  :image {:file "items/images.png", :sub-image-bounds [528 144 48 48]},
-  :pretty-name "Staff",
+  ; => will become :entity/image then ... make namespaced so easier to find ...
+  :property/image {:file "items/images.png", :sub-image-bounds [528 144 48 48]},
+  :property/pretty-name "Staff",
   :item/slot :weapon,
   :item/two-handed? true,
   :skill/action-time 0.5,
@@ -109,35 +110,48 @@
 
 (def ^:private attribute->attribute-widget
   {:id :label
+   :slot :label
+   :spell? :label
    :image :image
-   :level :text-field
    :species :link-button
-   :hp :text-field
    :speed :text-field
    :skills :one-to-many
    :items :one-to-many
    :effect :nested-map
    :modifier :nested-map
-   :effect/sound :sound
+   :effect/sound :sound})
 
-   :map-size :text-field
-   :max-area-level :text-field
-   :spawn-rate :text-field})
+(defn- sort-attributes [properties]
+  (sort-by
+   (fn [[k _v]]
+     [(case k
+        :id 0
+        :image 1
+        :pretty-name 2
+        :level 3
+        :slot 3
+        :species 4
+        9)
+      (name k)])
+   properties))
 
 ;;
 
-(defmulti ->attribute-widget
-  (fn [_context [k _v]]
-    (get attribute->attribute-widget k)))
+(defmulti ->attribute-widget     (fn [_context [k _v]] (get attribute->attribute-widget k)))
+(defmulti attribute-widget->data (fn [_widget  [k _v]] (get attribute->attribute-widget k)))
 
-(defmethod ->attribute-widget :default [ctx [_k v]]
+(defmethod ->attribute-widget :default [ctx [_ v]]
+  (->text-field ctx (pr-str v) {}))
+
+(defmethod attribute-widget->data :default [widget _kv]
+  (edn/read-string (text-field/text widget)))
+
+;;
+
+(defmethod ->attribute-widget :label [ctx [_k v]]
   (->label ctx (pr-str v))) ; TODO print-level set to nil ! not showing all effect -> print-fn?
 
-(defmulti attribute-widget->data
-  (fn [_widget [k _v]]
-    (get attribute->attribute-widget k)))
-
-(defmethod attribute-widget->data :default [_widget _kv]
+(defmethod attribute-widget->data :label [_widget _kv]
   nil)
 
 ;;
@@ -182,16 +196,13 @@
     window
     ))
 
+;;
+
 (defmethod ->attribute-widget :image [ctx [_ image]]
   (->image-button ctx image #(add-to-stage! % (->list-textures-window %))))
 
-;;
-
-(defmethod ->attribute-widget :text-field [ctx [_ v]]
-  (->text-field ctx (pr-str v) {}))
-
-(defmethod attribute-widget->data :text-field [widget _kv]
-  (edn/read-string (text-field/text widget)))
+(defmethod attribute-widget->data :image [_widget _kv]
+  nil)
 
 ;;
 
@@ -202,6 +213,9 @@
 
 (defmethod ->attribute-widget :link-button [context [_ prop-id]]
   (->text-button context (name prop-id) #(open-property-editor-window! % prop-id)))
+
+(defmethod attribute-widget->data :link-button [_widget _kv]
+  nil)
 
 ;;
 
@@ -218,41 +232,63 @@
 
 (declare redo-nested-map-rows!)
 
+(defn- nested-map-attribute->allowed-keys [k]
+  (case k
+    :modifier (keys context.modifier/modifier-definitions)
+    :effect (keys (methods context.effect/do!))))
+
+(declare ->attribute-widgets)
+
+(defn- clicked-nested-map-overview [k ctx table window nested-k widget-rows]
+  (remove! window)
+  (redo-nested-map-rows! k ctx table
+                         (conj widget-rows (first (->attribute-widgets ctx {nested-k nil})))))
+
 (defn- ->nested-map-rows [k ctx table widget-rows]
   (conj (for [row widget-rows]
-          (conj row (->text-button ctx "-" #(redo-nested-map-rows! k % table (disj widget-rows row)))))
+          (conj row
+                (->text-button ctx "-" #(redo-nested-map-rows! k % table (disj widget-rows row)))))
         [{:actor (->text-button ctx (str "Add " (name k))
                                 (fn [ctx]
                                   (let [window (->window ctx {:title "Choose"
                                                               :modal? true
                                                               :close-button? true
                                                               :center? true
-                                                              :close-on-escape? true})
-                                        clicked-id-fn (fn [ctx id]
-                                                        (remove! window)
-                                                        #_(redo-nested-map-rows! k % table (conj widget-rows row)))]
-                                    (add-rows window (for [k (case k
-                                                               :modifier (keys context.modifier/modifier-definitions)
-                                                               :effect (keys (methods context.effect/do!)))]
-                                                       [(->label ctx (name k))]))
+                                                              :close-on-escape? true})]
+                                    (add-rows window (for [nested-k (nested-map-attribute->allowed-keys k)]
+                                                       [(->text-button ctx (name nested-k)
+                                                                       #(clicked-nested-map-overview k % table window nested-k widget-rows))]))
                                     (pack! window)
                                     (add-to-stage! ctx window))))
           :colspan 3}]))
 
 (defn- redo-nested-map-rows! [k ctx table widget-rows]
   (clear-children! table)
-  (add-rows table (->nested-map-rows k ctx table widget-rows)))
-
-(declare ->attribute-widgets
-         attribute-widgets->all-data)
+  (add-rows table (->nested-map-rows k ctx table widget-rows))
+  (pack! (parent table)))
 
 (defmethod ->attribute-widget :nested-map [ctx [k props]]
   (let [table (->table ctx {:cell-defaults {:pad 5}})]
     (add-rows table (->nested-map-rows k ctx table (set (->attribute-widgets ctx props))))
     table))
 
+(declare attribute-widgets->all-data)
+
 (defmethod attribute-widget->data :nested-map [table [_k props]]
-  (attribute-widgets->all-data table props))
+  (let [data (attribute-widgets->all-data table props)]
+    (println "get data :nested-map " data)
+    data))
+
+(comment
+ (let [ctx @gdl.app/current-context
+       table (:modifier (gdl.context/mouse-on-stage-actor? ctx))
+       ]
+   (attribute-widgets->all-data table #:modifier{:armor nil :max-hp nil :shield nil})
+   ; need to get not props but from widgets themself the value ...
+   ; a widget should hold its value by which it was created?
+
+   )
+ )
 
 ;;
 
@@ -380,18 +416,20 @@
 ; but for nested map I can check a boolean no separators ?
 ; https://github.com/kotcrab/vis-ui/blob/4a1e267e80cc38a9467f9bfa67be66902c78b6ef/ui/src/main/java/com/kotcrab/vis/ui/widget/VisTable.java#L45
 (defn- ->attribute-widgets [ctx props]
-  (for [[k v] props
+  (for [[k v] (sort-attributes props)
         :let [widget (->attribute-widget ctx [k v])]]
     (do
      (actor/set-id! widget k)
      [(->label ctx (name k)) widget])))
 
 (defn- attribute-widgets->all-data [parent props]
+  (println "GET ALL DATA")
   (into {} (for [[k v] props
                  :let [widget (k parent)]
                  :when widget]
-             [k (or (attribute-widget->data widget [k v])
-                    v)])))
+             (do
+              [k (or (attribute-widget->data widget [k v])
+                     v)]))))
 
 ;;
 
@@ -412,6 +450,8 @@
     (add-rows window (concat widgets
                              [[(->text-button context "Save"
                                               (fn [_ctx]
+                                                (println "~SAVE ~")
+                                                (println " ... get-data")
                                                 ; TODO error modal like map editor?
                                                 ; TODO refresh overview creatures lvls,etc. ?
                                                 (swap! app/current-context properties/update-and-write-to-file! (get-data))
