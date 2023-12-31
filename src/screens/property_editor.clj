@@ -137,11 +137,15 @@
 
 ;;
 
+(defn ->edn [v]
+  (binding [*print-level* nil]
+    (pr-str v)))
+
 (defmulti ->attribute-widget     (fn [_context [k _v]] (get attribute->attribute-widget k)))
 (defmulti attribute-widget->data (fn [_widget  [k _v]] (get attribute->attribute-widget k)))
 
 (defmethod ->attribute-widget :default [ctx [_ v]]
-  (->text-field ctx (pr-str v) {}))
+  (->text-field ctx (->edn v) {}))
 
 (defmethod attribute-widget->data :default [widget _kv]
   (edn/read-string (text-field/text widget)))
@@ -149,7 +153,7 @@
 ;;
 
 (defmethod ->attribute-widget :label [ctx [_k v]]
-  (->label ctx (pr-str v))) ; TODO print-level set to nil ! not showing all effect -> print-fn?
+  (->label ctx (->edn v)))
 
 (defmethod attribute-widget->data :label [_widget _kv]
   nil)
