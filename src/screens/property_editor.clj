@@ -275,20 +275,8 @@
 (declare attribute-widgets->all-data)
 
 (defmethod attribute-widget->data :nested-map [table [_k props]]
-  (let [data (attribute-widgets->all-data table props)]
-    (println "get data :nested-map " data)
-    data))
-
-(comment
- (let [ctx @gdl.app/current-context
-       table (:modifier (gdl.context/mouse-on-stage-actor? ctx))
-       ]
-   (attribute-widgets->all-data table #:modifier{:armor nil :max-hp nil :shield nil})
-   ; need to get not props but from widgets themself the value ...
-   ; a widget should hold its value by which it was created?
-
-   )
- )
+  (attribute-widgets->all-data table (zipmap (keep actor/id (children table))
+                                             (repeat nil))))
 
 ;;
 
@@ -315,15 +303,21 @@
 
 (defmethod ->attribute-widget :sound [ctx [_ sound-file]]
   (->table ctx {:cell-defaults {:pad 5}
-                :rows [[(->text-button ctx
-                                       (name sound-file)
-                                       #(add-to-stage! % (->list-sounds-window %)))
-                        (->text-button ctx
-                                       "play"
-                                       #(play-sound! % sound-file))]]}))
+                :rows [(if sound-file
+                         [(->text-button ctx
+                                         (name sound-file)
+                                         #(add-to-stage! % (->list-sounds-window %)))
+                          (->text-button ctx
+                                         "play"
+                                         #(play-sound! % sound-file))]
+                         [(->text-button ctx
+                                         "Select sound"
+                                         #(add-to-stage! % (->list-sounds-window %)))])]}))
 
 (defmethod attribute-widget->data :sound [widget _]
-  nil) ; TODO needs to pass value?
+  ; TODO give sound selected , save in userobject/id .... ?
+  nil
+  )
 
 ;;
 
@@ -423,13 +417,10 @@
      [(->label ctx (name k)) widget])))
 
 (defn- attribute-widgets->all-data [parent props]
-  (println "GET ALL DATA")
   (into {} (for [[k v] props
                  :let [widget (k parent)]
                  :when widget]
-             (do
-              [k (or (attribute-widget->data widget [k v])
-                     v)]))))
+             [k (or (attribute-widget->data widget [k v]) v)])))
 
 ;;
 
@@ -450,8 +441,6 @@
     (add-rows window (concat widgets
                              [[(->text-button context "Save"
                                               (fn [_ctx]
-                                                (println "~SAVE ~")
-                                                (println " ... get-data")
                                                 ; TODO error modal like map editor?
                                                 ; TODO refresh overview creatures lvls,etc. ?
                                                 (swap! app/current-context properties/update-and-write-to-file! (get-data))
