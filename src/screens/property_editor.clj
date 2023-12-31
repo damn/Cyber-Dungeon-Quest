@@ -114,12 +114,14 @@
    :spell? :label
    :image :image
    :species :link-button
-   :speed :text-field
    :skills :one-to-many
    :items :one-to-many
    :effect :nested-map
    :modifier :nested-map
-   :effect/sound :sound})
+   :effect/sound :sound
+   :effect/target-entity :nested-map
+   :hit-effect :nested-map
+   })
 
 (defn- sort-attributes [properties]
   (sort-by
@@ -160,6 +162,38 @@
 
 ;;
 
+(defn ->scroll-pane [_ actor]
+  (let [widget (com.kotcrab.vis.ui.widget.VisScrollPane. actor)]
+    (.setFlickScroll widget false)
+    (.setFadeScrollBars widget false)
+    ; TODO set touch focus , have to click first to use scroll pad
+    ; TODO use scrollpad ingame too
+    widget))
+
+(defn ->scrollable-choose-window [ctx rows]
+  (let [window (->window ctx {:title "Choose"
+                              :modal? true
+                              :close-button? true
+                              :center? true
+                              :close-on-escape? true})
+        table (->table ctx {:rows rows
+                            :cell-defaults {:pad 1}})]
+
+    ; (println "(.getWidth table)" (.getWidth table))
+    ; == 0 .. ?1
+    ; or resizable make window ... ?
+    ; or pass size at params
+
+    (.width
+     (.height (.add window (->scroll-pane ctx table))
+              (float (- (:gui-viewport-height ctx) 50)))
+     (float (+ 100 (/ (:gui-viewport-width ctx) 2)))
+     )
+    (.pack window)
+    window))
+
+;;
+
 ; TODO too many ! too big ! scroll ... only show files first & preview?
 ; TODO make tree view from folders, etc. .. !! all creatures animations showing...
 (defn- texture-rows [ctx]
@@ -171,39 +205,8 @@
                     file
                     (fn [_ctx]))]))
 
-(defn ->scroll-pane [_ actor]
-  (let [widget (com.kotcrab.vis.ui.widget.VisScrollPane. actor)]
-    (.setFlickScroll widget false)
-    (.setFadeScrollBars widget false)
-    ; TODO set touch focus , have to click first to use scroll pad
-    ; TODO use scrollpad ingame too
-    widget))
-
-(defn ->list-textures-window [ctx]
-  (let [window  (->window ctx {:title "Choose"
-                 :modal? true
-                 :close-button? true
-                 :center? true
-                 :close-on-escape? true
-                 ;:rows [[(->scroll-pane ctx (->table ctx {:rows (texture-rows ctx)}))]]
-                 :pack? true})]
-
-    ;(.add window (->scroll-pane ctx (->table ctx {:rows (texture-rows ctx)})))
-    (.width
-     (.height (.add window (->scroll-pane ctx (->table ctx {:rows (texture-rows ctx)})))
-              (float (- (:gui-viewport-height ctx) 50)))
-     (float 750)
-     )
-    ;(.fill (.add window (->scroll-pane ctx (->table ctx {:rows (texture-rows ctx)}))))
-    (.pack window)
-    ;(.setFillParent window true)
-    window
-    ))
-
-;;
-
 (defmethod ->attribute-widget :image [ctx [_ image]]
-  (->image-button ctx image #(add-to-stage! % (->list-textures-window %))))
+  (->image-button ctx image #(add-to-stage! % (->scrollable-choose-window % (texture-rows %)))))
 
 (defmethod attribute-widget->data :image [_widget _kv]
   nil)
@@ -239,7 +242,9 @@
 (defn- nested-map-attribute->allowed-keys [k]
   (case k
     :modifier (keys context.modifier/modifier-definitions)
-    :effect (keys (methods context.effect/do!))))
+    :effect     (keys (methods context.effect/do!))
+    :hit-effect (keys (methods context.effect/do!)) ; only those with 'source/target'
+    ))
 
 (declare ->attribute-widgets)
 
@@ -269,8 +274,10 @@
 (defn- redo-nested-map-rows! [k ctx table widget-rows]
   (clear-children! table)
   (add-rows table (->nested-map-rows k ctx table widget-rows))
+  ; TODO recursively pack all parents ! hit-effect ..
   (pack! (parent table)))
 
+; FIXME target-entity does not have 'add'/'remove' nested fields ....
 (defmethod ->attribute-widget :nested-map [ctx [k props]]
   (let [table (->table ctx {:cell-defaults {:pad 5}})]
     (add-rows table (->nested-map-rows k ctx table (set (->attribute-widgets ctx props))))
@@ -281,6 +288,9 @@
 (defmethod attribute-widget->data :nested-map [table [_k props]]
   (attribute-widgets->all-data table (zipmap (keep actor/id (children table))
                                              (repeat nil))))
+; FIXME
+;Assert failed: Actor ids are not distinct: [:effect/damage :effect/damage :effect/stun]
+;(or (empty? ids) (apply distinct? ids))
 
 ;;
 
@@ -289,39 +299,44 @@
 ; TODO do the same for image!!
 ; TODO -> modal window reuse code?
 
-(defn- sound-rows [ctx]
-  (for [sounds (partition-all 5 (all-sound-files ctx))]
-    (for [sound sounds]
-      (->text-button ctx
-                     (str/replace-first sound "sounds/" "")
-                     #(play-sound! % sound)))))
+; FIXME sound saving becomes nil because nested bla uses widget-data fns not 'or'
+; => probably should always fetch the data out of the widget not original props
+; even for label ... or image ... or sound ...
+; => store the value somewhere ? id [k v] ?
+; but k parent used a lot dont even know where ...
+; or hidden value id widget o.o
 
-(defn ->list-sounds-window [ctx]
-  (->window ctx {:title "Choose"
-                 :modal? true
-                 :close-button? true
-                 :center? true
-                 :close-on-escape? true
-                 :rows (sound-rows ctx)
-                 :pack? true}))
+; TODO why not effect text 'spawns a wizard' ?
+
+(defn- ->play-sound-button [ctx sound-file]
+  (->text-button ctx ">>>" #(play-sound! % sound-file)))
+
+(defn- all-sounds-rows [ctx]
+  (for [sound-file (all-sound-files ctx)]
+    [(->text-button ctx (str/replace-first sound-file "sounds/" "")
+                    (fn [_ctx]
+                      (println "selected " sound-file)
+                      ; TODO add sound widget, clear table cells? idk lets see...
+                      ))
+     (->play-sound-button ctx sound-file)]))
+
+(defn- click-open-sounds-window! [ctx]
+  (add-to-stage! ctx (->scrollable-choose-window ctx (all-sounds-rows ctx))))
+
+(defn- ->sound-button [ctx sound-file]
+  (let [button (->text-button ctx (name sound-file) click-open-sounds-window!)]
+    (actor/set-id! button sound-file)
+    button))
 
 (defmethod ->attribute-widget :sound [ctx [_ sound-file]]
   (->table ctx {:cell-defaults {:pad 5}
                 :rows [(if sound-file
-                         [(->text-button ctx
-                                         (name sound-file)
-                                         #(add-to-stage! % (->list-sounds-window %)))
-                          (->text-button ctx
-                                         "play"
-                                         #(play-sound! % sound-file))]
-                         [(->text-button ctx
-                                         "Select sound"
-                                         #(add-to-stage! % (->list-sounds-window %)))])]}))
+                         [(->sound-button ctx sound-file)
+                          (->play-sound-button ctx sound-file)]
+                         [(->text-button ctx "Select sound" click-open-sounds-window!)])]}))
 
 (defmethod attribute-widget->data :sound [widget _]
-  ; TODO give sound selected , save in userobject/id .... ?
-  nil
-  )
+  (actor/id (first (children widget))))
 
 ;;
 

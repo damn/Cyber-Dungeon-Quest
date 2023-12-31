@@ -19,7 +19,7 @@
             {:title "Skills"
              :id :skill-window
              :visible? false
-             :rows [(for [id [:spells/projectile
+             :rows [(for [id [:spells/projectile ; TODO if they get changed, have to redo this window , actually these windows need to be created only when starting a new session ... hmmmm check....
                               :spells/meditation
                               :spells/spawn]
                           :let [skill (get-property context id)
