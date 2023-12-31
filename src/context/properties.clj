@@ -164,7 +164,8 @@
          (= (set (keys data))
             (set (keys (get properties id))))]}
   (let [properties (update properties id merge data)]
-    (write-to-file! properties properties-file)
+    (.start (Thread. (fn []
+                       (write-to-file! properties properties-file))))
     (assoc context :context/properties properties)))
 
 (comment
