@@ -1,16 +1,19 @@
 (ns screens.property-editor
   (:require [clojure.edn :as edn]
-            [gdl.app :refer [change-screen!]]
-            [gdl.context :refer [get-stage ->text-button ->image-button ->label ->text-field
-                                 ->image-widget ->table ->stack ->window ->text-tooltip]]
+            [clojure.string :as str]
+            [gdl.app :as app :refer [change-screen!]]
+            [gdl.context :refer [get-stage ->text-button ->image-button ->label ->text-field ->image-widget ->table ->stack ->window ->text-tooltip all-sound-files play-sound!]]
             [gdl.scene2d.actor :as actor :refer [remove! set-touchable! parent add-listener!]]
             [gdl.scene2d.group :refer [add-actor! clear-children! children]]
             [gdl.scene2d.ui.text-field :as text-field]
             [gdl.scene2d.ui.table :refer [add! add-rows cells add-separator!]]
             [gdl.scene2d.ui.cell :refer [set-actor!]]
             [gdl.scene2d.ui.widget-group :refer [pack!]]
-            context.properties
+            [context.properties :as properties]
             [cdq.context :refer [get-property all-properties]]))
+
+; TODO all properties which have no property type -> misc -> select from scroll pane text buttons
+; e.g. first-level .... want to edit ! or @ map editor ?
 
 ; ADD SOUNDS TO SPELLS MANDATORY - move out of restoration - also hp / mana separate
 ; LET ME EDIT for example spawn which creature
@@ -24,37 +27,73 @@
 
 ; used @ player-modal / error-window , can move to gdl.context
 (defn- add-to-stage! [ctx actor]
-  (-> ctx get-stage (add-actor! actor)))
+  (-> ctx get-stage (add-actor! actor))
+  (.setScrollFocus (get-stage ctx) actor) ; TODO not working
+  (.setKeyboardFocus (get-stage ctx) actor)
+  )
 
 (defn- default-property-tooltip-text [context props]
   (binding [*print-level* nil]
     (with-out-str
      (clojure.pprint/pprint (dissoc props :image)))))
 
+; property-keys not used
+; but schema? add/remove something ? or prepare already in resources/properties.edn
+; => still schema for checking - all items,spells,etc. ok?
+
+; creature
+; item
+; spell  = skill type
+; weapon = skill type & item also or skill modifier myself?
+
+; weapon is just item with yourself as skill modifier ... but its BOTH
+; so how to do text ? based on all keys always ?
+
+(comment
+ {:property/id :staff,
+  ; property/image ?? used @ skill & item ...
+  :image {:file "items/images.png", :sub-image-bounds [528 144 48 48]},
+  :pretty-name "Staff",
+  :item/slot :weapon,
+  :item/two-handed? true,
+  :skill/action-time 0.5,
+  :skill/effect
+  [[:effect/target-entity
+    {:maxrange 0.6,
+     :hit-effect [[:effect/damage [:physical [3 6]]]]}]]})
+
+; or properties no type but components/composition
+; e.g.
+{:property/id :weapons/staff
+ :skill {:foo :bar}
+ :item {:bar :baz}
+ ; ?
+ }
+
 (def ^:private property-types
   {:species {:title "Species"
-             :property-keys [:id :hp :speed]
+             ;:property-keys [:id :hp :speed]
              :overview {:title "Species"}}
    :creature {:title "Creature"
-              :property-keys [:id :image :species :level :skills :items]
+              ;:property-keys [:id :image :species :level :skills :items]
               :overview {:title "Creatures"
                          :sort-by-fn #(vector (or (:level %) 9) (name (:species %)) (name (:id %)))
                          :extra-infos-widget #(->label %1 (or (str (:level %2)) "-"))
                          :tooltip-text-fn default-property-tooltip-text}}
    :item {:title "Item"
-          :property-keys [:id :image :slot :pretty-name :modifier]
+          ;:property-keys [:id :image :slot :pretty-name :modifier]
           :overview {:title "Items"
                      :sort-by-fn #(vector (if-let [slot (:slot %)] (name slot) "") (name (:id %)))
                      :tooltip-text-fn default-property-tooltip-text}}
    :skill {:title "Spell"
-           :property-keys [:id :image :action-time :cooldown :cost :effect]
+           ;:property-keys [:id :image :action-time :cooldown :cost :effect]
            :overview {:title "Spells"
                       :tooltip-text-fn (fn [ctx props]
                                          (try (cdq.context/skill-text ctx props)
                                               (catch Throwable t
                                                 (default-property-tooltip-text ctx props))))}}
    :weapon {:title "Weapon"
-            :property-keys [:id :image :pretty-name :action-time :effect]
+            ;:property-keys [:id :image :pretty-name :action-time :effect]
             :overview {:title "Weapons"
                        :tooltip-text-fn (fn [ctx props]
                                           (try (cdq.context/skill-text ctx props)
@@ -79,7 +118,11 @@
    :items :one-to-many
    :effect :nested-map
    :modifier :nested-map
-   :effect/sound :sound})
+   :effect/sound :sound
+
+   :map-size :text-field
+   :max-area-level :text-field
+   :spawn-rate :text-field})
 
 ;;
 
@@ -99,8 +142,48 @@
 
 ;;
 
+; TODO too many ! too big ! scroll ... only show files first & preview?
+; TODO make tree view from folders, etc. .. !! all creatures animations showing...
+(defn- texture-rows [ctx]
+  (for [file (sort (gdl.context/all-texture-files ctx))]
+    [(->image-button ctx
+                      (gdl.context/create-image ctx file)
+                      (fn [_ctx]))]
+    #_[(->text-button ctx
+                    file
+                    (fn [_ctx]))]))
+
+(defn ->scroll-pane [_ actor]
+  (let [widget (com.kotcrab.vis.ui.widget.VisScrollPane. actor)]
+    (.setFlickScroll widget false)
+    (.setFadeScrollBars widget false)
+    ; TODO set touch focus , have to click first to use scroll pad
+    ; TODO use scrollpad ingame too
+    widget))
+
+(defn ->list-textures-window [ctx]
+  (let [window  (->window ctx {:title "Choose"
+                 :modal? true
+                 :close-button? true
+                 :center? true
+                 :close-on-escape? true
+                 ;:rows [[(->scroll-pane ctx (->table ctx {:rows (texture-rows ctx)}))]]
+                 :pack? true})]
+
+    ;(.add window (->scroll-pane ctx (->table ctx {:rows (texture-rows ctx)})))
+    (.width
+     (.height (.add window (->scroll-pane ctx (->table ctx {:rows (texture-rows ctx)})))
+              (float (- (:gui-viewport-height ctx) 50)))
+     (float 750)
+     )
+    ;(.fill (.add window (->scroll-pane ctx (->table ctx {:rows (texture-rows ctx)}))))
+    (.pack window)
+    ;(.setFillParent window true)
+    window
+    ))
+
 (defmethod ->attribute-widget :image [ctx [_ image]]
-  (->image-widget ctx image {}))
+  (->image-button ctx image #(add-to-stage! % (->list-textures-window %))))
 
 ;;
 
@@ -114,7 +197,7 @@
 
 (declare ->property-editor-window)
 
-(defn- open-property-editor-window! [context property-id]
+(defn open-property-editor-window! [context property-id]
   (add-to-stage! context (->property-editor-window context property-id)))
 
 (defmethod ->attribute-widget :link-button [context [_ prop-id]]
@@ -124,6 +207,14 @@
 
 ; TODO add effect/modifier components
 ; => data schema for all modifiers/effects & value ranges?
+
+; TODO what happens if you select damage or sound or whatever ?
+; each has its own widget get added with default/empty value (cannot save then)
+; => schema ! for each attribute.
+
+; right click entity popup menu
+; edit
+; => open-property-editor-window! ingame !
 
 (declare redo-nested-map-rows!)
 
@@ -165,27 +256,17 @@
 
 ;;
 
-(defn ->list [items]
-  (let [vis-list (com.kotcrab.vis.ui.widget.VisList.)]
-    (.setItems vis-list (into-array items))
-    (com.kotcrab.vis.ui.widget.VisScrollPane. vis-list)))
-
-; TODO only wavs ... ALL SOUNDS =>  save in assets !!
-(defn- all-sounds []
-  (map #(clojure.string/replace-first % "resources/" "")
-       (map (memfn path)
-            (seq (.list (.internal com.badlogic.gdx.Gdx/files "resources/sounds/"))))))
-
-; TODO grep play-sound! and move configurable to properties
-; state enter alert, die, etc. for creatures
-; for each creature different sounds death sound, etc. !
-; movement sounds!
-; find good sound FX library
+; TODO select from all sounds (see duration, waveform, if already used somewhere ?)
+; TODO selectable sound / pass widget->data somehow
+; TODO do the same for image!!
+; TODO -> modal window reuse code?
 
 (defn- sound-rows [ctx]
-  (for [sounds (partition-all 5 (all-sounds))]
+  (for [sounds (partition-all 5 (all-sound-files ctx))]
     (for [sound sounds]
-      (->text-button ctx (clojure.string/replace-first sound "sounds/" "") #(gdl.context/play-sound! % sound)))))
+      (->text-button ctx
+                     (str/replace-first sound "sounds/" "")
+                     #(play-sound! % sound)))))
 
 (defn ->list-sounds-window [ctx]
   (->window ctx {:title "Choose"
@@ -194,18 +275,16 @@
                  :center? true
                  :close-on-escape? true
                  :rows (sound-rows ctx)
-                 :pack? true
-                 }))
+                 :pack? true}))
 
 (defmethod ->attribute-widget :sound [ctx [_ sound-file]]
   (->table ctx {:cell-defaults {:pad 5}
-                :rows [[(->text-button ctx (name sound-file) #(add-to-stage! % (->list-sounds-window %)))
-                        (->text-button ctx "play" #(gdl.context/play-sound! % sound-file))]]}))
-
-; select from all sounds (see length, waveform, if already used ?)
-; can play all sounds from list and also select
-
-
+                :rows [[(->text-button ctx
+                                       (name sound-file)
+                                       #(add-to-stage! % (->list-sounds-window %)))
+                        (->text-button ctx
+                                       "play"
+                                       #(play-sound! % sound-file))]]}))
 
 (defmethod attribute-widget->data :sound [widget _]
   nil) ; TODO needs to pass value?
@@ -296,10 +375,10 @@
 
 ;;
 
-; TODO here interleave separators
-; https://github.com/kotcrab/vis-ui/blob/4a1e267e80cc38a9467f9bfa67be66902c78b6ef/ui/src/main/java/com/kotcrab/vis/ui/widget/VisTable.java#L45
-; but for nested map I can check a boolean no separators ?
 ; TODO sort them in specific way, id, image first, etc.
+; TODO here interleave separators as cells with colspan?
+; but for nested map I can check a boolean no separators ?
+; https://github.com/kotcrab/vis-ui/blob/4a1e267e80cc38a9467f9bfa67be66902c78b6ef/ui/src/main/java/com/kotcrab/vis/ui/widget/VisTable.java#L45
 (defn- ->attribute-widgets [ctx props]
   (for [[k v] props
         :let [widget (->attribute-widget ctx [k v])]]
@@ -308,22 +387,21 @@
      [(->label ctx (name k)) widget])))
 
 (defn- attribute-widgets->all-data [parent props]
-  (into {}
-        (for [[k v] props
-              :let [widget (k parent)]
-              :when widget]
-          [k (or (attribute-widget->data widget [k v])
-                 v)])))
+  (into {} (for [[k v] props
+                 :let [widget (k parent)]
+                 :when widget]
+             [k (or (attribute-widget->data widget [k v])
+                    v)])))
 
 ;;
 
-(defn- ->property-editor-window [context id]
+(defn ->property-editor-window [context id]
   (let [props (get-property context id)
         {:keys [title
                 ; unused
-                property-keys
+                ; property-keys
                 ]} (get property-types (context.properties/property-type props))
-        window (->window context {:title title
+        window (->window context {:title (or title (name id))
                                   :modal? true
                                   :close-button? true
                                   :center? true
@@ -335,9 +413,8 @@
                              [[(->text-button context "Save"
                                               (fn [_ctx]
                                                 ; TODO error modal like map editor?
-                                                ; TODO redo/close overview ?
-                                                (swap! gdl.app/current-context
-                                                       context.properties/update-and-write-to-file! (get-data))
+                                                ; TODO refresh overview creatures lvls,etc. ?
+                                                (swap! app/current-context properties/update-and-write-to-file! (get-data))
                                                 (remove! window)))
                                (->text-button context "Cancel" (fn [_ctx]
                                                                  (remove! window)))]]))

@@ -1,10 +1,9 @@
 (ns screens.map-editor
-  (:require [clojure.edn :as edn]
-            [clojure.string :as str]
+  (:require [clojure.string :as str]
             [gdl.app :refer [change-screen!]]
-            [gdl.context :refer [key-pressed? key-just-pressed? ->text-field ->table
-                                 ->label ->window world-mouse-position ->actor ->tiled-map render-tiled-map
-                                 draw-filled-rectangle draw-filled-circle draw-grid render-world-view ->text-button
+            [gdl.context :refer [key-pressed? key-just-pressed? ->label ->window world-mouse-position
+                                 ->actor ->tiled-map render-tiled-map draw-filled-rectangle
+                                 draw-filled-circle draw-grid render-world-view ->text-button
                                  current-screen draw-rectangle]]
             [gdl.disposable :refer [dispose]]
             [gdl.input.keys :as input.keys]
@@ -19,8 +18,8 @@
             [cdq.context :refer [get-property]]
             [utils.core :refer [->tile]]
             [mapgen.movement-property :refer (movement-property movement-properties)]
-            [mapgen.module-gen :as module-gen])
-  (:import com.badlogic.gdx.scenes.scene2d.ui.TextField))
+            [mapgen.module-gen :as module-gen]
+            screens.property-editor))
 
 ; TODO map-coords are clamped ? thats why showing 0 under and left of the map?
 ; make more explicit clamped-map-coords ?
@@ -154,22 +153,6 @@ direction keys: move")
            :start-position start-position)
     (show-whole-map! world-camera tiled-map)))
 
-(defn ->edit-text-field [ctx [k v]]
-  (->text-field ctx (str v) {:id k}))
-
-(defn key->value [^com.badlogic.gdx.scenes.scene2d.ui.Table forms-table k]
-  (edn/read-string
-   (.getText ^com.kotcrab.vis.ui.widget.VisTextField
-             (k forms-table))))
-
-(defn- ->params-form-table [ctx properties]
-  (let [table (->table ctx {:rows (for [[k v] properties]
-                                    [(->label ctx (name k))
-                                     (->edit-text-field ctx [k v])])})
-        get-properties #(into {} (for [k (keys properties)]
-                                   [k (key->value table k)]))]
-    [table get-properties]))
-
 (defrecord SubScreen [current-data]
   gdl.disposable/Disposable
   (dispose [_]
@@ -204,20 +187,18 @@ direction keys: move")
                              :center? true
                              :pack? true})))
 
-(defn ->generate-map-window [ctx]
-  (let [[form-table get-properties] (->params-form-table ctx (get-property ctx :world/first-level))]
-    (->window ctx {:title "Properties"
-                   :rows [[form-table]
-                          [(->text-button ctx
-                                          "Generate"
-                                          #(try (generate % (get-properties))
-                                                (catch Throwable t
-                                                  (->error-window! % t)
-                                                  (println t))))]]
-                   :pack? true})))
+(defn ->generate-map-window [ctx level-id]
+  (->window ctx {:title "Properties"
+                 :cell-defaults {:pad 10}
+                 :rows [[(->text-button ctx "Edit" #(screens.property-editor/open-property-editor-window! % level-id))]
+                        [(->text-button ctx "Generate" #(try (generate % (get-property % level-id))
+                                                             (catch Throwable t
+                                                               (->error-window! % t)
+                                                               (println t))))]]
+                 :pack? true}))
 
 (defn screen [context]
-  {:actors [(->generate-map-window context)
+  {:actors [(->generate-map-window context :world/first-level)
             (->info-window context)]
    :sub-screen (->SubScreen (atom {:tiled-map (->tiled-map context module-gen/modules-file)
                                    :show-movement-properties false

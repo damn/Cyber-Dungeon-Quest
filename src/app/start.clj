@@ -37,7 +37,6 @@
    :debug-windows? true
    :debug-options? true})
 
-; TODO move to resources & pass cmdline arg
 (def ^:private config dev-config)
 
 (defn- create-context [context]
