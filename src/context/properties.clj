@@ -6,9 +6,12 @@
             cdq.context))
 
 ; TODO
+; * namespaced ids as of type :creature/vampire
 ; * validation @ load/save of property-types attributes (optional ones to add like cooldown?)
 ; * text-field make validateabletextfiel
 ; * schema/value-ranges for all modifiers/effects
+; * fix item-text/skill-text/weapon-text etc. tooltip fns
+; * filter out not implemented weapons, etc.  mark them somehow
 
 ; TODO aggro range wakup time, etc what else is hidden?!, unique death animation/sound/attacksound each weapon/spell etc.
 ; alert sound, etc., mana, hp, speed.... default block modifiers

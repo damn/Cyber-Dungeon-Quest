@@ -98,8 +98,8 @@
 (defn- nested-map->components [k]
   (case k
     :item/modifier (keys context.modifier/modifier-definitions)
-    :skill/effect     (keys (methods context.effect/do!))
-    :hit-effect (keys (methods context.effect/do!)) ; only those with 'source/target'
+    :skill/effect (keys (methods context.effect/do!))
+    :hit-effect   (keys (methods context.effect/do!)) ; TODO only those with 'source/target'
     ))
 
 (defn- sort-attributes [properties]

@@ -19,17 +19,18 @@
             {:title "Skills"
              :id :skill-window
              :visible? false
+             :cell-defaults {:pad 10}
              :rows [(for [id [:spells/projectile
                               :spells/meditation
                               :spells/spawn]
-                          :let [skill (get-property context id)
+                          :let [; get-property in callbacks if they get changed, this is part of context permanently
                                 button (->image-button context
-                                                       (:property/image skill)
+                                                       (:property/image (get-property context id)) ; TODO here anyway taken
+                                                       ; => should probably build this window @ game start
                                                        (fn [{:keys [context/player-entity] :as ctx}]
                                                          (when (= :idle (entity/state @player-entity))
-                                                           (pressed-on-skill-in-menu ctx skill))))]]
-                      ; duplicated @ action-bar => not skill-text but skill-button ... ? with different on-clicked
+                                                           (pressed-on-skill-in-menu ctx (get-property ctx id)))))]]
                       (do
-                       (add-tooltip! button #(skill-text % skill))
+                       (add-tooltip! button #(skill-text % (get-property % id)))
                        button))]
              :pack? true}))
