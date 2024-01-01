@@ -121,8 +121,8 @@
 (defn- species-properties [species-props]
   (let [multiplier {:id :species/multiplier, :speed 2, :hp 10}]
     (-> species-props
-        (update :speed * (:speed multiplier))
-        (update :hp #(int (* % (:hp multiplier)))))))
+        (update :creature/speed * (:speed multiplier))
+        (update :creature/hp #(int (* % (:hp multiplier)))))))
 
 (defn- create-creature-data [creature-props
                              {:keys [is-player
@@ -132,7 +132,8 @@
         creature-props (update creature-props :creature/skills #(or % []))
         images (create-images context (name creature-id))
         [width height] (images->world-unit-dimensions images)
-        {:keys [speed hp]} (species-properties (get-property context (:creature/species creature-props)))]
+        {:keys [creature/speed
+                creature/hp]} (species-properties (get-property context (:creature/species creature-props)))]
     (merge (cond
             is-player               player-components
             (= creature-id :lady-a) lady-props

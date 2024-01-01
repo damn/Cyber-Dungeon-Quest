@@ -101,10 +101,15 @@
  }
 
 (def ^:private property-types
-  {:species {:title "Species"
+  {
+   ; not used
+   :species {:title "Species"
              :overview {:title "Species"}}
+   ;
    :creature {:title "Creature"
               :overview {:title "Creatures"
+                         :columns 16
+                         :image/dimensions [65 65]
                          :sort-by-fn #(vector (or (:creature/level %) 9)
                                               (name (:creature/species %))
                                               (name (:property/id %)))
@@ -112,6 +117,8 @@
                          :tooltip-text-fn default-property-tooltip-text}}
    :item {:title "Item"
           :overview {:title "Items"
+                     :columns 17
+                     :image/dimensions [60 60]
                      :sort-by-fn #(vector (if-let [slot (:item/slot %)]
                                             (name slot)
                                             "")
@@ -119,18 +126,24 @@
                      :tooltip-text-fn default-property-tooltip-text}}
    :skill {:title "Spell"
            :overview {:title "Spells"
+                      :columns 16
+                      :image/dimensions [70 70]
                       :tooltip-text-fn (fn [ctx props]
                                          (try (cdq.context/skill-text ctx props)
                                               (catch Throwable t
                                                 (default-property-tooltip-text ctx props))))}}
    :weapon {:title "Weapon"
             :overview {:title "Weapons"
+                       :columns 10
+                       :image/dimensions [96 96]
                        :tooltip-text-fn (fn [ctx props]
                                           (try (cdq.context/skill-text ctx props)
-                                              (catch Throwable t
-                                                (default-property-tooltip-text ctx props))))}}
+                                               (catch Throwable t
+                                                 (default-property-tooltip-text ctx props))))}}
    :misc {:title "Misc"
           :overview {:title "Misc"
+                     :columns 10
+                     :image/dimensions [96 96]
                      :tooltip-text-fn default-property-tooltip-text}}})
 ;;
 
@@ -154,6 +167,8 @@
    :creature/species :link-button
    :creature/skills :one-to-many
    :creature/items :one-to-many
+   :creature/hp :text-field
+   :creature/speed :text-field
    :spell? :label
    :skill/action-time :text-field
    :skill/cooldown :text-field
@@ -259,7 +274,9 @@
                     (fn [_ctx]))]))
 
 (defmethod ->value-widget :image [ctx [_ image]]
-  (->image-button ctx image #(add-to-stage! % (->scrollable-choose-window % (texture-rows %)))))
+  (->image-button ctx image
+                  #(add-to-stage! % (->scrollable-choose-window % (texture-rows %)))
+                  {:dimensions [96 96]}))
 
 ;;
 
@@ -386,6 +403,7 @@
                                    (add-to-stage! ctx window))))]
                (for [prop-id property-ids]
                  (let [props (get-property ctx prop-id)
+                       ; TODO also x2 dimensions
                        image-widget (->image-widget ctx ; TODO image-button (link)
                                                     (:property/image props)
                                                     {:id (:property/id props)})]
@@ -488,12 +506,14 @@
   (let [{:keys [title
                 sort-by-fn
                 extra-infos-widget
-                tooltip-text-fn]} (:overview (get property-types property-type))
+                tooltip-text-fn
+                columns
+                image/dimensions]} (:overview (get property-types property-type))
         entities (all-properties ctx property-type)
         entities (if sort-by-fn
                    (sort-by sort-by-fn entities)
                    entities)
-        number-columns 15]
+        number-columns columns]
     (->table ctx
              {:cell-defaults {:pad 2}
               :rows (concat [[{:actor (->label ctx title) :colspan number-columns}]]
@@ -501,7 +521,8 @@
                               (for [{:keys [property/id] :as props} entities
                                     :let [on-clicked #(clicked-id-fn % id)
                                           button (if (:property/image props)
-                                                   (->image-button ctx (:property/image props) on-clicked)
+                                                   (->image-button ctx (:property/image props) on-clicked
+                                                                   {:dimensions dimensions})
                                                    (->text-button ctx (name id) on-clicked))
                                           top-widget (or (and extra-infos-widget
                                                               (extra-infos-widget ctx props))

@@ -65,12 +65,17 @@
 ; alert sound, etc., mana, hp, speed.... default block modifiers
 
 (def ^:private prop-type-unique-key
-  {:species :hp
+  {:species :creature/hp
    :creature :creature/species
    :item :item/slot
-   :skill (fn [{:keys [item/slot skill/effect]}] (and (not slot) effect))
-   :weapon (fn [{:keys [item/slot]}] (and slot (= slot :weapon)))
-   :misc (fn [{:keys [hp creature/species item/slot skill/effect]}]
+   :skill (fn [{:keys [item/slot skill/effect]}]
+            (and (not slot) effect))
+   :weapon (fn [{:keys [item/slot]}]
+             (and slot (= slot :weapon)))
+   :misc (fn [{:keys [creature/hp
+                      creature/species
+                      item/slot
+                      skill/effect]}]
            (not (or hp species slot effect)))})
 
 ; TODO schema -

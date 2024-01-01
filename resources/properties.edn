@@ -920,46 +920,64 @@
   :creature/skills #{},
   :creature/items #{},
   :creature/level nil}
- {:property/id :species/flies, :hp 0.5, :speed 1.5}
- {:property/id :species/bat, :hp 0.5, :speed 1.5}
- {:property/id :species/troll, :hp 3.5, :speed 0.5}
- {:property/id :species/snake, :hp 1.2, :speed 1.0}
- {:property/id :species/moth, :hp 0.8, :speed 1.5}
- {:property/id :species/dragon, :hp 4.5, :speed 0.5}
- {:property/id :species/mimic, :hp 2.5, :speed 0.8}
- {:property/id :species/lizardman-green, :hp 1.0, :speed 1.0}
- {:property/id :species/halfling, :hp 0.8, :speed 1.0}
- {:property/id :species/elf, :hp 1.0, :speed 1.5}
- {:property/id :species/pixie, :hp 0.8, :speed 1.5}
- {:property/id :species/human, :hp 1.0, :speed 1.0}
- {:property/id :species/worm, :hp 0.5, :speed 1.2}
- {:property/id :species/zombie, :hp 2.5, :speed 0.5}
- {:property/id :species/banshee, :hp 1.5, :speed 1.2}
- {:property/id :species/valkyrie, :hp 1.5, :speed 1.0}
- {:property/id :species/spirit, :hp 1.2, :speed 1.0}
- {:property/id :species/beholder, :hp 3.5, :speed 1.2}
- {:property/id :species/minotaur, :hp 2.8, :speed 0.8}
- {:property/id :species/toad, :hp 1.2, :speed 0.8}
- {:property/id :species/bird, :hp 0.8, :speed 1.5}
- {:property/id :species/beetle, :hp 1.2, :speed 0.8}
- {:property/id :species/barbarian, :hp 1.0, :speed 1.0}
- {:property/id :species/elemental, :hp 2.2, :speed 1.0}
- {:property/id :species/skeleton, :hp 1.5, :speed 1.0}
- {:property/id :species/spider, :hp 0.8, :speed 1.2}
- {:property/id :species/wolf, :hp 1.5, :speed 1.2}
- {:property/id :species/rat, :hp 0.8, :speed 1.5}
- {:property/id :species/golem, :hp 35, :speed 1}
- {:property/id :species/ogre, :hp 2.8, :speed 0.8}
- {:property/id :species/mummy, :hp 2.2, :speed 0.8}
- {:property/id :species/lizardman-blue, :hp 1.0, :speed 1.0}
- {:property/id :species/demon, :hp 3.2, :speed 1.5}
- {:property/id :species/dwarf, :hp 1.2, :speed 0.8}
- {:property/id :species/lich, :hp 1.8, :speed 1.2}
- {:property/id :species/wisp, :hp 0.8, :speed 1.0}
- {:property/id :species/vampire, :hp 2.5, :speed 3}
- {:property/id :species/wraith, :hp 2.2, :speed 1.5}
- {:property/id :species/goblin, :hp 0.8, :speed 1.2}
- {:property/id :species/drow, :hp 1.0, :speed 1.0}
+ {:property/id :species/flies, :creature/hp 0.5, :creature/speed 1.5}
+ {:property/id :species/bat, :creature/hp 0.5, :creature/speed 1.5}
+ {:property/id :species/troll, :creature/hp 3.5, :creature/speed 0.5}
+ {:property/id :species/snake, :creature/hp 1.2, :creature/speed 1.0}
+ {:property/id :species/moth, :creature/hp 0.8, :creature/speed 1.5}
+ {:property/id :species/dragon, :creature/hp 4.5, :creature/speed 0.5}
+ {:property/id :species/mimic, :creature/hp 2.5, :creature/speed 0.8}
+ {:property/id :species/lizardman-green,
+  :creature/hp 1.0,
+  :creature/speed 1.0}
+ {:property/id :species/halfling,
+  :creature/hp 0.8,
+  :creature/speed 1.0}
+ {:property/id :species/elf, :creature/hp 1.0, :creature/speed 1.5}
+ {:property/id :species/pixie, :creature/hp 0.8, :creature/speed 1.5}
+ {:property/id :species/human, :creature/hp 1.0, :creature/speed 1.0}
+ {:property/id :species/worm, :creature/hp 0.5, :creature/speed 1.2}
+ {:property/id :species/zombie, :creature/hp 2.5, :creature/speed 0.5}
+ {:property/id :species/banshee, :creature/hp 1.5, :creature/speed 1.2}
+ {:property/id :species/valkyrie,
+  :creature/hp 1.5,
+  :creature/speed 1.0}
+ {:property/id :species/spirit, :creature/hp 1.2, :creature/speed 1.0}
+ {:property/id :species/beholder,
+  :creature/hp 3.5,
+  :creature/speed 1.2}
+ {:property/id :species/minotaur,
+  :creature/hp 2.8,
+  :creature/speed 0.8}
+ {:property/id :species/toad, :creature/hp 1.2, :creature/speed 0.8}
+ {:property/id :species/bird, :creature/hp 0.8, :creature/speed 2}
+ {:property/id :species/beetle, :creature/hp 1.2, :creature/speed 0.8}
+ {:property/id :species/barbarian,
+  :creature/hp 1.0,
+  :creature/speed 1.0}
+ {:property/id :species/elemental,
+  :creature/hp 2.2,
+  :creature/speed 1.0}
+ {:property/id :species/skeleton,
+  :creature/hp 1.5,
+  :creature/speed 1.0}
+ {:property/id :species/spider, :creature/hp 0.8, :creature/speed 1.2}
+ {:property/id :species/wolf, :creature/hp 1.5, :creature/speed 1.2}
+ {:property/id :species/rat, :creature/hp 0.8, :creature/speed 1.5}
+ {:property/id :species/golem, :creature/hp 35, :creature/speed 1}
+ {:property/id :species/ogre, :creature/hp 2.8, :creature/speed 0.8}
+ {:property/id :species/mummy, :creature/hp 2.2, :creature/speed 0.8}
+ {:property/id :species/lizardman-blue,
+  :creature/hp 1.0,
+  :creature/speed 1.0}
+ {:property/id :species/demon, :creature/hp 3.2, :creature/speed 1.5}
+ {:property/id :species/dwarf, :creature/hp 1.2, :creature/speed 0.8}
+ {:property/id :species/lich, :creature/hp 1.8, :creature/speed 1.2}
+ {:property/id :species/wisp, :creature/hp 0.8, :creature/speed 1.0}
+ {:property/id :species/vampire, :creature/hp 2.5, :creature/speed 3}
+ {:property/id :species/wraith, :creature/hp 2.2, :creature/speed 1.5}
+ {:property/id :species/goblin, :creature/hp 0.8, :creature/speed 1.2}
+ {:property/id :species/drow, :creature/hp 1.0, :creature/speed 1.0}
  {:property/image
   {:file "items/images.png", :sub-image-bounds [480 432 48 48]},
   :item/slot :cloak,
