@@ -29,25 +29,16 @@
    :fill-y? true
    :expand-y? true})
 
-; TODO show animations in property editor window & images x2 size ! not 48x48 but 96x96.
-; weapons complicated with ' effect -> target-entity '
-
 ; TODO use findByName & actor name as id with pr-str and ->edn for keywords
 ; userObject keep as is, can add both then !
-
 ; TODO rename 'add-rows!'
 ; TODO check syntax colors gdl.context names set special (gold)
-
-; TODO all properties which have no property type -> misc -> select from scroll pane text buttons
-; e.g. first-level .... want to edit ! or @ map editor ?
-
 ; ADD SOUNDS TO SPELLS MANDATORY - move out of restoration - also hp / mana separate
 ; LET ME EDIT for example spawn which creature
+; also :vampire, :lady-a , everything, game-speed, zoom-level,...
 ; => SCHEMA
-
 ; => let me ADD effect components like sound & SELECT sound ! file chooser
 ; do it properly right do it with your editor not text ....
-
 ; TODO refresh overview table after property-editor save something (callback ?)
 ; remove species, directly hp/speed ( no multiplier )
 
@@ -56,45 +47,9 @@
   (-> ctx get-stage (add-actor! actor))
   (.setScrollFocus (get-stage ctx) actor) ; TODO not working
   (.setKeyboardFocus (get-stage ctx) actor)
-
   ; TODO set touch focus , have to click first to use scroll pad
   ; TODO use scrollpad ingame too
   )
-
-
-; property-keys not used
-; but schema? add/remove something ? or prepare already in resources/properties.edn
-; => still schema for checking - all items,spells,etc. ok?
-
-; creature
-; item
-; spell  = skill type
-; weapon = skill type & item also or skill modifier myself?
-
-; weapon is just item with yourself as skill modifier ... but its BOTH
-; so how to do text ? based on all keys always ?
-
-(comment
- {:property/id :staff,
-  ; property/image ?? used @ skill & item ...
-  ; => will become :entity/image then ... make namespaced so easier to find ...
-  :property/image {:file "items/images.png", :sub-image-bounds [528 144 48 48]},
-  :property/pretty-name "Staff",
-  :item/slot :weapon,
-  :weapon/two-handed? true,
-  :skill/action-time 0.5,
-  :skill/effect
-  [[:effect/target-entity
-    {:maxrange 0.6,
-     :hit-effect [[:effect/damage [:physical [3 6]]]]}]]})
-
-; or properties no type but components/composition
-; e.g.
-{:property/id :weapons/staff
- :skill {:foo :bar}
- :item {:bar :baz}
- ; ?
- }
 
 ;;
 
@@ -104,7 +59,7 @@
     :creature/items :item))
 
 ; TODO label does not exist anymore.
-; maybe no default widget & assert for all loaded distinct keys from properties.edn
+; maybe no default widget & assert for all attributes are explicitly defined?
 (def ^:private attribute->value-widget
   {:property/id :label
    :property/image :image
