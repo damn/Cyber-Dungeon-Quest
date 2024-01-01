@@ -29,24 +29,24 @@
 
 (extend-type context.entity.Entity
   cdq.entity/Skills
-  (has-skill? [{:keys [skills]} {:keys [id]}]
+  (has-skill? [{:keys [skills]} {:keys [property/id]}]
     (contains? skills id)))
 
 (extend-type gdl.context.Context
   cdq.context/Skills
-  (add-skill! [ctx entity {:keys [id] :as skill}]
+  (add-skill! [ctx entity {:keys [property/id] :as skill}]
     (assert (not (cdq.entity/has-skill? @entity skill)))
     (swap! entity update :skills assoc id skill)
     (when (:is-player @entity)
       (actionbar-add-skill ctx skill)))
 
-  (remove-skill! [ctx entity {:keys [id] :as skill}]
+  (remove-skill! [ctx entity {:keys [property/id] :as skill}]
     (assert (cdq.entity/has-skill? @entity skill))
     (swap! entity update :skills dissoc id)
     (when (:is-player @entity)
       (actionbar-remove-skill ctx skill)))
 
-  (set-skill-to-cooldown! [context entity {:keys [id cooldown] :as skill}]
+  (set-skill-to-cooldown! [context entity {:keys [property/id cooldown] :as skill}]
     (when cooldown
       (swap! entity assoc-in [:skills id :cooling-down?] (->counter context cooldown))))
 

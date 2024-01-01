@@ -128,9 +128,8 @@
                              {:keys [is-player
                                      initial-state] :as extra-params}
                              context]
-  (let [creature-id (:id creature-props)
+  (let [creature-id (:property/id creature-props)
         creature-name (name creature-id)
-        creature-props (dissoc creature-props :id)
         creature-props (update creature-props :skills #(or % []))
         images (create-images context creature-name)
         [width height] (images->world-unit-dimensions images)

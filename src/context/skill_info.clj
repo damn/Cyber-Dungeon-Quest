@@ -8,7 +8,7 @@
 (extend-type gdl.context.Context
   cdq.context/SkillInfo
   (skill-text [{:keys [context/player-entity] :as context}
-               {:keys [id cost action-time cooldown spell? effect]}]
+               {:keys [property/id cost action-time cooldown spell? effect]}]
     (str (str/capitalize (name id)) "\n"
          (if spell? "Spell" "Weapon") "\n"
          (when cost (str "Cost " cost  "\n"))

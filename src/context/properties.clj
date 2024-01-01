@@ -5,6 +5,13 @@
             [utils.core :refer [safe-get]]
             cdq.context))
 
+; 1. step: proper namespaced keywords
+; :property/id
+; => where used everywhere ? OMG
+
+; TODO also for entities: :entity/id  , :entity/position, etc.
+; will make work easier in the future .. ? but no defrecord then hmm...
+
 (comment
 
  (require '[malli.provider :as mp])
@@ -63,6 +70,18 @@
    :weapon (fn [{:keys [slot]}] (and slot (= slot :weapon)))
    :misc (fn [{:keys [hp species slot effect]}]
            (not (or hp species slot effect)))})
+
+; TODO schema -
+; => :property/type
+; :property.type/creature
+; :property.type/item
+; :property.type/weapon
+; :property.type/spell
+
+; => misc ? species ?
+
+; ASSERT & LOAD EDN / WRITE EDN / BEFORE SAVE DATA
+; also things like target-entity props should be a map , :hit-effect & :maxrange, it was a list...
 
 (defn property-type [props]
   (some (fn [[prop-type k]] (when (k props) prop-type))
@@ -125,10 +144,10 @@
 
 (defn- load-edn [context file]
   (let [properties (-> file slurp edn/read-string)] ; TODO use .internal Gdx/files  => part of context protocol
-    (assert (apply distinct? (map :id properties)))
+    (assert (apply distinct? (map :property/id properties)))
     (->> properties
          (map #(deserialize context %))
-         (#(zipmap (map :id %) %)))))
+         (#(zipmap (map :property/id %) %)))))
 
 (defn ->context [context file]
   {:context/properties (load-edn context file)
@@ -163,8 +182,8 @@
 
 (defn update-and-write-to-file! [{:keys [context/properties
                                          context/properties-file] :as context}
-                                 {:keys [id] :as data}]
-  {:pre [(contains? data :id)
+                                 {:keys [property/id] :as data}]
+  {:pre [(contains? data :property/id)
          (contains? properties id)
          (= (set (keys data))
             (set (keys (get properties id))))]}

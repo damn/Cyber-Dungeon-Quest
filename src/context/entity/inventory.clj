@@ -69,7 +69,7 @@
 (defn stackable? [item-a item-b]
   (and (:count item-a)
        (:count item-b) ; TODO this is not required but can be asserted, all of one name should have count if others have count
-       (= (:id item-a) (:id item-b))))
+       (= (:property/id item-a) (:property/id item-b))))
 
 ; TODO doesnt exist, stackable, usable items with action/skillbar thingy
 #_(defn remove-one-item [entity cell]

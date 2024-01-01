@@ -107,13 +107,15 @@
    :creature {:title "Creature"
               ;:property-keys [:id :image :species :level :skills :items]
               :overview {:title "Creatures"
-                         :sort-by-fn #(vector (or (:level %) 9) (name (:species %)) (name (:id %)))
+                         :sort-by-fn #(vector (or (:level %) 9)
+                                              (name (:species %))
+                                              (name (:property/id %)))
                          :extra-infos-widget #(->label %1 (or (str (:level %2)) "-"))
                          :tooltip-text-fn default-property-tooltip-text}}
    :item {:title "Item"
           ;:property-keys [:id :image :slot :pretty-name :modifier]
           :overview {:title "Items"
-                     :sort-by-fn #(vector (if-let [slot (:slot %)] (name slot) "") (name (:id %)))
+                     :sort-by-fn #(vector (if-let [slot (:slot %)] (name slot) "") (name (:property/id %)))
                      :tooltip-text-fn default-property-tooltip-text}}
    :skill {:title "Spell"
            ;:property-keys [:id :image :action-time :cooldown :cost :effect]
@@ -128,7 +130,6 @@
                        :tooltip-text-fn (fn [ctx props]
                                           (try (cdq.context/skill-text ctx props)
                                               (catch Throwable t
-                                                ;(println t)
                                                 (default-property-tooltip-text ctx props))))}}
    :misc {:title "Misc"
           :overview {:title "Misc"
@@ -143,7 +144,7 @@
 ; TODO label does not exist anymore.
 ; maybe no default widget & assert for all loaded distinct keys from properties.edn
 (def ^:private attribute->value-widget
-  {:id :label
+  {:property/id :label
    :image :image
    :pretty-name :text-field
 
@@ -194,7 +195,7 @@
   (sort-by
    (fn [[k _v]]
      [(case k
-        :id 0
+        :property/id 0
         :image 1
         :pretty-name 2
         :spell? 3
@@ -397,7 +398,7 @@
                  (let [props (get-property ctx prop-id)
                        image-widget (->image-widget ctx ; TODO image-button (link)
                                                     (:image props)
-                                                    {:id (:id props)})]
+                                                    {:id (:id props)})] ; ??!? TODO
                    (add-tooltip! image-widget #((-> property-types
                                                     property-type
                                                     :overview
@@ -510,7 +511,7 @@
              {:cell-defaults {:pad 2}
               :rows (concat [[{:actor (->label ctx title) :colspan number-columns}]]
                             (for [entities (partition-all number-columns entities)] ; TODO can just do 1 for?
-                              (for [{:keys [id] :as props} entities
+                              (for [{:keys [property/id] :as props} entities
                                     :let [on-clicked #(clicked-id-fn % id)
                                           button (if (:image props)
                                                    (->image-button ctx (:image props) on-clicked)
