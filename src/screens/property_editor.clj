@@ -17,6 +17,8 @@
 ; TODO use findByName & actor name as id with pr-str and ->edn for keywords
 ; userObject keep as is, can add both then !
 
+; TODO rename 'add-rows!'
+; TODO check syntax colors gdl.context names set special (gold)
 
 ; TODO all properties which have no property type -> misc -> select from scroll pane text buttons
 ; e.g. first-level .... want to edit ! or @ map editor ?
@@ -36,6 +38,9 @@
   (-> ctx get-stage (add-actor! actor))
   (.setScrollFocus (get-stage ctx) actor) ; TODO not working
   (.setKeyboardFocus (get-stage ctx) actor)
+
+  ; TODO set touch focus , have to click first to use scroll pad
+  ; TODO use scrollpad ingame too
   )
 
 (defn- default-property-tooltip-text [context props]
@@ -113,9 +118,11 @@
 
 (defn- one-to-many-attribute->linked-property-type [k]
   (case k
-    :skills :skill
+    :skills :skill ; == ! spells !
     :items :item))
 
+; TODO label does not exist anymore.
+; maybe no default widget & assert for all loaded distinct keys from properties.edn
 (def ^:private attribute->value-widget
   {:id :label
    :image :image
@@ -211,8 +218,6 @@
   (let [widget (com.kotcrab.vis.ui.widget.VisScrollPane. actor)]
     (.setFlickScroll widget false)
     (.setFadeScrollBars widget false)
-    ; TODO set touch focus , have to click first to use scroll pad
-    ; TODO use scrollpad ingame too
     widget))
 
 (defn ->scrollable-choose-window [ctx rows]
@@ -223,17 +228,10 @@
                               :close-on-escape? true})
         table (->table ctx {:rows rows
                             :cell-defaults {:pad 1}})]
-
-    ; (println "(.getWidth table)" (.getWidth table))
-    ; == 0 .. ?1
-    ; or resizable make window ... ?
-    ; or pass size at params
-
     (.width
      (.height (.add window (->scroll-pane ctx table))
               (float (- (:gui-viewport-height ctx) 50)))
-     (float (+ 100 (/ (:gui-viewport-width ctx) 2)))
-     )
+     (float (+ 100 (/ (:gui-viewport-width ctx) 2))))
     (.pack window)
     window))
 
@@ -318,41 +316,10 @@
 ; FIXME
 ;Assert failed: Actor ids are not distinct: [:effect/damage :effect/damage :effect/stun]
 ;(or (empty? ids) (apply distinct? ids))
-; => don't always save as map ?
-
-
-
-(comment
- ; use vertical group ?
- ; each element = one attribute [k v] and separator table ?
- ; can remove/add easily ?
- ; cannot remove rows, ahve to redo ..
- (let [ctx @gdl.app/current-context
-       actor (gdl.context/mouse-on-stage-actor? ctx)
-       ]
-   (find-window actor)
-   )
- )
+; => check before adding, always make into {}, no physical & magic damage mix ?!
+; => damage consists of physical & magic part ?
 
 ;;
-
-; TODO select from all sounds (see duration, waveform, if already used somewhere ?)
-; TODO selectable sound / pass widget->data somehow
-; TODO do the same for image!!
-; TODO -> modal window reuse code?
-
-; FIXME sound saving becomes nil because nested bla uses widget-data fns not 'or'
-; => probably should always fetch the data out of the widget not original props
-; even for label ... or image ... or sound ...
-; => store the value somewhere ? id [k v] ?
-; but k parent used a lot dont even know where ...
-; or hidden value id widget o.o
-
-; TODO why not effect text 'spawns a wizard' ?
-
-; TODO rename 'add-rows!'
-
-; TODO check syntax colors gdl.context names set special (gold)
 
 (defn- ->play-sound-button [ctx sound-file]
   (->text-button ctx ">>>" #(play-sound! % sound-file)))
@@ -384,39 +351,7 @@
 
 ;;
 
-(defn- ->overview-table
-  "Creates a table with all-properties of property-type and buttons for each id
-  which on-clicked calls clicked-id-fn."
-  [ctx property-type clicked-id-fn]
-  (let [{:keys [title
-                sort-by-fn
-                extra-infos-widget
-                tooltip-text-fn]} (:overview (get property-types property-type))
-        entities (all-properties ctx property-type)
-        entities (if sort-by-fn
-                   (sort-by sort-by-fn entities)
-                   entities)
-        number-columns 15]
-    (->table ctx
-             {:cell-defaults {:pad 2}
-              :rows (concat [[{:actor (->label ctx title) :colspan number-columns}]]
-                            (for [entities (partition-all number-columns entities)] ; TODO can just do 1 for?
-                              (for [{:keys [id] :as props} entities
-                                    :let [on-clicked #(clicked-id-fn % id)
-                                          button (if (:image props)
-                                                   (->image-button ctx (:image props) on-clicked)
-                                                   (->text-button ctx (name id) on-clicked))
-                                          top-widget (or (and extra-infos-widget
-                                                              (extra-infos-widget ctx props))
-                                                         (->label ctx ""))
-                                          stack (->stack ctx [button top-widget])]]
-                                (do
-                                 (when tooltip-text-fn
-                                   (add-tooltip! button #(tooltip-text-fn % props)))
-                                 (set-touchable! top-widget :disabled)
-                                 stack))))})))
-
-;;
+(declare ->overview-table)
 
 (defn- add-one-to-many-rows [ctx table property-type property-ids]
   (let [redo-rows (fn [ctx property-ids]
@@ -522,9 +457,6 @@
               value-widget (attribute-widget-table->value-widget table)]]
     [k (value-widget->data k value-widget)]))
 
-; value-widget->data can be removed mostly only for text-field not
-; because I will just set the value id as of changes ... ?
-
 ;;
 
 (defn ->property-editor-window [context id]
@@ -554,6 +486,38 @@
     window))
 
 ;;
+
+(defn- ->overview-table
+  "Creates a table with all-properties of property-type and buttons for each id
+  which on-clicked calls clicked-id-fn."
+  [ctx property-type clicked-id-fn]
+  (let [{:keys [title
+                sort-by-fn
+                extra-infos-widget
+                tooltip-text-fn]} (:overview (get property-types property-type))
+        entities (all-properties ctx property-type)
+        entities (if sort-by-fn
+                   (sort-by sort-by-fn entities)
+                   entities)
+        number-columns 15]
+    (->table ctx
+             {:cell-defaults {:pad 2}
+              :rows (concat [[{:actor (->label ctx title) :colspan number-columns}]]
+                            (for [entities (partition-all number-columns entities)] ; TODO can just do 1 for?
+                              (for [{:keys [id] :as props} entities
+                                    :let [on-clicked #(clicked-id-fn % id)
+                                          button (if (:image props)
+                                                   (->image-button ctx (:image props) on-clicked)
+                                                   (->text-button ctx (name id) on-clicked))
+                                          top-widget (or (and extra-infos-widget
+                                                              (extra-infos-widget ctx props))
+                                                         (->label ctx ""))
+                                          stack (->stack ctx [button top-widget])]]
+                                (do
+                                 (when tooltip-text-fn
+                                   (add-tooltip! button #(tooltip-text-fn % props)))
+                                 (set-touchable! top-widget :disabled)
+                                 stack))))})))
 
 (defn- set-second-widget! [context widget]
   (let [table (:main-table (get-stage context))]
