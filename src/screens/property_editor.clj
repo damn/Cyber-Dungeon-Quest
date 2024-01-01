@@ -11,7 +11,7 @@
             [gdl.scene2d.ui.widget-group :refer [pack!]]
             context.modifier
             context.effect
-            [context.properties :as properties]
+            [context.properties :as properties :refer [property-types]]
             [cdq.context :refer [get-property all-properties]]))
 
 (defn- ->horizontal-separator-cell [colspan]
@@ -61,10 +61,6 @@
   ; TODO use scrollpad ingame too
   )
 
-(defn- default-property-tooltip-text [context props]
-  (binding [*print-level* nil]
-    (with-out-str
-     (clojure.pprint/pprint (dissoc props :property/image)))))
 
 ; property-keys not used
 ; but schema? add/remove something ? or prepare already in resources/properties.edn
@@ -100,49 +96,6 @@
  ; ?
  }
 
-(def ^:private property-types
-  {; not used
-   :property.type/species {:title "Species"
-                           :overview {:title "Species"}}
-   :property.type/creature {:title "Creature"
-                            :overview {:title "Creatures"
-                                       :columns 16
-                                       :image/dimensions [65 65]
-                                       :sort-by-fn #(vector (or (:creature/level %) 9)
-                                                            (name (:creature/species %))
-                                                            (name (:property/id %)))
-                                       :extra-infos-widget #(->label %1 (or (str (:creature/level %2)) "-"))
-                                       :tooltip-text-fn default-property-tooltip-text}}
-   :property.type/item {:title "Item"
-                        :overview {:title "Items"
-                                   :columns 17
-                                   :image/dimensions [60 60]
-                                   :sort-by-fn #(vector (if-let [slot (:item/slot %)]
-                                                          (name slot)
-                                                          "")
-                                                        (name (:property/id %)))
-                                   :tooltip-text-fn default-property-tooltip-text}}
-   :property.type/skill {:title "Spell"
-                         :overview {:title "Spells"
-                                    :columns 16
-                                    :image/dimensions [70 70]
-                                    :tooltip-text-fn (fn [ctx props]
-                                                       (try (cdq.context/skill-text ctx props)
-                                                            (catch Throwable t
-                                                              (default-property-tooltip-text ctx props))))}}
-   :property.type/weapon {:title "Weapon"
-                          :overview {:title "Weapons"
-                                     :columns 10
-                                     :image/dimensions [96 96]
-                                     :tooltip-text-fn (fn [ctx props]
-                                                        (try (cdq.context/skill-text ctx props)
-                                                             (catch Throwable t
-                                                               (default-property-tooltip-text ctx props))))}}
-   :property.type/misc {:title "Misc"
-                        :overview {:title "Misc"
-                                   :columns 10
-                                   :image/dimensions [96 96]
-                                   :tooltip-text-fn default-property-tooltip-text}}})
 ;;
 
 (defn- one-to-many-attribute->linked-property-type [k]
@@ -503,7 +456,7 @@
   [ctx property-type clicked-id-fn]
   (let [{:keys [title
                 sort-by-fn
-                extra-infos-widget
+                extra-info-text
                 tooltip-text-fn
                 columns
                 image/dimensions]} (:overview (get property-types property-type))
@@ -522,9 +475,9 @@
                                                    (->image-button ctx (:property/image props) on-clicked
                                                                    {:dimensions dimensions})
                                                    (->text-button ctx (name id) on-clicked))
-                                          top-widget (or (and extra-infos-widget
-                                                              (extra-infos-widget ctx props))
-                                                         (->label ctx ""))
+                                          top-widget (->label ctx (or (and extra-info-text
+                                                                           (extra-info-text props))
+                                                                      ""))
                                           stack (->stack ctx [button top-widget])]]
                                 (do
                                  (when tooltip-text-fn
@@ -540,11 +493,7 @@
 (defn- ->left-widget [context]
   (->table context {:cell-defaults {:pad 5}
                     :rows (concat
-                           (for [[property-type {:keys [overview]}] (select-keys property-types [:property.type/creature
-                                                                                                 :property.type/item
-                                                                                                 :property.type/skill
-                                                                                                 :property.type/weapon
-                                                                                                 :property.type/misc])]
+                           (for [[property-type {:keys [overview]}] property-types]
                              [(->text-button context
                                              (:title overview)
                                              #(set-second-widget! % (->overview-table % property-type open-property-editor-window!)))])

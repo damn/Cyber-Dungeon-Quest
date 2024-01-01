@@ -5,53 +5,104 @@
             [utils.core :refer [safe-get]]
             cdq.context))
 
+; TODO move all property-type , attribute, etc. config together
+; sort-order, overview-title, etc. everything
+
 (comment
 
- (require '[malli.provider :as mp])
-
- (set! *print-level* nil)
- (let [ctx @gdl.app/current-context
-       properties (:context/properties ctx)
-       creatures (cdq.context/all-properties ctx :creature)
-       ]
-
-
-   (mp/provide creatures))
+ (do
+  (require '[malli.provider :as mp])
+  (set! *print-level* nil)
+  (let [ctx @gdl.app/current-context
+        properties (:context/properties ctx)
+        creatures (cdq.context/all-properties ctx :property.type/creature)]
+    (clojure.pprint/pprint
+     (mp/provide (map #(dissoc % :property/image) creatures)))))
+ ; =>
  [:map
-  [:image
-   [:map
-    [:file :string]
-    [:texture :some]
-    [:sub-image-bounds [:vector :int]]
-    [:scale :int]
-    [:pixel-dimensions [:vector :int]]
-    [:world-unit-dimensions [:vector integer?]]
-    [:tilew :int]
-    [:tileh :int]]]
-  [:id :keyword]
-  [:species :qualified-keyword]
-  [:skills [:set :qualified-keyword]]
-  [:items [:set :keyword]]
-  [:level {:optional true} :int]]
+  [:property/id :keyword] ; namespaced creature/vampire
+  [:creature/species :qualified-keyword] ; one of species (or move in creatures)
+  [:creature/skills [:set :qualified-keyword]] ; one of SPELLS ids, not skills (passives?)
+  [:creature/items [:set :keyword]] ; one of items ...
+  [:creature/level [:maybe :int]]] ; ?
+
  )
 
-(def ^:private prop-type-unique-key
-  {:property.type/species :creature/hp
-   :property.type/creature :creature/species
-   :property.type/item :item/slot
-   :property.type/skill (fn [{:keys [item/slot skill/effect]}]
-                          (and (not slot) effect))
-   :property.type/weapon (fn [{:keys [item/slot]}]
-                           (and slot (= slot :inventory.slot/weapon)))
-   :property.type/misc (fn [{:keys [creature/hp
-                                    creature/species
-                                    item/slot
-                                    skill/effect]}]
-                         (not (or hp species slot effect)))})
+(defn- default-property-tooltip-text [context props]
+  (binding [*print-level* nil]
+    (with-out-str
+     (clojure.pprint/pprint (dissoc props :property/image)))))
+
+; fn for checking if = property-type
+; weapons are both item & weapons ( & skills, not spells)
+(def property-types
+  {:property.type/skill {:of-type? (fn [{:keys [item/slot skill/effect]}]
+                                     (and (not slot) effect))
+                         :sort-order 0
+                         :title "Spell"
+                         :overview {:title "Spells"
+                                    :columns 16
+                                    :image/dimensions [70 70]
+                                    :tooltip-text-fn (fn [ctx props]
+                                                       (try (cdq.context/skill-text ctx props)
+                                                            (catch Throwable t
+                                                              (default-property-tooltip-text ctx props))))}}
+   :property.type/creature {:of-type? :creature/species
+                            :sort-order 1
+                            :title "Creature"
+                            :overview {:title "Creatures"
+                                       :columns 16
+                                       :image/dimensions [65 65]
+                                       :sort-by-fn #(vector (or (:creature/level %) 9)
+                                                            (name (:creature/species %))
+                                                            (name (:property/id %)))
+                                       :extra-info-text #(or (str (:creature/level %)) "-")
+                                       :tooltip-text-fn default-property-tooltip-text}}
+   :property.type/species {:of-type? :creature/hp
+                           :sort-order 2
+                           :title "Species"
+                           :overview {:title "Species"
+                                      :columns 2
+                                      :tooltip-text-fn default-property-tooltip-text}}
+   :property.type/item {:of-type? :item/slot
+                        :sort-order 3
+                        :title "Item"
+                        :overview {:title "Items"
+                                   :columns 17
+                                   :image/dimensions [60 60]
+                                   :sort-by-fn #(vector (if-let [slot (:item/slot %)]
+                                                          (name slot)
+                                                          "")
+                                                        (name (:property/id %)))
+                                   :tooltip-text-fn default-property-tooltip-text}}
+   :property.type/weapon {:of-type? (fn [{:keys [item/slot]}]
+                                      (and slot (= slot :inventory.slot/weapon)))
+                          :sort-order 4
+                          :title "Weapon"
+                          :overview {:title "Weapons"
+                                     :columns 10
+                                     :image/dimensions [96 96]
+                                     :tooltip-text-fn (fn [ctx props]
+                                                        (try (cdq.context/skill-text ctx props)
+                                                             (catch Throwable t
+                                                               (default-property-tooltip-text ctx props))))}}
+   :property.type/misc {:of-type? (fn [{:keys [creature/hp
+                                               creature/species
+                                               item/slot
+                                               skill/effect]}]
+                                    (not (or hp species slot effect)))
+                        :sort-order 5
+                        :title "Misc"
+                        :overview {:title "Misc"
+                                   :columns 10
+                                   :image/dimensions [96 96]
+                                   :tooltip-text-fn default-property-tooltip-text}}})
 
 (defn property-type [props]
-  (some (fn [[prop-type k]] (when (k props) prop-type))
-        prop-type-unique-key))
+  (some (fn [[prop-type {:keys [of-type?]}]]
+          (when (of-type? props)
+            prop-type))
+        property-types))
 
 (comment
  ; weapons get branded as items
@@ -78,8 +129,6 @@
         sort-by-type
         (map serialize)
         (save-edn (:context/properties-file ctx))))
-
-
  )
 
 (extend-type gdl.context.Context
@@ -87,8 +136,8 @@
   (get-property [{:keys [context/properties]} id]
     (safe-get properties id))
 
-  (all-properties [{:keys [context/properties]} type]
-    (filter (prop-type-unique-key type) (vals properties))))
+  (all-properties [{:keys [context/properties]} property-type]
+    (filter (:of-type? (get property-types property-type)) (vals properties))))
 
 (require 'gdl.backends.libgdx.context.image-drawer-creator)
 
@@ -156,17 +205,8 @@
          (spit file))))
 
 (defn- sort-by-type [properties]
-  (sort-by
-   (fn [prop]
-     (let [ptype (property-type prop)]
-       (case ptype
-        :property.type/skill 0
-        :property.type/creature 1
-        :property.type/species 2
-        :property.type/item 3
-        :property.type/weapon 4
-        :property.type/misc 5)))
-   properties))
+  (sort-by #(-> % property-type property-types :sort-order)
+           properties))
 
 (defn- write-to-file! [properties properties-file]
   (->> properties

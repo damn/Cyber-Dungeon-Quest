@@ -148,18 +148,9 @@
        (->> item
             :item/modifier
             (modifier-text context))))
-(comment
- ; doesnt work need bag idx :positions
- (add-rows table
-           [[nil nil nil nil (cell :bag) (cell :bag) (cell :bag) (cell :bag)]
-            [nil (cell :weapon) nil (cell :glove) (cell :bag) (cell :bag) (cell :bag) (cell :bag)]
-            [(cell :helm) (cell :chest) (cell :leg) (cell :rings :position [0 0]) (cell :bag) (cell :bag) (cell :bag) (cell :bag)]
-            [(cell :necklace) (cell :cloak) nil (cell :rings :position [1 0]) (cell :bag) (cell :bag) (cell :bag) (cell :bag)]
-            [nil (cell :shield) nil (cell :boot) (cell :bag) (cell :bag) (cell :bag) (cell :bag)]
-            [nil nil nil nil (cell :bag) (cell :bag) (cell :bag) (cell :bag)]])
- )
 
 (defn- redo-table [ctx {:keys [^Table table slot->background]}]
+  ; cannot do add-rows, need bag :position idx
   (let [cell (fn [& args] (apply ->cell ctx slot->background args))]
     (.clear table)
     (doto table .add .add
