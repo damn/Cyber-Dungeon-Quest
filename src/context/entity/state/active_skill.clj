@@ -41,7 +41,7 @@
   (exit [_ _ctx])
 
   (tick! [_ context]
-    (let [effect (:effect skill)
+    (let [effect (:skill/effect skill)
           effect-context (merge context effect-context)]
       (cond
        (not (valid-params? effect-context effect))
@@ -55,7 +55,7 @@
   (render-below [_ c entity*])
   (render-above [_ c entity*])
   (render-info [_ c {:keys [position] :as entity*}]
-    (let [{:keys [property/image effect]} skill]
+    (let [{:keys [property/image skill/effect]} skill]
       (draw-skill-icon c image entity* position (finished-ratio c counter))
       (effect-render-info (merge c effect-context) effect))))
 
@@ -77,6 +77,6 @@
                  skill
                  effect-context
                  (->> skill
-                      :action-time
+                      :skill/action-time
                       (apply-action-speed-modifier @entity skill)
                       (->counter context))))

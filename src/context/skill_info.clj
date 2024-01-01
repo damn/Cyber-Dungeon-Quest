@@ -5,10 +5,18 @@
             [utils.core :refer [readable-number]]
             [cdq.context :refer [effect-text]]))
 
+; different info fn for :property.type/foo
+; e.g. weapons/spells different infofn
+; and each attribute its own text fn (tooltip too at editor)
 (extend-type gdl.context.Context
   cdq.context/SkillInfo
   (skill-text [{:keys [context/player-entity] :as context}
-               {:keys [property/id cost action-time cooldown spell? effect]}]
+               {:keys [property/id
+                       skill/cost
+                       skill/action-time
+                       skill/cooldown
+                       spell?
+                       skill/effect]}]
     (str (str/capitalize (name id)) "\n"
          (if spell? "Spell" "Weapon") "\n"
          (when cost (str "Cost " cost  "\n"))

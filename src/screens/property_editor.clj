@@ -146,30 +146,36 @@
 (def ^:private attribute->value-widget
   {:property/id :label
    :property/image :image
+   ; property/
    :pretty-name :text-field
 
+   ; item/
    :slot :label
    :two-handed? :label
 
+   ; creature/
    :level :text-field
    :species :link-button
    :skills :one-to-many
    :items :one-to-many
 
+   ; item/
    :modifier :nested-map
    :modifier/armor :text-field
    :modifier/max-mana :text-field
 
+   ; propert.type/
    :spell? :label
-   :action-time :text-field
-   :cooldown :text-field
-   :cost :text-field
-   :effect :nested-map
+   :skill/action-time :text-field
+   :skill/cooldown :text-field
+   :skill/cost :text-field
+   :skill/effect :nested-map
 
    :effect/sound :sound
    :effect/damage :text-field
 
    :effect/target-entity :nested-map
+   ; not necessary ns keys ? idk. better?
    :maxrange :text-field
    :hit-effect :nested-map
 
@@ -182,12 +188,12 @@
   (#{"effect" "modifier"} (namespace k)))
 
 (defn- add-components? [k]
-  (#{:modifier :effect :hit-effect} k))
+  (#{:modifier :skill/effect :hit-effect} k))
 
 (defn- nested-map->components [k]
   (case k
     :modifier (keys context.modifier/modifier-definitions)
-    :effect     (keys (methods context.effect/do!))
+    :skill/effect     (keys (methods context.effect/do!))
     :hit-effect (keys (methods context.effect/do!)) ; only those with 'source/target'
     ))
 

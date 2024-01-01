@@ -19,11 +19,11 @@
   (->> entity*
        :skills
        vals
-       (sort-by #(or (:cost %) 0))
+       (sort-by #(or (:skill/cost %) 0))
        reverse
        (filter #(and (= :usable
                         (skill-usable-state effect-context entity* %))
-                     (effect-useful? effect-context (:effect %))))
+                     (effect-useful? effect-context (:skill/effect %))))
        first))
 
 ; TODO == NpcMoving !!

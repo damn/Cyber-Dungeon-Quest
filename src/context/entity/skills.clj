@@ -46,13 +46,13 @@
     (when (:is-player @entity)
       (actionbar-remove-skill ctx skill)))
 
-  (set-skill-to-cooldown! [context entity {:keys [property/id cooldown] :as skill}]
+  (set-skill-to-cooldown! [context entity {:keys [property/id skill/cooldown] :as skill}]
     (when cooldown
       (swap! entity assoc-in [:skills id :cooling-down?] (->counter context cooldown))))
 
   (skill-usable-state [effect-context
                        {:keys [mana]}
-                       {:keys [cost cooling-down? effect]}]
+                       {:keys [skill/cost cooling-down? skill/effect]}]
     (cond
      cooling-down?                               :cooldown
      (and cost (> cost (mana 0)))                :not-enough-mana
@@ -61,6 +61,6 @@
 
   (pay-skill-mana-cost! [_ entity skill]
     (swap! entity (fn [entity*]
-                    (if (:cost skill)
-                      (update entity* :mana apply-val #(- % (:cost skill)))
+                    (if (:skill/cost skill)
+                      (update entity* :mana apply-val #(- % (:skill/cost skill)))
                       entity*)))))

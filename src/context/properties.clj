@@ -12,6 +12,8 @@
 ; TODO also for entities: :entity/id  , :entity/position, etc.
 ; will make work easier in the future .. ? but no defrecord then hmm...
 
+; maybe :spell? true not needed but property.type/spell and property.type/weapon
+
 (comment
 
  (require '[malli.provider :as mp])
@@ -66,9 +68,9 @@
   {:species :hp
    :creature :species
    :item :slot
-   :skill (fn [{:keys [slot effect]}] (and (not slot) effect))
+   :skill (fn [{:keys [slot skill/effect]}] (and (not slot) effect))
    :weapon (fn [{:keys [slot]}] (and slot (= slot :weapon)))
-   :misc (fn [{:keys [hp species slot effect]}]
+   :misc (fn [{:keys [hp species slot skill/effect]}]
            (not (or hp species slot effect)))})
 
 ; TODO schema -
