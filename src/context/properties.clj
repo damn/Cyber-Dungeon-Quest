@@ -67,10 +67,10 @@
 (def ^:private prop-type-unique-key
   {:species :hp
    :creature :creature/species
-   :item :slot
-   :skill (fn [{:keys [slot skill/effect]}] (and (not slot) effect))
-   :weapon (fn [{:keys [slot]}] (and slot (= slot :weapon)))
-   :misc (fn [{:keys [hp creature/species slot skill/effect]}]
+   :item :item/slot
+   :skill (fn [{:keys [item/slot skill/effect]}] (and (not slot) effect))
+   :weapon (fn [{:keys [item/slot]}] (and slot (= slot :weapon)))
+   :misc (fn [{:keys [hp creature/species item/slot skill/effect]}]
            (not (or hp species slot effect)))})
 
 ; TODO schema -

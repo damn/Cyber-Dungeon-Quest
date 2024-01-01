@@ -85,7 +85,7 @@
   :property/image {:file "items/images.png", :sub-image-bounds [528 144 48 48]},
   :property/pretty-name "Staff",
   :item/slot :weapon,
-  :item/two-handed? true,
+  :weapon/two-handed? true,
   :skill/action-time 0.5,
   :skill/effect
   [[:effect/target-entity
@@ -112,7 +112,10 @@
                          :tooltip-text-fn default-property-tooltip-text}}
    :item {:title "Item"
           :overview {:title "Items"
-                     :sort-by-fn #(vector (if-let [slot (:slot %)] (name slot) "") (name (:property/id %)))
+                     :sort-by-fn #(vector (if-let [slot (:item/slot %)]
+                                            (name slot)
+                                            "")
+                                          (name (:property/id %)))
                      :tooltip-text-fn default-property-tooltip-text}}
    :skill {:title "Spell"
            :overview {:title "Spells"
@@ -141,52 +144,39 @@
 (def ^:private attribute->value-widget
   {:property/id :label
    :property/image :image
-   ; property/
-   :pretty-name :text-field
-
-   ; item/
-   :slot :label
-   :two-handed? :label
-
+   :property/pretty-name :text-field
+   :item/slot :label
+   :item/modifier :nested-map
+   :modifier/armor :text-field
+   :modifier/max-mana :text-field
+   :weapon/two-handed? :label
    :creature/level :text-field
    :creature/species :link-button
    :creature/skills :one-to-many
    :creature/items :one-to-many
-
-   ; item/
-   :modifier :nested-map
-   :modifier/armor :text-field
-   :modifier/max-mana :text-field
-
-   ; propert.type/
    :spell? :label
    :skill/action-time :text-field
    :skill/cooldown :text-field
    :skill/cost :text-field
    :skill/effect :nested-map
-
    :effect/sound :sound
    :effect/damage :text-field
-
    :effect/target-entity :nested-map
-   ; not necessary ns keys ? idk. better?
    :maxrange :text-field
    :hit-effect :nested-map
-
    :map-size :text-field
    :max-area-level :text-field
-   :spawn-rate :text-field
-   })
+   :spawn-rate :text-field})
 
 (defn- removable? [k]
   (#{"effect" "modifier"} (namespace k)))
 
 (defn- add-components? [k]
-  (#{:modifier :skill/effect :hit-effect} k))
+  (#{:item/modifier :skill/effect :hit-effect} k))
 
 (defn- nested-map->components [k]
   (case k
-    :modifier (keys context.modifier/modifier-definitions)
+    :item/modifier (keys context.modifier/modifier-definitions)
     :skill/effect     (keys (methods context.effect/do!))
     :hit-effect (keys (methods context.effect/do!)) ; only those with 'source/target'
     ))
@@ -197,11 +187,11 @@
      [(case k
         :property/id 0
         :property/image 1
-        :pretty-name 2
+        :property/pretty-name 2
         :spell? 3
         :creature/level 3
-        :slot 3
-        :two-handed? 4
+        :item/slot 3
+        :weapon/two-handed? 4
         :creature/species 4
         9)
       (name k)])

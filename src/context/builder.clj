@@ -188,7 +188,7 @@
                      :image (:property/image item)
                      :item item
                      :entity/clickable {:type :clickable/item
-                                        :text (:pretty-name item)}}))
+                                        :text (:property/pretty-name item)}}))
 
   (line-entity [context {:keys [start end duration color thick?]}]
     (create-entity! context

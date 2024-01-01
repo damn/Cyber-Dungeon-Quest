@@ -36,16 +36,16 @@
 
 (defn valid-slot? [[slot _] item]
   (or (= :bag slot)
-      (= (:slot item) slot)))
+      (= (:item/slot item) slot)))
 
 (defn two-handed-weapon-and-shield-together? [inventory {slot 0 :as cell} new-item]
-  (or (and (:two-handed? new-item)
+  (or (and (:weapon/two-handed? new-item)
            (= slot :weapon)
            (first (slot->items inventory :shield)))
-      (and (= (:slot new-item) :shield)
+      (and (= (:item/slot new-item) :shield)
            (= slot :shield)
            (if-let [weapon (first (slot->items inventory :weapon))]
-             (:two-handed? weapon)))))
+             (:weapon/two-handed? weapon)))))
 
 (defn applies-modifiers? [[slot _]]
   (not= :bag slot))
@@ -106,8 +106,8 @@
     (swap! entity set-item cell item)
 
     (when (applies-modifiers? cell)
-      (apply-modifier! context entity (:modifier item))
-      (when (and (= (:slot item) :weapon))
+      (apply-modifier! context entity (:item/modifier item))
+      (when (and (= (:item/slot item) :weapon))
         (add-skill! context entity item)))
 
     (when (:is-player @entity)
@@ -118,8 +118,8 @@
       (swap! entity remove-item cell)
 
       (when (applies-modifiers? cell)
-        (reverse-modifier! context entity (:modifier item))
-        (when (= (:slot item) :weapon)
+        (reverse-modifier! context entity (:item/modifier item))
+        (when (= (:item/slot item) :weapon)
           (remove-skill! context entity item)))
 
       (when (:is-player @entity)
@@ -136,7 +136,7 @@
 
   (try-pickup-item! [context entity item]
     (or
-     (try-put-item-in! context entity (:slot item) item)
+     (try-put-item-in! context entity (:item/slot item) item)
      (try-put-item-in! context entity :bag item))))
 
 (defcomponent :items items

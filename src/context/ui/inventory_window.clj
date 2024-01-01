@@ -139,7 +139,7 @@
 
 ; TODO write 'two handed' at weapon info -> key-to-pretty-tooltip-text function for keywords (extend-c?)
 (defn- item-name [item]
-  (str (:pretty-name item)
+  (str (:property/pretty-name item)
        (when-let [cnt (:count item)]
          (str " (" cnt ")"))))
 
