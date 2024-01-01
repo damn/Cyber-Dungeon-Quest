@@ -24,7 +24,7 @@
       (actor/id skill-button)))
 
   (actionbar-add-skill [{{:keys [horizontal-group button-group]} ::data :as ctx}
-                        {:keys [property/id image] :as skill}]
+                        {:keys [property/id property/image] :as skill}]
     (let [button (->image-button ctx image (fn [_]))]
       (actor/set-id! button id)
       (add-tooltip! button #(skill-text % skill))

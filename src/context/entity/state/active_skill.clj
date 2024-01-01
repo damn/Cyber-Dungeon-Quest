@@ -55,7 +55,7 @@
   (render-below [_ c entity*])
   (render-above [_ c entity*])
   (render-info [_ c {:keys [position] :as entity*}]
-    (let [{:keys [image effect]} skill]
+    (let [{:keys [property/image effect]} skill]
       (draw-skill-icon c image entity* position (finished-ratio c counter))
       (effect-render-info (merge c effect-context) effect))))
 

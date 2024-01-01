@@ -129,18 +129,17 @@
                                      initial-state] :as extra-params}
                              context]
   (let [creature-id (:property/id creature-props)
-        creature-name (name creature-id)
         creature-props (update creature-props :skills #(or % []))
-        images (create-images context creature-name)
+        images (create-images context (name creature-id))
         [width height] (images->world-unit-dimensions images)
         {:keys [speed hp]} (species-properties (get-property context (:species creature-props)))]
-    (merge (dissoc creature-props :image)
+    ; TODO dont merge but be explicit
+    (merge creature-props
            (cond
             is-player               player-components
             (= creature-id :lady-a) lady-props
             :else                   npc-components)
-           {:creature/name creature-name
-            :body {:width width
+           {:body {:width width
                    :height height
                    :is-solid true}
             :entity/movement speed
@@ -186,7 +185,7 @@
                             :height 0.5
                             :is-solid false}
                      :z-order :on-ground
-                     :image (:image item)
+                     :image (:property/image item)
                      :item item
                      :entity/clickable {:type :clickable/item
                                         :text (:pretty-name item)}}))

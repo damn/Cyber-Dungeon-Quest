@@ -24,7 +24,7 @@
                               :spells/spawn]
                           :let [skill (get-property context id)
                                 button (->image-button context
-                                                       (:image skill)
+                                                       (:property/image skill)
                                                        (fn [{:keys [context/player-entity] :as ctx}]
                                                          (when (= :idle (entity/state @player-entity))
                                                            (pressed-on-skill-in-menu ctx skill))))]]

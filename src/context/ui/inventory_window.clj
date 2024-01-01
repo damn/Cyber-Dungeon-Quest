@@ -196,7 +196,7 @@
                              item]
     (let [^Actor cell-widget (get table cell)
           ^Image image-widget (get cell-widget :image)]
-      (.setDrawable image-widget (->texture-region-drawable ctx (:texture (:image item))))
+      (.setDrawable image-widget (->texture-region-drawable ctx (:texture (:property/image item))))
       (add-tooltip! cell-widget #(item-text % item))))
 
   (remove-item-from-widget [{{:keys [table slot->background]} :context/inventory :as ctx} cell]
@@ -239,10 +239,10 @@
                                                     :position [gui-viewport-width
                                                                gui-viewport-height]
                                                     :rows [[{:actor table :pad 2 :colspan 2}]
-                                                           [(->image-button context (:image (get-property context :book-latch))
+                                                           [(->image-button context (:property/image (get-property context :book-latch))
                                                                             (fn [_]
                                                                               (gdl.app/change-screen! :screens/minimap)))
-                                                            (->image-button context  (:image (get-property context :key-bone))
+                                                            (->image-button context  (:property/image (get-property context :key-bone))
                                                                             (fn [_]
                                                                               (gdl.app/change-screen! :screens/options-menu)))]]})
                          :slot->background (slot->background context)

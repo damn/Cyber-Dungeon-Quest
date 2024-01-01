@@ -64,7 +64,7 @@
 (defn- default-property-tooltip-text [context props]
   (binding [*print-level* nil]
     (with-out-str
-     (clojure.pprint/pprint (dissoc props :image)))))
+     (clojure.pprint/pprint (dissoc props :property/image)))))
 
 ; property-keys not used
 ; but schema? add/remove something ? or prepare already in resources/properties.edn
@@ -145,7 +145,7 @@
 ; maybe no default widget & assert for all loaded distinct keys from properties.edn
 (def ^:private attribute->value-widget
   {:property/id :label
-   :image :image
+   :property/image :image
    :pretty-name :text-field
 
    :slot :label
@@ -196,7 +196,7 @@
    (fn [[k _v]]
      [(case k
         :property/id 0
-        :image 1
+        :property/image 1
         :pretty-name 2
         :spell? 3
         :level 3
@@ -397,8 +397,8 @@
                (for [prop-id property-ids]
                  (let [props (get-property ctx prop-id)
                        image-widget (->image-widget ctx ; TODO image-button (link)
-                                                    (:image props)
-                                                    {:id (:id props)})] ; ??!? TODO
+                                                    (:property/image props)
+                                                    {:id (:property/id props)})]
                    (add-tooltip! image-widget #((-> property-types
                                                     property-type
                                                     :overview
@@ -513,8 +513,8 @@
                             (for [entities (partition-all number-columns entities)] ; TODO can just do 1 for?
                               (for [{:keys [property/id] :as props} entities
                                     :let [on-clicked #(clicked-id-fn % id)
-                                          button (if (:image props)
-                                                   (->image-button ctx (:image props) on-clicked)
+                                          button (if (:property/image props)
+                                                   (->image-button ctx (:property/image props) on-clicked)
                                                    (->text-button ctx (name id) on-clicked))
                                           top-widget (or (and extra-infos-widget
                                                               (extra-infos-widget ctx props))

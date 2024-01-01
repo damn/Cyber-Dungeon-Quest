@@ -59,7 +59,7 @@
   (tick! [_ _ctx])
   (render-below [_ ctx entity*]
     (when (world-item? ctx)
-      (draw-centered-image ctx (:image item) (item-place-position ctx entity))))
+      (draw-centered-image ctx (:property/image item) (item-place-position ctx entity))))
   (render-above [_ ctx entity*])
   (render-info  [_ ctc entity*]))
 
@@ -67,5 +67,5 @@
   (when (and (= :item-on-cursor (entity/state @player-entity))
              (not (world-item? context)))
     (draw-centered-image context
-                         (:image (:item-on-cursor @player-entity))
+                         (:property/image (:item-on-cursor @player-entity))
                          (gui-mouse-position context))))

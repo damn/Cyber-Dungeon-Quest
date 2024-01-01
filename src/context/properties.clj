@@ -125,8 +125,8 @@
 
 (defn- deserialize [context data]
   (->> data
-       (#(if (:image %)
-           (update % :image (fn [img] (deserialize-image context img)))
+       (#(if (:property/image %)
+           (update % :property/image (fn [img] (deserialize-image context img)))
            %))
        (#(if (:animation %)
            (update % :animation (fn [anim] (deserialize-animation context anim)))
@@ -139,7 +139,7 @@
 ; => simplest way: just define keys which are assets (which are all the same anyway at the moment)
 (defn- serialize [data]
   (->> data
-       (#(if (:image     %) (update % :image     serialize-image)     %))
+       (#(if (:property/image %) (update % :property/image serialize-image) %))
        (#(if (:animation %) (update % :animation serialize-animation) %))))
 
 (defn- load-edn [context file]
