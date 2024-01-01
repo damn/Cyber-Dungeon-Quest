@@ -129,13 +129,11 @@
                                      initial-state] :as extra-params}
                              context]
   (let [creature-id (:property/id creature-props)
-        creature-props (update creature-props :skills #(or % []))
+        creature-props (update creature-props :creature/skills #(or % []))
         images (create-images context (name creature-id))
         [width height] (images->world-unit-dimensions images)
-        {:keys [speed hp]} (species-properties (get-property context (:species creature-props)))]
-    ; TODO dont merge but be explicit
-    (merge creature-props
-           (cond
+        {:keys [speed hp]} (species-properties (get-property context (:creature/species creature-props)))]
+    (merge (cond
             is-player               player-components
             (= creature-id :lady-a) lady-props
             :else                   npc-components)
@@ -145,6 +143,8 @@
             :entity/movement speed
             :hp hp
             :mana 11
+            :skills (:creature/skills creature-props)
+            :items (:creature/items creature-props)
             :is-flying false
             :animation (animation/create images :frame-duration 0.1 :looping? true)
             :z-order (if (:is-flying creature-props) :flying :ground)}

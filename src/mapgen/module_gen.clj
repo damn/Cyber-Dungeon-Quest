@@ -190,7 +190,7 @@
            :area-level-grid grid})))))
 
 (defn- creatures-with-level [creature-properties level]
-  (filter #(= level (:level %)) creature-properties))
+  (filter #(= level (:creature/level %)) creature-properties))
 
 (def ^:private creature->tile
   (memoize

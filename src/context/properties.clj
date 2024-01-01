@@ -66,11 +66,11 @@
 
 (def ^:private prop-type-unique-key
   {:species :hp
-   :creature :species
+   :creature :creature/species
    :item :slot
    :skill (fn [{:keys [slot skill/effect]}] (and (not slot) effect))
    :weapon (fn [{:keys [slot]}] (and slot (= slot :weapon)))
-   :misc (fn [{:keys [hp species slot skill/effect]}]
+   :misc (fn [{:keys [hp creature/species slot skill/effect]}]
            (not (or hp species slot effect)))})
 
 ; TODO schema -
@@ -195,19 +195,3 @@
     (.start (Thread. (fn []
                        (write-to-file! properties properties-file))))
     (assoc context :context/properties properties)))
-
-(comment
- (let [ctx @gdl.app/current-context
-       creatures (cdq.context/all-properties ctx :creature)
-       creatures (map #(if (:level %)
-                        %
-                        (assoc % :level nil)) creatures )
-       properties (reduce
-                   (fn [properties creature]
-                     (assoc properties (:id creature) creature))
-                   (:context/properties ctx)
-                   creatures)]
-   (write-to-file! properties (:context/properties-file ctx))
-
-   )
- )

@@ -102,23 +102,19 @@
 
 (def ^:private property-types
   {:species {:title "Species"
-             ;:property-keys [:id :hp :speed]
              :overview {:title "Species"}}
    :creature {:title "Creature"
-              ;:property-keys [:id :image :species :level :skills :items]
               :overview {:title "Creatures"
-                         :sort-by-fn #(vector (or (:level %) 9)
-                                              (name (:species %))
+                         :sort-by-fn #(vector (or (:creature/level %) 9)
+                                              (name (:creature/species %))
                                               (name (:property/id %)))
-                         :extra-infos-widget #(->label %1 (or (str (:level %2)) "-"))
+                         :extra-infos-widget #(->label %1 (or (str (:creature/level %2)) "-"))
                          :tooltip-text-fn default-property-tooltip-text}}
    :item {:title "Item"
-          ;:property-keys [:id :image :slot :pretty-name :modifier]
           :overview {:title "Items"
                      :sort-by-fn #(vector (if-let [slot (:slot %)] (name slot) "") (name (:property/id %)))
                      :tooltip-text-fn default-property-tooltip-text}}
    :skill {:title "Spell"
-           ;:property-keys [:id :image :action-time :cooldown :cost :effect]
            :overview {:title "Spells"
                       :tooltip-text-fn (fn [ctx props]
                                          (try (cdq.context/skill-text ctx props)
@@ -138,8 +134,8 @@
 
 (defn- one-to-many-attribute->linked-property-type [k]
   (case k
-    :skills :skill ; == ! spells !
-    :items :item))
+    :creature/skills :skill ; == ! spells !
+    :creature/items :item))
 
 ; TODO label does not exist anymore.
 ; maybe no default widget & assert for all loaded distinct keys from properties.edn
@@ -153,11 +149,10 @@
    :slot :label
    :two-handed? :label
 
-   ; creature/
-   :level :text-field
-   :species :link-button
-   :skills :one-to-many
-   :items :one-to-many
+   :creature/level :text-field
+   :creature/species :link-button
+   :creature/skills :one-to-many
+   :creature/items :one-to-many
 
    ; item/
    :modifier :nested-map
@@ -205,10 +200,10 @@
         :property/image 1
         :pretty-name 2
         :spell? 3
-        :level 3
+        :creature/level 3
         :slot 3
         :two-handed? 4
-        :species 4
+        :creature/species 4
         9)
       (name k)])
    properties))
