@@ -5,15 +5,6 @@
             [utils.core :refer [safe-get]]
             cdq.context))
 
-; 1. step: proper namespaced keywords
-; :property/id
-; => where used everywhere ? OMG
-
-; TODO also for entities: :entity/id  , :entity/position, etc.
-; will make work easier in the future .. ? but no defrecord then hmm...
-
-; maybe :spell? true not needed but property.type/spell and property.type/weapon
-
 (comment
 
  (require '[malli.provider :as mp])
@@ -44,26 +35,6 @@
   [:level {:optional true} :int]]
  )
 
-; TODO SKILL WINDOW OUTDATED PROPERTIES !! GETS ADDED TO ACTIOnBAR !! RELOAD ON SESSION START !
-; also skill tooltip in property editor out of date
-
-; Idea;
-; during running game each entity has property/id
-; can right click and edit the properties on the fly of _everything_
-; in non-debug mode only presenting, otherwise editable.
-
-; Validation at: read, write
-; Each property type => keys for editing
-; Each key: what is it -> widget, validation
-; Weapon both item and skill possible? normalized & denormalized data
-; (creature animations, weapons, spritesheet indices)
-; sounds play/open bfxr
-; open tmx file, tiled editor
-; components editor creatures, etc. & builder
-; * also item needs to be in certain slot, each slot only once, etc. also max-items ...?
-; TODO aggro range wakup time, etc what else is hidden?!, unique death animation/sound/attacksound each weapon/spell etc.
-; alert sound, etc., mana, hp, speed.... default block modifiers
-
 (def ^:private prop-type-unique-key
   {:species :creature/hp
    :creature :creature/species
@@ -71,28 +42,45 @@
    :skill (fn [{:keys [item/slot skill/effect]}]
             (and (not slot) effect))
    :weapon (fn [{:keys [item/slot]}]
-             (and slot (= slot :weapon)))
+             (and slot (= slot :inventory.slot/weapon)))
    :misc (fn [{:keys [creature/hp
                       creature/species
                       item/slot
                       skill/effect]}]
            (not (or hp species slot effect)))})
 
-; TODO schema -
-; => :property/type
-; :property.type/creature
-; :property.type/item
-; :property.type/weapon
-; :property.type/spell
-
-; => misc ? species ?
-
-; ASSERT & LOAD EDN / WRITE EDN / BEFORE SAVE DATA
-; also things like target-entity props should be a map , :hit-effect & :maxrange, it was a list...
-
 (defn property-type [props]
   (some (fn [[prop-type k]] (when (k props) prop-type))
         prop-type-unique-key))
+
+(comment
+ ; weapons get branded as items
+ ; but they are ALSO STILL items
+ ; idk i am confused
+ ; get all items should get them
+ ; items with slot = weapon just have modifier: skill
+ ; itself and a bit different schema
+ (let [ctx @gdl.app/current-context
+       properties (:context/properties ctx)
+       properties (map (fn [[id props]]
+                         (assoc props
+                                :property/type
+                                (case (property-type props)
+                                  :species :property.type/species
+                                  :creature :property.type/creature
+                                  :weapon :property.type/weapon
+                                  :item :property.type/item
+                                  :skill :property.type/spell
+                                  :misc :property.type/misc)))
+                       properties)]
+   (->> properties
+        ;(take 10)
+        sort-by-type
+        (map serialize)
+        (save-edn (:context/properties-file ctx))))
+
+
+ )
 
 (extend-type gdl.context.Context
   cdq.context/PropertyStore

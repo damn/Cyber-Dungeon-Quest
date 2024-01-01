@@ -146,7 +146,7 @@
 (defn- item-text [context item]
   (str (item-name item) "\n"
        (->> item
-            :modifier
+            :item/modifier
             (modifier-text context))))
 (comment
  ; doesnt work need bag idx :positions
@@ -163,23 +163,23 @@
   (let [cell (fn [& args] (apply ->cell ctx slot->background args))]
     (.clear table)
     (doto table .add .add
-      (.add ^Actor (cell :helm))
-      (.add ^Actor (cell :necklace)) .row)
+      (.add ^Actor (cell :inventory.slot/helm))
+      (.add ^Actor (cell :inventory.slot/necklace)) .row)
     (doto table .add
-      (.add ^Actor (cell :weapon))
-      (.add ^Actor (cell :chest))
-      (.add ^Actor (cell :cloak))
-      (.add ^Actor (cell :shield)) .row)
+      (.add ^Actor (cell :inventory.slot/weapon))
+      (.add ^Actor (cell :inventory.slot/chest))
+      (.add ^Actor (cell :inventory.slot/cloak))
+      (.add ^Actor (cell :inventory.slot/shield)) .row)
     (doto table .add .add
-      (.add ^Actor (cell :leg)) .row)
+      (.add ^Actor (cell :inventory.slot/leg)) .row)
     (doto table .add
-      (.add ^Actor (cell :glove))
-      (.add ^Actor (cell :rings :position [0 0]))
-      (.add ^Actor (cell :rings :position [1 0]))
-      (.add ^Actor (cell :boot)) .row)
-    (doseq [y (range (grid/height (:bag inventory/empty-inventory)))]
-      (doseq [x (range (grid/width (:bag inventory/empty-inventory)))]
-        (.add table ^Actor (cell :bag :position [x y])))
+      (.add ^Actor (cell :inventory.slot/glove))
+      (.add ^Actor (cell :inventory.slot/rings :position [0 0]))
+      (.add ^Actor (cell :inventory.slot/rings :position [1 0]))
+      (.add ^Actor (cell :inventory.slot/boot)) .row)
+    (doseq [y (range (grid/height (:inventory.slot/bag inventory/empty-inventory)))]
+      (doseq [x (range (grid/width (:inventory.slot/bag inventory/empty-inventory)))]
+        (.add table ^Actor (cell :inventory.slot/bag :position [x y])))
       (.row table))))
 
 (extend-type gdl.context.Context
@@ -207,17 +207,17 @@
 
 (defn- slot->background [ctx]
   (let [sheet (spritesheet ctx "items/images.png" 48 48)]
-    (->> {:weapon   0
-          :shield   1
-          :rings    2
-          :necklace 3
-          :helm     4
-          :cloak    5
-          :chest    6
-          :leg      7
-          :glove    8
-          :boot     9
-          :bag      10} ; transparent
+    (->> #:inventory.slot {:weapon   0
+                           :shield   1
+                           :rings    2
+                           :necklace 3
+                           :helm     4
+                           :cloak    5
+                           :chest    6
+                           :leg      7
+                           :glove    8
+                           :boot     9
+                           :bag      10} ; transparent
          (map (fn [[slot y]]
                 [slot
                  (.tint ^TextureRegionDrawable

@@ -8,17 +8,17 @@
             cdq.entity))
 
 (def empty-inventory
-  (->> {:bag      [6 4]
-        :weapon   [1 1]
-        :shield   [1 1]
-        :helm     [1 1]
-        :chest    [1 1]
-        :leg      [1 1]
-        :glove    [1 1]
-        :boot     [1 1]
-        :cloak    [1 1]
-        :necklace [1 1]
-        :rings    [2 1]}
+  (->> #:inventory.slot{:bag      [6 4]
+                        :weapon   [1 1]
+                        :shield   [1 1]
+                        :helm     [1 1]
+                        :chest    [1 1]
+                        :leg      [1 1]
+                        :glove    [1 1]
+                        :boot     [1 1]
+                        :cloak    [1 1]
+                        :necklace [1 1]
+                        :rings    [2 1]}
        (map (fn [[slot [width height]]]
               [slot
                (grid/create-grid width height (constantly nil))])) ; simple hashmap grid?
@@ -35,20 +35,20 @@
   (-> inventory slot (contains? position)))
 
 (defn valid-slot? [[slot _] item]
-  (or (= :bag slot)
+  (or (= :inventory.slot/bag slot)
       (= (:item/slot item) slot)))
 
 (defn two-handed-weapon-and-shield-together? [inventory {slot 0 :as cell} new-item]
   (or (and (:weapon/two-handed? new-item)
-           (= slot :weapon)
-           (first (slot->items inventory :shield)))
-      (and (= (:item/slot new-item) :shield)
-           (= slot :shield)
-           (if-let [weapon (first (slot->items inventory :weapon))]
+           (= slot :inventory.slot/weapon)
+           (first (slot->items inventory :inventory.slot/shield)))
+      (and (= (:item/slot new-item) :inventory.slot/shield)
+           (= slot :inventory.slot/shield)
+           (if-let [weapon (first (slot->items inventory :inventory.slot/weapon))]
              (:weapon/two-handed? weapon)))))
 
 (defn applies-modifiers? [[slot _]]
-  (not= :bag slot))
+  (not= :inventory.slot/bag slot))
 
 (defn- inv-set-item [inventory cell item]
   {:pre [(nil? (get-in inventory cell))
@@ -107,7 +107,7 @@
 
     (when (applies-modifiers? cell)
       (apply-modifier! context entity (:item/modifier item))
-      (when (and (= (:item/slot item) :weapon))
+      (when (and (= (:item/slot item) :inventory.slot/weapon))
         (add-skill! context entity item)))
 
     (when (:is-player @entity)
@@ -119,7 +119,7 @@
 
       (when (applies-modifiers? cell)
         (reverse-modifier! context entity (:item/modifier item))
-        (when (= (:item/slot item) :weapon)
+        (when (= (:item/slot item) :inventory.slot/weapon)
           (remove-skill! context entity item)))
 
       (when (:is-player @entity)
@@ -137,7 +137,7 @@
   (try-pickup-item! [context entity item]
     (or
      (try-put-item-in! context entity (:item/slot item) item)
-     (try-put-item-in! context entity :bag item))))
+     (try-put-item-in! context entity :inventory.slot/bag item))))
 
 (defcomponent :items items
   (entity/create! [_ entity context]
