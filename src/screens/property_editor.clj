@@ -317,15 +317,17 @@
 ;(or (empty? ids) (apply distinct? ids))
 ; => don't always save as map ?
 
+
+
 (comment
  ; use vertical group ?
  ; each element = one attribute [k v] and separator table ?
  ; can remove/add easily ?
  ; cannot remove rows, ahve to redo ..
  (let [ctx @gdl.app/current-context
-       window (gdl.context/mouse-on-stage-actor? ctx)
+       actor (gdl.context/mouse-on-stage-actor? ctx)
        ]
-   (pack! window)
+   (find-window actor)
    )
  )
 
@@ -412,47 +414,41 @@
 
 ;;
 
-; TODO need to pack-window! here too..
-
 (defn- add-one-to-many-rows [ctx table property-type property-ids]
   (let [redo-rows (fn [ctx property-ids]
                     (clear-children! table)
-                    (add-one-to-many-rows ctx table property-type property-ids))]
-    (add-rows table (concat
-                     (for [prop-id property-ids]
-                       [(let [props (get-property ctx prop-id)
-                              image-widget (->image-widget ctx ; TODO image-button (link)
-                                                           (:image props)
-                                                           {:id (:id props)})]
-                          (add-tooltip! image-widget #((-> property-types
-                                                               property-type
-                                                               :overview
-                                                               :tooltip-text-fn) % props))
-                          image-widget)
-                        (->text-button ctx
-                                       " - "
-                                       #(redo-rows % (disj (set property-ids) prop-id)))])
-                     [[(->text-button ctx
-                                      " + "
-                                      (fn [ctx]
-                                        (let [window (->window ctx {:title "Choose"
-                                                                    :modal? true
-                                                                    :close-button? true
-                                                                    :center? true
-                                                                    :close-on-escape? true})
-                                              clicked-id-fn (fn [ctx id]
-                                                              (remove! window)
-                                                              ;(pack-window! table)
-                                                              (redo-rows ctx
-                                                                         (conj (set property-ids) id)))]
-                                          (add! window (->overview-table ctx property-type clicked-id-fn))
-                                          (pack! window)
-                                          (add-to-stage! ctx window))))]])))
-  (when-let [parent (parent table)]
-    (pack! parent)))
+                    (add-one-to-many-rows ctx table property-type property-ids)
+                    (pack-window! table))]
+    (add-rows table
+              [[(->text-button ctx "+"
+                               (fn [ctx]
+                                 (let [window (->window ctx {:title "Choose"
+                                                             :modal? true
+                                                             :close-button? true
+                                                             :center? true
+                                                             :close-on-escape? true})
+                                       clicked-id-fn (fn [ctx id]
+                                                       (remove! window)
+                                                       (redo-rows ctx (conj (set property-ids) id)))]
+                                   (add! window (->overview-table ctx property-type clicked-id-fn))
+                                   (pack! window)
+                                   (add-to-stage! ctx window))))]
+               (for [prop-id property-ids]
+                 (let [props (get-property ctx prop-id)
+                       image-widget (->image-widget ctx ; TODO image-button (link)
+                                                    (:image props)
+                                                    {:id (:id props)})]
+                   (add-tooltip! image-widget #((-> property-types
+                                                    property-type
+                                                    :overview
+                                                    :tooltip-text-fn) % props))
+                   image-widget))
+               (for [prop-id property-ids]
+                 (->text-button ctx "-"
+                                #(redo-rows % (disj (set property-ids) prop-id))))])))
 
 (defmethod ->value-widget :one-to-many [context [attribute property-ids]]
-  (let [table (->table context {})]
+  (let [table (->table context {:cell-defaults {:pad 5}})]
     (add-one-to-many-rows context
                           table
                           (one-to-many-attribute->linked-property-type attribute)
@@ -464,9 +460,6 @@
   (->> (children widget) (keep actor/id) set))
 
 ;;
-
-; TODO separators don't work with nested yet, also probably fucking up children actor id
-; also they are removable o.o
 
 (defn- ->horizontal-separator-cell [colspan]
   {:actor (com.kotcrab.vis.ui.widget.Separator. "default")
