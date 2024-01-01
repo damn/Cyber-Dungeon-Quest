@@ -5,6 +5,25 @@
             [utils.core :refer [safe-get]]
             cdq.context))
 
+; TODO
+; * validation @ load/save of property-types attributes (optional ones to add like cooldown?)
+; * text-field make validateabletextfiel
+; * schema/value-ranges for all modifiers/effects
+
+; TODO aggro range wakup time, etc what else is hidden?!, unique death animation/sound/attacksound each weapon/spell etc.
+; alert sound, etc., mana, hp, speed.... default block modifiers
+; ASSERT & LOAD EDN / WRITE EDN / BEFORE SAVE DATA
+; also things like target-entity props should be a map , :hit-effect & :maxrange, it was a list...
+
+; Later
+; * move other game params like aggro-range, wakeup/alert state time into creature props
+; * unique death animations/sounds
+; * attacksound each weapon/spell/effect/etc. grep play-sound! & image/animation all in properties.edn
+; * sounds play/open bfxr
+; * open tmx file, tiled editor
+; * components editor creatures, etc. & builder
+; * also item needs to be in certain slot, each slot only once, etc. also max-items ...?
+
 (comment
 
  (do
