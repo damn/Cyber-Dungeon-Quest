@@ -101,50 +101,48 @@
  }
 
 (def ^:private property-types
-  {
-   ; not used
-   :species {:title "Species"
-             :overview {:title "Species"}}
-   ;
-   :creature {:title "Creature"
-              :overview {:title "Creatures"
-                         :columns 16
-                         :image/dimensions [65 65]
-                         :sort-by-fn #(vector (or (:creature/level %) 9)
-                                              (name (:creature/species %))
-                                              (name (:property/id %)))
-                         :extra-infos-widget #(->label %1 (or (str (:creature/level %2)) "-"))
-                         :tooltip-text-fn default-property-tooltip-text}}
-   :item {:title "Item"
-          :overview {:title "Items"
-                     :columns 17
-                     :image/dimensions [60 60]
-                     :sort-by-fn #(vector (if-let [slot (:item/slot %)]
-                                            (name slot)
-                                            "")
-                                          (name (:property/id %)))
-                     :tooltip-text-fn default-property-tooltip-text}}
-   :skill {:title "Spell"
-           :overview {:title "Spells"
-                      :columns 16
-                      :image/dimensions [70 70]
-                      :tooltip-text-fn (fn [ctx props]
-                                         (try (cdq.context/skill-text ctx props)
-                                              (catch Throwable t
-                                                (default-property-tooltip-text ctx props))))}}
-   :weapon {:title "Weapon"
-            :overview {:title "Weapons"
-                       :columns 10
-                       :image/dimensions [96 96]
-                       :tooltip-text-fn (fn [ctx props]
-                                          (try (cdq.context/skill-text ctx props)
-                                               (catch Throwable t
-                                                 (default-property-tooltip-text ctx props))))}}
-   :misc {:title "Misc"
-          :overview {:title "Misc"
-                     :columns 10
-                     :image/dimensions [96 96]
-                     :tooltip-text-fn default-property-tooltip-text}}})
+  {; not used
+   :property.type/species {:title "Species"
+                           :overview {:title "Species"}}
+   :property.type/creature {:title "Creature"
+                            :overview {:title "Creatures"
+                                       :columns 16
+                                       :image/dimensions [65 65]
+                                       :sort-by-fn #(vector (or (:creature/level %) 9)
+                                                            (name (:creature/species %))
+                                                            (name (:property/id %)))
+                                       :extra-infos-widget #(->label %1 (or (str (:creature/level %2)) "-"))
+                                       :tooltip-text-fn default-property-tooltip-text}}
+   :property.type/item {:title "Item"
+                        :overview {:title "Items"
+                                   :columns 17
+                                   :image/dimensions [60 60]
+                                   :sort-by-fn #(vector (if-let [slot (:item/slot %)]
+                                                          (name slot)
+                                                          "")
+                                                        (name (:property/id %)))
+                                   :tooltip-text-fn default-property-tooltip-text}}
+   :property.type/skill {:title "Spell"
+                         :overview {:title "Spells"
+                                    :columns 16
+                                    :image/dimensions [70 70]
+                                    :tooltip-text-fn (fn [ctx props]
+                                                       (try (cdq.context/skill-text ctx props)
+                                                            (catch Throwable t
+                                                              (default-property-tooltip-text ctx props))))}}
+   :property.type/weapon {:title "Weapon"
+                          :overview {:title "Weapons"
+                                     :columns 10
+                                     :image/dimensions [96 96]
+                                     :tooltip-text-fn (fn [ctx props]
+                                                        (try (cdq.context/skill-text ctx props)
+                                                             (catch Throwable t
+                                                               (default-property-tooltip-text ctx props))))}}
+   :property.type/misc {:title "Misc"
+                        :overview {:title "Misc"
+                                   :columns 10
+                                   :image/dimensions [96 96]
+                                   :tooltip-text-fn default-property-tooltip-text}}})
 ;;
 
 (defn- one-to-many-attribute->linked-property-type [k]
@@ -542,7 +540,11 @@
 (defn- ->left-widget [context]
   (->table context {:cell-defaults {:pad 5}
                     :rows (concat
-                           (for [[property-type {:keys [overview]}] (select-keys property-types [:creature :item :skill :weapon :misc])]
+                           (for [[property-type {:keys [overview]}] (select-keys property-types [:property.type/creature
+                                                                                                 :property.type/item
+                                                                                                 :property.type/skill
+                                                                                                 :property.type/weapon
+                                                                                                 :property.type/misc])]
                              [(->text-button context
                                              (:title overview)
                                              #(set-second-widget! % (->overview-table % property-type open-property-editor-window!)))])

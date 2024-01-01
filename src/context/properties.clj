@@ -36,18 +36,18 @@
  )
 
 (def ^:private prop-type-unique-key
-  {:species :creature/hp
-   :creature :creature/species
-   :item :item/slot
-   :skill (fn [{:keys [item/slot skill/effect]}]
-            (and (not slot) effect))
-   :weapon (fn [{:keys [item/slot]}]
-             (and slot (= slot :inventory.slot/weapon)))
-   :misc (fn [{:keys [creature/hp
-                      creature/species
-                      item/slot
-                      skill/effect]}]
-           (not (or hp species slot effect)))})
+  {:property.type/species :creature/hp
+   :property.type/creature :creature/species
+   :property.type/item :item/slot
+   :property.type/skill (fn [{:keys [item/slot skill/effect]}]
+                          (and (not slot) effect))
+   :property.type/weapon (fn [{:keys [item/slot]}]
+                           (and slot (= slot :inventory.slot/weapon)))
+   :property.type/misc (fn [{:keys [creature/hp
+                                    creature/species
+                                    item/slot
+                                    skill/effect]}]
+                         (not (or hp species slot effect)))})
 
 (defn property-type [props]
   (some (fn [[prop-type k]] (when (k props) prop-type))
@@ -160,12 +160,12 @@
    (fn [prop]
      (let [ptype (property-type prop)]
        (case ptype
-        :skill 0
-        :creature 1
-        :species 2
-        :item 3
-        :weapon 4
-        9)))
+        :property.type/skill 0
+        :property.type/creature 1
+        :property.type/species 2
+        :property.type/item 3
+        :property.type/weapon 4
+        :property.type/misc 5)))
    properties))
 
 (defn- write-to-file! [properties properties-file]
