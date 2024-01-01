@@ -144,7 +144,7 @@
             :hp hp
             :mana 11
             :skills (:creature/skills creature-props)
-            :items (:creature/items creature-props)
+            :items  (:creature/items creature-props)
             :is-flying false
             :animation (animation/create images :frame-duration 0.1 :looping? true)
             :z-order (if (:is-flying creature-props) :flying :ground)}

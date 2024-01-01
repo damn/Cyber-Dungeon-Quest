@@ -121,7 +121,6 @@
                                               (catch Throwable t
                                                 (default-property-tooltip-text ctx props))))}}
    :weapon {:title "Weapon"
-            ;:property-keys [:id :image :pretty-name :action-time :effect]
             :overview {:title "Weapons"
                        :tooltip-text-fn (fn [ctx props]
                                           (try (cdq.context/skill-text ctx props)
@@ -469,10 +468,7 @@
 
 (defn ->property-editor-window [context id]
   (let [props (get-property context id)
-        {:keys [title
-                ; unused
-                ; property-keys
-                ]} (get property-types (context.properties/property-type props))
+        {:keys [title]} (get property-types (context.properties/property-type props))
         window (->window context {:title (or title (name id))
                                   :modal? true
                                   :close-button? true
