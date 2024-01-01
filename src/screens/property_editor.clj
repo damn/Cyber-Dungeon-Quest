@@ -14,6 +14,9 @@
             [context.properties :as properties]
             [cdq.context :refer [get-property all-properties]]))
 
+; TODO use findByName & actor name as id with pr-str and ->edn for keywords
+; userObject keep as is, can add both then !
+
 
 ; TODO all properties which have no property type -> misc -> select from scroll pane text buttons
 ; e.g. first-level .... want to edit ! or @ map editor ?
@@ -151,6 +154,16 @@
 (defn- removable? [k]
   (#{"effect" "modifier"} (namespace k)))
 
+(defn- add-components? [k]
+  (#{:modifier :effect :hit-effect} k))
+
+(defn- nested-map->components [k]
+  (case k
+    :modifier (keys context.modifier/modifier-definitions)
+    :effect     (keys (methods context.effect/do!))
+    :hit-effect (keys (methods context.effect/do!)) ; only those with 'source/target'
+    ))
+
 (defn- sort-attributes [properties]
   (sort-by
    (fn [[k _v]]
@@ -252,64 +265,56 @@
 
 ;;
 
-; TODO add effect/modifier components
-; => data schema for all modifiers/effects & value ranges?
+(declare ->attribute-widget-table)
 
-; TODO what happens if you select damage or sound or whatever ?
-; each has its own widget get added with default/empty value (cannot save then)
-; => schema ! for each attribute.
+(defn- ->add-nested-map-button [ctx k attribute-widget-group]
+  (->text-button ctx (str "Add " (name k))
+   (fn [ctx]
+     (let [window (->window ctx {:title "Choose"
+                                 :modal? true
+                                 :close-button? true
+                                 :center? true
+                                 :close-on-escape? true})]
+       (add-rows window (for [nested-k (nested-map->components k)]
+                          [(->text-button ctx (name nested-k)
+                            (fn [ctx]
+                              (remove! window)
+                              (.setLayoutEnabled attribute-widget-group true)
+                              (add-actor! attribute-widget-group
+                                          (->attribute-widget-table ctx
+                                                                    [nested-k nil] ; TODO default value ?
+                                                                    :horizontal-sep?
+                                                                    (pos? (count (children attribute-widget-group)))))
+                              ; TODO .invalidateHierarchy does not work - should anyway be called with add-actor! ?
+                              (.invalidateHierarchy attribute-widget-group)
+                              (.pack attribute-widget-group)
+                              (println "invalidate hierarchy")
+                              ;(pack! attribute-widget-group)
+                              ; TODO doesn't work for hit-effects also ... one level too deep ... aargs
+                              #_(when-let [prnt (parent (parent attribute-widget-group))]
+                                (when-let [prnt2 (parent prnt)]
+                                  (when-let [prnt3 (parent prnt2)]
+                                    (pack! prnt3))))
 
-; right click entity popup menu
-; edit
-; => open-property-editor-window! ingame !
-
-(declare redo-nested-map-rows!)
-
-(defn- nested-map-attribute->allowed-keys [k]
-  (case k
-    :modifier (keys context.modifier/modifier-definitions)
-    :effect     (keys (methods context.effect/do!))
-    :hit-effect (keys (methods context.effect/do!)) ; only those with 'source/target'
-    ))
+                              ))]))
+       (pack! window)
+       (add-to-stage! ctx window)))))
 
 (declare ->attribute-widget-group)
 
-#_(defn- clicked-nested-map-overview [k ctx table window nested-k widget-rows]
-  (remove! window)
-  (redo-nested-map-rows! k ctx table
-                         (conj widget-rows (first (->attribute-widget-group ctx {nested-k nil})))))
-
-#_(defn- ->nested-map-rows [k ctx table widget-group]
-  (conj (for [row (children widget-group)]
-          (conj row (->text-button ctx "-" #(redo-nested-map-rows! k % table (disj widget-rows row)))))
-        [{:actor (->text-button ctx (str "Add " (name k))
-                                (fn [ctx]
-                                  (let [window (->window ctx {:title "Choose"
-                                                              :modal? true
-                                                              :close-button? true
-                                                              :center? true
-                                                              :close-on-escape? true})]
-                                    (add-rows window (for [nested-k (nested-map-attribute->allowed-keys k)]
-                                                       [(->text-button ctx (name nested-k)
-                                                                       #(clicked-nested-map-overview k % table window nested-k widget-rows))]))
-                                    (pack! window)
-                                    (add-to-stage! ctx window))))
-          :colspan 3}]))
-
-#_(defn- redo-nested-map-rows! [k ctx table widget-rows]
-  (clear-children! table)
-  (add-rows table (->nested-map-rows k ctx table widget-rows))
-  ; TODO recursively pack all parents ! hit-effect ..
-  (pack! (parent table)))
-
-; FIXME target-entity does not have 'add'/'remove' nested fields ....
-(defmethod ->value-widget :nested-map [ctx [_ props]]
-  (->attribute-widget-group ctx props))
+(defmethod ->value-widget :nested-map [ctx [k props]]
+  (let [attribute-widget-group (->attribute-widget-group ctx props)]
+    (actor/set-id! attribute-widget-group :attribute-widget-group)
+    (->table ctx {:cell-defaults {:pad 5}
+                  :rows (remove nil?
+                                [(when (add-components? k)
+                                   [(->add-nested-map-button ctx k attribute-widget-group)])
+                                 [attribute-widget-group]])})))
 
 (declare attribute-widget-group->data)
 
-(defmethod value-widget->data :nested-map [_ group]
-  (attribute-widget-group->data group))
+(defmethod value-widget->data :nested-map [_ table]
+  (attribute-widget-group->data (:attribute-widget-group table)))
 
 ; FIXME
 ;Assert failed: Actor ids are not distinct: [:effect/damage :effect/damage :effect/stun]
@@ -323,14 +328,8 @@
  ; cannot remove rows, ahve to redo ..
  (let [ctx @gdl.app/current-context
        window (gdl.context/mouse-on-stage-actor? ctx)
-       number-rows (.getRows window)
-       number-columns (.getColumns window)
-       cells (seq (.getCells window))
-       ; rows (partition number-columns cells)
        ]
-   (clojure.pprint/pprint (map (fn [cell] [(.getRow cell) cell]) cells))
-   ; some rows only separator
-   ; how do I know when is a new row???
+   (pack! window)
    )
  )
 
@@ -377,6 +376,7 @@
                           (->play-sound-button ctx sound-file)]
                          [(->text-button ctx "Select sound" click-open-sounds-window!)])]}))
 
+; TODO use id of the value-widget itself and set/change it
 (defmethod value-widget->data :sound [_ widget]
   (actor/id (first (children widget))))
 
@@ -460,6 +460,7 @@
                           property-ids)
     table))
 
+; TODO use id of the value-widget itself and set/change it
 (defmethod value-widget->data :one-to-many [_ widget]
   (->> (children widget) (keep actor/id) set))
 
@@ -483,9 +484,11 @@
    :fill-y? true
    :expand-y? true})
 
-(defn ->attribute-widget-rows [ctx [k v] & {:keys [horizontal-sep? table]}]
+(defn ->attribute-widget-table [ctx [k v] & {:keys [horizontal-sep?]}]
   (let [label (->label ctx (name k))
         value-widget (->value-widget ctx [k v])
+        table (->table ctx {:id k
+                            :cell-defaults {:pad 4}})
         column (remove nil?
                        [(when (removable? k)
                           (->text-button ctx "-" (fn [_ctx] (remove! table))))
@@ -495,7 +498,8 @@
         rows [(when horizontal-sep? [(->horizontal-separator-cell (count column))])
               column]]
     (actor/set-id! value-widget v)
-    (remove nil? rows)))
+    (add-rows table (remove nil? rows))
+    table))
 
 (defn- attribute-widget-table->value-widget [table]
   (-> table children last))
@@ -504,14 +508,8 @@
   (let [first-row? (atom true)]
     (for [[k v] (sort-attributes props)
           :let [sep? (not @first-row?)
-                _ (reset! first-row? false)
-                table (->table ctx {:id k
-                                    :cell-defaults {:pad 4}})]]
-      (do
-       (add-rows table (->attribute-widget-rows ctx [k v]
-                                                :horizontal-sep? sep?
-                                                :table table))
-       table))))
+                _ (reset! first-row? false)]]
+      (->attribute-widget-table ctx [k v] :horizontal-sep? sep?))))
 
 (defn- ->attribute-widget-group [ctx props]
   (let [group (->vertical-group ctx (->attribute-widget-tables ctx props))]
@@ -544,6 +542,8 @@
                                   :cell-defaults {:pad 5}})
         widgets (->attribute-widget-group context props)]
     (add-rows window [[widgets]
+                      ; TODO SHOW IF CHANGES MADE then SAVE otherwise different color etc.
+                      ; when closing (lose changes? yes no)
                       [(->text-button context "Save"
                                       (fn [_ctx]
                                         ; TODO error modal like map editor?
