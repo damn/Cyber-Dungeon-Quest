@@ -1304,9 +1304,8 @@
   :id :sword,
   :image {:file "items/images.png", :sub-image-bounds [0 96 48 48]},
   :effect
-  [[:effect/target-entity
-    {:maxrange 0.5,
-     :hit-effect [[:effect/damage [:physical [5 10]]]]}]]}
+  {:effect/target-entity
+   {:hit-effect {:effect/damage [:physical [5 10]]}, :maxrange 0.5}}}
  {:image {:file "items/images.png", :sub-image-bounds [384 432 48 48]},
   :slot :helm,
   :id :wild-helm,

@@ -14,6 +14,24 @@
             [context.properties :as properties]
             [cdq.context :refer [get-property all-properties]]))
 
+(defn- ->horizontal-separator-cell [colspan]
+  {:actor (com.kotcrab.vis.ui.widget.Separator. "default")
+   :pad-top 2
+   :pad-bottom 2
+   :colspan colspan
+   :fill-x? true
+   :expand-x? true})
+
+(defn- ->vertical-separator-cell []
+  {:actor (com.kotcrab.vis.ui.widget.Separator. "vertical")
+   :pad-top 2
+   :pad-bottom 2
+   :fill-y? true
+   :expand-y? true})
+
+; TODO show animations in property editor window & images x2 size ! not 48x48 but 96x96.
+; weapons complicated with ' effect -> target-entity '
+
 ; TODO use findByName & actor name as id with pr-str and ->edn for keywords
 ; userObject keep as is, can add both then !
 
@@ -110,6 +128,7 @@
                        :tooltip-text-fn (fn [ctx props]
                                           (try (cdq.context/skill-text ctx props)
                                               (catch Throwable t
+                                                ;(println t)
                                                 (default-property-tooltip-text ctx props))))}}
    :misc {:title "Misc"
           :overview {:title "Misc"
@@ -290,7 +309,7 @@
                               (remove! window)
                               (add-actor! attribute-widget-group
                                           (->attribute-widget-table ctx
-                                                                    [nested-k nil] ; TODO default value ?
+                                                                    [nested-k nil] ; TODO default value ? important for target-entity otherwise no hit-effect & maxrange because cannot add ! ..............
                                                                     :horizontal-sep?
                                                                     (pos? (count (children attribute-widget-group)))))
                               (pack-ancestor-window! attribute-widget-group)))]))
@@ -306,6 +325,8 @@
                   :rows (remove nil?
                                 [(when (add-components? k)
                                    [(->add-nested-map-button ctx k attribute-widget-group)])
+                                 (when (add-components? k)
+                                   [(->horizontal-separator-cell 1)])
                                  [attribute-widget-group]])})))
 
 (declare attribute-widget-group->data)
@@ -400,21 +421,6 @@
 
 ;;
 
-(defn- ->horizontal-separator-cell [colspan]
-  {:actor (com.kotcrab.vis.ui.widget.Separator. "default")
-   :pad-top 2
-   :pad-bottom 2
-   :colspan colspan
-   :fill-x? true
-   :expand-x? true})
-
-(defn- ->vertical-separator-cell []
-  {:actor (com.kotcrab.vis.ui.widget.Separator. "vertical")
-   :pad-top 2
-   :pad-bottom 2
-   :fill-y? true
-   :expand-y? true})
-
 (defn ->attribute-widget-table [ctx [k v] & {:keys [horizontal-sep?]}]
   (let [label (->label ctx (name k))
         value-widget (->value-widget ctx [k v])
@@ -452,10 +458,10 @@
     ))
 
 (defn- attribute-widget-group->data [group]
-  (for [k (map actor/id (children group))
-        :let [table (k group)
-              value-widget (attribute-widget-table->value-widget table)]]
-    [k (value-widget->data k value-widget)]))
+  (into {} (for [k (map actor/id (children group))
+                 :let [table (k group)
+                       value-widget (attribute-widget-table->value-widget table)]]
+             [k (value-widget->data k value-widget)])))
 
 ;;
 
@@ -480,7 +486,7 @@
                                         ; TODO error modal like map editor?
                                         ; TODO refresh overview creatures lvls,etc. ?
                                         (swap! app/current-context properties/update-and-write-to-file!
-                                               (into {} (attribute-widget-group->data widgets)))
+                                               (attribute-widget-group->data widgets))
                                         (remove! window)))]])
     (pack! window)
     window))

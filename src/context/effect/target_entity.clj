@@ -43,9 +43,7 @@
 
 (defmethod effect/text :effect/target-entity
   [context [_ {:keys [maxrange hit-effect]}]]
-  (str "Range " maxrange " meters\n"
-       ; TODO already merged before calling text? ... when are they coming from ?
-       (effect-text context hit-effect)))
+  (str "Range " maxrange " meters\n" (effect-text context hit-effect)))
 
 ; TODO target still exists ?! necessary ? what if disappears/dead?
 ; TODO this is valid-params of hit-effect damage !!

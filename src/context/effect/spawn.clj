@@ -27,7 +27,7 @@
 
 (defmethod effect/text :effect/spawn
   [_context [_ creature-id]]
-  (str "Spawns a " creature-id))
+  (str "Spawns a " (name creature-id)))
 
 (defmethod effect/valid-params? :effect/spawn
   [{:keys [effect/source
