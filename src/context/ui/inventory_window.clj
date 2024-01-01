@@ -3,15 +3,15 @@
             [data.grid2d :as grid]
             [gdl.app :refer [current-context]]
             [gdl.context :refer [draw-rectangle draw-filled-rectangle spritesheet get-sprite
-                                 play-sound! gui-mouse-position get-stage ->text-tooltip ->table ->window
+                                 play-sound! gui-mouse-position get-stage ->table ->window
                                  ->texture-region-drawable ->color ->stack ->image-widget ->image-button]]
             [gdl.graphics.color :as color]
-            [gdl.scene2d.actor :as actor :refer [set-id! add-listener! set-name!]]
+            [gdl.scene2d.actor :as actor :refer [set-id! add-listener! set-name! add-tooltip! remove-tooltip!]]
             [context.entity.inventory :as inventory]
             [cdq.context :refer [show-msg-to-player! send-event! modifier-text set-item! stack-item! remove-item! get-property]]
             [cdq.entity :as entity])
   (:import com.badlogic.gdx.scenes.scene2d.Actor
-           (com.badlogic.gdx.scenes.scene2d.ui Widget Image TextTooltip Window Table)
+           (com.badlogic.gdx.scenes.scene2d.ui Widget Image Window Table)
            com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
            com.badlogic.gdx.scenes.scene2d.utils.ClickListener
            com.badlogic.gdx.math.Vector2))
@@ -197,16 +197,13 @@
     (let [^Actor cell-widget (get table cell)
           ^Image image-widget (get cell-widget :image)]
       (.setDrawable image-widget (->texture-region-drawable ctx (:texture (:image item))))
-      (.addListener cell-widget (->text-tooltip ctx #(item-text % item)))))
+      (add-tooltip! cell-widget #(item-text % item))))
 
   (remove-item-from-widget [{{:keys [table slot->background]} :context/inventory :as ctx} cell]
     (let [^Actor cell-widget (get table cell)
-          ^Image image-widget (get cell-widget :image)
-          ^TextTooltip tooltip (first (filter #(instance? TextTooltip %)
-                                              (.getListeners cell-widget)))]
+          ^Image image-widget (get cell-widget :image)]
       (.setDrawable image-widget (slot->background (cell 0)))
-      (.hide tooltip)
-      (.removeListener cell-widget tooltip))))
+      (remove-tooltip! cell-widget))))
 
 (defn- slot->background [ctx]
   (let [sheet (spritesheet ctx "items/images.png" 48 48)]

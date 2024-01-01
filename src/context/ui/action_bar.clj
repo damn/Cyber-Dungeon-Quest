@@ -1,6 +1,6 @@
 (ns context.ui.action-bar
-  (:require [gdl.context :refer [->image-button key-just-pressed? ->text-tooltip ->button-group ->horizontal-group]]
-            [gdl.scene2d.actor :as actor :refer [add-listener! remove!]]
+  (:require [gdl.context :refer [->image-button key-just-pressed? ->button-group ->horizontal-group]]
+            [gdl.scene2d.actor :as actor :refer [remove! add-tooltip!]]
             [gdl.scene2d.group :refer [clear-children! add-actor!]]
             [gdl.scene2d.ui.button-group :refer [clear! add! checked] :as button-group]
             [cdq.context :refer [skill-text]]))
@@ -27,7 +27,7 @@
                         {:keys [id image] :as skill}]
     (let [button (->image-button ctx image (fn [_]))]
       (actor/set-id! button id)
-      (add-listener! button (->text-tooltip ctx #(skill-text % skill)))
+      (add-tooltip! button #(skill-text % skill))
       (add-actor! horizontal-group button)
       (add! button-group button)))
 

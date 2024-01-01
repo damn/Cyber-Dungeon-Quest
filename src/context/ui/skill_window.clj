@@ -1,6 +1,6 @@
 (ns context.ui.skill-window
-  (:require [gdl.context :refer [->window ->image-button ->text-tooltip]]
-            [gdl.scene2d.actor :refer [add-listener!]]
+  (:require [gdl.context :refer [->window ->image-button]]
+            [gdl.scene2d.actor :refer [add-tooltip!]]
             [cdq.context :refer [get-property add-skill! skill-text]]
             [cdq.entity :as entity]))
 
@@ -30,6 +30,6 @@
                                                            (pressed-on-skill-in-menu ctx skill))))]]
                       ; duplicated @ action-bar => not skill-text but skill-button ... ? with different on-clicked
                       (do
-                       (add-listener! button (->text-tooltip context #(skill-text % skill)))
+                       (add-tooltip! button #(skill-text % skill))
                        button))]
              :pack? true}))

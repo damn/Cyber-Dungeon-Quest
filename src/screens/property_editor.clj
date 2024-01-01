@@ -2,8 +2,8 @@
   (:require [clojure.edn :as edn]
             [clojure.string :as str]
             [gdl.app :as app :refer [change-screen!]]
-            [gdl.context :refer [get-stage ->text-button ->image-button ->label ->text-field ->image-widget ->table ->stack ->window ->text-tooltip all-sound-files play-sound!]]
-            [gdl.scene2d.actor :as actor :refer [remove! set-touchable! parent add-listener!]]
+            [gdl.context :refer [get-stage ->text-button ->image-button ->label ->text-field ->image-widget ->table ->stack ->window all-sound-files play-sound!]]
+            [gdl.scene2d.actor :as actor :refer [remove! set-touchable! parent add-listener! add-tooltip!]]
             [gdl.scene2d.group :refer [add-actor! clear-children! children]]
             [gdl.scene2d.ui.text-field :as text-field]
             [gdl.scene2d.ui.table :refer [add! add-rows cells]]
@@ -11,6 +11,7 @@
             [gdl.scene2d.ui.widget-group :refer [pack!]]
             [context.properties :as properties]
             [cdq.context :refer [get-property all-properties]]))
+
 
 ; TODO all properties which have no property type -> misc -> select from scroll pane text buttons
 ; e.g. first-level .... want to edit ! or @ map editor ?
@@ -370,7 +371,7 @@
                                           stack (->stack ctx [button top-widget])]]
                                 (do
                                  (when tooltip-text-fn
-                                   (add-listener! button (->text-tooltip ctx #(tooltip-text-fn % props))))
+                                   (add-tooltip! button #(tooltip-text-fn % props)))
                                  (set-touchable! top-widget :disabled)
                                  stack))))})))
 
@@ -386,10 +387,10 @@
                               image-widget (->image-widget ctx ; TODO image-button (link)
                                                            (:image props)
                                                            {:id (:id props)})]
-                          (add-listener! image-widget (->text-tooltip ctx #((-> property-types
-                                                                                property-type
-                                                                                :overview
-                                                                                :tooltip-text-fn) % props)))
+                          (add-tooltip! image-widget #((-> property-types
+                                                               property-type
+                                                               :overview
+                                                               :tooltip-text-fn) % props))
                           image-widget)
                         (->text-button ctx
                                        " - "
