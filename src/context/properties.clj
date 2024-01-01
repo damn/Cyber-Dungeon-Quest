@@ -5,9 +5,6 @@
             [utils.core :refer [safe-get]]
             cdq.context))
 
-; TODO move all property-type , attribute, etc. config together
-; sort-order, overview-title, etc. everything
-
 (comment
 
  (do
@@ -33,8 +30,6 @@
     (with-out-str
      (clojure.pprint/pprint (dissoc props :property/image)))))
 
-; fn for checking if = property-type
-; weapons are both item & weapons ( & skills, not spells)
 (def property-types
   {:property.type/skill {:of-type? (fn [{:keys [item/slot skill/effect]}]
                                      (and (not slot) effect))
@@ -103,33 +98,6 @@
           (when (of-type? props)
             prop-type))
         property-types))
-
-(comment
- ; weapons get branded as items
- ; but they are ALSO STILL items
- ; idk i am confused
- ; get all items should get them
- ; items with slot = weapon just have modifier: skill
- ; itself and a bit different schema
- (let [ctx @gdl.app/current-context
-       properties (:context/properties ctx)
-       properties (map (fn [[id props]]
-                         (assoc props
-                                :property/type
-                                (case (property-type props)
-                                  :species :property.type/species
-                                  :creature :property.type/creature
-                                  :weapon :property.type/weapon
-                                  :item :property.type/item
-                                  :skill :property.type/spell
-                                  :misc :property.type/misc)))
-                       properties)]
-   (->> properties
-        ;(take 10)
-        sort-by-type
-        (map serialize)
-        (save-edn (:context/properties-file ctx))))
- )
 
 (extend-type gdl.context.Context
   cdq.context/PropertyStore

@@ -5,9 +5,6 @@
             [utils.core :refer [readable-number]]
             [cdq.context :refer [effect-text]]))
 
-; different info fn for :property.type/foo
-; e.g. weapons/spells different infofn
-; and each attribute its own text fn (tooltip too at editor)
 (extend-type gdl.context.Context
   cdq.context/SkillInfo
   (skill-text [{:keys [context/player-entity] :as context}
