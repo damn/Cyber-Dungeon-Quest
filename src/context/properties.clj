@@ -35,6 +35,9 @@
   [:level {:optional true} :int]]
  )
 
+; TODO SKILL WINDOW OUTDATED PROPERTIES !! GETS ADDED TO ACTIOnBAR !! RELOAD ON SESSION START !
+; also skill tooltip in property editor out of date
+
 ; Idea;
 ; during running game each entity has property/id
 ; can right click and edit the properties on the fly of _everything_

@@ -268,10 +268,13 @@
 (defn- window? [actor]
   (instance? com.badlogic.gdx.scenes.scene2d.ui.Window actor))
 
-(defn- pack-window! [actor]
+(defn- find-ancestor-window [actor]
   (if-let [p (parent actor)]
-    (if (window? p) (pack! p) (pack-window! p))
+    (if (window? p) p (find-ancestor-window p))
     (throw (Error. (str "Actor has no parent window " actor)))))
+
+(defn- pack-ancestor-window! [actor]
+  (pack! (find-ancestor-window actor)))
 
 (declare ->attribute-widget-table)
 
@@ -292,7 +295,7 @@
                                                                     [nested-k nil] ; TODO default value ?
                                                                     :horizontal-sep?
                                                                     (pos? (count (children attribute-widget-group)))))
-                              (pack-window! attribute-widget-group)))]))
+                              (pack-ancestor-window! attribute-widget-group)))]))
        (pack! window)
        (add-to-stage! ctx window)))))
 
@@ -347,36 +350,37 @@
 
 ; TODO why not effect text 'spawns a wizard' ?
 
+; TODO rename 'add-rows!'
+
+; TODO check syntax colors gdl.context names set special (gold)
+
 (defn- ->play-sound-button [ctx sound-file]
   (->text-button ctx ">>>" #(play-sound! % sound-file)))
 
-(defn- all-sounds-rows [ctx]
-  (for [sound-file (all-sound-files ctx)]
-    [(->text-button ctx (str/replace-first sound-file "sounds/" "")
-                    (fn [_ctx]
-                      (println "selected " sound-file)
-                      ; TODO add sound widget, clear table cells? idk lets see...
-                      ))
-     (->play-sound-button ctx sound-file)]))
+(declare ->sound-columns)
 
-(defn- click-open-sounds-window! [ctx]
-  (add-to-stage! ctx (->scrollable-choose-window ctx (all-sounds-rows ctx))))
+(defn- open-sounds-window! [ctx table]
+  (let [rows (for [sound-file (all-sound-files ctx)]
+               [(->text-button ctx (str/replace-first sound-file "sounds/" "")
+                               (fn [{:keys [actor] :as ctx}]
+                                 (clear-children! table)
+                                 (add-rows table [(->sound-columns ctx table sound-file)])
+                                 (remove! (find-ancestor-window actor))
+                                 (pack-ancestor-window! table)
+                                 (actor/set-id! table sound-file)))
+                (->play-sound-button ctx sound-file)])]
+    (add-to-stage! ctx (->scrollable-choose-window ctx rows))))
 
-(defn- ->sound-button [ctx sound-file]
-  (let [button (->text-button ctx (name sound-file) click-open-sounds-window!)]
-    (actor/set-id! button sound-file)
-    button))
+(defn- ->sound-columns [ctx table sound-file]
+  [(->text-button ctx (name sound-file) #(open-sounds-window! % table))
+   (->play-sound-button ctx sound-file)])
 
 (defmethod ->value-widget :sound [ctx [_ sound-file]]
-  (->table ctx {:cell-defaults {:pad 5}
-                :rows [(if sound-file
-                         [(->sound-button ctx sound-file)
-                          (->play-sound-button ctx sound-file)]
-                         [(->text-button ctx "Select sound" click-open-sounds-window!)])]}))
-
-; TODO use id of the value-widget itself and set/change it
-(defmethod value-widget->data :sound [_ widget]
-  (actor/id (first (children widget))))
+  (let [table (->table ctx {:cell-defaults {:pad 5}})]
+    (add-rows table [(if sound-file
+                       (->sound-columns ctx table sound-file)
+                       [(->text-button ctx "No sound" #(open-sounds-window! % table))])])
+    table))
 
 ;;
 
@@ -392,7 +396,7 @@
         entities (if sort-by-fn
                    (sort-by sort-by-fn entities)
                    entities)
-        number-columns 20]
+        number-columns 15]
     (->table ctx
              {:cell-defaults {:pad 2}
               :rows (concat [[{:actor (->label ctx title) :colspan number-columns}]]
@@ -418,7 +422,7 @@
   (let [redo-rows (fn [ctx property-ids]
                     (clear-children! table)
                     (add-one-to-many-rows ctx table property-type property-ids)
-                    (pack-window! table))]
+                    (pack-ancestor-window! table))]
     (add-rows table
               [[(->text-button ctx "+"
                                (fn [ctx]
@@ -483,7 +487,10 @@
                             :cell-defaults {:pad 4}})
         column (remove nil?
                        [(when (removable? k)
-                          (->text-button ctx "-" (fn [_ctx] (remove! table))))
+                          (->text-button ctx "-" (fn [_ctx]
+                                                   (let [window (find-ancestor-window table)]
+                                                     (remove! table)
+                                                     (pack! window)))))
                         label
                         (->vertical-separator-cell)
                         value-widget])
