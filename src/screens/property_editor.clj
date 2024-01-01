@@ -2,13 +2,15 @@
   (:require [clojure.edn :as edn]
             [clojure.string :as str]
             [gdl.app :as app :refer [change-screen!]]
-            [gdl.context :refer [get-stage ->text-button ->image-button ->label ->text-field ->image-widget ->table ->stack ->window all-sound-files play-sound!]]
+            [gdl.context :refer [get-stage ->text-button ->image-button ->label ->text-field ->image-widget ->table ->stack ->window all-sound-files play-sound! ->vertical-group]]
             [gdl.scene2d.actor :as actor :refer [remove! set-touchable! parent add-listener! add-tooltip!]]
             [gdl.scene2d.group :refer [add-actor! clear-children! children]]
             [gdl.scene2d.ui.text-field :as text-field]
             [gdl.scene2d.ui.table :refer [add! add-rows cells]]
             [gdl.scene2d.ui.cell :refer [set-actor!]]
             [gdl.scene2d.ui.widget-group :refer [pack!]]
+            context.modifier
+            context.effect
             [context.properties :as properties]
             [cdq.context :refer [get-property all-properties]]))
 
@@ -111,20 +113,43 @@
     :skills :skill
     :items :item))
 
-(def ^:private attribute->attribute-widget
+(def ^:private attribute->value-widget
   {:id :label
-   :slot :label
-   :spell? :label
    :image :image
+   :pretty-name :text-field
+
+   :slot :label
+   :two-handed? :label
+
+   :level :text-field
    :species :link-button
    :skills :one-to-many
    :items :one-to-many
-   :effect :nested-map
+
    :modifier :nested-map
+   :modifier/armor :text-field
+   :modifier/max-mana :text-field
+
+   :spell? :label
+   :action-time :text-field
+   :cooldown :text-field
+   :cost :text-field
+   :effect :nested-map
+
    :effect/sound :sound
+   :effect/damage :text-field
+
    :effect/target-entity :nested-map
+   :maxrange :text-field
    :hit-effect :nested-map
+
+   :map-size :text-field
+   :max-area-level :text-field
+   :spawn-rate :text-field
    })
+
+(defn- removable? [k]
+  (#{"effect" "modifier"} (namespace k)))
 
 (defn- sort-attributes [properties]
   (sort-by
@@ -133,8 +158,10 @@
         :id 0
         :image 1
         :pretty-name 2
+        :spell? 3
         :level 3
         :slot 3
+        :two-handed? 4
         :species 4
         9)
       (name k)])
@@ -142,26 +169,28 @@
 
 ;;
 
+(defmulti ->value-widget     (fn [_ctx [k _v]] (get attribute->value-widget k)))
+(defmulti value-widget->data (fn [k _widget]   (get attribute->value-widget k)))
+
+;;
+
 (defn ->edn [v]
   (binding [*print-level* nil]
     (pr-str v)))
 
-(defmulti ->attribute-widget     (fn [_context [k _v]] (get attribute->attribute-widget k)))
-(defmulti attribute-widget->data (fn [_widget  [k _v]] (get attribute->attribute-widget k)))
+(defmethod ->value-widget :default [ctx [_ v]]
+  (->label ctx (->edn v)))
 
-(defmethod ->attribute-widget :default [ctx [_ v]]
-  (->text-field ctx (->edn v) {}))
-
-(defmethod attribute-widget->data :default [widget _kv]
-  (edn/read-string (text-field/text widget)))
+(defmethod value-widget->data :default [_ widget]
+  (actor/id widget))
 
 ;;
 
-(defmethod ->attribute-widget :label [ctx [_k v]]
-  (->label ctx (->edn v)))
+(defmethod ->value-widget :text-field [ctx [_ v]]
+  (->text-field ctx (->edn v) {}))
 
-(defmethod attribute-widget->data :label [_widget _kv]
-  nil)
+(defmethod value-widget->data :text-field [_ widget]
+  (edn/read-string (text-field/text widget)))
 
 ;;
 
@@ -208,11 +237,8 @@
                     file
                     (fn [_ctx]))]))
 
-(defmethod ->attribute-widget :image [ctx [_ image]]
+(defmethod ->value-widget :image [ctx [_ image]]
   (->image-button ctx image #(add-to-stage! % (->scrollable-choose-window % (texture-rows %)))))
-
-(defmethod attribute-widget->data :image [_widget _kv]
-  nil)
 
 ;;
 
@@ -221,11 +247,8 @@
 (defn open-property-editor-window! [context property-id]
   (add-to-stage! context (->property-editor-window context property-id)))
 
-(defmethod ->attribute-widget :link-button [context [_ prop-id]]
+(defmethod ->value-widget :link-button [context [_ prop-id]]
   (->text-button context (name prop-id) #(open-property-editor-window! % prop-id)))
-
-(defmethod attribute-widget->data :link-button [_widget _kv]
-  nil)
 
 ;;
 
@@ -249,17 +272,16 @@
     :hit-effect (keys (methods context.effect/do!)) ; only those with 'source/target'
     ))
 
-(declare ->attribute-widgets)
+(declare ->attribute-widget-group)
 
-(defn- clicked-nested-map-overview [k ctx table window nested-k widget-rows]
+#_(defn- clicked-nested-map-overview [k ctx table window nested-k widget-rows]
   (remove! window)
   (redo-nested-map-rows! k ctx table
-                         (conj widget-rows (first (->attribute-widgets ctx {nested-k nil})))))
+                         (conj widget-rows (first (->attribute-widget-group ctx {nested-k nil})))))
 
-(defn- ->nested-map-rows [k ctx table widget-rows]
-  (conj (for [row widget-rows]
-          (conj row
-                (->text-button ctx "-" #(redo-nested-map-rows! k % table (disj widget-rows row)))))
+#_(defn- ->nested-map-rows [k ctx table widget-group]
+  (conj (for [row (children widget-group)]
+          (conj row (->text-button ctx "-" #(redo-nested-map-rows! k % table (disj widget-rows row)))))
         [{:actor (->text-button ctx (str "Add " (name k))
                                 (fn [ctx]
                                   (let [window (->window ctx {:title "Choose"
@@ -274,26 +296,43 @@
                                     (add-to-stage! ctx window))))
           :colspan 3}]))
 
-(defn- redo-nested-map-rows! [k ctx table widget-rows]
+#_(defn- redo-nested-map-rows! [k ctx table widget-rows]
   (clear-children! table)
   (add-rows table (->nested-map-rows k ctx table widget-rows))
   ; TODO recursively pack all parents ! hit-effect ..
   (pack! (parent table)))
 
 ; FIXME target-entity does not have 'add'/'remove' nested fields ....
-(defmethod ->attribute-widget :nested-map [ctx [k props]]
-  (let [table (->table ctx {:cell-defaults {:pad 5}})]
-    (add-rows table (->nested-map-rows k ctx table (set (->attribute-widgets ctx props))))
-    table))
+(defmethod ->value-widget :nested-map [ctx [_ props]]
+  (->attribute-widget-group ctx props))
 
-(declare attribute-widgets->all-data)
+(declare attribute-widget-group->data)
 
-(defmethod attribute-widget->data :nested-map [table [_k props]]
-  (attribute-widgets->all-data table (zipmap (keep actor/id (children table))
-                                             (repeat nil))))
+(defmethod value-widget->data :nested-map [_ group]
+  (attribute-widget-group->data group))
+
 ; FIXME
 ;Assert failed: Actor ids are not distinct: [:effect/damage :effect/damage :effect/stun]
 ;(or (empty? ids) (apply distinct? ids))
+; => don't always save as map ?
+
+(comment
+ ; use vertical group ?
+ ; each element = one attribute [k v] and separator table ?
+ ; can remove/add easily ?
+ ; cannot remove rows, ahve to redo ..
+ (let [ctx @gdl.app/current-context
+       window (gdl.context/mouse-on-stage-actor? ctx)
+       number-rows (.getRows window)
+       number-columns (.getColumns window)
+       cells (seq (.getCells window))
+       ; rows (partition number-columns cells)
+       ]
+   (clojure.pprint/pprint (map (fn [cell] [(.getRow cell) cell]) cells))
+   ; some rows only separator
+   ; how do I know when is a new row???
+   )
+ )
 
 ;;
 
@@ -331,14 +370,14 @@
     (actor/set-id! button sound-file)
     button))
 
-(defmethod ->attribute-widget :sound [ctx [_ sound-file]]
+(defmethod ->value-widget :sound [ctx [_ sound-file]]
   (->table ctx {:cell-defaults {:pad 5}
                 :rows [(if sound-file
                          [(->sound-button ctx sound-file)
                           (->play-sound-button ctx sound-file)]
                          [(->text-button ctx "Select sound" click-open-sounds-window!)])]}))
 
-(defmethod attribute-widget->data :sound [widget _]
+(defmethod value-widget->data :sound [_ widget]
   (actor/id (first (children widget))))
 
 ;;
@@ -413,7 +452,7 @@
   (when-let [parent (parent table)]
     (pack! parent)))
 
-(defmethod ->attribute-widget :one-to-many [context [attribute property-ids]]
+(defmethod ->value-widget :one-to-many [context [attribute property-ids]]
   (let [table (->table context {})]
     (add-one-to-many-rows context
                           table
@@ -421,7 +460,7 @@
                           property-ids)
     table))
 
-(defmethod attribute-widget->data :one-to-many [widget _]
+(defmethod value-widget->data :one-to-many [_ widget]
   (->> (children widget) (keep actor/id) set))
 
 ;;
@@ -429,11 +468,11 @@
 ; TODO separators don't work with nested yet, also probably fucking up children actor id
 ; also they are removable o.o
 
-(defn- ->horizontal-separator-cell []
+(defn- ->horizontal-separator-cell [colspan]
   {:actor (com.kotcrab.vis.ui.widget.Separator. "default")
    :pad-top 2
    :pad-bottom 2
-   :colspan 3
+   :colspan colspan
    :fill-x? true
    :expand-x? true})
 
@@ -444,24 +483,50 @@
    :fill-y? true
    :expand-y? true})
 
-; TODO sort them in specific way, id, image first, etc.
-; TODO here interleave separators as cells with colspan?
-; but for nested map I can check a boolean no separators ?
-; https://github.com/kotcrab/vis-ui/blob/4a1e267e80cc38a9467f9bfa67be66902c78b6ef/ui/src/main/java/com/kotcrab/vis/ui/widget/VisTable.java#L45
-(defn- ->attribute-widgets [ctx props]
-  (rest
-   (interleave (repeatedly (fn [] [(->horizontal-separator-cell)]))
-               (for [[k v] (sort-attributes props)
-                     :let [widget (->attribute-widget ctx [k v])]]
-                 (do
-                  (actor/set-id! widget k)
-                  [(->label ctx (name k)) (->vertical-separator-cell) widget])))))
+(defn ->attribute-widget-rows [ctx [k v] & {:keys [horizontal-sep? table]}]
+  (let [label (->label ctx (name k))
+        value-widget (->value-widget ctx [k v])
+        column (remove nil?
+                       [(when (removable? k)
+                          (->text-button ctx "-" (fn [_ctx] (remove! table))))
+                        label
+                        (->vertical-separator-cell)
+                        value-widget])
+        rows [(when horizontal-sep? [(->horizontal-separator-cell (count column))])
+              column]]
+    (actor/set-id! value-widget v)
+    (remove nil? rows)))
 
-(defn- attribute-widgets->all-data [parent props]
-  (into {} (for [[k v] props
-                 :let [widget (k parent)]
-                 :when widget]
-             [k (or (attribute-widget->data widget [k v]) v)])))
+(defn- attribute-widget-table->value-widget [table]
+  (-> table children last))
+
+(defn- ->attribute-widget-tables [ctx props]
+  (let [first-row? (atom true)]
+    (for [[k v] (sort-attributes props)
+          :let [sep? (not @first-row?)
+                _ (reset! first-row? false)
+                table (->table ctx {:id k
+                                    :cell-defaults {:pad 4}})]]
+      (do
+       (add-rows table (->attribute-widget-rows ctx [k v]
+                                                :horizontal-sep? sep?
+                                                :table table))
+       table))))
+
+(defn- ->attribute-widget-group [ctx props]
+  (let [group (->vertical-group ctx (->attribute-widget-tables ctx props))]
+    ;(.left group)
+    group
+    ))
+
+(defn- attribute-widget-group->data [group]
+  (for [k (map actor/id (children group))
+        :let [table (k group)
+              value-widget (attribute-widget-table->value-widget table)]]
+    [k (value-widget->data k value-widget)]))
+
+; value-widget->data can be removed mostly only for text-field not
+; because I will just set the value id as of changes ... ?
 
 ;;
 
@@ -477,18 +542,15 @@
                                   :center? true
                                   :close-on-escape? true
                                   :cell-defaults {:pad 5}})
-        widgets (->attribute-widgets context props)
-        get-data #(attribute-widgets->all-data window props)]
-    (add-rows window (concat widgets
-                             [[(->text-button context "Save"
-                                              (fn [_ctx]
-                                                ; TODO error modal like map editor?
-                                                ; TODO refresh overview creatures lvls,etc. ?
-                                                (swap! app/current-context properties/update-and-write-to-file! (get-data))
-                                                (remove! window)))
-                               nil
-                               (->text-button context "Cancel" (fn [_ctx]
-                                                                 (remove! window)))]]))
+        widgets (->attribute-widget-group context props)]
+    (add-rows window [[widgets]
+                      [(->text-button context "Save"
+                                      (fn [_ctx]
+                                        ; TODO error modal like map editor?
+                                        ; TODO refresh overview creatures lvls,etc. ?
+                                        (swap! app/current-context properties/update-and-write-to-file!
+                                               (into {} (attribute-widget-group->data widgets)))
+                                        (remove! window)))]])
     (pack! window)
     window))
 

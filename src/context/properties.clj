@@ -165,6 +165,7 @@
          (contains? properties id)
          (= (set (keys data))
             (set (keys (get properties id))))]}
+  (binding [*print-level* nil] (clojure.pprint/pprint data)) ; TODO modal window with data / maybe get change diff ?
   (let [properties (update properties id merge data)]
     (.start (Thread. (fn []
                        (write-to-file! properties properties-file))))
