@@ -265,6 +265,14 @@
 
 ;;
 
+(defn- window? [actor]
+  (instance? com.badlogic.gdx.scenes.scene2d.ui.Window actor))
+
+(defn- pack-window! [actor]
+  (if-let [p (parent actor)]
+    (if (window? p) (pack! p) (pack-window! p))
+    (throw (Error. (str "Actor has no parent window " actor)))))
+
 (declare ->attribute-widget-table)
 
 (defn- ->add-nested-map-button [ctx k attribute-widget-group]
@@ -279,24 +287,12 @@
                           [(->text-button ctx (name nested-k)
                             (fn [ctx]
                               (remove! window)
-                              (.setLayoutEnabled attribute-widget-group true)
                               (add-actor! attribute-widget-group
                                           (->attribute-widget-table ctx
                                                                     [nested-k nil] ; TODO default value ?
                                                                     :horizontal-sep?
                                                                     (pos? (count (children attribute-widget-group)))))
-                              ; TODO .invalidateHierarchy does not work - should anyway be called with add-actor! ?
-                              (.invalidateHierarchy attribute-widget-group)
-                              (.pack attribute-widget-group)
-                              (println "invalidate hierarchy")
-                              ;(pack! attribute-widget-group)
-                              ; TODO doesn't work for hit-effects also ... one level too deep ... aargs
-                              #_(when-let [prnt (parent (parent attribute-widget-group))]
-                                (when-let [prnt2 (parent prnt)]
-                                  (when-let [prnt3 (parent prnt2)]
-                                    (pack! prnt3))))
-
-                              ))]))
+                              (pack-window! attribute-widget-group)))]))
        (pack! window)
        (add-to-stage! ctx window)))))
 
@@ -416,6 +412,8 @@
 
 ;;
 
+; TODO need to pack-window! here too..
+
 (defn- add-one-to-many-rows [ctx table property-type property-ids]
   (let [redo-rows (fn [ctx property-ids]
                     (clear-children! table)
@@ -444,6 +442,7 @@
                                                                     :close-on-escape? true})
                                               clicked-id-fn (fn [ctx id]
                                                               (remove! window)
+                                                              ;(pack-window! table)
                                                               (redo-rows ctx
                                                                          (conj (set property-ids) id)))]
                                           (add! window (->overview-table ctx property-type clicked-id-fn))
