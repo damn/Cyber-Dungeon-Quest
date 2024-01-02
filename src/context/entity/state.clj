@@ -25,7 +25,8 @@
                                     state-obj-constructors]}
   (entity/create! [_ entity context]
     (swap! entity assoc :entity/state
-           {:fsm (fsm initial-state nil) ; throws when initial-state is not part of states
+           ; FIXME if :state = nil in fsm => set to initial-state & make PR / bug report.
+           {:fsm (assoc (fsm initial-state nil) :state initial-state) ; throws when initial-state is not part of states
             :state-obj ((initial-state state-obj-constructors) context entity)
             :state-obj-constructors state-obj-constructors}))
 
