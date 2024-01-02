@@ -13,7 +13,6 @@
 ; * validation @ load/save of property-types attributes (optional ones to add like cooldown?)
 ; * text-field make validateabletextfiel
 ; * schema/value-ranges for all modifiers/effects
-; * fix item-text/skill-text/weapon-text etc. tooltip fns
 ; * filter out not implemented weapons, etc.  mark them somehow
 
 ; aggro range wakup time, etc what else is hidden?!, unique death animation/sound/attacksound each weapon/spell etc.
@@ -128,7 +127,7 @@
                                        :sort-by-fn #(vector (or (:creature/level %) 9)
                                                             (name (:creature/species %))
                                                             (name (:property/id %)))
-                                       :extra-info-text #(or (str (:creature/level %)) "-")}}
+                                       :extra-info-text #(str (:creature/level %))}}
    :property.type/species {:of-type? :creature/hp
                            :edn-file-sort-order 2
                            :title "Species"
@@ -197,6 +196,8 @@
    (when (seq items) (str "Items: "   (str/join "," (map name items))))])
 
 ; TODO spell? why needed ...
+; different enter active skill state sound
+; different attack/cast speed modifier & text
 (defmethod property->text :property.type/spell [{:keys [context/player-entity] :as context}
                                                 {:keys [property/id
                                                         skill/cost
@@ -233,16 +234,6 @@
    (when modifier (modifier-text ctx modifier))
    (effect-text (merge ctx {:effect/source player-entity})
                 effect)])
-
-; TODO fix broken weapons w. damage/range / not working
-
-
-#_(
- :property.type/species
- :property.type/spell
- :property.type/weapon
- :property.type/item
- :property.type/misc)
 
 (extend-type gdl.context.Context
   cdq.context/TooltipText
