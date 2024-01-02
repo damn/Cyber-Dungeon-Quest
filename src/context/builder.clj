@@ -134,11 +134,12 @@
         images (create-images context (name creature-id))
         [width height] (images->world-unit-dimensions images)
         {:keys [creature/speed
-                creature/hp]} (species-properties (get-property context (:creature/species creature-props)))]
+                creature/hp]} (species-properties (get-property context (:creature/species creature-props)))
+        princess? (= creature-id :creatures/lady-a)]
     (merge (cond
-            is-player               player-components
-            (= creature-id :creatures/lady-a) lady-props
-            :else                   npc-components)
+            is-player player-components
+            princess? lady-props
+            :else     npc-components)
            {:body {:width width
                    :height height
                    :is-solid true}
@@ -151,7 +152,7 @@
             :animation (animation/create images :frame-duration 0.1 :looping? true)
             :z-order (if (:is-flying creature-props) :flying :ground)}
            (cond
-            (= creature-id :creatures/lady-a) nil
+            princess? nil
             :else {:entity/state (->state :is-player is-player
                                           :initial-state initial-state)})
            extra-params)))

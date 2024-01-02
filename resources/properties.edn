@@ -1962,7 +1962,7 @@
   :world/map-size 1,
   :world/max-area-level 1,
   :world/spawn-rate 0.03,
-  :world/princess :lady-a}
+  :world/princess :creatures/lady-a}
  {:property/image
   {:file "items/images.png", :sub-image-bounds [192 384 48 48]},
   :property/id :skull-small-gold,
