@@ -12,7 +12,7 @@
 ; * namespaced ids as of type :creature/vampire
 ; * validation @ load/save of property-types attributes (optional ones to add like cooldown?)
 ; * text-field make validateabletextfiel
-; * schema/value-ranges for all modifiers/effects
+; * schema/value-ranges/value-widgets for all modifiers/effects, e.g. damage select physical,magical,...
 ; * filter out not implemented weapons, etc.  mark them somehow
 
 ; aggro range wakup time, etc what else is hidden?!, unique death animation/sound/attacksound each weapon/spell etc.
@@ -98,6 +98,13 @@
    properties))
 
 (comment
+
+ (let [ctx @gdl.app/current-context
+       properties (:context/properties ctx)
+       ]
+   (clojure.pprint/pprint
+    (remove namespace
+            (map first properties))))
 
  (do
   (require '[malli.provider :as mp])

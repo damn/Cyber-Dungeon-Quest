@@ -148,7 +148,8 @@
                                  :close-button? true
                                  :center? true
                                  :close-on-escape? true})]
-       (add-rows window (for [nested-k (properties/nested-map->components k)]
+       (add-rows window (for [nested-k (remove (set (keys (attribute-widget-group->data attribute-widget-group)))
+                                               (properties/nested-map->components k))]
                           [(->text-button ctx (name nested-k)
                             (fn [ctx]
                               (remove! window)
@@ -178,12 +179,6 @@
 
 (defmethod value-widget->data :nested-map [_ table]
   (attribute-widget-group->data (:attribute-widget-group table)))
-
-; FIXME
-;Assert failed: Actor ids are not distinct: [:effect/damage :effect/damage :effect/stun]
-;(or (empty? ids) (apply distinct? ids))
-; => check before adding, always make into {}, no physical & magic damage mix ?!
-; => damage consists of physical & magic part ?
 
 ;;
 
