@@ -1586,8 +1586,7 @@
   {:file "items/images.png", :sub-image-bounds [48 96 48 48]},
   :skill/effect
   {:effect/target-entity
-    {:maxrange 0.5,
-     :hit-effect [[:effect/damage [:physical [2 5]]]]}}}
+   {:maxrange 0.5, :hit-effect [[:effect/damage [:physical [2 5]]]]}}}
  {:item/slot :inventory.slot/weapon,
   :skill/action-time nil,
   :property/id :items/handaxe,
@@ -1955,6 +1954,10 @@
   {:file "items/images.png", :sub-image-bounds [192 384 48 48]},
   :property/id :skull-small-gold,
   :property/pretty-name "Gold Small Skull"}
+ {:property/id :skill.type/spell,
+  :skill.type/start-action-sound "sounds/shoot.wav",
+  :skill.type/action-time-modifier-key :cast-speed,
+  :skill.type/action-time-pretty-name "Cast-Time"}
  {:property/image
   {:file "items/images.png", :sub-image-bounds [624 336 48 48]},
   :property/id :crystal-dragon,
@@ -2225,6 +2228,10 @@
   {:file "items/images.png", :sub-image-bounds [288 0 48 48]},
   :property/id :key-ornate,
   :property/pretty-name "Ornate Key"}
+ {:property/id :skill.type/weapon,
+  :skill.type/start-action-sound "sounds/slash.wav",
+  :skill.type/action-time-modifier-key :attack-speed,
+  :skill.type/action-time-pretty-name "Attack-Time"}
  {:sound "sounds/bfxr_curse.wav",
   :animation
   {:frames

@@ -259,6 +259,8 @@
 ; TODO spell? why needed ... => use :property.type/spell or :property.type/weapon instead
 ; different enter active skill state sound
 ; different attack/cast speed modifier & text
+; => dispatch on skill.type/weapon or skill.type/spell
+; => :start-action-sound / :action-time-modifier / :action-time-pretty-name
 (defmethod property->text :property.type/spell [{:keys [context/player-entity] :as context}
                                                 {:keys [property/id
                                                         skill/cost

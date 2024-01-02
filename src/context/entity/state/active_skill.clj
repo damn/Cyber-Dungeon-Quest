@@ -62,9 +62,7 @@
 (defn- apply-action-speed-modifier [entity* skill action-time]
   (let [{:keys [cast-speed attack-speed]} (:modifiers entity*)
         modified-action-time (/ action-time
-                                (or (if (:spell? skill)
-                                      cast-speed
-                                      attack-speed)
+                                (or (if (:spell? skill) cast-speed attack-speed)
                                     1))]
     (max 0 modified-action-time)))
 
