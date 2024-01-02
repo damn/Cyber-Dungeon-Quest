@@ -6,8 +6,7 @@
                      [cursor :as cursor]
                      builder
                      potential-fields
-                     render-debug
-                     skill-info)
+                     render-debug)
             context.effect.all
             context.entity.all
             [context.entity.movement :refer [frames-per-second]]

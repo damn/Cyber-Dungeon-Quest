@@ -10,7 +10,7 @@
             [gdl.scene2d.ui.cell :refer [set-actor!]]
             [gdl.scene2d.ui.widget-group :refer [pack!]]
             [context.properties :as properties]
-            [cdq.context :refer [get-property all-properties]]))
+            [cdq.context :refer [get-property all-properties tooltip-text]]))
 
 (defn- ->horizontal-separator-cell [colspan]
   {:actor (com.kotcrab.vis.ui.widget.Separator. "default")
@@ -168,9 +168,9 @@
     (actor/set-id! attribute-widget-group :attribute-widget-group)
     (->table ctx {:cell-defaults {:pad 5}
                   :rows (remove nil?
-                                [(when (properties/add-components? k)
+                                [(when (properties/nested-map-attribute-add-components? k)
                                    [(->add-nested-map-button ctx k attribute-widget-group)])
-                                 (when (properties/add-components? k)
+                                 (when (properties/nested-map-attribute-add-components? k)
                                    [(->horizontal-separator-cell 1)])
                                  [attribute-widget-group]])})))
 
@@ -244,10 +244,7 @@
                        image-widget (->image-widget ctx ; TODO image-button (link)
                                                     (:property/image props)
                                                     {:id (:property/id props)})]
-                   (add-tooltip! image-widget #((-> properties/property-types
-                                                    property-type
-                                                    :overview
-                                                    :tooltip-text-fn) % props))
+                   (add-tooltip! image-widget #(tooltip-text % props))
                    image-widget))
                (for [prop-id property-ids]
                  (->text-button ctx "-"
@@ -292,7 +289,7 @@
 
 (defn- ->attribute-widget-tables [ctx props]
   (let [first-row? (atom true)]
-    (for [[k v] (properties/sort-attributes props)
+    (for [[k v] (properties/attribute-widget-sort-attributes props)
           :let [sep? (not @first-row?)
                 _ (reset! first-row? false)]]
       (->attribute-widget-table ctx [k v] :horizontal-sep? sep?))))
@@ -343,7 +340,6 @@
   (let [{:keys [title
                 sort-by-fn
                 extra-info-text
-                tooltip-text-fn
                 columns
                 image/dimensions]} (:overview (get properties/property-types property-type))
         entities (all-properties ctx property-type)
@@ -366,8 +362,7 @@
                                                                       ""))
                                           stack (->stack ctx [button top-widget])]]
                                 (do
-                                 (when tooltip-text-fn
-                                   (add-tooltip! button #(tooltip-text-fn % props)))
+                                 (add-tooltip! button #(tooltip-text % props))
                                  (set-touchable! top-widget :disabled)
                                  stack))))})))
 

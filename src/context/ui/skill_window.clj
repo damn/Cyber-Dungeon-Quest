@@ -1,7 +1,7 @@
 (ns context.ui.skill-window
   (:require [gdl.context :refer [->window ->image-button]]
             [gdl.scene2d.actor :refer [add-tooltip!]]
-            [cdq.context :refer [get-property add-skill! skill-text]]
+            [cdq.context :refer [get-property add-skill! tooltip-text]]
             [cdq.entity :as entity]))
 
 (defn- pressed-on-skill-in-menu [{:keys [context/player-entity]
@@ -31,6 +31,6 @@
                                                          (when (= :idle (entity/state @player-entity))
                                                            (pressed-on-skill-in-menu ctx (get-property ctx id)))))]]
                       (do
-                       (add-tooltip! button #(skill-text % (get-property % id)))
+                       (add-tooltip! button #(tooltip-text % (get-property % id)))
                        button))]
              :pack? true}))

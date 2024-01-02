@@ -8,7 +8,7 @@
             [gdl.graphics.color :as color]
             [gdl.scene2d.actor :as actor :refer [set-id! add-listener! set-name! add-tooltip! remove-tooltip!]]
             [context.entity.inventory :as inventory]
-            [cdq.context :refer [show-msg-to-player! send-event! modifier-text set-item! stack-item! remove-item! get-property]]
+            [cdq.context :refer [show-msg-to-player! send-event! set-item! stack-item! remove-item! get-property tooltip-text]]
             [cdq.entity :as entity])
   (:import com.badlogic.gdx.scenes.scene2d.Actor
            (com.badlogic.gdx.scenes.scene2d.ui Widget Image Window Table)
@@ -137,18 +137,6 @@
                                  (clicked-cell ctx cell))))))
     stack))
 
-; TODO write 'two handed' at weapon info -> key-to-pretty-tooltip-text function for keywords (extend-c?)
-(defn- item-name [item]
-  (str (:property/pretty-name item)
-       (when-let [cnt (:count item)]
-         (str " (" cnt ")"))))
-
-(defn- item-text [context item]
-  (str (item-name item) "\n"
-       (->> item
-            :item/modifier
-            (modifier-text context))))
-
 (defn- redo-table [ctx {:keys [^Table table slot->background]}]
   ; cannot do add-rows, need bag :position idx
   (let [cell (fn [& args] (apply ->cell ctx slot->background args))]
@@ -188,7 +176,7 @@
     (let [^Actor cell-widget (get table cell)
           ^Image image-widget (get cell-widget :image)]
       (.setDrawable image-widget (->texture-region-drawable ctx (:texture (:property/image item))))
-      (add-tooltip! cell-widget #(item-text % item))))
+      (add-tooltip! cell-widget #(tooltip-text % item))))
 
   (remove-item-from-widget [{{:keys [table slot->background]} :context/inventory :as ctx} cell]
     (let [^Actor cell-widget (get table cell)

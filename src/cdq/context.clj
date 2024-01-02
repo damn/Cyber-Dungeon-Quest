@@ -110,8 +110,8 @@
   (debug-render-before-entities [_])
   (debug-render-after-entities  [_]))
 
-(defprotocol SkillInfo
-  (skill-text [_ skill]))
-
 (defprotocol Cursor
   (set-cursor! [_ cursor-key]))
+
+(defprotocol TooltipText
+  (tooltip-text [_ property]))

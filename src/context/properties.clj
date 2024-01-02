@@ -1,11 +1,12 @@
 (ns context.properties
   (:require [clojure.edn :as edn]
+            [clojure.string :as str]
             [gdl.context :refer [get-sprite]]
             [gdl.graphics.animation :as animation]
-            [utils.core :refer [safe-get]]
+            [utils.core :refer [safe-get readable-number]]
             context.modifier
             context.effect
-            cdq.context))
+            [cdq.context :refer [modifier-text effect-text]]))
 
 ; TODO
 ; * namespaced ids as of type :creature/vampire
@@ -34,7 +35,7 @@
 
 (defn one-to-many-attribute->linked-property-type [k]
   (case k
-    :creature/skills :property.type/skill
+    :creature/skills :property.type/spell
     :creature/items  :property.type/item))
 
 ; TODO label does not exist anymore.
@@ -71,7 +72,7 @@
 (defn removable-attribute? [k]
   (#{"effect" "modifier"} (namespace k)))
 
-(defn add-components? [k]
+(defn nested-map-attribute-add-components? [k]
   (#{:item/modifier :skill/effect :hit-effect} k))
 
 (defn nested-map->components [k]
@@ -81,7 +82,7 @@
     :hit-effect   (keys (methods context.effect/do!)) ; TODO only those with 'source/target'
     ))
 
-(defn sort-attributes [properties]
+(defn attribute-widget-sort-attributes [properties]
   (sort-by
    (fn [[k _v]]
      [(case k
@@ -104,7 +105,7 @@
   (set! *print-level* nil)
   (let [ctx @gdl.app/current-context
         properties (:context/properties ctx)
-        creatures (cdq.context/all-properties ctx :property.type/creature)]
+        creatures (cdq.context/all-properties ctx :property.type/item)]
     (clojure.pprint/pprint
      (mp/provide (map #(dissoc % :property/image) creatures)))))
  ; =>
@@ -117,25 +118,9 @@
 
  )
 
-(defn- default-property-tooltip-text [context props]
-  (binding [*print-level* nil]
-    (with-out-str
-     (clojure.pprint/pprint (dissoc props :property/image)))))
-
 (def property-types
-  {:property.type/skill {:of-type? (fn [{:keys [item/slot skill/effect]}]
-                                     (and (not slot) effect))
-                         :sort-order 0
-                         :title "Spell"
-                         :overview {:title "Spells"
-                                    :columns 16
-                                    :image/dimensions [70 70]
-                                    :tooltip-text-fn (fn [ctx props]
-                                                       (try (cdq.context/skill-text ctx props)
-                                                            (catch Throwable t
-                                                              (default-property-tooltip-text ctx props))))}}
-   :property.type/creature {:of-type? :creature/species
-                            :sort-order 1
+  {:property.type/creature {:of-type? :creature/species
+                            :edn-file-sort-order 1
                             :title "Creature"
                             :overview {:title "Creatures"
                                        :columns 16
@@ -143,16 +128,29 @@
                                        :sort-by-fn #(vector (or (:creature/level %) 9)
                                                             (name (:creature/species %))
                                                             (name (:property/id %)))
-                                       :extra-info-text #(or (str (:creature/level %)) "-")
-                                       :tooltip-text-fn default-property-tooltip-text}}
+                                       :extra-info-text #(or (str (:creature/level %)) "-")}}
    :property.type/species {:of-type? :creature/hp
-                           :sort-order 2
+                           :edn-file-sort-order 2
                            :title "Species"
                            :overview {:title "Species"
-                                      :columns 2
-                                      :tooltip-text-fn default-property-tooltip-text}}
+                                      :columns 2}}
+   :property.type/spell {:of-type? (fn [{:keys [item/slot skill/effect]}]
+                                     (and (not slot) effect))
+                         :edn-file-sort-order 0
+                         :title "Spell"
+                         :overview {:title "Spells"
+                                    :columns 16
+                                    :image/dimensions [70 70]}}
+   ; weapons before items checking
+   :property.type/weapon {:of-type? (fn [{:keys [item/slot]}]
+                                      (and slot (= slot :inventory.slot/weapon)))
+                          :edn-file-sort-order 4
+                          :title "Weapon"
+                          :overview {:title "Weapons"
+                                     :columns 10
+                                     :image/dimensions [96 96]}}
    :property.type/item {:of-type? :item/slot
-                        :sort-order 3
+                        :edn-file-sort-order 3
                         :title "Item"
                         :overview {:title "Items"
                                    :columns 17
@@ -160,36 +158,101 @@
                                    :sort-by-fn #(vector (if-let [slot (:item/slot %)]
                                                           (name slot)
                                                           "")
-                                                        (name (:property/id %)))
-                                   :tooltip-text-fn default-property-tooltip-text}}
-   :property.type/weapon {:of-type? (fn [{:keys [item/slot]}]
-                                      (and slot (= slot :inventory.slot/weapon)))
-                          :sort-order 4
-                          :title "Weapon"
-                          :overview {:title "Weapons"
-                                     :columns 10
-                                     :image/dimensions [96 96]
-                                     :tooltip-text-fn (fn [ctx props]
-                                                        (try (cdq.context/skill-text ctx props)
-                                                             (catch Throwable t
-                                                               (default-property-tooltip-text ctx props))))}}
+                                                        (name (:property/id %)))}}
    :property.type/misc {:of-type? (fn [{:keys [creature/hp
                                                creature/species
                                                item/slot
                                                skill/effect]}]
                                     (not (or hp species slot effect)))
-                        :sort-order 5
+                        :edn-file-sort-order 5
                         :title "Misc"
                         :overview {:title "Misc"
                                    :columns 10
-                                   :image/dimensions [96 96]
-                                   :tooltip-text-fn default-property-tooltip-text}}})
+                                   :image/dimensions [96 96]}}})
 
-(defn property-type [props]
-  (some (fn [[prop-type {:keys [of-type?]}]]
-          (when (of-type? props)
-            prop-type))
+(defn property-type [property]
+  (some (fn [[type {:keys [of-type?]}]]
+          (when (of-type? property)
+            type))
         property-types))
+
+;;
+
+(defmulti property->text (fn [_ctx property] (property-type property)))
+
+(defmethod property->text :default [_ctx properties]
+  (cons [:TODO (property-type properties)]
+        properties))
+
+(defmethod property->text :property.type/creature [_ctx
+                                                   {:keys [property/id
+                                                           creature/species
+                                                           creature/skills
+                                                           creature/items
+                                                           creature/level]}]
+  [(str/capitalize (name id))
+   (str "Species: " (str/capitalize (name species)))
+   (when level (str "Level: " level))
+   (when (seq skills) (str "Spells: " (str/join "," (map name skills))))
+   (when (seq items) (str "Items: "   (str/join "," (map name items))))])
+
+; TODO spell? why needed ...
+(defmethod property->text :property.type/spell [{:keys [context/player-entity] :as context}
+                                                {:keys [property/id
+                                                        skill/cost
+                                                        skill/action-time
+                                                        skill/cooldown
+                                                        spell?
+                                                        skill/effect]}]
+  [(str/capitalize (name id))
+   (if spell? "Spell" "Weapon")
+   (when cost (str "Cost: " cost))
+   (str (if spell?  "Cast-Time" "Attack-time") ": " (readable-number action-time) " seconds")
+   (when cooldown (str "Cooldown: " (readable-number cooldown)))
+   (effect-text (merge context {:effect/source player-entity})
+                effect)])
+
+(defmethod property->text :property.type/item [ctx
+                                               {:keys [property/pretty-name
+                                                       item/modifier]
+                                                :as item}]
+  [(str pretty-name (when-let [cnt (:count item)] (str " (" cnt ")")))
+   (when modifier (modifier-text ctx modifier))])
+
+(defmethod property->text :property.type/weapon [{:keys [context/player-entity] :as ctx}
+                                                 {:keys [property/pretty-name
+                                                         item/two-handed?
+                                                         item/modifier
+                                                         spell? ; TODO
+                                                         skill/action-time
+                                                         skill/effect]
+                                                  :as item}]
+  [(str pretty-name (when-let [cnt (:count item)] (str " (" cnt ")")))
+   (when two-handed? "Two-handed")
+   (str (if spell?  "Cast-Time" "Attack-time") ": " (readable-number action-time) " seconds") ; TODO
+   (when modifier (modifier-text ctx modifier))
+   (effect-text (merge ctx {:effect/source player-entity})
+                effect)])
+
+; TODO fix broken weapons w. damage/range / not working
+
+
+#_(
+ :property.type/species
+ :property.type/spell
+ :property.type/weapon
+ :property.type/item
+ :property.type/misc)
+
+(extend-type gdl.context.Context
+  cdq.context/TooltipText
+  (tooltip-text [ctx property]
+    (try (->> property
+              (property->text ctx)
+              (remove nil?)
+              (str/join "\n"))
+         (catch Throwable t
+           (str t))))) ; TODO not implemented weapons.
 
 ;;
 
@@ -267,7 +330,7 @@
          (spit file))))
 
 (defn- sort-by-type [properties]
-  (sort-by #(-> % property-type property-types :sort-order)
+  (sort-by #(-> % property-type property-types :edn-file-sort-order)
            properties))
 
 (defn- write-to-file! [properties properties-file]
