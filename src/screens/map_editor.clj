@@ -198,7 +198,7 @@ direction keys: move")
                  :pack? true}))
 
 (defn screen [context]
-  {:actors [(->generate-map-window context :world/first-level)
+  {:actors [(->generate-map-window context :worlds/first-level)
             (->info-window context)]
    :sub-screen (->SubScreen (atom {:tiled-map (->tiled-map context module-gen/modules-file)
                                    :show-movement-properties false

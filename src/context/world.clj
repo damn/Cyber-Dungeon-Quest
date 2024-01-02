@@ -117,7 +117,7 @@
   (let [{:keys [tiled-map
                 start-position]} (mapgen.module-gen/generate
                                   context
-                                  (get-property context :world/first-level))]
+                                  (get-property context :worlds/first-level))]
     {:map-key :first-level
      :pretty-name "First Level"
      :tiled-map tiled-map

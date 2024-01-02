@@ -1958,6 +1958,11 @@
   {:file "items/images.png", :sub-image-bounds [816 96 48 48]},
   :weapon/two-handed? false,
   :property/pretty-name "Exotic3 Sword"}
+ {:property/id :worlds/first-level,
+  :world/map-size 1,
+  :world/max-area-level 1,
+  :world/spawn-rate 0.03,
+  :world/princess :lady-a}
  {:property/image
   {:file "items/images.png", :sub-image-bounds [192 384 48 48]},
   :property/id :skull-small-gold,
@@ -1986,11 +1991,6 @@
   {:file "items/images.png", :sub-image-bounds [816 48 48 48]},
   :property/id :flask-red,
   :property/pretty-name "Red Flask"}
- {:property/id :world/first-level,
-  :world/map-size 1,
-  :world/max-area-level 1,
-  :world/spawn-rate 0.03,
-  :world/princess :lady-a}
  {:property/image
   {:file "items/images.png", :sub-image-bounds [144 0 48 48]},
   :property/id :key-blue,
