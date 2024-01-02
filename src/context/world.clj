@@ -184,7 +184,7 @@
 (defn- create-entities-from-tiledmap! [{:keys [context/world-map] :as context}]
   (place-entities! context (:tiled-map world-map))
   (creature-entity context
-                   :vampire ; TODO hardcoded
+                   :creatures/vampire ; TODO hardcoded
                    (:start-position world-map)
                    {:is-player true}))
 

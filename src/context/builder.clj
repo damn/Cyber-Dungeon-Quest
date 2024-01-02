@@ -137,7 +137,7 @@
                 creature/hp]} (species-properties (get-property context (:creature/species creature-props)))]
     (merge (cond
             is-player               player-components
-            (= creature-id :lady-a) lady-props
+            (= creature-id :creatures/lady-a) lady-props
             :else                   npc-components)
            {:body {:width width
                    :height height
@@ -151,7 +151,7 @@
             :animation (animation/create images :frame-duration 0.1 :looping? true)
             :z-order (if (:is-flying creature-props) :flying :ground)}
            (cond
-            (= creature-id :lady-a) nil
+            (= creature-id :creatures/lady-a) nil
             :else {:entity/state (->state :is-player is-player
                                           :initial-state initial-state)})
            extra-params)))
