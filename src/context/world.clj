@@ -178,13 +178,13 @@
                      creature-id
                      (tile->middle posi)
                      {:initial-state :sleeping}))
-  ; otherwise will be rendered, is visible, can also just setVisible layer false
+  ; otherwise will be rendered, is visible
   (tiled/remove-layer! tiled-map :creatures))
 
 (defn- create-entities-from-tiledmap! [{:keys [context/world-map] :as context}]
   (place-entities! context (:tiled-map world-map))
   (creature-entity context
-                   :vampire
+                   :vampire ; TODO hardcoded
                    (:start-position world-map)
                    {:is-player true}))
 

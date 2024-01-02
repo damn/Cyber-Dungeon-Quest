@@ -124,6 +124,7 @@
         (update :creature/speed * (:speed multiplier))
         (update :creature/hp #(int (* % (:hp multiplier)))))))
 
+; TODO hardcoded :lady-a
 (defn- create-creature-data [creature-props
                              {:keys [is-player
                                      initial-state] :as extra-params}

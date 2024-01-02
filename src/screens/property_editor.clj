@@ -113,7 +113,7 @@
 (defmethod ->value-widget :image [ctx [_ image]]
   (->image-button ctx image
                   #(add-to-stage! % (->scrollable-choose-window % (texture-rows %)))
-                  {:dimensions [96 96]}))
+                  {:dimensions [192 192]})) ; x4  , not hardcoded here TODO
 
 ;;
 
@@ -138,7 +138,8 @@
 (defn- pack-ancestor-window! [actor]
   (pack! (find-ancestor-window actor)))
 
-(declare ->attribute-widget-table)
+(declare ->attribute-widget-table
+         attribute-widget-group->data)
 
 (defn- ->add-nested-map-button [ctx k attribute-widget-group]
   (->text-button ctx (str "Add " (name k))
@@ -175,7 +176,6 @@
                                    [(->horizontal-separator-cell 1)])
                                  [attribute-widget-group]])})))
 
-(declare attribute-widget-group->data)
 
 (defmethod value-widget->data :nested-map [_ table]
   (attribute-widget-group->data (:attribute-widget-group table)))

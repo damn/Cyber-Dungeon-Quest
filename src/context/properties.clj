@@ -9,7 +9,17 @@
             [cdq.context :refer [modifier-text effect-text]]))
 
 ; TODO
-; * namespaced ids as of type :creature/vampire
+; * namespaced ids as of type :creature.id/vampire :item.id/ :weapon.id ?
+; :spells/foo => creatures/ not used yet ! => can be used as a 'type' ?
+; => :lady-a & :vampire should not be hardcoded, part of map props
+; => place also player @ start map @ mapgen?
+; add type : 'world' / 'audiovisual' ...
+; immediately show tooltips...
+; minotaur is not lady-a ! doesnt have the proper components !...
+; => no hardcoded props
+
+
+
 ; * validation @ load/save of property-types attributes (optional ones to add like cooldown?)
 ; * text-field make validateabletextfiel
 ; * schema/value-ranges/value-widgets for all modifiers/effects, e.g. damage select physical,magical,...
@@ -39,6 +49,7 @@
 
 ; TODO label does not exist anymore.
 ; maybe no default widget & assert for all attributes are explicitly defined?
+; also :property-widget/foo
 (def attribute->value-widget
   {:property/id :label
    :property/image :image
@@ -64,9 +75,10 @@
    :effect/target-entity :nested-map
    :maxrange :text-field
    :hit-effect :nested-map
-   :map-size :text-field
-   :max-area-level :text-field
-   :spawn-rate :text-field})
+   :world/map-size :text-field
+   :world/max-area-level :text-field
+   :world/spawn-rate :text-field
+   :world/princess :label})
 
 (defn removable-attribute? [k]
   (#{"effect" "modifier"} (namespace k)))
@@ -165,16 +177,24 @@
                                                           (name slot)
                                                           "")
                                                         (name (:property/id %)))}}
+   :property.type/world {:of-type? :world/princess
+                         :edn-file-sort-order 5
+                         :title "World"
+                         :overview {:title "Worlds"
+                                    :columns 10
+                                    :image/dimensions [96 96]}}
    :property.type/misc {:of-type? (fn [{:keys [creature/hp
                                                creature/species
                                                item/slot
-                                               skill/effect]}]
-                                    (not (or hp species slot effect)))
-                        :edn-file-sort-order 5
+                                               skill/effect
+                                               world/princess]}]
+                                    (not (or hp species slot effect princess)))
+                        :edn-file-sort-order 6
                         :title "Misc"
                         :overview {:title "Misc"
                                    :columns 10
-                                   :image/dimensions [96 96]}}})
+                                   :image/dimensions [96 96]}}
+   })
 
 (defn property-type [property]
   (some (fn [[type {:keys [of-type?]}]]
