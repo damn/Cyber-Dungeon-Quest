@@ -15,7 +15,7 @@
             [gdl.scene2d.group :refer [add-actor!]]
             [gdl.scene2d.ui.widget-group :refer [pack!]]
             [gdl.scene2d.ui.label :refer [set-text!]]
-            [cdq.context :refer [get-property]]
+            [cdq.context :refer [get-property ->error-window]]
             [utils.core :refer [->tile]]
             [mapgen.movement-property :refer (movement-property movement-properties)]
             [mapgen.module-gen :as module-gen]
@@ -178,22 +178,13 @@ direction keys: move")
     (when (key-just-pressed? context input.keys/escape)
       (change-screen! :screens/main-menu))))
 
-(defn- ->error-window! [ctx throwable]
-  (add-actor! (gdl.context/get-stage ctx)
-              (->window ctx {:title "Error"
-                             :rows [[(->label ctx (str throwable))]]
-                             :modal? true
-                             :close-button? true
-                             :center? true
-                             :pack? true})))
-
 (defn ->generate-map-window [ctx level-id]
   (->window ctx {:title "Properties"
                  :cell-defaults {:pad 10}
                  :rows [[(->text-button ctx "Edit" #(screens.property-editor/open-property-editor-window! % level-id))]
                         [(->text-button ctx "Generate" #(try (generate % (get-property % level-id))
                                                              (catch Throwable t
-                                                               (->error-window! % t)
+                                                               (->error-window % t)
                                                                (println t))))]]
                  :pack? true}))
 

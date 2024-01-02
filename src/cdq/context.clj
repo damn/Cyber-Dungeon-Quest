@@ -115,3 +115,6 @@
 
 (defprotocol TooltipText
   (tooltip-text [_ property]))
+
+(defprotocol ErrorModal
+  (->error-window [_ throwable]))

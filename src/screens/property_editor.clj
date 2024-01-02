@@ -10,7 +10,7 @@
             [gdl.scene2d.ui.cell :refer [set-actor!]]
             [gdl.scene2d.ui.widget-group :refer [pack!]]
             [context.properties :as properties]
-            [cdq.context :refer [get-property all-properties tooltip-text]]))
+            [cdq.context :refer [get-property all-properties tooltip-text ->error-window]]))
 
 (defn- ->horizontal-separator-cell [colspan]
   {:actor (com.kotcrab.vis.ui.widget.Separator. "default")
@@ -317,12 +317,15 @@
                       ; TODO SHOW IF CHANGES MADE then SAVE otherwise different color etc.
                       ; when closing (lose changes? yes no)
                       [(->text-button context "Save"
-                                      (fn [_ctx]
+                                      (fn [ctx]
                                         ; TODO error modal like map editor?
                                         ; TODO refresh overview creatures lvls,etc. ?
-                                        (swap! app/current-context properties/update-and-write-to-file!
-                                               (attribute-widget-group->data widgets))
-                                        (remove! window)))]])
+                                        (try
+                                         (swap! app/current-context properties/update-and-write-to-file!
+                                                (attribute-widget-group->data widgets))
+                                         (remove! window)
+                                         (catch Throwable t
+                                           (->error-window ctx t)))))]])
     (pack! window)
     window))
 

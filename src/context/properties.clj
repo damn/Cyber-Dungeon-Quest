@@ -1,6 +1,8 @@
 (ns context.properties
   (:require [clojure.edn :as edn]
             [clojure.string :as str]
+            [malli.core :as m]
+            [malli.error :as me]
             [gdl.context :refer [get-sprite]]
             [gdl.graphics.animation :as animation]
             [utils.core :refer [safe-get readable-number]]
@@ -8,21 +10,48 @@
             context.effect
             [cdq.context :refer [modifier-text effect-text]]))
 
+(comment
+ (do
+  (require '[malli.provider :as mp])
+  (set! *print-level* nil)
+  (let [ctx @gdl.app/current-context
+        properties (:context/properties ctx)
+        creatures (cdq.context/all-properties ctx :property.type/creature)]
+    (clojure.pprint/pprint
+     (mp/provide (map #(dissoc % :property/image) creatures)))))
+ ; =>
+ [:map
+  [:property/id :qualified-keyword] ; namespace = 'creatures'
+  [:creature/species :qualified-keyword] ; one of species
+  [:creature/skills [:set :qualified-keyword]] ; one of spells/skills
+  [:creature/items [:set :qualified-keyword]] ; one of items
+  [:creature/level [:maybe :int]]]  ; value range?
+
+ )
+
+(set! com.kotcrab.vis.ui.widget.Tooltip/DEFAULT_APPEAR_DELAY_TIME (float 0))
+
+(comment
+ (set! com.kotcrab.vis.ui.widget.Tooltip/DEFAULT_FADE_TIME (float 0.3))
+ ;(set! com.kotcrab.vis.ui.widget.Tooltip/MOUSE_MOVED_FADEOUT false)
+ ; always show BELOW the actor nicely not near mouse thing or ABOVE centered ?
+ )
+
+;com.kotcrab.vis.ui.widget.Tooltip
+;static float 	DEFAULT_APPEAR_DELAY_TIME
+;static float 	DEFAULT_FADE_TIME
+;static boolean 	MOUSE_MOVED_FADEOUT
+;Controls whether to fade out tooltip when mouse was moved.
+
 ; TODO
-; * namespaced ids as of type :creature.id/vampire :item.id/ :weapon.id ?
-; :spells/foo => creatures/ not used yet ! => can be used as a 'type' ?
-; => :lady-a & :vampire should not be hardcoded, part of map props
-; => place also player @ start map @ mapgen?
-; add type : 'world' / 'audiovisual' ...
-; immediately show tooltips...
-; minotaur is not lady-a ! doesnt have the proper components !...
-; => no hardcoded props
-
-
+; * immediately show tooltips...
 
 ; * validation @ load/save of property-types attributes (optional ones to add like cooldown?)
-; * text-field make validateabletextfiel
+
+; * text-field make validateabletextfield
+
 ; * schema/value-ranges/value-widgets for all modifiers/effects, e.g. damage select physical,magical,...
+
 ; * filter out not implemented weapons, etc.  mark them somehow
 
 ; aggro range wakup time, etc what else is hidden?!, unique death animation/sound/attacksound each weapon/spell etc.
@@ -38,9 +67,6 @@
 ; * open tmx file, tiled editor
 ; * components editor creatures, etc. & builder
 ; * also item needs to be in certain slot, each slot only once, etc. also max-items ...?
-
-; TODO where to put attributes ? useful @ tooltip text
-; properties ?
 
 (defn one-to-many-attribute->linked-property-type [k]
   (case k
@@ -109,33 +135,7 @@
       (name k)])
    properties))
 
-(comment
-
- (let [ctx @gdl.app/current-context
-       properties (:context/properties ctx)
-       ]
-   (clojure.pprint/pprint
-    (remove namespace
-            (map first properties))))
-
- (do
-  (require '[malli.provider :as mp])
-  (set! *print-level* nil)
-  (let [ctx @gdl.app/current-context
-        properties (:context/properties ctx)
-        creatures (cdq.context/all-properties ctx :property.type/item)]
-    (clojure.pprint/pprint
-     (mp/provide (map #(dissoc % :property/image) creatures)))))
- ; =>
- [:map
-  [:property/id :keyword] ; namespaced creature/vampire
-  [:creature/species :qualified-keyword] ; one of species (or move in creatures)
-  [:creature/skills [:set :qualified-keyword]] ; one of SPELLS ids, not skills (passives?)
-  [:creature/items [:set :keyword]] ; one of items ...
-  [:creature/level [:maybe :int]]] ; ?
-
- )
-
+; https://github.com/metosin/malli#built-in-schemas
 (def property-types
   {:property.type/creature {:of-type? :creature/species
                             :edn-file-sort-order 1
@@ -146,7 +146,15 @@
                                        :sort-by-fn #(vector (or (:creature/level %) 9)
                                                             (name (:creature/species %))
                                                             (name (:property/id %)))
-                                       :extra-info-text #(str (:creature/level %))}}
+                                       :extra-info-text #(str (:creature/level %))}
+                            :schema (m/schema
+                                     [:map {:closed true}
+                                      [:property/id [:qualified-keyword {:namespace :creatures}]]
+                                      [:property/image :some]
+                                      [:creature/species [:qualified-keyword {:namespace :species}]] ; one of species
+                                      [:creature/skills [:set :qualified-keyword]] ; one of spells/skills
+                                      [:creature/items  [:set :qualified-keyword]] ; one of items
+                                      [:creature/level [:maybe pos-int?]]])} ; >0, <max-lvls (9 ?)
    :property.type/species {:of-type? :creature/hp
                            :edn-file-sort-order 2
                            :title "Species"
@@ -222,7 +230,7 @@
    (when (seq skills) (str "Spells: " (str/join "," (map name skills))))
    (when (seq items) (str "Items: "   (str/join "," (map name items))))])
 
-; TODO spell? why needed ...
+; TODO spell? why needed ... => use :property.type/spell or :property.type/weapon instead
 ; different enter active skill state sound
 ; different attack/cast speed modifier & text
 (defmethod property->text :property.type/spell [{:keys [context/player-entity] :as context}
@@ -329,10 +337,24 @@
        (#(if (:property/image %) (update % :property/image serialize-image) %))
        (#(if (:animation %) (update % :animation serialize-animation) %))))
 
+(defn- validate [property & {:keys [humanize?]}]
+  (if-let [schema (:schema (get property-types (property-type property)))]
+    (if (m/validate schema property)
+      property
+      (throw (Error. (let [explained (m/explain schema property)]
+                       (str (if humanize?
+                              (me/humanize explained)
+                              (binding [*print-level* nil]
+                                (with-out-str
+                                 (clojure.pprint/pprint
+                                  explained)))))))))
+    property))
+
 (defn- load-edn [context file]
   (let [properties (-> file slurp edn/read-string)] ; TODO use .internal Gdx/files  => part of context protocol
     (assert (apply distinct? (map :property/id properties)))
     (->> properties
+         (map validate)
          (map #(deserialize context %))
          (#(zipmap (map :property/id %) %)))))
 
@@ -340,7 +362,7 @@
   {:context/properties (load-edn context file)
    :context/properties-file file})
 
-(defn- save-edn [file data]
+(defn- pprint-spit [file data]
   (binding [*print-level* nil]
     (->> data
          clojure.pprint/pprint
@@ -356,7 +378,8 @@
        vals
        sort-by-type
        (map serialize)
-       (save-edn properties-file)))
+       (pprint-spit properties-file)))
+
 
 (defn update-and-write-to-file! [{:keys [context/properties
                                          context/properties-file] :as context}
@@ -365,8 +388,10 @@
          (contains? properties id)
          (= (set (keys data))
             (set (keys (get properties id))))]}
-  (println "update-and-write-to-file!")
-  (binding [*print-level* nil] (clojure.pprint/pprint data)) ; TODO modal window with data / maybe get change diff ?
+  (validate data :humanize? true)
+  (println "\nupdate-and-write-to-file!")
+  (binding [*print-level* nil]
+    (clojure.pprint/pprint data)) ; TODO modal window with data / maybe get change diff ?
   (let [properties (update properties id merge data)]
     (.start (Thread. (fn []
                        (write-to-file! properties properties-file))))
