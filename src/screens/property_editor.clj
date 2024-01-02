@@ -55,8 +55,8 @@
 
 (defn- one-to-many-attribute->linked-property-type [k]
   (case k
-    :creature/skills :skill ; == ! spells !
-    :creature/items :item))
+    :creature/skills :property.type/skill
+    :creature/items  :property.type/item))
 
 ; TODO label does not exist anymore.
 ; maybe no default widget & assert for all attributes are explicitly defined?
@@ -101,6 +101,9 @@
     :skill/effect (keys (methods context.effect/do!))
     :hit-effect   (keys (methods context.effect/do!)) ; TODO only those with 'source/target'
     ))
+
+; TODO just reuse this order and make attributes->text fn
+; all mixed together idk
 
 (defn- sort-attributes [properties]
   (sort-by

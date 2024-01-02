@@ -13,7 +13,7 @@
 ; * fix item-text/skill-text/weapon-text etc. tooltip fns
 ; * filter out not implemented weapons, etc.  mark them somehow
 
-; TODO aggro range wakup time, etc what else is hidden?!, unique death animation/sound/attacksound each weapon/spell etc.
+; aggro range wakup time, etc what else is hidden?!, unique death animation/sound/attacksound each weapon/spell etc.
 ; alert sound, etc., mana, hp, speed.... default block modifiers
 ; ASSERT & LOAD EDN / WRITE EDN / BEFORE SAVE DATA
 ; also things like target-entity props should be a map , :hit-effect & :maxrange, it was a list...
@@ -120,6 +120,8 @@
           (when (of-type? props)
             prop-type))
         property-types))
+
+;;
 
 (extend-type gdl.context.Context
   cdq.context/PropertyStore
