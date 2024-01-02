@@ -9,9 +9,7 @@
             [gdl.scene2d.ui.table :refer [add! add-rows cells]]
             [gdl.scene2d.ui.cell :refer [set-actor!]]
             [gdl.scene2d.ui.widget-group :refer [pack!]]
-            context.modifier
-            context.effect
-            [context.properties :as properties :refer [property-types]]
+            [context.properties :as properties]
             [cdq.context :refer [get-property all-properties]]))
 
 (defn- ->horizontal-separator-cell [colspan]
@@ -53,78 +51,8 @@
 
 ;;
 
-(defn- one-to-many-attribute->linked-property-type [k]
-  (case k
-    :creature/skills :property.type/skill
-    :creature/items  :property.type/item))
-
-; TODO label does not exist anymore.
-; maybe no default widget & assert for all attributes are explicitly defined?
-(def ^:private attribute->value-widget
-  {:property/id :label
-   :property/image :image
-   :property/pretty-name :text-field
-   :item/slot :label
-   :item/modifier :nested-map
-   :modifier/armor :text-field
-   :modifier/max-mana :text-field
-   :weapon/two-handed? :label
-   :creature/level :text-field
-   :creature/species :link-button
-   :creature/skills :one-to-many
-   :creature/items :one-to-many
-   :creature/hp :text-field
-   :creature/speed :text-field
-   :spell? :label
-   :skill/action-time :text-field
-   :skill/cooldown :text-field
-   :skill/cost :text-field
-   :skill/effect :nested-map
-   :effect/sound :sound
-   :effect/damage :text-field
-   :effect/target-entity :nested-map
-   :maxrange :text-field
-   :hit-effect :nested-map
-   :map-size :text-field
-   :max-area-level :text-field
-   :spawn-rate :text-field})
-
-(defn- removable? [k]
-  (#{"effect" "modifier"} (namespace k)))
-
-(defn- add-components? [k]
-  (#{:item/modifier :skill/effect :hit-effect} k))
-
-(defn- nested-map->components [k]
-  (case k
-    :item/modifier (keys context.modifier/modifier-definitions)
-    :skill/effect (keys (methods context.effect/do!))
-    :hit-effect   (keys (methods context.effect/do!)) ; TODO only those with 'source/target'
-    ))
-
-; TODO just reuse this order and make attributes->text fn
-; all mixed together idk
-
-(defn- sort-attributes [properties]
-  (sort-by
-   (fn [[k _v]]
-     [(case k
-        :property/id 0
-        :property/image 1
-        :property/pretty-name 2
-        :spell? 3
-        :creature/level 3
-        :item/slot 3
-        :weapon/two-handed? 4
-        :creature/species 4
-        9)
-      (name k)])
-   properties))
-
-;;
-
-(defmulti ->value-widget     (fn [_ctx [k _v]] (get attribute->value-widget k)))
-(defmulti value-widget->data (fn [k _widget]   (get attribute->value-widget k)))
+(defmulti ->value-widget     (fn [_ctx [k _v]] (get properties/attribute->value-widget k)))
+(defmulti value-widget->data (fn [k _widget]   (get properties/attribute->value-widget k)))
 
 ;;
 
@@ -220,7 +148,7 @@
                                  :close-button? true
                                  :center? true
                                  :close-on-escape? true})]
-       (add-rows window (for [nested-k (nested-map->components k)]
+       (add-rows window (for [nested-k (properties/nested-map->components k)]
                           [(->text-button ctx (name nested-k)
                             (fn [ctx]
                               (remove! window)
@@ -240,9 +168,9 @@
     (actor/set-id! attribute-widget-group :attribute-widget-group)
     (->table ctx {:cell-defaults {:pad 5}
                   :rows (remove nil?
-                                [(when (add-components? k)
+                                [(when (properties/add-components? k)
                                    [(->add-nested-map-button ctx k attribute-widget-group)])
-                                 (when (add-components? k)
+                                 (when (properties/add-components? k)
                                    [(->horizontal-separator-cell 1)])
                                  [attribute-widget-group]])})))
 
@@ -316,7 +244,7 @@
                        image-widget (->image-widget ctx ; TODO image-button (link)
                                                     (:property/image props)
                                                     {:id (:property/id props)})]
-                   (add-tooltip! image-widget #((-> property-types
+                   (add-tooltip! image-widget #((-> properties/property-types
                                                     property-type
                                                     :overview
                                                     :tooltip-text-fn) % props))
@@ -329,7 +257,7 @@
   (let [table (->table context {:cell-defaults {:pad 5}})]
     (add-one-to-many-rows context
                           table
-                          (one-to-many-attribute->linked-property-type attribute)
+                          (properties/one-to-many-attribute->linked-property-type attribute)
                           property-ids)
     table))
 
@@ -345,7 +273,7 @@
         table (->table ctx {:id k
                             :cell-defaults {:pad 4}})
         column (remove nil?
-                       [(when (removable? k)
+                       [(when (properties/removable-attribute? k)
                           (->text-button ctx "-" (fn [_ctx]
                                                    (let [window (find-ancestor-window table)]
                                                      (remove! table)
@@ -364,7 +292,7 @@
 
 (defn- ->attribute-widget-tables [ctx props]
   (let [first-row? (atom true)]
-    (for [[k v] (sort-attributes props)
+    (for [[k v] (properties/sort-attributes props)
           :let [sep? (not @first-row?)
                 _ (reset! first-row? false)]]
       (->attribute-widget-table ctx [k v] :horizontal-sep? sep?))))
@@ -385,7 +313,7 @@
 
 (defn ->property-editor-window [context id]
   (let [props (get-property context id)
-        {:keys [title]} (get property-types (context.properties/property-type props))
+        {:keys [title]} (get properties/property-types (context.properties/property-type props))
         window (->window context {:title (or title (name id))
                                   :modal? true
                                   :close-button? true
@@ -417,7 +345,7 @@
                 extra-info-text
                 tooltip-text-fn
                 columns
-                image/dimensions]} (:overview (get property-types property-type))
+                image/dimensions]} (:overview (get properties/property-types property-type))
         entities (all-properties ctx property-type)
         entities (if sort-by-fn
                    (sort-by sort-by-fn entities)
@@ -451,7 +379,7 @@
 (defn- ->left-widget [context]
   (->table context {:cell-defaults {:pad 5}
                     :rows (concat
-                           (for [[property-type {:keys [overview]}] property-types]
+                           (for [[property-type {:keys [overview]}] properties/property-types]
                              [(->text-button context
                                              (:title overview)
                                              #(set-second-widget! % (->overview-table % property-type open-property-editor-window!)))])

@@ -3,6 +3,8 @@
             [gdl.context :refer [get-sprite]]
             [gdl.graphics.animation :as animation]
             [utils.core :refer [safe-get]]
+            context.modifier
+            context.effect
             cdq.context))
 
 ; TODO
@@ -26,6 +28,74 @@
 ; * open tmx file, tiled editor
 ; * components editor creatures, etc. & builder
 ; * also item needs to be in certain slot, each slot only once, etc. also max-items ...?
+
+; TODO where to put attributes ? useful @ tooltip text
+; properties ?
+
+(defn one-to-many-attribute->linked-property-type [k]
+  (case k
+    :creature/skills :property.type/skill
+    :creature/items  :property.type/item))
+
+; TODO label does not exist anymore.
+; maybe no default widget & assert for all attributes are explicitly defined?
+(def attribute->value-widget
+  {:property/id :label
+   :property/image :image
+   :property/pretty-name :text-field
+   :item/slot :label
+   :item/modifier :nested-map
+   :modifier/armor :text-field
+   :modifier/max-mana :text-field
+   :weapon/two-handed? :label
+   :creature/level :text-field
+   :creature/species :link-button
+   :creature/skills :one-to-many
+   :creature/items :one-to-many
+   :creature/hp :text-field
+   :creature/speed :text-field
+   :spell? :label
+   :skill/action-time :text-field
+   :skill/cooldown :text-field
+   :skill/cost :text-field
+   :skill/effect :nested-map
+   :effect/sound :sound
+   :effect/damage :text-field
+   :effect/target-entity :nested-map
+   :maxrange :text-field
+   :hit-effect :nested-map
+   :map-size :text-field
+   :max-area-level :text-field
+   :spawn-rate :text-field})
+
+(defn removable-attribute? [k]
+  (#{"effect" "modifier"} (namespace k)))
+
+(defn add-components? [k]
+  (#{:item/modifier :skill/effect :hit-effect} k))
+
+(defn nested-map->components [k]
+  (case k
+    :item/modifier (keys context.modifier/modifier-definitions)
+    :skill/effect (keys (methods context.effect/do!))
+    :hit-effect   (keys (methods context.effect/do!)) ; TODO only those with 'source/target'
+    ))
+
+(defn sort-attributes [properties]
+  (sort-by
+   (fn [[k _v]]
+     [(case k
+        :property/id 0
+        :property/image 1
+        :property/pretty-name 2
+        :spell? 3
+        :creature/level 3
+        :item/slot 3
+        :weapon/two-handed? 4
+        :creature/species 4
+        9)
+      (name k)])
+   properties))
 
 (comment
 
