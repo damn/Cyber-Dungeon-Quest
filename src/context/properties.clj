@@ -14,18 +14,15 @@
  (do
   (require '[malli.provider :as mp])
   (set! *print-level* nil)
-  (let [ctx @gdl.app/current-context
-        properties (:context/properties ctx)
-        creatures (cdq.context/all-properties ctx :property.type/creature)]
-    (clojure.pprint/pprint
-     (mp/provide (map #(dissoc % :property/image) creatures)))))
+  (let [ctx @gdl.app/current-context]
+    (->> :property.type/weapon
+         (cdq.context/all-properties ctx)
+         mp/provide
+         clojure.pprint/pprint
+         )))
  ; =>
- [:map
-  [:property/id :qualified-keyword] ; namespace = 'creatures'
-  [:creature/species :qualified-keyword] ; one of species
-  [:creature/skills [:set :qualified-keyword]] ; one of spells/skills
-  [:creature/items [:set :qualified-keyword]] ; one of items
-  [:creature/level [:maybe :int]]]  ; value range?
+
+
 
  )
 
@@ -166,7 +163,16 @@
                          :title "Spell"
                          :overview {:title "Spells"
                                     :columns 16
-                                    :image/dimensions [70 70]}}
+                                    :image/dimensions [70 70]}
+                         :schema (m/schema
+                                  [:map {:closed true}
+                                   [:property/id [:qualified-keyword {:namespace :spells}]]
+                                   [:property/image :some]
+                                   [:spell? :boolean] ; true
+                                   [:skill/action-time pos?]
+                                   [:skill/cooldown nat-int?]
+                                   [:skill/cost nat-int?]
+                                   [:skill/effect [:map ]]])} ; of one of 'effect/' components
    ; weapons before items checking
    :property.type/weapon {:of-type? (fn [{:keys [item/slot]}]
                                       (and slot (= slot :inventory.slot/weapon)))
@@ -174,7 +180,17 @@
                           :title "Weapon"
                           :overview {:title "Weapons"
                                      :columns 10
-                                     :image/dimensions [96 96]}}
+                                     :image/dimensions [96 96]}
+                          :schema
+                          (m/schema ; TODO DRY with spell ....
+                           [:map
+                            [:property/id [:qualified-keyword {:namespace :items}]]
+                            [:property/pretty-name :string]
+                            [:item/slot :qualified-keyword] ; :inventory.slot/weapon
+                            [:weapon/two-handed? :boolean]
+                            [:skill/action-time {:optional true} [:maybe pos?]] ; not optional
+                            [:property/image :some]
+                            [:skill/effect {:optional true} [:map]]])}
    :property.type/item {:of-type? :item/slot
                         :edn-file-sort-order 3
                         :title "Item"

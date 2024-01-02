@@ -1565,9 +1565,8 @@
   :property/image
   {:file "items/images.png", :sub-image-bounds [528 144 48 48]},
   :skill/effect
-  [[:effect/target-entity
-    {:maxrange 0.6,
-     :hit-effect [[:effect/damage [:physical [3 6]]]]}]]}
+  {:effect/target-entity
+   {:maxrange 0.6, :hit-effect [[:effect/damage [:physical [3 6]]]]}}}
  {:item/slot :inventory.slot/weapon,
   :weapon/two-handed? true,
   :property/pretty-name "Axe",
@@ -1576,9 +1575,8 @@
   :property/image
   {:file "items/images.png", :sub-image-bounds [336 96 48 48]},
   :skill/effect
-  [[:effect/target-entity
-    {:maxrange 0.5,
-     :hit-effect [[:effect/damage [:physical [5 10]]]]}]]}
+  {:effect/target-entity
+   {:maxrange 0.5, :hit-effect [[:effect/damage [:physical [5 10]]]]}}}
  {:item/slot :inventory.slot/weapon,
   :weapon/two-handed? false,
   :property/pretty-name "Dagger",
@@ -1587,9 +1585,9 @@
   :property/image
   {:file "items/images.png", :sub-image-bounds [48 96 48 48]},
   :skill/effect
-  [[:effect/target-entity
+  {:effect/target-entity
     {:maxrange 0.5,
-     :hit-effect [[:effect/damage [:physical [2 5]]]]}]]}
+     :hit-effect [[:effect/damage [:physical [2 5]]]]}}}
  {:item/slot :inventory.slot/weapon,
   :skill/action-time nil,
   :property/id :items/handaxe,
@@ -1706,9 +1704,8 @@
   :property/image
   {:file "items/images.png", :sub-image-bounds [624 144 48 48]},
   :skill/effect
-  [[:effect/target-entity
-    {:maxrange 0.6,
-     :hit-effect [[:effect/damage [:physical [3 6]]]]}]]}
+  {:effect/target-entity
+   {:maxrange 0.6, :hit-effect [[:effect/damage [:physical [3 6]]]]}}}
  {:item/slot :inventory.slot/weapon,
   :skill/action-time nil,
   :property/id :items/magic-staff-venom,
@@ -1731,9 +1728,8 @@
   :property/image
   {:file "items/images.png", :sub-image-bounds [0 192 48 48]},
   :skill/effect
-  [[:effect/target-entity
-    {:maxrange 0.5,
-     :hit-effect [[:effect/damage [:physical [5 10]]]]}]]}
+  {:effect/target-entity
+   {:maxrange 0.5, :hit-effect [[:effect/damage [:physical [5 10]]]]}}}
  {:property/image
   {:file "items/images.png", :sub-image-bounds [432 192 48 48]},
   :item/slot :inventory.slot/weapon,
@@ -1748,9 +1744,8 @@
   :property/image
   {:file "items/images.png", :sub-image-bounds [192 144 48 48]},
   :skill/effect
-  [[:effect/target-entity
-    {:maxrange 0.75,
-     :hit-effect [[:effect/damage [:physical [3 7]]]]}]]}
+  {:effect/target-entity
+   {:maxrange 0.75, :hit-effect [[:effect/damage [:physical [3 7]]]]}}}
  {:item/slot :inventory.slot/weapon,
   :skill/action-time nil,
   :property/id :items/axe-exotic1,
@@ -1766,9 +1761,8 @@
   :property/image
   {:file "items/images.png", :sub-image-bounds [192 96 48 48]},
   :skill/effect
-  [[:effect/target-entity
-    {:maxrange 0.5,
-     :hit-effect [[:effect/damage [:physical [3 7]]]]}]]}
+  {:effect/target-entity
+   {:maxrange 0.5, :hit-effect [[:effect/damage [:physical [3 7]]]]}}}
  {:item/slot :inventory.slot/weapon,
   :skill/action-time nil,
   :property/id :items/magic-sword-lightning,
@@ -1798,9 +1792,9 @@
   :property/image
   {:file "items/images.png", :sub-image-bounds [384 144 48 48]},
   :skill/effect
-  [[:effect/target-entity
-    {:maxrange 5.0,
-     :hit-effect [[:effect/damage [:physical [10 20]]]]}]]}
+  {:effect/target-entity
+   {:maxrange 5.0,
+    :hit-effect [[:effect/damage [:physical [10 20]]]]}}}
  {:item/slot :inventory.slot/weapon,
   :skill/action-time nil,
   :property/id :items/staff-winged,
@@ -1816,9 +1810,8 @@
   :property/image
   {:file "items/images.png", :sub-image-bounds [528 96 48 48]},
   :skill/effect
-  [[:effect/target-entity
-    {:maxrange 0.5,
-     :hit-effect [[:effect/damage [:physical [6 13]]]]}]]}
+  {:effect/target-entity
+   {:maxrange 0.5, :hit-effect [[:effect/damage [:physical [6 13]]]]}}}
  {:item/slot :inventory.slot/weapon,
   :skill/action-time nil,
   :property/id :items/magic-sword-acid,
@@ -1834,9 +1827,9 @@
   :property/image
   {:file "items/images.png", :sub-image-bounds [240 144 48 48]},
   :skill/effect
-  [[:effect/target-entity
-    {:maxrange 7.5,
-     :hit-effect [[:effect/damage [:physical [15 30]]]]}]]}
+  {:effect/target-entity
+   {:maxrange 7.5,
+    :hit-effect [[:effect/damage [:physical [15 30]]]]}}}
  {:item/slot :inventory.slot/weapon,
   :skill/action-time nil,
   :property/id :items/magic-staff-chaos,
@@ -1859,9 +1852,8 @@
   :property/image
   {:file "items/images.png", :sub-image-bounds [480 144 48 48]},
   :skill/effect
-  [[:effect/target-entity
-    {:maxrange 0.6,
-     :hit-effect [[:effect/damage [:physical [3 6]]]]}]]}
+  {:effect/target-entity
+   {:maxrange 0.6, :hit-effect [[:effect/damage [:physical [3 6]]]]}}}
  {:item/slot :inventory.slot/weapon,
   :weapon/two-handed? false,
   :property/pretty-name "Club",
@@ -1870,9 +1862,8 @@
   :property/image
   {:file "items/images.png", :sub-image-bounds [624 96 48 48]},
   :skill/effect
-  [[:effect/target-entity
-    {:maxrange 0.5,
-     :hit-effect [[:effect/damage [:physical [7 14]]]]}]]}
+  {:effect/target-entity
+   {:maxrange 0.5, :hit-effect [[:effect/damage [:physical [7 14]]]]}}}
  {:item/slot :inventory.slot/weapon,
   :skill/action-time nil,
   :property/id :items/greatmace,
@@ -1888,9 +1879,8 @@
   :property/image
   {:file "items/images.png", :sub-image-bounds [576 144 48 48]},
   :skill/effect
-  [[:effect/target-entity
-    {:maxrange 0.6,
-     :hit-effect [[:effect/damage [:physical [3 6]]]]}]]}
+  {:effect/target-entity
+   {:maxrange 0.6, :hit-effect [[:effect/damage [:physical [3 6]]]]}}}
  {:item/slot :inventory.slot/weapon,
   :weapon/two-handed? false,
   :property/pretty-name "Trident",
@@ -1899,9 +1889,8 @@
   :property/image
   {:file "items/images.png", :sub-image-bounds [96 144 48 48]},
   :skill/effect
-  [[:effect/target-entity
-    {:maxrange 1.0,
-     :hit-effect [[:effect/damage [:physical [5 11]]]]}]]}
+  {:effect/target-entity
+   {:maxrange 1.0, :hit-effect [[:effect/damage [:physical [5 11]]]]}}}
  {:item/slot :inventory.slot/weapon,
   :skill/action-time nil,
   :property/id :items/maul,
@@ -1934,9 +1923,8 @@
   :property/image
   {:file "items/images.png", :sub-image-bounds [240 96 48 48]},
   :skill/effect
-  [[:effect/target-entity
-    {:maxrange 0.5,
-     :hit-effect [[:effect/damage [:physical [6 12]]]]}]]}
+  {:effect/target-entity
+   {:maxrange 0.5, :hit-effect [[:effect/damage [:physical [6 12]]]]}}}
  {:item/slot :inventory.slot/weapon,
   :skill/action-time nil,
   :property/id :items/cross,
@@ -1959,8 +1947,8 @@
   :weapon/two-handed? false,
   :property/pretty-name "Exotic3 Sword"}
  {:property/id :worlds/first-level,
-  :world/map-size 1,
-  :world/max-area-level 1,
+  :world/map-size 3,
+  :world/max-area-level 3,
   :world/spawn-rate 0.03,
   :world/princess :creatures/lady-a}
  {:property/image
