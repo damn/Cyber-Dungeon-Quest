@@ -7,10 +7,8 @@
                      builder
                      potential-fields
                      render-debug)
-            context.effect.all
             context.entity.all
             [context.entity.movement :refer [frames-per-second]]
-            context.modifier.all
             (context.ui [action-bar :as action-bar]
                         [inventory-window :as inventory-window]
                         player-modal)

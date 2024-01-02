@@ -7,12 +7,10 @@
             [gdl.graphics.animation :as animation]
             [utils.core :refer [safe-get readable-number]]
             context.modifier
+            context.modifier.all
             context.effect
+            context.effect.all
             [cdq.context :refer [modifier-text effect-text]]))
-
-; modifier/effet schemas in 'map' part of item/skill:
-; like this: [:modifier/max-mana :int]
-; modifier has 'schema' multi
 
 (comment
  (do
@@ -24,10 +22,6 @@
          mp/provide
          clojure.pprint/pprint
          )))
- ; =>
-
-
-
  )
 
 (set! com.kotcrab.vis.ui.widget.Tooltip/DEFAULT_APPEAR_DELAY_TIME (float 0))
@@ -83,8 +77,6 @@
    :property/pretty-name :text-field
    :item/slot :label
    :item/modifier :nested-map
-   :modifier/armor :text-field
-   :modifier/max-mana :text-field
    :weapon/two-handed? :label
    :creature/level :text-field
    :creature/species :link-button
@@ -106,6 +98,12 @@
    :world/max-area-level :text-field
    :world/spawn-rate :text-field
    :world/princess :label})
+
+(doseq [k (concat (keys context.modifier/modifier-definitions)
+                  (keys (methods context.effect/do!)))]
+  (alter-var-root #'attribute->value-widget (fn [m]
+                                              (if (contains? m k) m (assoc m k :text-field)))))
+; TODO schema/default-values/nicer text?
 
 (defn removable-attribute? [k]
   (#{"effect" "modifier"} (namespace k)))
@@ -210,7 +208,12 @@
                                   [:property/pretty-name :string]
                                   [:item/slot [:qualified-keyword {:namespace :inventory.slot}]]
                                   [:property/image :some]
-                                  [:item/modifier {:optional true} [:map]]])}
+                                  [:item/modifier {:optional true} [:map
+                                                                    #_(mapv
+                                                                     (fn [k]
+                                                                       [k {:optional true} :some])
+                                                                     (keys context.modifier/modifier-definitions))
+                                                                    ]]])}
    :property.type/world {:of-type? :world/princess
                          :edn-file-sort-order 5
                          :title "World"
