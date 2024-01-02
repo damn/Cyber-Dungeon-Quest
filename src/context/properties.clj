@@ -10,12 +10,16 @@
             context.effect
             [cdq.context :refer [modifier-text effect-text]]))
 
+; modifier/effet schemas in 'map' part of item/skill:
+; like this: [:modifier/max-mana :int]
+; modifier has 'schema' multi
+
 (comment
  (do
   (require '[malli.provider :as mp])
   (set! *print-level* nil)
   (let [ctx @gdl.app/current-context]
-    (->> :property.type/weapon
+    (->> :property.type/item
          (cdq.context/all-properties ctx)
          mp/provide
          clojure.pprint/pprint
@@ -181,16 +185,15 @@
                           :overview {:title "Weapons"
                                      :columns 10
                                      :image/dimensions [96 96]}
-                          :schema
-                          (m/schema ; TODO DRY with spell ....
-                           [:map
-                            [:property/id [:qualified-keyword {:namespace :items}]]
-                            [:property/pretty-name :string]
-                            [:item/slot :qualified-keyword] ; :inventory.slot/weapon
-                            [:weapon/two-handed? :boolean]
-                            [:skill/action-time {:optional true} [:maybe pos?]] ; not optional
-                            [:property/image :some]
-                            [:skill/effect {:optional true} [:map]]])}
+                          :schema (m/schema ; TODO DRY with spell/item
+                                   [:map
+                                    [:property/id [:qualified-keyword {:namespace :items}]]
+                                    [:property/pretty-name :string]
+                                    [:item/slot [:qualified-keyword {:namespace :inventory.slot}]] ; :inventory.slot/weapon
+                                    [:property/image :some]
+                                    [:weapon/two-handed? :boolean]
+                                    [:skill/action-time {:optional true} [:maybe pos?]] ; not optional
+                                    [:skill/effect {:optional true} [:map]]])}
    :property.type/item {:of-type? :item/slot
                         :edn-file-sort-order 3
                         :title "Item"
@@ -200,7 +203,14 @@
                                    :sort-by-fn #(vector (if-let [slot (:item/slot %)]
                                                           (name slot)
                                                           "")
-                                                        (name (:property/id %)))}}
+                                                        (name (:property/id %)))}
+                        :schema (m/schema
+                                 [:map
+                                  [:property/id [:qualified-keyword {:namespace :items}]]
+                                  [:property/pretty-name :string]
+                                  [:item/slot [:qualified-keyword {:namespace :inventory.slot}]]
+                                  [:property/image :some]
+                                  [:item/modifier {:optional true} [:map]]])}
    :property.type/world {:of-type? :world/princess
                          :edn-file-sort-order 5
                          :title "World"
