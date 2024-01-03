@@ -12,13 +12,12 @@
             context.effect.all
             [cdq.context :refer [modifier-text effect-text]]))
 
-
+; TODO cannot find bat -> assertions @ properties load
 ; how can we validate effect/spawn value is one of creatures
 ; if we load our properties all at once and validate step by step ?
 ; should we use a database ?? idk. maybe...
 ; https://docs.datomic.com/pro/schema/schema.html?search=%20
-
-; :skill/effect {:effect/spawn :bat}, ; TODO cannot find bat -> assertions @ properties load
+; :skill/effect {:effect/spawn :bat},
 ; should have been :creatures/bat
 
 (comment

@@ -1,25 +1,34 @@
 (ns context.modifier.all
-  (:require [utils.core :refer [readable-number]]
+  (:require [clojure.math :as math]
+            [utils.core :refer [readable-number]]
             [data.val-max :refer [apply-max]]
             [context.modifier :as modifier]))
 
 ; TODO dissoc again if value == default value -> into modifier logic, e.g. modifiers blocks 0 , just dissoc then ?
-; TODO fix max-hp like max-mana
 ; TODO add movement speed +/- modifier.
+
+(defn- check-plus-symbol [n]
+  (case (math/signum n) 1.0 "+" -1.0 ""))
+
+(defn- plus-max-modifier-text [modified-value-name v]
+  (str (check-plus-symbol v) v " " modified-value-name))
+
+(defn- apply-max-plus  [vmx v] (apply-max vmx #(+ % v)))
+(defn- apply-max-minus [vmx v] (apply-max vmx #(- % v)))
 
 (modifier/defmodifier :modifier/max-hp
   {:values  [[15 25] [35 45] [55 65]]
-   :text    #(str "+" % " HP")
+   :text    (partial plus-max-modifier-text "HP")
    :keys    [:hp]
-   :apply   (partial apply-max +) ; TODO broken, do like max-mana
-   :reverse (partial apply-max -)})
+   :apply   apply-max-plus
+   :reverse apply-max-minus})
 
 (modifier/defmodifier :modifier/max-mana
   {:values  [[15 25] [35 45] [55 65]]
-   :text    (fn [v] (str "+" v " Mana"))
+   :text    (partial plus-max-modifier-text "Mana")
    :keys    [:mana]
-   :apply   (fn [mana v] (apply-max mana #(+ % v)))
-   :reverse (fn [mana v] (apply-max mana #(- % v)))})
+   :apply   apply-max-plus
+   :reverse apply-max-minus})
 
 ; TODO (/ action-time cast-speed)
 ; new calculations
