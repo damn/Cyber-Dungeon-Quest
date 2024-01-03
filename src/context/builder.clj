@@ -105,7 +105,7 @@
 (def ^:private player-components
   {:is-player true
    :faction :evil
-   :mana 100
+   ;:entity/mana 100 ; is overwritten
    :player-movement true
    :free-skill-points 3
    :entity/clickable {:type :clickable/player}})
@@ -144,8 +144,8 @@
                    :height height
                    :is-solid true}
             :entity/movement speed
-            :hp hp
-            :mana 11
+            :entity/hp hp
+            :entity/mana 11
             :skills (:creature/skills creature-props)
             :items  (:creature/items creature-props)
             :is-flying false

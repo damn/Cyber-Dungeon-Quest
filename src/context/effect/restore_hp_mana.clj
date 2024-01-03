@@ -4,8 +4,8 @@
 
 (defmethod effect/useful? :effect/restore-hp-mana
   [{:keys [effect/source]} _effect]
-  (or (lower-than-max? (:mana @source))
-      (lower-than-max? (:hp   @source))))
+  (or (lower-than-max? (:entity/mana @source))
+      (lower-than-max? (:entity/hp   @source))))
 
 (defmethod effect/text :effect/restore-hp-mana
   [_context _effect]
@@ -18,5 +18,5 @@
 (defmethod effect/do! :effect/restore-hp-mana
   [{:keys [effect/source] :as context} _effect]
   (swap! source #(-> %
-                     (update :hp set-to-max)
-                     (update :mana set-to-max))))
+                     (update :entity/hp set-to-max)
+                     (update :entity/mana set-to-max))))

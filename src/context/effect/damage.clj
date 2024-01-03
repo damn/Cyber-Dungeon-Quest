@@ -134,13 +134,13 @@
 
 (defmethod effect/valid-params? :effect/damage
   [{:keys [effect/source effect/target]} _effect]
-  (and source target (:hp @target)))
+  (and source target (:entity/hp @target)))
 
 (defmethod effect/do! :effect/damage
   [{:keys [effect/source
            effect/target] :as context} [_ {dmg-type 0 :as damage}]]
   (cond
-   (no-hp-left? (:hp @target))
+   (no-hp-left? (:entity/hp @target))
    nil
 
    (blocks? (effective-block-rate @source @target :shield dmg-type))
@@ -155,9 +155,9 @@
      (audiovisual context (:position @target)
                   (keyword (str "effects.damage." (name dmg-type))
                            "hit-effect"))
-     (swap! target update :hp apply-val #(- % dmg-amount))
+     (swap! target update :entity/hp apply-val #(- % dmg-amount))
      (add-text-effect! context target (str "[RED]" dmg-amount))
      (send-event! context target
-                  (if (no-hp-left? (:hp @target))
+                  (if (no-hp-left? (:entity/hp @target))
                     :kill
                     :alert)))))

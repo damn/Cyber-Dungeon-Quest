@@ -51,7 +51,7 @@
       (swap! entity assoc-in [:skills id :cooling-down?] (->counter context cooldown))))
 
   (skill-usable-state [effect-context
-                       {:keys [mana]}
+                       {:keys [entity/mana]}
                        {:keys [skill/cost cooling-down? skill/effect]}]
     (cond
      cooling-down?                               :cooldown
@@ -62,5 +62,5 @@
   (pay-skill-mana-cost! [_ entity skill]
     (swap! entity (fn [entity*]
                     (if (:skill/cost skill)
-                      (update entity* :mana apply-val #(- % (:skill/cost skill)))
+                      (update entity* :entity/mana apply-val #(- % (:skill/cost skill)))
                       entity*)))))

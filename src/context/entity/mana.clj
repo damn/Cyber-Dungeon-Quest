@@ -2,6 +2,6 @@
   (:require [x.x :refer [defcomponent]]
             [context.entity :as entity]))
 
-(defcomponent :mana max-mana
+(defcomponent :entity/mana max-mana
   (entity/create [_]
     [max-mana max-mana]))

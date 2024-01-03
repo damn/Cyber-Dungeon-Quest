@@ -19,14 +19,14 @@
 (modifier/defmodifier :modifier/max-hp
   {:values  [[15 25] [35 45] [55 65]]
    :text    (partial plus-max-modifier-text "HP")
-   :keys    [:hp]
+   :keys    [:entity/hp]
    :apply   apply-max-plus
    :reverse apply-max-minus})
 
 (modifier/defmodifier :modifier/max-mana
   {:values  [[15 25] [35 45] [55 65]]
    :text    (partial plus-max-modifier-text "Mana")
-   :keys    [:mana]
+   :keys    [:entity/mana]
    :apply   apply-max-plus
    :reverse apply-max-minus})
 

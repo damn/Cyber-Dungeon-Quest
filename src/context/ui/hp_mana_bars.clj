@@ -28,5 +28,5 @@
                                  (/ rahmenw 2))
                             y-hp 54
                             y-mana (+ y-hp rahmenh)]
-                        (render-hpmana-bar c x y-hp   hpcontent   (:hp   @player-entity) "HP")
-                        (render-hpmana-bar c x y-mana manacontent (:mana @player-entity) "MP")))})))
+                        (render-hpmana-bar c x y-hp   hpcontent   (:entity/hp  @player-entity) "HP")
+                        (render-hpmana-bar c x y-mana manacontent (:entity/mana @player-entity) "MP")))})))

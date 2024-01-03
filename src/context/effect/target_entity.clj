@@ -54,7 +54,7 @@
   (and source
        target
        (line-of-sight? context @source @target)
-       (:hp @target)))
+       (:entity/hp @target)))
 
 (defmethod effect/do! :effect/target-entity
   [{:keys [effect/source
