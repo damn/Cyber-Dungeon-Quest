@@ -5,7 +5,7 @@
             [context.entity :as entity]
             [cdq.context :refer [->counter stopped? reset]]))
 
-(defcomponent :string-effect {:keys [text counter] :as this}
+(defcomponent :entity/string-effect {:keys [text counter] :as this}
   (entity/tick! [[k _] e context]
     (when (stopped? context counter)
       (swap! e dissoc k)))
@@ -20,10 +20,10 @@
 (extend-type gdl.context.Context
   cdq.context/TextEffect
   (add-text-effect! [context entity text]
-    (if (:string-effect @entity)
-      (swap! entity update :string-effect #(-> %
-                                               (update :text str "\n" text)
-                                               (update :counter (fn [cnt]
-                                                                  (reset context cnt)))))
-      (swap! entity assoc :string-effect {:text text
-                                          :counter (->counter context 0.4)}))))
+    (if (:entity/string-effect @entity)
+      (swap! entity update :entity/string-effect #(-> %
+                                                      (update :text str "\n" text)
+                                                      (update :counter (fn [cnt]
+                                                                         (reset context cnt)))))
+      (swap! entity assoc :entity/string-effect {:text text
+                                                 :counter (->counter context 0.4)}))))

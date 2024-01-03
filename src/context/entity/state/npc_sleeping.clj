@@ -20,7 +20,7 @@
     (create-entity! context
                     {:entity/position (:entity/position @entity)
                      :entity/faction  (:entity/faction  @entity)
-                     :shout (->counter context 0.2)}))
+                     :entity/shout (->counter context 0.2)}))
 
   (tick! [_ context]
     (let [cell (get (world-grid context)
