@@ -2200,10 +2200,10 @@
    :looping? true},
   :property/height 2/3,
   :creature/species :species/vampire,
-  :creature/mana 11,
+  :creature/mana 100,
   :creature/level nil,
   :creature/skills #{},
-  :creature/hp 25,
+  :creature/hp 100,
   :property/width 17/24,
   :property/id :creatures/vampire,
   :creature/items #{:items/sword :items/cloak-blood}}

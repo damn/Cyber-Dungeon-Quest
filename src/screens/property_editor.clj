@@ -120,9 +120,21 @@
                     (fn [_ctx]))]))
 
 (defmethod ->value-widget :image [ctx [_ image]]
-  (->image-button ctx image
+  (->image-widget ctx image {})
+  #_(->image-button ctx image
                   #(add-to-stage! % (->scrollable-choose-window % (texture-rows %)))
-                  {:dimensions [192 192]})) ; x4  , not hardcoded here TODO
+                  {:dimensions [96 96]})) ; x2  , not hardcoded here TODO
+
+;;
+
+; looping? - click on widget restart
+; frame-duration
+; frames ....
+; hidden actor act tick atom animation & set current frame image drawable
+(defmethod ->value-widget :animation [ctx [_ animation]]
+  (->table ctx {:rows [(for [image (:frames animation)]
+                         (->image-widget ctx image {}))]
+                :cell-defaults {:pad 1}}))
 
 ;;
 

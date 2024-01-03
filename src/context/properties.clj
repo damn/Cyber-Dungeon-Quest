@@ -82,6 +82,7 @@
 (def attribute->value-widget
   {:property/id :label
    :property/image :image
+   :property/animation :animation
    :property/pretty-name :text-field
    :item/slot :label
    :item/modifier :nested-map
@@ -133,6 +134,9 @@
      [(case k
         :property/id 0
         :property/image 1
+        :property/animation 2
+        :property/width 3 ; TODO => body.. one field.
+        :property/height 4
         :property/pretty-name 2
         :spell? 3
         :creature/level 3
