@@ -93,15 +93,15 @@
 ; TODO player settings also @ editor ?!
 (def ^:private player-components
   {:entity/player? true
-   :entity/faction :evil
+   :entity/faction :faction/evil
    :entity/free-skill-points 3
    :entity/clickable {:type :clickable/player}})
 
 (def ^:private npc-components
-  {:entity/faction :good})
+  {:entity/faction :faction/good})
 
 (def ^:private lady-components
-  {:entity/faction :good
+  {:entity/faction :faction/good
    :entity/clickable {:type :clickable/princess}})
 
 ; TODO hardcoded :lady-a

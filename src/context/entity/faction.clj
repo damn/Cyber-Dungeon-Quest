@@ -6,5 +6,8 @@
   cdq.entity/Faction
   (enemy-faction [{:keys [entity/faction]}]
     (case faction
-      :evil :good
-      :good :evil)))
+      :faction/evil :faction/good
+      :faction/good :faction/evil))
+
+  (friendly-faction [{:keys [entity/faction]}]
+    faction))

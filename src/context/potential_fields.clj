@@ -65,7 +65,7 @@
 
  ; Stepping through manually
 
- (clear-marked-cells! :good (get @faction->marked-cells :good))
+ (clear-marked-cells! :faction/good (get @faction->marked-cells :faction/good))
 
  (defn- faction->tiles->entities-map* [entities]
    (into {}
@@ -79,15 +79,15 @@
  (def max-iterations 1)
 
  (let [entities (map db/get-entity [140 110 91])
-       tl->es (:good (faction->tiles->entities-map* entities))
+       tl->es (:faction/good (faction->tiles->entities-map* entities))
        ]
    tl->es
 
-   (def last-marked-cells (generate-potential-field :good tl->es))
+   (def last-marked-cells (generate-potential-field :faction/good tl->es))
    )
  (println *1)
  (def marked *2)
- (step :good *1)
+ (step :faction/good *1)
  )
 
 (defn- generate-potential-field
@@ -132,7 +132,7 @@
 
 (defn- update-potential-fields* [context entities] ; TODO call on world-grid ?!..
   (let [grid (world-grid context)]
-    (doseq [faction [:good :evil]]
+    (doseq [faction [:faction/good :faction/evil]]
       (update-faction-potential-field grid faction entities))))
 
 ;; MOVEMENT AI

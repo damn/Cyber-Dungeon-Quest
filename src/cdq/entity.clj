@@ -11,4 +11,5 @@
   (effect-target-modifiers [_ effect-type]))
 
 (defprotocol Faction
-  (enemy-faction [_]))
+  (enemy-faction [_])
+  (friendly-faction [_]))
