@@ -2206,7 +2206,7 @@
   :creature/hp 100,
   :property/id :creatures/vampire,
   :creature/items #{:items/sword :items/cloak-blood},
-  :creature/faction :faction/good}
+  :creature/faction :faction/evil}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [96 576 48 48]},
   :creature/speed 3.0,
