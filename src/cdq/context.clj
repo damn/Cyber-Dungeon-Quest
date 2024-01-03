@@ -2,7 +2,7 @@
 
 (defprotocol EntityComponentSystem
   (create-entity! [_ components-map]
-                  "Entities should not have :id component, will get added.
+                  "Entities should not have :entity/id component, will get added.
                   Calls create/create! on components.
                   Returns the entity.")
   (get-entity [_ id])

@@ -9,8 +9,8 @@
   (binding [*print-level* nil]
     (with-out-str
      (clojure.pprint/pprint
-      {:id (:id entity*)
-       :state (entity/state entity*)}))))
+      {:entity/id (:entity/id entity*)
+       :entity/state (entity/state entity*)}))))
 
 (defn create [{:keys [gui-viewport-width] :as context}]
   (let [label (->label context "")

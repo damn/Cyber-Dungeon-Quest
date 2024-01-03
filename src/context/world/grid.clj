@@ -108,7 +108,8 @@
                (->> cells*
                     cells->entities
                     (map deref)
-                    (not-any? #(and (not= (:id %) (:id entity*))
+                    (not-any? #(and (not= (:entity/id %)
+                                          (:entity/id entity*))
                                     (:is-solid (:entity/body %))
                                     (geom/collides? (:entity/body %)
                                                     (:entity/body entity*)))))))))

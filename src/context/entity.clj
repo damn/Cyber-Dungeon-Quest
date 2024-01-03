@@ -31,11 +31,11 @@
      (system component entity* context)
      (catch Throwable t
        (when-not @thrown-error
-         (println "Render error for: entity :id " (:entity/id entity*) " \n component " component "\n system" system)
+         (println "Render error for: entity :entity/id " (:entity/id entity*) " \n component " component "\n system" system)
          (p/pretty-pst t)
          (reset! thrown-error t))
        (let [[x y] (:entity/position entity*)]
-         (draw-text context {:text (str "Render error entity :id " (:entity/id entity*) "\n" (component 0) "\n"system "\n" @thrown-error)
+         (draw-text context {:text (str "Render error entity :entity/id " (:entity/id entity*) "\n" (component 0) "\n"system "\n" @thrown-error)
                              :x x
                              :y y
                              :up? true}))))))
