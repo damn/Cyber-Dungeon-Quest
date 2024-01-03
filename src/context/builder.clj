@@ -1,117 +1,11 @@
 (ns context.builder
   (:require [x.x :refer [defcomponent]]
-            [reduce-fsm :as fsm]
             [gdl.context :refer [play-sound!]]
             [gdl.graphics.animation :as animation]
             [gdl.math.vector :as v]
             [cdq.context :refer [create-entity! get-property]]
-            [context.entity.body :refer (assoc-left-bottom)]
-            (context.entity.state
-             [active-skill :as active-skill]
-             [npc-dead :as npc-dead]
-             [npc-idle :as npc-idle]
-             [npc-sleeping :as npc-sleeping]
-             [player-dead :as player-dead]
-             [player-found-princess :as player-found-princess]
-             [player-idle :as player-idle]
-             [player-item-on-cursor :as player-item-on-cursor]
-             [player-moving :as player-moving]
-             [stunned :as stunned])))
+            [context.entity.body :refer (assoc-left-bottom)]))
 
-(fsm/defsm-inc ^:private npc-fsm
-  [[:sleeping
-    :kill -> :dead
-    :stun -> :stunned
-    :alert -> :idle]
-   [:idle
-    :kill -> :dead
-    :stun -> :stunned
-    :start-action -> :active-skill]
-   [:active-skill
-    :kill -> :dead
-    :stun -> :stunned
-    :action-done -> :idle]
-   [:stunned
-    :kill -> :dead
-    :effect-wears-off -> :idle]
-   [:dead]])
-
-(fsm/defsm-inc ^:private player-fsm
-  [[:idle
-    :kill -> :dead
-    :stun -> :stunned
-    :start-action -> :active-skill
-    :pickup-item -> :item-on-cursor
-    :movement-input -> :moving
-    :found-princess -> :princess-saved]
-   [:moving
-    :kill -> :dead
-    :stun -> :stunned
-    :no-movement-input -> :idle]
-   [:active-skill
-    :kill -> :dead
-    :stun -> :stunned
-    :action-done -> :idle]
-   [:stunned
-    :kill -> :dead
-    :effect-wears-off -> :idle]
-   [:item-on-cursor
-    :kill -> :dead
-    :stun -> :stunned
-    :drop-item -> :idle
-    :dropped-item -> :idle]
-   [:princess-saved]
-   [:dead]])
-
-(def ^:private npc-state-constructors
-  {:sleeping     (fn [_ctx e] (npc-sleeping/->NpcSleeping e))
-   :idle         (fn [_ctx e] (npc-idle/->NpcIdle e))
-   :active-skill active-skill/->CreateWithCounter
-   :stunned      stunned/->CreateWithCounter
-   :dead         (fn [_ctx e] (npc-dead/->NpcDead e))})
-
-(def ^:private player-state-constructors
-  {:item-on-cursor (fn [_ctx e item] (player-item-on-cursor/->PlayerItemOnCursor e item))
-   :idle           (fn [_ctx e] (player-idle/->PlayerIdle e))
-   :moving         (fn [_ctx e v] (player-moving/->PlayerMoving e v))
-   :active-skill   active-skill/->CreateWithCounter
-   :stunned        stunned/->CreateWithCounter
-   :dead           (fn [_ctx e] (player-dead/->PlayerDead e))
-   :princess-saved (fn [_ctx e] (player-found-princess/->PlayerFoundPrincess e))})
-
-(defn- ->state [& {:keys [player? initial-state]}]
-  {:initial-state (if player?
-                    :idle ; for savegame not, also initial-state.
-                    initial-state)
-   :fsm (if player?
-          player-fsm
-          npc-fsm)
-   :state-obj-constructors (if player?
-                             player-state-constructors
-                             npc-state-constructors)})
-
-; TODO player settings also @ editor ?!
-(def ^:private player-components
-  {:entity/player? true
-   :entity/free-skill-points 3
-   :entity/clickable {:type :clickable/player}})
-
-(def ^:private lady-components
-  {:entity/clickable {:type :clickable/princess}})
-
-; TODO just pass components ! ( & validate entity schema ?)
-; => check schema by going through all entities ?
-
-; optional fields @ creature editor ?
-; flying
-; skills
-; items
-; => can also add clickable/princess ?
-
-; New fields editor
-; faction ?
-
-; TODO hardcoded :lady-a
 (defn- create-creature-data [{:keys [property/id
                                      property/animation
                                      creature/flying?
@@ -121,29 +15,21 @@
                                      creature/mana
                                      creature/skills
                                      creature/items]
-                              [width height] :property/dimensions
-                              :as creature-props}
-                             {:keys [player?
-                                     initial-state] :as extra-params}
+                              [width height] :property/dimensions}
+                             extra-components
                              context]
-  (let [princess? (= id :creatures/lady-a)]
-    (merge (cond
-            player? player-components
-            princess? lady-components)
-           {:entity/animation animation
-            :entity/body {:width width :height height :solid? true}
-            :entity/movement speed
-            :entity/hp hp
-            :entity/mana mana
-            :entity/skills (zipmap skills (map #(get-property context %) skills)) ; TODO just set of skills use?
-            :entity/items items
-            :entity/flying? flying?
-            :entity/faction faction
-            :entity/z-order (if flying? :z-order/flying :z-order/ground)}
-           (cond
-            princess? nil
-            :else {:entity/state (->state :player? player? :initial-state initial-state)})
-           extra-params)))
+  (merge {:entity/animation animation
+          :entity/body {:width width :height height :solid? true}
+          :entity/movement speed
+          :entity/hp hp
+          :entity/mana mana
+          :entity/skills (zipmap skills (map #(get-property context %) skills)) ; TODO just set of skills use?
+          :entity/items items
+          :entity/flying? flying?
+          :entity/faction faction
+          :entity/z-order (if flying? :z-order/flying :z-order/ground)}
+         extra-components
+         (when (= id :creatures/lady-a) {:entity/clickable {:type :clickable/princess}})))
 
 (defcomponent :entity/plop _
   (context.entity/destroy! [_ entity ctx]
@@ -151,11 +37,11 @@
 
 (extend-type gdl.context.Context
   cdq.context/Builder
-  (creature-entity [context creature-id position creature-params]
+  (creature-entity [context creature-id position extra-components]
     (create-entity! context
                     (-> context
                         (get-property creature-id)
-                        (create-creature-data creature-params context)
+                        (create-creature-data extra-components context)
                         (assoc :entity/position position)
                         assoc-left-bottom)))
 

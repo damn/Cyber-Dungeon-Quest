@@ -1,5 +1,6 @@
 (ns context.effect.spawn
   (:require [context.effect :as effect]
+            [context.entity.state.npc :as npc-state]
             [cdq.context :refer [creature-entity]]))
 
 ; TODO spawning on player both without error ?! => not valid position checked
@@ -44,6 +45,5 @@
   (creature-entity context
                    creature-id
                    target-position
-                   ; TODO make this param explicit @ create-creature-data, don't just merge there.
-                   {:entity/faction (:entity/faction @source)
-                    :initial-state :idle}))
+                   {:entity/state (npc-state/->state :idle)
+                    :entity/faction (:entity/faction @source)}))

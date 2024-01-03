@@ -6,6 +6,8 @@
             [gdl.math.vector :as v]
             [data.grid2d :as grid2d]
             [utils.core :refer [->tile tile->middle]]
+            [context.entity.state.player :as player-state]
+            [context.entity.state.npc :as npc-state]
             [context.world.grid :refer [create-grid]]
             [context.world.content-grid :refer [->content-grid]]
             [cdq.context :refer [creature-entity ray-blocked? content-grid world-grid get-property]]
@@ -177,7 +179,7 @@
     (creature-entity context
                      creature-id
                      (tile->middle posi)
-                     {:initial-state :sleeping}))
+                     {:entity/state (npc-state/->state :sleeping)}))
   ; otherwise will be rendered, is visible
   (tiled/remove-layer! tiled-map :creatures))
 
@@ -186,7 +188,10 @@
   (creature-entity context
                    :creatures/vampire ; TODO hardcoded
                    (:start-position world-map)
-                   {:player? true}))
+                   {:entity/state (player-state/->state :idle)
+                    :entity/player? true
+                    :entity/free-skill-points 3
+                    :entity/clickable {:type :clickable/player}}))
 
 (defn merge->context [context]
   ; TODO when (:context/world-map context)
