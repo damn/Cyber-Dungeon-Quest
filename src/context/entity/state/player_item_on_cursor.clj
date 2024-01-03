@@ -13,9 +13,9 @@
 ; this is okay, you have thrown the item over a hill, thats possible.
 
 (defn- put-item-on-ground! [{:keys [context/player-entity] :as context} position]
-  {:pre [(:item-on-cursor @player-entity)]}
+  {:pre [(:entity/item-on-cursor @player-entity)]}
   (play-sound! context "sounds/bfxr_itemputground.wav")
-  (item-entity context position (:item-on-cursor @player-entity)))
+  (item-entity context position (:entity/item-on-cursor @player-entity)))
 
 (defn- placement-point [player target maxrange]
   (v/add player
@@ -45,16 +45,16 @@
   state/State
   (enter [_ ctx]
     (set-cursor! ctx :cursors/hand-grab)
-    (swap! entity assoc :item-on-cursor item))
+    (swap! entity assoc :entity/item-on-cursor item))
 
   (exit [_ ctx]
     ; at context.ui.inventory-window/clicked-cell when we put it into a inventory-cell
     ; we do not want to drop it on the ground too additonally,
     ; so we dissoc it there manually. Otherwise it creates another item
     ; on the ground
-    (when (:item-on-cursor @entity)
+    (when (:entity/item-on-cursor @entity)
       (put-item-on-ground! ctx (item-place-position ctx entity))
-      (swap! entity dissoc :item-on-cursor)))
+      (swap! entity dissoc :entity/item-on-cursor)))
 
   (tick! [_ _ctx])
   (render-below [_ ctx entity*]
@@ -67,5 +67,5 @@
   (when (and (= :item-on-cursor (entity/state @player-entity))
              (not (world-item? context)))
     (draw-centered-image context
-                         (:property/image (:item-on-cursor @player-entity))
+                         (:property/image (:entity/item-on-cursor @player-entity))
                          (gui-mouse-position context))))

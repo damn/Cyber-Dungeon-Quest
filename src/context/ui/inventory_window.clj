@@ -29,7 +29,7 @@
   (let [entity player-entity
         inventory (:entity/inventory @entity)
         item (get-in inventory cell)
-        item-on-cursor (:item-on-cursor @entity)]
+        item-on-cursor (:entity/item-on-cursor @entity)]
     (cond
      ; PICKUP FROM CELL
      (and (not item-on-cursor)
@@ -49,7 +49,7 @@
         (do
          (play-sound! context "sounds/bfxr_itemput.wav")
          (set-item! context entity cell item-on-cursor)
-         (swap! entity dissoc :item-on-cursor)
+         (swap! entity dissoc :entity/item-on-cursor)
          (send-event! context entity :dropped-item)))
 
       ; STACK ITEMS
@@ -58,7 +58,7 @@
       (do
        (play-sound! context "sounds/bfxr_itemput.wav")
        (stack-item! context entity cell item-on-cursor)
-       (swap! entity dissoc :item-on-cursor)
+       (swap! entity dissoc :entity/item-on-cursor)
        (send-event! context entity :dropped-item))
 
       ; SWAP ITEMS
@@ -71,7 +71,7 @@
          (remove-item! context entity cell)
          (set-item! context entity cell item-on-cursor)
          ; need to dissoc and drop otherwise state enter does not trigger picking it up again
-         (swap! entity dissoc :item-on-cursor)
+         (swap! entity dissoc :entity/item-on-cursor)
          (send-event! context entity :dropped-item)
          (send-event! context entity :pickup-item item)))))))
 
@@ -88,7 +88,7 @@
   (draw-rectangle c x y cell-size cell-size color/gray)
   (when (and mouseover?
              (= :item-on-cursor (entity/state @player-entity)))
-    (let [item (:item-on-cursor @player-entity)
+    (let [item (:entity/item-on-cursor @player-entity)
           color (cond
                  (not (inventory/valid-slot? cell item))
                  not-allowed-color
