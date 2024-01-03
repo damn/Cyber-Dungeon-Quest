@@ -106,13 +106,11 @@
   {:entity/player? true
    :entity/faction :evil
    ;:entity/mana 100 ; is overwritten
-   :player-movement true
-   :free-skill-points 3
+   :entity/free-skill-points 3
    :entity/clickable {:type :clickable/player}})
 
 (def ^:private npc-components
-  {:entity/faction :good
-   :move-towards-enemy true})
+  {:entity/faction :good})
 
 (def ^:private lady-props
   {:entity/faction :good
@@ -178,7 +176,7 @@
                       {:position position
                        :entity/animation animation
                        :entity/z-order :effect
-                       :delete-after-animation-stopped? true})))
+                       :entity/delete-after-animation-stopped? true})))
 
   ; TODO use image w. shadows spritesheet
   (item-entity [context position item]
@@ -188,8 +186,8 @@
                                    :height 0.5
                                    :is-solid false}
                      :entity/z-order :on-ground
-                     :image (:property/image item)
-                     :item item
+                     :entity/image (:property/image item)
+                     :entity/item item
                      :entity/clickable {:type :clickable/item
                                         :text (:property/pretty-name item)}}))
 
@@ -197,10 +195,8 @@
     (create-entity! context
                     {:position start
                      :entity/z-order :effect
-                     :line-render {:thick? thick?
-                                   :end end
-                                   :color color}
-                     :delete-after-duration duration}))
+                     :entity/line-render {:thick? thick? :end end :color color}
+                     :entity/delete-after-duration duration}))
 
   ; TODO maxrange ?
   ; TODO make only common fields here
@@ -220,8 +216,8 @@
                      :entity/movement speed
                      :entity/movement-vector movement-vector
                      :entity/animation animation
-                     :delete-after-duration maxtime
+                     :entity/delete-after-duration maxtime
                      :entity/plop true
-                     :projectile-collision {:piercing piercing
-                                            :hit-effect hit-effect
-                                            :already-hit-bodies #{}}})))
+                     :entity/projectile-collision {:piercing piercing
+                                                   :hit-effect hit-effect
+                                                   :already-hit-bodies #{}}})))

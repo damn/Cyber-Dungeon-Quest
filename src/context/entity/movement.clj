@@ -33,7 +33,7 @@
   (swap! projectile update-position delta-time direction)
   (let [{:keys [hit-effect
                 already-hit-bodies
-                piercing]} (:projectile-collision @projectile)
+                piercing]} (:entity/projectile-collision @projectile)
         grid (world-grid ctx)
         cells* (map deref (rectangle->cells grid (:entity/body @projectile)))
         hit-entity (find-first #(and (not (contains? already-hit-bodies %)) ; not filtering out own id
@@ -45,7 +45,7 @@
                                (cells->entities cells*))
         blocked? (cond hit-entity
                        (do
-                        (swap! projectile update-in [:projectile-collision :already-hit-bodies] conj hit-entity)
+                        (swap! projectile update-in [:entity/projectile-collision :already-hit-bodies] conj hit-entity)
                         (do-effect! (merge ctx {:effect/source projectile
                                                 :effect/target hit-entity})
                                     hit-effect)
@@ -80,7 +80,7 @@
       (assert (or (zero? (v/length direction))
                   (v/normalised? direction)))
       (when-not (zero? (v/length direction))
-        (when (if (:projectile-collision @entity)
+        (when (if (:entity/projectile-collision @entity)
                 (update-position-projectile! ctx entity direction)
                 (update-position-solid!      ctx entity direction))
           (doseq-entity entity

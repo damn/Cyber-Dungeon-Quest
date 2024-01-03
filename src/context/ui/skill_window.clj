@@ -7,13 +7,13 @@
 (defn- pressed-on-skill-in-menu [{:keys [context/player-entity]
                                   :as context}
                                  skill]
-  (when (and (pos? (:free-skill-points @player-entity))
+  (when (and (pos? (:entity/free-skill-points @player-entity))
              (not (entity/has-skill? @player-entity skill)))
-    (swap! player-entity update :free-skill-points dec)
+    (swap! player-entity update :entity/free-skill-points dec)
     (add-skill! context player-entity skill)))
 
 ; TODO render text label free-skill-points
-; (str "Free points: " (:free-skill-points @player-entity))
+; (str "Free points: " (:entity/free-skill-points @player-entity))
 (defn create [context]
   (->window context
             {:title "Skills"

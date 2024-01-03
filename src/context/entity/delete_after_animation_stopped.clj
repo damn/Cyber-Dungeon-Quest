@@ -3,7 +3,7 @@
             [gdl.graphics.animation :as animation]
             [context.entity :as entity]))
 
-(defcomponent :delete-after-animation-stopped? _
+(defcomponent :entity/delete-after-animation-stopped? _
   (entity/create! [_ e _ctx]
     (-> @e :entity/animation :looping? not assert))
   (entity/tick! [_ e _ctx]

@@ -19,7 +19,7 @@
 
 (defmethod on-clicked :clickable/item
   [{:keys [context/player-entity] :as context} clicked-entity]
-  (let [item (:item @clicked-entity)]
+  (let [item (:entity/item @clicked-entity)]
     (cond
      (visible? (inventory-window context))
      (do

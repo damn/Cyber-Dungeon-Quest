@@ -4,7 +4,7 @@
             [context.entity :as entity]))
 
 (defn- assoc-frame! [e]
-  (swap! e #(assoc % :image (animation/current-frame (:entity/animation %)))))
+  (swap! e #(assoc % :entity/image (animation/current-frame (:entity/animation %)))))
 
 (defcomponent :entity/animation animation
   (entity/create! [_ e _ctx]

@@ -10,6 +10,10 @@
 
 (defrecord Entity [id position]) ; position only required for render, actually we dont need to know about that here?
 ; can be used for non-positional entities, skills, items, ?
+; TODO entity/id, entity/position, entity/destroyed
+; entity/item-on-cursor
+; entity/inventory
+; etc.
 
 (defsystem create   [_])
 (defsystem create!  [_ entity context])
