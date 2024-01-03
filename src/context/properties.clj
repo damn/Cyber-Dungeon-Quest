@@ -87,7 +87,6 @@
    :item/modifier :nested-map
    :weapon/two-handed? :label
    :creature/level :text-field
-   :creature/species :link-button
    :creature/skills :one-to-many
    :creature/items :one-to-many
    :creature/mana :text-field
@@ -140,6 +139,10 @@
         :item/slot 3
         :weapon/two-handed? 4
         :creature/species 4
+        :creature/flying? 5
+        :creature/speed 6
+        :creature/hp 7
+        :creature/mana 8
         9)
       (name k)])
    properties))
@@ -161,16 +164,13 @@
                                       [:property/id [:qualified-keyword {:namespace :creatures}]]
                                       [:property/image :some]
                                       [:creature/species [:qualified-keyword {:namespace :species}]] ; one of species
+                                      [:creature/speed pos?]
+                                      [:creature/hp pos-int?]
                                       [:creature/mana nat-int?]
                                       [:creature/flying? :boolean]
                                       [:creature/skills [:set :qualified-keyword]] ; one of spells/skills
                                       [:creature/items  [:set :qualified-keyword]] ; one of items
                                       [:creature/level [:maybe pos-int?]]])} ; >0, <max-lvls (9 ?)
-   :property.type/species {:of-type? :creature/hp
-                           :edn-file-sort-order 2
-                           :title "Species"
-                           :overview {:title "Species"
-                                      :columns 2}}
    :property.type/spell {:of-type? (fn [{:keys [item/slot skill/effect]}]
                                      (and (not slot) effect))
                          :edn-file-sort-order 0
@@ -426,7 +426,9 @@
        (pprint-spit properties-file)))
 
 ; # Add new fields
-; * comment out write-to-file! below
+; set this to false
+(def ^:private write-to-file? false)
+
 (comment
  (let [ctx @gdl.app/current-context
        creatures (cdq.context/all-properties ctx :property.type/creature)
@@ -453,6 +455,7 @@
   (binding [*print-level* nil]
     (clojure.pprint/pprint data)) ; TODO modal window with data / maybe get change diff ?
   (let [properties (update properties id merge data)]
-    (.start (Thread. (fn []
-                       (write-to-file! properties properties-file))))
+    (when write-to-file?
+      (.start (Thread. (fn []
+                         (write-to-file! properties properties-file)))))
     (assoc context :context/properties properties)))

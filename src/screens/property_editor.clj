@@ -39,7 +39,6 @@
 ; => let me ADD effect components like sound & SELECT sound ! file chooser
 ; do it properly right do it with your editor not text ....
 ; TODO refresh overview table after property-editor save something (callback ?)
-; remove species, directly hp/speed ( no multiplier )
 
 ; used @ player-modal / error-window , can move to gdl.context
 (defn- add-to-stage! [ctx actor]

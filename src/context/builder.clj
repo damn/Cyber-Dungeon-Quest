@@ -117,17 +117,13 @@
   {:entity/faction :good
    :entity/clickable {:type :clickable/princess}})
 
-(defn- species-properties [species-props]
-  (let [multiplier {:id :species/multiplier, :speed 2, :hp 10}]
-    (-> species-props
-        (update :creature/speed * (:speed multiplier))
-        (update :creature/hp #(int (* % (:hp multiplier)))))))
-
 ; TODO hardcoded :lady-a
-(defn- create-creature-data [{:keys [creature/skills
-                                     creature/items
+(defn- create-creature-data [{:keys [creature/flying?
+                                     creature/speed
+                                     creature/hp
                                      creature/mana
-                                     creature/flying?] :as creature-props}
+                                     creature/skills
+                                     creature/items] :as creature-props}
                              {:keys [is-player
                                      initial-state] :as extra-params}
                              context]
@@ -136,9 +132,6 @@
         ; no need to calculate/see it here again every time.
         images (create-images context (name creature-id))
         [width height] (images->world-unit-dimensions images)
-        ; TODO remove species, just speed/hp
-        {:keys [creature/speed
-                creature/hp]} (species-properties (get-property context (:creature/species creature-props)))
         princess? (= creature-id :creatures/lady-a)]
     (merge (cond
             is-player player-components
