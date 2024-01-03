@@ -72,7 +72,7 @@
 (defcomponent :entity/movement tiles-per-second
   (ecs/create! [_ entity _ctx]
     (assert (and (:entity/body @entity)
-                 (:entity/position    @entity)))
+                 (:entity/position @entity)))
     (assert (<= tiles-per-second max-speed)))
 
   (ecs/tick! [_ entity ctx]

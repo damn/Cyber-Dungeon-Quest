@@ -23,8 +23,8 @@
                                     fsm
                                     state-obj
                                     state-obj-constructors]}
-  (ecs/create! [_ entity context]
-    (swap! entity assoc :entity/state
+  (ecs/create! [[k _] entity context]
+    (swap! entity assoc k
            ; if :state = nil in fsm => set to initial-state
            ; TODO make PR / bug report.
            {:fsm (assoc (fsm initial-state nil)  ; throws when initial-state is not part of states
