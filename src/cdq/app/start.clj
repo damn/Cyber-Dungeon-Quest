@@ -37,29 +37,29 @@
 
 (def ^:private config dev-config)
 
-(defn- create-context [context]
-  (let [context (merge context
-                       (properties/->context context "resources/properties.edn"))
+(defn- create-context [default-context]
+  (let [context (merge default-context
+                       (properties/->context default-context "resources/properties.edn"))
         context (merge context
                        (cursor/->context context)
                        (inventory-window/->context context)
                        (action-bar/->context context)
                        {:context/config config})
-        background-image-fn #(->image-widget context ; fn because cannot add actor to different stages...
-                                             (create-image context "ui/moon_background.png")
-                                             {:fill-parent? true
-                                              :scaling :fill
-                                              :align :center})]
+        ->background-image #(->image-widget context ; fn because cannot add actor to different stages
+                                            (create-image context "ui/moon_background.png")
+                                            {:fill-parent? true
+                                             :scaling :fill
+                                             :align :center})]
     (set-cursor! context :cursors/default)
     (merge context
            ; previous default-font overwritten
            {:default-font (generate-ttf context {:file "exocet/films.EXL_____.ttf" :size 16})
             :screens/game            (->stage-screen context (cdq.screens.game/screen context))
-            :screens/main-menu       (->stage-screen context (cdq.screens.main-menu/screen context background-image-fn))
+            :screens/main-menu       (->stage-screen context (cdq.screens.main-menu/screen context (->background-image)))
             :screens/map-editor      (->stage-screen context (cdq.screens.map-editor/screen context))
             :screens/minimap         (cdq.screens.minimap/->Screen)
-            :screens/options-menu    (->stage-screen context (cdq.screens.options-menu/screen context background-image-fn))
-            :screens/property-editor (->stage-screen context (cdq.screens.property-editor/screen context background-image-fn))})))
+            :screens/options-menu    (->stage-screen context (cdq.screens.options-menu/screen context (->background-image)))
+            :screens/property-editor (->stage-screen context (cdq.screens.property-editor/screen context (->background-image)))})))
 
 (def ^:private tile-size 48)
 

@@ -6,7 +6,7 @@
             [utils.core :refer [safe-get]]
             [cdq.context.game :refer [start-game-context]]))
 
-(defn screen [{:keys [context/config] :as context} background-image-fn]
+(defn screen [{:keys [context/config] :as context} background-image]
   (let [table (->table context
                        {:rows (remove nil?
                                       [[(->text-button context "Start game" (fn [_context]
@@ -23,7 +23,7 @@
                                        [(->text-button context "Exit" exit-app)]])
                         :cell-defaults {:pad-bottom 25}
                         :fill-parent? true})]
-    {:actors [(background-image-fn)
+    {:actors [background-image
               table
               (->actor context {:act (fn [ctx]
                                        (when (key-just-pressed? ctx input.keys/escape)

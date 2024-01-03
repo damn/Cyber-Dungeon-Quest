@@ -411,8 +411,8 @@
                            [[(->text-button context "Back to Main Menu" (fn [_context]
                                                                           (change-screen! :screens/main-menu)))]])}))
 
-(defn screen [context background-image-fn]
-  {:actors [(background-image-fn)
+(defn screen [context background-image]
+  {:actors [background-image
             (->table context {:id :main-table
                               :rows [[(->left-widget context) nil]]
                               :fill-parent? true})]})
