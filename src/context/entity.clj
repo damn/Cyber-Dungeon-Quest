@@ -8,7 +8,7 @@
 ; doseq-entity - what if key is not available anymore ? check :when (k @entity)  ?
 ; but for now accepting nil value at components, so have to check first.
 
-(defrecord Entity [id position]) ; position only required for render, actually we dont need to know about that here?
+(defrecord Entity [id]) ; position only required for render, actually we dont need to know about that here?
 ; can be used for non-positional entities, skills, items, ?
 ; TODO entity/id, entity/position, entity/destroyed
 ; entity/item-on-cursor
@@ -38,7 +38,7 @@
          (println "Render error for: entity :id " (:id entity*) " \n component " component "\n system" system)
          (p/pretty-pst t)
          (reset! thrown-error t))
-       (let [[x y] (:position entity*)]
+       (let [[x y] (:entity/position entity*)]
          (draw-text context {:text (str "Render error entity :id " (:id entity*) "\n" (component 0) "\n"system "\n" @thrown-error)
                              :x x
                              :y y
@@ -70,7 +70,7 @@
 
   (create-entity! [{:keys [context.entity/ids->entities] :as context} components-map]
     {:pre [(not (contains? components-map :id))
-           (:position components-map)]}
+           (:entity/position components-map)]}
     (let [id (unique-number!)
           entity (-> (assoc components-map :id id)
                      (update-map create)

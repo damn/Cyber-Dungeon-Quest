@@ -4,7 +4,7 @@
             [context.entity :as entity]))
 
 (defcomponent :entity/line-render {:keys [thick? end color]}
-  (entity/render-default [_ {:keys [position]} c]
+  (entity/render-default [_ {:keys [entity/position]} c]
     (if thick?
       (with-shape-line-width c 4
         #(draw-line c position end color))

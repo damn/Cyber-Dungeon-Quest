@@ -8,7 +8,7 @@
 (defrecord ContentGrid [grid cell-w cell-h]
   cdq.world.content-grid/ContentGrid
   (update-entity! [_ entity]
-    (let [{:keys [entity/content-cell position]} @entity
+    (let [{:keys [entity/content-cell entity/position]} @entity
           [x y] position
           new-cell (get grid [(int (/ x cell-w))
                               (int (/ y cell-h))])]

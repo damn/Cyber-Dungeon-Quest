@@ -18,8 +18,8 @@
     ; then nice alert '!' and different entities different alert time
     (add-text-effect! context entity "!")
     (create-entity! context
-                    {:position (:position @entity)
-                     :faction (:faction  @entity)
+                    {:entity/position (:entity/position @entity)
+                     :entity/faction  (:entity/faction  @entity)
                      :shout (->counter context 0.2)}))
 
   (tick! [_ context]
@@ -31,7 +31,7 @@
           (send-event! context entity :alert)))))
 
   (render-below [_ c entity*])
-  (render-above [_ c {[x y] :position :keys [entity/body]}]
+  (render-above [_ c {[x y] :entity/position :keys [entity/body]}]
     (draw-text c
                {:text "zzz"
                 :x x

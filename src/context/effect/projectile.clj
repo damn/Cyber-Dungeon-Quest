@@ -20,12 +20,12 @@
            effect/target] :as context}
    _effect]
   (and (not (path-blocked? context
-                           (:position @source) ; TODO test
-                           (:position @target)
+                           (:entity/position @source) ; TODO test
+                           (:entity/position @target)
                            size))
        ; TODO not taking into account body sizes
-       (< (v/distance (:position @source)
-                      (:position @target))
+       (< (v/distance (:entity/position @source)
+                      (:entity/position @target))
           maxrange)))
 
 (comment
@@ -60,7 +60,7 @@
   (and source target direction)) ; faction @ source also ?
 
 (defn- start-point [entity* direction]
-  (v/add (:position entity*)
+  (v/add (:entity/position entity*)
          (v/scale direction
                   (+ (:radius (:entity/body entity*)) size 0.1))))
 
@@ -70,7 +70,7 @@
    _effect]
   (projectile-entity context
                      {:position (start-point @source direction)
-                      :faction  (:faction  @source)
+                      :faction  (:entity/faction  @source)
                       :size size
                       :animation (black-projectile context)
                       :speed speed

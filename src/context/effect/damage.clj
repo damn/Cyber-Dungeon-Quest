@@ -152,7 +152,7 @@
    :else
    (let [[dmg-type min-max-dmg] (effective-damage damage @source @target)
          dmg-amount (random/rand-int-between min-max-dmg)]
-     (audiovisual context (:position @target)
+     (audiovisual context (:entity/position @target)
                   (keyword (str "effects.damage." (name dmg-type))
                            "hit-effect"))
      (swap! target update :entity/hp apply-val #(- % dmg-amount))

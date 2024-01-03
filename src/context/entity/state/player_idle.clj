@@ -58,8 +58,8 @@
 (def click-distance-tiles 1.5)
 
 (defn- ->clickable-mouseover-entity-interaction [ctx player-entity* mouseover-entity]
-  (if (and (< (v/distance (:position player-entity*)
-                          (:position @mouseover-entity))
+  (if (and (< (v/distance (:entity/position player-entity*)
+                          (:entity/position @mouseover-entity))
               click-distance-tiles))
     [(clickable->cursor @mouseover-entity false)
      (fn [] (on-clicked ctx mouseover-entity))]
@@ -68,12 +68,12 @@
 
 (defn- effect-context [{:keys [context/mouseover-entity] :as context} entity]
   (let [target @mouseover-entity
-        target-position (or (and target (:position @target))
+        target-position (or (and target (:entity/position @target))
                             (world-mouse-position context))]
     {:effect/source entity
      :effect/target target
      :effect/target-position target-position
-     :effect/direction (v/direction (:position @entity) target-position)}))
+     :effect/direction (v/direction (:entity/position @entity) target-position)}))
 
 ; TODO move to inventory-window extend Context
 (defn- inventory-cell-with-item? [{:keys [context/player-entity]} actor]

@@ -22,7 +22,7 @@
         apply-delta (fn [position]
                       (mapv #(+ %1 (* %2 speed delta)) position direction-vector))]
     (-> entity*
-        (update :position apply-delta)
+        (update :entity/position apply-delta)
         (update-in [:entity/body :left-bottom] apply-delta))))
 
 ; TODO DRY with valid-position?
@@ -72,7 +72,7 @@
 (defcomponent :entity/movement tiles-per-second
   (entity/create! [_ entity _ctx]
     (assert (and (:entity/body @entity)
-                 (:position    @entity)))
+                 (:entity/position    @entity)))
     (assert (<= tiles-per-second max-speed)))
 
   (entity/tick! [_ entity ctx]

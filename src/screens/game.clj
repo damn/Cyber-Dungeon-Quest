@@ -86,7 +86,7 @@
                             world-camera]
                      :as context}
                     active-entities]
-  (camera/set-position! world-camera (:position @player-entity))
+  (camera/set-position! world-camera (:entity/position @player-entity))
   (render-tiled-map context
                     (:tiled-map world-map)
                     tile-color-setter)

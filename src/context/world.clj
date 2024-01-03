@@ -52,7 +52,7 @@
 ; idk how to call it
 
 (defn- on-screen? [entity* {:keys [world-camera world-viewport-width world-viewport-height]}]
-  (let [[x y] (:position entity*)
+  (let [[x y] (:entity/position entity*)
         x (float x)
         y (float y)
         [cx cy] (camera/position world-camera)
@@ -87,7 +87,7 @@
     (and (:entity/z-order target*)  ; is even an entity which renders something
          (or (not (:entity/player? source*))
              (on-screen? target* context))
-         (not (ray-blocked? context (:position source*) (:position target*)))))
+         (not (ray-blocked? context (:entity/position source*) (:entity/position target*)))))
 
   (ray-blocked? [{:keys [context/world-map]} start target]
     (let [{:keys [cell-blocked-boolean-array width height]} world-map]

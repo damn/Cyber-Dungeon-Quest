@@ -5,8 +5,8 @@
             [context.effect :as effect]))
 
 (defn- in-range? [entity* target* maxrange] ; == circle-collides?
-  (< (- (v/distance (:position entity*)
-                    (:position target*))
+  (< (- (v/distance (:entity/position entity*)
+                    (:entity/position target*))
         (:radius (:entity/body entity*))
         (:radius (:entity/body target*)))
      maxrange))
@@ -19,15 +19,15 @@
 
 ; TODO use at projectile & also adjust rotation
 (defn- start-point [entity* target*]
-  (v/add (:position entity*)
-         (v/scale (v/direction (:position entity*)
-                               (:position target*))
+  (v/add (:entity/position entity*)
+         (v/scale (v/direction (:entity/position entity*)
+                               (:entity/position target*))
                   (:radius (:entity/body entity*)))))
 
 (defn- end-point [entity* target* maxrange]
   (v/add (start-point entity* target*)
-         (v/scale (v/direction (:position entity*)
-                               (:position target*))
+         (v/scale (v/direction (:entity/position entity*)
+                               (:entity/position target*))
                   maxrange)))
 
 (defmethod effect/render-info :effect/target-entity
@@ -64,7 +64,7 @@
     (do
      (line-entity context
                   {:start (start-point @source @target)
-                   :end (:position @target)
+                   :end (:entity/position @target)
                    :duration 0.05
                    :color [1 0 0 0.75]
                    :thick? true})

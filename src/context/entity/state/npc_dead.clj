@@ -6,7 +6,7 @@
   state/State
   (enter [_ context]
     (swap! entity assoc :destroyed? true)
-    (audiovisual context (:position @entity) :creature/die-effect))
+    (audiovisual context (:entity/position @entity) :creature/die-effect))
   (exit [_ context])
   (tick! [_ context])
   (render-below [_ c entity*])

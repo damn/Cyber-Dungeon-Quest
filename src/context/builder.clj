@@ -157,7 +157,7 @@
 
 (defcomponent :entity/plop _
   (context.entity/destroy! [_ entity ctx]
-    (cdq.context/audiovisual ctx (:position @entity) :projectile/hit-wall-effect)))
+    (cdq.context/audiovisual ctx (:entity/position @entity) :projectile/hit-wall-effect)))
 
 (extend-type gdl.context.Context
   cdq.context/Builder
@@ -166,14 +166,14 @@
                     (-> context
                         (get-property creature-id)
                         (create-creature-data creature-params context)
-                        (assoc :position position)
+                        (assoc :entity/position position)
                         assoc-left-bottom)))
 
   (audiovisual [context position id]
     (let [{:keys [sound animation]} (get-property context id)]
       (play-sound! context sound)
       (create-entity! context
-                      {:position position
+                      {:entity/position position
                        :entity/animation animation
                        :entity/z-order :effect
                        :entity/delete-after-animation-stopped? true})))
@@ -181,7 +181,7 @@
   ; TODO use image w. shadows spritesheet
   (item-entity [context position item]
     (create-entity! context
-                    {:position position
+                    {:entity/position position
                      :entity/body {:width 0.5 ; TODO use item-body-dimensions
                                    :height 0.5
                                    :is-solid false}
@@ -193,7 +193,7 @@
 
   (line-entity [context {:keys [start end duration color thick?]}]
     (create-entity! context
-                    {:position start
+                    {:entity/position start
                      :entity/z-order :effect
                      :entity/line-render {:thick? thick? :end end :color color}
                      :entity/delete-after-duration duration}))
@@ -203,7 +203,7 @@
   (projectile-entity [context
                       {:keys [position faction size animation movement-vector hit-effect speed maxtime piercing]}]
     (create-entity! context
-                    {:position position
+                    {:entity/position position
                      :entity/faction faction
                      :entity/body {:width size
                                    :height size

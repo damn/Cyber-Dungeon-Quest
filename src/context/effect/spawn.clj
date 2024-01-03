@@ -45,5 +45,5 @@
                    creature-id
                    target-position
                    ; TODO make this param explicit @ create-creature-data, don't just merge there.
-                   {:entity/faction (:faction @source)
+                   {:entity/faction (:entity/faction @source)
                     :initial-state :idle}))

@@ -14,7 +14,7 @@
 (defn- draw-bounds [c {[x y] :left-bottom :keys [width height is-solid]}]
   (draw-rectangle c x y width height (if is-solid color/white color/gray)))
 
-(defn assoc-left-bottom [{:keys [entity/body] [x y] :position :as entity*}]
+(defn assoc-left-bottom [{:keys [entity/body] [x y] :entity/position :as entity*}]
   (assoc-in entity* [:entity/body :left-bottom] [(- x (/ (:width body)  2))
                                                  (- y (/ (:height body) 2))]))
 
@@ -56,7 +56,7 @@
 
   (entity/create! [_ entity context]
     ; TODO VALID POSITION CHECK (done @ world-grid?)
-    (assert (:position @entity))
+    (assert (:entity/position @entity))
     (swap! entity assoc-left-bottom)
     (add-entity! (world-grid context) entity))
 

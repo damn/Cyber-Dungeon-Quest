@@ -7,13 +7,13 @@
 
 (defn- effect-context [context entity]
   (let [cell (get (world-grid context)
-                  (utils.core/->tile (:position @entity)))
+                  (utils.core/->tile (:entity/position @entity)))
         target (cell/nearest-entity @cell (entity/enemy-faction @entity))]
     {:effect/source entity
      :effect/target target
      :effect/direction (when target
-                         (v/direction (:position @entity)
-                                      (:position @target)))}))
+                         (v/direction (:entity/position @entity)
+                                      (:entity/position @target)))}))
 
 (defn- npc-choose-skill [effect-context entity*]
   (->> entity*

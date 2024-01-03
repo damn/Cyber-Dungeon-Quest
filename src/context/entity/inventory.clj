@@ -144,4 +144,4 @@
     (swap! entity assoc :inventory empty-inventory)
     ;(swap! entity dissoc :items)
     (doseq [id items]
-      (try-pickup-item! context entity (get-property context id)))))
+      (try-pickup-item! context entity (get-property context id))))) ; TODO bug happens before entity/skills so no skills there

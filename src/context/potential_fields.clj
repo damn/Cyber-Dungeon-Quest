@@ -70,10 +70,10 @@
  (defn- faction->tiles->entities-map* [entities]
    (into {}
          (for [[faction entities] (->> entities
-                                       (filter   #(:faction @%))
-                                       (group-by #(:faction @%)))]
+                                       (filter   #(:entity/faction @%))
+                                       (group-by #(:entity/faction @%)))]
            [faction
-            (zipmap (map #(->tile (:position @%)) entities)
+            (zipmap (map #(->tile (:entity/position @%)) entities)
                     entities)])))
 
  (def max-iterations 1)
@@ -110,9 +110,9 @@
                  (inc iterations)))))))
 
 (defn- tiles->entities [entities faction]
-  (let [entities (filter #(= (:faction @%) faction)
+  (let [entities (filter #(= (:entity/faction @%) faction)
                          entities)]
-    (zipmap (map #(->tile (:position @%)) entities)
+    (zipmap (map #(->tile (:entity/position @%)) entities)
             entities)))
 
 (def ^:private cache (atom nil)) ; TODO move to context?
@@ -227,12 +227,12 @@
   ; TODO work with entity* !? occupied-by-other? works with entity not entity* ... not with ids ... hmmm
   (potential-field-follow-to-enemy [context entity] ; TODO pass faction here, one less dependency.
     (let [grid (world-grid context)
-          position (:position @entity)
+          position (:entity/position @entity)
           own-cell (get grid (->tile position))
           {:keys [target-entity target-cell]} (find-next-cell grid entity own-cell)]
       (cond
        target-entity
-       (v/direction position (:position @target-entity))
+       (v/direction position (:entity/position @target-entity))
 
        (nil? target-cell)
        nil
@@ -259,7 +259,7 @@
 
 #_(defn calculate-mouseover-body-colors [mouseoverbody]
   (when-let [body mouseoverbody]
-    (let [occupied-cell (get (world-grid context) (->tile (:position @body)))
+    (let [occupied-cell (get (world-grid context) (->tile (:entity/position @body)))
           own-dist (distance-to occupied-cell)
           adj-cells (cached-adjacent-cells grid occupied-cell)
           potential-cells (filter distance-to

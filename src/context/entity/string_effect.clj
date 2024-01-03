@@ -9,7 +9,7 @@
   (entity/tick! [[k _] e context]
     (when (stopped? context counter)
       (swap! e dissoc k)))
-  (entity/render-above [_ {[x y] :position :keys [entity/body]} c]
+  (entity/render-above [_ {[x y] :entity/position :keys [entity/body]} c]
     (draw-text c
                {:text text
                 :x x
