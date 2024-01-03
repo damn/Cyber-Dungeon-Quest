@@ -135,8 +135,7 @@
         :property/id 0
         :property/image 1
         :property/animation 2
-        :property/width 3 ; TODO => body.. one field.
-        :property/height 4
+        :property/dimensions 3
         :property/pretty-name 2
         :spell? 3
         :creature/level 3
@@ -167,8 +166,7 @@
                                      [:map {:closed true}
                                       [:property/id [:qualified-keyword {:namespace :creatures}]]
                                       [:property/image :some]
-                                      [:property/width pos?] ; & > max size?
-                                      [:property/height pos?]
+                                      [:property/dimensions [:tuple pos? pos?]] ; & > max size?
                                       [:property/animation :some]
                                       [:creature/species [:qualified-keyword {:namespace :species}]] ; one of species
                                       [:creature/speed pos?]
@@ -455,10 +453,10 @@
   {:pre [(contains? data :property/id)
          (contains? properties id)]}
   (validate data :humanize? true)
-  (println "\nupdate-and-write-to-file!")
-  (binding [*print-level* nil]
+  ;(println "\nupdate-and-write-to-file!")
+  #_(binding [*print-level* nil]
     (clojure.pprint/pprint data)) ; TODO modal window with data / maybe get change diff ?
-  (let [properties (update properties id merge data)]
+  (let [properties (assoc properties id data)]
     (when write-to-file?
       (.start (Thread. (fn []
                          (write-to-file! properties properties-file)))))

@@ -107,14 +107,14 @@
 ; TODO hardcoded :lady-a
 (defn- create-creature-data [{:keys [property/id
                                      property/animation
-                                     property/width
-                                     property/height
                                      creature/flying?
                                      creature/speed
                                      creature/hp
                                      creature/mana
                                      creature/skills
-                                     creature/items] :as creature-props}
+                                     creature/items]
+                              [width height] :property/dimensions
+                              :as creature-props}
                              {:keys [player?
                                      initial-state] :as extra-params}
                              context]

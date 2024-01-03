@@ -40,13 +40,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 11/24,
   :creature/species :species/toad,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [2/3 11/24],
   :creature/hp 12,
-  :property/width 2/3,
   :property/id :creatures/toad-horned,
   :creature/items #{}}
  {:property/image
@@ -65,13 +64,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 29/48,
   :creature/species :species/goblin,
   :creature/mana 11,
   :creature/level 1,
   :creature/skills #{},
+  :property/dimensions [2/3 29/48],
   :creature/hp 8,
-  :property/width 2/3,
   :property/id :creatures/goblin-warrior,
   :creature/items #{:items/falchion}}
  {:property/image
@@ -90,13 +88,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 37/48,
   :creature/species :species/lizardman-blue,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [11/16 37/48],
   :creature/hp 10,
-  :property/width 11/16,
   :property/id :creatures/lizardman-blue-shaman,
   :creature/items #{}}
  {:property/image
@@ -115,13 +112,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 2/3,
   :creature/species :species/barbarian,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [11/16 2/3],
   :creature/hp 10,
-  :property/width 11/16,
   :property/id :creatures/barbarian-f,
   :creature/items #{:items/axe}}
  {:property/image
@@ -136,13 +132,12 @@
     {:file "creatures/animations/mummy-4.png", :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 31/48,
   :creature/species :species/mummy,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [2/3 31/48],
   :creature/hp 22,
-  :property/width 2/3,
   :property/id :creatures/mummy,
   :creature/items #{}}
  {:property/image
@@ -158,13 +153,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 35/48,
   :creature/species :species/human,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [2/3 35/48],
   :creature/hp 10,
-  :property/width 2/3,
   :property/id :creatures/helion,
   :creature/items #{}}
  {:property/image
@@ -180,13 +174,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 17/24,
   :creature/species :species/human,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [2/3 17/24],
   :creature/hp 10,
-  :property/width 2/3,
   :property/id :creatures/priest,
   :creature/items #{}}
  {:property/image
@@ -205,13 +198,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 13/16,
   :creature/species :species/lizardman-green,
   :creature/mana 11,
   :creature/level 2,
   :creature/skills #{},
+  :property/dimensions [11/16 13/16],
   :creature/hp 10,
-  :property/width 11/16,
   :property/id :creatures/lizardman-green-spear,
   :creature/items #{:items/shield-wood-buckler :items/trident}}
  {:property/image
@@ -230,13 +222,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 9/16,
   :creature/species :species/dwarf,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [35/48 9/16],
   :creature/hp 12,
-  :property/width 35/48,
   :property/id :creatures/dwarf-cleric,
   :creature/items #{:items/hammer}}
  {:property/image
@@ -251,13 +242,12 @@
     {:file "creatures/animations/thief-4.png", :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 11/16,
   :creature/species :species/human,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [2/3 11/16],
   :creature/hp 10,
-  :property/width 2/3,
   :property/id :creatures/thief,
   :creature/items #{:items/dagger}}
  {:property/image
@@ -276,13 +266,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 37/48,
   :creature/species :species/lizardman-green,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [11/16 37/48],
   :creature/hp 10,
-  :property/width 11/16,
   :property/id :creatures/lizardman-green-shaman,
   :creature/items #{}}
  {:property/image
@@ -301,13 +290,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 19/24,
   :creature/species :species/beholder,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [5/6 19/24],
   :creature/hp 35,
-  :property/width 5/6,
   :property/id :creatures/beholder,
   :creature/items #{}}
  {:property/image
@@ -326,13 +314,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 19/48,
   :creature/species :species/spider,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [13/24 19/48],
   :creature/hp 8,
-  :property/width 13/24,
   :property/id :creatures/spider-brown,
   :creature/items #{}}
  {:property/image
@@ -351,13 +338,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 2/3,
   :creature/species :species/vampire,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [17/24 2/3],
   :creature/hp 25,
-  :property/width 17/24,
   :property/id :creatures/vampire-lord,
   :creature/items #{}}
  {:property/image
@@ -372,13 +358,12 @@
     {:file "creatures/animations/witch-4.png", :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 35/48,
   :creature/species :species/human,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [2/3 35/48],
   :creature/hp 10,
-  :property/width 2/3,
   :property/id :creatures/witch,
   :creature/items #{}}
  {:property/image
@@ -397,13 +382,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 35/48,
   :creature/species :species/human,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [2/3 35/48],
   :creature/hp 10,
-  :property/width 2/3,
   :property/id :creatures/minstrel-f,
   :creature/items #{:items/sword}}
  {:property/image
@@ -419,13 +403,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 3/4,
   :creature/species :species/human,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [2/3 3/4],
   :creature/hp 10,
-  :property/width 2/3,
   :property/id :creatures/lady-b,
   :creature/items #{}}
  {:property/image
@@ -440,13 +423,12 @@
     {:file "creatures/animations/dwarf-4.png", :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 9/16,
   :creature/species :species/dwarf,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [35/48 9/16],
   :creature/hp 12,
-  :property/width 35/48,
   :property/id :creatures/dwarf,
   :creature/items #{:items/hammer}}
  {:property/image
@@ -465,13 +447,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 13/16,
   :creature/species :species/elemental,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [7/12 13/16],
   :creature/hp 22,
-  :property/width 7/12,
   :property/id :creatures/elemental-air,
   :creature/items #{}}
  {:property/image
@@ -490,13 +471,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 5/12,
   :creature/species :species/beetle,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [1/2 5/12],
   :creature/hp 12,
-  :property/width 1/2,
   :property/id :creatures/beetle-fire,
   :creature/items #{}}
  {:property/image
@@ -515,13 +495,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 2/3,
   :creature/species :species/human,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [2/3 2/3],
   :creature/hp 10,
-  :property/width 2/3,
   :property/id :creatures/warrior-f,
   :creature/items #{:items/sword}}
  {:property/image
@@ -540,13 +519,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 35/48,
   :creature/species :species/golem,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [17/24 35/48],
   :creature/hp 350,
-  :property/width 17/24,
   :property/id :creatures/golem-mud,
   :creature/items #{:items/greatspear}}
  {:property/image
@@ -565,13 +543,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 29/48,
   :creature/species :species/human,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [2/3 29/48],
   :creature/hp 10,
-  :property/width 2/3,
   :property/id :creatures/merchant-f,
   :creature/items #{}}
  {:property/image
@@ -590,13 +567,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 35/48,
   :creature/species :species/human,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [2/3 35/48],
   :creature/hp 10,
-  :property/width 2/3,
   :property/id :creatures/minstrel-m,
   :creature/items #{:items/sword}}
  {:property/image
@@ -615,13 +591,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 5/6,
   :creature/species :species/spirit,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [3/4 5/6],
   :creature/hp 12,
-  :property/width 3/4,
   :property/id :creatures/spirit-greater,
   :creature/items #{}}
  {:property/image
@@ -637,13 +612,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 19/24,
   :creature/species :species/human,
   :creature/mana 11,
   :creature/level 2,
   :creature/skills #{:spells/spawn},
+  :property/dimensions [2/3 19/24],
   :creature/hp 10,
-  :property/width 2/3,
   :property/id :creatures/knight,
   :creature/items #{:items/royal-helm :items/sword}}
  {:property/image
@@ -662,13 +636,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 2/3,
   :creature/species :species/zombie,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [17/24 2/3],
   :creature/hp 25,
-  :property/width 17/24,
   :property/id :creatures/zombie-b,
   :creature/items #{}}
  {:property/image
@@ -687,13 +660,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 19/24,
   :creature/species :species/demon,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [19/24 19/24],
   :creature/hp 32,
-  :property/width 19/24,
   :property/id :creatures/demon-green,
   :creature/items #{}}
  {:property/image
@@ -712,13 +684,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 2/3,
   :creature/species :species/drow,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [2/3 2/3],
   :creature/hp 10,
-  :property/width 2/3,
   :property/id :creatures/drow-wizard,
   :creature/items #{}}
  {:property/image
@@ -737,13 +708,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 3/4,
   :creature/species :species/goblin,
   :creature/mana 11,
   :creature/level 3,
   :creature/skills #{},
+  :property/dimensions [35/48 3/4],
   :creature/hp 8,
-  :property/width 35/48,
   :property/id :creatures/goblin-shaman,
   :creature/items #{}}
  {:property/image
@@ -762,13 +732,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 13/24,
   :creature/species :species/beetle,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [7/12 13/24],
   :creature/hp 12,
-  :property/width 7/12,
   :property/id :creatures/beetle-giant,
   :creature/items #{}}
  {:property/image
@@ -787,13 +756,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 11/16,
   :creature/species :species/human,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [2/3 11/16],
   :creature/hp 10,
-  :property/width 2/3,
   :property/id :creatures/prisoner-b,
   :creature/items #{}}
  {:property/image
@@ -812,13 +780,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 7/12,
   :creature/species :species/dwarf,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [17/24 7/12],
   :creature/hp 12,
-  :property/width 17/24,
   :property/id :creatures/dwarf-mage,
   :creature/items #{}}
  {:property/image
@@ -837,13 +804,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 35/48,
   :creature/species :species/bird,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [13/24 35/48],
   :creature/hp 8,
-  :property/width 13/24,
   :property/id :creatures/bird-hawk,
   :creature/items #{}}
  {:property/image
@@ -859,13 +825,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 3/4,
   :creature/species :species/pixie,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [13/24 3/4],
   :creature/hp 8,
-  :property/width 13/24,
   :property/id :creatures/pixie-b,
   :creature/items #{}}
  {:property/image
@@ -881,13 +846,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 3/4,
   :creature/species :species/human,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [2/3 3/4],
   :creature/hp 10,
-  :property/width 2/3,
   :property/id :creatures/lady-a,
   :creature/items #{}}
  {:property/image
@@ -902,13 +866,12 @@
     {:file "creatures/animations/drow-4.png", :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 35/48,
   :creature/species :species/drow,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [11/16 35/48],
   :creature/hp 10,
-  :property/width 11/16,
   :property/id :creatures/drow,
   :creature/items #{:items/sword}}
  {:property/image
@@ -924,13 +887,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 29/48,
   :creature/species :species/goblin,
   :creature/mana 11,
   :creature/level 3,
   :creature/skills #{},
+  :property/dimensions [2/3 29/48],
   :creature/hp 8,
-  :property/width 2/3,
   :property/id :creatures/goblin,
   :creature/items #{:items/falchion}}
  {:property/image
@@ -949,13 +911,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 5/8,
   :creature/species :species/wolf,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [2/3 5/8],
   :creature/hp 15,
-  :property/width 2/3,
   :property/id :creatures/wolf-black,
   :creature/items #{}}
  {:property/image
@@ -974,13 +935,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 35/48,
   :creature/species :species/bird,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [13/24 35/48],
   :creature/hp 8,
-  :property/width 13/24,
   :property/id :creatures/bird-crow,
   :creature/items #{}}
  {:property/image
@@ -999,13 +959,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 19/24,
   :creature/species :species/demon,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [19/24 19/24],
   :creature/hp 32,
-  :property/width 19/24,
   :property/id :creatures/demon-red,
   :creature/items #{}}
  {:property/image
@@ -1021,13 +980,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 3/4,
   :creature/species :species/pixie,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [13/24 3/4],
   :creature/hp 8,
-  :property/width 13/24,
   :property/id :creatures/pixie-a,
   :creature/items #{}}
  {:property/image
@@ -1043,13 +1001,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 19/24,
   :creature/species :species/human,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [2/3 19/24],
   :creature/hp 10,
-  :property/width 2/3,
   :property/id :creatures/archer,
   :creature/items #{:items/longbow}}
  {:property/image
@@ -1068,13 +1025,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 11/16,
   :creature/species :species/rat,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [41/48 11/16],
   :creature/hp 8,
-  :property/width 41/48,
   :property/id :creatures/rat-giant,
   :creature/items #{}}
  {:property/image
@@ -1090,13 +1046,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 17/24,
   :creature/species :species/human,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [2/3 17/24],
   :creature/hp 10,
-  :property/width 2/3,
   :property/id :creatures/lord-a,
   :creature/items #{}}
  {:property/image
@@ -1115,13 +1070,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 3/4,
   :creature/species :species/wraith,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [2/3 3/4],
   :creature/hp 22,
-  :property/width 2/3,
   :property/id :creatures/wraith-black,
   :creature/items #{}}
  {:property/image
@@ -1140,13 +1094,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 3/4,
   :creature/species :species/wraith,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [2/3 3/4],
   :creature/hp 22,
-  :property/width 2/3,
   :property/id :creatures/wraith-red,
   :creature/items #{}}
  {:property/image
@@ -1165,13 +1118,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 5/6,
   :creature/species :species/golem,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [17/24 5/6],
   :creature/hp 350,
-  :property/width 17/24,
   :property/id :creatures/golem-fire,
   :creature/items #{}}
  {:property/image
@@ -1190,13 +1142,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 3/4,
   :creature/species :species/wisp,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [5/8 3/4],
   :creature/hp 8,
-  :property/width 5/8,
   :property/id :creatures/wisp-ancient,
   :creature/items #{}}
  {:property/image
@@ -1211,13 +1162,12 @@
     {:file "creatures/animations/troll-4.png", :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 3/4,
   :creature/species :species/troll,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [35/48 3/4],
   :creature/hp 35,
-  :property/width 35/48,
   :property/id :creatures/troll,
   :creature/items #{}}
  {:property/image
@@ -1236,13 +1186,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 3/4,
   :creature/species :species/wraith,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [2/3 3/4],
   :creature/hp 22,
-  :property/width 2/3,
   :property/id :creatures/wraith-blue,
   :creature/items #{}}
  {:property/image
@@ -1261,13 +1210,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 13/24,
   :creature/species :species/beetle,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [7/12 13/24],
   :creature/hp 12,
-  :property/width 7/12,
   :property/id :creatures/beetle-fire-giant,
   :creature/items #{}}
  {:property/image
@@ -1286,13 +1234,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 13/16,
   :creature/species :species/lizardman-blue,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [11/16 13/16],
   :creature/hp 10,
-  :property/width 11/16,
   :property/id :creatures/lizardman-blue-spear,
   :creature/items #{:items/trident}}
  {:property/image
@@ -1311,13 +1258,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 19/24,
   :creature/species :species/human,
   :creature/mana 11,
   :creature/level 2,
   :creature/skills #{:spells/spawn},
+  :property/dimensions [2/3 19/24],
   :creature/hp 10,
-  :property/width 2/3,
   :property/id :creatures/dark-knight,
   :creature/items #{:items/cloak-eye}}
  {:property/image
@@ -1336,13 +1282,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 7/12,
   :creature/species :species/wolf,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [2/3 7/12],
   :creature/hp 15,
-  :property/width 2/3,
   :property/id :creatures/wolf-brown,
   :creature/items #{}}
  {:property/image
@@ -1361,13 +1306,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 19/24,
   :creature/species :species/demon,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [19/24 19/24],
   :creature/hp 32,
-  :property/width 19/24,
   :property/id :creatures/demon-blue,
   :creature/items #{}}
  {:property/image
@@ -1386,13 +1330,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 31/48,
   :creature/species :species/moth,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [1/2 31/48],
   :creature/hp 8,
-  :property/width 1/2,
   :property/id :creatures/moth-red,
   :creature/items #{}}
  {:property/image
@@ -1411,13 +1354,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 2/3,
   :creature/species :species/human,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [2/3 2/3],
   :creature/hp 10,
-  :property/width 2/3,
   :property/id :creatures/prisoner-c,
   :creature/items #{}}
  {:property/image
@@ -1432,13 +1374,12 @@
     {:file "creatures/animations/mimic-4.png", :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 9/16,
   :creature/species :species/mimic,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [1/2 9/16],
   :creature/hp 25,
-  :property/width 1/2,
   :property/id :creatures/mimic,
   :creature/items #{}}
  {:property/image
@@ -1457,13 +1398,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 3/4,
   :creature/species :species/lizardman-green,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [11/16 3/4],
   :creature/hp 10,
-  :property/width 11/16,
   :property/id :creatures/lizardman-green,
   :creature/items #{:items/falchion}}
  {:property/image
@@ -1479,13 +1419,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 11/16,
   :creature/species :species/human,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [11/16 11/16],
   :creature/hp 10,
-  :property/width 11/16,
   :property/id :creatures/paladin,
   :creature/items #{}}
  {:property/image
@@ -1504,13 +1443,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 5/6,
   :creature/species :species/dragon,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [23/24 5/6],
   :creature/hp 45,
-  :property/width 23/24,
   :property/id :creatures/dragon-green,
   :creature/items #{}}
  {:property/image
@@ -1525,13 +1463,12 @@
     {:file "creatures/animations/rat-4.png", :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 23/48,
   :creature/species :species/rat,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [31/48 23/48],
   :creature/hp 8,
-  :property/width 31/48,
   :property/id :creatures/rat,
   :creature/items #{}}
  {:property/image
@@ -1550,13 +1487,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 13/16,
   :creature/species :species/elemental,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [7/12 13/16],
   :creature/hp 22,
-  :property/width 7/12,
   :property/id :creatures/elemental-vorpal,
   :creature/items #{}}
  {:property/image
@@ -1575,13 +1511,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 2/3,
   :creature/species :species/zombie,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [17/24 2/3],
   :creature/hp 25,
-  :property/width 17/24,
   :property/id :creatures/zombie-a,
   :creature/items #{}}
  {:property/image
@@ -1600,13 +1535,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 5/6,
   :creature/species :species/dragon,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [23/24 5/6],
   :creature/hp 45,
-  :property/width 23/24,
   :property/id :creatures/dragon-blue,
   :creature/items #{}}
  {:property/image
@@ -1625,13 +1559,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 19/48,
   :creature/species :species/spider,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [13/24 19/48],
   :creature/hp 8,
-  :property/width 13/24,
   :property/id :creatures/spider-black,
   :creature/items #{}}
  {:property/image
@@ -1646,13 +1579,12 @@
     {:file "creatures/animations/ogre-4.png", :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 3/4,
   :creature/species :species/ogre,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [35/48 3/4],
   :creature/hp 28,
-  :property/width 35/48,
   :property/id :creatures/ogre,
   :creature/items #{}}
  {:property/image
@@ -1668,13 +1600,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 11/16,
   :creature/species :species/human,
   :creature/mana 11,
   :creature/level 4,
   :creature/skills #{:spells/projectile :spells/meditation},
+  :property/dimensions [2/3 11/16],
   :creature/hp 10,
-  :property/width 2/3,
   :property/id :creatures/wizard,
   :creature/items #{}}
  {:property/image
@@ -1693,13 +1624,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 13/16,
   :creature/species :species/elemental,
   :creature/mana 11,
   :creature/level 2,
   :creature/skills #{},
+  :property/dimensions [7/12 13/16],
   :creature/hp 22,
-  :property/width 7/12,
   :property/id :creatures/elemental-earth,
   :creature/items #{}}
  {:property/image
@@ -1718,13 +1648,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 5/6,
   :creature/species :species/dragon,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [23/24 5/6],
   :creature/hp 45,
-  :property/width 23/24,
   :property/id :creatures/dragon-shadow,
   :creature/items #{}}
  {:property/image
@@ -1740,13 +1669,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 13/16,
   :creature/species :species/banshee,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [2/3 13/16],
   :creature/hp 15,
-  :property/width 2/3,
   :property/id :creatures/banshee,
   :creature/items #{}}
  {:property/image
@@ -1765,13 +1693,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 2/3,
   :creature/species :species/human,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [2/3 2/3],
   :creature/hp 10,
-  :property/width 2/3,
   :property/id :creatures/warrior-m,
   :creature/items #{:items/sword}}
  {:property/image
@@ -1790,13 +1717,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 31/48,
   :creature/species :species/moth,
   :creature/mana 11,
   :creature/level 1,
   :creature/skills #{},
+  :property/dimensions [1/2 31/48],
   :creature/hp 8,
-  :property/width 1/2,
   :property/id :creatures/moth-white,
   :creature/items #{}}
  {:property/image
@@ -1815,13 +1741,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 35/48,
   :creature/species :species/bird,
   :creature/mana 11,
   :creature/level 1,
   :creature/skills #{:spells/projectile},
+  :property/dimensions [13/24 35/48],
   :creature/hp 8,
-  :property/width 13/24,
   :property/id :creatures/bird-dove,
   :creature/items #{}}
  {:property/image
@@ -1840,13 +1765,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 3/4,
   :creature/species :species/lizardman-blue,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [11/16 3/4],
   :creature/hp 10,
-  :property/width 11/16,
   :property/id :creatures/lizardman-blue,
   :creature/items #{:items/falchion}}
  {:property/image
@@ -1865,13 +1789,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 5/6,
   :creature/species :species/dragon,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [23/24 5/6],
   :creature/hp 45,
-  :property/width 23/24,
   :property/id :creatures/dragon-red,
   :creature/items #{}}
  {:property/image
@@ -1890,13 +1813,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 31/48,
   :creature/species :species/spider,
   :creature/mana 11,
   :creature/level 1,
   :creature/skills #{},
+  :property/dimensions [5/6 31/48],
   :creature/hp 8,
-  :property/width 5/6,
   :property/id :creatures/spider-brown-giant,
   :creature/items #{}}
  {:property/image
@@ -1912,13 +1834,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 3/4,
   :creature/species :species/spirit,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [1/2 3/4],
   :creature/hp 12,
-  :property/width 1/2,
   :property/id :creatures/spirit,
   :creature/items #{}}
  {:property/image
@@ -1933,13 +1854,12 @@
     {:file "creatures/animations/lich-4.png", :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 35/48,
   :creature/species :species/lich,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [2/3 35/48],
   :creature/hp 18,
-  :property/width 2/3,
   :property/id :creatures/lich,
   :creature/items #{}}
  {:property/image
@@ -1958,13 +1878,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 37/48,
   :creature/species :species/skeleton,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [11/16 37/48],
   :creature/hp 15,
-  :property/width 11/16,
   :property/id :creatures/skeleton-archer,
   :creature/items #{:items/longbow}}
  {:property/image
@@ -1983,13 +1902,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 35/48,
   :creature/species :species/ogre,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [35/48 35/48],
   :creature/hp 28,
-  :property/width 35/48,
   :property/id :creatures/ogre-mystic,
   :creature/items #{}}
  {:property/image
@@ -2008,13 +1926,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 35/48,
   :creature/species :species/golem,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [17/24 35/48],
   :creature/hp 350,
-  :property/width 17/24,
   :property/id :creatures/golem-metal,
   :creature/items #{}}
  {:property/image
@@ -2033,13 +1950,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 13/16,
   :creature/species :species/elemental,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [7/12 13/16],
   :creature/hp 22,
-  :property/width 7/12,
   :property/id :creatures/elemental-fire,
   :creature/items #{}}
  {:property/image
@@ -2055,13 +1971,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 41/48,
   :creature/species :species/human,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [2/3 41/48],
   :creature/hp 10,
-  :property/width 2/3,
   :property/id :creatures/templar,
   :creature/items #{}}
  {:property/image
@@ -2076,13 +1991,12 @@
     {:file "creatures/animations/wisp-4.png", :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 5/8,
   :creature/species :species/wisp,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [1/2 5/8],
   :creature/hp 8,
-  :property/width 1/2,
   :property/id :creatures/wisp,
   :creature/items #{}}
  {:property/image
@@ -2101,13 +2015,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 11/16,
   :creature/species :species/snake,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [5/6 11/16],
   :creature/hp 12,
-  :property/width 5/6,
   :property/id :creatures/snake-giant,
   :creature/items #{}}
  {:property/image
@@ -2126,13 +2039,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 35/48,
   :creature/species :species/minotaur,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [35/48 35/48],
   :creature/hp 28,
-  :property/width 35/48,
   :property/id :creatures/minotaur,
   :creature/items #{}}
  {:property/image
@@ -2151,13 +2063,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 13/16,
   :creature/species :species/valkyrie,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [17/24 13/16],
   :creature/hp 15,
-  :property/width 17/24,
   :property/id :creatures/valkyrie-a,
   :creature/items #{}}
  {:property/image
@@ -2176,13 +2087,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 5/12,
   :creature/species :species/toad,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [2/3 5/12],
   :creature/hp 12,
-  :property/width 2/3,
   :property/id :creatures/toad-green,
   :creature/items #{}}
  {:property/image
@@ -2198,13 +2108,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 2/3,
   :creature/species :species/vampire,
   :creature/mana 100,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [17/24 2/3],
   :creature/hp 100,
-  :property/width 17/24,
   :property/id :creatures/vampire,
   :creature/items #{:items/sword :items/cloak-blood}}
  {:property/image
@@ -2223,13 +2132,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 31/48,
   :creature/species :species/moth,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [1/2 31/48],
   :creature/hp 8,
-  :property/width 1/2,
   :property/id :creatures/moth-black,
   :creature/items #{}}
  {:property/image
@@ -2244,13 +2152,12 @@
     {:file "creatures/animations/monk-4.png", :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 2/3,
   :creature/species :species/human,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [35/48 2/3],
   :creature/hp 10,
-  :property/width 35/48,
   :property/id :creatures/monk,
   :creature/items #{}}
  {:property/image
@@ -2266,13 +2173,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 17/24,
   :creature/species :species/human,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [2/3 17/24],
   :creature/hp 10,
-  :property/width 2/3,
   :property/id :creatures/lord-b,
   :creature/items #{}}
  {:property/image
@@ -2288,13 +2194,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 2/3,
   :creature/species :species/human,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [11/16 2/3],
   :creature/hp 10,
-  :property/width 11/16,
   :property/id :creatures/warden,
   :creature/items #{}}
  {:property/image
@@ -2309,13 +2214,12 @@
     {:file "creatures/animations/druid-4.png", :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 11/16,
   :creature/species :species/human,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [11/16 11/16],
   :creature/hp 10,
-  :property/width 11/16,
   :property/id :creatures/druid,
   :creature/items #{}}
  {:property/image
@@ -2334,13 +2238,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 31/48,
   :creature/species :species/elf,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [2/3 31/48],
   :creature/hp 10,
-  :property/width 2/3,
   :property/id :creatures/elf-wizard,
   :creature/items #{}}
  {:property/image
@@ -2359,13 +2262,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 11/16,
   :creature/species :species/skeleton,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [2/3 11/16],
   :creature/hp 15,
-  :property/width 2/3,
   :property/id :creatures/skeleton-mage,
   :creature/items #{}}
  {:property/image
@@ -2384,13 +2286,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 7/12,
   :creature/species :species/halfling,
   :creature/mana 11,
   :creature/level 3,
   :creature/skills #{},
+  :property/dimensions [17/24 7/12],
   :creature/hp 8,
-  :property/width 17/24,
   :property/id :creatures/halfling-fighter,
   :creature/items #{:items/dagger}}
  {:property/image
@@ -2409,13 +2310,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 2/3,
   :creature/species :species/skeleton,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [2/3 2/3],
   :creature/hp 15,
-  :property/width 2/3,
   :property/id :creatures/skeleton-warrior,
   :creature/items #{:items/sword}}
  {:property/image
@@ -2434,13 +2334,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 5/8,
   :creature/species :species/halfling,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [17/24 5/8],
   :creature/hp 8,
-  :property/width 17/24,
   :property/id :creatures/halfling-thief,
   :creature/items #{:items/dagger}}
  {:property/image
@@ -2459,13 +2358,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 17/24,
   :creature/species :species/barbarian,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [11/16 17/24],
   :creature/hp 10,
-  :property/width 11/16,
   :property/id :creatures/barbarian-m,
   :creature/items #{:items/axe}}
  {:property/image
@@ -2484,13 +2382,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 37/48,
   :creature/species :species/elf,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [2/3 37/48],
   :creature/hp 10,
-  :property/width 2/3,
   :property/id :creatures/elf-bowman,
   :creature/items #{:items/longbow}}
  {:property/image
@@ -2506,13 +2403,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 5/12,
   :creature/species :species/beetle,
   :creature/mana 11,
   :creature/level 1,
   :creature/skills #{},
+  :property/dimensions [1/2 5/12],
   :creature/hp 12,
-  :property/width 1/2,
   :property/id :creatures/beetle,
   :creature/items #{}}
  {:property/image
@@ -2531,13 +2427,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 3/4,
   :creature/species :species/bat,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [5/6 3/4],
   :creature/hp 5,
-  :property/width 5/6,
   :property/id :creatures/bat-giant,
   :creature/items #{}}
  {:property/image
@@ -2556,13 +2451,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 5/12,
   :creature/species :species/toad,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [2/3 5/12],
   :creature/hp 12,
-  :property/width 2/3,
   :property/id :creatures/toad-blue,
   :creature/items #{}}
  {:property/image
@@ -2581,13 +2475,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 35/48,
   :creature/species :species/golem,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [17/24 35/48],
   :creature/hp 350,
-  :property/width 17/24,
   :property/id :creatures/golem-stone,
   :creature/items #{}}
  {:property/image
@@ -2606,13 +2499,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 11/16,
   :creature/species :species/human,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [2/3 11/16],
   :creature/hp 10,
-  :property/width 2/3,
   :property/id :creatures/necromancer,
   :creature/items #{}}
  {:property/image
@@ -2631,13 +2523,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 5/8,
   :creature/species :species/spider,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [5/6 5/8],
   :creature/hp 8,
-  :property/width 5/6,
   :property/id :creatures/spider-black-giant,
   :creature/items #{}}
  {:property/image
@@ -2656,13 +2547,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 3/4,
   :creature/species :species/valkyrie,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [17/24 3/4],
   :creature/hp 15,
-  :property/width 17/24,
   :property/id :creatures/valkyrie-b,
   :creature/items #{}}
  {:property/image
@@ -2677,13 +2567,12 @@
     {:file "creatures/animations/bat-4.png", :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 31/48,
   :creature/species :species/bat,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [13/24 31/48],
   :creature/hp 5,
-  :property/width 13/24,
   :property/id :creatures/bat,
   :creature/items #{:items/dagger}}
  {:property/image
@@ -2698,13 +2587,12 @@
     {:file "creatures/animations/snake-4.png", :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 25/48,
   :creature/species :species/snake,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [31/48 25/48],
   :creature/hp 12,
-  :property/width 31/48,
   :property/id :creatures/snake,
   :creature/items #{}}
  {:property/image
@@ -2719,13 +2607,12 @@
     {:file "creatures/animations/flies-4.png", :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 5/8,
   :creature/species :species/flies,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [25/48 5/8],
   :creature/hp 5,
-  :property/width 25/48,
   :property/id :creatures/flies,
   :creature/items #{}}
  {:property/image
@@ -2744,13 +2631,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 11/16,
   :creature/species :species/human,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [2/3 11/16],
   :creature/hp 10,
-  :property/width 2/3,
   :property/id :creatures/prisoner-a,
   :creature/items #{}}
  {:property/image
@@ -2769,13 +2655,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 19/24,
   :creature/species :species/beholder,
   :creature/mana 11,
   :creature/level 5,
   :creature/skills #{},
+  :property/dimensions [5/6 19/24],
   :creature/hp 35,
-  :property/width 5/6,
   :property/id :creatures/beholder-deep,
   :creature/items #{}}
  {:property/image
@@ -2794,13 +2679,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 5/8,
   :creature/species :species/skeleton,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [2/3 5/8],
   :creature/hp 15,
-  :property/width 2/3,
   :property/id :creatures/skeleton,
   :creature/items #{}}
  {:property/image
@@ -2819,13 +2703,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 13/16,
   :creature/species :species/elemental,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [7/12 13/16],
   :creature/hp 22,
-  :property/width 7/12,
   :property/id :creatures/elemental-water,
   :creature/items #{}}
  {:property/image
@@ -2841,13 +2724,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 11/16,
   :creature/species :species/human,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [2/3 11/16],
   :creature/hp 10,
-  :property/width 2/3,
   :property/id :creatures/cultist,
   :creature/items #{:items/dagger}}
  {:property/image
@@ -2866,13 +2748,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 11/16,
   :creature/species :species/mummy,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [2/3 11/16],
   :creature/hp 22,
-  :property/width 2/3,
   :property/id :creatures/mummy-pharao,
   :creature/items #{}}
  {:property/image
@@ -2891,13 +2772,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 2/3,
   :creature/species :species/halfling,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [17/24 2/3],
   :creature/hp 8,
-  :property/width 17/24,
   :property/id :creatures/halfling-wizard,
   :creature/items #{}}
  {:property/image
@@ -2916,13 +2796,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 19/24,
   :creature/species :species/drow,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [2/3 19/24],
   :creature/hp 10,
-  :property/width 2/3,
   :property/id :creatures/drow-bowman,
   :creature/items #{:items/longbow}}
  {:property/image
@@ -2941,13 +2820,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 17/24,
   :creature/species :species/worm,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [5/6 17/24],
   :creature/hp 5,
-  :property/width 5/6,
   :property/id :creatures/worm-giant,
   :creature/items #{}}
  {:property/image
@@ -2966,13 +2844,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 5/8,
   :creature/species :species/human,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [2/3 5/8],
   :creature/hp 10,
-  :property/width 2/3,
   :property/id :creatures/merchant-m,
   :creature/items #{}}
  {:property/image
@@ -2987,13 +2864,12 @@
     {:file "creatures/animations/elf-4.png", :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 17/24,
   :creature/species :species/elf,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [11/16 17/24],
   :creature/hp 10,
-  :property/width 11/16,
   :property/id :creatures/elf,
   :creature/items #{:items/sword}}
  {:property/image
@@ -3008,13 +2884,12 @@
     {:file "creatures/animations/worm-4.png", :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 1/2,
   :creature/species :species/worm,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [7/12 1/2],
   :creature/hp 5,
-  :property/width 7/12,
   :property/id :creatures/worm,
   :creature/items #{}}
  {:property/image
@@ -3033,13 +2908,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 7/12,
   :creature/species :species/halfling,
   :creature/mana 11,
   :creature/level 3,
   :creature/skills #{},
+  :property/dimensions [17/24 7/12],
   :creature/hp 8,
-  :property/width 17/24,
   :property/id :creatures/halfling-sling,
   :creature/items #{:items/sling}}
  {:property/image
@@ -3058,13 +2932,12 @@
      :sub-image-bounds nil}),
    :frame-duration 0.1,
    :looping? true},
-  :property/height 3/4,
   :creature/species :species/golem,
   :creature/mana 11,
   :creature/level nil,
   :creature/skills #{},
+  :property/dimensions [17/24 3/4],
   :creature/hp 350,
-  :property/width 17/24,
   :property/id :creatures/golem-ice,
   :creature/items #{}}
  {:property/image
