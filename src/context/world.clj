@@ -186,7 +186,7 @@
   (creature-entity context
                    :creatures/vampire ; TODO hardcoded
                    (:start-position world-map)
-                   {:is-player true}))
+                   {:player? true}))
 
 (defn merge->context [context]
   ; TODO when (:context/world-map context)

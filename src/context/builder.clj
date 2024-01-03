@@ -79,14 +79,14 @@
    :dead           (fn [_ctx e] (player-dead/->PlayerDead e))
    :princess-saved (fn [_ctx e] (player-found-princess/->PlayerFoundPrincess e))})
 
-(defn- ->state [& {:keys [is-player initial-state]}]
-  {:initial-state (if is-player
+(defn- ->state [& {:keys [player? initial-state]}]
+  {:initial-state (if player?
                     :idle ; for savegame not, also initial-state.
                     initial-state)
-   :fsm (if is-player
+   :fsm (if player?
           player-fsm
           npc-fsm)
-   :state-obj-constructors (if is-player
+   :state-obj-constructors (if player?
                              player-state-constructors
                              npc-state-constructors)})
 
@@ -106,7 +106,6 @@
 (def ^:private player-components
   {:entity/player? true
    :entity/faction :evil
-   ;:entity/mana 100 ; is overwritten
    :entity/free-skill-points 3
    :entity/clickable {:type :clickable/player}})
 
@@ -124,7 +123,7 @@
                                      creature/mana
                                      creature/skills
                                      creature/items] :as creature-props}
-                             {:keys [is-player
+                             {:keys [player?
                                      initial-state] :as extra-params}
                              context]
   (let [creature-id (:property/id creature-props)
@@ -134,7 +133,7 @@
         [width height] (images->world-unit-dimensions images)
         princess? (= creature-id :creatures/lady-a)]
     (merge (cond
-            is-player player-components
+            player? player-components
             princess? lady-props
             :else     npc-components)
            {:entity/body {:width width :height height :solid? true}
@@ -148,8 +147,7 @@
             :entity/z-order (if flying? :flying :ground)} ; TODO :z-order/foo
            (cond
             princess? nil
-            :else {:entity/state (->state :is-player is-player
-                                          :initial-state initial-state)})
+            :else {:entity/state (->state :player? player? :initial-state initial-state)})
            extra-params)))
 
 (defcomponent :entity/plop _
