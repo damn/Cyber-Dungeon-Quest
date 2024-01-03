@@ -34,7 +34,7 @@
            effect/target-position]} _effect]
   ; TODO line of sight ? / not blocked ..
   (and source
-       (:faction @source)
+       (:entity/faction @source)
        target-position))
 
 (defmethod effect/do! :effect/spawn

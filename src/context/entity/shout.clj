@@ -12,7 +12,7 @@
   (->> {:position (:position entity*)
         :radius radius}
        (circle->entities (world-grid context))
-       (filter #(and (= (:faction @%) (:faction entity*))
+       (filter #(and (= (:entity/faction @%) (:entity/faction entity*))
                      (line-of-sight? context entity* @%)))))
 
 (defcomponent :shout counter

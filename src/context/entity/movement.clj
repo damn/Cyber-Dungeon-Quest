@@ -37,7 +37,8 @@
         grid (world-grid ctx)
         cells* (map deref (rectangle->cells grid (:body @projectile)))
         hit-entity (find-first #(and (not (contains? already-hit-bodies %)) ; not filtering out own id
-                                     (not= (:faction @projectile) (:faction @%))
+                                     (not= (:entity/faction @projectile)
+                                           (:entity/faction @%))
                                      (:is-solid (:body @%))
                                      (geom/collides? (:body @projectile) (:body @%)))
                                (cells->entities cells*))

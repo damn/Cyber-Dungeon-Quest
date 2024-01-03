@@ -139,7 +139,7 @@
      (try-put-item-in! context entity (:item/slot item) item)
      (try-put-item-in! context entity :inventory.slot/bag item))))
 
-(defcomponent :items items
+(defcomponent :entity/items items
   (entity/create! [_ entity context]
     (swap! entity assoc :inventory empty-inventory)
     ;(swap! entity dissoc :items)

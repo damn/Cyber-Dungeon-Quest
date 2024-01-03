@@ -17,7 +17,7 @@
 
 (defn- npc-choose-skill [effect-context entity*]
   (->> entity*
-       :skills
+       :entity/skills
        vals
        (sort-by #(or (:skill/cost %) 0))
        reverse

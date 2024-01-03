@@ -4,7 +4,7 @@
 
 (extend-type context.entity.Entity
   cdq.entity/Faction
-  (enemy-faction [{:keys [faction]}]
+  (enemy-faction [{:keys [entity/faction]}]
     (case faction
       :evil :good
       :good :evil)))

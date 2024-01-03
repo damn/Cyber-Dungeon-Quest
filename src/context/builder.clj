@@ -104,18 +104,18 @@
 
 (def ^:private player-components
   {:is-player true
-   :faction :evil
+   :entity/faction :evil
    ;:entity/mana 100 ; is overwritten
    :player-movement true
    :free-skill-points 3
    :entity/clickable {:type :clickable/player}})
 
 (def ^:private npc-components
-  {:faction :good
+  {:entity/faction :good
    :move-towards-enemy true})
 
 (def ^:private lady-props
-  {:faction :good
+  {:entity/faction :good
    :entity/clickable {:type :clickable/princess}})
 
 (defn- species-properties [species-props]
@@ -146,8 +146,8 @@
             :entity/movement speed
             :entity/hp hp
             :entity/mana 11
-            :skills (:creature/skills creature-props)
-            :items  (:creature/items creature-props)
+            :entity/skills (:creature/skills creature-props)
+            :entity/items  (:creature/items creature-props)
             :is-flying false
             :animation (animation/create images :frame-duration 0.1 :looping? true)
             :z-order (if (:is-flying creature-props) :flying :ground)}
@@ -208,7 +208,7 @@
                       {:keys [position faction size animation movement-vector hit-effect speed maxtime piercing]}]
     (create-entity! context
                     {:position position
-                     :faction faction
+                     :entity/faction faction
                      :body {:width size
                             :height size
                             :is-solid false

@@ -16,7 +16,7 @@
                 counter)))
     skill))
 
-(defcomponent :skills skills
+(defcomponent :entity/skills skills
   (entity/create! [[k skill-ids] entity context]
     (swap! entity assoc k (zipmap skill-ids
                                   (map #(get-property context %)
@@ -29,26 +29,26 @@
 
 (extend-type context.entity.Entity
   cdq.entity/Skills
-  (has-skill? [{:keys [skills]} {:keys [property/id]}]
+  (has-skill? [{:keys [entity/skills]} {:keys [property/id]}]
     (contains? skills id)))
 
 (extend-type gdl.context.Context
   cdq.context/Skills
   (add-skill! [ctx entity {:keys [property/id] :as skill}]
     (assert (not (cdq.entity/has-skill? @entity skill)))
-    (swap! entity update :skills assoc id skill)
+    (swap! entity update :entity/skills assoc id skill)
     (when (:is-player @entity)
       (actionbar-add-skill ctx skill)))
 
   (remove-skill! [ctx entity {:keys [property/id] :as skill}]
     (assert (cdq.entity/has-skill? @entity skill))
-    (swap! entity update :skills dissoc id)
+    (swap! entity update :entity/skills dissoc id)
     (when (:is-player @entity)
       (actionbar-remove-skill ctx skill)))
 
   (set-skill-to-cooldown! [context entity {:keys [property/id skill/cooldown] :as skill}]
     (when cooldown
-      (swap! entity assoc-in [:skills id :cooling-down?] (->counter context cooldown))))
+      (swap! entity assoc-in [:entity/skills id :cooling-down?] (->counter context cooldown))))
 
   (skill-usable-state [effect-context
                        {:keys [entity/mana]}
