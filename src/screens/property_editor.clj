@@ -2,7 +2,8 @@
   (:require [clojure.edn :as edn]
             [clojure.string :as str]
             [gdl.app :as app :refer [change-screen!]]
-            [gdl.context :refer [get-stage ->text-button ->image-button ->label ->text-field ->image-widget ->table ->stack ->window all-sound-files play-sound! ->vertical-group]]
+            [gdl.context :refer [get-stage ->text-button ->image-button ->label ->text-field ->image-widget ->table ->stack ->window all-sound-files play-sound! ->vertical-group ->check-box ->actor key-just-pressed?]]
+            [gdl.input.keys :as input.keys]
             [gdl.scene2d.actor :as actor :refer [remove! set-touchable! parent add-listener! add-tooltip!]]
             [gdl.scene2d.group :refer [add-actor! clear-children! children]]
             [gdl.scene2d.ui.text-field :as text-field]
@@ -73,6 +74,15 @@
 
 (defmethod value-widget->data :text-field [_ widget]
   (edn/read-string (text-field/text widget)))
+
+;;
+
+(defmethod ->value-widget :check-box [ctx [k checked?]]
+  (assert (boolean? checked?))
+  (->check-box ctx (name k) (fn [_]) checked?))
+
+(defmethod value-widget->data :check-box [_ widget]
+  (.isChecked ^com.kotcrab.vis.ui.widget.VisCheckBox widget))
 
 ;;
 
@@ -312,20 +322,22 @@
                                   :center? true
                                   :close-on-escape? true
                                   :cell-defaults {:pad 5}})
-        widgets (->attribute-widget-group context props)]
+        widgets (->attribute-widget-group context props)
+        save! (fn [ctx]
+                ; TODO error modal like map editor?
+                ; TODO refresh overview creatures lvls,etc. ?
+                (try
+                 (swap! app/current-context properties/update-and-write-to-file!
+                        (attribute-widget-group->data widgets))
+                 (remove! window)
+                 (catch Throwable t
+                   (->error-window ctx t))))]
     (add-rows window [[widgets]
                       ; TODO SHOW IF CHANGES MADE then SAVE otherwise different color etc.
                       ; when closing (lose changes? yes no)
-                      [(->text-button context "Save"
-                                      (fn [ctx]
-                                        ; TODO error modal like map editor?
-                                        ; TODO refresh overview creatures lvls,etc. ?
-                                        (try
-                                         (swap! app/current-context properties/update-and-write-to-file!
-                                                (attribute-widget-group->data widgets))
-                                         (remove! window)
-                                         (catch Throwable t
-                                           (->error-window ctx t)))))]])
+                      [(->text-button context "Save" save!)]])
+    (add-actor! window (->actor context {:act #(when (key-just-pressed? % input.keys/enter)
+                                                 (save! %))}))
     (pack! window)
     window))
 

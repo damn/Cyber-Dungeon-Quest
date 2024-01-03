@@ -37,7 +37,7 @@
 (comment
  (set! com.kotcrab.vis.ui.widget.Tooltip/DEFAULT_FADE_TIME (float 0.3))
  ;(set! com.kotcrab.vis.ui.widget.Tooltip/MOUSE_MOVED_FADEOUT false)
- ; always show BELOW the actor nicely not near mouse thing or ABOVE centered ?
+ ; TODO always show BELOW the/ABOVE actor nicely not near mouse thing or ABOVE centered ?
  )
 
 ;com.kotcrab.vis.ui.widget.Tooltip
@@ -90,6 +90,8 @@
    :creature/species :link-button
    :creature/skills :one-to-many
    :creature/items :one-to-many
+   :creature/mana :text-field
+   :creature/flying? :check-box
    :creature/hp :text-field
    :creature/speed :text-field
    :spell? :label
@@ -159,6 +161,8 @@
                                       [:property/id [:qualified-keyword {:namespace :creatures}]]
                                       [:property/image :some]
                                       [:creature/species [:qualified-keyword {:namespace :species}]] ; one of species
+                                      [:creature/mana nat-int?]
+                                      [:creature/flying? :boolean]
                                       [:creature/skills [:set :qualified-keyword]] ; one of spells/skills
                                       [:creature/items  [:set :qualified-keyword]] ; one of items
                                       [:creature/level [:maybe pos-int?]]])} ; >0, <max-lvls (9 ?)
@@ -258,12 +262,14 @@
 (defmethod property->text :property.type/creature [_ctx
                                                    {:keys [property/id
                                                            creature/species
+                                                           creature/flying?
                                                            creature/skills
                                                            creature/items
                                                            creature/level]}]
   [(str/capitalize (name id))
    (str "Species: " (str/capitalize (name species)))
    (when level (str "Level: " level))
+   (str "Flying? " flying?)
    (when (seq skills) (str "Spells: " (str/join "," (map name skills))))
    (when (seq items) (str "Items: "   (str/join "," (map name items))))])
 
@@ -419,14 +425,29 @@
        (map serialize)
        (pprint-spit properties-file)))
 
+; # Add new fields
+; * comment out write-to-file! below
+(comment
+ (let [ctx @gdl.app/current-context
+       creatures (cdq.context/all-properties ctx :property.type/creature)
+       creatures (for [creature creatures]
+                   (assoc creature :creature/flying? false :creature/mana 11))]
+   #_(doseq [creature creatures]
+     (swap! gdl.app/current-context update-and-write-to-file! creature))
+
+   ; write to file
+   (swap! gdl.app/current-context update-and-write-to-file! (cdq.context/get-property ctx :creatures/vampire))
+   )
+
+
+ )
+
 
 (defn update-and-write-to-file! [{:keys [context/properties
                                          context/properties-file] :as context}
                                  {:keys [property/id] :as data}]
   {:pre [(contains? data :property/id)
-         (contains? properties id)
-         (= (set (keys data))
-            (set (keys (get properties id))))]}
+         (contains? properties id)]}
   (validate data :humanize? true)
   (println "\nupdate-and-write-to-file!")
   (binding [*print-level* nil]

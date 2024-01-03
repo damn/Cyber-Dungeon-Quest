@@ -162,10 +162,10 @@
   (blocked? [_]
     (= :none movement))
 
-  (blocked? [_ {:keys [entity/is-flying]}]
+  (blocked? [_ {:keys [entity/flying?]}]
     (case movement
       :none true
-      :air (not is-flying)
+      :air (not flying?)
       :all false))
 
   (occupied-by-other? [_ entity]

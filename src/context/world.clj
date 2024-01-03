@@ -137,7 +137,7 @@
     (aset arr
           x
           y
-          (boolean (cell/blocked? cell* {:entity/is-flying true})))))
+          (boolean (cell/blocked? cell* {:entity/flying? true})))))
 
 (defn- create-cell-blocked-boolean-array [grid]
   (let [arr (make-array Boolean/TYPE

@@ -30,889 +30,1143 @@
   :creature/species :species/toad,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:creature/level 1,
   :creature/items #{:items/falchion},
   :property/image
   {:file "creatures/images.png", :sub-image-bounds [240 144 48 48]},
   :property/id :creatures/goblin-warrior,
   :creature/species :species/goblin,
-  :creature/skills #{}}
+  :creature/skills #{},
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [336 288 48 48]},
   :property/id :creatures/lizardman-blue-shaman,
   :creature/species :species/lizardman-blue,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:creature/items #{:items/axe},
   :property/image
   {:file "creatures/images.png", :sub-image-bounds [288 0 48 48]},
   :property/id :creatures/barbarian-f,
   :creature/species :species/barbarian,
   :creature/skills #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [144 432 48 48]},
   :property/id :creatures/mummy,
   :creature/species :species/mummy,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [432 0 48 48]},
   :property/id :creatures/helion,
   :creature/species :species/human,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [192 0 48 48]},
   :property/id :creatures/priest,
   :creature/species :species/human,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:creature/level 2,
   :creature/items #{:items/shield-wood-buckler :items/trident},
   :property/image
   {:file "creatures/images.png", :sub-image-bounds [144 288 48 48]},
   :property/id :creatures/lizardman-green-spear,
   :creature/species :species/lizardman-green,
-  :creature/skills #{}}
+  :creature/skills #{},
+  :creature/flying? false,
+  :creature/mana 11}
  {:creature/items #{:items/hammer},
   :property/image
   {:file "creatures/images.png", :sub-image-bounds [48 192 48 48]},
   :property/id :creatures/dwarf-cleric,
   :creature/species :species/dwarf,
   :creature/skills #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:creature/items #{:items/dagger},
   :property/image
   {:file "creatures/images.png", :sub-image-bounds [336 0 48 48]},
   :property/id :creatures/thief,
   :creature/species :species/human,
   :creature/skills #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [192 288 48 48]},
   :property/id :creatures/lizardman-green-shaman,
   :creature/species :species/lizardman-green,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [384 288 48 48]},
   :property/id :creatures/beholder,
   :creature/species :species/beholder,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? true,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [336 192 48 48]},
   :property/id :creatures/spider-brown,
   :creature/species :species/spider,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [384 240 48 48]},
   :property/id :creatures/vampire-lord,
   :creature/species :species/vampire,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [384 48 48 48]},
   :property/id :creatures/witch,
   :creature/species :species/human,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:creature/items #{:items/sword},
   :property/image
   {:file "creatures/images.png", :sub-image-bounds [192 48 48 48]},
   :property/id :creatures/minstrel-f,
   :creature/species :species/human,
   :creature/skills #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [144 480 48 48]},
   :property/id :creatures/lady-b,
   :creature/species :species/human,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:creature/items #{:items/hammer},
   :property/image
   {:file "creatures/images.png", :sub-image-bounds [0 192 48 48]},
   :property/id :creatures/dwarf,
   :creature/species :species/dwarf,
   :creature/skills #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [144 528 48 48]},
   :property/id :creatures/elemental-air,
   :creature/species :species/elemental,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? true,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [336 480 48 48]},
   :property/id :creatures/beetle-fire,
   :creature/species :species/beetle,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:creature/items #{:items/sword},
   :property/image
   {:file "creatures/images.png", :sub-image-bounds [96 48 48 48]},
   :property/id :creatures/warrior-f,
   :creature/species :species/human,
   :creature/skills #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [336 432 48 48]},
   :property/id :creatures/golem-mud,
   :creature/species :species/golem,
   :creature/skills #{},
   :creature/items #{:items/greatspear},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [432 576 48 48]},
   :property/id :creatures/merchant-f,
   :creature/species :species/human,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:creature/items #{:items/sword},
   :property/image
   {:file "creatures/images.png", :sub-image-bounds [144 48 48 48]},
   :property/id :creatures/minstrel-m,
   :creature/species :species/human,
   :creature/skills #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [432 480 48 48]},
   :property/id :creatures/spirit-greater,
   :creature/species :species/spirit,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? true,
+  :creature/mana 11}
  {:creature/level 2,
   :creature/items #{:items/royal-helm :items/sword},
   :property/image
   {:file "creatures/images.png", :sub-image-bounds [96 0 48 48]},
   :property/id :creatures/knight,
   :creature/species :species/human,
-  :creature/skills #{:spells/spawn}}
+  :creature/skills #{:spells/spawn},
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [144 240 48 48]},
   :property/id :creatures/zombie-b,
   :creature/species :species/zombie,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [336 336 48 48]},
   :property/id :creatures/demon-green,
   :creature/species :species/demon,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [384 96 48 48]},
   :property/id :creatures/drow-wizard,
   :creature/species :species/drow,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:creature/level 3,
   :property/image
   {:file "creatures/images.png", :sub-image-bounds [288 144 48 48]},
   :property/id :creatures/goblin-shaman,
   :creature/species :species/goblin,
   :creature/skills #{},
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [192 480 48 48]},
   :property/id :creatures/beetle-giant,
   :creature/species :species/beetle,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [96 96 48 48]},
   :property/id :creatures/prisoner-b,
   :creature/species :species/human,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [96 192 48 48]},
   :property/id :creatures/dwarf-mage,
   :creature/species :species/dwarf,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [48 432 48 48]},
   :property/id :creatures/bird-hawk,
   :creature/species :species/bird,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? true,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [192 336 48 48]},
   :property/id :creatures/pixie-b,
   :creature/species :species/pixie,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? true,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [48 480 48 48]},
   :property/id :creatures/lady-a,
   :creature/species :species/human,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:creature/items #{:items/sword},
   :property/image
   {:file "creatures/images.png", :sub-image-bounds [336 96 48 48]},
   :property/id :creatures/drow,
   :creature/species :species/drow,
   :creature/skills #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:creature/level 3,
   :creature/items #{:items/falchion},
   :property/image
   {:file "creatures/images.png", :sub-image-bounds [192 144 48 48]},
   :property/id :creatures/goblin,
   :creature/species :species/goblin,
-  :creature/skills #{}}
+  :creature/skills #{},
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [0 288 48 48]},
   :property/id :creatures/wolf-black,
   :creature/species :species/wolf,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [96 432 48 48]},
   :property/id :creatures/bird-crow,
   :creature/species :species/bird,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? true,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [240 336 48 48]},
   :property/id :creatures/demon-red,
   :creature/species :species/demon,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [144 336 48 48]},
   :property/id :creatures/pixie-a,
   :creature/species :species/pixie,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? true,
+  :creature/mana 11}
  {:creature/items #{:items/longbow},
   :property/image
   {:file "creatures/images.png", :sub-image-bounds [144 0 48 48]},
   :property/id :creatures/archer,
   :creature/species :species/human,
   :creature/skills #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [48 240 48 48]},
   :property/id :creatures/rat-giant,
   :creature/species :species/rat,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [0 480 48 48]},
   :property/id :creatures/lord-a,
   :creature/species :species/human,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [96 336 48 48]},
   :property/id :creatures/wraith-black,
   :creature/species :species/wraith,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [48 336 48 48]},
   :property/id :creatures/wraith-red,
   :creature/species :species/wraith,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [288 432 48 48]},
   :property/id :creatures/golem-fire,
   :creature/species :species/golem,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [192 384 48 48]},
   :property/id :creatures/wisp-ancient,
   :creature/species :species/wisp,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? true,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [336 144 48 48]},
   :property/id :creatures/troll,
   :creature/species :species/troll,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [0 336 48 48]},
   :property/id :creatures/wraith-blue,
   :creature/species :species/wraith,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [240 480 48 48]},
   :property/id :creatures/beetle-fire-giant,
   :creature/species :species/beetle,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:creature/items #{:items/trident},
   :property/image
   {:file "creatures/images.png", :sub-image-bounds [288 288 48 48]},
   :property/id :creatures/lizardman-blue-spear,
   :creature/species :species/lizardman-blue,
   :creature/skills #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [288 48 48 48]},
   :property/id :creatures/dark-knight,
   :creature/species :species/human,
   :creature/skills #{:spells/spawn},
   :creature/items #{:items/cloak-eye},
-  :creature/level 2}
+  :creature/level 2,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [48 288 48 48]},
   :property/id :creatures/wolf-brown,
   :creature/species :species/wolf,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [288 336 48 48]},
   :property/id :creatures/demon-blue,
   :creature/species :species/demon,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [48 576 48 48]},
   :property/id :creatures/moth-red,
   :creature/species :species/moth,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? true,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [144 96 48 48]},
   :property/id :creatures/prisoner-c,
   :creature/species :species/human,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [336 576 48 48]},
   :property/id :creatures/mimic,
   :creature/species :species/mimic,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:creature/items #{:items/falchion},
   :property/image
   {:file "creatures/images.png", :sub-image-bounds [96 288 48 48]},
   :property/id :creatures/lizardman-green,
   :creature/species :species/lizardman-green,
   :creature/skills #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [240 48 48 48]},
   :property/id :creatures/paladin,
   :creature/species :species/human,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [432 384 48 48]},
   :property/id :creatures/dragon-green,
   :creature/species :species/dragon,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [0 240 48 48]},
   :property/id :creatures/rat,
   :creature/species :species/rat,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [0 528 48 48]},
   :property/id :creatures/elemental-vorpal,
   :creature/species :species/elemental,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? true,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [96 240 48 48]},
   :property/id :creatures/zombie-a,
   :creature/species :species/zombie,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [384 384 48 48]},
   :property/id :creatures/dragon-blue,
   :creature/species :species/dragon,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [432 192 48 48]},
   :property/id :creatures/spider-black,
   :creature/species :species/spider,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [432 144 48 48]},
   :property/id :creatures/ogre,
   :creature/species :species/ogre,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:creature/level 4,
   :creature/skills #{:spells/projectile :spells/meditation},
   :property/id :creatures/wizard,
   :property/image
   {:file "creatures/images.png", :sub-image-bounds [0 0 48 48]},
   :creature/species :species/human,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [192 528 48 48]},
   :property/id :creatures/elemental-earth,
   :creature/species :species/elemental,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level 2}
+  :creature/level 2,
+  :creature/flying? true,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [288 384 48 48]},
   :property/id :creatures/dragon-shadow,
   :creature/species :species/dragon,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [144 192 48 48]},
   :property/id :creatures/banshee,
   :creature/species :species/banshee,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? true,
+  :creature/mana 11}
  {:creature/items #{:items/sword},
   :property/image
   {:file "creatures/images.png", :sub-image-bounds [48 48 48 48]},
   :property/id :creatures/warrior-m,
   :creature/species :species/human,
   :creature/skills #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [0 576 48 48]},
   :property/id :creatures/moth-white,
   :creature/species :species/moth,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level 1}
+  :creature/level 1,
+  :creature/flying? true,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [0 432 48 48]},
   :property/id :creatures/bird-dove,
   :creature/species :species/bird,
   :creature/skills #{:spells/projectile},
   :creature/items #{},
-  :creature/level 1}
+  :creature/level 1,
+  :creature/flying? true,
+  :creature/mana 11}
  {:creature/items #{:items/falchion},
   :property/image
   {:file "creatures/images.png", :sub-image-bounds [240 288 48 48]},
   :property/id :creatures/lizardman-blue,
   :creature/species :species/lizardman-blue,
   :creature/skills #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [336 384 48 48]},
   :property/id :creatures/dragon-red,
   :creature/species :species/dragon,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [288 192 48 48]},
   :property/id :creatures/spider-brown-giant,
   :creature/species :species/spider,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level 1}
+  :creature/level 1,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [384 480 48 48]},
   :property/id :creatures/spirit,
   :creature/species :species/spirit,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? true,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [432 240 48 48]},
   :property/id :creatures/lich,
   :creature/species :species/lich,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:creature/items #{:items/longbow},
   :property/image
   {:file "creatures/images.png", :sub-image-bounds [144 144 48 48]},
   :property/id :creatures/skeleton-archer,
   :creature/species :species/skeleton,
   :creature/skills #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [384 144 48 48]},
   :property/id :creatures/ogre-mystic,
   :creature/species :species/ogre,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [432 432 48 48]},
   :property/id :creatures/golem-metal,
   :creature/species :species/golem,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [96 528 48 48]},
   :property/id :creatures/elemental-fire,
   :creature/species :species/elemental,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? true,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [336 48 48 48]},
   :property/id :creatures/templar,
   :creature/species :species/human,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [240 384 48 48]},
   :property/id :creatures/wisp,
   :creature/species :species/wisp,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? true,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [192 240 48 48]},
   :property/id :creatures/snake-giant,
   :creature/species :species/snake,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [288 240 48 48]},
   :property/id :creatures/minotaur,
   :creature/species :species/minotaur,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [384 336 48 48]},
   :property/id :creatures/valkyrie-a,
   :creature/species :species/valkyrie,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? true,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [144 576 48 48]},
   :property/id :creatures/toad-green,
   :creature/species :species/toad,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/id :creatures/vampire,
   :property/image
   {:file "creatures/images.png", :sub-image-bounds [336 240 48 48]},
   :creature/items #{:items/sword :items/cloak-blood},
   :creature/species :species/vampire,
   :creature/skills #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [96 576 48 48]},
   :property/id :creatures/moth-black,
   :creature/species :species/moth,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? true,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [432 48 48 48]},
   :property/id :creatures/monk,
   :creature/species :species/human,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [96 480 48 48]},
   :property/id :creatures/lord-b,
   :creature/species :species/human,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [0 96 48 48]},
   :property/id :creatures/warden,
   :creature/species :species/human,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [384 0 48 48]},
   :property/id :creatures/druid,
   :creature/species :species/human,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [240 96 48 48]},
   :property/id :creatures/elf-wizard,
   :creature/species :species/elf,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [96 144 48 48]},
   :property/id :creatures/skeleton-mage,
   :creature/species :species/skeleton,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:creature/level 3,
   :creature/items #{:items/dagger},
   :property/image
   {:file "creatures/images.png", :sub-image-bounds [96 384 48 48]},
   :property/id :creatures/halfling-fighter,
   :creature/species :species/halfling,
-  :creature/skills #{}}
+  :creature/skills #{},
+  :creature/flying? false,
+  :creature/mana 11}
  {:creature/items #{:items/sword},
   :property/image
   {:file "creatures/images.png", :sub-image-bounds [48 144 48 48]},
   :property/id :creatures/skeleton-warrior,
   :creature/species :species/skeleton,
   :creature/skills #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:creature/items #{:items/dagger},
   :property/image
   {:file "creatures/images.png", :sub-image-bounds [0 384 48 48]},
   :property/id :creatures/halfling-thief,
   :creature/species :species/halfling,
   :creature/skills #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:creature/items #{:items/axe},
   :property/image
   {:file "creatures/images.png", :sub-image-bounds [240 0 48 48]},
   :property/id :creatures/barbarian-m,
   :creature/species :species/barbarian,
   :creature/skills #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:creature/items #{:items/longbow},
   :property/image
   {:file "creatures/images.png", :sub-image-bounds [288 96 48 48]},
   :property/id :creatures/elf-bowman,
   :creature/species :species/elf,
   :creature/skills #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [288 480 48 48]},
   :property/id :creatures/beetle,
   :creature/species :species/beetle,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level 1}
+  :creature/level 1,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [192 192 48 48]},
   :property/id :creatures/bat-giant,
   :creature/species :species/bat,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? true,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [192 576 48 48]},
   :property/id :creatures/toad-blue,
   :creature/species :species/toad,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [240 432 48 48]},
   :property/id :creatures/golem-stone,
   :creature/species :species/golem,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [0 48 48 48]},
   :property/id :creatures/necromancer,
   :creature/species :species/human,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [384 192 48 48]},
   :property/id :creatures/spider-black-giant,
   :creature/species :species/spider,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [432 336 48 48]},
   :property/id :creatures/valkyrie-b,
   :creature/species :species/valkyrie,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? true,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [240 192 48 48]},
   :property/id :creatures/bat,
   :creature/species :species/bat,
   :creature/skills #{},
   :creature/items #{:items/dagger},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? true,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [240 240 48 48]},
   :property/id :creatures/snake,
   :creature/species :species/snake,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [288 576 48 48]},
   :property/id :creatures/flies,
   :creature/species :species/flies,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? true,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [48 96 48 48]},
   :property/id :creatures/prisoner-a,
   :creature/species :species/human,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [432 288 48 48]},
   :property/id :creatures/beholder-deep,
   :creature/species :species/beholder,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level 5}
+  :creature/level 5,
+  :creature/flying? true,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [0 144 48 48]},
   :property/id :creatures/skeleton,
   :creature/species :species/skeleton,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [48 528 48 48]},
   :property/id :creatures/elemental-water,
   :creature/species :species/elemental,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? true,
+  :creature/mana 11}
  {:property/id :creatures/cultist,
   :property/image
   {:file "creatures/images.png", :sub-image-bounds [48 0 48 48]},
   :creature/items #{:items/dagger},
   :creature/species :species/human,
   :creature/skills #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [192 432 48 48]},
   :property/id :creatures/mummy-pharao,
   :creature/species :species/mummy,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [144 384 48 48]},
   :property/id :creatures/halfling-wizard,
   :creature/species :species/halfling,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:creature/items #{:items/longbow},
   :property/image
   {:file "creatures/images.png", :sub-image-bounds [432 96 48 48]},
   :property/id :creatures/drow-bowman,
   :creature/species :species/drow,
   :creature/skills #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [288 528 48 48]},
   :property/id :creatures/worm-giant,
   :creature/species :species/worm,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [384 576 48 48]},
   :property/id :creatures/merchant-m,
   :creature/species :species/human,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:creature/items #{:items/sword},
   :property/image
   {:file "creatures/images.png", :sub-image-bounds [192 96 48 48]},
   :property/id :creatures/elf,
   :creature/species :species/elf,
   :creature/skills #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [240 528 48 48]},
   :property/id :creatures/worm,
   :creature/species :species/worm,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:creature/level 3,
   :creature/items #{:items/sling},
   :property/image
   {:file "creatures/images.png", :sub-image-bounds [48 384 48 48]},
   :property/id :creatures/halfling-sling,
   :creature/species :species/halfling,
-  :creature/skills #{}}
+  :creature/skills #{},
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [384 432 48 48]},
   :property/id :creatures/golem-ice,
   :creature/species :species/golem,
   :creature/skills #{},
   :creature/items #{},
-  :creature/level nil}
+  :creature/level nil,
+  :creature/flying? false,
+  :creature/mana 11}
  {:property/id :species/flies, :creature/hp 0.5, :creature/speed 1.5}
  {:property/id :species/bat, :creature/hp 0.5, :creature/speed 1.5}
  {:property/id :species/troll, :creature/hp 3.5, :creature/speed 0.5}

@@ -11,7 +11,8 @@
             [context.entity.movement :refer [frames-per-second]]
             (context.ui [action-bar :as action-bar]
                         [inventory-window :as inventory-window]
-                        player-modal)
+                        player-modal
+                        error-modal)
             (screens game
                      main-menu
                      map-editor

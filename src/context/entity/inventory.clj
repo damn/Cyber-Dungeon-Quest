@@ -104,24 +104,20 @@
   cdq.context/Inventory
   (set-item! [context entity cell item]
     (swap! entity set-item cell item)
-
     (when (applies-modifiers? cell)
       (apply-modifier! context entity (:item/modifier item))
       (when (and (= (:item/slot item) :inventory.slot/weapon))
         (add-skill! context entity item)))
-
     (when (:entity/player? @entity)
       (set-item-image-in-widget context cell item)))
 
   (remove-item! [context entity cell]
     (let [item (get-in (:entity/inventory @entity) cell)]
       (swap! entity remove-item cell)
-
       (when (applies-modifiers? cell)
         (reverse-modifier! context entity (:item/modifier item))
         (when (= (:item/slot item) :inventory.slot/weapon)
           (remove-skill! context entity item)))
-
       (when (:entity/player? @entity)
         (remove-item-from-widget context cell))))
 

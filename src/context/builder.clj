@@ -81,7 +81,7 @@
 
 (defn- ->state [& {:keys [is-player initial-state]}]
   {:initial-state (if is-player
-                    :idle
+                    :idle ; for savegame not, also initial-state.
                     initial-state)
    :fsm (if is-player
           player-fsm
@@ -102,6 +102,7 @@
     [max-width
      max-height]))
 
+; TODO player settings also @ editor ?!
 (def ^:private player-components
   {:entity/player? true
    :entity/faction :evil
@@ -123,13 +124,19 @@
         (update :creature/hp #(int (* % (:hp multiplier)))))))
 
 ; TODO hardcoded :lady-a
-(defn- create-creature-data [{:keys [creature/skills] :as creature-props}
+(defn- create-creature-data [{:keys [creature/skills
+                                     creature/items
+                                     creature/mana
+                                     creature/flying?] :as creature-props}
                              {:keys [is-player
                                      initial-state] :as extra-params}
                              context]
   (let [creature-id (:property/id creature-props)
+        ; TODO images/width/height/animation move to properties,
+        ; no need to calculate/see it here again every time.
         images (create-images context (name creature-id))
         [width height] (images->world-unit-dimensions images)
+        ; TODO remove species, just speed/hp
         {:keys [creature/speed
                 creature/hp]} (species-properties (get-property context (:creature/species creature-props)))
         princess? (= creature-id :creatures/lady-a)]
@@ -137,17 +144,15 @@
             is-player player-components
             princess? lady-props
             :else     npc-components)
-           {:entity/body {:width width
-                          :height height
-                          :is-solid true}
+           {:entity/body {:width width :height height :is-solid true} ; TODO solid?
             :entity/movement speed
             :entity/hp hp
-            :entity/mana 11
-            :entity/skills (zipmap skills (map #(get-property context %) skills))
-            :entity/items  (:creature/items creature-props)
-            :entity/is-flying false
+            :entity/mana mana
+            :entity/skills (zipmap skills (map #(get-property context %) skills)) ; TODO just set of skills use?
+            :entity/items items
+            :entity/flying? flying?
             :entity/animation (animation/create images :frame-duration 0.1 :looping? true)
-            :entity/z-order (if (:is-flying creature-props) :flying :ground)}
+            :entity/z-order (if flying? :flying :ground)} ; TODO :z-order/foo
            (cond
             princess? nil
             :else {:entity/state (->state :is-player is-player
@@ -209,8 +214,7 @@
                                    :is-solid false
                                    :rotation-angle (v/get-angle-from-vector movement-vector)
                                    :rotate-in-movement-direction? true}
-                     ; TODO forgot to add :is-flying true !!!
-                     ; blocked by stones which I can see over
+                     :entity/flying? true
                      :entity/z-order :effect
                      :entity/movement speed
                      :entity/movement-vector movement-vector
