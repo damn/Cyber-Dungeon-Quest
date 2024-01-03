@@ -87,6 +87,7 @@
    :item/slot :label
    :item/modifier :nested-map
    :weapon/two-handed? :label
+   :creature/faction :enum
    :creature/level :text-field
    :creature/skills :one-to-many
    :creature/items :one-to-many
@@ -108,6 +109,10 @@
    :world/max-area-level :text-field
    :world/spawn-rate :text-field
    :world/princess :label})
+
+(defn enum-attribute->items [k]
+  (case k
+    :creature/faction [:faction/good :faction/evil]))
 
 (doseq [k (concat (keys context.modifier/modifier-definitions)
                   (keys (methods context.effect/do!)))]
@@ -142,11 +147,12 @@
         :item/slot 3
         :weapon/two-handed? 4
         :creature/species 4
-        :creature/flying? 5
-        :creature/speed 6
-        :creature/hp 7
-        :creature/mana 8
-        9)
+        :creature/faction 5
+        :creature/flying? 6
+        :creature/speed 7
+        :creature/hp 8
+        :creature/mana 9
+        10)
       (name k)])
    properties))
 
@@ -161,7 +167,9 @@
                                        :sort-by-fn #(vector (or (:creature/level %) 9)
                                                             (name (:creature/species %))
                                                             (name (:property/id %)))
-                                       :extra-info-text #(str (:creature/level %))}
+                                       :extra-info-text #(str (:creature/level %) (case (:creature/faction %)
+                                                                                    :faction/good "g"
+                                                                                    :faction/evil "e"))}
                             :schema (m/schema
                                      [:map {:closed true}
                                       [:property/id [:qualified-keyword {:namespace :creatures}]]
@@ -169,6 +177,7 @@
                                       [:property/dimensions [:tuple pos? pos?]] ; & > max size?
                                       [:property/animation :some]
                                       [:creature/species [:qualified-keyword {:namespace :species}]] ; one of species
+                                      [:creature/faction [:enum :faction/good :faction/evil]]
                                       [:creature/speed pos?]
                                       [:creature/hp pos-int?]
                                       [:creature/mana nat-int?]
@@ -432,19 +441,20 @@
        (map serialize)
        (pprint-spit properties-file)))
 
-; # Add new fields => set this to false
 (def ^:private write-to-file? true)
 
 (comment
+ ; # Add new attributes
  (let [ctx @gdl.app/current-context
        creatures (cdq.context/all-properties ctx :property.type/creature)
        creatures (for [creature creatures]
-                   (assoc creature :creature/flying? false :creature/mana 11))]
-   #_(doseq [creature creatures]
+                   (assoc creature :creature/faction :faction/good))]
+   (def write-to-file? false)
+   (doseq [creature creatures]
      (swap! gdl.app/current-context update-and-write-to-file! creature))
-
-   ; write to file
-   (swap! gdl.app/current-context update-and-write-to-file! (cdq.context/get-property ctx :creatures/vampire)))
+   (def ^:private write-to-file? true)
+   (swap! gdl.app/current-context update-and-write-to-file! (cdq.context/get-property ctx :creatures/vampire))
+   nil)
  )
 
 (defn update-and-write-to-file! [{:keys [context/properties
@@ -453,11 +463,8 @@
   {:pre [(contains? data :property/id)
          (contains? properties id)]}
   (validate data :humanize? true)
-  ;(println "\nupdate-and-write-to-file!")
-  #_(binding [*print-level* nil]
-    (clojure.pprint/pprint data)) ; TODO modal window with data / maybe get change diff ?
+  (binding [*print-level* nil] (clojure.pprint/pprint data))
   (let [properties (assoc properties id data)]
     (when write-to-file?
-      (.start (Thread. (fn []
-                         (write-to-file! properties properties-file)))))
+      (.start (Thread. (fn [] (write-to-file! properties properties-file)))))
     (assoc context :context/properties properties)))

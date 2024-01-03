@@ -47,7 +47,8 @@
   :property/dimensions [2/3 11/24],
   :creature/hp 12,
   :property/id :creatures/toad-horned,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [240 144 48 48]},
   :creature/speed 2.4,
@@ -71,7 +72,8 @@
   :property/dimensions [2/3 29/48],
   :creature/hp 8,
   :property/id :creatures/goblin-warrior,
-  :creature/items #{:items/falchion}}
+  :creature/items #{:items/falchion},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [336 288 48 48]},
   :creature/speed 2.0,
@@ -95,7 +97,8 @@
   :property/dimensions [11/16 37/48],
   :creature/hp 10,
   :property/id :creatures/lizardman-blue-shaman,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [288 0 48 48]},
   :creature/speed 2.0,
@@ -119,7 +122,8 @@
   :property/dimensions [11/16 2/3],
   :creature/hp 10,
   :property/id :creatures/barbarian-f,
-  :creature/items #{:items/axe}}
+  :creature/items #{:items/axe},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [144 432 48 48]},
   :creature/speed 1.6,
@@ -139,7 +143,8 @@
   :property/dimensions [2/3 31/48],
   :creature/hp 22,
   :property/id :creatures/mummy,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [432 0 48 48]},
   :creature/speed 2.0,
@@ -160,7 +165,8 @@
   :property/dimensions [2/3 35/48],
   :creature/hp 10,
   :property/id :creatures/helion,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [192 0 48 48]},
   :creature/speed 2.0,
@@ -181,7 +187,8 @@
   :property/dimensions [2/3 17/24],
   :creature/hp 10,
   :property/id :creatures/priest,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [144 288 48 48]},
   :creature/speed 2.0,
@@ -205,7 +212,8 @@
   :property/dimensions [11/16 13/16],
   :creature/hp 10,
   :property/id :creatures/lizardman-green-spear,
-  :creature/items #{:items/shield-wood-buckler :items/trident}}
+  :creature/items #{:items/shield-wood-buckler :items/trident},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [48 192 48 48]},
   :creature/speed 1.6,
@@ -229,7 +237,8 @@
   :property/dimensions [35/48 9/16],
   :creature/hp 12,
   :property/id :creatures/dwarf-cleric,
-  :creature/items #{:items/hammer}}
+  :creature/items #{:items/hammer},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [336 0 48 48]},
   :creature/speed 2.0,
@@ -249,7 +258,8 @@
   :property/dimensions [2/3 11/16],
   :creature/hp 10,
   :property/id :creatures/thief,
-  :creature/items #{:items/dagger}}
+  :creature/items #{:items/dagger},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [192 288 48 48]},
   :creature/speed 2.0,
@@ -273,7 +283,8 @@
   :property/dimensions [11/16 37/48],
   :creature/hp 10,
   :property/id :creatures/lizardman-green-shaman,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [384 288 48 48]},
   :creature/speed 2.4,
@@ -297,7 +308,8 @@
   :property/dimensions [5/6 19/24],
   :creature/hp 35,
   :property/id :creatures/beholder,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [336 192 48 48]},
   :creature/speed 2.4,
@@ -321,7 +333,8 @@
   :property/dimensions [13/24 19/48],
   :creature/hp 8,
   :property/id :creatures/spider-brown,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [384 240 48 48]},
   :creature/speed 6,
@@ -345,7 +358,8 @@
   :property/dimensions [17/24 2/3],
   :creature/hp 25,
   :property/id :creatures/vampire-lord,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [384 48 48 48]},
   :creature/speed 2.0,
@@ -365,7 +379,8 @@
   :property/dimensions [2/3 35/48],
   :creature/hp 10,
   :property/id :creatures/witch,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [192 48 48 48]},
   :creature/speed 2.0,
@@ -389,7 +404,8 @@
   :property/dimensions [2/3 35/48],
   :creature/hp 10,
   :property/id :creatures/minstrel-f,
-  :creature/items #{:items/sword}}
+  :creature/items #{:items/sword},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [144 480 48 48]},
   :creature/speed 2.0,
@@ -410,7 +426,8 @@
   :property/dimensions [2/3 3/4],
   :creature/hp 10,
   :property/id :creatures/lady-b,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [0 192 48 48]},
   :creature/speed 1.6,
@@ -430,7 +447,8 @@
   :property/dimensions [35/48 9/16],
   :creature/hp 12,
   :property/id :creatures/dwarf,
-  :creature/items #{:items/hammer}}
+  :creature/items #{:items/hammer},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [144 528 48 48]},
   :creature/speed 2.0,
@@ -454,7 +472,8 @@
   :property/dimensions [7/12 13/16],
   :creature/hp 22,
   :property/id :creatures/elemental-air,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [336 480 48 48]},
   :creature/speed 1.6,
@@ -478,7 +497,8 @@
   :property/dimensions [1/2 5/12],
   :creature/hp 12,
   :property/id :creatures/beetle-fire,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [96 48 48 48]},
   :creature/speed 2.0,
@@ -502,7 +522,8 @@
   :property/dimensions [2/3 2/3],
   :creature/hp 10,
   :property/id :creatures/warrior-f,
-  :creature/items #{:items/sword}}
+  :creature/items #{:items/sword},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [336 432 48 48]},
   :creature/speed 2,
@@ -526,7 +547,8 @@
   :property/dimensions [17/24 35/48],
   :creature/hp 350,
   :property/id :creatures/golem-mud,
-  :creature/items #{:items/greatspear}}
+  :creature/items #{:items/greatspear},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [432 576 48 48]},
   :creature/speed 2.0,
@@ -550,7 +572,8 @@
   :property/dimensions [2/3 29/48],
   :creature/hp 10,
   :property/id :creatures/merchant-f,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [144 48 48 48]},
   :creature/speed 2.0,
@@ -574,7 +597,8 @@
   :property/dimensions [2/3 35/48],
   :creature/hp 10,
   :property/id :creatures/minstrel-m,
-  :creature/items #{:items/sword}}
+  :creature/items #{:items/sword},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [432 480 48 48]},
   :creature/speed 2.0,
@@ -598,7 +622,8 @@
   :property/dimensions [3/4 5/6],
   :creature/hp 12,
   :property/id :creatures/spirit-greater,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [96 0 48 48]},
   :creature/speed 2.0,
@@ -619,7 +644,8 @@
   :property/dimensions [2/3 19/24],
   :creature/hp 10,
   :property/id :creatures/knight,
-  :creature/items #{:items/royal-helm :items/sword}}
+  :creature/items #{:items/royal-helm :items/sword},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [144 240 48 48]},
   :creature/speed 1.0,
@@ -643,7 +669,8 @@
   :property/dimensions [17/24 2/3],
   :creature/hp 25,
   :property/id :creatures/zombie-b,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [336 336 48 48]},
   :creature/speed 3.0,
@@ -667,7 +694,8 @@
   :property/dimensions [19/24 19/24],
   :creature/hp 32,
   :property/id :creatures/demon-green,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [384 96 48 48]},
   :creature/speed 2.0,
@@ -691,7 +719,8 @@
   :property/dimensions [2/3 2/3],
   :creature/hp 10,
   :property/id :creatures/drow-wizard,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [288 144 48 48]},
   :creature/speed 2.4,
@@ -715,7 +744,8 @@
   :property/dimensions [35/48 3/4],
   :creature/hp 8,
   :property/id :creatures/goblin-shaman,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [192 480 48 48]},
   :creature/speed 1.6,
@@ -739,7 +769,8 @@
   :property/dimensions [7/12 13/24],
   :creature/hp 12,
   :property/id :creatures/beetle-giant,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [96 96 48 48]},
   :creature/speed 2.0,
@@ -763,7 +794,8 @@
   :property/dimensions [2/3 11/16],
   :creature/hp 10,
   :property/id :creatures/prisoner-b,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [96 192 48 48]},
   :creature/speed 1.6,
@@ -787,7 +819,8 @@
   :property/dimensions [17/24 7/12],
   :creature/hp 12,
   :property/id :creatures/dwarf-mage,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [48 432 48 48]},
   :creature/speed 4,
@@ -811,7 +844,8 @@
   :property/dimensions [13/24 35/48],
   :creature/hp 8,
   :property/id :creatures/bird-hawk,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [192 336 48 48]},
   :creature/speed 3.0,
@@ -832,7 +866,8 @@
   :property/dimensions [13/24 3/4],
   :creature/hp 8,
   :property/id :creatures/pixie-b,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [48 480 48 48]},
   :creature/speed 2.0,
@@ -853,7 +888,8 @@
   :property/dimensions [2/3 3/4],
   :creature/hp 10,
   :property/id :creatures/lady-a,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [336 96 48 48]},
   :creature/speed 2.0,
@@ -873,7 +909,8 @@
   :property/dimensions [11/16 35/48],
   :creature/hp 10,
   :property/id :creatures/drow,
-  :creature/items #{:items/sword}}
+  :creature/items #{:items/sword},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [192 144 48 48]},
   :creature/speed 2.4,
@@ -894,7 +931,8 @@
   :property/dimensions [2/3 29/48],
   :creature/hp 8,
   :property/id :creatures/goblin,
-  :creature/items #{:items/falchion}}
+  :creature/items #{:items/falchion},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [0 288 48 48]},
   :creature/speed 2.4,
@@ -918,7 +956,8 @@
   :property/dimensions [2/3 5/8],
   :creature/hp 15,
   :property/id :creatures/wolf-black,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [96 432 48 48]},
   :creature/speed 4,
@@ -942,7 +981,8 @@
   :property/dimensions [13/24 35/48],
   :creature/hp 8,
   :property/id :creatures/bird-crow,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [240 336 48 48]},
   :creature/speed 3.0,
@@ -966,7 +1006,8 @@
   :property/dimensions [19/24 19/24],
   :creature/hp 32,
   :property/id :creatures/demon-red,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [144 336 48 48]},
   :creature/speed 3.0,
@@ -987,7 +1028,8 @@
   :property/dimensions [13/24 3/4],
   :creature/hp 8,
   :property/id :creatures/pixie-a,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [144 0 48 48]},
   :creature/speed 2.0,
@@ -1008,7 +1050,8 @@
   :property/dimensions [2/3 19/24],
   :creature/hp 10,
   :property/id :creatures/archer,
-  :creature/items #{:items/longbow}}
+  :creature/items #{:items/longbow},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [48 240 48 48]},
   :creature/speed 3.0,
@@ -1032,7 +1075,8 @@
   :property/dimensions [41/48 11/16],
   :creature/hp 8,
   :property/id :creatures/rat-giant,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [0 480 48 48]},
   :creature/speed 2.0,
@@ -1053,7 +1097,8 @@
   :property/dimensions [2/3 17/24],
   :creature/hp 10,
   :property/id :creatures/lord-a,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [96 336 48 48]},
   :creature/speed 3.0,
@@ -1077,7 +1122,8 @@
   :property/dimensions [2/3 3/4],
   :creature/hp 22,
   :property/id :creatures/wraith-black,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [48 336 48 48]},
   :creature/speed 3.0,
@@ -1101,7 +1147,8 @@
   :property/dimensions [2/3 3/4],
   :creature/hp 22,
   :property/id :creatures/wraith-red,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [288 432 48 48]},
   :creature/speed 2,
@@ -1125,7 +1172,8 @@
   :property/dimensions [17/24 5/6],
   :creature/hp 350,
   :property/id :creatures/golem-fire,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [192 384 48 48]},
   :creature/speed 2.0,
@@ -1149,7 +1197,8 @@
   :property/dimensions [5/8 3/4],
   :creature/hp 8,
   :property/id :creatures/wisp-ancient,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [336 144 48 48]},
   :creature/speed 1.0,
@@ -1169,7 +1218,8 @@
   :property/dimensions [35/48 3/4],
   :creature/hp 35,
   :property/id :creatures/troll,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [0 336 48 48]},
   :creature/speed 3.0,
@@ -1193,7 +1243,8 @@
   :property/dimensions [2/3 3/4],
   :creature/hp 22,
   :property/id :creatures/wraith-blue,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [240 480 48 48]},
   :creature/speed 1.6,
@@ -1217,7 +1268,8 @@
   :property/dimensions [7/12 13/24],
   :creature/hp 12,
   :property/id :creatures/beetle-fire-giant,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [288 288 48 48]},
   :creature/speed 2.0,
@@ -1241,7 +1293,8 @@
   :property/dimensions [11/16 13/16],
   :creature/hp 10,
   :property/id :creatures/lizardman-blue-spear,
-  :creature/items #{:items/trident}}
+  :creature/items #{:items/trident},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [288 48 48 48]},
   :creature/speed 2.0,
@@ -1265,7 +1318,8 @@
   :property/dimensions [2/3 19/24],
   :creature/hp 10,
   :property/id :creatures/dark-knight,
-  :creature/items #{:items/cloak-eye}}
+  :creature/items #{:items/cloak-eye},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [48 288 48 48]},
   :creature/speed 2.4,
@@ -1289,7 +1343,8 @@
   :property/dimensions [2/3 7/12],
   :creature/hp 15,
   :property/id :creatures/wolf-brown,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [288 336 48 48]},
   :creature/speed 3.0,
@@ -1313,7 +1368,8 @@
   :property/dimensions [19/24 19/24],
   :creature/hp 32,
   :property/id :creatures/demon-blue,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [48 576 48 48]},
   :creature/speed 3.0,
@@ -1337,7 +1393,8 @@
   :property/dimensions [1/2 31/48],
   :creature/hp 8,
   :property/id :creatures/moth-red,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [144 96 48 48]},
   :creature/speed 2.0,
@@ -1361,7 +1418,8 @@
   :property/dimensions [2/3 2/3],
   :creature/hp 10,
   :property/id :creatures/prisoner-c,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [336 576 48 48]},
   :creature/speed 1.6,
@@ -1381,7 +1439,8 @@
   :property/dimensions [1/2 9/16],
   :creature/hp 25,
   :property/id :creatures/mimic,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [96 288 48 48]},
   :creature/speed 2.0,
@@ -1405,7 +1464,8 @@
   :property/dimensions [11/16 3/4],
   :creature/hp 10,
   :property/id :creatures/lizardman-green,
-  :creature/items #{:items/falchion}}
+  :creature/items #{:items/falchion},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [240 48 48 48]},
   :creature/speed 2.0,
@@ -1426,7 +1486,8 @@
   :property/dimensions [11/16 11/16],
   :creature/hp 10,
   :property/id :creatures/paladin,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [432 384 48 48]},
   :creature/speed 1.0,
@@ -1450,7 +1511,8 @@
   :property/dimensions [23/24 5/6],
   :creature/hp 45,
   :property/id :creatures/dragon-green,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [0 240 48 48]},
   :creature/speed 3.0,
@@ -1470,7 +1532,8 @@
   :property/dimensions [31/48 23/48],
   :creature/hp 8,
   :property/id :creatures/rat,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [0 528 48 48]},
   :creature/speed 2.0,
@@ -1494,7 +1557,8 @@
   :property/dimensions [7/12 13/16],
   :creature/hp 22,
   :property/id :creatures/elemental-vorpal,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [96 240 48 48]},
   :creature/speed 1.0,
@@ -1518,7 +1582,8 @@
   :property/dimensions [17/24 2/3],
   :creature/hp 25,
   :property/id :creatures/zombie-a,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [384 384 48 48]},
   :creature/speed 1.0,
@@ -1542,7 +1607,8 @@
   :property/dimensions [23/24 5/6],
   :creature/hp 45,
   :property/id :creatures/dragon-blue,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [432 192 48 48]},
   :creature/speed 2.4,
@@ -1566,7 +1632,8 @@
   :property/dimensions [13/24 19/48],
   :creature/hp 8,
   :property/id :creatures/spider-black,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [432 144 48 48]},
   :creature/speed 1.6,
@@ -1586,7 +1653,8 @@
   :property/dimensions [35/48 3/4],
   :creature/hp 28,
   :property/id :creatures/ogre,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [0 0 48 48]},
   :creature/speed 2.0,
@@ -1607,7 +1675,8 @@
   :property/dimensions [2/3 11/16],
   :creature/hp 10,
   :property/id :creatures/wizard,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [192 528 48 48]},
   :creature/speed 2.0,
@@ -1631,7 +1700,8 @@
   :property/dimensions [7/12 13/16],
   :creature/hp 22,
   :property/id :creatures/elemental-earth,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [288 384 48 48]},
   :creature/speed 1.0,
@@ -1655,7 +1725,8 @@
   :property/dimensions [23/24 5/6],
   :creature/hp 45,
   :property/id :creatures/dragon-shadow,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [144 192 48 48]},
   :creature/speed 2.4,
@@ -1676,7 +1747,8 @@
   :property/dimensions [2/3 13/16],
   :creature/hp 15,
   :property/id :creatures/banshee,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [48 48 48 48]},
   :creature/speed 2.0,
@@ -1700,7 +1772,8 @@
   :property/dimensions [2/3 2/3],
   :creature/hp 10,
   :property/id :creatures/warrior-m,
-  :creature/items #{:items/sword}}
+  :creature/items #{:items/sword},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [0 576 48 48]},
   :creature/speed 3.0,
@@ -1724,7 +1797,8 @@
   :property/dimensions [1/2 31/48],
   :creature/hp 8,
   :property/id :creatures/moth-white,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [0 432 48 48]},
   :creature/speed 4,
@@ -1748,7 +1822,8 @@
   :property/dimensions [13/24 35/48],
   :creature/hp 8,
   :property/id :creatures/bird-dove,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [240 288 48 48]},
   :creature/speed 2.0,
@@ -1772,7 +1847,8 @@
   :property/dimensions [11/16 3/4],
   :creature/hp 10,
   :property/id :creatures/lizardman-blue,
-  :creature/items #{:items/falchion}}
+  :creature/items #{:items/falchion},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [336 384 48 48]},
   :creature/speed 1.0,
@@ -1796,7 +1872,8 @@
   :property/dimensions [23/24 5/6],
   :creature/hp 45,
   :property/id :creatures/dragon-red,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [288 192 48 48]},
   :creature/speed 2.4,
@@ -1820,7 +1897,8 @@
   :property/dimensions [5/6 31/48],
   :creature/hp 8,
   :property/id :creatures/spider-brown-giant,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [384 480 48 48]},
   :creature/speed 2.0,
@@ -1841,7 +1919,8 @@
   :property/dimensions [1/2 3/4],
   :creature/hp 12,
   :property/id :creatures/spirit,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [432 240 48 48]},
   :creature/speed 2.4,
@@ -1861,7 +1940,8 @@
   :property/dimensions [2/3 35/48],
   :creature/hp 18,
   :property/id :creatures/lich,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [144 144 48 48]},
   :creature/speed 2.0,
@@ -1885,7 +1965,8 @@
   :property/dimensions [11/16 37/48],
   :creature/hp 15,
   :property/id :creatures/skeleton-archer,
-  :creature/items #{:items/longbow}}
+  :creature/items #{:items/longbow},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [384 144 48 48]},
   :creature/speed 1.6,
@@ -1909,7 +1990,8 @@
   :property/dimensions [35/48 35/48],
   :creature/hp 28,
   :property/id :creatures/ogre-mystic,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [432 432 48 48]},
   :creature/speed 2,
@@ -1933,7 +2015,8 @@
   :property/dimensions [17/24 35/48],
   :creature/hp 350,
   :property/id :creatures/golem-metal,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [96 528 48 48]},
   :creature/speed 2.0,
@@ -1957,7 +2040,8 @@
   :property/dimensions [7/12 13/16],
   :creature/hp 22,
   :property/id :creatures/elemental-fire,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [336 48 48 48]},
   :creature/speed 2.0,
@@ -1978,7 +2062,8 @@
   :property/dimensions [2/3 41/48],
   :creature/hp 10,
   :property/id :creatures/templar,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [240 384 48 48]},
   :creature/speed 2.0,
@@ -1998,7 +2083,8 @@
   :property/dimensions [1/2 5/8],
   :creature/hp 8,
   :property/id :creatures/wisp,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [192 240 48 48]},
   :creature/speed 2.0,
@@ -2022,7 +2108,8 @@
   :property/dimensions [5/6 11/16],
   :creature/hp 12,
   :property/id :creatures/snake-giant,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [288 240 48 48]},
   :creature/speed 1.6,
@@ -2046,7 +2133,8 @@
   :property/dimensions [35/48 35/48],
   :creature/hp 28,
   :property/id :creatures/minotaur,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [384 336 48 48]},
   :creature/speed 2.0,
@@ -2070,7 +2158,8 @@
   :property/dimensions [17/24 13/16],
   :creature/hp 15,
   :property/id :creatures/valkyrie-a,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [144 576 48 48]},
   :creature/speed 1.6,
@@ -2094,7 +2183,8 @@
   :property/dimensions [2/3 5/12],
   :creature/hp 12,
   :property/id :creatures/toad-green,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [336 240 48 48]},
   :creature/speed 6,
@@ -2115,7 +2205,8 @@
   :property/dimensions [17/24 2/3],
   :creature/hp 100,
   :property/id :creatures/vampire,
-  :creature/items #{:items/sword :items/cloak-blood}}
+  :creature/items #{:items/sword :items/cloak-blood},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [96 576 48 48]},
   :creature/speed 3.0,
@@ -2139,7 +2230,8 @@
   :property/dimensions [1/2 31/48],
   :creature/hp 8,
   :property/id :creatures/moth-black,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [432 48 48 48]},
   :creature/speed 2.0,
@@ -2159,7 +2251,8 @@
   :property/dimensions [35/48 2/3],
   :creature/hp 10,
   :property/id :creatures/monk,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [96 480 48 48]},
   :creature/speed 2.0,
@@ -2180,7 +2273,8 @@
   :property/dimensions [2/3 17/24],
   :creature/hp 10,
   :property/id :creatures/lord-b,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [0 96 48 48]},
   :creature/speed 2.0,
@@ -2201,7 +2295,8 @@
   :property/dimensions [11/16 2/3],
   :creature/hp 10,
   :property/id :creatures/warden,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [384 0 48 48]},
   :creature/speed 2.0,
@@ -2221,7 +2316,8 @@
   :property/dimensions [11/16 11/16],
   :creature/hp 10,
   :property/id :creatures/druid,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [240 96 48 48]},
   :creature/speed 3.0,
@@ -2245,7 +2341,8 @@
   :property/dimensions [2/3 31/48],
   :creature/hp 10,
   :property/id :creatures/elf-wizard,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [96 144 48 48]},
   :creature/speed 2.0,
@@ -2269,7 +2366,8 @@
   :property/dimensions [2/3 11/16],
   :creature/hp 15,
   :property/id :creatures/skeleton-mage,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [96 384 48 48]},
   :creature/speed 2.0,
@@ -2293,7 +2391,8 @@
   :property/dimensions [17/24 7/12],
   :creature/hp 8,
   :property/id :creatures/halfling-fighter,
-  :creature/items #{:items/dagger}}
+  :creature/items #{:items/dagger},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [48 144 48 48]},
   :creature/speed 2.0,
@@ -2317,7 +2416,8 @@
   :property/dimensions [2/3 2/3],
   :creature/hp 15,
   :property/id :creatures/skeleton-warrior,
-  :creature/items #{:items/sword}}
+  :creature/items #{:items/sword},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [0 384 48 48]},
   :creature/speed 2.0,
@@ -2341,7 +2441,8 @@
   :property/dimensions [17/24 5/8],
   :creature/hp 8,
   :property/id :creatures/halfling-thief,
-  :creature/items #{:items/dagger}}
+  :creature/items #{:items/dagger},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [240 0 48 48]},
   :creature/speed 2.0,
@@ -2365,7 +2466,8 @@
   :property/dimensions [11/16 17/24],
   :creature/hp 10,
   :property/id :creatures/barbarian-m,
-  :creature/items #{:items/axe}}
+  :creature/items #{:items/axe},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [288 96 48 48]},
   :creature/speed 3.0,
@@ -2389,7 +2491,8 @@
   :property/dimensions [2/3 37/48],
   :creature/hp 10,
   :property/id :creatures/elf-bowman,
-  :creature/items #{:items/longbow}}
+  :creature/items #{:items/longbow},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [288 480 48 48]},
   :creature/speed 1.6,
@@ -2410,7 +2513,8 @@
   :property/dimensions [1/2 5/12],
   :creature/hp 12,
   :property/id :creatures/beetle,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [192 192 48 48]},
   :creature/speed 3.0,
@@ -2434,7 +2538,8 @@
   :property/dimensions [5/6 3/4],
   :creature/hp 5,
   :property/id :creatures/bat-giant,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [192 576 48 48]},
   :creature/speed 1.6,
@@ -2458,7 +2563,8 @@
   :property/dimensions [2/3 5/12],
   :creature/hp 12,
   :property/id :creatures/toad-blue,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [240 432 48 48]},
   :creature/speed 2,
@@ -2482,7 +2588,8 @@
   :property/dimensions [17/24 35/48],
   :creature/hp 350,
   :property/id :creatures/golem-stone,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [0 48 48 48]},
   :creature/speed 2.0,
@@ -2506,7 +2613,8 @@
   :property/dimensions [2/3 11/16],
   :creature/hp 10,
   :property/id :creatures/necromancer,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [384 192 48 48]},
   :creature/speed 2.4,
@@ -2530,7 +2638,8 @@
   :property/dimensions [5/6 5/8],
   :creature/hp 8,
   :property/id :creatures/spider-black-giant,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [432 336 48 48]},
   :creature/speed 2.0,
@@ -2554,7 +2663,8 @@
   :property/dimensions [17/24 3/4],
   :creature/hp 15,
   :property/id :creatures/valkyrie-b,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [240 192 48 48]},
   :creature/speed 3.0,
@@ -2574,7 +2684,8 @@
   :property/dimensions [13/24 31/48],
   :creature/hp 5,
   :property/id :creatures/bat,
-  :creature/items #{:items/dagger}}
+  :creature/items #{:items/dagger},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [240 240 48 48]},
   :creature/speed 2.0,
@@ -2594,7 +2705,8 @@
   :property/dimensions [31/48 25/48],
   :creature/hp 12,
   :property/id :creatures/snake,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [288 576 48 48]},
   :creature/speed 3.0,
@@ -2614,7 +2726,8 @@
   :property/dimensions [25/48 5/8],
   :creature/hp 5,
   :property/id :creatures/flies,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [48 96 48 48]},
   :creature/speed 2.0,
@@ -2638,7 +2751,8 @@
   :property/dimensions [2/3 11/16],
   :creature/hp 10,
   :property/id :creatures/prisoner-a,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [432 288 48 48]},
   :creature/speed 2.4,
@@ -2662,7 +2776,8 @@
   :property/dimensions [5/6 19/24],
   :creature/hp 35,
   :property/id :creatures/beholder-deep,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [0 144 48 48]},
   :creature/speed 2.0,
@@ -2686,7 +2801,8 @@
   :property/dimensions [2/3 5/8],
   :creature/hp 15,
   :property/id :creatures/skeleton,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [48 528 48 48]},
   :creature/speed 2.0,
@@ -2710,7 +2826,8 @@
   :property/dimensions [7/12 13/16],
   :creature/hp 22,
   :property/id :creatures/elemental-water,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [48 0 48 48]},
   :creature/speed 2.0,
@@ -2731,7 +2848,8 @@
   :property/dimensions [2/3 11/16],
   :creature/hp 10,
   :property/id :creatures/cultist,
-  :creature/items #{:items/dagger}}
+  :creature/items #{:items/dagger},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [192 432 48 48]},
   :creature/speed 1.6,
@@ -2755,7 +2873,8 @@
   :property/dimensions [2/3 11/16],
   :creature/hp 22,
   :property/id :creatures/mummy-pharao,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [144 384 48 48]},
   :creature/speed 2.0,
@@ -2779,7 +2898,8 @@
   :property/dimensions [17/24 2/3],
   :creature/hp 8,
   :property/id :creatures/halfling-wizard,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [432 96 48 48]},
   :creature/speed 2.0,
@@ -2803,7 +2923,8 @@
   :property/dimensions [2/3 19/24],
   :creature/hp 10,
   :property/id :creatures/drow-bowman,
-  :creature/items #{:items/longbow}}
+  :creature/items #{:items/longbow},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [288 528 48 48]},
   :creature/speed 2.4,
@@ -2827,7 +2948,8 @@
   :property/dimensions [5/6 17/24],
   :creature/hp 5,
   :property/id :creatures/worm-giant,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [384 576 48 48]},
   :creature/speed 2.0,
@@ -2851,7 +2973,8 @@
   :property/dimensions [2/3 5/8],
   :creature/hp 10,
   :property/id :creatures/merchant-m,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [192 96 48 48]},
   :creature/speed 3.0,
@@ -2871,7 +2994,8 @@
   :property/dimensions [11/16 17/24],
   :creature/hp 10,
   :property/id :creatures/elf,
-  :creature/items #{:items/sword}}
+  :creature/items #{:items/sword},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [240 528 48 48]},
   :creature/speed 2.4,
@@ -2891,7 +3015,8 @@
   :property/dimensions [7/12 1/2],
   :creature/hp 5,
   :property/id :creatures/worm,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [48 384 48 48]},
   :creature/speed 2.0,
@@ -2915,7 +3040,8 @@
   :property/dimensions [17/24 7/12],
   :creature/hp 8,
   :property/id :creatures/halfling-sling,
-  :creature/items #{:items/sling}}
+  :creature/items #{:items/sling},
+  :creature/faction :faction/good}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [384 432 48 48]},
   :creature/speed 2,
@@ -2939,7 +3065,8 @@
   :property/dimensions [17/24 3/4],
   :creature/hp 350,
   :property/id :creatures/golem-ice,
-  :creature/items #{}}
+  :creature/items #{},
+  :creature/faction :faction/good}
  {:property/image
   {:file "items/images.png", :sub-image-bounds [480 432 48 48]},
   :item/slot :inventory.slot/cloak,

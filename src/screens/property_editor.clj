@@ -2,7 +2,7 @@
   (:require [clojure.edn :as edn]
             [clojure.string :as str]
             [gdl.app :as app :refer [change-screen!]]
-            [gdl.context :refer [get-stage ->text-button ->image-button ->label ->text-field ->image-widget ->table ->stack ->window all-sound-files play-sound! ->vertical-group ->check-box ->actor key-just-pressed?]]
+            [gdl.context :refer [get-stage ->text-button ->image-button ->label ->text-field ->image-widget ->table ->stack ->window all-sound-files play-sound! ->vertical-group ->check-box ->select-box ->actor key-just-pressed?]]
             [gdl.input.keys :as input.keys]
             [gdl.scene2d.actor :as actor :refer [remove! set-touchable! parent add-listener! add-tooltip!]]
             [gdl.scene2d.group :refer [add-actor! clear-children! children]]
@@ -82,6 +82,15 @@
 
 (defmethod value-widget->data :check-box [_ widget]
   (.isChecked ^com.kotcrab.vis.ui.widget.VisCheckBox widget))
+
+;;
+
+(defmethod ->value-widget :enum [ctx [k v]]
+  (->select-box ctx {:items (map ->edn (properties/enum-attribute->items k))
+                     :selected (->edn v)}))
+
+(defmethod value-widget->data :enum [_ widget]
+  (edn/read-string (.getSelected widget)))
 
 ;;
 

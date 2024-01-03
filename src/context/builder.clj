@@ -93,21 +93,29 @@
 ; TODO player settings also @ editor ?!
 (def ^:private player-components
   {:entity/player? true
-   :entity/faction :faction/evil
    :entity/free-skill-points 3
    :entity/clickable {:type :clickable/player}})
 
-(def ^:private npc-components
-  {:entity/faction :faction/good})
-
 (def ^:private lady-components
-  {:entity/faction :faction/good
-   :entity/clickable {:type :clickable/princess}})
+  {:entity/clickable {:type :clickable/princess}})
+
+; TODO just pass components ! ( & validate entity schema ?)
+; => check schema by going through all entities ?
+
+; optional fields @ creature editor ?
+; flying
+; skills
+; items
+; => can also add clickable/princess ?
+
+; New fields editor
+; faction ?
 
 ; TODO hardcoded :lady-a
 (defn- create-creature-data [{:keys [property/id
                                      property/animation
                                      creature/flying?
+                                     creature/faction
                                      creature/speed
                                      creature/hp
                                      creature/mana
@@ -121,8 +129,7 @@
   (let [princess? (= id :creatures/lady-a)]
     (merge (cond
             player? player-components
-            princess? lady-components
-            :else      npc-components)
+            princess? lady-components)
            {:entity/animation animation
             :entity/body {:width width :height height :solid? true}
             :entity/movement speed
@@ -131,6 +138,7 @@
             :entity/skills (zipmap skills (map #(get-property context %) skills)) ; TODO just set of skills use?
             :entity/items items
             :entity/flying? flying?
+            :entity/faction faction
             :entity/z-order (if flying? :flying :ground)} ; TODO :z-order/foo
            (cond
             princess? nil
