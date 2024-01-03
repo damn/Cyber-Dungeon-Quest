@@ -27,7 +27,7 @@
   (entity/create [[_ max-hp]]
     [max-hp max-hp])
   (entity/render-info [_ {[x y] :position
-                          {:keys [width half-width half-height]} :body
+                          {:keys [width half-width half-height]} :entity/body
                           :keys [mouseover?]}
                        c]
     (let [ratio (val-max-ratio hp)]

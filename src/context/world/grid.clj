@@ -24,7 +24,7 @@
        [[l b] [l t] [r b] [r t]]))))
 
 (defn- set-cells! [grid entity]
-  (let [cells (rectangle->cells grid (:body @entity))]
+  (let [cells (rectangle->cells grid (:entity/body @entity))]
     (assert (not-any? nil? cells))
     (swap! entity assoc :cells cells)
     (doseq [cell cells]
@@ -37,7 +37,7 @@
 ; old version, only calculating cells once, faster
 ; but anyway movement calculates it again -> refactor there first
 #_(defn- update-cells! [grid entity]
-  (let [cells (rectangle->cells grid (:body @entity))]
+  (let [cells (rectangle->cells grid (:entity/body @entity))]
     (when-not (= cells (:cells @entity))
       (remove-from-cells! entity)
       (set-cells! e cells))))
@@ -56,7 +56,7 @@
            (int (+ (left-bottom 1) (/ height 2)))])]))
 
 (defn- set-occupied-cells! [grid entity]
-  (let [cells (rectangle->occupied-cells grid (:body @entity))]
+  (let [cells (rectangle->occupied-cells grid (:entity/body @entity))]
     (doseq [cell cells]
       (swap! cell cell/add-occupying-entity entity))
     (swap! entity assoc :occupied-cells cells)))
@@ -94,39 +94,40 @@
     (->> (circle->cells grid circle)
          (map deref)
          cells->entities
-         (filter #(geom/collides? circle (:body @%)))))
+         (filter #(geom/collides? circle (:entity/body @%)))))
 
   (point->entities [grid position]
     (when-let [cell (get grid (->tile position))]
-      (filter #(geom/point-in-rect? position (:body @%))
+      (filter #(geom/point-in-rect? position (:entity/body @%))
               (:entities @cell))))
 
   (valid-position? [grid entity*]
-    (let [cells* (map deref (rectangle->cells grid (:body entity*)))]
+    (let [cells* (map deref (rectangle->cells grid (:entity/body entity*)))]
       (and (not-any? #(cell/blocked? % entity*) cells*)
-           (or (not (:is-solid (:body entity*)))
+           (or (not (:is-solid (:entity/body entity*)))
                (->> cells*
                     cells->entities
                     (map deref)
                     (not-any? #(and (not= (:id %) (:id entity*))
-                                    (:is-solid (:body %))
-                                    (geom/collides? (:body %) (:body entity*)))))))))
+                                    (:is-solid (:entity/body %))
+                                    (geom/collides? (:entity/body %)
+                                                    (:entity/body entity*)))))))))
 
   (add-entity! [grid entity]
     ;(assert (valid-position? grid @entity)) ; TODO deactivate because projectile no left-bottom remove that field or update properly for all
     (set-cells! grid entity)
-    (when (:is-solid (:body @entity))
+    (when (:is-solid (:entity/body @entity))
       (set-occupied-cells! grid entity)))
 
   (remove-entity! [_ entity]
     (remove-from-cells! entity)
-    (when (:is-solid (:body @entity))
+    (when (:is-solid (:entity/body @entity))
       (remove-from-occupied-cells! entity)))
 
   (entity-position-changed! [grid entity]
     ;(assert (valid-position? grid @entity)) ; TODO deactivate because projectile no left-bottom remove that field or update properly for all
     (update-cells! grid entity)
-    (when (:is-solid (:body @entity))
+    (when (:is-solid (:entity/body @entity))
       (update-occupied-cells! grid entity))))
 
 ; TODO separate ns?
@@ -160,7 +161,7 @@
   (blocked? [_]
     (= :none movement))
 
-  (blocked? [_ {:keys [is-flying]}]
+  (blocked? [_ {:keys [entity/is-flying]}]
     (case movement
       :none true
       :air (not is-flying)

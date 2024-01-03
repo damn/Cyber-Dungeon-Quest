@@ -62,7 +62,7 @@
 (defn- start-point [entity* direction]
   (v/add (:position entity*)
          (v/scale direction
-                  (+ (:radius (:body entity*)) size 0.1))))
+                  (+ (:radius (:entity/body entity*)) size 0.1))))
 
 (defmethod effect/do! :effect/projectile
   [{:keys [effect/source

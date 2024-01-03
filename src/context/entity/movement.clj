@@ -23,7 +23,7 @@
                       (mapv #(+ %1 (* %2 speed delta)) position direction-vector))]
     (-> entity*
         (update :position apply-delta)
-        (update-in [:body :left-bottom] apply-delta))))
+        (update-in [:entity/body :left-bottom] apply-delta))))
 
 ; TODO DRY with valid-position?
 (defn- update-position-projectile! [{:keys [context/delta-time] :as ctx}
@@ -35,12 +35,13 @@
                 already-hit-bodies
                 piercing]} (:projectile-collision @projectile)
         grid (world-grid ctx)
-        cells* (map deref (rectangle->cells grid (:body @projectile)))
+        cells* (map deref (rectangle->cells grid (:entity/body @projectile)))
         hit-entity (find-first #(and (not (contains? already-hit-bodies %)) ; not filtering out own id
                                      (not= (:entity/faction @projectile)
                                            (:entity/faction @%))
-                                     (:is-solid (:body @%))
-                                     (geom/collides? (:body @projectile) (:body @%)))
+                                     (:is-solid (:entity/body @%))
+                                     (geom/collides? (:entity/body @projectile)
+                                                     (:entity/body @%)))
                                (cells->entities cells*))
         blocked? (cond hit-entity
                        (do
@@ -70,8 +71,8 @@
 
 (defcomponent :entity/movement tiles-per-second
   (entity/create! [_ entity _ctx]
-    (assert (and (:body     @entity)
-                 (:position @entity)))
+    (assert (and (:entity/body @entity)
+                 (:position    @entity)))
     (assert (<= tiles-per-second max-speed)))
 
   (entity/tick! [_ entity ctx]

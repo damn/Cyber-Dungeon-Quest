@@ -11,7 +11,7 @@
                                    (world-mouse-position context))]
     ; TODO needs z-order ? what if 'shout' element or FX ?
     (->> render-on-map-order
-         (sort-by-order hits #(:z-order @%))
+         (sort-by-order hits #(:entity/z-order @%))
          reverse
          (filter #(line-of-sight? context @player-entity @%)) ; TODO here disable LoS for debug
          first)))

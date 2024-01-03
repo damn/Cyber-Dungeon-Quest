@@ -9,7 +9,7 @@
   (let [[width height] (:world-unit-dimensions icon)
         _ (assert (= width height))
         radius (/ width 2)
-        y (+ y (:half-height (:body entity*)))
+        y (+ y (:half-height (:entity/body entity*)))
         center [x (+ y radius)]]
     (draw-filled-circle c center radius [1 1 1 0.125])
     (draw-sector c center radius

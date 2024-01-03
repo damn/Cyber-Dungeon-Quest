@@ -96,7 +96,7 @@
                        (render-entities* context
                                          (->> active-entities
                                               (map deref)
-                                              (filter :z-order)
+                                              (filter :entity/z-order)
                                               (filter #(line-of-sight? context @player-entity %)))) ; TODO here debug los disable
                        (debug-render-after-entities context))))
 

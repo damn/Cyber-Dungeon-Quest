@@ -84,7 +84,7 @@
 (extend-type gdl.context.Context
   cdq.context/World
   (line-of-sight? [context source* target*]
-    (and (:z-order target*)  ; is even an entity which renders something
+    (and (:entity/z-order target*)  ; is even an entity which renders something
          (or (not (:is-player source*))
              (on-screen? target* context))
          (not (ray-blocked? context (:position source*) (:position target*)))))
@@ -137,7 +137,7 @@
     (aset arr
           x
           y
-          (boolean (cell/blocked? cell* {:is-flying true})))))
+          (boolean (cell/blocked? cell* {:entity/is-flying true})))))
 
 (defn- create-cell-blocked-boolean-array [grid]
   (let [arr (make-array Boolean/TYPE

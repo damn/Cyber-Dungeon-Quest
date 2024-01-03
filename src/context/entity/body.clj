@@ -14,9 +14,9 @@
 (defn- draw-bounds [c {[x y] :left-bottom :keys [width height is-solid]}]
   (draw-rectangle c x y width height (if is-solid color/white color/gray)))
 
-(defn assoc-left-bottom [{:keys [body] [x y] :position :as entity*}]
-  (assoc-in entity* [:body :left-bottom] [(- x (/ (:width body)  2))
-                                          (- y (/ (:height body) 2))]))
+(defn assoc-left-bottom [{:keys [entity/body] [x y] :position :as entity*}]
+  (assoc-in entity* [:entity/body :left-bottom] [(- x (/ (:width body)  2))
+                                                 (- y (/ (:height body) 2))]))
 
 (def show-body-bounds false)
 
@@ -29,7 +29,12 @@
                  rotation-angle
                  rotate-in-movement-direction?])
 
-(defcomponent :body {:keys [left-bottom width height is-solid rotation-angle rotate-in-movement-direction?] :as body}
+(defcomponent :entity/body {:keys [left-bottom
+                                   width
+                                   height
+                                   is-solid
+                                   rotation-angle
+                                   rotate-in-movement-direction?] :as body}
   (entity/create [_]
     (assert (and width height
                  (>= width  (if is-solid min-solid-body-size 0))
@@ -60,7 +65,7 @@
 
   (entity/moved! [_ entity context direction-vector]
     (when rotate-in-movement-direction?
-      (swap! entity assoc-in [:body :rotation-angle] (v/get-angle-from-vector direction-vector)))
+      (swap! entity assoc-in [:entity/body :rotation-angle] (v/get-angle-from-vector direction-vector)))
     (entity-position-changed! (world-grid context) entity))
 
   (entity/render-debug [_ e* context]

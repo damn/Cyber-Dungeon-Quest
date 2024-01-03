@@ -4,9 +4,9 @@
             [context.entity :as entity]))
 
 (defn- assoc-frame! [e]
-  (swap! e #(assoc % :image (animation/current-frame (:animation %)))))
+  (swap! e #(assoc % :image (animation/current-frame (:entity/animation %)))))
 
-(defcomponent :animation animation
+(defcomponent :entity/animation animation
   (entity/create! [_ e _ctx]
     (assoc-frame! e))
   (entity/tick! [[k _] e {:keys [context/delta-time]}]

@@ -140,17 +140,17 @@
             is-player player-components
             princess? lady-props
             :else     npc-components)
-           {:body {:width width
-                   :height height
-                   :is-solid true}
+           {:entity/body {:width width
+                          :height height
+                          :is-solid true}
             :entity/movement speed
             :entity/hp hp
             :entity/mana 11
             :entity/skills (:creature/skills creature-props)
             :entity/items  (:creature/items creature-props)
-            :is-flying false
-            :animation (animation/create images :frame-duration 0.1 :looping? true)
-            :z-order (if (:is-flying creature-props) :flying :ground)}
+            :entity/is-flying false
+            :entity/animation (animation/create images :frame-duration 0.1 :looping? true)
+            :entity/z-order (if (:is-flying creature-props) :flying :ground)}
            (cond
             princess? nil
             :else {:entity/state (->state :is-player is-player
@@ -176,18 +176,18 @@
       (play-sound! context sound)
       (create-entity! context
                       {:position position
-                       :animation animation
-                       :z-order :effect
+                       :entity/animation animation
+                       :entity/z-order :effect
                        :delete-after-animation-stopped? true})))
 
   ; TODO use image w. shadows spritesheet
   (item-entity [context position item]
     (create-entity! context
                     {:position position
-                     :body {:width 0.5 ; TODO use item-body-dimensions
-                            :height 0.5
-                            :is-solid false}
-                     :z-order :on-ground
+                     :entity/body {:width 0.5 ; TODO use item-body-dimensions
+                                   :height 0.5
+                                   :is-solid false}
+                     :entity/z-order :on-ground
                      :image (:property/image item)
                      :item item
                      :entity/clickable {:type :clickable/item
@@ -196,7 +196,7 @@
   (line-entity [context {:keys [start end duration color thick?]}]
     (create-entity! context
                     {:position start
-                     :z-order :effect
+                     :entity/z-order :effect
                      :line-render {:thick? thick?
                                    :end end
                                    :color color}
@@ -209,17 +209,17 @@
     (create-entity! context
                     {:position position
                      :entity/faction faction
-                     :body {:width size
-                            :height size
-                            :is-solid false
-                            :rotation-angle (v/get-angle-from-vector movement-vector)
-                            :rotate-in-movement-direction? true}
+                     :entity/body {:width size
+                                   :height size
+                                   :is-solid false
+                                   :rotation-angle (v/get-angle-from-vector movement-vector)
+                                   :rotate-in-movement-direction? true}
                      ; TODO forgot to add :is-flying true !!!
                      ; blocked by stones which I can see over
-                     :z-order :effect
+                     :entity/z-order :effect
                      :entity/movement speed
                      :entity/movement-vector movement-vector
-                     :animation animation
+                     :entity/animation animation
                      :delete-after-duration maxtime
                      :entity/plop true
                      :projectile-collision {:piercing piercing

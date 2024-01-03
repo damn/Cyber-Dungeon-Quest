@@ -31,7 +31,7 @@
           (send-event! context entity :alert)))))
 
   (render-below [_ c entity*])
-  (render-above [_ c {[x y] :position :keys [body]}]
+  (render-above [_ c {[x y] :position :keys [entity/body]}]
     (draw-text c
                {:text "zzz"
                 :x x

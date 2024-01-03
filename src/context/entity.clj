@@ -88,7 +88,7 @@
                       :as context}
                      entities*]
     (doseq [entities* (map second
-                           (sort-by-order (group-by :z-order entities*)
+                           (sort-by-order (group-by :entity/z-order entities*)
                                           first
                                           render-on-map-order))
             ; vars so I can see the function name @ error (can I do this with x.x? give multimethods names?)

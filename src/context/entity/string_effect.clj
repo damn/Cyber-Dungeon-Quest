@@ -9,12 +9,11 @@
   (entity/tick! [[k _] e context]
     (when (stopped? context counter)
       (swap! e dissoc k)))
-  (entity/render-above [_ {[x y] :position :keys [body]} c]
+  (entity/render-above [_ {[x y] :position :keys [entity/body]} c]
     (draw-text c
                {:text text
                 :x x
-                :y (+ y (:half-height body)
-                      (pixels->world-units c hpbar-height-px))
+                :y (+ y (:half-height body) (pixels->world-units c hpbar-height-px))
                 :scale 2
                 :up? true})))
 

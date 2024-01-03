@@ -7,8 +7,8 @@
 (defn- in-range? [entity* target* maxrange] ; == circle-collides?
   (< (- (v/distance (:position entity*)
                     (:position target*))
-        (:radius (:body entity*))
-        (:radius (:body target*)))
+        (:radius (:entity/body entity*))
+        (:radius (:entity/body target*)))
      maxrange))
 
 (defmethod effect/useful? :effect/target-entity
@@ -22,7 +22,7 @@
   (v/add (:position entity*)
          (v/scale (v/direction (:position entity*)
                                (:position target*))
-                  (:radius (:body entity*)))))
+                  (:radius (:entity/body entity*)))))
 
 (defn- end-point [entity* target* maxrange]
   (v/add (start-point entity* target*)
