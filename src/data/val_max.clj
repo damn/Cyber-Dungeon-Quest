@@ -8,29 +8,45 @@
   those functions make sure that val always remains smaller or equal than maximum
   for example damage [5 10] and we apply-val * 3
   will result in [10 10] damage
-  where as apply-max / 3 => [3 3] damage.")
+  where as apply-max / 3 => [3 3] damage."
+  (:require [malli.core :as m]))
+
+(def val-max-schema
+  (m/schema [:and
+             [:vector {:min 2 :max 2} [:int {:min 0}]]
+             [:fn {:error/fn (fn [{[v mx] :value} _]
+                               (when (< mx v)
+                                 (format "Expected max (%d) to be smaller than val (%d)" v mx)))}
+              (fn [[a b]] (<= a b))]]))
 
 (defn val-max-ratio
   "If mx and v is 0, returns 0, otherwise (/ v mx)"
   [[v mx]]
+  {:pre [(m/validate val-max-schema [v mx])]}
   (if (and (zero? v) (zero? mx))
     0
     (/ v mx)))
 
 (defn lower-than-max? [[v mx]]
+  {:pre [(m/validate val-max-schema [v mx])]}
   (< v mx))
 
-(defn set-to-max [[_ mx]]
+(defn set-to-max [[v mx]]
+  {:pre [(m/validate val-max-schema [v mx])]}
   [mx mx])
 
 (defn- zero-or-pos-int [value]
   (-> value int (max 0)))
 
 (defn apply-val [[v mx] f]
+  {:pre [(m/validate val-max-schema [v mx])]
+   :post [(m/validate val-max-schema %)]}
   (let [v (zero-or-pos-int (f v))]
     [(min v mx) mx]))
 
 (defn apply-max [[v mx] f]
+  {:pre [(m/validate val-max-schema [v mx])]
+   :post [(m/validate val-max-schema %)]}
   (let [mx (zero-or-pos-int (f mx))]
     [(min v mx) mx]))
 
@@ -49,6 +65,8 @@
 
 ; [operant operation]
 (defn apply-val-max-modifier [val-max [[val-or-max inc-or-mult] value]]
+  {:pre [(m/validate val-max-schema val-max)]
+   :post [(m/validate val-max-schema %)]}
   (let [f (case inc-or-mult
             :inc  (partial + value) ; TODO use operation op => :+ :- :*, :set-to-max
             :mult (partial * value))]
@@ -62,9 +80,12 @@
     :inc 0
     :mult 1))
 
+; TODO validate modifiers
 (defn apply-val-max-modifiers
   "First inc then mult"
   [val-max modifiers]
+  {:pre [(m/validate val-max-schema val-max)]
+   :post [(m/validate val-max-schema %)]}
   (reduce apply-val-max-modifier
           val-max
           (sort-by inc<mult modifiers)))

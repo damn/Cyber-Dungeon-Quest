@@ -9,6 +9,15 @@
 ; doseq-entity - what if key is not available anymore ? check :when (k @entity)  ?
 ; but for now accepting nil value at components, so have to check first.
 
+; TODO why do defsystem have default returns ?
+; I can just apply them on (keys (methods ...)) only
+; only 8 tick fns
+; => apply on those 8 methods only of entity ....
+; => reuse at effects see
+; I could cache the keyset intersection call between entity keys and multimethod keys
+; keySet is cached anyway in a map ?
+; anyway this needs to be tested
+
 (defrecord Entity [])
 
 (defsystem create   [_])
