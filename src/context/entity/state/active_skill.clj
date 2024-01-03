@@ -60,7 +60,7 @@
       (effect-render-info (merge c effect-context) effect))))
 
 (defn- apply-action-speed-modifier [entity* skill action-time]
-  (let [{:keys [cast-speed attack-speed]} (:modifiers entity*)
+  (let [{:keys [cast-speed attack-speed]} (:entity/modifiers entity*)
         modified-action-time (/ action-time
                                 (or (if (:spell? skill) cast-speed attack-speed)
                                     1))]

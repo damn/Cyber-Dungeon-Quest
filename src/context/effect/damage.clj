@@ -30,8 +30,8 @@
 (comment
  (let [block-ignore 0.4
        block-rate 0.5
-       source {:modifiers {:shield {:effect/source {:physical block-ignore}}}}
-       target {:modifiers {:shield {:effect/target {:physical block-rate}}}}]
+       source {:entity/modifiers {:shield {:effect/source {:physical block-ignore}}}}
+       target {:entity/modifiers {:shield {:effect/target {:physical block-rate}}}}]
    (effective-block-rate source target :shield :physical))
  )
 
@@ -58,16 +58,16 @@
  (set! *print-level* nil)
  (apply-source-modifiers [:physical [5 10]]
                          (context.entity/map->Entity
-                          {:modifiers {:effect/damage {:effect/source {:physical {[:val :inc] 1}}}}}))
+                          {:entity/modifiers {:effect/damage {:effect/source {:physical {[:val :inc] 1}}}}}))
  [:physical [6 10]]
  (apply-source-modifiers [:magic [5 10]]
                          (context.entity/map->Entity
-                          {:modifiers {:effect/damage {:effect/source {:physical {[:val :inc] 1}}}}}))
+                          {:entity/modifiers {:effect/damage {:effect/source {:physical {[:val :inc] 1}}}}}))
  [:magic [5 10]]
 
  (apply-source-modifiers [:magic [5 10]]
                          (context.entity/map->Entity
-                          {:modifiers {:effect/damage {:effect/source {:magic {[:max :mult] 3}}}}}))
+                          {:entity/modifiers {:effect/damage {:effect/source {:magic {[:max :mult] 3}}}}}))
  [:magic [5 30]]
  )
 
@@ -96,15 +96,15 @@
 
  (effective-damage [:physical [3 10]]
                    (context.entity/map->Entity
-                    {:modifiers {:effect/damage {:effect/source {:physical  {[:max :mult] 2
-                                                                             [:val :mult] 1.5
-                                                                             [:val :inc] 1
-                                                                             [:max :inc] 0}}}}})
+                    {:entity/modifiers {:effect/damage {:effect/source {:physical  {[:max :mult] 2
+                                                                                    [:val :mult] 1.5
+                                                                                    [:val :inc] 1
+                                                                                    [:max :inc] 0}}}}})
                    (context.entity/map->Entity
-                    {:modifiers {:effect/damage {:target {:physical  {[:max :mult] 1
-                                                                      [:val :mult] 1
-                                                                      [:val :inc] -5
-                                                                      [:max :inc] 0}}}}}))
+                    {:entity/modifiers {:effect/damage {:target {:physical  {[:max :mult] 1
+                                                                             [:val :mult] 1
+                                                                             [:val :inc] -5
+                                                                             [:max :inc] 0}}}}}))
  [:physical [1 20]]
  )
 

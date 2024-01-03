@@ -36,14 +36,14 @@
 (modifier/defmodifier :modifier/cast-speed
   {:values  [[15 25] [35 45] [50 60]]
    :text    (fn [v] (str "+" v "% Casting-Speed"))
-   :keys    [:modifiers :cast-speed]
+   :keys    [:entity/modifiers :cast-speed]
    :apply   #(+ (or %1 1) (/ %2 100))
    :reverse #(- %1 (/ %2 100))})
 
 (modifier/defmodifier :modifier/attack-speed
   {:values  [[15 25] [35 45] [50 60]]
    :text    (fn [v] (str "+" v "% Attack-Speed"))
-   :keys    [:modifiers :attack-speed]
+   :keys    [:entity/modifiers :attack-speed]
    :apply   #(+ (or %1 1) (/ %2 100))
    :reverse #(- %1 (/ %2 100))})
 
@@ -60,7 +60,7 @@
            (assert (check-damage-block-modifier-value value)
                    (str "Wrong value for modifier: " value))
            (str value))
-   :keys [:modifiers block-type]
+   :keys [:entity/modifiers block-type]
    :apply (fn [component value]
             (assert (check-damage-block-modifier-value value)
                     (str "Wrong value for shield/armor modifier: " value))
@@ -110,7 +110,7 @@
            (assert (check-damage-modifier-value value)
                    (str "Wrong value for damage modifier: " value))
            (damage-modifier-text value))
-   :keys [:modifiers :effect/damage]
+   :keys [:entity/modifiers :effect/damage]
    :apply (fn [component value]
             (assert (check-damage-modifier-value value)
                     (str "Wrong value for damage modifier: " value))

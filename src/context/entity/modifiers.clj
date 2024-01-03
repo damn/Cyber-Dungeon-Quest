@@ -3,7 +3,7 @@
             cdq.entity))
 
 (defn- effect-modifiers [entity* effect-type]
-  (-> entity* :modifiers effect-type))
+  (-> entity* :entity/modifiers effect-type))
 
 (extend-type context.entity.Entity
   cdq.entity/EffectModifiers
