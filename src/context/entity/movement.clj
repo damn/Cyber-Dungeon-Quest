@@ -39,7 +39,7 @@
         hit-entity (find-first #(and (not (contains? already-hit-bodies %)) ; not filtering out own id
                                      (not= (:entity/faction @projectile)
                                            (:entity/faction @%))
-                                     (:is-solid (:entity/body @%))
+                                     (:solid? (:entity/body @%))
                                      (geom/collides? (:entity/body @projectile)
                                                      (:entity/body @%)))
                                (cells->entities cells*))

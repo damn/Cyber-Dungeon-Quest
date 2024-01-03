@@ -11,8 +11,8 @@
 ; skipping bodies at too fast movement
 (def min-solid-body-size 0.4)
 
-(defn- draw-bounds [c {[x y] :left-bottom :keys [width height is-solid]}]
-  (draw-rectangle c x y width height (if is-solid color/white color/gray)))
+(defn- draw-bounds [c {[x y] :left-bottom :keys [width height solid?]}]
+  (draw-rectangle c x y width height (if solid? color/white color/gray)))
 
 (defn assoc-left-bottom [{:keys [entity/body] [x y] :entity/position :as entity*}]
   (assoc-in entity* [:entity/body :left-bottom] [(- x (/ (:width body)  2))
@@ -25,21 +25,21 @@
                  half-width
                  half-height
                  radius
-                 is-solid
+                 solid?
                  rotation-angle
                  rotate-in-movement-direction?])
 
 (defcomponent :entity/body {:keys [left-bottom
                                    width
                                    height
-                                   is-solid
+                                   solid?
                                    rotation-angle
                                    rotate-in-movement-direction?] :as body}
   (entity/create [_]
     (assert (and width height
-                 (>= width  (if is-solid min-solid-body-size 0))
-                 (>= height (if is-solid min-solid-body-size 0))
-                 (boolean? is-solid)
+                 (>= width  (if solid? min-solid-body-size 0))
+                 (>= height (if solid? min-solid-body-size 0))
+                 (boolean? solid?)
                  (or (nil? rotation-angle)
                      (<= 0 rotation-angle 360))))
     (map->Body
@@ -50,7 +50,7 @@
       :half-height (float (/ height 2))
       :radius (float (max (/ width  2)
                           (/ height 2)))
-      :is-solid is-solid
+      :solid? solid?
       :rotation-angle (or rotation-angle 0)
       :rotate-in-movement-direction? rotate-in-movement-direction?}))
 

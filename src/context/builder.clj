@@ -137,7 +137,7 @@
             is-player player-components
             princess? lady-props
             :else     npc-components)
-           {:entity/body {:width width :height height :is-solid true} ; TODO solid?
+           {:entity/body {:width width :height height :solid? true}
             :entity/movement speed
             :entity/hp hp
             :entity/mana mana
@@ -181,7 +181,7 @@
                     {:entity/position position
                      :entity/body {:width 0.5 ; TODO use item-body-dimensions
                                    :height 0.5
-                                   :is-solid false}
+                                   :solid? false}
                      :entity/z-order :on-ground
                      :entity/image (:property/image item)
                      :entity/item item
@@ -204,7 +204,7 @@
                      :entity/faction faction
                      :entity/body {:width size
                                    :height size
-                                   :is-solid false
+                                   :solid? false
                                    :rotation-angle (v/get-angle-from-vector movement-vector)
                                    :rotate-in-movement-direction? true}
                      :entity/flying? true

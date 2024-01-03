@@ -104,31 +104,31 @@
   (valid-position? [grid entity*]
     (let [cells* (map deref (rectangle->cells grid (:entity/body entity*)))]
       (and (not-any? #(cell/blocked? % entity*) cells*)
-           (or (not (:is-solid (:entity/body entity*)))
+           (or (not (:solid? (:entity/body entity*)))
                (->> cells*
                     cells->entities
                     (map deref)
                     (not-any? #(and (not= (:entity/id %)
                                           (:entity/id entity*))
-                                    (:is-solid (:entity/body %))
+                                    (:solid? (:entity/body %))
                                     (geom/collides? (:entity/body %)
                                                     (:entity/body entity*)))))))))
 
   (add-entity! [grid entity]
     ;(assert (valid-position? grid @entity)) ; TODO deactivate because projectile no left-bottom remove that field or update properly for all
     (set-cells! grid entity)
-    (when (:is-solid (:entity/body @entity))
+    (when (:solid? (:entity/body @entity))
       (set-occupied-cells! grid entity)))
 
   (remove-entity! [_ entity]
     (remove-from-cells! entity)
-    (when (:is-solid (:entity/body @entity))
+    (when (:solid? (:entity/body @entity))
       (remove-from-occupied-cells! entity)))
 
   (entity-position-changed! [grid entity]
     ;(assert (valid-position? grid @entity)) ; TODO deactivate because projectile no left-bottom remove that field or update properly for all
     (update-cells! grid entity)
-    (when (:is-solid (:entity/body @entity))
+    (when (:solid? (:entity/body @entity))
       (update-occupied-cells! grid entity))))
 
 ; TODO separate ns?
