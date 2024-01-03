@@ -11,7 +11,7 @@
   :skill/action-time 0.4,
   :skill/cooldown 0,
   :skill/cost 0,
-  :skill/effect {:effect/spawn :bat},
+  :skill/effect {:effect/spawn :creatures/bat},
   :property/image
   {:file "skills/images.png", :sub-image-bounds [160 64 32 32]}}
  {:property/id :spells/meditation,
