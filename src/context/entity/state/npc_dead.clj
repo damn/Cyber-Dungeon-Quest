@@ -5,7 +5,7 @@
 (defrecord NpcDead [entity]
   state/State
   (enter [_ context]
-    (swap! entity assoc :destroyed? true)
+    (swap! entity assoc :entity/destroyed? true)
     (audiovisual context (:entity/position @entity) :creature/die-effect))
   (exit [_ context])
   (tick! [_ context])

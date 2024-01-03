@@ -122,6 +122,11 @@
         (update :creature/speed * (:speed multiplier))
         (update :creature/hp #(int (* % (:hp multiplier)))))))
 
+; TODO
+; entity/item-on-cursor
+; entity/inventory
+; etc.
+
 ; TODO hardcoded :lady-a
 (defn- create-creature-data [{:keys [creature/skills] :as creature-props}
                              {:keys [is-player

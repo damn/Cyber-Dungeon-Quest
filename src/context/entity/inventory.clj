@@ -61,10 +61,10 @@
   (assoc-in inventory cell nil))
 
 (defn- set-item [entity* cell item]
-  (update entity* :inventory inv-set-item cell item))
+  (update entity* :entity/inventory inv-set-item cell item))
 
 (defn- remove-item [entity* cell]
-  (update entity* :inventory inv-remove-item cell))
+  (update entity* :entity/inventory inv-remove-item cell))
 
 (defn stackable? [item-a item-b]
   (and (:count item-a)
@@ -73,7 +73,7 @@
 
 ; TODO doesnt exist, stackable, usable items with action/skillbar thingy
 #_(defn remove-one-item [entity cell]
-  (let [item (get-in (:inventory @entity) cell)]
+  (let [item (get-in (:entity/inventory @entity) cell)]
     (if (and (:count item)
              (> (:count item) 1))
       (do
@@ -86,7 +86,7 @@
 (defn- try-put-item-in!
   "returns true when the item was picked up"
   [context entity slot item]
-  (let [inventory (:inventory @entity)
+  (let [inventory (:entity/inventory @entity)
         cells-items (cells-and-items inventory slot)
         [cell cell-item] (find-first (fn [[cell cell-item]] (stackable? item cell-item))
                                      cells-items)
@@ -114,7 +114,7 @@
       (set-item-image-in-widget context cell item)))
 
   (remove-item! [context entity cell]
-    (let [item (get-in (:inventory @entity) cell)]
+    (let [item (get-in (:entity/inventory @entity) cell)]
       (swap! entity remove-item cell)
 
       (when (applies-modifiers? cell)
@@ -127,7 +127,7 @@
 
   ; TODO no items which stack are available
   (stack-item! [context entity cell item]
-    (let [cell-item (get-in (:inventory @entity) cell)]
+    (let [cell-item (get-in (:entity/inventory @entity) cell)]
       (assert (stackable? item cell-item))
       ; TODO this doesnt make sense with modifiers ! (triggered 2 times if available)
       ; first remove and then place, just update directly  item ...
@@ -141,7 +141,7 @@
 
 (defcomponent :entity/items items
   (entity/create! [_ entity context]
-    (swap! entity assoc :inventory empty-inventory)
+    (swap! entity assoc :entity/inventory empty-inventory)
     ;(swap! entity dissoc :items)
     (doseq [id items]
-      (try-pickup-item! context entity (get-property context id))))) ; TODO bug happens before entity/skills so no skills there
+      (try-pickup-item! context entity (get-property context id)))))

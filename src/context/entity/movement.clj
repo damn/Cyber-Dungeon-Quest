@@ -53,7 +53,7 @@
                        (some #(cell/blocked? % @projectile) cells*)
                        true)]
     (if blocked?
-      (do (swap! projectile assoc :destroyed? true) false) ; not moved
+      (do (swap! projectile assoc :entity/destroyed? true) false) ; not moved
       true))) ; moved
 
 (defn- try-move! [{:keys [context/delta-time] :as ctx} entity direction]

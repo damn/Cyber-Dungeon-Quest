@@ -27,7 +27,7 @@
 
 (defn- clicked-cell [{:keys [context/player-entity] :as context} cell]
   (let [entity player-entity
-        inventory (:inventory @entity)
+        inventory (:entity/inventory @entity)
         item (get-in inventory cell)
         item-on-cursor (:item-on-cursor @entity)]
     (cond
@@ -93,7 +93,7 @@
                  (not (inventory/valid-slot? cell item))
                  not-allowed-color
 
-                 (inventory/two-handed-weapon-and-shield-together? (:inventory @player-entity)
+                 (inventory/two-handed-weapon-and-shield-together? (:entity/inventory @player-entity)
                                                                    cell
                                                                    item)
                  two-h-shield-color

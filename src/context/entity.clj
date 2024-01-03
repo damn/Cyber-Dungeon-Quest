@@ -5,22 +5,17 @@
             [utils.core :refer [define-order sort-by-order]]
             [cdq.context :refer [get-entity]]))
 
+; TODO
 ; doseq-entity - what if key is not available anymore ? check :when (k @entity)  ?
 ; but for now accepting nil value at components, so have to check first.
 
 (defrecord Entity [])
-; position only required for render, actually we dont need to know about that here?
-; can be used for non-positional entities, skills, items, ?
-; TODO entity/id, entity/position, entity/destroyed
-; entity/item-on-cursor
-; entity/inventory
-; etc.
 
 (defsystem create   [_])
 (defsystem create!  [_ entity context])
 (defsystem destroy! [_ entity context]) ; only used twice position/body
 (defsystem tick!    [_ entity context])
-(defsystem moved!   [_ entity context direction-vector]) ; body/position
+(defsystem moved!   [_ entity context direction-vector]) ; position/body
 
 (defsystem render-below   [_ entity* context])
 (defsystem render-default [_ entity* context])
@@ -107,7 +102,7 @@
       (render-entity* #'render-debug entity* context)))
 
   (remove-destroyed-entities [{:keys [context.entity/ids->entities] :as context}]
-    (doseq [e (filter (comp :destroyed? deref) (vals @ids->entities))]
+    (doseq [e (filter (comp :entity/destroyed? deref) (vals @ids->entities))]
       (doseq-entity e destroy! context)
       (swap! ids->entities dissoc (:entity/id @e)))))
 

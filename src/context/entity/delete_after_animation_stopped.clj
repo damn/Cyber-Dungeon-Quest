@@ -8,4 +8,4 @@
     (-> @e :entity/animation :looping? not assert))
   (entity/tick! [_ e _ctx]
     (when (-> @e :entity/animation animation/stopped?)
-      (swap! e assoc :destroyed? true))))
+      (swap! e assoc :entity/destroyed? true))))

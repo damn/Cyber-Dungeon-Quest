@@ -24,13 +24,13 @@
      (visible? (inventory-window context))
      (do
       (play-sound! context "sounds/bfxr_takeit.wav")
-      (swap! clicked-entity assoc :destroyed? true)
+      (swap! clicked-entity assoc :entity/destroyed? true)
       (send-event! context player-entity :pickup-item item))
 
      (try-pickup-item! context player-entity item)
      (do
       (play-sound! context "sounds/bfxr_pickup.wav")
-      (swap! clicked-entity assoc :destroyed? true))
+      (swap! clicked-entity assoc :entity/destroyed? true))
 
      :else
      (do
@@ -79,7 +79,7 @@
 (defn- inventory-cell-with-item? [{:keys [context/player-entity]} actor]
   (and (parent actor)
        (= "inventory-cell" (actor/name (parent actor)))
-       (get-in (:inventory @player-entity)
+       (get-in (:entity/inventory @player-entity)
                (actor/id (parent actor)))))
 
 (defn- mouseover-actor->cursor [ctx]

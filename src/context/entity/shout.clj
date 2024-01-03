@@ -18,6 +18,6 @@
 (defcomponent :shout counter
   (entity/tick! [_ entity context]
     (when (stopped? context counter)
-      (swap! entity assoc :destroyed? true)
+      (swap! entity assoc :entity/destroyed? true)
       (doseq [entity (get-friendly-entities-in-line-of-sight context @entity shout-range)]
         (send-event! context entity :alert)))))
