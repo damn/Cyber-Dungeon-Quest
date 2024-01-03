@@ -28,7 +28,7 @@
     [max-hp max-hp])
   (entity/render-info [_ {[x y] :entity/position
                           {:keys [width half-width half-height]} :entity/body
-                          :keys [mouseover?]}
+                          :keys [entity/mouseover?]}
                        c]
     (let [ratio (val-max-ratio hp)]
       (when (or (< ratio 1) mouseover?)

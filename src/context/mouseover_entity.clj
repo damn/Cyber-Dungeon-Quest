@@ -21,13 +21,13 @@
   (update-mouseover-entity [{:keys [context/mouseover-entity]
                              :as context}]
     (when-let [entity @mouseover-entity]
-      (swap! entity dissoc :mouseover?))
+      (swap! entity dissoc :entity/mouseover?))
     (let [entity (if (mouse-on-stage-actor? context)
                    nil
                    (calculate-mouseover-entity context))]
       (reset! mouseover-entity entity)
       (when entity
-        (swap! entity assoc :mouseover? true)))))
+        (swap! entity assoc :entity/mouseover? true)))))
 
 (defn ->context []
   {:context/mouseover-entity (atom nil)})

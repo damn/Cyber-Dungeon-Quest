@@ -8,7 +8,7 @@
 (def ^:private friendly-color [0 1 0 outline-alpha])
 (def ^:private neutral-color  [1 1 1 outline-alpha])
 
-(defcomponent :mouseover? _
+(defcomponent :entity/mouseover? _
   (entity/render-below [_ {:keys [entity/position entity/body entity/faction]} c]
     (with-shape-line-width c 3
       #(draw-ellipse c position
