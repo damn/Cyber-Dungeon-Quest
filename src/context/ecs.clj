@@ -1,4 +1,4 @@
-(ns context.entity
+(ns context.ecs
   (:require [clj-commons.pretty.repl :as p]
             [x.x :refer [defsystem doseq-entity]]
             [gdl.context :refer [draw-text]]
@@ -25,7 +25,7 @@
 
 (defn- render-entity* [system
                        entity*
-                       {:keys [context.entity/thrown-error] :as context}]
+                       {::keys [thrown-error] :as context}]
   (doseq [component entity*]
     (try
      (system component entity* context)
@@ -61,10 +61,10 @@
 
 (extend-type gdl.context.Context
   cdq.context/EntityComponentSystem
-  (get-entity [{:keys [context.entity/ids->entities]} id]
+  (get-entity [{::keys [ids->entities]} id]
     (get @ids->entities id))
 
-  (create-entity! [{:keys [context.entity/ids->entities] :as context} components-map]
+  (create-entity! [{::keys [ids->entities] :as context} components-map]
     {:pre [(not (contains? components-map :entity/id))
            (:entity/position components-map)]}
     (try
@@ -80,7 +80,7 @@
        (println "Erorr with: " components-map)
        (throw t))))
 
-  (tick-entity [{:keys [context.entity/thrown-error] :as context} entity]
+  (tick-entity [{::keys [thrown-error] :as context} entity]
     (try
      (doseq-entity entity tick! context)
      (catch Throwable t
@@ -88,9 +88,7 @@
        (println "Entity id: " (:entity/id @entity))
        (reset! thrown-error t))))
 
-  (render-entities* [{:keys [context.entity/render-on-map-order]
-                      :as context}
-                     entities*]
+  (render-entities* [{::keys [render-on-map-order] :as context} entities*]
     (doseq [entities* (map second
                            (sort-by-order (group-by :entity/z-order entities*)
                                           first
@@ -105,13 +103,13 @@
     (doseq [entity* entities*]
       (render-entity* #'render-debug entity* context)))
 
-  (remove-destroyed-entities [{:keys [context.entity/ids->entities] :as context}]
+  (remove-destroyed-entities [{::keys [ids->entities] :as context}]
     (doseq [e (filter (comp :entity/destroyed? deref) (vals @ids->entities))]
       (doseq-entity e destroy! context)
       (swap! ids->entities dissoc (:entity/id @e)))))
 
 (defn ->context [& {:keys [z-orders]}]
   (assert (every? #(= "z-order" (namespace %)) z-orders))
-  {:context.entity/ids->entities (atom {})
-   :context.entity/thrown-error (atom nil)
-   :context.entity/render-on-map-order (define-order z-orders)})
+  {::ids->entities (atom {})
+   ::thrown-error (atom nil)
+   ::render-on-map-order (define-order z-orders)})

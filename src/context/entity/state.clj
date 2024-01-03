@@ -2,7 +2,7 @@
   (:require [reduce-fsm :as fsm]
             [x.x :refer [defcomponent]]
             gdl.context
-            [context.entity :as entity]
+            [context.ecs :as ecs]
             cdq.context
             cdq.entity))
 
@@ -23,7 +23,7 @@
                                     fsm
                                     state-obj
                                     state-obj-constructors]}
-  (entity/create! [_ entity context]
+  (ecs/create! [_ entity context]
     (swap! entity assoc :entity/state
            ; if :state = nil in fsm => set to initial-state
            ; TODO make PR / bug report.
@@ -32,12 +32,12 @@
             :state-obj ((initial-state state-obj-constructors) context entity)
             :state-obj-constructors state-obj-constructors}))
 
-  (entity/tick! [_ _entity context]
+  (ecs/tick! [_ _entity context]
     (tick! state-obj context))
 
-  (entity/render-below [_ entity* c] (render-below state-obj c entity*))
-  (entity/render-above [_ entity* c] (render-above state-obj c entity*))
-  (entity/render-info  [_ entity* c] (render-info  state-obj c entity*)))
+  (ecs/render-below [_ entity* c] (render-below state-obj c entity*))
+  (ecs/render-above [_ entity* c] (render-above state-obj c entity*))
+  (ecs/render-info  [_ entity* c] (render-info  state-obj c entity*)))
 
 (extend-type gdl.context.Context
   cdq.context/FiniteStateMachine
@@ -67,7 +67,7 @@
                                                         :fsm new-fsm
                                                         :state-obj new-state-obj)))))))))
 
-(extend-type context.entity.Entity
+(extend-type context.ecs.Entity
   cdq.entity/State
   (state [entity*]
     (-> entity* :entity/state :fsm :state)))

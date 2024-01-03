@@ -2,9 +2,9 @@
   (:require [x.x :refer [defcomponent]]
             [utils.core :refer [mapvals]]
             [data.val-max :refer [apply-val]]
-            [context.entity :as entity]
+            [context.ecs :as ecs]
             [cdq.context :refer [valid-params? ->counter stopped? actionbar-add-skill actionbar-remove-skill]]
-            cdq.entity))
+            [cdq.entity :as entity]))
 
 (defn- update-cooldown [context skill]
   (if (:cooling-down? skill)
@@ -16,11 +16,11 @@
     skill))
 
 (defcomponent :entity/skills skills
-  (entity/tick! [[k _] entity context]
+  (ecs/tick! [[k _] entity context]
     (swap! entity update k (fn [skills]
                              (mapvals #(update-cooldown context %) skills)))))
 
-(extend-type context.entity.Entity
+(extend-type context.ecs.Entity
   cdq.entity/Skills
   (has-skill? [{:keys [entity/skills]} {:keys [property/id]}]
     (contains? skills id)))
@@ -28,13 +28,13 @@
 (extend-type gdl.context.Context
   cdq.context/Skills
   (add-skill! [ctx entity {:keys [property/id] :as skill}]
-    (assert (not (cdq.entity/has-skill? @entity skill)))
+    (assert (not (entity/has-skill? @entity skill)))
     (swap! entity update :entity/skills assoc id skill)
     (when (:entity/player? @entity)
       (actionbar-add-skill ctx skill)))
 
   (remove-skill! [ctx entity {:keys [property/id] :as skill}]
-    (assert (cdq.entity/has-skill? @entity skill))
+    (assert (entity/has-skill? @entity skill))
     (swap! entity update :entity/skills dissoc id)
     (when (:entity/player? @entity)
       (actionbar-remove-skill ctx skill)))

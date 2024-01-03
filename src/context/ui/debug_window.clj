@@ -8,7 +8,7 @@
 
 (defn- debug-infos [{:keys [context/game-paused?
                             context/player-entity
-                            context.entity/thrown-error
+                            context.ecs/thrown-error
                             context/elapsed-game-time
                             world-camera] :as c}]
   (let [world-mouse (world-mouse-position c)]

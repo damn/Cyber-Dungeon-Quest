@@ -3,9 +3,8 @@
             [x.x :refer [defcomponent]]
             gdl.context
             [utils.core :refer [find-first]]
-            [context.entity :as entity]
-            [cdq.context :refer [get-property set-item-image-in-widget remove-item-from-widget apply-modifier! reverse-modifier! try-pickup-item! remove-item! set-item! stack-item! add-skill! remove-skill!]]
-            cdq.entity))
+            [context.ecs :as ecs]
+            [cdq.context :refer [get-property set-item-image-in-widget remove-item-from-widget apply-modifier! reverse-modifier! try-pickup-item! remove-item! set-item! stack-item! add-skill! remove-skill!]]))
 
 (def empty-inventory
   (->> #:inventory.slot{:bag      [6 4]
@@ -136,7 +135,7 @@
      (try-put-item-in! context entity :inventory.slot/bag item))))
 
 (defcomponent :entity/items items
-  (entity/create! [_ entity context]
+  (ecs/create! [_ entity context]
     (swap! entity assoc :entity/inventory empty-inventory)
     ;(swap! entity dissoc :items)
     (doseq [id items]

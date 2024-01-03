@@ -3,7 +3,7 @@
             [gdl.context :refer [draw-rectangle]]
             [gdl.graphics.color :as color]
             [gdl.math.vector :as v]
-            [context.entity :as entity]
+            [context.ecs :as ecs]
             [cdq.context :refer [world-grid]]
             [cdq.world.grid :refer [add-entity! remove-entity! entity-position-changed!]]))
 
@@ -35,7 +35,7 @@
                                    solid?
                                    rotation-angle
                                    rotate-in-movement-direction?] :as body}
-  (entity/create [_]
+  (ecs/create [_]
     (assert (and width height
                  (>= width  (if solid? min-solid-body-size 0))
                  (>= height (if solid? min-solid-body-size 0))
@@ -54,20 +54,20 @@
       :rotation-angle (or rotation-angle 0)
       :rotate-in-movement-direction? rotate-in-movement-direction?}))
 
-  (entity/create! [_ entity context]
+  (ecs/create! [_ entity context]
     ; TODO VALID POSITION CHECK (done @ world-grid?)
     (assert (:entity/position @entity))
     (swap! entity assoc-left-bottom)
     (add-entity! (world-grid context) entity))
 
-  (entity/destroy! [_ entity context]
+  (ecs/destroy! [_ entity context]
     (remove-entity! (world-grid context) entity))
 
-  (entity/moved! [_ entity context direction-vector]
+  (ecs/moved! [_ entity context direction-vector]
     (when rotate-in-movement-direction?
       (swap! entity assoc-in [:entity/body :rotation-angle] (v/get-angle-from-vector direction-vector)))
     (entity-position-changed! (world-grid context) entity))
 
-  (entity/render-debug [_ e* context]
+  (ecs/render-debug [_ e* context]
     (when show-body-bounds
       (draw-bounds context body))))

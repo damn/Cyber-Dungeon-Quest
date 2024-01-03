@@ -1,10 +1,10 @@
 (ns context.entity.clickable
   (:require [x.x :refer [defcomponent]]
             [gdl.context :refer [draw-text]]
-            [context.entity :as entity]))
+            [context.ecs :as ecs]))
 
 (defcomponent :entity/clickable {:keys [text]}
-  (entity/render-default [_ {[x y] :entity/position :keys [entity/mouseover? entity/body]} c]
+  (ecs/render-default [_ {[x y] :entity/position :keys [entity/mouseover? entity/body]} c]
     (when (and mouseover? text)
       (draw-text c
                  {:text text

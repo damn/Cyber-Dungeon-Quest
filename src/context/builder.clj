@@ -32,7 +32,7 @@
          (when (= id :creatures/lady-a) {:entity/clickable {:type :clickable/princess}})))
 
 (defcomponent :entity/plop _
-  (context.entity/destroy! [_ entity ctx]
+  (context.ecs/destroy! [_ entity ctx]
     (cdq.context/audiovisual ctx (:entity/position @entity) :projectile/hit-wall-effect)))
 
 (extend-type gdl.context.Context

@@ -3,7 +3,7 @@
             [gdl.graphics.color :as color]
             [gdl.context :refer [draw-filled-rectangle pixels->world-units]]
             [data.val-max :refer [val-max-ratio]]
-            [context.entity :as entity]
+            [context.ecs :as ecs]
             [context.ui.config :refer (hpbar-height-px)]))
 
 (def ^:private hpbar-colors
@@ -24,9 +24,9 @@
 (def ^:private borders-px 1)
 
 (defcomponent :entity/hp hp
-  (entity/create [[_ max-hp]]
+  (ecs/create [[_ max-hp]]
     [max-hp max-hp])
-  (entity/render-info [_ {[x y] :entity/position
+  (ecs/render-info [_ {[x y] :entity/position
                           {:keys [width half-width half-height]} :entity/body
                           :keys [entity/mouseover?]}
                        c]

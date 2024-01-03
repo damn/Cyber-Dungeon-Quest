@@ -2,14 +2,14 @@
   (:require [x.x :refer [defcomponent]]
             [gdl.context :refer [draw-text pixels->world-units]]
             [context.ui.config :refer [hpbar-height-px]]
-            [context.entity :as entity]
+            [context.ecs :as ecs]
             [cdq.context :refer [->counter stopped? reset]]))
 
 (defcomponent :entity/string-effect {:keys [text counter] :as this}
-  (entity/tick! [[k _] e context]
+  (ecs/tick! [[k _] e context]
     (when (stopped? context counter)
       (swap! e dissoc k)))
-  (entity/render-above [_ {[x y] :entity/position :keys [entity/body]} c]
+  (ecs/render-above [_ {[x y] :entity/position :keys [entity/body]} c]
     (draw-text c
                {:text text
                 :x x

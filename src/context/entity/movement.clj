@@ -3,7 +3,7 @@
             [gdl.math.geom :as geom]
             [gdl.math.vector :as v]
             [utils.core :refer [find-first]]
-            [context.entity :as entity]
+            [context.ecs :as ecs]
             [cdq.context :refer [do-effect! world-grid]]
             [context.entity.body :as body]
             [cdq.world.grid :refer [rectangle->cells valid-position?]]
@@ -70,12 +70,12 @@
         (try-move! ctx entity [0 ydir]))))
 
 (defcomponent :entity/movement tiles-per-second
-  (entity/create! [_ entity _ctx]
+  (ecs/create! [_ entity _ctx]
     (assert (and (:entity/body @entity)
                  (:entity/position    @entity)))
     (assert (<= tiles-per-second max-speed)))
 
-  (entity/tick! [_ entity ctx]
+  (ecs/tick! [_ entity ctx]
     (when-let [direction (:entity/movement-vector @entity)]
       (assert (or (zero? (v/length direction))
                   (v/normalised? direction)))
@@ -83,7 +83,4 @@
         (when (if (:entity/projectile-collision @entity)
                 (update-position-projectile! ctx entity direction)
                 (update-position-solid!      ctx entity direction))
-          (doseq-entity entity
-                        entity/moved!
-                        ctx
-                        direction))))))
+          (doseq-entity entity ecs/moved! ctx direction))))))

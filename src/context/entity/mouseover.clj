@@ -1,8 +1,8 @@
 (ns context.entity.mouseover
   (:require [x.x :refer [defcomponent]]
             [gdl.context :refer [with-shape-line-width draw-ellipse]]
-            cdq.entity
-            [context.entity :as entity]))
+            [cdq.entity :as entity]
+            [context.ecs :as ecs]))
 
 (def ^:private outline-alpha 0.4)
 (def ^:private enemy-color    [1 0 0 outline-alpha])
@@ -11,7 +11,7 @@
 
 
 (defcomponent :entity/mouseover? _
-  (entity/render-below [_
+  (ecs/render-below [_
                         {:keys [entity/position entity/body entity/faction]}
                         {:keys [context/player-entity] :as ctx}]
     (with-shape-line-width ctx 3
@@ -19,9 +19,9 @@
                      position
                      (:half-width body)
                      (:half-height body)
-                     (cond (= faction (cdq.entity/enemy-faction @player-entity))
+                     (cond (= faction (entity/enemy-faction @player-entity))
                            enemy-color
-                           (= faction (cdq.entity/friendly-faction @player-entity))
+                           (= faction (entity/friendly-faction @player-entity))
                            friendly-color
                            :else
                            neutral-color)))))

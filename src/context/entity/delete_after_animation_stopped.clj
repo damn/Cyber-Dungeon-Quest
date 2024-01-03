@@ -1,11 +1,11 @@
 (ns context.entity.delete-after-animation-stopped
   (:require [x.x :refer [defcomponent]]
             [gdl.graphics.animation :as animation]
-            [context.entity :as entity]))
+            [context.ecs :as ecs]))
 
 (defcomponent :entity/delete-after-animation-stopped? _
-  (entity/create! [_ e _ctx]
+  (ecs/create! [_ e _ctx]
     (-> @e :entity/animation :looping? not assert))
-  (entity/tick! [_ e _ctx]
+  (ecs/tick! [_ e _ctx]
     (when (-> @e :entity/animation animation/stopped?)
       (swap! e assoc :entity/destroyed? true))))

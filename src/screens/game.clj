@@ -108,7 +108,7 @@
 
 (defn- update-game [{:keys [context/player-entity
                             context/game-paused?
-                            context.entity/thrown-error]
+                            context.ecs/thrown-error]
                      :as context}
                     active-entities]
   (let [state (:state-obj (:entity/state @player-entity))
