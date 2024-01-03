@@ -10,8 +10,12 @@
   will result in [10 10] damage
   where as apply-max / 3 => [3 3] damage.")
 
-(defn val-max-ratio [[v mx]]
-  (/ v mx))
+(defn val-max-ratio
+  "If mx and v is 0, returns 0, otherwise (/ v mx)"
+  [[v mx]]
+  (if (and (zero? v) (zero? mx))
+    0
+    (/ v mx)))
 
 (defn lower-than-max? [[v mx]]
   (< v mx))
