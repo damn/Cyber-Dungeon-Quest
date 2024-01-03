@@ -10,10 +10,10 @@
   (rebuild-inventory-widgets context) ; before adding entities ( player gets items )
   (reset-actionbar context) ; empties skills -> before adding player
   (let [context (merge context
-                       (context.entity/->context :z-orders [:on-ground ; items
-                                                            :ground    ; creatures, player
-                                                            :flying    ; flying creatures
-                                                            :effect])  ; projectiles, nova
+                       (context.entity/->context :z-orders [:z-order/on-ground
+                                                            :z-order/ground
+                                                            :z-order/flying
+                                                            :z-order/effect])
                        (context.mouseover-entity/->context)
                        (player-message/->context)
                        (context.counter/->context)

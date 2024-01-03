@@ -139,7 +139,7 @@
             :entity/items items
             :entity/flying? flying?
             :entity/faction faction
-            :entity/z-order (if flying? :flying :ground)} ; TODO :z-order/foo
+            :entity/z-order (if flying? :z-order/flying :z-order/ground)}
            (cond
             princess? nil
             :else {:entity/state (->state :player? player? :initial-state initial-state)})
@@ -166,7 +166,7 @@
       (create-entity! context
                       {:entity/position position
                        :entity/animation animation
-                       :entity/z-order :effect
+                       :entity/z-order :z-order/effect
                        :entity/delete-after-animation-stopped? true})))
 
   ; TODO use image w. shadows spritesheet
@@ -176,7 +176,7 @@
                      :entity/body {:width 0.5 ; TODO use item-body-dimensions
                                    :height 0.5
                                    :solid? false}
-                     :entity/z-order :on-ground
+                     :entity/z-order :z-order/on-ground
                      :entity/image (:property/image item)
                      :entity/item item
                      :entity/clickable {:type :clickable/item
@@ -185,7 +185,7 @@
   (line-entity [context {:keys [start end duration color thick?]}]
     (create-entity! context
                     {:entity/position start
-                     :entity/z-order :effect
+                     :entity/z-order :z-order/effect
                      :entity/line-render {:thick? thick? :end end :color color}
                      :entity/delete-after-duration duration}))
 
@@ -202,7 +202,7 @@
                                    :rotation-angle (v/get-angle-from-vector movement-vector)
                                    :rotate-in-movement-direction? true}
                      :entity/flying? true
-                     :entity/z-order :effect
+                     :entity/z-order :z-order/effect
                      :entity/movement speed
                      :entity/movement-vector movement-vector
                      :entity/animation animation

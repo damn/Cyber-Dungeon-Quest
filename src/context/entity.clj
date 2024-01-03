@@ -111,6 +111,7 @@
       (swap! ids->entities dissoc (:entity/id @e)))))
 
 (defn ->context [& {:keys [z-orders]}]
+  (assert (every? #(= "z-order" (namespace %)) z-orders))
   {:context.entity/ids->entities (atom {})
    :context.entity/thrown-error (atom nil)
    :context.entity/render-on-map-order (define-order z-orders)})
