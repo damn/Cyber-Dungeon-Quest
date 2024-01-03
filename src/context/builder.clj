@@ -1,7 +1,7 @@
 (ns context.builder
   (:require [x.x :refer [defcomponent]]
             [reduce-fsm :as fsm]
-            [gdl.context :refer [create-image play-sound!]]
+            [gdl.context :refer [play-sound!]]
             [gdl.graphics.animation :as animation]
             [gdl.math.vector :as v]
             [cdq.context :refer [create-entity! get-property]]
@@ -90,18 +90,6 @@
                              player-state-constructors
                              npc-state-constructors)})
 
-(defn- create-images [context creature-name]
-  (map #(create-image context
-                      (str "creatures/animations/" creature-name "-" % ".png"))
-       (range 1 5)))
-
-(defn- images->world-unit-dimensions [images]
-  (let [dimensions (map :world-unit-dimensions images)
-        max-width  (apply max (map first  dimensions))
-        max-height (apply max (map second dimensions))]
-    [max-width
-     max-height]))
-
 ; TODO player settings also @ editor ?!
 (def ^:private player-components
   {:entity/player? true
@@ -112,12 +100,16 @@
 (def ^:private npc-components
   {:entity/faction :good})
 
-(def ^:private lady-props
+(def ^:private lady-components
   {:entity/faction :good
    :entity/clickable {:type :clickable/princess}})
 
 ; TODO hardcoded :lady-a
-(defn- create-creature-data [{:keys [creature/flying?
+(defn- create-creature-data [{:keys [property/id
+                                     property/animation
+                                     property/width
+                                     property/height
+                                     creature/flying?
                                      creature/speed
                                      creature/hp
                                      creature/mana
@@ -126,24 +118,19 @@
                              {:keys [player?
                                      initial-state] :as extra-params}
                              context]
-  (let [creature-id (:property/id creature-props)
-        ; TODO images/width/height/animation move to properties,
-        ; no need to calculate/see it here again every time.
-        images (create-images context (name creature-id))
-        [width height] (images->world-unit-dimensions images)
-        princess? (= creature-id :creatures/lady-a)]
+  (let [princess? (= id :creatures/lady-a)]
     (merge (cond
             player? player-components
-            princess? lady-props
-            :else     npc-components)
-           {:entity/body {:width width :height height :solid? true}
+            princess? lady-components
+            :else      npc-components)
+           {:entity/animation animation
+            :entity/body {:width width :height height :solid? true}
             :entity/movement speed
             :entity/hp hp
             :entity/mana mana
             :entity/skills (zipmap skills (map #(get-property context %) skills)) ; TODO just set of skills use?
             :entity/items items
             :entity/flying? flying?
-            :entity/animation (animation/create images :frame-duration 0.1 :looping? true)
             :entity/z-order (if flying? :flying :ground)} ; TODO :z-order/foo
            (cond
             princess? nil
@@ -165,7 +152,8 @@
                         assoc-left-bottom)))
 
   (audiovisual [context position id]
-    (let [{:keys [sound animation]} (get-property context id)]
+    (let [{:keys [sound
+                  property/animation]} (get-property context id)]
       (play-sound! context sound)
       (create-entity! context
                       {:entity/position position

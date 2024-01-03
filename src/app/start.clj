@@ -64,7 +64,7 @@
 (def ^:private tile-size 48)
 
 (def ^:private app-config
-  {:app {:title "Cyber Dungeon Quest"
+  {:app {:title "Vampire Queen"
          :width  1440
          :height 900
          :full-screen? (safe-get config :full-screen?)

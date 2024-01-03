@@ -67,14 +67,20 @@
   (create-entity! [{:keys [context.entity/ids->entities] :as context} components-map]
     {:pre [(not (contains? components-map :entity/id))
            (:entity/position components-map)]}
-    (let [id (unique-number!)
-          entity (-> (assoc components-map :entity/id id)
-                     (update-map create)
-                     map->Entity
-                     atom
-                     (doseq-entity create! context))]
-      (swap! ids->entities assoc id entity)
-      entity))
+    (try
+     (let [id (unique-number!)
+           entity (-> (assoc components-map :entity/id id)
+                      (update-map create)
+                      map->Entity
+                      atom
+                      (doseq-entity create! context))]
+       (swap! ids->entities assoc id entity)
+       entity)
+     (catch Throwable t
+       (println "Erorr with: " components-map)
+       (throw t)
+       )
+     ))
 
   (tick-entity [{:keys [context.entity/thrown-error] :as context} entity]
     (try

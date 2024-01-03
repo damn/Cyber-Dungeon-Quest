@@ -3,7 +3,7 @@
             [clojure.string :as str]
             [malli.core :as m]
             [malli.error :as me]
-            [gdl.context :refer [get-sprite]]
+            [gdl.context :refer [get-sprite create-image]]
             [gdl.graphics.animation :as animation]
             [utils.core :refer [safe-get readable-number]]
             context.modifier
@@ -163,6 +163,9 @@
                                      [:map {:closed true}
                                       [:property/id [:qualified-keyword {:namespace :creatures}]]
                                       [:property/image :some]
+                                      [:property/width pos?] ; & > max size?
+                                      [:property/height pos?]
+                                      [:property/animation :some]
                                       [:creature/species [:qualified-keyword {:namespace :species}]] ; one of species
                                       [:creature/speed pos?]
                                       [:creature/hp pos-int?]
@@ -338,17 +341,19 @@
 (require 'gdl.backends.libgdx.context.image-drawer-creator)
 
 (defn- deserialize-image [context {:keys [file sub-image-bounds]}]
-  {:pre [file sub-image-bounds]}
-  (let [[sprite-x sprite-y] (take 2 sub-image-bounds)
-        [tilew tileh]       (drop 2 sub-image-bounds)]
-    ; TODO get-sprite does not return Image record => do @ image itself.
-    (gdl.backends.libgdx.context.image-drawer-creator/map->Image
-     (get-sprite context
-                 {:file file
-                  :tilew tileh
-                  :tileh tilew}
-                 [(int (/ sprite-x tilew))
-                  (int (/ sprite-y tileh))]))))
+  {:pre [file]}
+  (if sub-image-bounds
+    (let [[sprite-x sprite-y] (take 2 sub-image-bounds)
+          [tilew tileh]       (drop 2 sub-image-bounds)]
+      ; TODO get-sprite does not return Image record => do @ image itself.
+      (gdl.backends.libgdx.context.image-drawer-creator/map->Image
+       (get-sprite context
+                   {:file file
+                    :tilew tileh
+                    :tileh tilew}
+                   [(int (/ sprite-x tilew))
+                    (int (/ sprite-y tileh))])))
+    (create-image context file)))
 
 (defn- serialize-image [image]
   (select-keys image [:file :sub-image-bounds]))
@@ -368,8 +373,8 @@
        (#(if (:property/image %)
            (update % :property/image (fn [img] (deserialize-image context img)))
            %))
-       (#(if (:animation %)
-           (update % :animation (fn [anim] (deserialize-animation context anim)))
+       (#(if (:property/animation %)
+           (update % :property/animation (fn [anim] (deserialize-animation context anim)))
            %))))
 
 ; Other approaches to serialization:
@@ -380,7 +385,7 @@
 (defn- serialize [data]
   (->> data
        (#(if (:property/image %) (update % :property/image serialize-image) %))
-       (#(if (:animation %) (update % :animation serialize-animation) %))))
+       (#(if (:property/animation %) (update % :property/animation serialize-animation) %))))
 
 (defn- validate [property & {:keys [humanize?]}]
   (if-let [schema (:schema (get property-types (property-type property)))]
