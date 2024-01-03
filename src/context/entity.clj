@@ -78,9 +78,7 @@
        entity)
      (catch Throwable t
        (println "Erorr with: " components-map)
-       (throw t)
-       )
-     ))
+       (throw t))))
 
   (tick-entity [{:keys [context.entity/thrown-error] :as context} entity]
     (try
