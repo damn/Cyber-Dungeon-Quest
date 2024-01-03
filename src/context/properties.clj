@@ -425,9 +425,8 @@
        (map serialize)
        (pprint-spit properties-file)))
 
-; # Add new fields
-; set this to false
-(def ^:private write-to-file? false)
+; # Add new fields => set this to false
+(def ^:private write-to-file? true)
 
 (comment
  (let [ctx @gdl.app/current-context
@@ -438,12 +437,8 @@
      (swap! gdl.app/current-context update-and-write-to-file! creature))
 
    ; write to file
-   (swap! gdl.app/current-context update-and-write-to-file! (cdq.context/get-property ctx :creatures/vampire))
-   )
-
-
+   (swap! gdl.app/current-context update-and-write-to-file! (cdq.context/get-property ctx :creatures/vampire)))
  )
-
 
 (defn update-and-write-to-file! [{:keys [context/properties
                                          context/properties-file] :as context}
