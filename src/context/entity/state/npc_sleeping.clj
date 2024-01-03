@@ -24,7 +24,7 @@
 
   (tick! [_ context]
     (let [cell (get (world-grid context)
-                    (utils.core/->tile (:position @entity)))]
+                    (utils.core/->tile (:entity/position @entity)))]
       (when-let [distance (cell/nearest-entity-distance @cell
                                                         (entity/enemy-faction @entity))]
         (when (<= distance (* aggro-range 10)) ; TODO do @ cell/nearest-enemy-distance

@@ -123,12 +123,11 @@
         (update :creature/hp #(int (* % (:hp multiplier)))))))
 
 ; TODO hardcoded :lady-a
-(defn- create-creature-data [creature-props
+(defn- create-creature-data [{:keys [creature/skills] :as creature-props}
                              {:keys [is-player
                                      initial-state] :as extra-params}
                              context]
   (let [creature-id (:property/id creature-props)
-        creature-props (update creature-props :creature/skills #(or % []))
         images (create-images context (name creature-id))
         [width height] (images->world-unit-dimensions images)
         {:keys [creature/speed
@@ -144,7 +143,7 @@
             :entity/movement speed
             :entity/hp hp
             :entity/mana 11
-            :entity/skills (:creature/skills creature-props)
+            :entity/skills (zipmap skills (map #(get-property context %) skills))
             :entity/items  (:creature/items creature-props)
             :entity/is-flying false
             :entity/animation (animation/create images :frame-duration 0.1 :looping? true)

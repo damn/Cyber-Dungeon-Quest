@@ -3,8 +3,7 @@
             [utils.core :refer [mapvals]]
             [data.val-max :refer [apply-val]]
             [context.entity :as entity]
-            [cdq.context :refer [get-property valid-params? ->counter stopped?
-                                  actionbar-add-skill actionbar-remove-skill]]
+            [cdq.context :refer [valid-params? ->counter stopped? actionbar-add-skill actionbar-remove-skill]]
             cdq.entity))
 
 (defn- update-cooldown [context skill]
@@ -17,15 +16,9 @@
     skill))
 
 (defcomponent :entity/skills skills
-  (entity/create! [[k skill-ids] entity context]
-    (swap! entity assoc k (zipmap skill-ids
-                                  (map #(get-property context %)
-                                       skill-ids))))
-
   (entity/tick! [[k _] entity context]
-    (swap! entity update k
-           (fn [skills]
-             (mapvals #(update-cooldown context %) skills)))))
+    (swap! entity update k (fn [skills]
+                             (mapvals #(update-cooldown context %) skills)))))
 
 (extend-type context.entity.Entity
   cdq.entity/Skills

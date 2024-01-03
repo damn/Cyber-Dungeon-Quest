@@ -8,7 +8,8 @@
 ; doseq-entity - what if key is not available anymore ? check :when (k @entity)  ?
 ; but for now accepting nil value at components, so have to check first.
 
-(defrecord Entity [id]) ; position only required for render, actually we dont need to know about that here?
+(defrecord Entity [])
+; position only required for render, actually we dont need to know about that here?
 ; can be used for non-positional entities, skills, items, ?
 ; TODO entity/id, entity/position, entity/destroyed
 ; entity/item-on-cursor
@@ -35,11 +36,11 @@
      (system component entity* context)
      (catch Throwable t
        (when-not @thrown-error
-         (println "Render error for: entity :id " (:id entity*) " \n component " component "\n system" system)
+         (println "Render error for: entity :id " (:entity/id entity*) " \n component " component "\n system" system)
          (p/pretty-pst t)
          (reset! thrown-error t))
        (let [[x y] (:entity/position entity*)]
-         (draw-text context {:text (str "Render error entity :id " (:id entity*) "\n" (component 0) "\n"system "\n" @thrown-error)
+         (draw-text context {:text (str "Render error entity :id " (:entity/id entity*) "\n" (component 0) "\n"system "\n" @thrown-error)
                              :x x
                              :y y
                              :up? true}))))))
@@ -69,10 +70,10 @@
     (get @ids->entities id))
 
   (create-entity! [{:keys [context.entity/ids->entities] :as context} components-map]
-    {:pre [(not (contains? components-map :id))
+    {:pre [(not (contains? components-map :entity/id))
            (:entity/position components-map)]}
     (let [id (unique-number!)
-          entity (-> (assoc components-map :id id)
+          entity (-> (assoc components-map :entity/id id)
                      (update-map create)
                      map->Entity
                      atom
@@ -85,7 +86,7 @@
      (doseq-entity entity tick! context)
      (catch Throwable t
        (p/pretty-pst t)
-       (println "Entity id: " (:id @entity))
+       (println "Entity id: " (:entity/id @entity))
        (reset! thrown-error t))))
 
   (render-entities* [{:keys [context.entity/render-on-map-order]
@@ -108,7 +109,7 @@
   (remove-destroyed-entities [{:keys [context.entity/ids->entities] :as context}]
     (doseq [e (filter (comp :destroyed? deref) (vals @ids->entities))]
       (doseq-entity e destroy! context)
-      (swap! ids->entities dissoc (:id @e)))))
+      (swap! ids->entities dissoc (:entity/id @e)))))
 
 (defn ->context [& {:keys [z-orders]}]
   {:context.entity/ids->entities (atom {})
