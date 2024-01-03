@@ -110,7 +110,7 @@
       (when (and (= (:item/slot item) :inventory.slot/weapon))
         (add-skill! context entity item)))
 
-    (when (:is-player @entity)
+    (when (:entity/player? @entity)
       (set-item-image-in-widget context cell item)))
 
   (remove-item! [context entity cell]
@@ -122,7 +122,7 @@
         (when (= (:item/slot item) :inventory.slot/weapon)
           (remove-skill! context entity item)))
 
-      (when (:is-player @entity)
+      (when (:entity/player? @entity)
         (remove-item-from-widget context cell))))
 
   ; TODO no items which stack are available

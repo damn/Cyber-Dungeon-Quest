@@ -85,7 +85,7 @@
   cdq.context/World
   (line-of-sight? [context source* target*]
     (and (:entity/z-order target*)  ; is even an entity which renders something
-         (or (not (:is-player source*))
+         (or (not (:entity/player? source*))
              (on-screen? target* context))
          (not (ray-blocked? context (:position source*) (:position target*)))))
 

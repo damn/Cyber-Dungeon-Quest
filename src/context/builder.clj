@@ -103,7 +103,7 @@
      max-height]))
 
 (def ^:private player-components
-  {:is-player true
+  {:entity/player? true
    :entity/faction :evil
    ;:entity/mana 100 ; is overwritten
    :player-movement true

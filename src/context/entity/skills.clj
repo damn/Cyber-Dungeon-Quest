@@ -37,13 +37,13 @@
   (add-skill! [ctx entity {:keys [property/id] :as skill}]
     (assert (not (cdq.entity/has-skill? @entity skill)))
     (swap! entity update :entity/skills assoc id skill)
-    (when (:is-player @entity)
+    (when (:entity/player? @entity)
       (actionbar-add-skill ctx skill)))
 
   (remove-skill! [ctx entity {:keys [property/id] :as skill}]
     (assert (cdq.entity/has-skill? @entity skill))
     (swap! entity update :entity/skills dissoc id)
-    (when (:is-player @entity)
+    (when (:entity/player? @entity)
       (actionbar-remove-skill ctx skill)))
 
   (set-skill-to-cooldown! [context entity {:keys [property/id skill/cooldown] :as skill}]

@@ -61,7 +61,7 @@
                                  (constructor context entity params)
                                  (constructor context entity))]
              (enter new-state-obj context)
-             (when (:is-player @entity)
+             (when (:entity/player? @entity)
                (player-enter new-state-obj context))
              (swap! entity update :entity/state #(assoc %
                                                         :fsm new-fsm
