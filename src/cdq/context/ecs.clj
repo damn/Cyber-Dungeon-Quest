@@ -66,20 +66,6 @@
                (assoc m k (apply f [k (k m)] args))))
       m)))
 
-
-; # LATER TODO
-; * create! / destroy! check too
-; * manual tick ...
-; * TODO check all 25 functions working
-
-; TODO replays should be working (with different speeds)
-; => memory?
-; multiplayer -> only relevant transactions (movement only no full entity uudate send?
-
-; TODO send-event / state make namespaced
-; even if I have to munge/demunge it always
-
-; TODO belongs in ecs ??
 (defmulti handle-ctx-transaction! (fn [[k & _more] ctx]
                                     (assert (and (keyword? k)
                                                  (= "ctx" (namespace k))))
@@ -101,21 +87,7 @@
     (try (handle-side-effect! side-effect ctx)
          (catch Throwable t
            (println "Error with side-effect: \n" (pr-str side-effect))
-           (throw t)
-           )
-         )))
-
-; TODO check the called fns are still in public context callable, can remove otherwise.
-
-; TODO effect target/source can make '*' ?
-; => using meta atom always
-
-; TODO merge ctx with effect ctx always ? didnt do at projectile, removed the merge.
-; @ active skill anwyaway merged already effect-context?
-; TODO check shout is working cons ..
-; [:ctx/position-changed entity*]
-; [:ctx/do-effect effect-ctx effect]
-; [:ctx/send-event entity :alert]
+           (throw t)))))
 
 (extend-type gdl.context.Context
   cdq.context/EntityComponentSystem
@@ -150,8 +122,6 @@
          (try (handle-side-effects! side-effects context)
               (catch Throwable t
                 (println "Error with " k " and side-effects: \n" (pr-str side-effects))
-                ; defsystem tick default return = value ...
-                ; TODO RETURN DEFAULT RETURN FOR THOSE WHO DONT NEED IT
                 (throw t)))))
      (catch Throwable t
        (p/pretty-pst t)
