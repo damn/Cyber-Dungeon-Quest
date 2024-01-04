@@ -119,6 +119,7 @@
     ; this do always so can get debug info even when game not running
     (update-mouseover-entity context)
     (when-not paused?
+      ; TODO '!' to side effecty fns here !!
       (update-elapsed-game-time context)
       ; sowieso keine bewegungen / kein update gemacht ? checkt nur tiles ?
       (update-potential-fields context active-entities)

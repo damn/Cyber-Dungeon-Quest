@@ -136,7 +136,7 @@
 (defmethod cdq.context.ecs/handle-ctx-transaction!
   :ctx/position-changed
   [[_ entity*] ctx]
-  (position-changed! ctx (::atom (meta entity*))))
+  (cdq.context/position-changed! ctx (:cdq.context.ecs/atom (meta entity*))))
 
 (defn- first-level [context]
   (let [{:keys [tiled-map

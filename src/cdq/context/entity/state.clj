@@ -75,4 +75,4 @@
 (defmethod cdq.context.ecs/handle-ctx-transaction!
   :ctx/send-event
   [[_ & params] ctx]
-  (apply send-event! ctx params))
+  (apply cdq.context/send-event! ctx params))

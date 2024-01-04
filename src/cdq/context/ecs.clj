@@ -98,7 +98,17 @@
 (defn- handle-side-effects! [side-effects ctx]
   (doseq [side-effect side-effects
           :when side-effect]
-    (handle-side-effect! side-effect ctx)))
+    (try (handle-side-effect! side-effect ctx)
+         (catch Throwable t
+           (println "Error with side-effect: \n" (pr-str side-effect))
+           (throw t)
+           )
+         )))
+
+; TODO check the called fns are still in public context callable, can remove otherwise.
+
+; TODO effect target/source can make '*' ?
+; => using meta atom always
 
 ; TODO merge ctx with effect ctx always ? didnt do at projectile, removed the merge.
 ; @ active skill anwyaway merged already effect-context?
@@ -112,19 +122,17 @@
   (get-entity [{::keys [ids->entities]} id]
     (get @ids->entities id))
 
-  ;(meta (with-meta (map->Entity {:foo :bar}) {:atom (atom nil)}))
-
   (create-entity! [{::keys [ids->entities] :as context} components-map]
     {:pre [(not (contains? components-map :entity/id))
            (:entity/position components-map)]}
     (try
      (let [id (unique-number!)
-           ;an-atom (atom nil)
            entity (-> (assoc components-map :entity/id id)
                       (update-map create)
                       cdq.entity/map->Entity
                       atom
                       (doseq-entity create! context))]
+       (swap! entity with-meta {::atom entity})
        (swap! ids->entities assoc id entity)
        (add-entity! context entity)
        entity)
@@ -134,11 +142,17 @@
 
   (tick-entity [{::keys [thrown-error] :as context} entity]
     (try
-     (doseq [k (keys @entity)
+     (doseq [k (keys (methods tick))
              :let [entity* @entity
-                   v (k entity*)
-                   side-effects (tick [k v] entity* context)]]
-       (handle-side-effects! side-effects context))
+                   v (k entity*)]
+             :when v]
+       (let [side-effects (tick [k v] entity* context)]
+         (try (handle-side-effects! side-effects context)
+              (catch Throwable t
+                (println "Error with " k " and side-effects: \n" (pr-str side-effects))
+                ; defsystem tick default return = value ...
+                ; TODO RETURN DEFAULT RETURN FOR THOSE WHO DONT NEED IT
+                (throw t)))))
      (catch Throwable t
        (p/pretty-pst t)
        (println "Entity id: " (:entity/id @entity))

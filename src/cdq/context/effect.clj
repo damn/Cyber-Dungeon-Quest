@@ -1,7 +1,8 @@
 (ns cdq.context.effect
   (:require [clojure.string :as str]
             gdl.context
-            cdq.context))
+            cdq.context
+            cdq.context.ecs))
 
 (defn- by-type [_context [type value]]
   (assert (keyword? type)
@@ -45,5 +46,5 @@
 (defmethod cdq.context.ecs/handle-ctx-transaction!
   :ctx/do-effect
   [[_ effect-ctx effect] ctx]
-  (do-effect! (merge ctx effect-ctx)
-              effect))
+  (cdq.context/do-effect! (merge ctx effect-ctx)
+                          effect))

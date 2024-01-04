@@ -34,6 +34,6 @@
        (when hit-entity
          ; TODO? passed entity does not have new position/hit bodies
          [:ctx/do-effect
-          {:effect/source entity
+          {:effect/source (:cdq.context.ecs/atom (meta entity*))
            :effect/target hit-entity}
           hit-effect])])))
