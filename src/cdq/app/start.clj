@@ -5,6 +5,7 @@
             (cdq.context [properties :as properties]
                          [cursor :as cursor]
                          builder
+                         effect
                          potential-fields
                          render-debug)
             cdq.entity.all

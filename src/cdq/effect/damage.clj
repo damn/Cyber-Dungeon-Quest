@@ -1,8 +1,8 @@
-(ns cdq.context.effect.damage
+(ns cdq.effect.damage
   (:require [malli.core :as m]
             [data.val-max :refer [apply-val apply-val-max-modifiers val-max-schema]]
             [utils.random :as random]
-            [cdq.context.effect :as effect]
+            [cdq.effect :as effect]
             [cdq.context :refer [audiovisual send-event! add-text-effect!]]
             [cdq.entity :as entity]))
 

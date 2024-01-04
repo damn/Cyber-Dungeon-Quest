@@ -1,7 +1,7 @@
-(ns cdq.context.effect.sound
+(ns cdq.effect.sound
   (:require [malli.core :as m]
             [gdl.context :refer [play-sound!]]
-            [cdq.context.effect :as effect]))
+            [cdq.effect :as effect]))
 
 (def ^:private schema
   (m/schema string?))

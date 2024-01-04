@@ -1,6 +1,6 @@
-(ns cdq.context.effect.spawn
+(ns cdq.effect.spawn
   (:require [malli.core :as m]
-            [cdq.context.effect :as effect]
+            [cdq.effect :as effect]
             [cdq.entity.state.npc :as npc-state]
             [cdq.context :refer [creature-entity]]))
 

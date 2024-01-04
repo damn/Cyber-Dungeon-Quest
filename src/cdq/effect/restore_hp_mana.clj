@@ -1,7 +1,7 @@
-(ns cdq.context.effect.restore-hp-mana
+(ns cdq.effect.restore-hp-mana
   (:require [malli.core :as m]
             [data.val-max :refer [lower-than-max? set-to-max]]
-            [cdq.context.effect :as effect]))
+            [cdq.effect :as effect]))
 
 (def ^:private schema
   (m/schema [:= true]))

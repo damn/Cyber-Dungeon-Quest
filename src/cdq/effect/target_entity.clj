@@ -1,9 +1,9 @@
-(ns cdq.context.effect.target-entity
+(ns cdq.effect.target-entity
   (:require [malli.core :as m]
             [gdl.context :refer [draw-line]]
             [gdl.math.vector :as v]
             [cdq.context :refer (do-effect! effect-text audiovisual line-entity line-of-sight?)]
-            [cdq.context.effect :as effect]))
+            [cdq.effect :as effect]))
 
 (def ^:private schema
   (m/schema [:map [:hit-effect [:map]] [:maxrange pos?]]))

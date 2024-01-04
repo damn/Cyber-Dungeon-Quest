@@ -1,11 +1,11 @@
-(ns cdq.context.effect.projectile
+(ns cdq.effect.projectile
   (:require [clojure.string :as str]
             [malli.core :as m]
             [gdl.math.vector :as v]
             [gdl.graphics.animation :as animation]
             [gdl.context :refer [get-sprite spritesheet]]
             [cdq.context :refer [effect-text path-blocked? create-entity!]]
-            [cdq.context.effect :as effect]))
+            [cdq.effect :as effect]))
 
 ; -> range needs to be smaller than potential field range
 ; -> first range check then ray ! otherwise somewhere in contentfield out of sight

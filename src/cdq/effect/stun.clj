@@ -1,8 +1,8 @@
-(ns cdq.context.effect.stun
+(ns cdq.effect.stun
   (:require [malli.core :as m]
             [utils.core :refer [readable-number]]
             [cdq.context :refer [send-event!]]
-            [cdq.context.effect :as effect]))
+            [cdq.effect :as effect]))
 
 (def ^:private schema (m/schema [:and number? pos?]))
 

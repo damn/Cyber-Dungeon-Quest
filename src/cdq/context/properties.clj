@@ -8,8 +8,8 @@
             [utils.core :refer [safe-get readable-number]]
             cdq.context.modifier
             cdq.context.modifier.all
-            cdq.context.effect
-            cdq.context.effect.all
+            cdq.effect
+            cdq.effect.all
             [cdq.context :refer [modifier-text effect-text]]))
 
 ; TODO
@@ -77,7 +77,7 @@
     :creature/faction [:faction/good :faction/evil]))
 
 (doseq [k (concat (keys cdq.context.modifier/modifier-definitions)
-                  (keys (methods cdq.context.effect/do!)))]
+                  (keys (methods cdq.effect/do!)))]
   (alter-var-root #'attribute->value-widget (fn [m]
                                               (if (contains? m k) m (assoc m k :text-field)))))
 ; TODO schema/default-values/nicer text?
@@ -91,8 +91,8 @@
 (defn nested-map->components [k]
   (case k
     :item/modifier (keys cdq.context.modifier/modifier-definitions)
-    :skill/effect (keys (methods cdq.context.effect/do!))
-    :hit-effect   (keys (methods cdq.context.effect/do!)) ; TODO only those with 'source/target'
+    :skill/effect (keys (methods cdq.effect/do!))
+    :hit-effect   (keys (methods cdq.effect/do!)) ; TODO only those with 'source/target'
     ))
 
 (defn attribute-widget-sort-attributes [properties]
@@ -120,8 +120,8 @@
 
 
 (def ^:private effect-components-schema
-  (for [k (keys (methods cdq.context.effect/do!))]
-    [k {:optional true} (m/form (cdq.context.effect/value-schema k))]))
+  (for [k (keys (methods cdq.effect/do!))]
+    [k {:optional true} (m/form (cdq.effect/value-schema k))]))
 
 ; https://github.com/metosin/malli#built-in-schemas
 (def property-types
