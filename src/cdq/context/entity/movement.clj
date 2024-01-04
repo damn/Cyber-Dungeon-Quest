@@ -2,7 +2,7 @@
   (:require [x.x :refer [defcomponent]]
             [gdl.math.vector :as v]
             [cdq.context.ecs :as ecs]
-            [cdq.context :refer [world-grid position-changed!]]
+            [cdq.context :refer [world-grid]]
             [cdq.context.entity.body :as body]
             [cdq.world.grid :refer [valid-position?]]))
 
@@ -39,6 +39,7 @@
         (try-move ctx entity* [xdir 0])
         (try-move ctx entity* [0 ydir]))))
 
+; TO BODY?
 (defn- check-rotate [entity* direction]
   (if (:rotate-in-movement-direction? (:entity/body entity*))
     (assoc-in entity* [:entity/body :rotation-angle] (v/get-angle-from-vector direction))
@@ -50,13 +51,13 @@
                  (:entity/position @entity)))
     (assert (<= tiles-per-second max-speed)))
 
-  (ecs/tick! [_ entity ctx]
-    (when-let [direction (:entity/movement-vector @entity)]
+  (ecs/tick [_ entity* ctx]
+    (when-let [direction (:entity/movement-vector entity*)]
       (assert (or (zero? (v/length direction))
                   (v/normalised? direction)))
       (when-not (zero? (v/length direction))
-        (when-let [moved-entity* (if (:solid? (:entity/body @entity))
-                                   (update-position-solid     ctx @entity direction)
-                                   (update-position-non-solid ctx @entity direction))]
-          (reset! entity (check-rotate moved-entity* direction))
-          (position-changed! ctx entity))))))
+        (when-let [moved-entity* (if (:solid? (:entity/body entity*))
+                                   (update-position-solid     ctx entity* direction)
+                                   (update-position-non-solid ctx entity* direction))]
+          [(check-rotate moved-entity* direction)
+           [:ctx/position-changed moved-entity*]])))))

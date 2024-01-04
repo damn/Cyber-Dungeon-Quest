@@ -21,8 +21,8 @@
 
 (defsystem create   [_])
 (defsystem create!  [_ entity context])
-(defsystem destroy! [_ entity context]) ; only used twice position/body
-(defsystem tick!    [_ entity context])
+(defsystem destroy! [_ entity context])
+(defsystem tick     [_ entity* context])
 
 (defsystem render-below   [_ entity* context])
 (defsystem render-default [_ entity* context])
@@ -71,11 +71,14 @@
   (get-entity [{::keys [ids->entities]} id]
     (get @ids->entities id))
 
+  ;(meta (with-meta (map->Entity {:foo :bar}) {:atom (atom nil)}))
+
   (create-entity! [{::keys [ids->entities] :as context} components-map]
     {:pre [(not (contains? components-map :entity/id))
            (:entity/position components-map)]}
     (try
      (let [id (unique-number!)
+           ;an-atom (atom nil)
            entity (-> (assoc components-map :entity/id id)
                       (update-map create)
                       cdq.entity/map->Entity

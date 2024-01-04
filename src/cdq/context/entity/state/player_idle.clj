@@ -146,7 +146,7 @@
   state/State
   (enter [_ context])
   (exit  [_ context])
-  (tick! [_ _context])
+  (tick [_ _context])
   (render-below [_ c entity*])
   (render-above [_ c entity*])
   (render-info  [_ c entity*]))

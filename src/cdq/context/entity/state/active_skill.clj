@@ -1,8 +1,7 @@
 (ns cdq.context.entity.state.active-skill
   (:require [gdl.context :refer [draw-filled-circle draw-sector draw-image play-sound!]]
             [cdq.context.entity.state :as state]
-            [cdq.context :refer [valid-params? do-effect! effect-render-info send-event!
-                                  stopped? finished-ratio ->counter set-skill-to-cooldown! pay-skill-mana-cost! set-cursor!]]
+            [cdq.context :refer [valid-params? effect-render-info stopped? finished-ratio ->counter set-skill-to-cooldown! pay-skill-mana-cost! set-cursor!]]
             [cdq.entity :as entity]))
 
 (defn- draw-skill-icon [c icon entity* [x y] action-counter-ratio]
@@ -40,17 +39,16 @@
 
   (exit [_ _ctx])
 
-  (tick! [_ context]
+  (tick [_ context]
     (let [effect (:skill/effect skill)
           effect-context (merge context effect-context)]
       (cond
        (not (valid-params? effect-context effect))
-       (send-event! context entity :action-done)
+       [[:ctx/send-event entity :action-done]]
 
        (stopped? context counter)
-       (do
-        (do-effect! effect-context effect)
-        (send-event! context entity :action-done)))))
+       [[:ctx/do-effect effect-context effect]
+        [:ctx/send-event entity :action-done]])))
 
   (render-below [_ c entity*])
   (render-above [_ c entity*])

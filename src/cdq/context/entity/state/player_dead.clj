@@ -21,7 +21,7 @@
                              :on-click (fn [_ctx]
                                          (change-screen! :screens/main-menu))}))
   (exit [_ _ctx])
-  (tick! [_ _ctx])
+  (tick [_ _ctx])
   (render-below [_ c entity*])
   (render-above [_ c entity*])
   (render-info  [_ c entity*]))

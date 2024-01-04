@@ -56,7 +56,7 @@
       (put-item-on-ground! ctx (item-place-position ctx entity))
       (swap! entity dissoc :entity/item-on-cursor)))
 
-  (tick! [_ _ctx])
+  (tick [_ _ctx])
   (render-below [_ ctx entity*]
     (when (world-item? ctx)
       (draw-centered-image ctx (:property/image item) (item-place-position ctx entity))))

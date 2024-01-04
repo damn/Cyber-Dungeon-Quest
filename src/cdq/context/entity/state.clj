@@ -9,7 +9,7 @@
 (defprotocol State
   (enter [_ context])
   (exit  [_ context])
-  (tick! [_ context])
+  (tick  [_ context])
   (render-below [_ context entity*])
   (render-above [_ context entity*])
   (render-info  [_ context entity*]))
@@ -32,8 +32,8 @@
             :state-obj ((initial-state state-obj-constructors) context entity)
             :state-obj-constructors state-obj-constructors}))
 
-  (ecs/tick! [_ _entity context]
-    (tick! state-obj context))
+  (ecs/tick [_ _entity* context]
+    (tick state-obj context))
 
   (ecs/render-below [_ entity* c] (render-below state-obj c entity*))
   (ecs/render-above [_ entity* c] (render-above state-obj c entity*))

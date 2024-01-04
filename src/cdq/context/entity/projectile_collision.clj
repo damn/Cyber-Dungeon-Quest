@@ -3,7 +3,7 @@
             [gdl.math.geom :as geom]
             [utils.core :refer [find-first]]
             [cdq.context.ecs :as ecs]
-            [cdq.context :refer [do-effect! world-grid]]
+            [cdq.context :refer [world-grid]]
             [cdq.context.entity.body :as body]
             [cdq.world.grid :refer [rectangle->cells]]
             [cdq.world.cell :as cell :refer [cells->entities]]))
@@ -14,9 +14,8 @@
   (ecs/create [[_ v]]
     (assoc v :already-hit-bodies #{}))
 
-  (ecs/tick! [[k _] entity ctx]
-    (let [entity* @entity
-          cells* (map deref (rectangle->cells (world-grid ctx) (:entity/body entity*)))
+  (ecs/tick [[k _] entity* ctx]
+    (let [cells* (map deref (rectangle->cells (world-grid ctx) (:entity/body entity*)))
           hit-entity (find-first #(and (not (contains? already-hit-bodies %)) ; not filtering out own id
                                        (not= (:entity/faction entity*)
                                              (:entity/faction @%))
@@ -27,14 +26,14 @@
           entity* (if hit-entity
                     (update-in entity* [k :already-hit-bodies] conj hit-entity)
                     entity*)
-          destroy? (cond hit-entity
-                         (do ; TODO? passed entity does not have new position/hit bodies
-                             (do-effect! (merge ctx {:effect/source entity
-                                                     :effect/target hit-entity})
-                                         hit-effect)
-                             (not piercing?))
-                         (some #(cell/blocked? % entity*) cells*)
-                         true)]
-      (reset! entity (if destroy?
-                       (assoc entity* :entity/destroyed? true)
-                       entity*)))))
+          destroy? (or (and hit-entity (not piercing?))
+                       (some #(cell/blocked? % entity*) cells*))]
+      [(if destroy?
+         (assoc entity* :entity/destroyed? true)
+         entity*)
+       (when hit-entity
+         ; TODO? passed entity does not have new position/hit bodies
+         [:ctx/do-effect
+          {:effect/source entity
+           :effect/target hit-entity}
+          hit-effect])])))

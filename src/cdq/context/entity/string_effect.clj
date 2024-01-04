@@ -6,9 +6,10 @@
             [cdq.context :refer [->counter stopped? reset]]))
 
 (defcomponent :entity/string-effect {:keys [text counter] :as this}
-  (ecs/tick! [[k _] e context]
+  (ecs/tick [[k _] entity* context]
     (when (stopped? context counter)
-      (swap! e dissoc k)))
+      (dissoc entity* k)))
+
   (ecs/render-above [_ {[x y] :entity/position :keys [entity/body]} c]
     (draw-text c
                {:text text

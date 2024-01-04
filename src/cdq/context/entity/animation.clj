@@ -9,10 +9,10 @@
        animation/current-frame
        (assoc entity* :entity/image)))
 
-(defcomponent :entity/animation animation
+(defcomponent :entity/animation _
   (ecs/create! [_ entity _ctx]
     (swap! entity assoc-image-current-frame))
-  (ecs/tick! [[k _] entity {:keys [context/delta-time]}]
-    (swap! entity #(-> %
-                       (update k animation/tick delta-time)
-                       assoc-image-current-frame))))
+  (ecs/tick [[k _] entity* {:keys [context/delta-time]}]
+    (-> entity*
+        (update k animation/tick delta-time)
+        assoc-image-current-frame)))

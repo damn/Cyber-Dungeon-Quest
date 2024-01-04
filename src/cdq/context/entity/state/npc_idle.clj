@@ -1,7 +1,7 @@
 (ns cdq.context.entity.state.npc-idle
   (:require [gdl.math.vector :as v]
             [cdq.context.entity.state :as state]
-            [cdq.context :refer [effect-useful? world-grid potential-field-follow-to-enemy send-event! skill-usable-state]]
+            [cdq.context :refer [effect-useful? world-grid potential-field-follow-to-enemy skill-usable-state]]
             [cdq.entity :as entity]
             [cdq.world.cell :as cell]))
 
@@ -34,11 +34,11 @@
   (exit  [_ context]
     (swap! entity assoc :entity/movement-vector nil))
 
-  (tick! [_ context]
-    (swap! entity assoc :entity/movement-vector (potential-field-follow-to-enemy context entity))
-    (let [effect-context (effect-context context entity)]
-      (when-let [skill (npc-choose-skill (merge context effect-context) @entity)]
-        (send-event! context entity :start-action [skill effect-context]))))
+  (tick [_ context]
+    [(assoc @entity :entity/movement-vector (potential-field-follow-to-enemy context entity))
+     (let [effect-context (effect-context context entity)]
+       (when-let [skill (npc-choose-skill (merge context effect-context) @entity)]
+         [:ctx/send-event entity :start-action [skill effect-context]]))])
 
   (render-below [_ c entity*])
   (render-above [_ c entity*])
