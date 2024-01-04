@@ -7,7 +7,7 @@
                                  ->texture-region-drawable ->color ->stack ->image-widget ->image-button]]
             [gdl.graphics.color :as color]
             [gdl.scene2d.actor :as actor :refer [set-id! add-listener! set-name! add-tooltip! remove-tooltip!]]
-            [cdq.context.entity.inventory :as inventory]
+            [cdq.entity.inventory :as inventory]
             [cdq.context :refer [show-msg-to-player! send-event! set-item! stack-item! remove-item! get-property tooltip-text]]
             [cdq.entity :as entity])
   (:import com.badlogic.gdx.scenes.scene2d.Actor

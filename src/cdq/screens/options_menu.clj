@@ -6,7 +6,7 @@
             [gdl.input.keys :as input.keys]
             [utils.core :refer [find-first safe-get]]
             ;[cdq.line-of-sight :refer (player-line-of-sight-checks)]
-            [cdq.context.entity.body :refer (show-body-bounds)]))
+            [cdq.entity.body :refer (show-body-bounds)]))
 
 ; no protocol
 (defprotocol StatusCheckBox

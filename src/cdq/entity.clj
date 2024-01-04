@@ -1,4 +1,16 @@
-(ns cdq.entity)
+(ns cdq.entity
+  (:require [x.x :refer [defsystem]]))
+
+(defsystem create   [_])
+(defsystem create!  [_ entity context])
+(defsystem destroy! [_ entity context])
+(defsystem tick     [_ entity* context])
+
+(defsystem render-below   [_ entity* context])
+(defsystem render-default [_ entity* context])
+(defsystem render-above   [_ entity* context])
+(defsystem render-info    [_ entity* context])
+(defsystem render-debug   [_ entity* context])
 
 (defrecord Entity [])
 

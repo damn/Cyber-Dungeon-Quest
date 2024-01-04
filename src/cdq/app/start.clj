@@ -7,8 +7,8 @@
                          builder
                          potential-fields
                          render-debug)
-            cdq.context.entity.all
-            [cdq.context.entity.movement :refer [frames-per-second]]
+            cdq.entity.all
+            [cdq.entity.movement :refer [frames-per-second]]
             (cdq.context.ui [action-bar :as action-bar]
                             [inventory-window :as inventory-window]
                             player-modal

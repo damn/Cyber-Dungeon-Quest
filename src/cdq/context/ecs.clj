@@ -1,6 +1,6 @@
 (ns cdq.context.ecs
   (:require [clj-commons.pretty.repl :as p]
-            [x.x :refer [defsystem doseq-entity]]
+            [x.x :refer [doseq-entity]]
             [gdl.context :refer [draw-text]]
             [utils.core :refer [define-order sort-by-order]]
             [cdq.entity :as entity]
@@ -18,17 +18,6 @@
 ; I could cache the keyset intersection call between entity keys and multimethod keys
 ; keySet is cached anyway in a map ?
 ; anyway this needs to be tested
-
-(defsystem create   [_])
-(defsystem create!  [_ entity context])
-(defsystem destroy! [_ entity context])
-(defsystem tick     [_ entity* context])
-
-(defsystem render-below   [_ entity* context])
-(defsystem render-default [_ entity* context])
-(defsystem render-above   [_ entity* context])
-(defsystem render-info    [_ entity* context])
-(defsystem render-debug   [_ entity* context])
 
 (defn- render-entity* [system
                        entity*
@@ -97,10 +86,10 @@
     (try
      (let [id (unique-number!)
            entity (-> (assoc components-map :entity/id id)
-                      (update-map create)
+                      (update-map entity/create)
                       cdq.entity/map->Entity
                       atom
-                      (doseq-entity create! context))]
+                      (doseq-entity entity/create! context))]
        (swap! entity with-meta {::atom entity})
        (swap! ids->entities assoc id entity)
        (add-entity! context entity)
@@ -111,11 +100,11 @@
 
   (tick-entity [{::keys [thrown-error] :as context} entity]
     (try
-     (doseq [k (keys (methods tick))
+     (doseq [k (keys (methods entity/tick))
              :let [entity* @entity
                    v (k entity*)]
              :when v]
-       (let [transactions (tick [k v] entity* context)]
+       (let [transactions (entity/tick [k v] entity* context)]
          (try (handle-transactions! transactions context)
               (catch Throwable t
                 (println "Error with " k " and transactions: \n" (pr-str transactions))
@@ -131,18 +120,18 @@
                                           first
                                           render-on-map-order))
             ; vars so I can see the function name @ error (can I do this with x.x? give multimethods names?)
-            system [#'render-below
-                    #'render-default
-                    #'render-above
-                    #'render-info]
+            system [#'entity/render-below
+                    #'entity/render-default
+                    #'entity/render-above
+                    #'entity/render-info]
             entity* entities*]
       (render-entity* system entity* context))
     (doseq [entity* entities*]
-      (render-entity* #'render-debug entity* context)))
+      (render-entity* #'entity/render-debug entity* context)))
 
   (remove-destroyed-entities [{::keys [ids->entities] :as context}]
     (doseq [entity (filter (comp :entity/destroyed? deref) (vals @ids->entities))]
-      (doseq-entity entity destroy! context)
+      (doseq-entity entity entity/destroy! context)
       (swap! ids->entities dissoc (:entity/id @entity))
       (remove-entity! context entity))))
 

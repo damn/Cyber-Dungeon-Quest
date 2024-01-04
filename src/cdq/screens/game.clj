@@ -11,8 +11,8 @@
             [cdq.context :refer [render-entities* ray-blocked? explored? set-explored! line-of-sight? content-grid
                                   tick-entity remove-destroyed-entities update-mouseover-entity update-potential-fields
                                   update-elapsed-game-time debug-render-after-entities debug-render-before-entities set-cursor!]]
-            [cdq.context.entity.movement :as movement]
-            [cdq.context.entity.state :as state]
+            [cdq.entity.movement :as movement]
+            [cdq.entity.state :as state]
             cdq.context.ui.actors
             [cdq.world.content-grid :refer [active-entities]]))
 

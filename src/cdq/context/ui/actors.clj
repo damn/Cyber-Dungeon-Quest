@@ -8,7 +8,7 @@
             [cdq.context.ui.entity-info-window :as entity-info-window]
             [cdq.context.ui.skill-window :as skill-window]
             [cdq.context.ui.inventory-window :as inventory]
-            [cdq.context.entity.state.player-item-on-cursor :refer [draw-item-on-cursor]]
+            [cdq.entity.state.player-item-on-cursor :refer [draw-item-on-cursor]]
             [cdq.context :refer [->player-message-actor ->action-bar]]))
 
 (defn- ->item-on-cursor-actor [context]

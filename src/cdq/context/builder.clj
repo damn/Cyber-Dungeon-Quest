@@ -2,7 +2,8 @@
   (:require [x.x :refer [defcomponent]]
             [gdl.context :refer [play-sound!]]
             [cdq.context :refer [create-entity! get-property]]
-            [cdq.context.entity.body :refer (assoc-left-bottom)]))
+            [cdq.entity :as entity]
+            [cdq.entity.body :refer (assoc-left-bottom)]))
 
 (defn- create-creature-data [{:keys [property/id
                                      property/animation
@@ -30,7 +31,7 @@
          (when (= id :creatures/lady-a) {:entity/clickable {:type :clickable/princess}})))
 
 (defcomponent :entity/plop _
-  (cdq.context.ecs/destroy! [_ entity ctx]
+  (entity/destroy! [_ entity ctx]
     (cdq.context/audiovisual ctx (:entity/position @entity) :projectile/hit-wall-effect)))
 
 (extend-type gdl.context.Context

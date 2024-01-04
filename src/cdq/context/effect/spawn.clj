@@ -1,7 +1,7 @@
 (ns cdq.context.effect.spawn
   (:require [malli.core :as m]
             [cdq.context.effect :as effect]
-            [cdq.context.entity.state.npc :as npc-state]
+            [cdq.entity.state.npc :as npc-state]
             [cdq.context :refer [creature-entity]]))
 
 ; TODO spawning on player both without error ?! => not valid position checked
