@@ -75,18 +75,18 @@
   [{:keys [effect/source
            effect/direction] :as context}
    _effect]
-  [{:entity/position (start-point @source direction)
-    :entity/faction (:entity/faction @source)
-    :entity/body {:width size
-                  :height size
-                  :solid? false
-                  :rotation-angle (v/get-angle-from-vector direction)}
-    :entity/flying? true
-    :entity/z-order :z-order/effect
-    :entity/movement speed
-    :entity/movement-vector direction
-    :entity/animation (black-projectile context)
-    :entity/delete-after-duration maxtime
-    :entity/plop true
-    :entity/projectile-collision {:hit-effect hit-effect
-                                  :piercing? true}}])
+  [#:entity {:position (start-point @source direction)
+             :faction (:entity/faction @source)
+             :body {:width size
+                    :height size
+                    :solid? false
+                    :rotation-angle (v/get-angle-from-vector direction)}
+             :flying? true
+             :z-order :z-order/effect
+             :movement speed
+             :movement-vector direction
+             :animation (black-projectile context)
+             :delete-after-duration maxtime
+             :plop true
+             :projectile-collision {:hit-effect hit-effect
+                                    :piercing? true}}])

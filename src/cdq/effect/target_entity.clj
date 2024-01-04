@@ -68,7 +68,8 @@
            effect/target] :as context}
    [_ {:keys [hit-effect maxrange]}]]
   (if (in-range? @source @target maxrange)
-    [(line-entity {:start (start-point @source @target)
+    [(line-entity context
+                  {:start (start-point @source @target)
                    :end (:entity/position @target)
                    :duration 0.05
                    :color [1 0 0 0.75]
