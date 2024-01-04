@@ -84,6 +84,7 @@
   {:property/id :label
    :property/image :image
    :property/animation :animation
+   :property/sound :sound
    :property/pretty-name :text-field
    :item/slot :label
    :item/modifier :nested-map

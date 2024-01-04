@@ -46,7 +46,7 @@
                         assoc-left-bottom)))
 
   (audiovisual [context position id]
-    (let [{:keys [sound
+    (let [{:keys [property/sound
                   property/animation]} (get-property context id)]
       (play-sound! context sound)
       (create-entity! context

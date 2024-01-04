@@ -4308,7 +4308,7 @@
   {:file "items/images.png", :sub-image-bounds [672 48 48 48]},
   :property/id :torch-lit,
   :property/pretty-name "Lit Torch"}
- {:sound "sounds/bfxr_fisthit.wav",
+ {:property/sound "sounds/bfxr_fisthit.wav",
   :property/animation
   {:frames
    ({:file "fx/uf_FX_impact.png", :sub-image-bounds [0 48 48 48]}
@@ -4337,7 +4337,7 @@
   {:file "items/images.png", :sub-image-bounds [480 48 48 48]},
   :property/id :chest-silver-,
   :property/pretty-name "Silver Chest"}
- {:sound "sounds/bfxr_normalhit.wav",
+ {:property/sound "sounds/bfxr_normalhit.wav",
   :property/animation
   {:frames
    ({:file "fx/uf_FX_impact.png", :sub-image-bounds [144 0 48 48]}
@@ -4370,7 +4370,7 @@
   {:file "items/images.png", :sub-image-bounds [336 48 48 48]},
   :property/id :chest-gold,
   :property/pretty-name "Gold Chest"}
- {:sound "sounds/bfxr_projectile_wallhit.wav",
+ {:property/sound "sounds/bfxr_projectile_wallhit.wav",
   :property/animation
   {:frames
    ({:file "fx/uf_FX.png", :sub-image-bounds [0 168 24 24]}
@@ -4394,7 +4394,7 @@
   {:file "items/images.png", :sub-image-bounds [768 48 48 48]},
   :property/id :drumstick,
   :property/pretty-name "Drumstick"}
- {:sound "sounds/bfxr_defaultmonsterdeath.wav",
+ {:property/id :creature/die-effect,
   :property/animation
   {:frames
    ({:file "fx/uf_FX.png", :sub-image-bounds [96 144 24 24]}
@@ -4405,7 +4405,7 @@
     {:file "fx/uf_FX.png", :sub-image-bounds [216 144 24 24]}),
    :frame-duration 0.05,
    :looping? nil},
-  :property/id :creature/die-effect}
+  :property/sound "sounds/bfxr_defaultmonsterdeath.wav"}
  {:property/image
   {:file "items/images.png", :sub-image-bounds [912 48 48 48]},
   :property/id :flask-green,
@@ -4498,7 +4498,7 @@
   :skill.type/start-action-sound "sounds/slash.wav",
   :skill.type/action-time-modifier-key :attack-speed,
   :skill.type/action-time-pretty-name "Attack-Time"}
- {:sound "sounds/bfxr_curse.wav",
+ {:property/sound "sounds/bfxr_curse.wav",
   :property/animation
   {:frames
    ({:file "fx/uf_FX_impact.png", :sub-image-bounds [288 48 48 48]}
