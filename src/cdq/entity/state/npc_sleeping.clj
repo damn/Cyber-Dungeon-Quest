@@ -2,7 +2,7 @@
   (:require [gdl.context :refer [draw-text]]
             [gdl.graphics.color :as color]
             [cdq.entity.state :as state]
-            [cdq.context :refer [world-grid create-entity! ->counter add-text-effect!]]
+            [cdq.context :refer [world-grid create-entity! ->counter]]
             [cdq.entity :as entity]
             [cdq.world.cell :as cell]))
 
@@ -16,7 +16,7 @@
   (exit [_ context]
     ; TODO make state = alerted, and shout at the end of that !
     ; then nice alert '!' and different entities different alert time
-    (add-text-effect! context entity "!")
+    (swap! entity entity/add-text-effect context "!")
     (create-entity! context
                     {:entity/position (:entity/position @entity)
                      :entity/faction  (:entity/faction  @entity)

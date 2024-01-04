@@ -1,6 +1,5 @@
 (ns cdq.effect.sound
   (:require [malli.core :as m]
-            [gdl.context :refer [play-sound!]]
             [cdq.effect :as effect]))
 
 (def ^:private schema
@@ -17,6 +16,6 @@
   [_ctx _effect]
   true)
 
-(defmethod effect/do! :effect/sound
+(defmethod effect/transactions :effect/sound
   [ctx [_ file]]
-  (play-sound! ctx file))
+  [:tx/sound file])

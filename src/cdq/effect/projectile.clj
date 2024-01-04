@@ -4,7 +4,7 @@
             [gdl.math.vector :as v]
             [gdl.graphics.animation :as animation]
             [gdl.context :refer [get-sprite spritesheet]]
-            [cdq.context :refer [effect-text path-blocked? create-entity!]]
+            [cdq.context :refer [effect-text path-blocked?]]
             [cdq.effect :as effect]))
 
 ; -> range needs to be smaller than potential field range
@@ -71,23 +71,22 @@
          (v/scale direction
                   (+ (:radius (:entity/body entity*)) size 0.1))))
 
-(defmethod effect/do! :effect/projectile
+(defmethod effect/transactions :effect/projectile
   [{:keys [effect/source
            effect/direction] :as context}
    _effect]
-  (create-entity! context
-                  {:entity/position (start-point @source direction)
-                   :entity/faction (:entity/faction @source)
-                   :entity/body {:width size
-                                 :height size
-                                 :solid? false
-                                 :rotation-angle (v/get-angle-from-vector direction)}
-                   :entity/flying? true
-                   :entity/z-order :z-order/effect
-                   :entity/movement speed
-                   :entity/movement-vector direction
-                   :entity/animation (black-projectile context)
-                   :entity/delete-after-duration maxtime
-                   :entity/plop true
-                   :entity/projectile-collision {:hit-effect hit-effect
-                                                 :piercing? true}}))
+  [{:entity/position (start-point @source direction)
+    :entity/faction (:entity/faction @source)
+    :entity/body {:width size
+                  :height size
+                  :solid? false
+                  :rotation-angle (v/get-angle-from-vector direction)}
+    :entity/flying? true
+    :entity/z-order :z-order/effect
+    :entity/movement speed
+    :entity/movement-vector direction
+    :entity/animation (black-projectile context)
+    :entity/delete-after-duration maxtime
+    :entity/plop true
+    :entity/projectile-collision {:hit-effect hit-effect
+                                  :piercing? true}}])

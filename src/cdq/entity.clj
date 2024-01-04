@@ -30,3 +30,6 @@
 (defprotocol Faction
   (enemy-faction [_])
   (friendly-faction [_]))
+
+(defprotocol TextEffect
+  (add-text-effect [_ ctx text]))

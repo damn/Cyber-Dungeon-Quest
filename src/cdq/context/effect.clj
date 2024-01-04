@@ -1,16 +1,11 @@
 (ns cdq.context.effect
   (:require [clojure.string :as str]
             gdl.context
-            cdq.context
+            [cdq.context :refer [transact-all!]]
             [cdq.effect :as effect]))
 
 (extend-type gdl.context.Context
   cdq.context/EffectInterpreter
-  (do-effect! [context effect]
-    (assert (cdq.context/valid-params? context effect)) ; extra line of sight checks TODO performance issue?
-    (doseq [component effect]
-      (effect/do! context component)))
-
   (effect-text [context effect]
     (->> (keep #(effect/text context %) effect)
          (str/join "\n")))
@@ -26,5 +21,7 @@
     (some (partial effect/useful? context) effect)))
 
 (defmethod cdq.context/transact! :tx/effect [[_ effect-ctx effect] ctx]
-  (cdq.context/do-effect! (merge ctx effect-ctx)
-                          effect))
+  (let [ctx (merge ctx effect-ctx)]
+    (assert (cdq.context/valid-params? ctx effect)) ; extra line of sight checks TODO performance issue?
+    (doseq [component effect]
+      (transact-all! (effect/transactions ctx component) ctx))))

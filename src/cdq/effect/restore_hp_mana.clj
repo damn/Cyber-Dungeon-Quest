@@ -22,8 +22,8 @@
   [{:keys [effect/source]} _effect]
   source)
 
-(defmethod effect/do! :effect/restore-hp-mana
+(defmethod effect/transactions :effect/restore-hp-mana
   [{:keys [effect/source] :as context} _effect]
-  (swap! source #(-> %
-                     (update :entity/hp set-to-max)
-                     (update :entity/mana set-to-max))))
+  [(-> @source
+       (update :entity/hp set-to-max)
+       (update :entity/mana set-to-max))])

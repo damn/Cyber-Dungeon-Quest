@@ -3,7 +3,7 @@
             [data.val-max :refer [apply-val apply-val-max-modifiers val-max-schema]]
             [utils.random :as random]
             [cdq.effect :as effect]
-            [cdq.context :refer [audiovisual send-event! add-text-effect!]]
+            [cdq.context :refer [audiovisual send-event! add-text-effect]]
             [cdq.entity :as entity]))
 
 (defn- source-block-ignore [entity* block-type damage-type]
@@ -98,11 +98,11 @@
  [:physical [1 20]]
  )
 
-(defn- shield-blocked-effect [context entity]
-  (add-text-effect! context entity "SHIELD"))
+(defn- shield-blocked-effect [context entity*]
+  [(entity/add-text-effect entity* context "SHIELD")])
 
-(defn- armor-blocked-effect [context entity]
-  (add-text-effect! context entity "ARMOR"))
+(defn- armor-blocked-effect [context entity*]
+  [(entity/add-text-effect entity* context "ARMOR")])
 
 (defn- blocks? [block-rate]
   (< (rand) block-rate))
@@ -132,7 +132,7 @@
   [{:keys [effect/source effect/target]} _effect]
   (and source target (:entity/hp @target)))
 
-(defmethod effect/do! :effect/damage
+(defmethod effect/transactions :effect/damage
   [{:keys [effect/source
            effect/target] :as context} [_ {dmg-type 0 :as damage}]]
   (cond
@@ -140,20 +140,20 @@
    nil
 
    (blocks? (effective-block-rate @source @target :shield dmg-type))
-   (shield-blocked-effect context target)
+   (shield-blocked-effect context @target)
 
    (blocks? (effective-block-rate @source @target :armor dmg-type))
-   (armor-blocked-effect context target)
+   (armor-blocked-effect context @target)
 
    :else
    (let [[dmg-type min-max-dmg] (effective-damage damage @source @target)
          dmg-amount (random/rand-int-between min-max-dmg)]
-     (audiovisual context (:entity/position @target)
-                  (keyword (str "effects.damage." (name dmg-type))
-                           "hit-effect"))
-     (swap! target update :entity/hp apply-val #(- % dmg-amount))
-     (add-text-effect! context target (str "[RED]" dmg-amount))
-     (send-event! context target
-                  (if (no-hp-left? (:entity/hp @target))
-                    :kill
-                    :alert)))))
+     [(audiovisual context
+                   (:entity/position @target)
+                   (keyword (str "effects.damage." (name dmg-type))
+                            "hit-effect"))
+
+      (-> @target
+          (entity/add-text-effect context (str "[RED]" dmg-amount))
+          (update :entity/hp apply-val #(- % dmg-amount)))
+      [:tx/event target (if (no-hp-left? (:entity/hp @target)) :kill :alert)]])))

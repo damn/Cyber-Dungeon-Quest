@@ -4,7 +4,7 @@
             [gdl.context :refer [draw-text]]
             [utils.core :refer [define-order sort-by-order]]
             [cdq.entity :as entity]
-            [cdq.context :refer [transact! get-entity add-entity! remove-entity!]]))
+            [cdq.context :refer [transact! transact-all! get-entity add-entity! remove-entity!]]))
 
 ; TODO
 ; doseq-entity - what if key is not available anymore ? check :when (k @entity)  ?
@@ -57,6 +57,8 @@
 
 (defn- handle-transaction! [tx ctx]
   (cond
+   ; TODO entity w/o entity/id => create-entity!
+   ; play-sound tx
    (instance? cdq.entity.Entity tx) (let [entity* tx]
                                       ;(println "tx: " (:entity/id entity*))
                                       (reset! (entity/reference entity*) entity*))
@@ -65,13 +67,14 @@
                  (transact! tx ctx))
    :else (throw (Error. (str "Unknown transaction: " (pr-str tx))))))
 
-(defn- handle-transactions! [transactions ctx]
-  (doseq [tx transactions
-          :when tx]
-    (try (handle-transaction! tx ctx)
-         (catch Throwable t
-           (println "Error with transaction: \n" (pr-str tx))
-           (throw t)))))
+(extend-type gdl.context.Context
+  cdq.context/TransactionHandler
+  (transact-all! [ctx txs]
+    (doseq [tx txs :when tx]
+      (try (handle-transaction! tx ctx)
+           (catch Throwable t
+             (println "Error with transaction: \n" (pr-str tx))
+             (throw t))))))
 
 (extend-type cdq.entity.Entity
   cdq.entity/HasReferenceToItself
@@ -107,11 +110,11 @@
              :let [entity* @entity
                    v (k entity*)]
              :when v]
-       (when-let [transactions (entity/tick [k v] entity* context)]
+       (when-let [txs (entity/tick [k v] entity* context)]
          ;(println "txs:" (:entity/id entity*) "-" k)
-         (try (handle-transactions! transactions context)
+         (try (transact-all! context txs)
               (catch Throwable t
-                (println "Error with " k " and transactions: \n" (pr-str transactions))
+                (println "Error with " k " and txs: \n" (pr-str txs))
                 (throw t)))))
      (catch Throwable t
        (p/pretty-pst t)

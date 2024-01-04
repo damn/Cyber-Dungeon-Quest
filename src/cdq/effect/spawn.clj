@@ -45,7 +45,7 @@
        (:entity/faction @source)
        target-position))
 
-(defmethod effect/do! :effect/spawn
+(defmethod effect/transactions :effect/spawn
   [{:keys [effect/source
            effect/target-position] :as context}
    [_ creature-id]]

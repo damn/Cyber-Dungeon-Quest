@@ -2,6 +2,9 @@
 
 (defmulti transact! (fn [[k] _ctx] k))
 
+(defprotocol TransactionHandler
+  (transact-all! [_ txs]))
+
 (defprotocol EntityComponentSystem
   (create-entity! [_ components-map]
                   "Entities should not have :entity/id component, will get added.
@@ -37,7 +40,6 @@
   (remove-entity! [_ entity]))
 
 (defprotocol EffectInterpreter
-  (do-effect!         [_ effect])
   (effect-text        [_ effect])
   (valid-params?      [_ effect])
   (effect-render-info [_ effect])
@@ -92,9 +94,6 @@
   (set-skill-to-cooldown! [_ entity skill])
   (pay-skill-mana-cost!   [_ entity skill])
   (skill-usable-state [effect-context entity* skill]))
-
-(defprotocol TextEffect
-  (add-text-effect! [_ entity text]))
 
 (defprotocol Actionbar
   (->action-bar    [_])

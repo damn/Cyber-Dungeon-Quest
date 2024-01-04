@@ -3,6 +3,7 @@
 ; TODO no assert needed ?
 ; is throwing on no impl ?
 ; => always
+; TODO dispatch first on effect ...
 (defn- by-type [_context [type value]]
   (assert (keyword? type)
           (str "Type is not a keyword: " type " and value: " value))
@@ -10,7 +11,7 @@
           (str "Effect keys need to have :effect/ keyword namespace type: " type " , value: " value))
   type)
 
-(defmulti do!           by-type)
+(defmulti transactions  by-type)
 (defmulti text          by-type)
 (defmulti valid-params? by-type)
 (defmulti value-schema  identity)

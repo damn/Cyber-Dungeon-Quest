@@ -1,7 +1,6 @@
 (ns cdq.effect.stun
   (:require [malli.core :as m]
             [utils.core :refer [readable-number]]
-            [cdq.context :refer [send-event!]]
             [cdq.effect :as effect]))
 
 (def ^:private schema (m/schema [:and number? pos?]))
@@ -18,6 +17,6 @@
   [{:keys [effect/source effect/target]} _effect]
   (and target))
 
-(defmethod effect/do! :effect/stun
+(defmethod effect/transactions :effect/stun
   [{:keys [effect/target] :as context} [_ duration]]
-  (send-event! context target :stun duration))
+  [:tx/event target :stun duration])

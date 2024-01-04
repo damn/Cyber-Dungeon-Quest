@@ -2,7 +2,7 @@
   (:require [malli.core :as m]
             [gdl.context :refer [draw-line]]
             [gdl.math.vector :as v]
-            [cdq.context :refer (do-effect! effect-text audiovisual line-entity line-of-sight?)]
+            [cdq.context :refer (effect-text audiovisual line-entity line-of-sight?)]
             [cdq.effect :as effect]))
 
 (def ^:private schema
@@ -63,13 +63,12 @@
        (line-of-sight? context @source @target)
        (:entity/hp @target)))
 
-(defmethod effect/do! :effect/target-entity
+(defmethod effect/transactions :effect/target-entity
   [{:keys [effect/source
            effect/target] :as context}
    [_ {:keys [hit-effect maxrange]}]]
   (if (in-range? @source @target maxrange)
-    (do
-     (line-entity context
+    [(line-entity context
                   {:start (start-point @source @target)
                    :end (:entity/position @target)
                    :duration 0.05
@@ -78,13 +77,12 @@
      ; TODO => make new context with end-point ... and check on point entity
      ; friendly fire ?!
      ; player maybe just direction possible ?!
-     (do-effect! context hit-effect))
-    (do
-     ; TODO
+     [:tx/effect context hit-effect]]
+    [; TODO
      ; * clicking on far away monster
      ; * hitting ground in front of you ( there is another monster )
      ; * -> it doesn't get hit ! hmmm
      ; * either use 'MISS' or get enemy entities at end-point
      (audiovisual context
                   (end-point @source @target maxrange)
-                  :effects.target-entity/hit-ground-effect))))
+                  :effects.target-entity/hit-ground-effect)]))
