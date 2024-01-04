@@ -67,7 +67,7 @@
                                                         :fsm new-fsm
                                                         :state-obj new-state-obj)))))))))
 
-(extend-type cdq.context.ecs.Entity
+(extend-type cdq.entity.Entity
   cdq.entity/State
   (state [entity*]
     (-> entity* :entity/state :fsm :state)))

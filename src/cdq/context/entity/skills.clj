@@ -20,7 +20,7 @@
     (swap! entity update k (fn [skills]
                              (mapvals #(update-cooldown context %) skills)))))
 
-(extend-type cdq.context.ecs.Entity
+(extend-type cdq.entity.Entity
   cdq.entity/Skills
   (has-skill? [{:keys [entity/skills]} {:keys [property/id]}]
     (contains? skills id)))

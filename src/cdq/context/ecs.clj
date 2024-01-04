@@ -3,6 +3,7 @@
             [x.x :refer [defsystem doseq-entity]]
             [gdl.context :refer [draw-text]]
             [utils.core :refer [define-order sort-by-order]]
+            cdq.entity
             [cdq.context :refer [get-entity]]))
 
 ; TODO
@@ -17,8 +18,6 @@
 ; I could cache the keyset intersection call between entity keys and multimethod keys
 ; keySet is cached anyway in a map ?
 ; anyway this needs to be tested
-
-(defrecord Entity [])
 
 (defsystem create   [_])
 (defsystem create!  [_ entity context])
@@ -80,7 +79,7 @@
      (let [id (unique-number!)
            entity (-> (assoc components-map :entity/id id)
                       (update-map create)
-                      map->Entity
+                      cdq.entity/map->Entity
                       atom
                       (doseq-entity create! context))]
        (swap! ids->entities assoc id entity)

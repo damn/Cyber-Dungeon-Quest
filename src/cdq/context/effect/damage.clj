@@ -47,16 +47,16 @@
 (comment
  (set! *print-level* nil)
  (apply-source-modifiers [:physical [5 10]]
-                         (cdq.context.ecs/map->Entity
+                         (cdq.entity/map->Entity
                           {:entity/modifiers {:effect/damage {:effect/source {:physical {[:val :inc] 1}}}}}))
  [:physical [6 10]]
  (apply-source-modifiers [:magic [5 10]]
-                         (cdq.context.ecs/map->Entity
+                         (cdq.entity/map->Entity
                           {:entity/modifiers {:effect/damage {:effect/source {:physical {[:val :inc] 1}}}}}))
  [:magic [5 10]]
 
  (apply-source-modifiers [:magic [5 10]]
-                         (cdq.context.ecs/map->Entity
+                         (cdq.entity/map->Entity
                           {:entity/modifiers {:effect/damage {:effect/source {:magic {[:max :mult] 3}}}}}))
  [:magic [5 30]]
  )
@@ -85,12 +85,12 @@
  [:physical [1 20]]
 
  (effective-damage [:physical [3 10]]
-                   (cdq.context.ecs/map->Entity
+                   (cdq.entity/map->Entity
                     {:entity/modifiers {:effect/damage {:effect/source {:physical  {[:max :mult] 2
                                                                                     [:val :mult] 1.5
                                                                                     [:val :inc] 1
                                                                                     [:max :inc] 0}}}}})
-                   (cdq.context.ecs/map->Entity
+                   (cdq.entity/map->Entity
                     {:entity/modifiers {:effect/damage {:target {:physical  {[:max :mult] 1
                                                                              [:val :mult] 1
                                                                              [:val :inc] -5

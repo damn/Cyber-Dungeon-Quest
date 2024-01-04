@@ -1,5 +1,7 @@
 (ns cdq.entity)
 
+(defrecord Entity [])
+
 (defprotocol State
   (state [_]))
 
