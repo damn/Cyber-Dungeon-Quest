@@ -1,5 +1,6 @@
 (ns cdq.context.effect.projectile
   (:require [clojure.string :as str]
+            [malli.core :as m]
             [gdl.math.vector :as v]
             [gdl.graphics.animation :as animation]
             [gdl.context :refer [get-sprite spritesheet]]
@@ -13,6 +14,12 @@
 (def ^:private maxrange 10)
 (def ^:private speed 10)
 (def ^:private maxtime (/ maxrange speed))
+
+(def ^:private schema
+  (m/schema [:= true]))
+
+(defmethod effect/value-schema :effect/projectile [_]
+  schema)
 
 ; TODO valid params direction has to be  non-nil (entities not los player ) ?
 (defmethod effect/useful? :effect/projectile

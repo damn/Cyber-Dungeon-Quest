@@ -110,6 +110,7 @@
    :world/spawn-rate :text-field
    :world/princess :label})
 
+; TODO make each attribute a map with :widget and extra keys => move into 1 place...
 (defn enum-attribute->items [k]
   (case k
     :creature/faction [:faction/good :faction/evil]))
@@ -156,6 +157,16 @@
       (name k)])
    properties))
 
+; TODO just implement 'melee-attack' skill and give all creatures
+; => using base stats of creature, damage, speed, dex? , range
+; => weapons are just normal items which modify this
+; e.g. sword gives some range & dmg ....
+; => no more DRY
+
+(def ^:private effect-components-schema
+  (for [k (keys (methods cdq.context.effect/do!))]
+    [k {:optional true} (m/form (cdq.context.effect/value-schema k))]))
+
 ; https://github.com/metosin/malli#built-in-schemas
 (def property-types
   {:property.type/creature {:of-type? :creature/species
@@ -200,7 +211,8 @@
                                    [:skill/action-time pos?]
                                    [:skill/cooldown nat-int?]
                                    [:skill/cost nat-int?]
-                                   [:skill/effect [:map ]]])} ; of one of 'effect/' components
+                                   [:skill/effect (vec (concat [:map {:closed true}]
+                                                               effect-components-schema))]])}
    ; weapons before items checking
    :property.type/weapon {:of-type? (fn [{:keys [item/slot]}]
                                       (and slot (= slot :inventory.slot/weapon)))

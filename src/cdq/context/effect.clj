@@ -13,6 +13,7 @@
 (defmulti do!           by-type)
 (defmulti text          by-type)
 (defmulti valid-params? by-type)
+(defmulti value-schema  identity)
 
 (defmulti render-info   by-type)
 (defmethod render-info :default [_ _])

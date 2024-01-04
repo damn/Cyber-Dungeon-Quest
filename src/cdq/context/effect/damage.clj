@@ -1,20 +1,10 @@
 (ns cdq.context.effect.damage
-  (:require [data.val-max :refer [apply-val apply-val-max-modifiers]]
+  (:require [malli.core :as m]
+            [data.val-max :refer [apply-val apply-val-max-modifiers val-max-schema]]
             [utils.random :as random]
             [cdq.context.effect :as effect]
             [cdq.context :refer [audiovisual send-event! add-text-effect!]]
             [cdq.entity :as entity]))
-
-; example:
-; [:effect/damage [:physical [5 6]]]
-(comment
- ; malli:
- [:tuple [:enum :effect/damage]
-  [:tuple [:enum :physical :magic]
-   [:tuple int? int?]]]
- ; TODO => val-max-data as schema!
- ; two >=0 integers and val<=max.
- )
 
 (defn- source-block-ignore [entity* block-type damage-type]
   (-> entity* (entity/effect-source-modifiers block-type) damage-type))
@@ -122,6 +112,12 @@
 
 (defn- damage->text [[dmg-type [min-dmg max-dmg]]]
   (str min-dmg "-" max-dmg " " (name dmg-type) " damage"))
+
+(def ^:private damage-schema
+  (m/schema [:tuple [:enum :physical :magic] (m/form val-max-schema)]))
+
+(defmethod effect/value-schema :effect/damage [_]
+  damage-schema)
 
 (defmethod effect/text :effect/damage
   [{:keys [effect/source]} [_ damage]]

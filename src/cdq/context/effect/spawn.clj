@@ -1,5 +1,6 @@
 (ns cdq.context.effect.spawn
-  (:require [cdq.context.effect :as effect]
+  (:require [malli.core :as m]
+            [cdq.context.effect :as effect]
             [cdq.context.entity.state.npc :as npc-state]
             [cdq.context :refer [creature-entity]]))
 
@@ -25,6 +26,12 @@
 (comment
  ; keys: :faction(:source)/:target-position/:creature-id
  )
+
+(def ^:private schema
+  (m/schema [:qualified-keyword {:namespace :creatures}]))
+
+(defmethod effect/value-schema :effect/spawn [_]
+  schema)
 
 (defmethod effect/text :effect/spawn
   [_context [_ creature-id]]

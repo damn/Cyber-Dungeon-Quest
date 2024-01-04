@@ -1,7 +1,13 @@
 (ns cdq.context.effect.stun
-  (:require [utils.core :refer [readable-number]]
+  (:require [malli.core :as m]
+            [utils.core :refer [readable-number]]
             [cdq.context :refer [send-event!]]
             [cdq.context.effect :as effect]))
+
+(def ^:private schema (m/schema [:and number? pos?]))
+
+(defmethod effect/value-schema :effect/stun [_]
+  schema)
 
 (defmethod effect/text :effect/stun
   [_context [_ duration]]

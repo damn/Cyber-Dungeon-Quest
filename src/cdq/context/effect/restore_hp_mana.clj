@@ -1,6 +1,13 @@
 (ns cdq.context.effect.restore-hp-mana
-  (:require [data.val-max :refer [lower-than-max? set-to-max]]
+  (:require [malli.core :as m]
+            [data.val-max :refer [lower-than-max? set-to-max]]
             [cdq.context.effect :as effect]))
+
+(def ^:private schema
+  (m/schema [:= true]))
+
+(defmethod effect/value-schema :effect/restore-hp-mana [_]
+  schema)
 
 (defmethod effect/useful? :effect/restore-hp-mana
   [{:keys [effect/source]} _effect]
