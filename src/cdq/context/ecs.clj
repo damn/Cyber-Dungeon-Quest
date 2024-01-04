@@ -70,7 +70,9 @@
   (cond
    (instance? cdq.entity.Entity tx) (let [entity* tx]
                                       (reset! (entity/reference entity*) entity*))
-   (vector? tx) (transact! ctx tx)
+   (vector? tx) (let [k (first tx)]
+                 (assert (and (keyword? k) (= "tx" (namespace k))))
+                 (transact! ctx tx))
    :else (throw (Error. (str "Unknown transaction: " (pr-str tx))))))
 
 (defn- handle-transactions! [transactions ctx]
@@ -82,7 +84,7 @@
            (throw t)))))
 
 (extend-type cdq.entity.Entity
-  cdq.entity/HasReference
+  cdq.entity/HasReferenceToItself
   (reference [entity*]
     (::atom (meta entity*))))
 

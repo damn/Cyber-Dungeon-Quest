@@ -1,9 +1,6 @@
 (ns cdq.context)
 
-(defmulti transact! (fn [ctx [k]]
-                      (assert (and (keyword? k)
-                                   (= "ctx" (namespace k))))
-                      k))
+(defmulti transact! (fn [_ctx [k]] k))
 
 (defprotocol EntityComponentSystem
   (create-entity! [_ components-map]
@@ -37,8 +34,7 @@
 
 (defprotocol EntityWorld
   (add-entity! [_ entity])
-  (remove-entity! [_ entity])
-  (position-changed! [_ entity]))
+  (remove-entity! [_ entity]))
 
 (defprotocol EffectInterpreter
   (do-effect!         [_ effect])

@@ -38,7 +38,7 @@
     [(assoc @entity :entity/movement-vector (potential-field-follow-to-enemy context entity))
      (let [effect-context (effect-context context entity)]
        (when-let [skill (npc-choose-skill (merge context effect-context) @entity)]
-         [:ctx/event entity :start-action [skill effect-context]]))])
+         [:tx/event entity :start-action [skill effect-context]]))])
 
   (render-below [_ c entity*])
   (render-above [_ c entity*])

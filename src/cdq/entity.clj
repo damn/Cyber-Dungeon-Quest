@@ -2,7 +2,7 @@
 
 (defrecord Entity [])
 
-(defprotocol HasReference
+(defprotocol HasReferenceToItself
   (reference [_]))
 
 (defprotocol State

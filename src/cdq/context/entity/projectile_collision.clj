@@ -34,7 +34,7 @@
          entity*)
        (when hit-entity
          ; TODO? passed entity does not have new position/hit bodies
-         [:ctx/effect
+         [:tx/effect
           {:effect/source (entity/reference entity*)
            :effect/target hit-entity}
           hit-effect])])))

@@ -127,15 +127,15 @@
   (remove-entity! [ctx entity]
     (content-grid/remove-entity! (content-grid ctx) entity)
     (when (:entity/body @entity)
-      (world-grid/remove-entity! (world-grid ctx) entity)))
+      (world-grid/remove-entity! (world-grid ctx) entity))))
 
-  (position-changed! [ctx entity]
-    (content-grid/update-entity! (content-grid ctx) entity)
-    (when (:entity/body @entity)
-      (world-grid/entity-position-changed! (world-grid ctx) entity))))
+(defn- position-changed! [ctx entity]
+  (content-grid/update-entity! (content-grid ctx) entity)
+  (when (:entity/body @entity)
+    (world-grid/entity-position-changed! (world-grid ctx) entity)))
 
-(defmethod cdq.context/transact! :ctx/position-changed [ctx [_ entity*]]
-  (cdq.context/position-changed! ctx (entity/reference entity*)))
+(defmethod cdq.context/transact! :tx/position-changed [ctx [_ entity*]]
+  (position-changed! ctx (entity/reference entity*)))
 
 (defn- first-level [context]
   (let [{:keys [tiled-map
