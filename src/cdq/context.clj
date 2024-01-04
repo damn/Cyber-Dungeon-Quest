@@ -1,6 +1,6 @@
 (ns cdq.context)
 
-(defmulti transact! (fn [_ctx [k]] k))
+(defmulti transact! (fn [[k] _ctx] k))
 
 (defprotocol EntityComponentSystem
   (create-entity! [_ components-map]

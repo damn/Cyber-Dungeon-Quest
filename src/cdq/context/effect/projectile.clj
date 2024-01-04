@@ -90,4 +90,4 @@
                    :entity/delete-after-duration maxtime
                    :entity/plop true
                    :entity/projectile-collision {:hit-effect hit-effect
-                                                 :piercing? false}}))
+                                                 :piercing? true}}))

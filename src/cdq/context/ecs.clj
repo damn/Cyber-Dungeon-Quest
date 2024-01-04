@@ -72,7 +72,7 @@
                                       (reset! (entity/reference entity*) entity*))
    (vector? tx) (let [k (first tx)]
                  (assert (and (keyword? k) (= "tx" (namespace k))))
-                 (transact! ctx tx))
+                 (transact! tx ctx))
    :else (throw (Error. (str "Unknown transaction: " (pr-str tx))))))
 
 (defn- handle-transactions! [transactions ctx]
