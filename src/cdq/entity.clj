@@ -2,6 +2,9 @@
 
 (defrecord Entity [])
 
+(defprotocol HasReference
+  (reference [_]))
+
 (defprotocol State
   (state [_]))
 

@@ -1,5 +1,10 @@
 (ns cdq.context)
 
+(defmulti transact! (fn [ctx [k]]
+                      (assert (and (keyword? k)
+                                   (= "ctx" (namespace k))))
+                      k))
+
 (defprotocol EntityComponentSystem
   (create-entity! [_ components-map]
                   "Entities should not have :entity/id component, will get added.

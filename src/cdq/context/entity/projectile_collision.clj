@@ -4,6 +4,7 @@
             [utils.core :refer [find-first]]
             [cdq.context.ecs :as ecs]
             [cdq.context :refer [world-grid]]
+            [cdq.entity :as entity]
             [cdq.context.entity.body :as body]
             [cdq.world.grid :refer [rectangle->cells]]
             [cdq.world.cell :as cell :refer [cells->entities]]))
@@ -34,6 +35,6 @@
        (when hit-entity
          ; TODO? passed entity does not have new position/hit bodies
          [:ctx/effect
-          {:effect/source (:cdq.context.ecs/atom (meta entity*))
+          {:effect/source (entity/reference entity*)
            :effect/target hit-entity}
           hit-effect])])))

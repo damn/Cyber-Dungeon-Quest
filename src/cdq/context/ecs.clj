@@ -3,8 +3,8 @@
             [x.x :refer [defsystem doseq-entity]]
             [gdl.context :refer [draw-text]]
             [utils.core :refer [define-order sort-by-order]]
-            cdq.entity
-            [cdq.context :refer [get-entity add-entity! remove-entity!]]))
+            [cdq.entity :as entity]
+            [cdq.context :refer [transact! get-entity add-entity! remove-entity!]]))
 
 ; TODO
 ; doseq-entity - what if key is not available anymore ? check :when (k @entity)  ?
@@ -66,28 +66,25 @@
                (assoc m k (apply f [k (k m)] args))))
       m)))
 
-(defmulti handle-ctx-transaction! (fn [[k & _more] ctx]
-                                    (assert (and (keyword? k)
-                                                 (= "ctx" (namespace k))))
-                                    k))
-
-(defn- handle-side-effect! [side-effect ctx]
+(defn- handle-transaction! [tx ctx]
   (cond
-   (instance? cdq.entity.Entity side-effect)
-   (let [entity* side-effect]
-     (reset! (::atom (meta entity*)) entity*))
+   (instance? cdq.entity.Entity tx) (let [entity* tx]
+                                      (reset! (entity/reference entity*) entity*))
+   (vector? tx) (transact! ctx tx)
+   :else (throw (Error. (str "Unknown transaction: " (pr-str tx))))))
 
-   (vector? side-effect)
-   (let [ctx-transaction side-effect]
-     (handle-ctx-transaction! ctx-transaction ctx))))
-
-(defn- handle-side-effects! [side-effects ctx]
-  (doseq [side-effect side-effects
-          :when side-effect]
-    (try (handle-side-effect! side-effect ctx)
+(defn- handle-transactions! [transactions ctx]
+  (doseq [tx transactions
+          :when tx]
+    (try (handle-transaction! tx ctx)
          (catch Throwable t
-           (println "Error with side-effect: \n" (pr-str side-effect))
+           (println "Error with transaction: \n" (pr-str tx))
            (throw t)))))
+
+(extend-type cdq.entity.Entity
+  cdq.entity/HasReference
+  (reference [entity*]
+    (::atom (meta entity*))))
 
 (extend-type gdl.context.Context
   cdq.context/EntityComponentSystem
@@ -118,10 +115,10 @@
              :let [entity* @entity
                    v (k entity*)]
              :when v]
-       (let [side-effects (tick [k v] entity* context)]
-         (try (handle-side-effects! side-effects context)
+       (let [transactions (tick [k v] entity* context)]
+         (try (handle-transactions! transactions context)
               (catch Throwable t
-                (println "Error with " k " and side-effects: \n" (pr-str side-effects))
+                (println "Error with " k " and transactions: \n" (pr-str transactions))
                 (throw t)))))
      (catch Throwable t
        (p/pretty-pst t)

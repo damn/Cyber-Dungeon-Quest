@@ -14,6 +14,7 @@
             [cdq.world.grid :as world-grid]
             [cdq.world.content-grid :as content-grid]
             [cdq.world.cell :as cell]
+            [cdq.entity :as entity]
             [mapgen.movement-property :refer (movement-property)]
             mapgen.module-gen))
 
@@ -133,10 +134,8 @@
     (when (:entity/body @entity)
       (world-grid/entity-position-changed! (world-grid ctx) entity))))
 
-(defmethod cdq.context.ecs/handle-ctx-transaction!
-  :ctx/position-changed
-  [[_ entity*] ctx]
-  (cdq.context/position-changed! ctx (:cdq.context.ecs/atom (meta entity*))))
+(defmethod cdq.context/transact! :ctx/position-changed [ctx [_ entity*]]
+  (cdq.context/position-changed! ctx (entity/reference entity*)))
 
 (defn- first-level [context]
   (let [{:keys [tiled-map
