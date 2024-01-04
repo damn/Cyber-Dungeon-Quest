@@ -58,5 +58,5 @@
         (when-let [moved-entity* (if (:solid? (:entity/body @entity))
                                    (update-position-solid     ctx @entity direction)
                                    (update-position-non-solid ctx @entity direction))]
-          (reset! entity (check-rotate moved-entity*))
+          (reset! entity (check-rotate moved-entity* direction))
           (position-changed! ctx entity))))))
