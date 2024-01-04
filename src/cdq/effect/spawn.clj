@@ -2,7 +2,7 @@
   (:require [malli.core :as m]
             [cdq.effect :as effect]
             [cdq.entity.state.npc :as npc-state]
-            [cdq.context :refer [creature-entity]]))
+            [cdq.context :refer [creature]]))
 
 ; TODO spawning on player both without error ?! => not valid position checked
 ; also what if someone moves on the target posi ? find nearby valid cell ?
@@ -49,5 +49,8 @@
   [{:keys [effect/source
            effect/target-position] :as context}
    [_ creature-id]]
-  [[:tx/creature-entity creature-id target-position {:entity/state (npc-state/->state :idle)
-                                                     :entity/faction (:entity/faction @source)}]])
+  [(creature context
+             creature-id
+             target-position
+             {:entity/state (npc-state/->state :idle)
+              :entity/faction (:entity/faction @source)})])

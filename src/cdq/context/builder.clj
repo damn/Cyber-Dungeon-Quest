@@ -34,16 +34,18 @@
   (entity/destroy! [_ entity ctx]
     (cdq.context/audiovisual ctx (:entity/position @entity) :projectile/hit-wall-effect)))
 
+; TODO if pass skills & creature props itself, function does not need context.
+; properties themself could be the creature map even somehow
 (extend-type gdl.context.Context
   cdq.context/Builder
-  (creature-entity [context creature-id position extra-components]
-    (create-entity! context
-                    (-> context
-                        (get-property creature-id)
-                        (create-creature-data extra-components context)
-                        (assoc :entity/position position)
-                        assoc-left-bottom)))
+  (creature [context creature-id position extra-components]
+    (-> context
+        (get-property creature-id)
+        (create-creature-data extra-components context)
+        (assoc :entity/position position)
+        assoc-left-bottom))
 
+  ; TODO probably separate in 2 txs
   (audiovisual [context position id]
     (let [{:keys [property/sound
                   property/animation]} (get-property context id)]
@@ -65,24 +67,16 @@
                      :entity/image (:property/image item)
                      :entity/item item
                      :entity/clickable {:type :clickable/item
-                                        :text (:property/pretty-name item)}})))
+                                        :text (:property/pretty-name item)}}))
+
+  (line-entity [_ {:keys [start end duration color thick?]}]
+    {:entity/position start
+     :entity/z-order :z-order/effect
+     :entity/line-render {:thick? thick? :end end :color color}
+     :entity/delete-after-duration duration}))
 
 (defmethod cdq.context/transact! :tx/sound [[_ file] ctx]
   (play-sound! ctx file))
 
 (defmethod cdq.context/transact! :tx/audiovisual [[_ position id] ctx]
   (cdq.context/audiovisual ctx position id))
-
-(defmethod cdq.context/transact! :tx/creature-entity [[_ & params] ctx]
-  ; TODO directly just pass the entity map as tx
-  (apply cdq.context/creature-entity ctx params))
-
-(defmethod cdq.context/transact! :tx/line-entity [[_ {:keys [start end duration color thick?]}] ctx]
-  ; TODO directly just pass the entity map as tx
-  (create-entity! ctx
-                  {:entity/position start
-                   :entity/z-order :z-order/effect
-                   :entity/line-render {:thick? thick? :end end :color color}
-                   :entity/delete-after-duration duration}))
-
-

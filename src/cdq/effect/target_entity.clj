@@ -2,7 +2,7 @@
   (:require [malli.core :as m]
             [gdl.context :refer [draw-line]]
             [gdl.math.vector :as v]
-            [cdq.context :refer (effect-text line-of-sight?)]
+            [cdq.context :refer (effect-text line-of-sight? line-entity)]
             [cdq.effect :as effect]))
 
 (def ^:private schema
@@ -68,11 +68,11 @@
            effect/target] :as context}
    [_ {:keys [hit-effect maxrange]}]]
   (if (in-range? @source @target maxrange)
-    [[:tx/line-entity {:start (start-point @source @target)
-                       :end (:entity/position @target)
-                       :duration 0.05
-                       :color [1 0 0 0.75]
-                       :thick? true}]
+    [(line-entity {:start (start-point @source @target)
+                   :end (:entity/position @target)
+                   :duration 0.05
+                   :color [1 0 0 0.75]
+                   :thick? true})
      ; TODO => make new context with end-point ... and check on point entity
      ; friendly fire ?!
      ; player maybe just direction possible ?!

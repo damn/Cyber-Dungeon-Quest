@@ -10,7 +10,7 @@
             [cdq.entity.state.npc :as npc-state]
             [cdq.context.world.grid :refer [create-grid]]
             [cdq.context.world.content-grid :refer [->content-grid]]
-            [cdq.context :refer [creature-entity ray-blocked? content-grid world-grid get-property]]
+            [cdq.context :refer [create-entity! creature ray-blocked? content-grid world-grid get-property]]
             [cdq.world.grid :as world-grid]
             [cdq.world.content-grid :as content-grid]
             [cdq.world.cell :as cell]
@@ -198,22 +198,24 @@
 ; looping through all tiles of the map 3 times. but dont do it in 1 loop because player needs to be initialized before all monsters!
 (defn- place-entities! [context tiled-map]
   (doseq [[posi creature-id] (tiled/positions-with-property tiled-map :creatures :id)]
-    (creature-entity context
-                     creature-id
-                     (tile->middle posi)
-                     {:entity/state (npc-state/->state :sleeping)}))
+    (create-entity! context
+                    (creature context
+                              creature-id
+                              (tile->middle posi)
+                              {:entity/state (npc-state/->state :sleeping)})))
   ; otherwise will be rendered, is visible
   (tiled/remove-layer! tiled-map :creatures))
 
 (defn- create-entities-from-tiledmap! [{:keys [context/world-map] :as context}]
   (place-entities! context (:tiled-map world-map))
-  (creature-entity context
-                   :creatures/vampire ; TODO hardcoded
-                   (:start-position world-map)
-                   {:entity/state (player-state/->state :idle)
-                    :entity/player? true
-                    :entity/free-skill-points 3
-                    :entity/clickable {:type :clickable/player}}))
+  (create-entity! context
+                  (creature context
+                            :creatures/vampire ; TODO hardcoded
+                            (:start-position world-map)
+                            {:entity/state (player-state/->state :idle)
+                             :entity/player? true
+                             :entity/free-skill-points 3
+                             :entity/clickable {:type :clickable/player}})))
 
 (defn merge->context [context]
   ; TODO when (:context/world-map context)
