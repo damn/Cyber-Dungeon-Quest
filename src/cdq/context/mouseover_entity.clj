@@ -5,11 +5,12 @@
             [cdq.world.grid :refer [point->entities]]))
 
 (defn- calculate-mouseover-entity [{:keys [context/player-entity
-                                           context.entity/render-on-map-order]
+                                           cdq.context.ecs/render-on-map-order]
                                     :as context}]
-  (when-let [hits (point->entities (world-grid context)
-                                   (world-mouse-position context))]
-    ; TODO needs z-order ? what if 'shout' element or FX ?
+  (assert render-on-map-order)
+  (when-let [hits (filter #(:entity/z-order @%)
+                          (point->entities (world-grid context)
+                                           (world-mouse-position context)))]
     (->> render-on-map-order
          (sort-by-order hits #(:entity/z-order @%))
          reverse
