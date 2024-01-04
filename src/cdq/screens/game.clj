@@ -9,8 +9,8 @@
             [gdl.scene2d.group :refer [children]]
             [utils.core :refer [safe-get]]
             [cdq.context :refer [render-entities* ray-blocked? explored? set-explored! line-of-sight? content-grid
-                                  tick-entity remove-destroyed-entities update-mouseover-entity update-potential-fields
-                                  update-elapsed-game-time debug-render-after-entities debug-render-before-entities set-cursor!]]
+                                  tick-entity! remove-destroyed-entities! update-mouseover-entity! update-potential-fields!
+                                  update-elapsed-game-time! debug-render-after-entities debug-render-before-entities set-cursor!]]
             [cdq.entity.movement :as movement]
             [cdq.entity.state :as state]
             cdq.context.ui.actors
@@ -62,7 +62,7 @@
 
 (def ^:private zoom-speed 0.05)
 
-(defn- end-of-frame-checks [{:keys [context/config world-camera] :as context}]
+(defn- end-of-frame-checks! [{:keys [context/config world-camera] :as context}]
   (when (key-pressed? context input.keys/shift-left)
     (adjust-zoom world-camera  zoom-speed))
 
@@ -109,25 +109,25 @@
 (defn- update-game [{:keys [context/player-entity
                             context/game-paused?
                             cdq.context.ecs/thrown-error]
-                     :as context}
+                     :as ctx}
                     active-entities]
   (let [state (:state-obj (:entity/state @player-entity))
-        _ (state/manual-tick! state context)
+        _ (state/manual-tick! state ctx)
         paused? (reset! game-paused? (or @thrown-error
                                          (and pausing? (state/pause-game? state))))
-        context (assoc-delta-time context)]
+        ctx (assoc-delta-time ctx)]
     ; this do always so can get debug info even when game not running
-    (update-mouseover-entity context)
-    (when-not paused?
-      ; TODO '!' to side effecty fns here !!
-      (update-elapsed-game-time context)
+    (update-mouseover-entity! ctx)
+    (when (or (not paused?)
+              (key-just-pressed? ctx input.keys/p))
+      (update-elapsed-game-time! ctx)
       ; sowieso keine bewegungen / kein update gemacht ? checkt nur tiles ?
-      (update-potential-fields context active-entities)
+      (update-potential-fields! ctx active-entities)
       (doseq [entity active-entities]
-        (tick-entity context entity)))
+        (tick-entity! ctx entity)))
     ; do not pause this as for example pickup item, should be destroyed.
-    (remove-destroyed-entities context)
-    (end-of-frame-checks context)))
+    (remove-destroyed-entities! ctx)
+    (end-of-frame-checks! ctx)))
 
 (defrecord SubScreen []
   Screen

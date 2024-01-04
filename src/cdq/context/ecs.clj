@@ -58,8 +58,11 @@
 (defn- handle-transaction! [tx ctx]
   (cond
    (instance? cdq.entity.Entity tx) (let [entity* tx]
+                                      ;(println "tx: " (:entity/id entity*))
                                       (reset! (entity/reference entity*) entity*))
-   (vector? tx) (transact! tx ctx)
+   (vector? tx) (do
+                 ;(println "tx: " (first tx))
+                 (transact! tx ctx))
    :else (throw (Error. (str "Unknown transaction: " (pr-str tx))))))
 
 (defn- handle-transactions! [transactions ctx]
@@ -98,13 +101,14 @@
        (println "Error with: " components-map)
        (throw t))))
 
-  (tick-entity [{::keys [thrown-error] :as context} entity]
+  (tick-entity! [{::keys [thrown-error] :as context} entity]
     (try
      (doseq [k (keys (methods entity/tick))
              :let [entity* @entity
                    v (k entity*)]
              :when v]
-       (let [transactions (entity/tick [k v] entity* context)]
+       (when-let [transactions (entity/tick [k v] entity* context)]
+         ;(println "txs:" (:entity/id entity*) "-" k)
          (try (handle-transactions! transactions context)
               (catch Throwable t
                 (println "Error with " k " and transactions: \n" (pr-str transactions))
@@ -129,7 +133,7 @@
     (doseq [entity* entities*]
       (render-entity* #'entity/render-debug entity* context)))
 
-  (remove-destroyed-entities [{::keys [ids->entities] :as context}]
+  (remove-destroyed-entities! [{::keys [ids->entities] :as context}]
     (doseq [entity (filter (comp :entity/destroyed? deref) (vals @ids->entities))]
       (doseq-entity entity entity/destroy! context)
       (swap! ids->entities dissoc (:entity/id @entity))

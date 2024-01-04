@@ -19,8 +19,8 @@
 
 (extend-type gdl.context.Context
   cdq.context/MouseOverEntity
-  (update-mouseover-entity [{:keys [context/mouseover-entity]
-                             :as context}]
+  (update-mouseover-entity! [{:keys [context/mouseover-entity]
+                              :as context}]
     (when-let [entity @mouseover-entity]
       (swap! entity dissoc :entity/mouseover?))
     (let [entity (if (mouse-on-stage-actor? context)

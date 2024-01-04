@@ -130,7 +130,7 @@
                                           faction
                                           tiles->entities)))))
 
-(defn- update-potential-fields* [context entities] ; TODO call on world-grid ?!..
+(defn- update-potential-fields*! [context entities] ; TODO call on world-grid ?!..
   (let [grid (world-grid context)]
     (doseq [faction [:faction/good :faction/evil]]
       (update-faction-potential-field grid faction entities))))
@@ -221,8 +221,8 @@
 
 (extend-type gdl.context.Context ; TODO only on grid this ?!
   cdq.context/PotentialField
-  (update-potential-fields [context entities]
-    (update-potential-fields* context entities))
+  (update-potential-fields! [context entities]
+    (update-potential-fields*! context entities))
 
   ; TODO work with entity* !? occupied-by-other? works with entity not entity* ... not with ids ... hmmm
   (potential-field-follow-to-enemy [context entity] ; TODO pass faction here, one less dependency.

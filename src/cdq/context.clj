@@ -8,9 +8,9 @@
                   Calls create/create! on components.
                   Returns the entity.")
   (get-entity [_ id])
-  (tick-entity [_ entity] "Calls the 'tick!' system on all components of the entity.")
+  (tick-entity! [_ entity] "Calls the 'tick!' system on all components of the entity.")
   (render-entities* [_ entities*] "Draws entities* in the correct z-order and in the order of render-systems for each z-order.")
-  (remove-destroyed-entities [_] "Calls destroy! on all entities which are marked as ':entity/destroyed?'"))
+  (remove-destroyed-entities! [_] "Calls destroy! on all entities which are marked as ':entity/destroyed?'"))
 
 (defprotocol PlayerMessage
   (show-msg-to-player! [_ message])
@@ -20,7 +20,7 @@
   (show-player-modal! [_ {:keys [title text button-text on-click]}]))
 
 (defprotocol MouseOverEntity
-  (update-mouseover-entity [_]))
+  (update-mouseover-entity! [_]))
 
 (defprotocol World
   (line-of-sight? [_ source* target*])
@@ -56,7 +56,7 @@
 
 ; TODO get from world?
 (defprotocol PotentialField
-  (update-potential-fields [_ entities])
+  (update-potential-fields! [_ entities])
   (potential-field-follow-to-enemy [_ entity]))
 
 (defprotocol FiniteStateMachine
@@ -84,7 +84,7 @@
   (stopped?       [_ counter])
   (reset          [_ counter])
   (finished-ratio [_ counter])
-  (update-elapsed-game-time [_]))
+  (update-elapsed-game-time! [_]))
 
 (defprotocol Skills
   (add-skill!             [_ entity skill])
