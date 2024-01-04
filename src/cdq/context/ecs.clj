@@ -112,9 +112,9 @@
       (render-entity* #'render-debug entity* context)))
 
   (remove-destroyed-entities [{::keys [ids->entities] :as context}]
-    (doseq [e (filter (comp :entity/destroyed? deref) (vals @ids->entities))]
-      (doseq-entity e destroy! context)
-      (swap! ids->entities dissoc (:entity/id @e))
+    (doseq [entity (filter (comp :entity/destroyed? deref) (vals @ids->entities))]
+      (doseq-entity entity destroy! context)
+      (swap! ids->entities dissoc (:entity/id @entity))
       (remove-entity! context entity))))
 
 (defn ->context [& {:keys [z-orders]}]
