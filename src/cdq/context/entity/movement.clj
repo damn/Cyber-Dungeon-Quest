@@ -1,12 +1,13 @@
 (ns cdq.context.entity.movement
-  (:require [x.x :refer [defcomponent doseq-entity]]
+  (:require [x.x :refer [defcomponent]]
             [gdl.math.geom :as geom]
             [gdl.math.vector :as v]
             [utils.core :refer [find-first]]
             [cdq.context.ecs :as ecs]
-            [cdq.context :refer [do-effect! world-grid]]
+            [cdq.context :refer [do-effect! world-grid content-grid]]
             [cdq.context.entity.body :as body]
-            [cdq.world.grid :refer [rectangle->cells valid-position?]]
+            [cdq.world.content-grid :refer [update-entity!]]
+            [cdq.world.grid :refer [rectangle->cells valid-position? entity-position-changed!]]
             [cdq.world.cell :as cell :refer [cells->entities]]))
 
 (def frames-per-second 60)
@@ -69,6 +70,10 @@
         (try-move! ctx entity [xdir 0])
         (try-move! ctx entity [0 ydir]))))
 
+(defn- position-changed! [ctx entity]
+  (entity-position-changed! (world-grid   ctx) entity)  ; similar @ cdq.context.entity.body     create!/destroy!
+  (update-entity!           (content-grid ctx) entity)) ; similar @ cdq.context.entity.position create!/destroy!
+
 (defcomponent :entity/movement tiles-per-second
   (ecs/create! [_ entity _ctx]
     (assert (and (:entity/body @entity)
@@ -83,4 +88,6 @@
         (when (if (:entity/projectile-collision @entity)
                 (update-position-projectile! ctx entity direction)
                 (update-position-solid!      ctx entity direction))
-          (doseq-entity entity ecs/moved! ctx direction))))))
+          (when (:rotate-in-movement-direction? (:entity/body @entity))
+            (swap! entity assoc-in [:entity/body :rotation-angle] (v/get-angle-from-vector direction)))
+          (position-changed! ctx entity))))))

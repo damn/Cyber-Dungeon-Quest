@@ -5,6 +5,5 @@
             [cdq.world.content-grid :refer [update-entity! remove-entity!]]))
 
 (defcomponent :entity/position _
-  (ecs/create!  [_ e ctx]      (update-entity! (content-grid ctx) e))
-  (ecs/destroy! [_ e ctx]      (remove-entity! (content-grid ctx) e))
-  (ecs/moved!   [_ e ctx _dir] (update-entity! (content-grid ctx) e)))
+  (ecs/create!  [_ entity ctx] (update-entity! (content-grid ctx) entity))
+  (ecs/destroy! [_ entity ctx] (remove-entity! (content-grid ctx) entity)))

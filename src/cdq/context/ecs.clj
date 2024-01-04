@@ -23,7 +23,6 @@
 (defsystem create!  [_ entity context])
 (defsystem destroy! [_ entity context]) ; only used twice position/body
 (defsystem tick!    [_ entity context])
-(defsystem moved!   [_ entity context direction-vector]) ; position/body
 
 (defsystem render-below   [_ entity* context])
 (defsystem render-default [_ entity* context])
