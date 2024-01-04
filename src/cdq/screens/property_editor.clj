@@ -78,7 +78,7 @@
 
 (defmethod ->value-widget :check-box [ctx [k checked?]]
   (assert (boolean? checked?))
-  (->check-box ctx (name k) (fn [_]) checked?))
+  (->check-box ctx "" (fn [_]) checked?))
 
 (defmethod value-widget->data :check-box [_ widget]
   (.isChecked ^com.kotcrab.vis.ui.widget.VisCheckBox widget))

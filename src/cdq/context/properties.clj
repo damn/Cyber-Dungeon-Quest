@@ -308,8 +308,7 @@
    (when cost (str "Cost: " cost))
    (str (if spell?  "Cast-Time" "Attack-time") ": " (readable-number action-time) " seconds")
    (when cooldown (str "Cooldown: " (readable-number cooldown)))
-   (effect-text (merge context {:effect/source player-entity})
-                effect)])
+   (effect-text context effect)])
 
 (defmethod property->text :property.type/item [ctx
                                                {:keys [property/pretty-name
@@ -330,8 +329,7 @@
    (when two-handed? "Two-handed")
    (str (if spell?  "Cast-Time" "Attack-time") ": " (readable-number action-time) " seconds") ; TODO
    (when (seq modifier) (modifier-text ctx modifier))
-   (effect-text (merge ctx {:effect/source player-entity})
-                effect)])
+   (effect-text ctx effect)])
 
 (extend-type gdl.context.Context
   cdq.context/TooltipText
