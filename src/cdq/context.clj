@@ -53,8 +53,7 @@
 (defprotocol Builder
   (creature-entity [_ creature-id position extra-components])
   (audiovisual [_ position property-id])
-  (item-entity [_ position item])
-  (line-entity [_ {:keys [start end duration color thick?]}]))
+  (item-entity [_ position item]))
 
 ; TODO get from world?
 (defprotocol PotentialField

@@ -65,11 +65,19 @@
                      :entity/image (:property/image item)
                      :entity/item item
                      :entity/clickable {:type :clickable/item
-                                        :text (:property/pretty-name item)}}))
+                                        :text (:property/pretty-name item)}})))
 
-  (line-entity [context {:keys [start end duration color thick?]}]
-    (create-entity! context
-                    {:entity/position start
-                     :entity/z-order :z-order/effect
-                     :entity/line-render {:thick? thick? :end end :color color}
-                     :entity/delete-after-duration duration})))
+(defmethod cdq.context/transact! :tx/audiovisual [[_ position id] ctx]
+  (cdq.context/audiovisual ctx position id))
+
+(defmethod cdq.context/transact! :tx/creature-entity [[_ & params] ctx]
+  (apply cdq.context/creature-entity ctx params))
+
+(defmethod cdq.context/transact! :tx/line-entity [[_ {:keys [start end duration color thick?]}] ctx]
+  (create-entity! ctx
+                  {:entity/position start
+                   :entity/z-order :z-order/effect
+                   :entity/line-render {:thick? thick? :end end :color color}
+                   :entity/delete-after-duration duration}))
+
+

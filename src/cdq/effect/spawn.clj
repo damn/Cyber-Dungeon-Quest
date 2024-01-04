@@ -49,8 +49,5 @@
   [{:keys [effect/source
            effect/target-position] :as context}
    [_ creature-id]]
-  (creature-entity context
-                   creature-id
-                   target-position
-                   {:entity/state (npc-state/->state :idle)
-                    :entity/faction (:entity/faction @source)}))
+  [[:tx/creature-entity creature-id target-position {:entity/state (npc-state/->state :idle)
+                                                     :entity/faction (:entity/faction @source)}]])

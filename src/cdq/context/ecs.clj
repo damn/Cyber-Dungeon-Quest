@@ -58,7 +58,7 @@
 (defn- handle-transaction! [tx ctx]
   (cond
    ; TODO entity w/o entity/id => create-entity!
-   ; play-sound tx
+   ; [:tx/sound file]
    (instance? cdq.entity.Entity tx) (let [entity* tx]
                                       ;(println "tx: " (:entity/id entity*))
                                       (reset! (entity/reference entity*) entity*))

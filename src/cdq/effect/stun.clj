@@ -19,4 +19,4 @@
 
 (defmethod effect/transactions :effect/stun
   [{:keys [effect/target] :as context} [_ duration]]
-  [:tx/event target :stun duration])
+  [[:tx/event target :stun duration]])
