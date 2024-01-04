@@ -8,9 +8,9 @@
                                            cdq.context.ecs/render-on-map-order]
                                     :as context}]
   (assert render-on-map-order)
-  (when-let [hits (filter #(:entity/z-order @%)
-                          (point->entities (world-grid context)
-                                           (world-mouse-position context)))]
+  (let [hits (filter #(:entity/z-order @%)
+                     (point->entities (world-grid context)
+                                      (world-mouse-position context)))]
     (->> render-on-map-order
          (sort-by-order hits #(:entity/z-order @%))
          reverse
