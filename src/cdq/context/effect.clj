@@ -24,4 +24,4 @@
   (let [ctx (merge ctx effect-ctx)]
     (assert (cdq.context/valid-params? ctx effect)) ; extra line of sight checks TODO performance issue?
     (doseq [component effect]
-      (transact-all! (effect/transactions ctx component) ctx))))
+      (transact-all! ctx (effect/transactions ctx component)))))

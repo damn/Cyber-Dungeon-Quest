@@ -2,7 +2,7 @@
   (:require [malli.core :as m]
             [gdl.context :refer [draw-line]]
             [gdl.math.vector :as v]
-            [cdq.context :refer (effect-text audiovisual line-of-sight?)]
+            [cdq.context :refer (effect-text line-of-sight?)]
             [cdq.effect :as effect]))
 
 (def ^:private schema

@@ -4,7 +4,7 @@
             [gdl.context :refer [draw-text]]
             [utils.core :refer [define-order sort-by-order]]
             [cdq.entity :as entity]
-            [cdq.context :refer [transact! transact-all! get-entity add-entity! remove-entity!]]))
+            [cdq.context :refer [transact! transact-all! get-entity create-entity! add-entity! remove-entity!]]))
 
 ; TODO
 ; doseq-entity - what if key is not available anymore ? check :when (k @entity)  ?
@@ -57,14 +57,10 @@
 
 (defn- handle-transaction! [tx ctx]
   (cond
-   ; TODO entity w/o entity/id => create-entity!
    ; [:tx/sound file]
-   (instance? cdq.entity.Entity tx) (let [entity* tx]
-                                      ;(println "tx: " (:entity/id entity*))
-                                      (reset! (entity/reference entity*) entity*))
-   (vector? tx) (do
-                 ;(println "tx: " (first tx))
-                 (transact! tx ctx))
+   (instance? cdq.entity.Entity tx) (reset! (entity/reference tx) tx)
+   (map? tx) (create-entity! ctx tx)
+   (vector? tx) (transact! tx ctx)
    :else (throw (Error. (str "Unknown transaction: " (pr-str tx))))))
 
 (extend-type gdl.context.Context

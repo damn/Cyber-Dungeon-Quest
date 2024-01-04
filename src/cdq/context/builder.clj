@@ -71,9 +71,11 @@
   (cdq.context/audiovisual ctx position id))
 
 (defmethod cdq.context/transact! :tx/creature-entity [[_ & params] ctx]
+  ; TODO directly just pass the entity map as tx
   (apply cdq.context/creature-entity ctx params))
 
 (defmethod cdq.context/transact! :tx/line-entity [[_ {:keys [start end duration color thick?]}] ctx]
+  ; TODO directly just pass the entity map as tx
   (create-entity! ctx
                   {:entity/position start
                    :entity/z-order :z-order/effect

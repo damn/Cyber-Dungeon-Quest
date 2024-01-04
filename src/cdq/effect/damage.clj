@@ -3,7 +3,7 @@
             [data.val-max :refer [apply-val apply-val-max-modifiers val-max-schema]]
             [utils.random :as random]
             [cdq.effect :as effect]
-            [cdq.context :refer [send-event! add-text-effect]]
+            [cdq.context :refer [send-event!]]
             [cdq.entity :as entity]))
 
 (defn- source-block-ignore [entity* block-type damage-type]
