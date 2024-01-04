@@ -9,8 +9,9 @@
                                 image
                                 line-render
                                 mana
-                                mouseover
                                 modifiers
+                                mouseover
+                                projectile-collision
                                 shout
                                 skills
                                 state
