@@ -17,16 +17,16 @@
                               [width height] :property/dimensions}
                              extra-components
                              context]
-  (merge {:entity/animation animation
-          :entity/body {:width width :height height :solid? true}
-          :entity/movement speed
-          :entity/hp hp
-          :entity/mana mana
-          :entity/skills (zipmap skills (map #(get-property context %) skills)) ; TODO just set of skills use?
-          :entity/items items
-          :entity/flying? flying?
-          :entity/faction faction
-          :entity/z-order (if flying? :z-order/flying :z-order/ground)}
+  (merge #:entity {:animation animation
+                   :body {:width width :height height :solid? true}
+                   :movement speed
+                   :hp hp
+                   :mana mana
+                   :skills (zipmap skills (map #(get-property context %) skills)) ; TODO just set of skills use?
+                   :items items
+                   :flying? flying?
+                   :faction faction
+                   :z-order (if flying? :z-order/flying :z-order/ground)}
          extra-components
          (when (= id :creatures/lady-a) {:entity/clickable {:type :clickable/princess}})))
 
@@ -51,29 +51,29 @@
                   property/animation]} (get-property context id)]
       (play-sound! context sound)
       (create-entity! context
-                      {:entity/position position
-                       :entity/animation animation
-                       :entity/z-order :z-order/effect
-                       :entity/delete-after-animation-stopped? true})))
+                      #:entity {:position position
+                                :animation animation
+                                :z-order :z-order/effect
+                                :delete-after-animation-stopped? true})))
 
   ; TODO use image w. shadows spritesheet
   (item-entity [context position item]
     (create-entity! context
-                    {:entity/position position
-                     :entity/body {:width 0.5 ; TODO use item-body-dimensions
-                                   :height 0.5
-                                   :solid? false}
-                     :entity/z-order :z-order/on-ground
-                     :entity/image (:property/image item)
-                     :entity/item item
-                     :entity/clickable {:type :clickable/item
-                                        :text (:property/pretty-name item)}}))
+                    #:entity {:position position
+                              :body {:width 0.5 ; TODO use item-body-dimensions
+                                            :height 0.5
+                                            :solid? false}
+                              :z-order :z-order/on-ground
+                              :image (:property/image item)
+                              :item item
+                              :clickable {:type :clickable/item
+                                                 :text (:property/pretty-name item)}}))
 
   (line-entity [_ {:keys [start end duration color thick?]}]
-    {:entity/position start
-     :entity/z-order :z-order/effect
-     :entity/line-render {:thick? thick? :end end :color color}
-     :entity/delete-after-duration duration}))
+    #:entity {:position start
+              :z-order :z-order/effect
+              :line-render {:thick? thick? :end end :color color}
+              :delete-after-duration duration}))
 
 (defmethod cdq.context/transact! :tx/sound [[_ file] ctx]
   (play-sound! ctx file))
