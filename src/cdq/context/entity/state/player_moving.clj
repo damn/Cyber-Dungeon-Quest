@@ -18,8 +18,8 @@
     (swap! entity dissoc :entity/movement-vector movement-vector))
   (tick [_ context]
     (if-let [movement-vector (WASD-movement-vector context)]
-      (assoc @entity :entity/movement-vector movement-vector)
-      [:ctx/send-event entity :no-movement-input]))
+      [(assoc @entity :entity/movement-vector movement-vector)]
+      [[:ctx/send-event entity :no-movement-input]]))
   (render-below [_ c entity*])
   (render-above [_ c entity*])
   (render-info  [_ c entity*]))

@@ -71,3 +71,8 @@
   cdq.entity/State
   (state [entity*]
     (-> entity* :entity/state :fsm :state)))
+
+(defmethod cdq.context.ecs/handle-ctx-transaction!
+  :ctx/send-event
+  [[_ & params] ctx]
+  (apply send-event! ctx params))

@@ -17,8 +17,8 @@
 
 (defcomponent :entity/skills skills
   (ecs/tick [[k _] entity* context]
-    (update entity* k (fn [skills]
-                        (mapvals #(update-cooldown context %) skills)))))
+    [(update entity* k (fn [skills]
+                         (mapvals #(update-cooldown context %) skills)))]))
 
 (extend-type cdq.entity.Entity
   cdq.entity/Skills

@@ -8,4 +8,4 @@
     (-> @e :entity/animation :looping? not assert))
   (ecs/tick [_ entity* _ctx]
     (when (-> entity* :entity/animation animation/stopped?)
-      (assoc entity* :entity/destroyed? true))))
+      [(assoc entity* :entity/destroyed? true)])))

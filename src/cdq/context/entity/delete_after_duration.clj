@@ -8,4 +8,4 @@
     (swap! entity assoc k (->counter context duration)))
   (ecs/tick [_ entity* ctx]
     (when (stopped? ctx counter)
-      (assoc entity* :entity/destroyed? true))))
+      [(assoc entity* :entity/destroyed? true)])))

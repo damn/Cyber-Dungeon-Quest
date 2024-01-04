@@ -13,6 +13,6 @@
   (ecs/create! [_ entity _ctx]
     (swap! entity assoc-image-current-frame))
   (ecs/tick [[k _] entity* {:keys [context/delta-time]}]
-    (-> entity*
-        (update k animation/tick delta-time)
-        assoc-image-current-frame)))
+    [(-> entity*
+         (update k animation/tick delta-time)
+         assoc-image-current-frame)]))

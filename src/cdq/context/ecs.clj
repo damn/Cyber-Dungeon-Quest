@@ -66,6 +66,47 @@
                (assoc m k (apply f [k (k m)] args))))
       m)))
 
+
+; # LATER TODO
+; * create! / destroy! check too
+; * manual tick ...
+; * TODO check all 25 functions working
+
+; TODO replays should be working (with different speeds)
+; => memory?
+; multiplayer -> only relevant transactions (movement only no full entity uudate send?
+
+; TODO send-event / state make namespaced
+; even if I have to munge/demunge it always
+
+; TODO belongs in ecs ??
+(defmulti handle-ctx-transaction! (fn [[k & _more] ctx]
+                                    (assert (and (keyword? k)
+                                                 (= "ctx" (namespace k))))
+                                    k))
+
+(defn- handle-side-effect! [side-effect ctx]
+  (cond
+   (instance? cdq.entity.Entity side-effect)
+   (let [entity* side-effect]
+     (reset! (::atom (meta entity*)) entity*))
+
+   (vector? side-effect)
+   (let [ctx-transaction side-effect]
+     (handle-ctx-transaction! ctx-transaction ctx))))
+
+(defn- handle-side-effects! [side-effects ctx]
+  (doseq [side-effect side-effects
+          :when side-effect]
+    (handle-side-effect! side-effect ctx)))
+
+; TODO merge ctx with effect ctx always ? didnt do at projectile, removed the merge.
+; @ active skill anwyaway merged already effect-context?
+; TODO check shout is working cons ..
+; [:ctx/position-changed entity*]
+; [:ctx/do-effect effect-ctx effect]
+; [:ctx/send-event entity :alert]
+
 (extend-type gdl.context.Context
   cdq.context/EntityComponentSystem
   (get-entity [{::keys [ids->entities]} id]
@@ -88,12 +129,16 @@
        (add-entity! context entity)
        entity)
      (catch Throwable t
-       (println "Erorr with: " components-map)
+       (println "Error with: " components-map)
        (throw t))))
 
   (tick-entity [{::keys [thrown-error] :as context} entity]
     (try
-     (doseq-entity entity tick! context)
+     (doseq [k (keys @entity)
+             :let [entity* @entity
+                   v (k entity*)
+                   side-effects (tick [k v] entity* context)]]
+       (handle-side-effects! side-effects context))
      (catch Throwable t
        (p/pretty-pst t)
        (println "Entity id: " (:entity/id @entity))

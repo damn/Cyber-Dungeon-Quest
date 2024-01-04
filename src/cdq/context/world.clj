@@ -133,6 +133,11 @@
     (when (:entity/body @entity)
       (world-grid/entity-position-changed! (world-grid ctx) entity))))
 
+(defmethod cdq.context.ecs/handle-ctx-transaction!
+  :ctx/position-changed
+  [[_ entity*] ctx]
+  (position-changed! ctx (::atom (meta entity*))))
+
 (defn- first-level [context]
   (let [{:keys [tiled-map
                 start-position]} (mapgen.module-gen/generate

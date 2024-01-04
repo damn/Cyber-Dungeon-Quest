@@ -8,7 +8,7 @@
 (defcomponent :entity/string-effect {:keys [text counter] :as this}
   (ecs/tick [[k _] entity* context]
     (when (stopped? context counter)
-      (dissoc entity* k)))
+      [(dissoc entity* k)]))
 
   (ecs/render-above [_ {[x y] :entity/position :keys [entity/body]} c]
     (draw-text c
