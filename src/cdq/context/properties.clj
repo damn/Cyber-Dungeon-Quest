@@ -12,57 +12,15 @@
             cdq.context.effect.all
             [cdq.context :refer [modifier-text effect-text]]))
 
-; TODO cannot find bat -> assertions @ properties load
-; how can we validate effect/spawn value is one of creatures
-; if we load our properties all at once and validate step by step ?
-; should we use a database ?? idk. maybe...
-; https://docs.datomic.com/pro/schema/schema.html?search=%20
-; :skill/effect {:effect/spawn :bat},
-; should have been :creatures/bat
-
-(comment
- (do
-  (require '[malli.provider :as mp])
-  (set! *print-level* nil)
-  (let [ctx @gdl.app/current-context]
-    (->> :property.type/item
-         (cdq.context/all-properties ctx)
-         mp/provide
-         clojure.pprint/pprint
-         )))
- )
-
-(set! com.kotcrab.vis.ui.widget.Tooltip/DEFAULT_APPEAR_DELAY_TIME (float 0))
-
-(comment
- (set! com.kotcrab.vis.ui.widget.Tooltip/DEFAULT_FADE_TIME (float 0.3))
- ;(set! com.kotcrab.vis.ui.widget.Tooltip/MOUSE_MOVED_FADEOUT false)
- ; _IMPORTANT_
- ; TODO always show BELOW the/ABOVE actor nicely not near mouse thing or ABOVE centered ?
- )
-
-;com.kotcrab.vis.ui.widget.Tooltip
-;static float 	DEFAULT_APPEAR_DELAY_TIME
-;static float 	DEFAULT_FADE_TIME
-;static boolean 	MOUSE_MOVED_FADEOUT
-;Controls whether to fade out tooltip when mouse was moved.
-
 ; TODO
-; * immediately show tooltips...
-
-; * validation @ load/save of property-types attributes (optional ones to add like cooldown?)
-
-; * text-field make validateabletextfield
-
+; * eother use table or scrollable pane for windoe (too hig h)
+; * text-field make validateabletextfield/number spinners, etc.
 ; * schema/value-ranges/value-widgets for all modifiers/effects, e.g. damage select physical,magical,...
-
 ; * filter out not implemented weapons, etc.  mark them somehow
-
 ; aggro range wakup time, etc what else is hidden?!, unique death animation/sound/attacksound each weapon/spell etc.
 ; alert sound, etc., mana, hp, speed.... default block modifiers
 ; ASSERT & LOAD EDN / WRITE EDN / BEFORE SAVE DATA
 ; also things like target-entity props should be a map , :hit-effect & :maxrange, it was a list...
-
 ; Later
 ; * move other game params like aggro-range, wakeup/alert state time into creature props
 ; * unique death animations/sounds
@@ -113,6 +71,7 @@
    :world/princess :label})
 
 ; TODO make each attribute a map with :widget and extra keys => move into 1 place...
+; => pass to value-widget the value-widget attrs.
 (defn enum-attribute->items [k]
   (case k
     :creature/faction [:faction/good :faction/evil]))
@@ -271,6 +230,22 @@
         property-types))
 
 ;;
+
+(set! com.kotcrab.vis.ui.widget.Tooltip/DEFAULT_APPEAR_DELAY_TIME (float 0))
+
+(comment
+ ;com.kotcrab.vis.ui.widget.Tooltip
+ ;static float 	DEFAULT_APPEAR_DELAY_TIME
+ ;static float 	DEFAULT_FADE_TIME
+ ;static boolean 	MOUSE_MOVED_FADEOUT
+ ;Controls whether to fade out tooltip when mouse was moved.
+ (set! com.kotcrab.vis.ui.widget.Tooltip/DEFAULT_FADE_TIME (float 0.3))
+ ;(set! com.kotcrab.vis.ui.widget.Tooltip/MOUSE_MOVED_FADEOUT false)
+ ; _IMPORTANT_
+ ; TODO always show BELOW the/ABOVE actor nicely not near mouse thing or ABOVE centered ?
+ ; https://github.com/kotcrab/vis-ui/blob/master/ui/src/main/java/com/kotcrab/vis/ui/widget/Tooltip.java#L267
+ )
+
 
 (defmulti property->text (fn [_ctx property] (property-type property)))
 
