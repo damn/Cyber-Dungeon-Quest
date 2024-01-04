@@ -70,9 +70,7 @@
   (cond
    (instance? cdq.entity.Entity tx) (let [entity* tx]
                                       (reset! (entity/reference entity*) entity*))
-   (vector? tx) (let [k (first tx)]
-                 (assert (and (keyword? k) (= "tx" (namespace k))))
-                 (transact! tx ctx))
+   (vector? tx) (transact! tx ctx)
    :else (throw (Error. (str "Unknown transaction: " (pr-str tx))))))
 
 (defn- handle-transactions! [transactions ctx]
