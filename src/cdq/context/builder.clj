@@ -67,6 +67,9 @@
                      :entity/clickable {:type :clickable/item
                                         :text (:property/pretty-name item)}})))
 
+(defmethod cdq.context/transact! :tx/sound [[_ file] ctx]
+  (play-sound! ctx file))
+
 (defmethod cdq.context/transact! :tx/audiovisual [[_ position id] ctx]
   (cdq.context/audiovisual ctx position id))
 

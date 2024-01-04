@@ -57,7 +57,6 @@
 
 (defn- handle-transaction! [tx ctx]
   (cond
-   ; [:tx/sound file]
    (instance? cdq.entity.Entity tx) (reset! (entity/reference tx) tx)
    (map? tx) (create-entity! ctx tx)
    (vector? tx) (transact! tx ctx)

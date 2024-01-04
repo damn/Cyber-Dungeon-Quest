@@ -18,4 +18,4 @@
 
 (defmethod effect/transactions :effect/sound
   [ctx [_ file]]
-  [:tx/sound file])
+  [[:tx/sound file]])

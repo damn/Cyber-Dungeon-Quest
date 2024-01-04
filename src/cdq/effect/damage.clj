@@ -147,9 +147,10 @@
 
    :else
    (let [[dmg-type min-max-dmg] (effective-damage damage @source @target)
-         dmg-amount (random/rand-int-between min-max-dmg)]
-     [[:tx/audiovisual (:entity/position @target) (keyword (str "effects.damage." (name dmg-type)) "hit-effect")]
-      (-> @target
-          (entity/add-text-effect context (str "[RED]" dmg-amount))
-          (update :entity/hp apply-val #(- % dmg-amount)))
-      [:tx/event target (if (no-hp-left? (:entity/hp @target)) :kill :alert)]])))
+         dmg-amount (random/rand-int-between min-max-dmg)
+         target* (-> @target
+                     (entity/add-text-effect context (str "[RED]" dmg-amount))
+                     (update :entity/hp apply-val #(- % dmg-amount)))]
+     [[:tx/audiovisual (:entity/position target*) (keyword (str "effects.damage." (name dmg-type)) "hit-effect")]
+      target*
+      [:tx/event target (if (no-hp-left? (:entity/hp target*)) :kill :alert)]])))
