@@ -4,10 +4,9 @@
             [gdl.math.vector :as v]
             [utils.core :refer [find-first]]
             [cdq.context.ecs :as ecs]
-            [cdq.context :refer [do-effect! world-grid content-grid]]
+            [cdq.context :refer [do-effect! world-grid position-changed!]]
             [cdq.context.entity.body :as body]
-            [cdq.world.content-grid :refer [update-entity!]]
-            [cdq.world.grid :refer [rectangle->cells valid-position? entity-position-changed!]]
+            [cdq.world.grid :refer [rectangle->cells valid-position?]]
             [cdq.world.cell :as cell :refer [cells->entities]]))
 
 (def frames-per-second 60)
@@ -69,10 +68,6 @@
     (or (try-move! ctx entity direction)
         (try-move! ctx entity [xdir 0])
         (try-move! ctx entity [0 ydir]))))
-
-(defn- position-changed! [ctx entity]
-  (entity-position-changed! (world-grid   ctx) entity)  ; similar @ cdq.context.entity.body     create!/destroy!
-  (update-entity!           (content-grid ctx) entity)) ; similar @ cdq.context.entity.position create!/destroy!
 
 (defcomponent :entity/movement tiles-per-second
   (ecs/create! [_ entity _ctx]

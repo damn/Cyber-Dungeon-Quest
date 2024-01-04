@@ -11,6 +11,7 @@
             [cdq.context.world.grid :refer [create-grid]]
             [cdq.context.world.content-grid :refer [->content-grid]]
             [cdq.context :refer [creature-entity ray-blocked? content-grid world-grid get-property]]
+            [cdq.world.grid :as world-grid]
             [cdq.world.content-grid :as content-grid]
             [cdq.world.cell :as cell]
             [mapgen.movement-property :refer (movement-property)]
@@ -114,6 +115,23 @@
 
   (world-grid [{:keys [context/world-map]}]
     (:grid world-map)))
+
+(extend-type gdl.context.Context
+  cdq.context/EntityWorld
+  (add-entity! [ctx entity]
+    (content-grid/update-entity! (content-grid ctx) entity)
+    (when (:entity/body @entity)
+      (world-grid/add-entity! (world-grid ctx) entity)))
+
+  (remove-entity! [ctx entity]
+    (content-grid/remove-entity! (content-grid ctx) entity)
+    (when (:entity/body @entity)
+      (world-grid/remove-entity! (world-grid ctx) entity)))
+
+  (position-changed! [ctx entity]
+    (content-grid/update-entity! (content-grid ctx) entity)
+    (when (:entity/body @entity)
+      (world-grid/entity-position-changed! (world-grid ctx) entity))))
 
 (defn- first-level [context]
   (let [{:keys [tiled-map

@@ -4,7 +4,7 @@
             [gdl.context :refer [draw-text]]
             [utils.core :refer [define-order sort-by-order]]
             cdq.entity
-            [cdq.context :refer [get-entity]]))
+            [cdq.context :refer [get-entity add-entity! remove-entity!]]))
 
 ; TODO
 ; doseq-entity - what if key is not available anymore ? check :when (k @entity)  ?
@@ -82,6 +82,7 @@
                       atom
                       (doseq-entity create! context))]
        (swap! ids->entities assoc id entity)
+       (add-entity! context entity)
        entity)
      (catch Throwable t
        (println "Erorr with: " components-map)
@@ -113,7 +114,8 @@
   (remove-destroyed-entities [{::keys [ids->entities] :as context}]
     (doseq [e (filter (comp :entity/destroyed? deref) (vals @ids->entities))]
       (doseq-entity e destroy! context)
-      (swap! ids->entities dissoc (:entity/id @e)))))
+      (swap! ids->entities dissoc (:entity/id @e))
+      (remove-entity! context entity))))
 
 (defn ->context [& {:keys [z-orders]}]
   (assert (every? #(= "z-order" (namespace %)) z-orders))

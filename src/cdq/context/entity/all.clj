@@ -11,7 +11,6 @@
                                 mana
                                 mouseover
                                 modifiers
-                                position
                                 shout
                                 skills
                                 state

@@ -2,9 +2,7 @@
   (:require [x.x :refer [defcomponent]]
             [gdl.context :refer [draw-rectangle]]
             [gdl.graphics.color :as color]
-            [cdq.context.ecs :as ecs]
-            [cdq.context :refer [world-grid]]
-            [cdq.world.grid :refer [add-entity! remove-entity!]]))
+            [cdq.context.ecs :as ecs]))
 
 ; setting a min-size for colliding bodies so movement can set a max-speed for not
 ; skipping bodies at too fast movement
@@ -53,14 +51,10 @@
       :rotation-angle (or rotation-angle 0)
       :rotate-in-movement-direction? rotate-in-movement-direction?}))
 
-  (ecs/create! [_ entity context]
+  (ecs/create! [_ entity _ctx]
     ; TODO VALID POSITION CHECK (done @ world-grid?)
     (assert (:entity/position @entity))
-    (swap! entity assoc-left-bottom)
-    (add-entity! (world-grid context) entity))
-
-  (ecs/destroy! [_ entity context]
-    (remove-entity! (world-grid context) entity))
+    (swap! entity assoc-left-bottom))
 
   (ecs/render-debug [_ _entity* context]
     (when show-body-bounds
