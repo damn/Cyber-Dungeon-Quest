@@ -20,4 +20,4 @@
     (when (stopped? context counter)
       (cons (assoc entity* :entity/destroyed? true)
             (for [entity (get-friendly-entities-in-line-of-sight context entity* shout-range)]
-              [:ctx/send-event entity :alert])))))
+              [:ctx/event entity :alert])))))

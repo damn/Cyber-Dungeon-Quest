@@ -28,7 +28,7 @@
       (when-let [distance (cell/nearest-entity-distance @cell
                                                         (entity/enemy-faction @entity))]
         (when (<= distance (* aggro-range 10)) ; TODO do @ cell/nearest-enemy-distance
-          [[:ctx/send-event entity :alert]]))))
+          [[:ctx/event entity :alert]]))))
 
   (render-below [_ c entity*])
   (render-above [_ c {[x y] :entity/position :keys [entity/body]}]

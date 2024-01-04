@@ -16,7 +16,7 @@
   (exit  [_ _ctx])
   (tick [_ context]
     (when (stopped? context counter)
-      [[:ctx/send-event entity :effect-wears-off]]))
+      [[:ctx/event entity :effect-wears-off]]))
 
   (render-below [_ c {:keys [entity/position]}]
     (draw-circle c position 0.5 [1 1 1 0.6]))

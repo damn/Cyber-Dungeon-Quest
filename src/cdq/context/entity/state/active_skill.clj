@@ -44,11 +44,11 @@
           effect-context (merge context effect-context)]
       (cond
        (not (valid-params? effect-context effect))
-       [[:ctx/send-event entity :action-done]]
+       [[:ctx/event entity :action-done]]
 
        (stopped? context counter)
-       [[:ctx/do-effect effect-context effect]
-        [:ctx/send-event entity :action-done]])))
+       [[:ctx/effect effect-context effect]
+        [:ctx/event entity :action-done]])))
 
   (render-below [_ c entity*])
   (render-above [_ c entity*])

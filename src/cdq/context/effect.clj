@@ -43,8 +43,7 @@
   (effect-useful? [context effect]
     (some (partial useful? context) effect)))
 
-(defmethod cdq.context.ecs/handle-ctx-transaction!
-  :ctx/do-effect
+(defmethod cdq.context.ecs/handle-ctx-transaction! :ctx/effect
   [[_ effect-ctx effect] ctx]
   (cdq.context/do-effect! (merge ctx effect-ctx)
                           effect))
