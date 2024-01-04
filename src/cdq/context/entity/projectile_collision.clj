@@ -10,7 +10,10 @@
 
 (defcomponent :entity/projectile-collision {:keys [hit-effect
                                                    already-hit-bodies
-                                                   piercing]}
+                                                   piercing?]}
+  (ecs/create [[_ v]]
+    (assoc v :already-hit-bodies #{}))
+
   (ecs/tick! [[k _] entity ctx]
     (let [entity* @entity
           cells* (map deref (rectangle->cells (world-grid ctx) (:entity/body entity*)))
@@ -29,7 +32,7 @@
                              (do-effect! (merge ctx {:effect/source entity
                                                      :effect/target hit-entity})
                                          hit-effect)
-                             (not piercing))
+                             (not piercing?))
                          (some #(cell/blocked? % entity*) cells*)
                          true)]
       (reset! entity (if destroy?

@@ -4,7 +4,7 @@
             [gdl.math.vector :as v]
             [gdl.graphics.animation :as animation]
             [gdl.context :refer [get-sprite spritesheet]]
-            [cdq.context :refer [effect-text projectile-entity path-blocked?]]
+            [cdq.context :refer [effect-text path-blocked? create-entity!]]
             [cdq.context.effect :as effect]))
 
 ; -> range needs to be smaller than potential field range
@@ -75,13 +75,19 @@
   [{:keys [effect/source
            effect/direction] :as context}
    _effect]
-  (projectile-entity context
-                     {:position (start-point @source direction)
-                      :faction  (:entity/faction  @source)
-                      :size size
-                      :animation (black-projectile context)
-                      :speed speed
-                      :movement-vector direction
-                      :maxtime maxtime
-                      :piercing false
-                      :hit-effect hit-effect}))
+  (create-entity! context
+                  {:entity/position (start-point @source direction)
+                   :entity/faction (:entity/faction @source)
+                   :entity/body {:width size
+                                 :height size
+                                 :solid? false
+                                 :rotation-angle (v/get-angle-from-vector direction)}
+                   :entity/flying? true
+                   :entity/z-order :z-order/effect
+                   :entity/movement speed
+                   :entity/movement-vector direction
+                   :entity/animation (black-projectile context)
+                   :entity/delete-after-duration maxtime
+                   :entity/plop true
+                   :entity/projectile-collision {:hit-effect hit-effect
+                                                 :piercing? false}}))

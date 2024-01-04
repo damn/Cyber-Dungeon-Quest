@@ -1,8 +1,6 @@
 (ns cdq.context.builder
   (:require [x.x :refer [defcomponent]]
             [gdl.context :refer [play-sound!]]
-            [gdl.graphics.animation :as animation]
-            [gdl.math.vector :as v]
             [cdq.context :refer [create-entity! get-property]]
             [cdq.context.entity.body :refer (assoc-left-bottom)]))
 
@@ -73,27 +71,4 @@
                     {:entity/position start
                      :entity/z-order :z-order/effect
                      :entity/line-render {:thick? thick? :end end :color color}
-                     :entity/delete-after-duration duration}))
-
-  ; TODO maxrange ?
-  ; TODO make only common fields here
-  (projectile-entity [context
-                      {:keys [position faction size animation movement-vector hit-effect speed maxtime piercing]}]
-    (create-entity! context
-                    {:entity/position position
-                     :entity/faction faction
-                     :entity/body {:width size
-                                   :height size
-                                   :solid? false
-                                   :rotation-angle (v/get-angle-from-vector movement-vector)
-                                   :rotate-in-movement-direction? true}
-                     :entity/flying? true
-                     :entity/z-order :z-order/effect
-                     :entity/movement speed
-                     :entity/movement-vector movement-vector
-                     :entity/animation animation
-                     :entity/delete-after-duration maxtime
-                     :entity/plop true
-                     :entity/projectile-collision {:piercing piercing
-                                                   :hit-effect hit-effect
-                                                   :already-hit-bodies #{}}})))
+                     :entity/delete-after-duration duration})))

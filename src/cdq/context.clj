@@ -51,16 +51,7 @@
   (creature-entity [_ creature-id position extra-components])
   (audiovisual [_ position property-id])
   (item-entity [_ position item])
-  (line-entity [_ {:keys [start end duration color thick?]}])
-  (projectile-entity [_ {:keys [position
-                                faction
-                                size
-                                animation
-                                movement-vector
-                                hit-effect
-                                speed
-                                maxtime
-                                piercing]}]))
+  (line-entity [_ {:keys [start end duration color thick?]}]))
 
 ; TODO get from world?
 (defprotocol PotentialField
