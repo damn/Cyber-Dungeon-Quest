@@ -7,6 +7,24 @@
 ; TODO dissoc again if value == default value -> into modifier logic, e.g. modifiers blocks 0 , just dissoc then ?
 ; TODO add movement speed +/- modifier.
 
+; * shield-wood-buckler / rings not having modifiers anymore
+; * center sprites (staff not centered for example)
+
+; TODO inventory x2 size ?
+; :modifiers [[:shield [:target :physical 0.2]]]
+;-    <property name="modifiers" value="[[:shield [:target :physical 0.2]]]"/>
+;-    <property name="name" value="shield-wood-buckler"/>
+;
+;-    <property name="modifiers" value="[[:damage [:source :physical [:val :inc] 5]]]"/>
+;-    <property name="name" value="ring-gold"/>
+;
+;-    <property name="modifiers" value="[[:damage [:source :magic [:max :mult] 0.5]]]"/>
+;-    <property name="name" value="ring-azure"/>
+
+; TODO - also show all modifiers ? how to show +- max - hp ?
+
+; TODO armor sometimes [RED] ! string effect doesnt reset colors ....
+
 (defn- check-plus-symbol [n]
   (case (math/signum n) 1.0 "+" -1.0 ""))
 
@@ -109,7 +127,10 @@
   {:text (fn [value]
            (assert (check-damage-modifier-value value)
                    (str "Wrong value for damage modifier: " value))
-           (damage-modifier-text value))
+           #_(damage-modifier-text value)
+           (pr-str value)
+
+           )
    :keys [:entity/modifiers :effect/damage]
    :apply (fn [component value]
             (assert (check-damage-modifier-value value)

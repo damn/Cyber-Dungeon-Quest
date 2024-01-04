@@ -37,6 +37,7 @@
 (comment
  (set! com.kotcrab.vis.ui.widget.Tooltip/DEFAULT_FADE_TIME (float 0.3))
  ;(set! com.kotcrab.vis.ui.widget.Tooltip/MOUSE_MOVED_FADEOUT false)
+ ; _IMPORTANT_
  ; TODO always show BELOW the/ABOVE actor nicely not near mouse thing or ABOVE centered ?
  )
 
@@ -157,11 +158,6 @@
       (name k)])
    properties))
 
-; TODO just implement 'melee-attack' skill and give all creatures
-; => using base stats of creature, damage, speed, dex? , range
-; => weapons are just normal items which modify this
-; e.g. sword gives some range & dmg ....
-; => no more DRY
 
 (def ^:private effect-components-schema
   (for [k (keys (methods cdq.context.effect/do!))]
@@ -229,7 +225,8 @@
                                     [:property/image :some]
                                     [:weapon/two-handed? :boolean]
                                     [:skill/action-time {:optional true} [:maybe pos?]] ; not optional
-                                    [:skill/effect {:optional true} [:map]]])}
+                                    [:skill/effect {:optional true} [:map]]
+                                    [:item/modifier [:map ]]])}
    :property.type/item {:of-type? :item/slot
                         :edn-file-sort-order 3
                         :title "Item"
@@ -246,12 +243,7 @@
                                   [:property/pretty-name :string]
                                   [:item/slot [:qualified-keyword {:namespace :inventory.slot}]]
                                   [:property/image :some]
-                                  [:item/modifier {:optional true} [:map
-                                                                    #_(mapv
-                                                                     (fn [k]
-                                                                       [k {:optional true} :some])
-                                                                     (keys cdq.context.modifier/modifier-definitions))
-                                                                    ]]])}
+                                  [:item/modifier [:map ]]])}
    :property.type/world {:of-type? :world/princess
                          :edn-file-sort-order 5
                          :title "World"
@@ -324,7 +316,7 @@
                                                        item/modifier]
                                                 :as item}]
   [(str pretty-name (when-let [cnt (:count item)] (str " (" cnt ")")))
-   (when modifier (modifier-text ctx modifier))])
+   (when (seq modifier) (modifier-text ctx modifier))])
 
 (defmethod property->text :property.type/weapon [{:keys [context/player-entity] :as ctx}
                                                  {:keys [property/pretty-name
@@ -337,7 +329,7 @@
   [(str pretty-name (when-let [cnt (:count item)] (str " (" cnt ")")))
    (when two-handed? "Two-handed")
    (str (if spell?  "Cast-Time" "Attack-time") ": " (readable-number action-time) " seconds") ; TODO
-   (when modifier (modifier-text ctx modifier))
+   (when (seq modifier) (modifier-text ctx modifier))
    (effect-text (merge ctx {:effect/source player-entity})
                 effect)])
 
@@ -458,12 +450,13 @@
 (comment
  ; # Add new attributes
  (let [ctx @gdl.app/current-context
-       creatures (cdq.context/all-properties ctx :property.type/creature)
-       creatures (for [creature creatures]
-                   (assoc creature :creature/faction :faction/good))]
+       props (cdq.context/all-properties ctx :property.type/item)
+       props (for [prop props
+                   :when (not (:item/modifier prop))]
+               (assoc prop :item/modifier {}))]
    (def write-to-file? false)
-   (doseq [creature creatures]
-     (swap! gdl.app/current-context update-and-write-to-file! creature))
+   (doseq [prop props]
+     (swap! gdl.app/current-context update-and-write-to-file! prop))
    (def ^:private write-to-file? true)
    (swap! gdl.app/current-context update-and-write-to-file! (cdq.context/get-property ctx :creatures/vampire))
    nil)
