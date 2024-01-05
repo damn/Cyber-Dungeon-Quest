@@ -27,13 +27,13 @@
                     (update-in entity* [k :already-hit-bodies] conj hit-entity)
                     entity*)
           destroy? (or (and hit-entity (not piercing?))
-                       (some #(cell/blocked? % entity*) cells*))]
-      [(if destroy?
-         (assoc entity* :entity/destroyed? true)
-         entity*)
+                       (some #(cell/blocked? % entity*) cells*))
+          entity* (if destroy?
+                    (assoc entity* :entity/destroyed? true)
+                    entity*)]
+      [entity*
        (when hit-entity
-         ; TODO? passed entity does not have new position/hit bodies
          [:tx/effect
-          {:effect/source (entity/reference entity*)
-           :effect/target hit-entity}
+          {:effect/source entity*
+           :effect/target @hit-entity}
           hit-effect])])))

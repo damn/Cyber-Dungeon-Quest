@@ -7,7 +7,8 @@
             [gdl.math.vector :as v]
             [cdq.context :refer [get-property inventory-window try-pickup-item! skill-usable-state selected-skill]]
             [cdq.state :as state]
-            [cdq.state.wasd-movement :refer [WASD-movement-vector]]))
+            [cdq.state.wasd-movement :refer [WASD-movement-vector]]
+            [cdq.state.active-skill :refer [deref-source-target-entities]]))
 
 (defn- denied [text]
   [[:tx/sound "sounds/bfxr_denied.wav"]
@@ -65,8 +66,8 @@
   (let [target @mouseover-entity
         target-position (or (and target (:entity/position @target))
                             (world-mouse-position context))]
-    {:effect/source entity
-     :effect/target target
+    {:effect/source-entity entity
+     :effect/target-entity target
      :effect/target-position target-position
      :effect/direction (v/direction (:entity/position @entity) target-position)}))
 
@@ -100,7 +101,7 @@
    (if-let [skill-id (selected-skill context)]
      (let [effect-context (effect-context context entity)
            skill (get-property context skill-id)
-           state (skill-usable-state (merge context effect-context) @entity skill)]
+           state (skill-usable-state (merge context (deref-source-target-entities effect-context)) @entity skill)]
        (if (= state :usable)
          (do
           ; TODO cursor AS OF SKILL effect (SWORD !) / show already what the effect would do ? e.g. if it would kill highlight

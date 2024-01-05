@@ -27,12 +27,12 @@
            effect/target] :as context}
    _effect]
   (and (not (path-blocked? context
-                           (:entity/position @source) ; TODO test
-                           (:entity/position @target)
+                           (:entity/position source) ; TODO test
+                           (:entity/position target)
                            size))
        ; TODO not taking into account body sizes
-       (< (v/distance (:entity/position @source)
-                      (:entity/position @target))
+       (< (v/distance (:entity/position source)
+                      (:entity/position target))
           maxrange)))
 
 (comment
@@ -75,8 +75,8 @@
   [{:keys [effect/source
            effect/direction] :as context}
    _effect]
-  [#:entity {:position (start-point @source direction)
-             :faction (:entity/faction @source)
+  [#:entity {:position (start-point source direction)
+             :faction (:entity/faction source)
              :body {:width size
                     :height size
                     :solid? false

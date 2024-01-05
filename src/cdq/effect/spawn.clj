@@ -42,7 +42,7 @@
            effect/target-position]} _effect]
   ; TODO line of sight ? / not blocked ..
   (and source
-       (:entity/faction @source)
+       (:entity/faction source)
        target-position))
 
 (defmethod effect/transactions :effect/spawn
@@ -53,4 +53,4 @@
              creature-id
              target-position
              {:entity/state (npc-state/->state :idle)
-              :entity/faction (:entity/faction @source)})])
+              :entity/faction (:entity/faction source)})])

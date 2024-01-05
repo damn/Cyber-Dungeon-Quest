@@ -121,7 +121,7 @@
 (defmethod effect/text :effect/damage
   [{:keys [effect/source]} [_ damage]]
   (if source
-    (let [modified (effective-damage damage @source)]
+    (let [modified (effective-damage damage source)]
       (if (= damage modified)
         (damage->text damage)
         (str (damage->text damage) "\nModified: " (damage->text modified))))
@@ -129,27 +129,27 @@
 
 (defmethod effect/valid-params? :effect/damage
   [{:keys [effect/source effect/target]} _effect]
-  (and source target (:entity/hp @target)))
+  (and source target (:entity/hp target)))
 
 (defmethod effect/transactions :effect/damage
   [{:keys [effect/source
            effect/target] :as context} [_ {dmg-type 0 :as damage}]]
   (cond
-   (no-hp-left? (:entity/hp @target))
+   (no-hp-left? (:entity/hp target))
    nil
 
-   (blocks? (effective-block-rate @source @target :shield dmg-type))
-   [(shield-blocked-tx context @target)]
+   (blocks? (effective-block-rate source target :shield dmg-type))
+   [(shield-blocked-tx context target)]
 
-   (blocks? (effective-block-rate @source @target :armor dmg-type))
-   [(armor-blocked-tx context @target)]
+   (blocks? (effective-block-rate source target :armor dmg-type))
+   [(armor-blocked-tx context target)]
 
    :else
-   (let [[dmg-type min-max-dmg] (effective-damage damage @source @target)
+   (let [[dmg-type min-max-dmg] (effective-damage damage source target)
          dmg-amount (random/rand-int-between min-max-dmg)
-         target* (-> @target
+         target (-> target
                      (entity/add-text-effect context (str "[RED]" dmg-amount))
                      (update :entity/hp apply-val #(- % dmg-amount)))]
-     [[:tx/audiovisual (:entity/position target*) (keyword (str "effects.damage." (name dmg-type)) "hit-effect")]
-      target*
-      [:tx/event target (if (no-hp-left? (:entity/hp target*)) :kill :alert)]])))
+     [[:tx/audiovisual (:entity/position target) (keyword (str "effects.damage." (name dmg-type)) "hit-effect")]
+      target
+      [:tx/event target (if (no-hp-left? (:entity/hp target)) :kill :alert)]])))

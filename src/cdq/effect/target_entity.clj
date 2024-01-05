@@ -22,7 +22,7 @@
   [{:keys [effect/source
            effect/target]}
    [_ {:keys [maxrange]}]]
-  (in-range? @source @target maxrange))
+  (in-range? source target maxrange))
 
 ; TODO use at projectile & also adjust rotation
 (defn- start-point [entity* target*]
@@ -42,9 +42,9 @@
            effect/target] :as context}
    [_ {:keys [maxrange]}]]
   (draw-line context
-             (start-point @source @target)
-             (end-point   @source @target maxrange)
-             (if (in-range? @source @target maxrange)
+             (start-point source target)
+             (end-point   source target maxrange)
+             (if (in-range? source target maxrange)
                [1 0 0 0.5]
                [1 1 0 0.5])))
 
@@ -60,17 +60,17 @@
    _effect]
   (and source
        target
-       (line-of-sight? context @source @target)
-       (:entity/hp @target)))
+       (line-of-sight? context source target)
+       (:entity/hp target)))
 
 (defmethod effect/transactions :effect/target-entity
   [{:keys [effect/source
            effect/target] :as context}
    [_ {:keys [hit-effect maxrange]}]]
-  (if (in-range? @source @target maxrange)
+  (if (in-range? source target maxrange)
     [(line-entity context
-                  {:start (start-point @source @target)
-                   :end (:entity/position @target)
+                  {:start (start-point source target)
+                   :end (:entity/position target)
                    :duration 0.05
                    :color [1 0 0 0.75]
                    :thick? true})
@@ -83,4 +83,4 @@
      ; * hitting ground in front of you ( there is another monster )
      ; * -> it doesn't get hit ! hmmm
      ; * either use 'MISS' or get enemy entities at end-point
-     [:tx/audiovisual (end-point @source @target maxrange) :effects.target-entity/hit-ground-effect]]))
+     [:tx/audiovisual (end-point source target maxrange) :effects.target-entity/hit-ground-effect]]))

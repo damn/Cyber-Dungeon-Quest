@@ -4,6 +4,15 @@
             [cdq.entity :as entity]
             [cdq.state :as state]))
 
+(defn deref-source-target-entities [{:keys [effect/source-entity
+                                            effect/target-entity]
+                                     :as effect-ctx}]
+  (-> effect-ctx
+      (dissoc :effect/source-entity
+              :effect/target-entity)
+      (assoc :effect/source (when source-entity @source-entity)
+             :effect/target (when target-entity @target-entity))))
+
 (defn- draw-skill-icon [c icon entity* [x y] action-counter-ratio]
   (let [[width height] (:world-unit-dimensions icon)
         _ (assert (= width height))
@@ -42,7 +51,7 @@
 
   (tick [_ context]
     (let [effect (:skill/effect skill)
-          effect-context (merge context effect-context)]
+          effect-context (merge context (deref-source-target-entities effect-context))]
       (cond
        (not (valid-params? effect-context effect))
        [[:tx/event entity :action-done]]
@@ -51,12 +60,12 @@
        [[:tx/effect effect-context effect]
         [:tx/event entity :action-done]])))
 
-  (render-below [_ c entity*])
-  (render-above [_ c entity*])
-  (render-info [_ c {:keys [entity/position] :as entity*}]
+  (render-below [_ _ctx entity*])
+  (render-above [_ _ctx entity*])
+  (render-info [_ ctx {:keys [entity/position] :as entity*}]
     (let [{:keys [property/image skill/effect]} skill]
-      (draw-skill-icon c image entity* position (finished-ratio c counter))
-      (effect-render-info (merge c effect-context) effect))))
+      (draw-skill-icon ctx image entity* position (finished-ratio ctx counter))
+      (effect-render-info (merge ctx (deref-source-target-entities effect-context)) effect))))
 
 (defn- apply-action-speed-modifier [entity* skill action-time]
   (let [{:keys [cast-speed attack-speed]} (:entity/modifiers entity*)
