@@ -27,6 +27,10 @@
   (defn- unique-number! []
     (swap! cnt inc)))
 
+(defmethod cdq.context/transact! :tx/assoc [[_ entity* k v] _ctx]
+  (swap! (entity/reference entity*) assoc k v)
+  nil)
+
 (defmethod cdq.context/transact! :tx/assoc-in [[_ entity* ks v] _ctx]
   (swap! (entity/reference entity*) assoc-in ks v)
   nil)
@@ -34,11 +38,8 @@
 (def ^:private log-txs? false)
 
 (defn- debug-print-tx [tx]
-  (vector
-   (map #(if (instance? cdq.entity.Entity %)
-           (:entity/id %)
-           %)
-        tx)))
+  (pr-str (mapv #(if (instance? cdq.entity.Entity %) (:entity/id %) %)
+                tx)))
 
 (defn- handle-transaction! [tx ctx]
   (when log-txs?

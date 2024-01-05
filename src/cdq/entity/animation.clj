@@ -3,16 +3,14 @@
             [gdl.graphics.animation :as animation]
             [cdq.entity :as entity]))
 
-(defn- assoc-image-current-frame [entity*]
-  (->> entity*
-       :entity/animation
-       animation/current-frame
-       (assoc entity* :entity/image)))
+(defn- tx-assoc-image-current-frame [entity*]
+  [:tx/assoc entity* :entity/image (->> entity*
+                                        :entity/animation
+                                        animation/current-frame)])
 
-(defcomponent :entity/animation _
+(defcomponent :entity/animation animation
   (entity/create [_ entity* _ctx]
-    [(assoc-image-current-frame entity*)])
+    [(tx-assoc-image-current-frame entity*)])
   (entity/tick [[k _] entity* {:keys [context/delta-time]}]
-    [(-> entity*
-         (update k animation/tick delta-time)
-         assoc-image-current-frame)]))
+    [(tx-assoc-image-current-frame entity*)
+     [:tx/assoc entity* k (animation/tick animation delta-time)]]))
