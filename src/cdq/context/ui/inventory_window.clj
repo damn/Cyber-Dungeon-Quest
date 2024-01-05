@@ -16,11 +16,6 @@
            com.badlogic.gdx.scenes.scene2d.utils.ClickListener
            com.badlogic.gdx.math.Vector2))
 
-; diablo2 unique gold rgb 144 136 88
-#_(def ^:private gold-item-color [0.84 0.8 0.52])
-; diablo2 blue magic rgb 72 80 184
-#_(def modifiers-text-color [0.38 0.47 1])
-
 (defn- complain-2h-weapon-and-shield! [context]
   ;(.play ^Sound (get assets "error.wav"))
   (show-msg-to-player! context "Two-handed weapon and shield is not possible."))
