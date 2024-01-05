@@ -66,6 +66,7 @@
          (remove-item! context entity cell)
          (set-item! context entity cell item-on-cursor)
          ; need to dissoc and drop otherwise state enter does not trigger picking it up again
+         ; TODO? coud handle pickup-item from item-on-cursor state also
          (swap! entity dissoc :entity/item-on-cursor)
          (send-event! context entity :dropped-item)
          (send-event! context entity :pickup-item item)))))))

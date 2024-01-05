@@ -8,12 +8,12 @@
 (defprotocol EntityComponentSystem
   (create-entity! [_ components-map]
                   "Entities should not have :entity/id component, will get added.
-                  Calls create/create! on components.
+                  Calls create-componenet/create on components.
                   Returns the entity.")
   (get-entity [_ id])
-  (tick-entity! [_ entity] "Calls the 'tick!' system on all components of the entity.")
+  (tick-entity! [_ entity] "Calls tick on all components of the entity.")
   (render-entities* [_ entities*] "Draws entities* in the correct z-order and in the order of render-systems for each z-order.")
-  (remove-destroyed-entities! [_] "Calls destroy! on all entities which are marked as ':entity/destroyed?'"))
+  (remove-destroyed-entities! [_] "Calls destroy on all entities which are marked as ':entity/destroyed?'"))
 
 (defprotocol PlayerMessage
   (show-msg-to-player! [_ message])
