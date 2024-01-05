@@ -33,13 +33,20 @@
 
 (def ^:private log-txs? false)
 
+(defn- debug-print-tx [tx]
+  (vector
+   (map #(if (instance? cdq.entity.Entity %)
+           (:entity/id %)
+           %)
+        tx)))
+
 (defn- handle-transaction! [tx ctx]
   (when log-txs?
     (when-not (and (vector? tx)
                    (= :tx/cursor (first tx)))
       (println "tx: " (cond (instance? cdq.entity.Entity tx) "reset!"
                             (map? tx) "create-entity!"
-                            (vector? tx) (first tx)))))
+                            (vector? tx) (debug-print-tx tx)))))
   (cond
    (instance? cdq.entity.Entity tx) (reset! (entity/reference tx) tx)
    (map? tx) (create-entity! ctx tx)
