@@ -100,7 +100,7 @@
    :else
    (if-let [skill-id (selected-skill context)]
      (let [effect-context (effect-context context entity*)
-           skill (get-property context skill-id)
+           skill (skill-id (:entity/skills entity*))
            state (skill-usable-state (merge context effect-context) entity* skill)]
        (if (= state :usable)
          (do
