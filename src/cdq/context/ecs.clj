@@ -1,36 +1,24 @@
 (ns cdq.context.ecs
   (:require [clj-commons.pretty.repl :as p]
+            [x.x :refer [update-map]]
             [gdl.context :refer [draw-text]]
             [utils.core :refer [define-order sort-by-order]]
             [cdq.entity :as entity]
             [cdq.context :refer [transact! transact-all! get-entity create-entity! add-entity! remove-entity!]]))
 
-; TODO
-; doseq-entity - what if key is not available anymore ? check :when (k @entity)  ?
-; but for now accepting nil value at components, so have to check first.
-
-; TODO why do defsystem have default returns ?
-; I can just apply them on (keys (methods ...)) only
-; only 8 tick fns
-; => apply on those 8 methods only of entity ....
-; => reuse at effects see
-; I could cache the keyset intersection call between entity keys and multimethod keys
-; keySet is cached anyway in a map ?
-; anyway this needs to be tested
-
-(defn- render-entity* [system
-                       entity*
-                       {::keys [thrown-error] :as context}]
-  (doseq [component entity*]
+(defn- render-entity* [system entity* {::keys [thrown-error] :as context}]
+  (doseq [k (keys (methods @system))
+          :let [v (k entity*)]
+          :when v]
     (try
-     (system component entity* context)
+     (system [k v] entity* context)
      (catch Throwable t
        (when-not @thrown-error
-         (println "Render error for: entity :entity/id " (:entity/id entity*) " \n component " component "\n system" system)
+         (println "Render error for: entity :entity/id " (:entity/id entity*) " \n k " k "\n system" system)
          (p/pretty-pst t)
          (reset! thrown-error t))
        (let [[x y] (:entity/position entity*)]
-         (draw-text context {:text (str "Render error entity :entity/id " (:entity/id entity*) "\n" (component 0) "\n"system "\n" @thrown-error)
+         (draw-text context {:text (str "Render error entity :entity/id " (:entity/id entity*) "\n" k "\n"system "\n" @thrown-error)
                              :x x
                              :y y
                              :up? true}))))))
@@ -38,21 +26,6 @@
 (let [cnt (atom 0)]
   (defn- unique-number! []
     (swap! cnt inc)))
-
-; using this because x.x/update-map with transients is destroying defrecords and
-; turning them into normal maps.
-; check (keys (methods multimethod))
-; remove 'tick' / counters then this doesnt hurt so much anymore performance wise
-(defn- update-map
-  "Updates every map-entry with (apply f [k v] args)."
-  [m f & args]
-  (loop [ks (keys m)
-         m m]
-    (if (seq ks)
-      (recur (rest ks)
-             (let [k (first ks)]
-               (assoc m k (apply f [k (k m)] args))))
-      m)))
 
 (defmethod cdq.context/transact! :tx/assoc-in [[_ entity* ks v] _ctx]
   (swap! (entity/reference entity*) assoc-in ks v)
