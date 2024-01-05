@@ -68,7 +68,7 @@
 (defn- check-damage-block-modifier-value [[source-or-target
                                            damage-type
                                            value-delta]]
-  (and (#{:effect/source :effect/target} source-or-target)
+  (and (#{:effect/source :effect/target} source-or-target) ; TODO use other names (block-absorb,block-ignore?)
        (#{:physical :magic} damage-type)))
 
 ; TODO make shield or armor part of the modifier data ...

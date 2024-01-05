@@ -8,8 +8,7 @@
             [cdq.context :refer [get-property inventory-window try-pickup-item! skill-usable-state selected-skill]]
             [cdq.entity :as entity]
             [cdq.state :as state]
-            [cdq.state.wasd-movement :refer [WASD-movement-vector]]
-            [cdq.state.active-skill :refer [deref-source-target-entities]]))
+            [cdq.state.wasd-movement :refer [WASD-movement-vector]]))
 
 (defn- denied [text]
   [[:tx/sound "sounds/bfxr_denied.wav"]
@@ -102,7 +101,7 @@
    (if-let [skill-id (selected-skill context)]
      (let [effect-context (effect-context context entity*)
            skill (get-property context skill-id)
-           state (skill-usable-state (merge context (deref-source-target-entities effect-context)) entity* skill)]
+           state (skill-usable-state (merge context effect-context) entity* skill)]
        (if (= state :usable)
          (do
           ; TODO cursor AS OF SKILL effect (SWORD !) / show already what the effect would do ? e.g. if it would kill highlight

@@ -3,7 +3,6 @@
             [cdq.context :refer [effect-useful? world-grid potential-field-follow-to-enemy skill-usable-state]]
             [cdq.entity :as entity]
             [cdq.state :as state]
-            [cdq.state.active-skill :refer [deref-source-target-entities]]
             [cdq.world.cell :as cell]))
 
 (defn- effect-context [context entity*]
@@ -36,8 +35,7 @@
   (tick [_ entity* context]
     [(assoc entity* :entity/movement-vector (potential-field-follow-to-enemy context (entity/reference entity*)))
      (let [effect-context (effect-context context entity*)]
-       (when-let [skill (npc-choose-skill (merge context (deref-source-target-entities effect-context))
-                                          entity*)]
+       (when-let [skill (npc-choose-skill (merge context effect-context) entity*)]
          [:tx/event entity* :start-action [skill effect-context]]))])
 
   (render-below [_ entity* c])
