@@ -5,19 +5,12 @@
             [cdq.context :refer [valid-params? ->counter stopped? actionbar-add-skill actionbar-remove-skill]]
             [cdq.entity :as entity]))
 
-(defn- update-cooldown [context skill]
-  (if (:cooling-down? skill)
-    (update skill :cooling-down?
-            (fn [counter]
-              (if (stopped? context counter)
-                false
-                counter)))
-    skill))
-
 (defcomponent :entity/skills skills
-  (entity/tick [[k _] entity* context]
-    [(update entity* k (fn [skills]
-                         (mapvals #(update-cooldown context %) skills)))]))
+  (entity/tick [[k _] entity* ctx]
+    (for [{:keys [property/id cooling-down?]} (vals skills)
+          :when (and cooling-down?
+                     (stopped? ctx cooling-down?))]
+      [:tx/assoc-in entity* [k id :cooling-down?] false])))
 
 (extend-type cdq.entity.Entity
   cdq.entity/Skills

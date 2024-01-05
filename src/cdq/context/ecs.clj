@@ -54,7 +54,19 @@
                (assoc m k (apply f [k (k m)] args))))
       m)))
 
+(defmethod cdq.context/transact! :tx/assoc-in [[_ entity* ks v] _ctx]
+  (swap! (entity/reference entity*) assoc-in ks v)
+  nil)
+
+(def ^:private log-txs? false)
+
 (defn- handle-transaction! [tx ctx]
+  (when log-txs?
+    (when-not (and (vector? tx)
+                   (= :tx/cursor (first tx)))
+      (println "tx: " (cond (instance? cdq.entity.Entity tx) "reset!"
+                            (map? tx) "create-entity!"
+                            (vector? tx) (first tx)))))
   (cond
    (instance? cdq.entity.Entity tx) (reset! (entity/reference tx) tx)
    (map? tx) (create-entity! ctx tx)
@@ -82,7 +94,8 @@
                 v (k entity*)]
           :when v]
     (when-let [txs (system [k v] entity* ctx)]
-      ;(println "txs:" (:entity/id entity*) "-" k)
+      (when log-txs?
+        (println "txs:" (:entity/id entity*) "-" k))
       (try (transact-all! ctx txs)
            (catch Throwable t
              (println "Error with " k " and txs: \n" (pr-str txs))
