@@ -24,18 +24,6 @@
   (entity/render-above [_ entity* ctx] (state/render-above state-obj entity* ctx))
   (entity/render-info  [_ entity* ctx] (state/render-info  state-obj entity* ctx)))
 
-; TODO => don't save entity in constructor
-; => pass entity* always
-; => easier !
-; => pass entity* in the first place.
-; => cells fetchers could also be entity*'s ??? idk.
-
-; active skill constructor needs entity* for setting action counter
-; => potential-field-follow-to-enemy needs entity reference ...
-; => also npc idle / player idle for source-entity need to use the ref... ?
-
-; TODO maybe pass entity* here, no need to keep in record?
-
 (extend-type gdl.context.Context
   cdq.context/FiniteStateMachine
   (send-event!
