@@ -45,17 +45,6 @@
         (assoc :entity/position position)
         assoc-left-bottom))
 
-  ; TODO probably separate in 2 txs
-  (audiovisual [context position id]
-    (let [{:keys [property/sound
-                  property/animation]} (get-property context id)]
-      (play-sound! context sound)
-      (create-entity! context
-                      #:entity {:position position
-                                :animation animation
-                                :z-order :z-order/effect
-                                :delete-after-animation-stopped? true})))
-
   ; TODO use image w. shadows spritesheet
   (item-entity [_ position item]
     #:entity {:position position
@@ -77,8 +66,20 @@
 (defmethod cdq.context/transact! :tx/sound [[_ file] ctx]
   (play-sound! ctx file))
 
+(defn- audiovisual [context position id]
+  (let [{:keys [property/sound
+                property/animation]} (get-property context id)]
+    (play-sound! context sound)
+    (create-entity! context
+                    #:entity {:position position
+                              :animation animation
+                              :z-order :z-order/effect
+                              :delete-after-animation-stopped? true})))
+
 (defmethod cdq.context/transact! :tx/audiovisual [[_ position id] ctx]
-  (cdq.context/audiovisual ctx position id))
+  (audiovisual ctx position id))
+
+; TODO move to respective ns's and remove cdq.context fns
 
 (defmethod cdq.context/transact! :tx/cursor [[_ cursor-key] ctx]
   (set-cursor! ctx cursor-key))

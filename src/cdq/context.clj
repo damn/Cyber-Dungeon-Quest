@@ -49,7 +49,6 @@
 
 (defprotocol Builder
   (creature [_ creature-id position extra-components])
-  (audiovisual [_ position property-id])
   (item-entity [_ position item])
   (line-entity [_ {:keys [start end duration color thick?]}]))
 
