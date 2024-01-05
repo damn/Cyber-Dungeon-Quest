@@ -41,16 +41,17 @@
            (let [constructor (new-state state-obj-constructors)
                  new-state-obj (if params
                                  (constructor ctx entity* params)
-                                 (constructor ctx entity*))]
+                                 (constructor ctx entity*))
+                 entity (entity/reference entity*)]
              (transact-all! ctx (state/exit      state-obj entity* ctx))
-             (transact-all! ctx (state/enter new-state-obj @(entity/reference entity*) ctx))
+             (transact-all! ctx (state/enter new-state-obj @entity ctx))
              (when (:entity/player? entity*)
                (transact-all! ctx (state/player-enter new-state-obj)))
-             (transact-all! ctx
-                            [(update @(entity/reference entity*)
-                                     :entity/state #(assoc %
-                                                           :fsm new-fsm
-                                                           :state-obj new-state-obj))]))))))))
+             (transact-all!
+              ctx
+              [(update @entity :entity/state #(assoc %
+                                                     :fsm new-fsm
+                                                     :state-obj new-state-obj))]))))))))
 
 (extend-type cdq.entity.Entity
   cdq.entity/State
