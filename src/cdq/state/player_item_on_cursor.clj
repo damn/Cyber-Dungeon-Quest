@@ -1,12 +1,12 @@
-(ns cdq.entity.state.player-item-on-cursor
+(ns cdq.state.player-item-on-cursor
   (:require [gdl.context :refer [mouse-on-stage-actor? button-just-pressed? draw-centered-image
                                  world-mouse-position gui-mouse-position]]
             [gdl.input.buttons :as buttons]
             [gdl.math.vector :as v]
-            [cdq.entity.state :as state]
-            [cdq.entity.state.player-idle :refer [click-distance-tiles]]
             [cdq.context :refer [item-entity]]
-            [cdq.entity :as entity]))
+            [cdq.entity :as entity]
+            [cdq.state :as state]
+            [cdq.state.player-idle :refer [click-distance-tiles]]))
 
 ; It is possible to put items out of sight, losing them.
 ; Because line of sight checks center of entity only, not corners
@@ -27,7 +27,7 @@
   (placement-point (:entity/position @entity)
                    (world-mouse-position ctx)
                    ; so you cannot put it out of your own reach
-                   (- cdq.entity.state.player-idle/click-distance-tiles 0.1)))
+                   (- cdq.state.player-idle/click-distance-tiles 0.1)))
 
 (defn- world-item? [ctx]
   (not (mouse-on-stage-actor? ctx)))

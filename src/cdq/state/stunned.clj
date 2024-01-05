@@ -1,7 +1,7 @@
-(ns cdq.entity.state.stunned
+(ns cdq.state.stunned
   (:require [gdl.context :refer [draw-circle]]
             [cdq.context :refer [stopped? ->counter]]
-            [cdq.entity.state :as state]))
+            [cdq.state :as state]))
 
 (defrecord Stunned [entity counter]
   state/PlayerState

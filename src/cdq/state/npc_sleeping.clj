@@ -1,9 +1,9 @@
-(ns cdq.entity.state.npc-sleeping
+(ns cdq.state.npc-sleeping
   (:require [gdl.context :refer [draw-text]]
             [gdl.graphics.color :as color]
-            [cdq.entity.state :as state]
             [cdq.context :refer [world-grid ->counter]]
             [cdq.entity :as entity]
+            [cdq.state :as state]
             [cdq.world.cell :as cell]))
 
 ; TODO pass to creature data, also @ shout

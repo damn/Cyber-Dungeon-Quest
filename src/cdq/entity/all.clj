@@ -15,6 +15,7 @@
                         shout
                         skills
                         state
+                        state
                         string-effect)))
 
 ; not here: body, inventory, movement

@@ -2,24 +2,9 @@
   (:require [reduce-fsm :as fsm]
             [x.x :refer [defcomponent]]
             gdl.context
+            [cdq.context :refer [transact-all!]]
             [cdq.entity :as entity]
-            [cdq.context :refer [transact-all!]]))
-
-; TODO states do not have to depend on this ns?
-; cdq/state/*
-; cdq/state.clj
-(defprotocol State
-  (enter [_ ctx])
-  (exit  [_ ctx])
-  (tick  [_ ctx])
-  (render-below [_ ctx entity*])
-  (render-above [_ ctx entity*])
-  (render-info  [_ ctx entity*]))
-
-(defprotocol PlayerState
-  (player-enter [_])
-  (pause-game? [_])
-  (manual-tick [_ ctx]))
+            [cdq.state :as state]))
 
 (defcomponent :entity/state {:keys [initial-state
                                     fsm
@@ -35,11 +20,11 @@
              :state-obj-constructors state-obj-constructors})])
 
   (entity/tick [_ _entity* context]
-    (tick state-obj context))
+    (state/tick state-obj context))
 
-  (entity/render-below [_ entity* c] (render-below state-obj c entity*))
-  (entity/render-above [_ entity* c] (render-above state-obj c entity*))
-  (entity/render-info  [_ entity* c] (render-info  state-obj c entity*)))
+  (entity/render-below [_ entity* c] (state/render-below state-obj c entity*))
+  (entity/render-above [_ entity* c] (state/render-above state-obj c entity*))
+  (entity/render-info  [_ entity* c] (state/render-info  state-obj c entity*)))
 
 (extend-type gdl.context.Context
   cdq.context/FiniteStateMachine
@@ -62,10 +47,10 @@
                                  (constructor ctx entity params)
                                  (constructor ctx entity))]
              ; TODO maybe pass entity* here, no need to keep in record?
-             (transact-all! ctx (exit state-obj ctx))
-             (transact-all! ctx (enter new-state-obj ctx))
+             (transact-all! ctx (state/exit state-obj ctx))
+             (transact-all! ctx (state/enter new-state-obj ctx))
              (when (:entity/player? @entity)
-               (transact-all! ctx (player-enter new-state-obj)))
+               (transact-all! ctx (state/player-enter new-state-obj)))
              (transact-all! ctx
                             [(update @entity :entity/state #(assoc %
                                                                    :fsm new-fsm

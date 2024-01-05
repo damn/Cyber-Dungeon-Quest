@@ -1,12 +1,12 @@
-(ns cdq.entity.state.player
+(ns cdq.state.player
   (:require [reduce-fsm :as fsm]
-            (cdq.entity.state [active-skill :as active-skill]
-                              [player-dead :as player-dead]
-                              [player-found-princess :as player-found-princess]
-                              [player-idle :as player-idle]
-                              [player-item-on-cursor :as player-item-on-cursor]
-                              [player-moving :as player-moving]
-                              [stunned :as stunned])))
+            (cdq.state [active-skill :as active-skill]
+                       [player-dead :as player-dead]
+                       [player-found-princess :as player-found-princess]
+                       [player-idle :as player-idle]
+                       [player-item-on-cursor :as player-item-on-cursor]
+                       [player-moving :as player-moving]
+                       [stunned :as stunned])))
 
 (fsm/defsm-inc ^:private player-fsm
   [[:idle

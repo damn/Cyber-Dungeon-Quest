@@ -1,6 +1,6 @@
-(ns cdq.entity.state.player-dead
+(ns cdq.state.player-dead
   (:require [gdl.app :refer [change-screen!]]
-            [cdq.entity.state :as state]))
+            [cdq.state :as state]))
 
 (defrecord PlayerDead [entity]
   state/PlayerState

@@ -12,10 +12,10 @@
                                   tick-entity! remove-destroyed-entities! update-mouseover-entity! update-potential-fields!
                                   update-elapsed-game-time! debug-render-after-entities debug-render-before-entities set-cursor!
                                   transact-all!]]
+            cdq.context.ui.actors
             [cdq.entity :as entity]
             [cdq.entity.movement :as movement]
-            [cdq.entity.state :as state]
-            cdq.context.ui.actors
+            [cdq.state :as state]
             [cdq.world.content-grid :refer [active-entities]]))
 
 (declare ^:private explored-tile-color)

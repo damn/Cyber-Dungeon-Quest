@@ -1,4 +1,4 @@
-(ns cdq.entity.state.wasd-movement
+(ns cdq.state.wasd-movement
   (:require [gdl.context :refer [key-pressed?]]
             [gdl.input.keys :as input.keys]
             [gdl.math.vector :as v]))

@@ -1,13 +1,13 @@
-(ns cdq.entity.state.player-idle
+(ns cdq.state.player-idle
   (:require [gdl.context :refer [world-mouse-position mouse-on-stage-actor? button-just-pressed? button-pressed?]]
             [gdl.input.buttons :as buttons]
             [gdl.scene2d.actor :refer [visible? toggle-visible! parent] :as actor]
             [gdl.scene2d.ui.button :refer [button?]]
             [gdl.scene2d.ui.window :refer [window-title-bar?]]
             [gdl.math.vector :as v]
-            [cdq.entity.state :as state]
-            [cdq.entity.state.wasd-movement :refer [WASD-movement-vector]]
-            [cdq.context :refer [get-property inventory-window try-pickup-item! skill-usable-state selected-skill]]))
+            [cdq.context :refer [get-property inventory-window try-pickup-item! skill-usable-state selected-skill]]
+            [cdq.state :as state]
+            [cdq.state.wasd-movement :refer [WASD-movement-vector]]))
 
 (defn- denied [text]
   [[:tx/sound "sounds/bfxr_denied.wav"]

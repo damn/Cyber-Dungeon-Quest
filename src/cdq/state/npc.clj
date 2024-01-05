@@ -1,10 +1,10 @@
-(ns cdq.entity.state.npc
+(ns cdq.state.npc
   (:require [reduce-fsm :as fsm]
-            (cdq.entity.state [active-skill :as active-skill]
-                              [npc-dead :as npc-dead]
-                              [npc-idle :as npc-idle]
-                              [npc-sleeping :as npc-sleeping]
-                              [stunned :as stunned])))
+            (cdq.state [active-skill :as active-skill]
+                       [npc-dead :as npc-dead]
+                       [npc-idle :as npc-idle]
+                       [npc-sleeping :as npc-sleeping]
+                       [stunned :as stunned])))
 
 (fsm/defsm-inc ^:private npc-fsm
   [[:sleeping

@@ -1,8 +1,8 @@
 (ns cdq.effect.spawn
   (:require [malli.core :as m]
+            [cdq.context :refer [creature]]
             [cdq.effect :as effect]
-            [cdq.entity.state.npc :as npc-state]
-            [cdq.context :refer [creature]]))
+            [cdq.state.npc :as npc-state]))
 
 ; TODO spawning on player both without error ?! => not valid position checked
 ; also what if someone moves on the target posi ? find nearby valid cell ?

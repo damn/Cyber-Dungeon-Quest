@@ -1,8 +1,8 @@
-(ns cdq.entity.state.npc-idle
+(ns cdq.state.npc-idle
   (:require [gdl.math.vector :as v]
-            [cdq.entity.state :as state]
             [cdq.context :refer [effect-useful? world-grid potential-field-follow-to-enemy skill-usable-state]]
             [cdq.entity :as entity]
+            [cdq.state :as state]
             [cdq.world.cell :as cell]))
 
 (defn- effect-context [context entity]
