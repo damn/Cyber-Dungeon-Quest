@@ -115,7 +115,6 @@
                     active-entities]
   (let [state (:state-obj (:entity/state @player-entity))
         _ (transact-all! ctx (state/manual-tick state ctx))
-        _ (println (entity/state @player-entity))
         paused? (reset! game-paused? (or @thrown-error
                                          (and pausing? (state/pause-game? state))))
         ctx (assoc-delta-time ctx)]

@@ -45,7 +45,7 @@
   state/State
   (enter [_ _ctx]
     [[:tx/cursor :cursors/hand-grab]
-     [(assoc @entity :entity/item-on-cursor item)]])
+     (assoc @entity :entity/item-on-cursor item)])
 
   (exit [_ ctx]
     ; at context.ui.inventory-window/clicked-cell when we put it into a inventory-cell

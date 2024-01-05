@@ -6,7 +6,7 @@
 (defrecord Stunned [entity counter]
   state/PlayerState
   (player-enter [_]
-    [[:ctx/cursor :cursors/denied]])
+    [[:tx/cursor :cursors/denied]])
 
   (pause-game? [_] false)
   (manual-tick [_ context])
