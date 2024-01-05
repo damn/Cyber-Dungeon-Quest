@@ -10,27 +10,26 @@
                                     fsm
                                     state-obj
                                     state-obj-constructors]}
-  (entity/create [[k _] entity* context]
+  (entity/create [[k _] entity* ctx]
     [(assoc entity* k
             ; if :state = nil in fsm => set to initial-state
             ; TODO make PR / bug report.
             {:fsm (assoc (fsm initial-state nil)  ; throws when initial-state is not part of states
                          :state initial-state)
-             :state-obj ((initial-state state-obj-constructors) context (entity/reference entity*))
+             :state-obj ((initial-state state-obj-constructors) ctx (entity/reference entity*))
              :state-obj-constructors state-obj-constructors})])
 
-  (entity/tick [_ _entity* context]
-    (state/tick state-obj context))
+  (entity/tick [_ _entity* ctx]
+    (state/tick state-obj ctx))
 
-  (entity/render-below [_ entity* c] (state/render-below state-obj c entity*))
-  (entity/render-above [_ entity* c] (state/render-above state-obj c entity*))
-  (entity/render-info  [_ entity* c] (state/render-info  state-obj c entity*)))
+  (entity/render-below [_ entity* ctx] (state/render-below state-obj ctx entity*))
+  (entity/render-above [_ entity* ctx] (state/render-above state-obj ctx entity*))
+  (entity/render-info  [_ entity* ctx] (state/render-info  state-obj ctx entity*)))
 
 ; TODO => don't save entity in constructor
 ; => pass entity* always
 ; => easier !
 ; => pass entity* in the first place.
-; -> can remove source*/target*
 ; => cells fetchers could also be entity*'s ??? idk.
 
 (extend-type gdl.context.Context
@@ -67,7 +66,6 @@
   (state [entity*]
     (-> entity* :entity/state :fsm :state)))
 
-; TODO needs to handle dereffed entity*'s now ! (pass everywhere ?)
 (defmethod cdq.context/transact! :tx/event [[_ & params] ctx]
   (apply cdq.context/send-event! ctx params)
   nil)

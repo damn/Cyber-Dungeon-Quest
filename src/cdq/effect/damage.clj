@@ -11,9 +11,9 @@
 (defn- target-block-rate [entity* block-type damage-type]
   (-> entity* (entity/effect-target-modifiers block-type) damage-type))
 
-(defn- effective-block-rate [source* target* block-type damage-type]
-  (max (- (or (target-block-rate   target* block-type damage-type) 0)
-          (or (source-block-ignore source* block-type damage-type) 0))
+(defn- effective-block-rate [source target block-type damage-type]
+  (max (- (or (target-block-rate   target block-type damage-type) 0)
+          (or (source-block-ignore source block-type damage-type) 0))
        0))
 
 (comment
@@ -35,13 +35,13 @@
  [:physical [8 10]]
  )
 
-(defn- apply-source-modifiers [{damage-type 0 :as damage} source*]
+(defn- apply-source-modifiers [{damage-type 0 :as damage} source]
   (apply-damage-modifiers damage
-                          (-> source* (entity/effect-source-modifiers :effect/damage) damage-type)))
+                          (-> source (entity/effect-source-modifiers :effect/damage) damage-type)))
 
-(defn- apply-target-modifiers [{damage-type 0 :as damage} target*]
+(defn- apply-target-modifiers [{damage-type 0 :as damage} target]
   (apply-damage-modifiers damage
-                          (-> target* (entity/effect-target-modifiers :effect/damage) damage-type)))
+                          (-> target (entity/effect-target-modifiers :effect/damage) damage-type)))
 
 (comment
  (set! *print-level* nil)
@@ -61,13 +61,13 @@
  )
 
 (defn- effective-damage
-  ([damage source*]
+  ([damage source]
    (-> damage
-       (apply-source-modifiers source*)))
-  ([damage source* target*]
+       (apply-source-modifiers source)))
+  ([damage source target]
    (-> damage
-       (apply-source-modifiers source*)
-       (apply-target-modifiers target*))))
+       (apply-source-modifiers source)
+       (apply-target-modifiers target))))
 
 (comment
  (apply-damage-modifiers [:physical [3 10]]

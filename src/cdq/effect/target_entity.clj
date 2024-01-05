@@ -11,11 +11,11 @@
 (defmethod effect/value-schema :effect/target-entity [_]
   schema)
 
-(defn- in-range? [entity* target* maxrange] ; == circle-collides?
+(defn- in-range? [entity* target maxrange] ; == circle-collides?
   (< (- (v/distance (:entity/position entity*)
-                    (:entity/position target*))
+                    (:entity/position target))
         (:radius (:entity/body entity*))
-        (:radius (:entity/body target*)))
+        (:radius (:entity/body target)))
      maxrange))
 
 (defmethod effect/useful? :effect/target-entity
@@ -25,16 +25,16 @@
   (in-range? source target maxrange))
 
 ; TODO use at projectile & also adjust rotation
-(defn- start-point [entity* target*]
+(defn- start-point [entity* target]
   (v/add (:entity/position entity*)
          (v/scale (v/direction (:entity/position entity*)
-                               (:entity/position target*))
+                               (:entity/position target))
                   (:radius (:entity/body entity*)))))
 
-(defn- end-point [entity* target* maxrange]
-  (v/add (start-point entity* target*)
+(defn- end-point [entity* target maxrange]
+  (v/add (start-point entity* target)
          (v/scale (v/direction (:entity/position entity*)
-                               (:entity/position target*))
+                               (:entity/position target))
                   maxrange)))
 
 (defmethod effect/render-info :effect/target-entity
