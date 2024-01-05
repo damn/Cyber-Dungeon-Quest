@@ -1,5 +1,5 @@
 (ns cdq.entity.state.player-idle
-  (:require [gdl.context :refer [play-sound! world-mouse-position mouse-on-stage-actor? button-just-pressed? button-pressed?]]
+  (:require [gdl.context :refer [world-mouse-position mouse-on-stage-actor? button-just-pressed? button-pressed?]]
             [gdl.input.buttons :as buttons]
             [gdl.scene2d.actor :refer [visible? toggle-visible! parent] :as actor]
             [gdl.scene2d.ui.button :refer [button?]]
@@ -7,43 +7,40 @@
             [gdl.math.vector :as v]
             [cdq.entity.state :as state]
             [cdq.entity.state.wasd-movement :refer [WASD-movement-vector]]
-            [cdq.context :refer [show-msg-to-player! send-event! get-property inventory-window try-pickup-item! skill-usable-state selected-skill set-cursor!]]))
+            [cdq.context :refer [get-property inventory-window try-pickup-item! skill-usable-state selected-skill]]))
 
-(defn- denied [context text]
-  (play-sound! context "sounds/bfxr_denied.wav")
-  (show-msg-to-player! context text))
+(defn- denied [text]
+  [[:tx/sound "sounds/bfxr_denied.wav"]
+   [:tx/msg-to-player text]])
 
 (defmulti ^:private on-clicked
-  (fn [_context entity]
-    (:type (:entity/clickable @entity))))
+  (fn [_context entity*]
+    (:type (:entity/clickable entity*))))
 
 (defmethod on-clicked :clickable/item
-  [{:keys [context/player-entity] :as context} clicked-entity]
-  (let [item (:entity/item @clicked-entity)]
+  [{:keys [context/player-entity] :as context} clicked-entity*]
+  (let [item (:entity/item clicked-entity*)]
     (cond
      (visible? (inventory-window context))
-     (do
-      (play-sound! context "sounds/bfxr_takeit.wav")
-      (swap! clicked-entity assoc :entity/destroyed? true)
-      (send-event! context player-entity :pickup-item item))
+     [(:tx/sound "sounds/bfxr_takeit.wav")
+      (assoc clicked-entity* :entity/destroyed? true)
+      [:tx/event player-entity :pickup-item item]]
 
      (try-pickup-item! context player-entity item)
-     (do
-      (play-sound! context "sounds/bfxr_pickup.wav")
-      (swap! clicked-entity assoc :entity/destroyed? true))
+     [[:tx/sound "sounds/bfxr_pickup.wav"]
+      (assoc clicked-entity* :entity/destroyed? true)]
 
      :else
-     (do
-      (play-sound! context "sounds/bfxr_denied.wav")
-      (show-msg-to-player! context "Your Inventory is full")))))
+     [[:tx/sound "sounds/bfxr_denied.wav"]
+      [:tx/msg-to-player "Your Inventory is full"]])))
 
 (defmethod on-clicked :clickable/player
-  [ctx _clicked-entity]
+  [ctx _clicked-entity*]
   (toggle-visible! (inventory-window ctx)))
 
 (defmethod on-clicked :clickable/princess
-  [ctx _clicked-entity]
-  (send-event! ctx (:context/player-entity ctx) :found-princess))
+  [ctx _clicked-entity*]
+  [[:tx/event (:context/player-entity ctx) :found-princess]])
 
 (defn- clickable->cursor [mouseover-entity* too-far-away?]
   (case (:type (:entity/clickable mouseover-entity*))
@@ -57,14 +54,12 @@
 
 (def click-distance-tiles 1.5)
 
-(defn- ->clickable-mouseover-entity-interaction [ctx player-entity* mouseover-entity]
+(defn- ->clickable-mouseover-entity-interaction [ctx player-entity* mouseover-entity*]
   (if (and (< (v/distance (:entity/position player-entity*)
-                          (:entity/position @mouseover-entity))
+                          (:entity/position mouseover-entity*))
               click-distance-tiles))
-    [(clickable->cursor @mouseover-entity false)
-     (fn [] (on-clicked ctx mouseover-entity))]
-    [(clickable->cursor @mouseover-entity true)
-     (fn [] (denied ctx "Too far away"))]))
+    [(clickable->cursor mouseover-entity* false) (fn [] (on-clicked ctx mouseover-entity*))]
+    [(clickable->cursor mouseover-entity* true)  (fn [] (denied "Too far away"))]))
 
 (defn- effect-context [{:keys [context/mouseover-entity] :as context} entity]
   (let [target @mouseover-entity
@@ -99,7 +94,7 @@
 
    (and @mouseover-entity
         (:entity/clickable @@mouseover-entity))
-   (->clickable-mouseover-entity-interaction context @entity @mouseover-entity)
+   (->clickable-mouseover-entity-interaction context @entity @@mouseover-entity)
 
    :else
    (if-let [skill-id (selected-skill context)]
@@ -113,7 +108,7 @@
           ; => e.g. meditation no TARGET .. etc.
           [:cursors/use-skill
            (fn []
-             (send-event! context entity :start-action [skill effect-context]))])
+             [[:tx/event entity :start-action [skill effect-context]]])])
          (do
           ; TODO cursor as of usable state
           ; cooldown -> sanduhr kleine
@@ -121,27 +116,25 @@
           ; invalid-params -> depends on params ...
           [:cursors/skill-not-usable
            (fn []
-             (denied context
-                     (case state
+             (denied (case state
                        :cooldown "Skill is still on cooldown"
                        :not-enough-mana "Not enough mana"
                        :invalid-params "Cannot use this here")))])))
      [:cursors/no-skill-selected
-      (fn []
-        (denied context "No selected skill"))])))
+      (fn [] (denied "No selected skill"))])))
 
 (defrecord PlayerIdle [entity]
   state/PlayerState
   (player-enter [_ _ctx])
   (pause-game? [_] true)
 
-  (manual-tick! [_ context]
+  (manual-tick [_ context]
     (if-let [movement-vector (WASD-movement-vector context)]
-      (send-event! context entity :movement-input movement-vector)
+      [[:tx/event entity :movement-input movement-vector]]
       (let [[cursor on-click] (->interaction-state context entity)]
-        (set-cursor! context cursor)
-        (when (button-just-pressed? context buttons/left)
-          (on-click)))))
+        (cons [:tx/cursor cursor]
+              (when (button-just-pressed? context buttons/left)
+                (on-click))))))
 
   state/State
   (enter [_ context])

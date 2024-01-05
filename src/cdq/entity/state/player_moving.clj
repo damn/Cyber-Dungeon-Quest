@@ -9,7 +9,7 @@
     (set-cursor! ctx :cursors/walking))
 
   (pause-game? [_] false)
-  (manual-tick! [_ context])
+  (manual-tick [_ context])
 
   state/State
   (enter [_ context]

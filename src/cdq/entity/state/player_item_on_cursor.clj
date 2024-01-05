@@ -5,7 +5,7 @@
             [gdl.math.vector :as v]
             [cdq.entity.state :as state]
             [cdq.entity.state.player-idle :refer [click-distance-tiles]]
-            [cdq.context :refer [item-entity send-event! set-cursor!]]
+            [cdq.context :refer [item-entity set-cursor!]]
             [cdq.entity :as entity]))
 
 ; It is possible to put items out of sight, losing them.
@@ -37,10 +37,10 @@
   (player-enter [_ _ctx])
   (pause-game? [_] true)
 
-  (manual-tick! [_ context]
+  (manual-tick [_ context]
     (when (and (button-just-pressed? context buttons/left)
                (world-item? context))
-      (send-event! context entity :drop-item)))
+      [[:tx/event entity :drop-item]]))
 
   state/State
   (enter [_ ctx]

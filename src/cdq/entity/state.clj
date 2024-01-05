@@ -16,7 +16,7 @@
 (defprotocol PlayerState
   (player-enter [_ context])
   (pause-game? [_])
-  (manual-tick! [_ context]))
+  (manual-tick [_ context]))
 
 (defcomponent :entity/state {:keys [initial-state
                                     fsm

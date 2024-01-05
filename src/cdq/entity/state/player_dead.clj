@@ -10,7 +10,7 @@
     (set-cursor! ctx :cursors/black-x))
 
   (pause-game? [_] true)
-  (manual-tick! [_ context])
+  (manual-tick [_ context])
 
   state/State
   (enter [_ ctx]

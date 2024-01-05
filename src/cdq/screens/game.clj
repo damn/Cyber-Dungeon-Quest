@@ -10,7 +10,8 @@
             [utils.core :refer [safe-get]]
             [cdq.context :refer [render-entities* ray-blocked? explored? set-explored! line-of-sight? content-grid
                                   tick-entity! remove-destroyed-entities! update-mouseover-entity! update-potential-fields!
-                                  update-elapsed-game-time! debug-render-after-entities debug-render-before-entities set-cursor!]]
+                                  update-elapsed-game-time! debug-render-after-entities debug-render-before-entities set-cursor!
+                                  transact-all!]]
             [cdq.entity.movement :as movement]
             [cdq.entity.state :as state]
             cdq.context.ui.actors
@@ -112,7 +113,7 @@
                      :as ctx}
                     active-entities]
   (let [state (:state-obj (:entity/state @player-entity))
-        _ (state/manual-tick! state ctx)
+        _ (transact-all! ctx (state/manual-tick state ctx))
         paused? (reset! game-paused? (or @thrown-error
                                          (and pausing? (state/pause-game? state))))
         ctx (assoc-delta-time ctx)]

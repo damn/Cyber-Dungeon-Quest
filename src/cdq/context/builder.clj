@@ -1,7 +1,7 @@
 (ns cdq.context.builder
   (:require [x.x :refer [defcomponent]]
             [gdl.context :refer [play-sound!]]
-            [cdq.context :refer [create-entity! get-property]]
+            [cdq.context :refer [create-entity! get-property set-cursor! show-msg-to-player!]]
             [cdq.entity :as entity]
             [cdq.entity.body :refer (assoc-left-bottom)]))
 
@@ -80,3 +80,9 @@
 
 (defmethod cdq.context/transact! :tx/audiovisual [[_ position id] ctx]
   (cdq.context/audiovisual ctx position id))
+
+(defmethod cdq.context/transact! :tx/cursor [[_ cursor-key] ctx]
+  (set-cursor! ctx cursor-key))
+
+(defmethod cdq.context/transact! :tx/msg-to-player [[_ message] ctx]
+  (show-msg-to-player! ctx message))

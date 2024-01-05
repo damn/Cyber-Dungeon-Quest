@@ -9,7 +9,7 @@
     (set-cursor! ctx :cursors/denied))
 
   (pause-game? [_] false)
-  (manual-tick! [_ context])
+  (manual-tick [_ context])
 
   state/State
   (enter [_ _ctx])
