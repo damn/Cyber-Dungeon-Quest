@@ -1,7 +1,7 @@
 (ns cdq.entity.state.active-skill
-  (:require [gdl.context :refer [draw-filled-circle draw-sector draw-image play-sound!]]
+  (:require [gdl.context :refer [draw-filled-circle draw-sector draw-image]]
             [cdq.entity.state :as state]
-            [cdq.context :refer [valid-params? effect-render-info stopped? finished-ratio ->counter set-skill-to-cooldown! pay-skill-mana-cost! set-cursor!]]
+            [cdq.context :refer [valid-params? effect-render-info stopped? finished-ratio ->counter]]
             [cdq.entity :as entity]))
 
 (defn- draw-skill-icon [c icon entity* [x y] action-counter-ratio]
@@ -19,23 +19,24 @@
 
 (defrecord ActiveSkill [entity skill effect-context counter]
   state/PlayerState
-  (player-enter [_ ctx]
-    (set-cursor! ctx :cursors/sandclock))
+  (player-enter [_]
+    [[:tx/cursor :cursors/sandclock]])
 
   (pause-game? [_] false)
   (manual-tick [_ context])
 
   state/State
-  (enter [_ context]
+  (enter [_ ctx]
     ; TODO all only called here => start-skill-bla
     ; make all this context context.entity.skill extension ?
-    (play-sound! context (str "sounds/" (if (:spell? skill) "shoot.wav" "slash.wav")))
-    (set-skill-to-cooldown! context entity skill)
-    ; should assert enough mana
-    ; but should also assert usable-state = :usable
-    ; but do not want to call again valid-params? (expensive)
-    ; i know i do it before only @ player & creature idle so ok
-    (pay-skill-mana-cost! context entity skill))
+    [[:tx/sound (str "sounds/" (if (:spell? skill) "shoot.wav" "slash.wav"))]
+     (-> @entity
+         (entity/set-skill-to-cooldown ctx skill)
+         ; should assert enough mana
+         ; but should also assert usable-state = :usable
+         ; but do not want to call again valid-params? (expensive)
+         ; i know i do it before only @ player & creature idle so ok
+         (entity/pay-skill-mana-cost skill))])
 
   (exit [_ _ctx])
 

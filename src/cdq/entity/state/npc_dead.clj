@@ -1,14 +1,13 @@
 (ns cdq.entity.state.npc-dead
-  (:require [cdq.context :refer [audiovisual]]
-            [cdq.entity.state :as state]))
+  (:require [cdq.entity.state :as state]))
 
 (defrecord NpcDead [entity]
   state/State
-  (enter [_ context]
-    (swap! entity assoc :entity/destroyed? true)
-    (audiovisual context (:entity/position @entity) :creature/die-effect))
-  (exit [_ context])
-  (tick [_ context])
+  (enter [_ _ctx]
+    [(assoc @entity :entity/destroyed? true)
+     [:tx/audiovisual (:entity/position @entity) :creature/die-effect]])
+  (exit [_ _ctx])
+  (tick [_ _ctx])
   (render-below [_ c entity*])
   (render-above [_ c entity*])
   (render-info  [_ c entity*]))

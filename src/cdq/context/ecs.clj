@@ -93,6 +93,7 @@
     (get @ids->entities id))
 
   (create-entity! [{::keys [ids->entities] :as context} components-map]
+    ; TODO all keys ':entity/'
     {:pre [(not (contains? components-map :entity/id))
            (:entity/position components-map)]}
     (try

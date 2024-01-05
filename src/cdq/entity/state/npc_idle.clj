@@ -29,11 +29,9 @@
 ; TODO == NpcMoving !!
 (defrecord NpcIdle [entity]
   state/State
-  (enter [_ context])
-
-  (exit  [_ context]
-    (swap! entity assoc :entity/movement-vector nil))
-
+  (enter [_ _ctx])
+  (exit  [_ _ctx]
+    [(assoc @entity :entity/movement-vector nil)])
   (tick [_ context]
     [(assoc @entity :entity/movement-vector (potential-field-follow-to-enemy context entity))
      (let [effect-context (effect-context context entity)]

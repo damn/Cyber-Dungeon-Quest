@@ -3,20 +3,23 @@
             [x.x :refer [defcomponent]]
             gdl.context
             [cdq.entity :as entity]
-            cdq.context))
+            [cdq.context :refer [transact-all!]]))
 
+; TODO states do not have to depend on this ns?
+; cdq/state/*
+; cdq/state.clj
 (defprotocol State
-  (enter [_ context])
-  (exit  [_ context])
-  (tick  [_ context])
-  (render-below [_ context entity*])
-  (render-above [_ context entity*])
-  (render-info  [_ context entity*]))
+  (enter [_ ctx])
+  (exit  [_ ctx])
+  (tick  [_ ctx])
+  (render-below [_ ctx entity*])
+  (render-above [_ ctx entity*])
+  (render-info  [_ ctx entity*]))
 
 (defprotocol PlayerState
-  (player-enter [_ context])
+  (player-enter [_])
   (pause-game? [_])
-  (manual-tick [_ context]))
+  (manual-tick [_ ctx]))
 
 (defcomponent :entity/state {:keys [initial-state
                                     fsm
@@ -41,10 +44,10 @@
 (extend-type gdl.context.Context
   cdq.context/FiniteStateMachine
   (send-event!
-    ([context entity event]
-     (cdq.context/send-event! context entity event nil))
+    ([ctx entity event]
+     (cdq.context/send-event! ctx entity event nil))
 
-    ([context entity event params]
+    ([ctx entity event params]
      ; 'when' because e.g. sending events to projectiles at wakeup (same faction filter)
      ; who do not have a state component
      (when-let [{:keys [fsm
@@ -54,17 +57,24 @@
              new-fsm (fsm/fsm-event fsm event)
              new-state (:state new-fsm)]
          (when (not= old-state new-state)
-           (exit state-obj context)
            (let [constructor (new-state state-obj-constructors)
                  new-state-obj (if params
-                                 (constructor context entity params)
-                                 (constructor context entity))]
-             (enter new-state-obj context)
+                                 (constructor ctx entity params)
+                                 (constructor ctx entity))]
+             ; TODO maybe pass entity* here, no need to keep in record?
+             (transact-all! ctx (exit state-obj ctx))
+             (transact-all! ctx (enter new-state-obj ctx))
              (when (:entity/player? @entity)
-               (player-enter new-state-obj context))
-             (swap! entity update :entity/state #(assoc %
-                                                        :fsm new-fsm
-                                                        :state-obj new-state-obj)))))))))
+               (transact-all! ctx (player-enter new-state-obj)))
+             (transact-all! ctx
+                            [(update @entity :entity/state #(assoc %
+                                                                   :fsm new-fsm
+                                                                   :state-obj new-state-obj))]))))))))
+
+; TODO can make coll of transactions
+; if each @entity references the original original
+; and does the stuff only when called
+; so only the last one ?
 
 (extend-type cdq.entity.Entity
   cdq.entity/State

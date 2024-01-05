@@ -12,6 +12,7 @@
                                   tick-entity! remove-destroyed-entities! update-mouseover-entity! update-potential-fields!
                                   update-elapsed-game-time! debug-render-after-entities debug-render-before-entities set-cursor!
                                   transact-all!]]
+            [cdq.entity :as entity]
             [cdq.entity.movement :as movement]
             [cdq.entity.state :as state]
             cdq.context.ui.actors
@@ -114,6 +115,7 @@
                     active-entities]
   (let [state (:state-obj (:entity/state @player-entity))
         _ (transact-all! ctx (state/manual-tick state ctx))
+        _ (println (entity/state @player-entity))
         paused? (reset! game-paused? (or @thrown-error
                                          (and pausing? (state/pause-game? state))))
         ctx (assoc-delta-time ctx)]

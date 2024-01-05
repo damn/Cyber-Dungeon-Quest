@@ -1,12 +1,12 @@
 (ns cdq.entity.state.stunned
   (:require [gdl.context :refer [draw-circle]]
-            [cdq.context :refer [stopped? ->counter set-cursor!]]
+            [cdq.context :refer [stopped? ->counter]]
             [cdq.entity.state :as state]))
 
 (defrecord Stunned [entity counter]
   state/PlayerState
-  (player-enter [_ ctx]
-    (set-cursor! ctx :cursors/denied))
+  (player-enter [_]
+    [[:ctx/cursor :cursors/denied]])
 
   (pause-game? [_] false)
   (manual-tick [_ context])

@@ -5,7 +5,7 @@
             [gdl.math.vector :as v]
             [cdq.entity.state :as state]
             [cdq.entity.state.player-idle :refer [click-distance-tiles]]
-            [cdq.context :refer [item-entity set-cursor!]]
+            [cdq.context :refer [item-entity]]
             [cdq.entity :as entity]))
 
 ; It is possible to put items out of sight, losing them.
@@ -34,7 +34,7 @@
 
 (defrecord PlayerItemOnCursor [entity item]
   state/PlayerState
-  (player-enter [_ _ctx])
+  (player-enter [_])
   (pause-game? [_] true)
 
   (manual-tick [_ context]
@@ -43,9 +43,9 @@
       [[:tx/event entity :drop-item]]))
 
   state/State
-  (enter [_ ctx]
-    (set-cursor! ctx :cursors/hand-grab)
-    (swap! entity assoc :entity/item-on-cursor item))
+  (enter [_ _ctx]
+    [[:tx/cursor :cursors/hand-grab]
+     [(assoc @entity :entity/item-on-cursor item)]])
 
   (exit [_ ctx]
     ; at context.ui.inventory-window/clicked-cell when we put it into a inventory-cell
@@ -54,7 +54,8 @@
     ; on the ground
     (when (:entity/item-on-cursor @entity)
       (put-item-on-ground! ctx (item-place-position ctx entity))
-      (swap! entity dissoc :entity/item-on-cursor)))
+      (swap! entity dissoc :entity/item-on-cursor)
+      nil))
 
   (tick [_ _ctx])
   (render-below [_ ctx entity*]

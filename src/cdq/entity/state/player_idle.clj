@@ -125,7 +125,7 @@
 
 (defrecord PlayerIdle [entity]
   state/PlayerState
-  (player-enter [_ _ctx])
+  (player-enter [_])
   (pause-game? [_] true)
 
   (manual-tick [_ context]
@@ -137,7 +137,7 @@
                 (on-click))))))
 
   state/State
-  (enter [_ context])
+  (enter [_ _ctx])
   (exit  [_ context])
   (tick [_ _context])
   (render-below [_ c entity*])

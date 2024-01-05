@@ -19,9 +19,6 @@
   (show-msg-to-player! [_ message])
   (->player-message-actor [_]))
 
-(defprotocol PlayerModal
-  (show-player-modal! [_ {:keys [title text button-text on-click]}]))
-
 (defprotocol MouseOverEntity
   (update-mouseover-entity! [_]))
 
@@ -89,10 +86,8 @@
   (update-elapsed-game-time! [_]))
 
 (defprotocol Skills
-  (add-skill!             [_ entity skill])
-  (remove-skill!          [_ entity skill])
-  (set-skill-to-cooldown! [_ entity skill])
-  (pay-skill-mana-cost!   [_ entity skill])
+  (add-skill! [_ entity skill])
+  (remove-skill! [_ entity skill])
   (skill-usable-state [effect-context entity* skill]))
 
 (defprotocol Actionbar
