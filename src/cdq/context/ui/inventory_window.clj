@@ -75,9 +75,6 @@
          (send-event! context entity :dropped-item)
          (send-event! context entity :pickup-item item)))))))
 
-; TODO swap item doesnt work => because already item in hand ... so nothing happens not entering the state
-; => move item-on-cursor code all together in the state component ns
-
 (def ^:private cell-size 48)
 
 (def ^:private droppable-color    [0   0.6 0 0.8])
@@ -123,9 +120,7 @@
 
 (defn- ->cell [ctx slot->background slot & {:keys [position]}]
   (let [cell [slot (or position [0 0])]
-        image-widget (->image-widget ctx
-                                     (slot->background slot)
-                                     {:id :image})
+        image-widget (->image-widget ctx (slot->background slot) {:id :image})
         stack (->stack ctx [(draw-rect-actor)
                             image-widget])]
     (set-name! stack "inventory-cell")
@@ -174,8 +169,10 @@
                              cell
                              item]
     (let [^Actor cell-widget (get table cell)
-          ^Image image-widget (get cell-widget :image)]
-      (.setDrawable image-widget (->texture-region-drawable ctx (:texture (:property/image item))))
+          ^Image image-widget (get cell-widget :image)
+          drawable (->texture-region-drawable ctx (:texture (:property/image item)))]
+      (.setMinSize drawable (float cell-size) (float cell-size))
+      (.setDrawable image-widget drawable)
       (add-tooltip! cell-widget #(tooltip-text % item))))
 
   (remove-item-from-widget [{{:keys [table slot->background]} :context/inventory :as ctx} cell]
@@ -198,11 +195,11 @@
                            :boot     9
                            :bag      10} ; transparent
          (map (fn [[slot y]]
-                [slot
-                 (.tint ^TextureRegionDrawable
-                        (->texture-region-drawable ctx
-                                                   (:texture (get-sprite ctx sheet [21 (+ y 2)])))
-                        (->color ctx 1 1 1 0.4))]))
+                (let [drawable (->texture-region-drawable ctx
+                                                          (:texture (get-sprite ctx sheet [21 (+ y 2)])))]
+                  (.setMinSize drawable (float cell-size) (float cell-size))
+                  [slot
+                   (.tint ^TextureRegionDrawable drawable (->color ctx 1 1 1 0.4))])))
          (into {}))))
 
 (defn ->inventory-window [{{:keys [window] :as inventory} :context/inventory}]
