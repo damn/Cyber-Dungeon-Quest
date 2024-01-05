@@ -1,5 +1,5 @@
 (ns cdq.entity.state.player-item-on-cursor
-  (:require [gdl.context :refer [play-sound! mouse-on-stage-actor? button-just-pressed? draw-centered-image
+  (:require [gdl.context :refer [mouse-on-stage-actor? button-just-pressed? draw-centered-image
                                  world-mouse-position gui-mouse-position]]
             [gdl.input.buttons :as buttons]
             [gdl.math.vector :as v]
@@ -12,10 +12,10 @@
 ; Because line of sight checks center of entity only, not corners
 ; this is okay, you have thrown the item over a hill, thats possible.
 
-(defn- put-item-on-ground! [{:keys [context/player-entity] :as context} position]
+(defn- put-item-on-ground-txs [{:keys [context/player-entity] :as context} position]
   {:pre [(:entity/item-on-cursor @player-entity)]}
-  (play-sound! context "sounds/bfxr_itemputground.wav")
-  (item-entity context position (:entity/item-on-cursor @player-entity)))
+  [[:tx/sound "sounds/bfxr_itemputground.wav"]
+   (item-entity context position (:entity/item-on-cursor @player-entity))])
 
 (defn- placement-point [player target maxrange]
   (v/add player
@@ -53,9 +53,8 @@
     ; so we dissoc it there manually. Otherwise it creates another item
     ; on the ground
     (when (:entity/item-on-cursor @entity)
-      (put-item-on-ground! ctx (item-place-position ctx entity))
-      (swap! entity dissoc :entity/item-on-cursor)
-      nil))
+      (conj (put-item-on-ground-txs ctx (item-place-position ctx entity))
+            (dissoc @entity :entity/item-on-cursor))))
 
   (tick [_ _ctx])
   (render-below [_ ctx entity*]
