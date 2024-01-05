@@ -31,8 +31,8 @@
          (when (= id :creatures/lady-a) {:entity/clickable {:type :clickable/princess}})))
 
 (defcomponent :entity/plop _
-  (entity/destroy! [_ entity ctx]
-    (cdq.context/audiovisual ctx (:entity/position @entity) :projectile/hit-wall-effect)))
+  (entity/destroy [_ entity* ctx]
+    [[:tx/audiovisual (:entity/position entity*) :projectile/hit-wall-effect]]))
 
 ; TODO if pass skills & creature props itself, function does not need context.
 ; properties themself could be the creature map even somehow

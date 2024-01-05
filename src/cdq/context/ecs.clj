@@ -1,6 +1,5 @@
 (ns cdq.context.ecs
   (:require [clj-commons.pretty.repl :as p]
-            [x.x :refer [doseq-entity]]
             [gdl.context :refer [draw-text]]
             [utils.core :refer [define-order sort-by-order]]
             [cdq.entity :as entity]
@@ -76,6 +75,18 @@
   (reference [entity*]
     (::atom (meta entity*))))
 
+(defn- system-transactions! [system entity ctx]
+  (doseq [k (keys (methods system))
+          :let [entity* @entity
+                v (k entity*)]
+          :when v]
+    (when-let [txs (system [k v] entity* ctx)]
+      ;(println "txs:" (:entity/id entity*) "-" k)
+      (try (transact-all! ctx txs)
+           (catch Throwable t
+             (println "Error with " k " and txs: \n" (pr-str txs))
+             (throw t))))))
+
 (extend-type gdl.context.Context
   cdq.context/EntityComponentSystem
   (get-entity [{::keys [ids->entities]} id]
@@ -87,13 +98,13 @@
     (try
      (let [id (unique-number!)
            entity (-> (assoc components-map :entity/id id)
-                      (update-map entity/create)
+                      (update-map entity/create-component)
                       cdq.entity/map->Entity
-                      atom
-                      (doseq-entity entity/create! context))]
+                      atom)]
        (swap! entity with-meta {::atom entity})
        (swap! ids->entities assoc id entity)
-       (add-entity! context entity)
+       (system-transactions! entity/create entity context)
+       (add-entity! context entity) ; no left-bottom! thats why put after entity/create (x.x)
        entity)
      (catch Throwable t
        (println "Error with: " components-map)
@@ -101,16 +112,7 @@
 
   (tick-entity! [{::keys [thrown-error] :as context} entity]
     (try
-     (doseq [k (keys (methods entity/tick))
-             :let [entity* @entity
-                   v (k entity*)]
-             :when v]
-       (when-let [txs (entity/tick [k v] entity* context)]
-         ;(println "txs:" (:entity/id entity*) "-" k)
-         (try (transact-all! context txs)
-              (catch Throwable t
-                (println "Error with " k " and txs: \n" (pr-str txs))
-                (throw t)))))
+     (system-transactions! entity/tick entity context)
      (catch Throwable t
        (p/pretty-pst t)
        (println "Entity id: " (:entity/id @entity))
@@ -133,7 +135,7 @@
 
   (remove-destroyed-entities! [{::keys [ids->entities] :as context}]
     (doseq [entity (filter (comp :entity/destroyed? deref) (vals @ids->entities))]
-      (doseq-entity entity entity/destroy! context)
+      (system-transactions! entity/destroy entity context)
       (swap! ids->entities dissoc (:entity/id @entity))
       (remove-entity! context entity))))
 

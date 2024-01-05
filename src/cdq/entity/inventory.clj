@@ -135,8 +135,9 @@
      (try-put-item-in! context entity :inventory.slot/bag item))))
 
 (defcomponent :entity/items items
-  (entity/create! [_ entity context]
-    (swap! entity assoc :entity/inventory empty-inventory)
-    ;(swap! entity dissoc :items)
-    (doseq [id items]
-      (try-pickup-item! context entity (get-property context id)))))
+  (entity/create [_ entity* context]
+    (let [entity (entity/reference entity*)]
+      (swap! entity assoc :entity/inventory empty-inventory)
+      ;(swap! entity dissoc :items)
+      (doseq [id items]
+        (try-pickup-item! context entity (get-property context id))))))

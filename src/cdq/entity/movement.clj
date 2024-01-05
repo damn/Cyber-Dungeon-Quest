@@ -46,9 +46,9 @@
     entity*))
 
 (defcomponent :entity/movement tiles-per-second
-  (entity/create! [_ entity _ctx]
-    (assert (and (:entity/body @entity)
-                 (:entity/position @entity)))
+  (entity/create [_ entity* _ctx]
+    (assert (and (:entity/body entity*)
+                 (:entity/position entity*)))
     (assert (<= tiles-per-second max-speed)))
 
   (entity/tick [_ entity* ctx]

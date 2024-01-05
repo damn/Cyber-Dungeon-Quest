@@ -32,7 +32,7 @@
                                    solid?
                                    rotation-angle
                                    rotate-in-movement-direction?] :as body}
-  (entity/create [_]
+  (entity/create-component [_]
     (assert (and width height
                  (>= width  (if solid? min-solid-body-size 0))
                  (>= height (if solid? min-solid-body-size 0))
@@ -51,10 +51,10 @@
       :rotation-angle (or rotation-angle 0)
       :rotate-in-movement-direction? rotate-in-movement-direction?}))
 
-  (entity/create! [_ entity _ctx]
+  (entity/create [_ entity* _ctx]
     ; TODO VALID POSITION CHECK (done @ world-grid?)
-    (assert (:entity/position @entity))
-    (swap! entity assoc-left-bottom))
+    (assert (:entity/position entity*))
+    [(assoc-left-bottom entity*)])
 
   (entity/render-debug [_ _entity* context]
     (when show-body-bounds

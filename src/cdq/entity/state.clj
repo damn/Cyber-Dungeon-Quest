@@ -22,14 +22,14 @@
                                     fsm
                                     state-obj
                                     state-obj-constructors]}
-  (entity/create! [[k _] entity context]
-    (swap! entity assoc k
-           ; if :state = nil in fsm => set to initial-state
-           ; TODO make PR / bug report.
-           {:fsm (assoc (fsm initial-state nil)  ; throws when initial-state is not part of states
-                        :state initial-state)
-            :state-obj ((initial-state state-obj-constructors) context entity)
-            :state-obj-constructors state-obj-constructors}))
+  (entity/create [[k _] entity* context]
+    [(assoc entity* k
+            ; if :state = nil in fsm => set to initial-state
+            ; TODO make PR / bug report.
+            {:fsm (assoc (fsm initial-state nil)  ; throws when initial-state is not part of states
+                         :state initial-state)
+             :state-obj ((initial-state state-obj-constructors) context (entity/reference entity*))
+             :state-obj-constructors state-obj-constructors})])
 
   (entity/tick [_ _entity* context]
     (tick state-obj context))
