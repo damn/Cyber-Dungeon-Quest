@@ -64,7 +64,7 @@
            effect/target
            effect/direction]}
    _effect]
-  (and source target direction)) ; faction @ source also ?
+  (and source direction)) ; faction @ source also ?
 
 (defn- start-point [entity* direction]
   (v/add (:entity/position entity*)
