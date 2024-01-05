@@ -196,14 +196,17 @@
 ; --> mach prozedural generierte maps mit prostprocessing (fill-singles/set-cells-behind-walls-nil/remove-nads/..?)
 ;& assertions 0 NADS z.b. ...?
 
+(def ^:private spawn-enemies? true)
+
 ; looping through all tiles of the map 3 times. but dont do it in 1 loop because player needs to be initialized before all monsters!
 (defn- place-entities! [context tiled-map]
-  (doseq [[posi creature-id] (tiled/positions-with-property tiled-map :creatures :id)]
-    (create-entity! context
-                    (creature context
-                              creature-id
-                              (tile->middle posi)
-                              {:entity/state (npc-state/->state :sleeping)})))
+  (when spawn-enemies?
+    (doseq [[posi creature-id] (tiled/positions-with-property tiled-map :creatures :id)]
+      (create-entity! context
+                      (creature context
+                                creature-id
+                                (tile->middle posi)
+                                {:entity/state (npc-state/->state :sleeping)}))))
   ; otherwise will be rendered, is visible
   (tiled/remove-layer! tiled-map :creatures))
 
