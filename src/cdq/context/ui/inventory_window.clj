@@ -31,7 +31,7 @@
           item)
      (do
       (play-sound! context "sounds/bfxr_takeit.wav")
-      (send-event! context entity :pickup-item item)
+      (send-event! context @entity :pickup-item item)
       (remove-item! context entity cell))
 
      item-on-cursor
@@ -45,7 +45,7 @@
          (play-sound! context "sounds/bfxr_itemput.wav")
          (set-item! context entity cell item-on-cursor)
          (swap! entity dissoc :entity/item-on-cursor)
-         (send-event! context entity :dropped-item)))
+         (send-event! context @entity :dropped-item)))
 
       ; STACK ITEMS
       (and item
@@ -54,7 +54,7 @@
        (play-sound! context "sounds/bfxr_itemput.wav")
        (stack-item! context entity cell item-on-cursor)
        (swap! entity dissoc :entity/item-on-cursor)
-       (send-event! context entity :dropped-item))
+       (send-event! context @entity :dropped-item))
 
       ; SWAP ITEMS
       (and item
@@ -68,8 +68,8 @@
          ; need to dissoc and drop otherwise state enter does not trigger picking it up again
          ; TODO? coud handle pickup-item from item-on-cursor state also
          (swap! entity dissoc :entity/item-on-cursor)
-         (send-event! context entity :dropped-item)
-         (send-event! context entity :pickup-item item)))))))
+         (send-event! context @entity :dropped-item)
+         (send-event! context @entity :pickup-item item)))))))
 
 (def ^:private cell-size 48)
 

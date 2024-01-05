@@ -113,10 +113,10 @@
                             cdq.context.ecs/thrown-error]
                      :as ctx}
                     active-entities]
-  (let [state (:state-obj (:entity/state @player-entity))
-        _ (transact-all! ctx (state/manual-tick state ctx))
+  (let [state-obj (:state-obj (:entity/state @player-entity))
+        _ (transact-all! ctx (state/manual-tick state-obj @player-entity ctx))
         paused? (reset! game-paused? (or @thrown-error
-                                         (and pausing? (state/pause-game? state))))
+                                         (and pausing? (state/pause-game? state-obj))))
         ctx (assoc-delta-time ctx)]
     ; this do always so can get debug info even when game not running
     (update-mouseover-entity! ctx)

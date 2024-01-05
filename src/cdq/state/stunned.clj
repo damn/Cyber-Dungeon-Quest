@@ -3,26 +3,26 @@
             [cdq.context :refer [stopped? ->counter]]
             [cdq.state :as state]))
 
-(defrecord Stunned [entity counter]
+(defrecord Stunned [counter]
   state/PlayerState
   (player-enter [_]
     [[:tx/cursor :cursors/denied]])
 
   (pause-game? [_] false)
-  (manual-tick [_ context])
+  (manual-tick [_ _entity* context])
 
   state/State
-  (enter [_ _ctx])
-  (exit  [_ _ctx])
-  (tick [_ context]
-    (when (stopped? context counter)
-      [[:tx/event entity :effect-wears-off]]))
+  (enter [_ _entity* _ctx])
+  (exit  [_ _entity* _ctx])
+  (tick [_ entity* ctx]
+    (when (stopped? ctx counter)
+      [[:tx/event entity* :effect-wears-off]]))
 
-  (render-below [_ c {:keys [entity/position]}]
-    (draw-circle c position 0.5 [1 1 1 0.6]))
+  (render-below [_ {:keys [entity/position]} ctx]
+    (draw-circle ctx position 0.5 [1 1 1 0.6]))
 
-  (render-above [_ c entity*])
-  (render-info  [_ c entity*]))
+  (render-above [_ entity* ctx])
+  (render-info  [_ entity* ctx]))
 
-(defn ->CreateWithCounter [context entity duration]
-  (->Stunned entity (->counter context duration)))
+(defn ->CreateWithCounter [ctx _entity* duration]
+  (->Stunned (->counter ctx duration)))

@@ -2,24 +2,24 @@
   (:require [gdl.app :refer [change-screen!]]
             [cdq.state :as state]))
 
-(defrecord PlayerFoundPrincess [entity]
+(defrecord PlayerFoundPrincess []
   state/PlayerState
   (player-enter [_]
     [[:tx/cursor :cursors/black-x]])
 
   (pause-game? [_] true)
-  (manual-tick [_ context])
+  (manual-tick [_ entity* context])
 
   state/State
-  (enter [_ _ctx]
+  (enter [_ _entity* _ctx]
     [[:tx/sound "sounds/bfxr_playerdeath.wav"]
      [:tx/player-modal {:title "YOU WON!"
                         :text "\nYou found the princess!"
                         :button-text ":)"
                         :on-click (fn [_ctx]
                                     (change-screen! :screens/main-menu))}]])
-  (exit [_ _ctx])
-  (tick [_ _ctx])
-  (render-below [_ c entity*])
-  (render-above [_ c entity*])
-  (render-info  [_ c entity*]))
+  (exit [_ entity* _ctx])
+  (tick [_ entity* _ctx])
+  (render-below [_ entity* c])
+  (render-above [_ entity* c])
+  (render-info  [_ entity* c]))

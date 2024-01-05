@@ -1,12 +1,12 @@
 (ns cdq.state.npc
   (:require [reduce-fsm :as fsm]
             (cdq.state [active-skill :as active-skill]
-                       [npc-dead :as npc-dead]
-                       [npc-idle :as npc-idle]
-                       [npc-sleeping :as npc-sleeping]
+                       [npc-dead :as dead]
+                       [npc-idle :as idle]
+                       [npc-sleeping :as sleeping]
                        [stunned :as stunned])))
 
-(fsm/defsm-inc ^:private npc-fsm
+(fsm/defsm-inc ^:private fsm
   [[:sleeping
     :kill -> :dead
     :stun -> :stunned
@@ -24,14 +24,14 @@
     :effect-wears-off -> :idle]
    [:dead]])
 
-(def ^:private npc-state-constructors
-  {:sleeping     (fn [_ctx e] (npc-sleeping/->NpcSleeping e))
-   :idle         (fn [_ctx e] (npc-idle/->NpcIdle e))
+(def ^:private state-obj-constructors
+  {:sleeping     (constantly (sleeping/->NpcSleeping))
+   :idle         (constantly (idle/->NpcIdle))
    :active-skill active-skill/->CreateWithCounter
    :stunned      stunned/->CreateWithCounter
-   :dead         (fn [_ctx e] (npc-dead/->NpcDead e))})
+   :dead         (constantly (dead/->NpcDead))})
 
 (defn ->state [initial-state]
   {:initial-state initial-state
-   :fsm npc-fsm
-   :state-obj-constructors npc-state-constructors})
+   :fsm fsm
+   :state-obj-constructors state-obj-constructors})

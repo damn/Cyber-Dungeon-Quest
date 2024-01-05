@@ -9,31 +9,30 @@
 ; TODO pass to creature data, also @ shout
 (def ^:private aggro-range 6)
 
-(defrecord NpcSleeping [entity]
+(defrecord NpcSleeping []
   state/State
-  (enter [_ _ctx])
+  (enter [_ entity* _ctx])
 
-  (exit [_ ctx]
+  (exit [_ entity* ctx]
     ; TODO make state = alerted, and shout at the end of that !
     ; then nice alert '!' and different entities different alert time
-    [(entity/add-text-effect @entity ctx "!")
-     #:entity {:position (:entity/position @entity)
-               :faction  (:entity/faction  @entity)
+    [(entity/add-text-effect entity* ctx "!")
+     #:entity {:position (:entity/position entity*)
+               :faction  (:entity/faction  entity*)
                :shout (->counter ctx 0.2)}])
 
-  (tick [_ context]
+  (tick [_ entity* context]
     (let [cell (get (world-grid context)
-                    (utils.core/->tile (:entity/position @entity)))]
-      (when-let [distance (cell/nearest-entity-distance @cell
-                                                        (entity/enemy-faction @entity))]
+                    (utils.core/->tile (:entity/position entity*)))]
+      (when-let [distance (cell/nearest-entity-distance @cell (entity/enemy-faction entity*))]
         (when (<= distance (* aggro-range 10)) ; TODO do @ cell/nearest-enemy-distance
-          [[:tx/event entity :alert]]))))
+          [[:tx/event entity* :alert]]))))
 
-  (render-below [_ c entity*])
-  (render-above [_ c {[x y] :entity/position :keys [entity/body]}]
+  (render-below [_ entity* c])
+  (render-above [_ {[x y] :entity/position :keys [entity/body]} c]
     (draw-text c
                {:text "zzz"
                 :x x
                 :y (+ y (:half-height body))
                 :up? true}))
-  (render-info [_ c entity*]))
+  (render-info [_ entity* c]))

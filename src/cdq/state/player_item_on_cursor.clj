@@ -23,8 +23,8 @@
                   (min maxrange
                        (v/distance player target)))))
 
-(defn- item-place-position [ctx entity]
-  (placement-point (:entity/position @entity)
+(defn- item-place-position [ctx entity*]
+  (placement-point (:entity/position entity*)
                    (world-mouse-position ctx)
                    ; so you cannot put it out of your own reach
                    (- cdq.state.player-idle/click-distance-tiles 0.1)))
@@ -32,36 +32,36 @@
 (defn- world-item? [ctx]
   (not (mouse-on-stage-actor? ctx)))
 
-(defrecord PlayerItemOnCursor [entity item]
+(defrecord PlayerItemOnCursor [item]
   state/PlayerState
   (player-enter [_])
   (pause-game? [_] true)
 
-  (manual-tick [_ context]
+  (manual-tick [_ entity* context]
     (when (and (button-just-pressed? context buttons/left)
                (world-item? context))
-      [[:tx/event entity :drop-item]]))
+      [[:tx/event entity* :drop-item]]))
 
   state/State
-  (enter [_ _ctx]
+  (enter [_ entity* _ctx]
     [[:tx/cursor :cursors/hand-grab]
-     (assoc @entity :entity/item-on-cursor item)])
+     (assoc entity* :entity/item-on-cursor item)])
 
-  (exit [_ ctx]
+  (exit [_ entity* ctx]
     ; at context.ui.inventory-window/clicked-cell when we put it into a inventory-cell
     ; we do not want to drop it on the ground too additonally,
     ; so we dissoc it there manually. Otherwise it creates another item
     ; on the ground
-    (when (:entity/item-on-cursor @entity)
-      (conj (put-item-on-ground-txs ctx (item-place-position ctx entity))
-            (dissoc @entity :entity/item-on-cursor))))
+    (when (:entity/item-on-cursor entity*)
+      (conj (put-item-on-ground-txs ctx (item-place-position ctx entity*))
+            (dissoc entity* :entity/item-on-cursor))))
 
-  (tick [_ _ctx])
-  (render-below [_ ctx entity*]
+  (tick [_ entity* _ctx])
+  (render-below [_ entity* ctx]
     (when (world-item? ctx)
-      (draw-centered-image ctx (:property/image item) (item-place-position ctx entity))))
-  (render-above [_ ctx entity*])
-  (render-info  [_ ctc entity*]))
+      (draw-centered-image ctx (:property/image item) (item-place-position ctx entity*))))
+  (render-above [_ entity* ctx])
+  (render-info  [_ entity* ctc]))
 
 (defn draw-item-on-cursor [{:keys [context/player-entity] :as context}]
   (when (and (= :item-on-cursor (entity/state @player-entity))

@@ -6,14 +6,14 @@
             [cdq.state.active-skill :refer [deref-source-target-entities]]
             [cdq.world.cell :as cell]))
 
-(defn- effect-context [context entity]
+(defn- effect-context [context entity*]
   (let [cell (get (world-grid context)
-                  (utils.core/->tile (:entity/position @entity)))
-        target (cell/nearest-entity @cell (entity/enemy-faction @entity))]
-    {:effect/source-entity entity
+                  (utils.core/->tile (:entity/position entity*)))
+        target (cell/nearest-entity @cell (entity/enemy-faction entity*))]
+    {:effect/source-entity (entity/reference entity*)
      :effect/target-entity target
      :effect/direction (when target
-                         (v/direction (:entity/position @entity)
+                         (v/direction (:entity/position entity*)
                                       (:entity/position @target)))}))
 
 (defn- npc-choose-skill [effect-context entity*]
@@ -28,18 +28,18 @@
        first))
 
 ; TODO == NpcMoving !!
-(defrecord NpcIdle [entity]
+(defrecord NpcIdle []
   state/State
-  (enter [_ _ctx])
-  (exit  [_ _ctx]
-    [(assoc @entity :entity/movement-vector nil)])
-  (tick [_ context]
-    [(assoc @entity :entity/movement-vector (potential-field-follow-to-enemy context entity))
-     (let [effect-context (effect-context context entity)]
+  (enter [_ entity* _ctx])
+  (exit  [_ entity* _ctx]
+    [(assoc entity* :entity/movement-vector nil)])
+  (tick [_ entity* context]
+    [(assoc entity* :entity/movement-vector (potential-field-follow-to-enemy context (entity/reference entity*)))
+     (let [effect-context (effect-context context entity*)]
        (when-let [skill (npc-choose-skill (merge context (deref-source-target-entities effect-context))
-                                          @entity)]
-         [:tx/event entity :start-action [skill effect-context]]))])
+                                          entity*)]
+         [:tx/event entity* :start-action [skill effect-context]]))])
 
-  (render-below [_ c entity*])
-  (render-above [_ c entity*])
-  (render-info  [_ c entity*]))
+  (render-below [_ entity* c])
+  (render-above [_ entity* c])
+  (render-info  [_ entity* c]))

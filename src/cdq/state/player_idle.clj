@@ -6,6 +6,7 @@
             [gdl.scene2d.ui.window :refer [window-title-bar?]]
             [gdl.math.vector :as v]
             [cdq.context :refer [get-property inventory-window try-pickup-item! skill-usable-state selected-skill]]
+            [cdq.entity :as entity]
             [cdq.state :as state]
             [cdq.state.wasd-movement :refer [WASD-movement-vector]]
             [cdq.state.active-skill :refer [deref-source-target-entities]]))
@@ -25,7 +26,7 @@
      (visible? (inventory-window context))
      [(:tx/sound "sounds/bfxr_takeit.wav")
       (assoc clicked-entity* :entity/destroyed? true)
-      [:tx/event player-entity :pickup-item item]]
+      [:tx/event @player-entity :pickup-item item]]
 
      (try-pickup-item! context player-entity item)
      [[:tx/sound "sounds/bfxr_pickup.wav"]
@@ -41,7 +42,7 @@
 
 (defmethod on-clicked :clickable/princess
   [ctx _clicked-entity*]
-  [[:tx/event (:context/player-entity ctx) :found-princess]])
+  [[:tx/event @(:context/player-entity ctx) :found-princess]])
 
 (defn- clickable->cursor [mouseover-entity* too-far-away?]
   (case (:type (:entity/clickable mouseover-entity*))
@@ -62,14 +63,14 @@
     [(clickable->cursor mouseover-entity* false) (fn [] (on-clicked ctx mouseover-entity*))]
     [(clickable->cursor mouseover-entity* true)  (fn [] (denied "Too far away"))]))
 
-(defn- effect-context [{:keys [context/mouseover-entity] :as context} entity]
+(defn- effect-context [{:keys [context/mouseover-entity] :as context} entity*]
   (let [target @mouseover-entity
         target-position (or (and target (:entity/position @target))
                             (world-mouse-position context))]
-    {:effect/source-entity entity
+    {:effect/source-entity (entity/reference entity*)
      :effect/target-entity target
      :effect/target-position target-position
-     :effect/direction (v/direction (:entity/position @entity) target-position)}))
+     :effect/direction (v/direction (:entity/position entity*) target-position)}))
 
 ; TODO move to inventory-window extend Context
 (defn- inventory-cell-with-item? [{:keys [context/player-entity]} actor]
@@ -86,7 +87,7 @@
      (button? actor) :cursors/over-button
      :else :cursors/default)))
 
-(defn- ->interaction-state [{:keys [context/mouseover-entity] :as context} entity]
+(defn- ->interaction-state [{:keys [context/mouseover-entity] :as context} entity*]
   (cond
    (mouse-on-stage-actor? context)
    [(mouseover-actor->cursor context)
@@ -95,13 +96,13 @@
 
    (and @mouseover-entity
         (:entity/clickable @@mouseover-entity))
-   (->clickable-mouseover-entity-interaction context @entity @@mouseover-entity)
+   (->clickable-mouseover-entity-interaction context entity* @@mouseover-entity)
 
    :else
    (if-let [skill-id (selected-skill context)]
-     (let [effect-context (effect-context context entity)
+     (let [effect-context (effect-context context entity*)
            skill (get-property context skill-id)
-           state (skill-usable-state (merge context (deref-source-target-entities effect-context)) @entity skill)]
+           state (skill-usable-state (merge context (deref-source-target-entities effect-context)) entity* skill)]
        (if (= state :usable)
          (do
           ; TODO cursor AS OF SKILL effect (SWORD !) / show already what the effect would do ? e.g. if it would kill highlight
@@ -109,7 +110,7 @@
           ; => e.g. meditation no TARGET .. etc.
           [:cursors/use-skill
            (fn []
-             [[:tx/event entity :start-action [skill effect-context]]])])
+             [[:tx/event entity* :start-action [skill effect-context]]])])
          (do
           ; TODO cursor as of usable state
           ; cooldown -> sanduhr kleine
@@ -124,23 +125,23 @@
      [:cursors/no-skill-selected
       (fn [] (denied "No selected skill"))])))
 
-(defrecord PlayerIdle [entity]
+(defrecord PlayerIdle []
   state/PlayerState
   (player-enter [_])
   (pause-game? [_] true)
 
-  (manual-tick [_ context]
+  (manual-tick [_ entity* context]
     (if-let [movement-vector (WASD-movement-vector context)]
-      [[:tx/event entity :movement-input movement-vector]]
-      (let [[cursor on-click] (->interaction-state context entity)]
+      [[:tx/event entity* :movement-input movement-vector]]
+      (let [[cursor on-click] (->interaction-state context entity*)]
         (cons [:tx/cursor cursor]
               (when (button-just-pressed? context buttons/left)
                 (on-click))))))
 
   state/State
-  (enter [_ _ctx])
-  (exit  [_ context])
-  (tick [_ _context])
-  (render-below [_ c entity*])
-  (render-above [_ c entity*])
-  (render-info  [_ c entity*]))
+  (enter [_ entity* _ctx])
+  (exit  [_ entity* context])
+  (tick [_ entity* _context])
+  (render-below [_ entity* c])
+  (render-above [_ entity* c])
+  (render-info  [_ entity* c]))

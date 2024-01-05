@@ -1,15 +1,14 @@
 (ns cdq.state)
 
 (defprotocol State
-  (enter [_ ctx])
-  (exit  [_ ctx])
-  (tick  [_ ctx])
-  (render-below [_ ctx entity*])
-  (render-above [_ ctx entity*])
-  (render-info  [_ ctx entity*]))
+  (enter [_ entity* ctx])
+  (exit  [_ entity* ctx])
+  (tick  [_ entity* ctx])
+  (render-below [_ entity* ctx])
+  (render-above [_ entity* ctx])
+  (render-info  [_ entity* ctx]))
 
 (defprotocol PlayerState
   (player-enter [_])
   (pause-game? [_])
-  (manual-tick [_ ctx]))
-
+  (manual-tick [_ entity* ctx]))

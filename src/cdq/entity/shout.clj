@@ -12,12 +12,13 @@
   (->> {:position (:entity/position entity*)
         :radius radius}
        (circle->entities (world-grid context))
-       (filter #(and (= (:entity/faction @%) (:entity/faction entity*))
-                     (line-of-sight? context entity* @%)))))
+       (map deref)
+       (filter #(and (= (:entity/faction %) (:entity/faction entity*))
+                     (line-of-sight? context entity* %)))))
 
 (defcomponent :entity/shout counter
   (entity/tick [_ entity* context]
     (when (stopped? context counter)
       (cons (assoc entity* :entity/destroyed? true)
-            (for [entity (get-friendly-entities-in-line-of-sight context entity* shout-range)]
-              [:tx/event entity :alert])))))
+            (for [entity* (get-friendly-entities-in-line-of-sight context entity* shout-range)]
+              [:tx/event entity* :alert])))))

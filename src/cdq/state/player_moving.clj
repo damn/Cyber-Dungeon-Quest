@@ -2,23 +2,23 @@
   (:require [cdq.state :as state]
             [cdq.state.wasd-movement :refer [WASD-movement-vector]]))
 
-(defrecord PlayerMoving [entity movement-vector]
+(defrecord PlayerMoving [movement-vector]
   state/PlayerState
   (player-enter [_]
     [[:tx/cursor :cursors/walking]])
 
   (pause-game? [_] false)
-  (manual-tick [_ context])
+  (manual-tick [_ entity* context])
 
   state/State
-  (enter [_ _ctx]
-    [(assoc @entity :entity/movement-vector movement-vector)])
-  (exit [_ _ctx]
-    [(dissoc @entity :entity/movement-vector movement-vector)])
-  (tick [_ context]
+  (enter [_ entity* _ctx]
+    [(assoc entity* :entity/movement-vector movement-vector)])
+  (exit [_ entity* _ctx]
+    [(dissoc entity* :entity/movement-vector movement-vector)])
+  (tick [_ entity* context]
     (if-let [movement-vector (WASD-movement-vector context)]
-      [(assoc @entity :entity/movement-vector movement-vector)]
-      [[:tx/event entity :no-movement-input]]))
-  (render-below [_ c entity*])
-  (render-above [_ c entity*])
-  (render-info  [_ c entity*]))
+      [(assoc entity* :entity/movement-vector movement-vector)]
+      [[:tx/event entity* :no-movement-input]]))
+  (render-below [_ entity* c])
+  (render-above [_ entity* c])
+  (render-info  [_ entity* c]))

@@ -26,20 +26,20 @@
                  [1 1 1 0.5])
     (draw-image c icon [(- x radius) y])))
 
-(defrecord ActiveSkill [entity skill effect-context counter]
+(defrecord ActiveSkill [skill effect-context counter]
   state/PlayerState
   (player-enter [_]
     [[:tx/cursor :cursors/sandclock]])
 
   (pause-game? [_] false)
-  (manual-tick [_ context])
+  (manual-tick [_ entity* context])
 
   state/State
-  (enter [_ ctx]
+  (enter [_ entity* ctx]
     ; TODO all only called here => start-skill-bla
     ; make all this context context.entity.skill extension ?
     [[:tx/sound (str "sounds/" (if (:spell? skill) "shoot.wav" "slash.wav"))]
-     (-> @entity
+     (-> entity*
          (entity/set-skill-to-cooldown ctx skill)
          ; should assert enough mana
          ; but should also assert usable-state = :usable
@@ -47,22 +47,22 @@
          ; i know i do it before only @ player & creature idle so ok
          (entity/pay-skill-mana-cost skill))])
 
-  (exit [_ _ctx])
+  (exit [_ entity* _ctx])
 
-  (tick [_ context]
+  (tick [_ entity* context]
     (let [effect (:skill/effect skill)
           effect-context (merge context (deref-source-target-entities effect-context))]
       (cond
        (not (valid-params? effect-context effect))
-       [[:tx/event entity :action-done]]
+       [[:tx/event entity* :action-done]]
 
        (stopped? context counter)
        [[:tx/effect effect-context effect]
-        [:tx/event entity :action-done]])))
+        [:tx/event entity* :action-done]])))
 
-  (render-below [_ _ctx entity*])
-  (render-above [_ _ctx entity*])
-  (render-info [_ ctx {:keys [entity/position] :as entity*}]
+  (render-below [_ entity* _ctx])
+  (render-above [_ entity* _ctx])
+  (render-info [_ {:keys [entity/position] :as entity*} ctx]
     (let [{:keys [property/image skill/effect]} skill]
       (draw-skill-icon ctx image entity* position (finished-ratio ctx counter))
       (effect-render-info (merge ctx (deref-source-target-entities effect-context)) effect))))
@@ -74,15 +74,14 @@
                                     1))]
     (max 0 modified-action-time)))
 
-(defn ->CreateWithCounter [context entity [skill effect-context]]
+(defn ->CreateWithCounter [context entity* [skill effect-context]]
   ; assert keys effect-context only with 'effect/'
   ; so we don't use an outdated 'context' in the State update
   ; when we call State protocol functions we call it with the current context
   (assert (every? #(= "effect" (namespace %)) (keys effect-context)))
-  (->ActiveSkill entity
-                 skill
+  (->ActiveSkill skill
                  effect-context
                  (->> skill
                       :skill/action-time
-                      (apply-action-speed-modifier @entity skill)
+                      (apply-action-speed-modifier entity* skill)
                       (->counter context))))

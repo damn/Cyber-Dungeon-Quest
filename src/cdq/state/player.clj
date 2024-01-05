@@ -1,14 +1,14 @@
 (ns cdq.state.player
   (:require [reduce-fsm :as fsm]
             (cdq.state [active-skill :as active-skill]
-                       [player-dead :as player-dead]
-                       [player-found-princess :as player-found-princess]
-                       [player-idle :as player-idle]
-                       [player-item-on-cursor :as player-item-on-cursor]
-                       [player-moving :as player-moving]
+                       [player-dead :as dead]
+                       [player-found-princess :as found-princess]
+                       [player-idle :as idle]
+                       [player-item-on-cursor :as item-on-cursor]
+                       [player-moving :as moving]
                        [stunned :as stunned])))
 
-(fsm/defsm-inc ^:private player-fsm
+(fsm/defsm-inc ^:private fsm
   [[:idle
     :kill -> :dead
     :stun -> :stunned
@@ -35,16 +35,16 @@
    [:princess-saved]
    [:dead]])
 
-(def ^:private player-state-constructors
-  {:item-on-cursor (fn [_ctx e item] (player-item-on-cursor/->PlayerItemOnCursor e item))
-   :idle           (fn [_ctx e] (player-idle/->PlayerIdle e))
-   :moving         (fn [_ctx e v] (player-moving/->PlayerMoving e v))
+(def ^:private state-obj-constructors
+  {:item-on-cursor (fn [_ctx _entity* item] (item-on-cursor/->PlayerItemOnCursor item))
+   :idle           (constantly (idle/->PlayerIdle))
+   :moving         (fn [_ctx _entity* v] (moving/->PlayerMoving v))
    :active-skill   active-skill/->CreateWithCounter
    :stunned        stunned/->CreateWithCounter
-   :dead           (fn [_ctx e] (player-dead/->PlayerDead e))
-   :princess-saved (fn [_ctx e] (player-found-princess/->PlayerFoundPrincess e))})
+   :dead           (constantly (dead/->PlayerDead))
+   :princess-saved (constantly (found-princess/->PlayerFoundPrincess))})
 
 (defn ->state [initial-state]
   {:initial-state initial-state
-   :fsm player-fsm
-   :state-obj-constructors player-state-constructors})
+   :fsm fsm
+   :state-obj-constructors state-obj-constructors})
