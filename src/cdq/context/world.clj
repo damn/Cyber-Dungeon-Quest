@@ -135,7 +135,8 @@
     (world-grid/entity-position-changed! (world-grid ctx) entity)))
 
 (defmethod cdq.context/transact! :tx/position-changed [[_ entity*] ctx]
-  (position-changed! ctx (entity/reference entity*)))
+  (position-changed! ctx (entity/reference entity*))
+  nil)
 
 (defn- first-level [context]
   (let [{:keys [tiled-map

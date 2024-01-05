@@ -1,7 +1,7 @@
 (ns cdq.context.effect
   (:require [clojure.string :as str]
             gdl.context
-            [cdq.context :refer [transact-all!]]
+            cdq.context
             [cdq.effect :as effect]))
 
 (extend-type gdl.context.Context
@@ -23,4 +23,4 @@
 (defmethod cdq.context/transact! :tx/effect [[_ effect-ctx effect] ctx]
   (let [ctx (merge ctx effect-ctx)]
     (assert (cdq.context/valid-params? ctx effect)) ; extra line of sight checks TODO performance issue?
-    (transact-all! ctx (mapcat #(effect/transactions ctx %) effect))))
+    (mapcat #(effect/transactions ctx %) effect)))

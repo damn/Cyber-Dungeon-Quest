@@ -58,7 +58,8 @@
   (cond
    (instance? cdq.entity.Entity tx) (reset! (entity/reference tx) tx)
    (map? tx) (create-entity! ctx tx)
-   (vector? tx) (transact! tx ctx)
+   (vector? tx) (doseq [tx (transact! tx ctx)]
+                  (handle-transaction! tx ctx))
    :else (throw (Error. (str "Unknown transaction: " (pr-str tx))))))
 
 (extend-type gdl.context.Context

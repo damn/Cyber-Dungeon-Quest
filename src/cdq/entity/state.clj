@@ -56,17 +56,11 @@
                                                                    :fsm new-fsm
                                                                    :state-obj new-state-obj))]))))))))
 
-; TODO can make coll of transactions
-; if each @entity references the original original
-; and does the stuff only when called
-; so only the last one ?
-; => nicht machen, sondern beschreiben was machen
-; => :db/add
-
 (extend-type cdq.entity.Entity
   cdq.entity/State
   (state [entity*]
     (-> entity* :entity/state :fsm :state)))
 
 (defmethod cdq.context/transact! :tx/event [[_ & params] ctx]
-  (apply cdq.context/send-event! ctx params))
+  (apply cdq.context/send-event! ctx params)
+  nil)

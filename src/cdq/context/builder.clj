@@ -1,7 +1,7 @@
 (ns cdq.context.builder
   (:require [x.x :refer [defcomponent]]
             [gdl.context :refer [play-sound!]]
-            [cdq.context :refer [create-entity! get-property set-cursor! show-msg-to-player!]]
+            [cdq.context :refer [get-property set-cursor! show-msg-to-player!]]
             [cdq.entity :as entity]
             [cdq.entity.body :refer (assoc-left-bottom)]))
 
@@ -64,25 +64,22 @@
               :delete-after-duration duration}))
 
 (defmethod cdq.context/transact! :tx/sound [[_ file] ctx]
-  (play-sound! ctx file))
-
-(defn- audiovisual [context position id]
-  (let [{:keys [property/sound
-                property/animation]} (get-property context id)]
-    (play-sound! context sound)
-    (create-entity! context
-                    #:entity {:position position
-                              :animation animation
-                              :z-order :z-order/effect
-                              :delete-after-animation-stopped? true})))
+  (play-sound! ctx file)
+  nil)
 
 (defmethod cdq.context/transact! :tx/audiovisual [[_ position id] ctx]
-  (audiovisual ctx position id))
-
-; TODO move to respective ns's and remove cdq.context fns
+  (let [{:keys [property/sound
+                property/animation]} (get-property ctx id)]
+    [[:tx/sound sound]
+     #:entity {:position position
+               :animation animation
+               :z-order :z-order/effect
+               :delete-after-animation-stopped? true}]))
 
 (defmethod cdq.context/transact! :tx/cursor [[_ cursor-key] ctx]
-  (set-cursor! ctx cursor-key))
+  (set-cursor! ctx cursor-key)
+  nil)
 
 (defmethod cdq.context/transact! :tx/msg-to-player [[_ message] ctx]
-  (show-msg-to-player! ctx message))
+  (show-msg-to-player! ctx message)
+  nil)
