@@ -44,10 +44,18 @@
   (swap! entity update-in (drop-last ks) dissoc (last ks))
   nil)
 
+(defmethod cdq.context/transact! :tx/destroy [[_ entity] _ctx]
+  (swap! entity assoc :entity/destroyed? true)
+  nil)
+
 (def ^:private log-txs? false)
 
 (defn- debug-print-tx [tx]
-  (pr-str (mapv #(if (instance? cdq.entity.Entity %) (:entity/uid %) %)
+  (pr-str (mapv #(cond
+                  (instance? clojure.lang.Atom %) (:entity/uid @%)
+                  (instance? gdl.backends.libgdx.context.image_drawer_creator.Image %) "<Image>"
+                  (instance? gdl.graphics.animation.ImmutableAnimation %) "<Animation>"
+                  :else %)
                 tx)))
 
 (declare create-entity!)
@@ -56,8 +64,8 @@
   (when log-txs?
     (when-not (and (vector? tx)
                    (= :tx/cursor (first tx)))
-      (println "tx: " (cond (instance? cdq.entity.Entity tx) "reset!"
-                            (map? tx) "create-entity!"
+      (println "tx: " (cond (instance? cdq.entity.Entity tx) "(reset! (:entity/id tx) tx)"
+                            (map? tx) "(create-entity! ctx tx)"
                             (vector? tx) (debug-print-tx tx)))))
   (cond
    (instance? cdq.entity.Entity tx) (reset! (:entity/id tx) tx)
@@ -82,7 +90,7 @@
           :when v]
     (when-let [txs (system [k v] entity* ctx)]
       (when log-txs?
-        (println "txs:" (:entity/uid entity*) "-" k))
+        (println "~~txs:" (:entity/uid entity*) "-" k))
       (try (transact-all! ctx txs)
            (catch Throwable t
              (println "Error with " k " and txs: \n" (pr-str txs))

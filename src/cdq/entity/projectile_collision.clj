@@ -23,17 +23,15 @@
                                        (geom/collides? (:entity/body entity*)
                                                        (:entity/body @%)))
                                  (cells->entities cells*))
-          entity* (if hit-entity
-                    (update-in entity* [k :already-hit-bodies] conj hit-entity)
-                    entity*)
           destroy? (or (and hit-entity (not piercing?))
                        (some #(cell/blocked? % entity*) cells*))
-          entity* (if destroy?
-                    (assoc entity* :entity/destroyed? true)
-                    entity*)]
-      [entity*
+          id (:entity/id entity*)]
+      [(when hit-entity
+         [:tx/assoc-in id [k :already-hit-bodies] (conj already-hit-bodies hit-entity)])
+       (when destroy?
+         [:tx/destroy id])
        (when hit-entity
          [:tx/effect
-          {:effect/source-entity (:entity/id entity*)
+          {:effect/source-entity id
            :effect/target-entity hit-entity}
           hit-effect])])))

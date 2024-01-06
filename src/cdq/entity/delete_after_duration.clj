@@ -6,6 +6,6 @@
 (defcomponent :entity/delete-after-duration counter
   (entity/create [[k duration] entity* ctx]
     [(assoc entity* k (->counter ctx duration))])
-  (entity/tick [_ entity* ctx]
+  (entity/tick [_ {:keys [entity/id]} ctx]
     (when (stopped? ctx counter)
-      [(assoc entity* :entity/destroyed? true)])))
+      [[:tx/destroy id]])))

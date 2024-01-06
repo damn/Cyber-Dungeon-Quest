@@ -3,9 +3,9 @@
 
 (defrecord NpcDead []
   state/State
-  (enter [_ entity* _ctx]
-    [(assoc entity* :entity/destroyed? true)
-     [:tx/audiovisual (:entity/position entity*) :creature/die-effect]])
+  (enter [_ {:keys [entity/id entity/position]} _ctx]
+    [[:tx/destroy id]
+     [:tx/audiovisual position :creature/die-effect]])
   (exit [_ entity* _ctx])
   (tick [_ entity* _ctx])
   (render-below [_ entity* ctx])

@@ -9,7 +9,7 @@
   (get-entity [_ id])
   (tick-entity! [_ entity] "Calls tick on all components of the entity.")
   (render-entities* [_ entities*] "Draws entities* in the correct z-order and in the order of render-systems for each z-order.")
-  (remove-destroyed-entities! [_] "Calls destroy on all entities which are marked as ':entity/destroyed?'"))
+  (remove-destroyed-entities! [_] "Calls destroy on all entities which are marked with ':tx/destroy'"))
 
 (defprotocol MouseOverEntity
   (update-mouseover-entity! [_]))

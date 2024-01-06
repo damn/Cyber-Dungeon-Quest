@@ -20,16 +20,17 @@
 
 (defmethod on-clicked :clickable/item
   [{:keys [context/player-entity] :as context} clicked-entity*]
-  (let [item (:entity/item clicked-entity*)]
+  (let [item (:entity/item clicked-entity*)
+        clicked-entity (:entity/id clicked-entity*)]
     (cond
      (visible? (inventory-window context))
-     [(:tx/sound "sounds/bfxr_takeit.wav")
-      (assoc clicked-entity* :entity/destroyed? true)
+     [[:tx/sound "sounds/bfxr_takeit.wav"]
+      [:tx/destroy clicked-entity]
       [:tx/event player-entity :pickup-item item]]
 
      (entity/can-pickup-item? @player-entity item)
      [[:tx/sound "sounds/bfxr_pickup.wav"]
-      (assoc clicked-entity* :entity/destroyed? true)
+      [:tx/destroy clicked-entity]
       [:tx/pickup-item player-entity item]]
 
      :else

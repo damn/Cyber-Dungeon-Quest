@@ -1,7 +1,7 @@
 (ns cdq.entity.shout
   (:require [x.x :refer [defcomponent]]
-            [cdq.entity :as entity]
             [cdq.context :refer [world-grid line-of-sight? stopped?]]
+            [cdq.entity :as entity]
             [cdq.world.grid :refer [circle->entities]]))
 
 (def ^:private shout-range 6)
@@ -17,8 +17,8 @@
                      (line-of-sight? context entity* %)))))
 
 (defcomponent :entity/shout counter
-  (entity/tick [_ entity* context]
+  (entity/tick [_ {:keys [entity/id] :as entity*} context]
     (when (stopped? context counter)
-      (cons (assoc entity* :entity/destroyed? true)
-            (for [entity* (get-friendly-entities-in-line-of-sight context entity* shout-range)]
-              [:tx/event (:entity/id entity*) :alert])))))
+      (cons [:tx/destroy id]
+            (for [{:keys [entity/id]} (get-friendly-entities-in-line-of-sight context entity* shout-range)]
+              [:tx/event id :alert])))))
