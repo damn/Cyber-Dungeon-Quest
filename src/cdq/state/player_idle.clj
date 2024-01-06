@@ -10,7 +10,6 @@
             [gdl.math.vector :as v]
             [cdq.context :refer [get-property inventory-window try-pickup-item! skill-usable-state selected-skill
                                  ; fixme
-                                 add-skill!
                                  send-event!
                                  remove-item!
                                  ]]
@@ -154,12 +153,11 @@
          (send-event! ctx entity* :pickup-item item)
          (remove-item! ctx (entity/reference entity*) cell)))))
 
-  ; TODO return txs
-  (clicked-skillmenu-skill [_ skill entity* ctx]
-    (when (and (pos? (:entity/free-skill-points entity*))
+  (clicked-skillmenu-skill [_ skill {:keys [entity/free-skill-points] :as entity*} ctx]
+    (when (and (pos? free-skill-points)
                (not (entity/has-skill? entity* skill)))
-      (swap! (entity/reference entity*) update :entity/free-skill-points dec)
-      (add-skill! ctx (entity/reference entity*) skill)))
+      [[:tx/assoc entity* :entity/free-skill-points (dec free-skill-points)]
+       [:tx/add-skill entity* skill]]))
 
   state/State
   (enter [_ entity* _ctx])

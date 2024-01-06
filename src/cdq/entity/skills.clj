@@ -27,6 +27,10 @@
       (update entity* :entity/mana apply-val #(- % (:skill/cost skill)))
       entity*)))
 
+(defmethod cdq.context/transact! :tx/add-skill [[_ entity* skill] ctx]
+  (cdq.context/add-skill! ctx (entity/reference entity*) skill)
+  nil)
+
 (extend-type gdl.context.Context
   cdq.context/Skills
   (add-skill! [ctx entity {:keys [property/id] :as skill}]

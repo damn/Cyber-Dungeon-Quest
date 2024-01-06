@@ -28,9 +28,7 @@
                                                        (:property/image (get-property context id)) ; TODO here anyway taken
                                                        ; => should probably build this window @ game start
                                                        (fn [ctx]
-                                                         (clicked-skill ctx id)
-                                                         ; TODO
-                                                         #_(transact-all! (clicked-skill ctx id) ctx)))]]
+                                                         (transact-all! ctx (clicked-skill ctx id))))]]
                       (do
                        (add-tooltip! button #(tooltip-text % (get-property % id)))
                        button))]
