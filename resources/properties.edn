@@ -2210,7 +2210,8 @@
     :items/ring-gold
     :items/sword
     :items/blood-chest
-    :items/cloak-blood},
+    :items/cloak-blood
+    :items/greatspear},
   :creature/faction :faction/evil}
  {:property/image
   {:file "creatures/images.png", :sub-image-bounds [96 576 48 48]},

@@ -1,6 +1,5 @@
 (ns cdq.context)
 
-; TODO cdq.transaction
 (defmulti transact! (fn [[k] _ctx] k))
 
 (defprotocol TransactionHandler

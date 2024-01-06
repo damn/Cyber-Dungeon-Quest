@@ -49,22 +49,6 @@
 (defn applies-modifiers? [[slot _]]
   (not= :inventory.slot/bag slot))
 
-(defn- inv-set-item [inventory cell item]
-  {:pre [(nil? (get-in inventory cell))
-         (valid-slot? cell item)
-         (not (two-handed-weapon-and-shield-together? inventory cell item))]}
-  (assoc-in inventory cell item))
-
-(defn- inv-remove-item [inventory cell]
-  {:pre [(get-in inventory cell)]}
-  (assoc-in inventory cell nil))
-
-(defn- set-item [entity* cell item]
-  (update entity* :entity/inventory inv-set-item cell item))
-
-(defn- remove-item [entity* cell]
-  (update entity* :entity/inventory inv-remove-item cell))
-
 (defn stackable? [item-a item-b]
   (and (:count item-a)
        (:count item-b) ; TODO this is not required but can be asserted, all of one name should have count if others have count
@@ -83,7 +67,11 @@
       (remove-item! context entity cell))))
 
 (defn- set-item! [context entity cell item]
-  (swap! entity set-item cell item)
+  (let [inventory (:entity/inventory @entity)]
+    (assert (and (nil? (get-in inventory cell))
+                 (valid-slot? cell item)
+                 (not (two-handed-weapon-and-shield-together? inventory cell item)))))
+  (swap! entity assoc-in (cons :entity/inventory cell) item)
   (when (applies-modifiers? cell)
     (apply-modifier! context entity (:item/modifier item))
     (when (and (= (:item/slot item) :inventory.slot/weapon))
@@ -97,7 +85,8 @@
 
 (defn- remove-item! [context entity cell]
   (let [item (get-in (:entity/inventory @entity) cell)]
-    (swap! entity remove-item cell)
+    (assert item)
+    (swap! entity assoc-in (cons :entity/inventory cell) nil)
     (when (applies-modifiers? cell)
       (reverse-modifier! context entity (:item/modifier item))
       (when (= (:item/slot item) :inventory.slot/weapon)
