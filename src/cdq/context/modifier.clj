@@ -55,14 +55,14 @@
 ; e.g. curse your opponents => dark energy => -50% HP, +50% strength.
 ; * similar to effects - text ...
 
+(defmethod cdq.context/transact! :tx/apply-modifier [[_ entity modifier] ctx]
+  [(apply-modifier @entity modifier)])
+
+(defmethod cdq.context/transact! :tx/reverse-modifier [[_ entity modifier] ctx]
+  [(reverse-modifier @entity modifier)])
+
 (extend-type gdl.context.Context
   cdq.context/Modifier
-  (apply-modifier! [_ entity modifier]
-    (swap! entity apply-modifier modifier))
-
-  (reverse-modifier! [_ entity modifier]
-    (swap! entity reverse-modifier modifier))
-
   (modifier-text [_ modifier]
     (->> (for [component modifier]
            (text component))

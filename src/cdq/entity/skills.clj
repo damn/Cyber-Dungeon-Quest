@@ -27,24 +27,28 @@
       (update entity* :entity/mana apply-val #(- % (:skill/cost skill)))
       entity*)))
 
-(defmethod cdq.context/transact! :tx/add-skill [[_ entity* skill] ctx]
-  (cdq.context/add-skill! ctx (entity/reference entity*) skill)
+(defn- add-skill! [ctx entity {:keys [property/id] :as skill}]
+  (assert (not (entity/has-skill? @entity skill)))
+  (swap! entity update :entity/skills assoc id skill)
+  (when (:entity/player? @entity)
+    (actionbar-add-skill ctx skill)))
+
+(defn- remove-skill! [ctx entity {:keys [property/id] :as skill}]
+  (assert (entity/has-skill? @entity skill))
+  (swap! entity update :entity/skills dissoc id)
+  (when (:entity/player? @entity)
+    (actionbar-remove-skill ctx skill)))
+
+(defmethod cdq.context/transact! :tx/add-skill [[_ entity skill] ctx]
+  (add-skill! ctx entity skill)
+  nil)
+
+(defmethod cdq.context/transact! :tx/remove-skill [[_ entity skill] ctx]
+  (remove-skill! ctx entity skill)
   nil)
 
 (extend-type gdl.context.Context
   cdq.context/Skills
-  (add-skill! [ctx entity {:keys [property/id] :as skill}]
-    (assert (not (entity/has-skill? @entity skill)))
-    (swap! entity update :entity/skills assoc id skill)
-    (when (:entity/player? @entity)
-      (actionbar-add-skill ctx skill)))
-
-  (remove-skill! [ctx entity {:keys [property/id] :as skill}]
-    (assert (entity/has-skill? @entity skill))
-    (swap! entity update :entity/skills dissoc id)
-    (when (:entity/player? @entity)
-      (actionbar-remove-skill ctx skill)))
-
   (skill-usable-state [effect-context
                        {:keys [entity/mana]}
                        {:keys [skill/cost cooling-down? skill/effect]}]

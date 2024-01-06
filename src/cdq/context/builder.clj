@@ -27,7 +27,7 @@
                    :hp hp
                    :mana mana
                    :skills (zipmap skills (map #(get-property context %) skills)) ; TODO just set of skills use?
-                   :items items
+                   :inventory items
                    :flying? flying?
                    :faction faction
                    :z-order (if flying? :z-order/flying :z-order/ground)}

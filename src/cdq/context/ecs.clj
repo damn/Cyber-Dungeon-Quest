@@ -57,7 +57,7 @@
   (cond
    (instance? cdq.entity.Entity tx) (reset! (entity/reference tx) tx)
    (map? tx) (create-entity! ctx tx)
-   (vector? tx) (doseq [tx (transact! tx ctx)]
+   (vector? tx) (doseq [tx (transact! tx ctx) :when tx]
                   (handle-transaction! tx ctx))
    :else (throw (Error. (str "Unknown transaction: " (pr-str tx))))))
 

@@ -36,3 +36,6 @@
 
 (defprotocol TextEffect
   (add-text-effect [_ ctx text]))
+
+(defprotocol Inventory
+  (can-pickup-item? [_ item]))

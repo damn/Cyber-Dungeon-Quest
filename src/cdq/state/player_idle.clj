@@ -5,7 +5,7 @@
             [gdl.scene2d.ui.button :refer [button?]]
             [gdl.scene2d.ui.window :refer [window-title-bar?]]
             [gdl.math.vector :as v]
-            [cdq.context :refer [get-property inventory-window try-pickup-item! skill-usable-state selected-skill]]
+            [cdq.context :refer [get-property inventory-window skill-usable-state selected-skill]]
             [cdq.entity :as entity]
             [cdq.state :as state]
             [cdq.state.wasd-movement :refer [WASD-movement-vector]]))
@@ -27,9 +27,10 @@
       (assoc clicked-entity* :entity/destroyed? true)
       [:tx/event @player-entity :pickup-item item]]
 
-     (try-pickup-item! context player-entity item)
+     (entity/can-pickup-item? @player-entity item)
      [[:tx/sound "sounds/bfxr_pickup.wav"]
-      (assoc clicked-entity* :entity/destroyed? true)]
+      (assoc clicked-entity* :entity/destroyed? true)
+      [:tx/pickup-item player-entity item]]
 
      :else
      [[:tx/sound "sounds/bfxr_denied.wav"]
@@ -37,7 +38,7 @@
 
 (defmethod on-clicked :clickable/player
   [ctx _clicked-entity*]
-  (toggle-visible! (inventory-window ctx)))
+  (toggle-visible! (inventory-window ctx))) ; _ TODO _
 
 (defmethod on-clicked :clickable/princess
   [ctx _clicked-entity*]
@@ -146,7 +147,7 @@
     (when (and (pos? free-skill-points)
                (not (entity/has-skill? entity* skill)))
       [[:tx/assoc entity* :entity/free-skill-points (dec free-skill-points)]
-       [:tx/add-skill entity* skill]]))
+       [:tx/add-skill (entity/reference entity*) skill]]))
 
   state/State
   (enter [_ entity* _ctx])

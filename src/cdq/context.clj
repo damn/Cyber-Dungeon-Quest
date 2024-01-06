@@ -35,10 +35,7 @@
   (effect-useful?     [_ effect]))
 
 (defprotocol Modifier
-  ; TODO remove
-  (apply-modifier!   [_ entity modifier])
-  (reverse-modifier! [_ entity modifier])
-  (modifier-text     [_ modifier]))
+  (modifier-text [_ modifier]))
 
 (defprotocol Builder
   ; TODO ?
@@ -56,13 +53,7 @@
 
 (defprotocol InventoryWindow
   (inventory-window [_])
-  (rebuild-inventory-widgets [_])
-  ; TODO trigger
-  (set-item-image-in-widget [_ cell item])
-  (remove-item-from-widget [_ cell]))
-
-(defprotocol Inventory
-  (try-pickup-item! [_ entity item])) ; TODO remove
+  (rebuild-inventory-widgets [_]))
 
 (defprotocol Counter
   (->counter [_ duration])
@@ -71,9 +62,7 @@
   (finished-ratio [_ counter])
   (update-elapsed-game-time! [_]))
 
-(defprotocol Skills ; TODO remove
-  (add-skill! [_ entity skill])
-  (remove-skill! [_ entity skill])
+(defprotocol Skills
   (skill-usable-state [effect-context entity* skill]))
 
 (defprotocol Actionbar

@@ -107,23 +107,23 @@
 
   (rebuild-inventory-widgets [{{:keys [^Window window] :as inventory} :context/inventory :as ctx}]
     (redo-table ctx inventory)
-    (.pack window))
+    (.pack window)))
 
-  (set-item-image-in-widget [{{:keys [table]} :context/inventory :as ctx}
-                             cell
-                             item]
-    (let [^Actor cell-widget (get table cell)
-          ^Image image-widget (get cell-widget :image)
-          drawable (->texture-region-drawable ctx (:texture (:property/image item)))]
-      (.setMinSize drawable (float cell-size) (float cell-size))
-      (.setDrawable image-widget drawable)
-      (add-tooltip! cell-widget #(tooltip-text % item))))
+(defmethod cdq.context/transact! :tx/set-item-image-in-widget [[_ cell item]
+                                                               {{:keys [table]} :context/inventory :as ctx}]
+  (let [^Actor cell-widget (get table cell)
+        ^Image image-widget (get cell-widget :image)
+        drawable (->texture-region-drawable ctx (:texture (:property/image item)))]
+    (.setMinSize drawable (float cell-size) (float cell-size))
+    (.setDrawable image-widget drawable)
+    (add-tooltip! cell-widget #(tooltip-text % item))))
 
-  (remove-item-from-widget [{{:keys [table slot->background]} :context/inventory :as ctx} cell]
-    (let [^Actor cell-widget (get table cell)
-          ^Image image-widget (get cell-widget :image)]
-      (.setDrawable image-widget (slot->background (cell 0)))
-      (remove-tooltip! cell-widget))))
+(defmethod cdq.context/transact! :tx/remove-item-from-widget [[_ cell]
+                                                              {{:keys [table slot->background]} :context/inventory :as ctx}]
+  (let [^Actor cell-widget (get table cell)
+        ^Image image-widget (get cell-widget :image)]
+    (.setDrawable image-widget (slot->background (cell 0)))
+    (remove-tooltip! cell-widget)))
 
 (defn- slot->background [ctx]
   (let [sheet (spritesheet ctx "items/images.png" 48 48)]
