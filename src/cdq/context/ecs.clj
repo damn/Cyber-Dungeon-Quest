@@ -85,6 +85,7 @@
 
 (defn- create-entity! [{::keys [uids->entities] :as context} components-map]
   {:pre [(not (contains? components-map :entity/id))
+         (not (contains? components-map :entity/uid))
          (:entity/position components-map)]}
   (try
    (let [entity (-> components-map
