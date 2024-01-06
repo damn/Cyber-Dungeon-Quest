@@ -8,9 +8,8 @@
 (defn- clicked-skill [{:keys [context/player-entity] :as ctx} id]
   (let [entity* @player-entity]
     (state/clicked-skillmenu-skill (entity/state-obj entity*)
-                                   (get-property ctx id)
                                    entity*
-                                   ctx)))
+                                   (get-property ctx id))))
 
 ; TODO render text label free-skill-points
 ; (str "Free points: " (:entity/free-skill-points @player-entity))

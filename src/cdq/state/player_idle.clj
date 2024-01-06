@@ -1,18 +1,11 @@
 (ns cdq.state.player-idle
-  (:require [gdl.context :refer [world-mouse-position mouse-on-stage-actor? button-just-pressed? button-pressed?
-                                 ; fixme
-                                 play-sound!
-                                 ]]
+  (:require [gdl.context :refer [world-mouse-position mouse-on-stage-actor? button-just-pressed? button-pressed?]]
             [gdl.input.buttons :as buttons]
             [gdl.scene2d.actor :refer [visible? toggle-visible! parent] :as actor]
             [gdl.scene2d.ui.button :refer [button?]]
             [gdl.scene2d.ui.window :refer [window-title-bar?]]
             [gdl.math.vector :as v]
-            [cdq.context :refer [get-property inventory-window try-pickup-item! skill-usable-state selected-skill
-                                 ; fixme
-                                 send-event!
-                                 remove-item!
-                                 ]]
+            [cdq.context :refer [get-property inventory-window try-pickup-item! skill-usable-state selected-skill]]
             [cdq.entity :as entity]
             [cdq.state :as state]
             [cdq.state.wasd-movement :refer [WASD-movement-vector]]))
@@ -143,17 +136,13 @@
               (when (button-just-pressed? context buttons/left)
                 (on-click))))))
 
-  ; TODO return txs
-  (clicked-inventory-cell [_ cell entity* ctx]
-    (let [inventory (:entity/inventory entity*)
-          item (get-in inventory cell)]
-      (when item
-        (do
-         (play-sound! ctx "sounds/bfxr_takeit.wav")
-         (send-event! ctx entity* :pickup-item item)
-         (remove-item! ctx (entity/reference entity*) cell)))))
+  (clicked-inventory-cell [_ entity* cell]
+    (when-let [item (get-in (:entity/inventory entity*) cell)]
+      [[:tx/sound "sounds/bfxr_takeit.wav"]
+       [:tx/event entity* :pickup-item item]
+       [:tx/remove-item entity* cell]]))
 
-  (clicked-skillmenu-skill [_ skill {:keys [entity/free-skill-points] :as entity*} ctx]
+  (clicked-skillmenu-skill [_ {:keys [entity/free-skill-points] :as entity*} skill]
     (when (and (pos? free-skill-points)
                (not (entity/has-skill? entity* skill)))
       [[:tx/assoc entity* :entity/free-skill-points (dec free-skill-points)]

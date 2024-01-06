@@ -7,8 +7,8 @@
   (player-enter [_] [[:tx/cursor :cursors/black-x]])
   (pause-game? [_] true)
   (manual-tick [_ entity* context])
-  (clicked-inventory-cell [_ cell entity* ctx])
-  (clicked-skillmenu-skill [_ skill entity* ctx])
+  (clicked-inventory-cell [_ entity* cell])
+  (clicked-skillmenu-skill [_ entity* skill])
 
   state/State
   (enter [_ _entity* _ctx]

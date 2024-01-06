@@ -17,60 +17,50 @@
             [cdq.state :as state]
             [cdq.state.player-idle :refer [click-distance-tiles]]))
 
-(defn- complain-2h-weapon-and-shield! [context]
-  ;(.play ^Sound (get assets "error.wav"))
-  (show-msg-to-player! context "Two-handed weapon and shield is not possible."))
+(def ^:private denied-2hw-shield
+  [[:tx/sound "sounds/bfxr_denied.wav"]
+   [:tx/msg-to-player "Two-handed weapon and shield is not possible."]])
 
-; TODO return txs
-(defn- clicked-cell [{:keys [context/player-entity] :as context} cell]
-  (let [entity player-entity
-        inventory (:entity/inventory @entity)
+(defn- clicked-cell [entity* cell]
+  (let [inventory (:entity/inventory entity*)
         item (get-in inventory cell)
-        item-on-cursor (:entity/item-on-cursor @entity)]
+        item-on-cursor (:entity/item-on-cursor entity*)]
     (cond
      ; PUT ITEM IN EMPTY CELL
      (and (not item)
           (inventory/valid-slot? cell item-on-cursor))
      (if (inventory/two-handed-weapon-and-shield-together? inventory cell item-on-cursor)
-       (complain-2h-weapon-and-shield! context)
-       (do
-        (play-sound! context "sounds/bfxr_itemput.wav")
-        (set-item! context entity cell item-on-cursor)
-        (swap! entity dissoc :entity/item-on-cursor)
-        (send-event! context @entity :dropped-item)))
+       denied-2hw-shield
+       [[:tx/sound "sounds/bfxr_itemput.wav"]
+        [:tx/set-item entity* cell item-on-cursor]
+        [:tx/dissoc entity* :entity/item-on-cursor]
+        [:tx/event entity* :dropped-item]])
 
      ; STACK ITEMS
-     (and item
-          (inventory/stackable? item item-on-cursor))
-     (do
-      (play-sound! context "sounds/bfxr_itemput.wav")
-      (stack-item! context entity cell item-on-cursor)
-      (swap! entity dissoc :entity/item-on-cursor)
-      (send-event! context @entity :dropped-item))
+     (and item (inventory/stackable? item item-on-cursor))
+     [[:tx/sound "sounds/bfxr_itemput.wav"]
+      [:tx/stack-item entity* cell item-on-cursor]
+      [:tx/dissoc entity* :entity/item-on-cursor]
+      [:tx/event entity* :dropped-item]]
 
      ; SWAP ITEMS
      (and item
           (inventory/valid-slot? cell item-on-cursor))
      (if (inventory/two-handed-weapon-and-shield-together? inventory cell item-on-cursor)
-       (complain-2h-weapon-and-shield! context)
-       (do
-        (play-sound! context "sounds/bfxr_itemput.wav")
-        (remove-item! context entity cell)
-        (set-item! context entity cell item-on-cursor)
+       denied-2hw-shield
+       [[:tx/sound "sounds/bfxr_itemput.wav"]
+        [:tx/remove-item entity* cell]
+        [:tx/set-item entity* cell item-on-cursor]
         ; need to dissoc and drop otherwise state enter does not trigger picking it up again
         ; TODO? coud handle pickup-item from item-on-cursor state also
-        (swap! entity dissoc :entity/item-on-cursor)
-        (send-event! context @entity :dropped-item)
-        (send-event! context @entity :pickup-item item))))))
+        [:tx/dissoc entity* :entity/item-on-cursor]
+        [:tx/event entity* :dropped-item]
+        [:tx/event entity* :pickup-item item]]))))
 
 ; It is possible to put items out of sight, losing them.
 ; Because line of sight checks center of entity only, not corners
 ; this is okay, you have thrown the item over a hill, thats possible.
 
-(defn- put-item-on-ground-txs [{:keys [context/player-entity] :as context} position]
-  {:pre [(:entity/item-on-cursor @player-entity)]}
-  [[:tx/sound "sounds/bfxr_itemputground.wav"]
-   (item-entity context position (:entity/item-on-cursor @player-entity))])
 
 (defn- placement-point [player target maxrange]
   (v/add player
@@ -95,9 +85,9 @@
     (when (and (button-just-pressed? context buttons/left)
                (world-item? context))
       [[:tx/event entity* :drop-item]]))
-  (clicked-inventory-cell [_ cell entity* ctx]
-    (clicked-cell ctx cell))
-  (clicked-skillmenu-skill [_ skill entity* ctx])
+  (clicked-inventory-cell [_ entity* cell]
+    (clicked-cell entity* cell))
+  (clicked-skillmenu-skill [_ entity* skill])
 
   state/State
   (enter [_ entity* _ctx]
@@ -110,8 +100,9 @@
     ; so we dissoc it there manually. Otherwise it creates another item
     ; on the ground
     (when (:entity/item-on-cursor entity*)
-      (conj (put-item-on-ground-txs ctx (item-place-position ctx entity*))
-            (dissoc entity* :entity/item-on-cursor))))
+      [[:tx/sound "sounds/bfxr_itemputground.wav"]
+       (item-entity ctx (item-place-position ctx entity*) (:entity/item-on-cursor entity*))
+       [:tx/dissoc entity* :entity/item-on-cursor]]))
 
   (tick [_ entity* _ctx])
   (render-below [_ entity* ctx]

@@ -12,5 +12,5 @@
   (player-enter [_])
   (pause-game? [_])
   (manual-tick [_ entity* ctx])
-  (clicked-inventory-cell [_ cell entity* ctx])
-  (clicked-skillmenu-skill [_ skill entity* ctx]))
+  (clicked-inventory-cell [_ entity* cell])
+  (clicked-skillmenu-skill [_ entity* skill]))

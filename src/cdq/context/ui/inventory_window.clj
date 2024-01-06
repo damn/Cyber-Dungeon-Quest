@@ -61,7 +61,7 @@
 
 (defn- clicked-cell [{:keys [context/player-entity] :as ctx} cell]
   (let [entity* @player-entity]
-    (state/clicked-inventory-cell (entity/state-obj entity*) cell entity* ctx)))
+    (state/clicked-inventory-cell (entity/state-obj entity*) entity* cell)))
 
 (defn- ->cell [ctx slot->background slot & {:keys [position]}]
   (let [cell [slot (or position [0 0])]
@@ -73,9 +73,7 @@
     (add-listener! stack (proxy [ClickListener] []
                            (clicked [event x y]
                              (let [ctx @current-context]
-                               (clicked-cell ctx cell)
-                               ; TODO
-                               #_(transact-all! (clicked-cell ctx cell) ctx)))))
+                               (transact-all! ctx (clicked-cell ctx cell))))))
     stack))
 
 (defn- redo-table [ctx {:keys [^Table table slot->background]}]

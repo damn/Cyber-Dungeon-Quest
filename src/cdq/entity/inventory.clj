@@ -99,6 +99,18 @@
                         true)))]
     picked-up))
 
+(defmethod cdq.context/transact! :tx/set-item [[_ entity* cell item] ctx]
+  (set-item! ctx (entity/reference entity*) cell item)
+  nil)
+
+(defmethod cdq.context/transact! :tx/remove-item [[_ entity* cell] ctx]
+  (remove-item! ctx (entity/reference entity*) cell)
+  nil)
+
+(defmethod cdq.context/transact! :tx/stack-item [[_ entity* cell item] ctx]
+  (stack-item! ctx (entity/reference entity*) cell item)
+  nil)
+
 (extend-type gdl.context.Context
   cdq.context/Inventory
   (set-item! [context entity cell item]
