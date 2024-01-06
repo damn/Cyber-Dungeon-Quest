@@ -34,6 +34,13 @@
          extra-components
          (when (= id :creatures/lady-a) {:entity/clickable {:type :clickable/princess}})))
 
+(defmethod cdq.context/transact! :tx/creature [[_ creature-id position extra-components] ctx]
+  [(-> ctx
+       (get-property creature-id)
+       (create-creature-data extra-components ctx)
+       (assoc :entity/position position)
+       assoc-left-bottom)])
+
 (defcomponent :entity/plop _
   (entity/destroy [_ entity* ctx]
     [[:tx/audiovisual (:entity/position entity*) :projectile/hit-wall-effect]]))
@@ -42,13 +49,6 @@
 ; properties themself could be the creature map even somehow
 (extend-type gdl.context.Context
   cdq.context/Builder
-  (creature [context creature-id position extra-components]
-    (-> context
-        (get-property creature-id)
-        (create-creature-data extra-components context)
-        (assoc :entity/position position)
-        assoc-left-bottom))
-
   ; TODO use image w. shadows spritesheet
   (item-entity [_ position item]
     #:entity {:position position

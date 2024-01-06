@@ -4,7 +4,7 @@
             [gdl.context :refer [draw-text]]
             [utils.core :refer [define-order sort-by-order]]
             [cdq.entity :as entity]
-            [cdq.context :refer [transact! transact-all! get-entity create-entity! add-entity! remove-entity!]]))
+            [cdq.context :refer [transact! transact-all! get-entity add-entity! remove-entity!]]))
 
 (defn- render-entity* [system entity* {::keys [thrown-error] :as context}]
   (doseq [k (keys (methods @system))
@@ -44,6 +44,8 @@
 (defn- debug-print-tx [tx]
   (pr-str (mapv #(if (instance? cdq.entity.Entity %) (:entity/id %) %)
                 tx)))
+
+(declare create-entity!)
 
 (defn- handle-transaction! [tx ctx]
   (when log-txs?
@@ -86,29 +88,29 @@
              (println "Error with " k " and txs: \n" (pr-str txs))
              (throw t))))))
 
+(defn- create-entity! [{::keys [ids->entities] :as context} components-map]
+  ; TODO all keys ':entity/'
+  {:pre [(not (contains? components-map :entity/id))
+         (:entity/position components-map)]}
+  (try
+   (let [id (unique-number!)
+         entity (-> (assoc components-map :entity/id id)
+                    (update-map entity/create-component)
+                    cdq.entity/map->Entity
+                    atom)]
+     (swap! entity with-meta {::atom entity})
+     (swap! ids->entities assoc id entity)
+     (system-transactions! entity/create entity context)
+     (add-entity! context entity) ; no left-bottom! thats why put after entity/create (x.x)
+     entity)
+   (catch Throwable t
+     (println "Error with: " components-map)
+     (throw t))))
+
 (extend-type gdl.context.Context
   cdq.context/EntityComponentSystem
   (get-entity [{::keys [ids->entities]} id]
     (get @ids->entities id))
-
-  (create-entity! [{::keys [ids->entities] :as context} components-map]
-    ; TODO all keys ':entity/'
-    {:pre [(not (contains? components-map :entity/id))
-           (:entity/position components-map)]}
-    (try
-     (let [id (unique-number!)
-           entity (-> (assoc components-map :entity/id id)
-                      (update-map entity/create-component)
-                      cdq.entity/map->Entity
-                      atom)]
-       (swap! entity with-meta {::atom entity})
-       (swap! ids->entities assoc id entity)
-       (system-transactions! entity/create entity context)
-       (add-entity! context entity) ; no left-bottom! thats why put after entity/create (x.x)
-       entity)
-     (catch Throwable t
-       (println "Error with: " components-map)
-       (throw t))))
 
   (tick-entity! [{::keys [thrown-error] :as context} entity]
     (try

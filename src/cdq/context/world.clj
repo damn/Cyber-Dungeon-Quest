@@ -6,9 +6,9 @@
             [gdl.math.vector :as v]
             [data.grid2d :as grid2d]
             [utils.core :refer [->tile tile->middle]]
+            [cdq.context :refer [transact-all! ray-blocked? content-grid world-grid get-property]]
             [cdq.context.world.grid :refer [create-grid]]
             [cdq.context.world.content-grid :refer [->content-grid]]
-            [cdq.context :refer [create-entity! creature ray-blocked? content-grid world-grid get-property]]
             [cdq.state.player :as player-state]
             [cdq.state.npc :as npc-state]
             [cdq.world.grid :as world-grid]
@@ -198,30 +198,28 @@
 
 (def ^:private spawn-enemies? true)
 
-; TODO txs for creating - can re-use on cleared map
+(defn- create-entities-from-tiledmap! [{:keys [context/world-map] :as ctx}]
+  (let [tiled-map (:tiled-map world-map)]
+    (when spawn-enemies?
+      (transact-all! ctx
+                     (for [[posi creature-id] (tiled/positions-with-property tiled-map :creatures :id)]
+                       [:tx/creature
+                        creature-id
+                        (tile->middle posi)
+                        {:entity/state (npc-state/->state :sleeping)}])))
+    (tiled/remove-layer! tiled-map :creatures)) ; otherwise will be rendered, is visible
+  (transact-all! ctx [[:tx/creature
+                       :creatures/vampire
+                       (:start-position world-map)
+                       {:entity/state (player-state/->state :idle)
+                        :entity/player? true
+                        :entity/free-skill-points 3
+                        :entity/clickable {:type :clickable/player}}]]))
 
-; looping through all tiles of the map 3 times. but dont do it in 1 loop because player needs to be initialized before all monsters!
-(defn- place-entities! [context tiled-map]
-  (when spawn-enemies?
-    (doseq [[posi creature-id] (tiled/positions-with-property tiled-map :creatures :id)]
-      (create-entity! context
-                      (creature context
-                                creature-id
-                                (tile->middle posi)
-                                {:entity/state (npc-state/->state :sleeping)}))))
-  ; otherwise will be rendered, is visible
-  (tiled/remove-layer! tiled-map :creatures))
-
-(defn- create-entities-from-tiledmap! [{:keys [context/world-map] :as context}]
-  (place-entities! context (:tiled-map world-map))
-  (create-entity! context
-                  (creature context
-                            :creatures/vampire ; TODO hardcoded
-                            (:start-position world-map)
-                            {:entity/state (player-state/->state :idle)
-                             :entity/player? true
-                             :entity/free-skill-points 3
-                             :entity/clickable {:type :clickable/player}})))
+(defn- fetch-player-entity [ctx]
+  {:post [%]}
+  (first (filter #(:entity/player? @%)
+                 (vals @(:cdq.context.ecs/ids->entities ctx)))))
 
 (defn merge->context [context]
   ; TODO when (:context/world-map context)
@@ -229,5 +227,5 @@
   ; check if it works
   (let [context (merge context
                        {:context/world-map (create-world-map (first-level context))})]
-    (merge context
-           {:context/player-entity (create-entities-from-tiledmap! context)})))
+    (create-entities-from-tiledmap! context)
+    (merge context {:context/player-entity (fetch-player-entity context)})))

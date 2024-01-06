@@ -1,7 +1,6 @@
 (ns cdq.effect.spawn
   (:require [malli.core :as m]
             [x.x :refer [defcomponent]]
-            [cdq.context :refer [creature]]
             [cdq.effect :as effect]
             [cdq.state.npc :as npc-state]))
 
@@ -48,8 +47,8 @@
 
   (effect/transactions [_ {:keys [effect/source
                                   effect/target-position] :as ctx}]
-    [(creature ctx
-               creature-id
-               target-position
-               {:entity/state (npc-state/->state :idle)
-                :entity/faction (:entity/faction source)})]))
+    [[:tx/creature
+      creature-id
+      target-position
+      {:entity/state (npc-state/->state :idle)
+       :entity/faction (:entity/faction source)}]]))

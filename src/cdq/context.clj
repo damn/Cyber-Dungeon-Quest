@@ -7,10 +7,6 @@
   (transact-all! [_ txs]))
 
 (defprotocol EntityComponentSystem
-  (create-entity! [_ components-map] ; TODO remove
-                  "Entities should not have :entity/id component, will get added.
-                  Calls create-componenet/create on components.
-                  Returns the entity.")
   (get-entity [_ id])
   (tick-entity! [_ entity] "Calls tick on all components of the entity.")
   (render-entities* [_ entities*] "Draws entities* in the correct z-order and in the order of render-systems for each z-order.")
@@ -47,7 +43,6 @@
 
 (defprotocol Builder
   ; TODO ?
-  (creature [_ creature-id position extra-components])
   (item-entity [_ position item])
   (line-entity [_ {:keys [start end duration color thick?]}]))
 
