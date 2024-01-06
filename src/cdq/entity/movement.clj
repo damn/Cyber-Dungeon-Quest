@@ -60,4 +60,4 @@
                                    (update-position-solid     ctx entity* direction)
                                    (update-position-non-solid ctx entity* direction))]
           [(check-rotate moved-entity* direction)
-           [:tx/position-changed moved-entity*]])))))
+           [:tx/position-changed (:entity/id moved-entity*)]])))))

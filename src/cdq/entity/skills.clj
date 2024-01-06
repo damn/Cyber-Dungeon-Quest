@@ -10,7 +10,7 @@
     (for [{:keys [property/id cooling-down?]} (vals skills)
           :when (and cooling-down?
                      (stopped? ctx cooling-down?))]
-      [:tx/assoc-in entity* [k id :cooling-down?] false])))
+      [:tx/assoc-in (:entity/id entity*) [k id :cooling-down?] false])))
 
 (extend-type cdq.entity.Entity
   cdq.entity/Skills

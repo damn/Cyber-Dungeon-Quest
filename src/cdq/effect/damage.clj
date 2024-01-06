@@ -150,4 +150,4 @@
                       (update :entity/hp apply-val #(- % dmg-amount)))]
        [[:tx/audiovisual (:entity/position target) (keyword (str "effects.damage." (name dmg-type)) "hit-effect")]
         target
-        [:tx/event target (if (no-hp-left? (:entity/hp target)) :kill :alert)]]))))
+        [:tx/event (:entity/id target) (if (no-hp-left? (:entity/hp target)) :kill :alert)]]))))

@@ -3,7 +3,7 @@
             [x.x :refer [update-map]]
             [gdl.context :refer [draw-text]]
             [utils.core :refer [define-order sort-by-order]]
-            [cdq.entity :as entity]
+            [cdq.entity :as entity :refer [map->Entity]]
             [cdq.context :refer [transact! transact-all! get-entity add-entity! remove-entity!]]))
 
 (defn- render-entity* [system entity* {::keys [thrown-error] :as context}]
@@ -14,11 +14,11 @@
      (system [k v] entity* context)
      (catch Throwable t
        (when-not @thrown-error
-         (println "Render error for: entity :entity/id " (:entity/id entity*) " \n k " k "\n system" system)
+         (println "Render error for: entity " (:entity/uid entity*) " \n k " k "\n system" system)
          (p/pretty-pst t)
          (reset! thrown-error t))
        (let [[x y] (:entity/position entity*)]
-         (draw-text context {:text (str "Render error entity :entity/id " (:entity/id entity*) "\n" k "\n"system "\n" @thrown-error)
+         (draw-text context {:text (str "Render error entity " (:entity/uid entity*) "\n" k "\n"system "\n" @thrown-error)
                              :x x
                              :y y
                              :up? true}))))))
@@ -27,22 +27,22 @@
   (defn- unique-number! []
     (swap! cnt inc)))
 
-(defmethod cdq.context/transact! :tx/dissoc [[_ entity* k] _ctx]
-  (swap! (entity/reference entity*) dissoc k)
+(defmethod cdq.context/transact! :tx/dissoc [[_ entity k] _ctx]
+  (swap! entity dissoc k)
   nil)
 
-(defmethod cdq.context/transact! :tx/assoc [[_ entity* k v] _ctx]
-  (swap! (entity/reference entity*) assoc k v)
+(defmethod cdq.context/transact! :tx/assoc [[_ entity k v] _ctx]
+  (swap! entity assoc k v)
   nil)
 
-(defmethod cdq.context/transact! :tx/assoc-in [[_ entity* ks v] _ctx]
-  (swap! (entity/reference entity*) assoc-in ks v)
+(defmethod cdq.context/transact! :tx/assoc-in [[_ entity ks v] _ctx]
+  (swap! entity assoc-in ks v)
   nil)
 
 (def ^:private log-txs? false)
 
 (defn- debug-print-tx [tx]
-  (pr-str (mapv #(if (instance? cdq.entity.Entity %) (:entity/id %) %)
+  (pr-str (mapv #(if (instance? cdq.entity.Entity %) (:entity/uid %) %)
                 tx)))
 
 (declare create-entity!)
@@ -55,7 +55,7 @@
                             (map? tx) "create-entity!"
                             (vector? tx) (debug-print-tx tx)))))
   (cond
-   (instance? cdq.entity.Entity tx) (reset! (entity/reference tx) tx)
+   (instance? cdq.entity.Entity tx) (reset! (:entity/id tx) tx)
    (map? tx) (create-entity! ctx tx)
    (vector? tx) (doseq [tx (transact! tx ctx) :when tx]
                   (handle-transaction! tx ctx))
@@ -70,11 +70,6 @@
              (println "Error with transaction: \n" (pr-str tx))
              (throw t))))))
 
-(extend-type cdq.entity.Entity
-  cdq.entity/HasReferenceToItself
-  (reference [entity*]
-    (::atom (meta entity*))))
-
 (defn- system-transactions! [system entity ctx]
   (doseq [k (keys (methods system))
           :let [entity* @entity
@@ -82,24 +77,23 @@
           :when v]
     (when-let [txs (system [k v] entity* ctx)]
       (when log-txs?
-        (println "txs:" (:entity/id entity*) "-" k))
+        (println "txs:" (:entity/uid entity*) "-" k))
       (try (transact-all! ctx txs)
            (catch Throwable t
              (println "Error with " k " and txs: \n" (pr-str txs))
              (throw t))))))
 
-(defn- create-entity! [{::keys [ids->entities] :as context} components-map]
-  ; TODO all keys ':entity/'
+(defn- create-entity! [{::keys [uids->entities] :as context} components-map]
   {:pre [(not (contains? components-map :entity/id))
          (:entity/position components-map)]}
   (try
-   (let [id (unique-number!)
-         entity (-> (assoc components-map :entity/id id)
+   (let [entity (-> components-map
                     (update-map entity/create-component)
-                    cdq.entity/map->Entity
-                    atom)]
-     (swap! entity with-meta {::atom entity})
-     (swap! ids->entities assoc id entity)
+                    map->Entity
+                    atom)
+         uid (unique-number!)]
+     (swap! entity assoc :entity/id entity :entity/uid uid)
+     (swap! uids->entities assoc uid entity)
      (system-transactions! entity/create entity context)
      (add-entity! context entity) ; no left-bottom! thats why put after entity/create (x.x)
      entity)
@@ -109,15 +103,15 @@
 
 (extend-type gdl.context.Context
   cdq.context/EntityComponentSystem
-  (get-entity [{::keys [ids->entities]} id]
-    (get @ids->entities id))
+  (get-entity [{::keys [uids->entities]} id]
+    (get @uids->entities id))
 
   (tick-entity! [{::keys [thrown-error] :as context} entity]
     (try
      (system-transactions! entity/tick entity context)
      (catch Throwable t
        (p/pretty-pst t)
-       (println "Entity id: " (:entity/id @entity))
+       (println "Entity id: " (:entity/uid @entity))
        (reset! thrown-error t))))
 
   (render-entities* [{::keys [render-on-map-order] :as context} entities*]
@@ -135,14 +129,14 @@
     (doseq [entity* entities*]
       (render-entity* #'entity/render-debug entity* context)))
 
-  (remove-destroyed-entities! [{::keys [ids->entities] :as context}]
-    (doseq [entity (filter (comp :entity/destroyed? deref) (vals @ids->entities))]
+  (remove-destroyed-entities! [{::keys [uids->entities] :as context}]
+    (doseq [entity (filter (comp :entity/destroyed? deref) (vals @uids->entities))]
       (system-transactions! entity/destroy entity context)
-      (swap! ids->entities dissoc (:entity/id @entity))
+      (swap! uids->entities dissoc (:entity/uid @entity))
       (remove-entity! context entity))))
 
 (defn ->context [& {:keys [z-orders]}]
   (assert (every? #(= "z-order" (namespace %)) z-orders))
-  {::ids->entities (atom {})
+  {::uids->entities (atom {})
    ::thrown-error (atom nil)
    ::render-on-map-order (define-order z-orders)})

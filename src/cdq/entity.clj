@@ -14,9 +14,6 @@
 
 (defrecord Entity [])
 
-(defprotocol HasReferenceToItself
-  (reference [_]))
-
 (defprotocol State
   (state [_])
   (state-obj [_]))

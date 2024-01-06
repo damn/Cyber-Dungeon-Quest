@@ -40,16 +40,16 @@
 
   (exit [_ entity* _ctx])
 
-  (tick [_ entity* context]
+  (tick [_ {:keys [entity/id]} context]
     (let [effect (:skill/effect skill)
           effect-context (merge context effect-context)]
       (cond
        (not (valid-params? effect-context effect))
-       [[:tx/event entity* :action-done]]
+       [[:tx/event id :action-done]]
 
        (stopped? context counter)
        [[:tx/effect effect-context effect]
-        [:tx/event entity* :action-done]])))
+        [:tx/event id :action-done]])))
 
   (render-below [_ entity* _ctx])
   (render-above [_ entity* _ctx])

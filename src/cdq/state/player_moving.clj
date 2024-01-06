@@ -18,7 +18,7 @@
   (tick [_ entity* context]
     (if-let [movement-vector (WASD-movement-vector context)]
       [(assoc entity* :entity/movement-vector movement-vector)]
-      [[:tx/event entity* :no-movement-input]]))
+      [[:tx/event (:entity/id entity*) :no-movement-input]]))
   (render-below [_ entity* c])
   (render-above [_ entity* c])
   (render-info  [_ entity* c]))

@@ -57,35 +57,35 @@
 (defn- weapon? [{:keys [item/slot]}]
   (= slot :inventory.slot/weapon))
 
-(defn- set-item [entity cell item]
-  (let [inventory (:entity/inventory @entity)]
+(defn- set-item [{:keys [entity/id] :as entity*} cell item]
+  (let [inventory (:entity/inventory entity*)]
     (assert (and (nil? (get-in inventory cell))
                  (valid-slot? cell item)
                  (not (two-handed-weapon-and-shield-together? inventory cell item)))))
-  [[:tx/assoc-in @entity (cons :entity/inventory cell) item]
+  [[:tx/assoc-in id (cons :entity/inventory cell) item]
    (when (applies-modifiers? cell)
-     [:tx/apply-modifier entity (:item/modifier item)])
+     [:tx/apply-modifier id (:item/modifier item)])
    (when (and (applies-modifiers? cell) (weapon? item))
-     [:tx/add-skill entity item])
-   (when (:entity/player? @entity)
+     [:tx/add-skill id item])
+   (when (:entity/player? entity*)
      [:tx/set-item-image-in-widget cell item])])
 
-(defn- remove-item [entity cell]
-  (let [item (get-in (:entity/inventory @entity) cell)]
+(defn- remove-item [{:keys [entity/id] :as entity*} cell]
+  (let [item (get-in (:entity/inventory entity*) cell)]
     (assert item)
-    [[:tx/assoc-in @entity (cons :entity/inventory cell) nil]
+    [[:tx/assoc-in id (cons :entity/inventory cell) nil]
      (when (applies-modifiers? cell)
-       [:tx/reverse-modifier entity (:item/modifier item)])
+       [:tx/reverse-modifier id (:item/modifier item)])
      (when (and (applies-modifiers? cell) (weapon? item))
-       [:tx/remove-skill entity item])
-     (when (:entity/player? @entity)
+       [:tx/remove-skill id item])
+     (when (:entity/player? entity*)
        [:tx/remove-item-from-widget cell])]))
 
-(defmethod cdq.context/transact! :tx/set-item [[_ entity* cell item] _ctx]
-  (set-item (entity/reference entity*) cell item))
+(defmethod cdq.context/transact! :tx/set-item [[_ entity cell item] _ctx]
+  (set-item @entity cell item))
 
-(defmethod cdq.context/transact! :tx/remove-item [[_ entity* cell] _ctx]
-  (remove-item (entity/reference entity*) cell))
+(defmethod cdq.context/transact! :tx/remove-item [[_ entity cell] _ctx]
+  (remove-item @entity cell))
 
 ; TODO doesnt exist, stackable, usable items with action/skillbar thingy
 #_(defn remove-one-item [entity cell]
@@ -100,45 +100,44 @@
       (remove-item! context entity cell))))
 
 ; TODO no items which stack are available
-(defn- stack-item [entity cell item]
-  (let [cell-item (get-in (:entity/inventory @entity) cell)]
+(defn- stack-item [entity* cell item]
+  (let [cell-item (get-in (:entity/inventory entity*) cell)]
     (assert (stackable? item cell-item))
     ; TODO this doesnt make sense with modifiers ! (triggered 2 times if available)
     ; first remove and then place, just update directly  item ...
-    (concat (remove-item entity cell)
-            (set-item entity cell (update cell-item :count + (:count item))))))
+    (concat (remove-item entity* cell)
+            (set-item entity* cell (update cell-item :count + (:count item))))))
 
-(defmethod cdq.context/transact! :tx/stack-item [[_ entity* cell item] _ctx]
-  (stack-item (entity/reference entity*) cell item))
+(defmethod cdq.context/transact! :tx/stack-item [[_ entity cell item] _ctx]
+  (stack-item @entity cell item))
 
-(defn- try-put-item-in [entity slot item]
-  (let [inventory (:entity/inventory @entity)
+(defn- try-put-item-in [entity* slot item]
+  (let [inventory (:entity/inventory entity*)
         cells-items (cells-and-items inventory slot)
         [cell cell-item] (find-first (fn [[cell cell-item]] (stackable? item cell-item))
                                      cells-items)]
     (if cell
-      (stack-item entity cell item)
+      (stack-item entity* cell item)
       (when-let [[empty-cell] (find-first (fn [[cell item]] (nil? item))
                                           cells-items)]
         (when-not (two-handed-weapon-and-shield-together? inventory empty-cell item)
-          (set-item entity empty-cell item))))))
+          (set-item entity* empty-cell item))))))
 
-(defn- pickup-item [entity item]
+(defn- pickup-item [entity* item]
   (or
-   (try-put-item-in entity (:item/slot item)   item)
-   (try-put-item-in entity :inventory.slot/bag item)))
+   (try-put-item-in entity* (:item/slot item)   item)
+   (try-put-item-in entity* :inventory.slot/bag item)))
 
 (defmethod cdq.context/transact! :tx/pickup-item [[_ entity item] _ctx]
-  (pickup-item entity item))
+  (pickup-item @entity item))
 
 (extend-type cdq.entity.Entity
   cdq.entity/Inventory
   (can-pickup-item? [entity* item]
-    (boolean (pickup-item (entity/reference entity*) item))))
+    (boolean (pickup-item entity* item))))
 
 (defcomponent :entity/inventory items
-  (entity/create [_ entity* context]
-    (let [entity (entity/reference entity*)]
-      (cons [:tx/assoc @entity :entity/inventory empty-inventory]
-            (for [id items]
-              [:tx/pickup-item entity (get-property context id)])))))
+  (entity/create [_ {:keys [entity/id]} context]
+    (cons [:tx/assoc id :entity/inventory empty-inventory]
+          (for [item-id items]
+            [:tx/pickup-item id (get-property context item-id)]))))

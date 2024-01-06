@@ -34,6 +34,6 @@
       [entity*
        (when hit-entity
          [:tx/effect
-          {:effect/source-entity (entity/reference entity*)
+          {:effect/source-entity (:entity/id entity*)
            :effect/target-entity hit-entity}
           hit-effect])])))

@@ -16,7 +16,7 @@
   (exit  [_ _entity* _ctx])
   (tick [_ entity* ctx]
     (when (stopped? ctx counter)
-      [[:tx/event entity* :effect-wears-off]]))
+      [[:tx/event (:entity/id entity*) :effect-wears-off]]))
 
   (render-below [_ {:keys [entity/position]} ctx]
     (draw-circle ctx position 0.5 [1 1 1 0.6]))

@@ -25,7 +25,7 @@
      (visible? (inventory-window context))
      [(:tx/sound "sounds/bfxr_takeit.wav")
       (assoc clicked-entity* :entity/destroyed? true)
-      [:tx/event @player-entity :pickup-item item]]
+      [:tx/event player-entity :pickup-item item]]
 
      (entity/can-pickup-item? @player-entity item)
      [[:tx/sound "sounds/bfxr_pickup.wav"]
@@ -42,7 +42,7 @@
 
 (defmethod on-clicked :clickable/princess
   [ctx _clicked-entity*]
-  [[:tx/event @(:context/player-entity ctx) :found-princess]])
+  [[:tx/event (:context/player-entity ctx) :found-princess]])
 
 (defn- clickable->cursor [mouseover-entity* too-far-away?]
   (case (:type (:entity/clickable mouseover-entity*))
@@ -67,7 +67,7 @@
   (let [target @mouseover-entity
         target-position (or (and target (:entity/position @target))
                             (world-mouse-position context))]
-    {:effect/source-entity (entity/reference entity*)
+    {:effect/source-entity (:entity/id entity*)
      :effect/target-entity target
      :effect/target-position target-position
      :effect/direction (v/direction (:entity/position entity*) target-position)}))
@@ -110,7 +110,7 @@
           ; => e.g. meditation no TARGET .. etc.
           [:cursors/use-skill
            (fn []
-             [[:tx/event entity* :start-action [skill effect-context]]])])
+             [[:tx/event (:entity/id entity*) :start-action [skill effect-context]]])])
          (do
           ; TODO cursor as of usable state
           ; cooldown -> sanduhr kleine
@@ -131,23 +131,23 @@
   (pause-game? [_] true)
   (manual-tick [_ entity* context]
     (if-let [movement-vector (WASD-movement-vector context)]
-      [[:tx/event entity* :movement-input movement-vector]]
+      [[:tx/event (:entity/id entity*) :movement-input movement-vector]]
       (let [[cursor on-click] (->interaction-state context entity*)]
         (cons [:tx/cursor cursor]
               (when (button-just-pressed? context buttons/left)
                 (on-click))))))
 
-  (clicked-inventory-cell [_ entity* cell]
-    (when-let [item (get-in (:entity/inventory entity*) cell)]
+  (clicked-inventory-cell [_ {:keys [entity/id entity/inventory]} cell]
+    (when-let [item (get-in inventory cell)]
       [[:tx/sound "sounds/bfxr_takeit.wav"]
-       [:tx/event entity* :pickup-item item]
-       [:tx/remove-item entity* cell]]))
+       [:tx/event id :pickup-item item]
+       [:tx/remove-item id cell]]))
 
-  (clicked-skillmenu-skill [_ {:keys [entity/free-skill-points] :as entity*} skill]
+  (clicked-skillmenu-skill [_ {:keys [entity/id entity/free-skill-points] :as entity*} skill]
     (when (and (pos? free-skill-points)
                (not (entity/has-skill? entity* skill)))
-      [[:tx/assoc entity* :entity/free-skill-points (dec free-skill-points)]
-       [:tx/add-skill (entity/reference entity*) skill]]))
+      [[:tx/assoc id :entity/free-skill-points (dec free-skill-points)]
+       [:tx/add-skill id skill]]))
 
   state/State
   (enter [_ entity* _ctx])

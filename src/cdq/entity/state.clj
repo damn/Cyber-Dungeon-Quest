@@ -52,6 +52,6 @@
   (state-obj [entity*]
     (-> entity* :entity/state :state-obj)))
 
-(defmethod cdq.context/transact! :tx/event [[_ entity* event params] ctx]
-  (send-event! ctx (entity/reference entity*) event params)
+(defmethod cdq.context/transact! :tx/event [[_ entity event params] ctx]
+  (send-event! ctx entity event params)
   nil)

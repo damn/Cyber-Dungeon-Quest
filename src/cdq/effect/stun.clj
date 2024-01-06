@@ -17,4 +17,4 @@
     (and target))
 
   (effect/transactions [_ {:keys [effect/target]}]
-    [[:tx/event target :stun duration]]))
+    [[:tx/event (:entity/id target) :stun duration]]))

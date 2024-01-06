@@ -9,7 +9,7 @@
   (binding [*print-level* nil]
     (with-out-str
      (clojure.pprint/pprint
-      {:id (:entity/id entity*)
+      {:uid   (:entity/uid entity*)
        :state (entity/state entity*)
        :faction (:entity/faction entity*)}))))
 

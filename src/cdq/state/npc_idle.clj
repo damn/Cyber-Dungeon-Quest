@@ -9,7 +9,7 @@
   (let [cell (get (world-grid context)
                   (utils.core/->tile (:entity/position entity*)))
         target (cell/nearest-entity @cell (entity/enemy-faction entity*))]
-    {:effect/source-entity (entity/reference entity*)
+    {:effect/source-entity (:entity/id entity*)
      :effect/target-entity target
      :effect/direction (when target
                          (v/direction (:entity/position entity*)
@@ -32,11 +32,11 @@
   (enter [_ entity* _ctx])
   (exit  [_ entity* _ctx]
     [(assoc entity* :entity/movement-vector nil)])
-  (tick [_ entity* context]
-    [(assoc entity* :entity/movement-vector (potential-field-follow-to-enemy context (entity/reference entity*)))
+  (tick [_ {:keys [entity/id] :as entity*} context]
+    [(assoc entity* :entity/movement-vector (potential-field-follow-to-enemy context id))
      (let [effect-context (effect-context context entity*)]
        (when-let [skill (npc-choose-skill (merge context effect-context) entity*)]
-         [:tx/event entity* :start-action [skill effect-context]]))])
+         [:tx/event id :start-action [skill effect-context]]))])
 
   (render-below [_ entity* c])
   (render-above [_ entity* c])

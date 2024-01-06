@@ -26,7 +26,7 @@
                     (utils.core/->tile (:entity/position entity*)))]
       (when-let [distance (cell/nearest-entity-distance @cell (entity/enemy-faction entity*))]
         (when (<= distance (* aggro-range 10)) ; TODO do @ cell/nearest-enemy-distance
-          [[:tx/event entity* :alert]]))))
+          [[:tx/event (:entity/id entity*) :alert]]))))
 
   (render-below [_ entity* c])
   (render-above [_ {[x y] :entity/position :keys [entity/body]} c]

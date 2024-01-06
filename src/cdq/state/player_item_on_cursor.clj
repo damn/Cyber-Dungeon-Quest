@@ -13,7 +13,7 @@
   [[:tx/sound "sounds/bfxr_denied.wav"]
    [:tx/msg-to-player "Two-handed weapon and shield is not possible."]])
 
-(defn- clicked-cell [entity* cell]
+(defn- clicked-cell [{:keys [entity/id] :as entity*} cell]
   (let [inventory (:entity/inventory entity*)
         item (get-in inventory cell)
         item-on-cursor (:entity/item-on-cursor entity*)]
@@ -24,16 +24,16 @@
      (if (inventory/two-handed-weapon-and-shield-together? inventory cell item-on-cursor)
        denied-2hw-shield
        [[:tx/sound "sounds/bfxr_itemput.wav"]
-        [:tx/set-item entity* cell item-on-cursor]
-        [:tx/dissoc entity* :entity/item-on-cursor]
-        [:tx/event entity* :dropped-item]])
+        [:tx/set-item id cell item-on-cursor]
+        [:tx/dissoc id :entity/item-on-cursor]
+        [:tx/event id :dropped-item]])
 
      ; STACK ITEMS
      (and item (inventory/stackable? item item-on-cursor))
      [[:tx/sound "sounds/bfxr_itemput.wav"]
-      [:tx/stack-item entity* cell item-on-cursor]
-      [:tx/dissoc entity* :entity/item-on-cursor]
-      [:tx/event entity* :dropped-item]]
+      [:tx/stack-item id cell item-on-cursor]
+      [:tx/dissoc id :entity/item-on-cursor]
+      [:tx/event id :dropped-item]]
 
      ; SWAP ITEMS
      (and item
@@ -41,13 +41,13 @@
      (if (inventory/two-handed-weapon-and-shield-together? inventory cell item-on-cursor)
        denied-2hw-shield
        [[:tx/sound "sounds/bfxr_itemput.wav"]
-        [:tx/remove-item entity* cell]
-        [:tx/set-item entity* cell item-on-cursor]
+        [:tx/remove-item id cell]
+        [:tx/set-item id cell item-on-cursor]
         ; need to dissoc and drop otherwise state enter does not trigger picking it up again
         ; TODO? coud handle pickup-item from item-on-cursor state also
-        [:tx/dissoc entity* :entity/item-on-cursor]
-        [:tx/event entity* :dropped-item]
-        [:tx/event entity* :pickup-item item]]))))
+        [:tx/dissoc id :entity/item-on-cursor]
+        [:tx/event id :dropped-item]
+        [:tx/event id :pickup-item item]]))))
 
 ; It is possible to put items out of sight, losing them.
 ; Because line of sight checks center of entity only, not corners
@@ -76,7 +76,7 @@
   (manual-tick [_ entity* context]
     (when (and (button-just-pressed? context buttons/left)
                (world-item? context))
-      [[:tx/event entity* :drop-item]]))
+      [[:tx/event (:entity/id entity*) :drop-item]]))
   (clicked-inventory-cell [_ entity* cell]
     (clicked-cell entity* cell))
   (clicked-skillmenu-skill [_ entity* skill])
@@ -86,7 +86,7 @@
     [[:tx/cursor :cursors/hand-grab]
      (assoc entity* :entity/item-on-cursor item)])
 
-  (exit [_ entity* ctx]
+  (exit [_ {:keys [entity/id] :as entity*} ctx]
     ; at context.ui.inventory-window/clicked-cell when we put it into a inventory-cell
     ; we do not want to drop it on the ground too additonally,
     ; so we dissoc it there manually. Otherwise it creates another item
@@ -94,7 +94,7 @@
     (when (:entity/item-on-cursor entity*)
       [[:tx/sound "sounds/bfxr_itemputground.wav"]
        (item-entity ctx (item-place-position ctx entity*) (:entity/item-on-cursor entity*))
-       [:tx/dissoc entity* :entity/item-on-cursor]]))
+       [:tx/dissoc id :entity/item-on-cursor]]))
 
   (tick [_ entity* _ctx])
   (render-below [_ entity* ctx]

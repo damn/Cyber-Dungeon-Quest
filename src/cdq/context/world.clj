@@ -134,8 +134,8 @@
   (when (:entity/body @entity)
     (world-grid/entity-position-changed! (world-grid ctx) entity)))
 
-(defmethod cdq.context/transact! :tx/position-changed [[_ entity*] ctx]
-  (position-changed! ctx (entity/reference entity*))
+(defmethod cdq.context/transact! :tx/position-changed [[_ entity] ctx]
+  (position-changed! ctx entity)
   nil)
 
 (defn- first-level [context]
@@ -219,7 +219,7 @@
 (defn- fetch-player-entity [ctx]
   {:post [%]}
   (first (filter #(:entity/player? @%)
-                 (vals @(:cdq.context.ecs/ids->entities ctx)))))
+                 (vals @(:cdq.context.ecs/uids->entities ctx))))) ; TODO private ! move to ecs ! forgot uid change
 
 (defn merge->context [context]
   ; TODO when (:context/world-map context)
