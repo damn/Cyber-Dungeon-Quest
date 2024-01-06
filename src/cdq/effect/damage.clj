@@ -1,5 +1,6 @@
 (ns cdq.effect.damage
   (:require [malli.core :as m]
+            [x.x :refer [defcomponent]]
             [data.val-max :refer [apply-val apply-val-max-modifiers val-max-schema]]
             [utils.random :as random]
             [cdq.effect :as effect]
@@ -115,41 +116,38 @@
 (def ^:private damage-schema
   (m/schema [:tuple [:enum :physical :magic] (m/form val-max-schema)]))
 
-(defmethod effect/value-schema :effect/damage [_]
-  damage-schema)
+(defcomponent :effect/damage {dmg-type 0 :as damage}
+  (effect/value-schema [_]
+    damage-schema)
 
-(defmethod effect/text :effect/damage
-  [{:keys [effect/source]} [_ damage]]
-  (if source
-    (let [modified (effective-damage damage source)]
-      (if (= damage modified)
-        (damage->text damage)
-        (str (damage->text damage) "\nModified: " (damage->text modified))))
-    (damage->text damage))) ; property menu no source,modifiers
+  (effect/text [_ {:keys [effect/source]}]
+    (if source
+      (let [modified (effective-damage damage source)]
+        (if (= damage modified)
+          (damage->text damage)
+          (str (damage->text damage) "\nModified: " (damage->text modified))))
+      (damage->text damage))) ; property menu no source,modifiers
 
-(defmethod effect/valid-params? :effect/damage
-  [{:keys [effect/source effect/target]} _effect]
-  (and source target (:entity/hp target)))
+  (effect/valid-params? [_ {:keys [effect/source effect/target]}]
+    (and source target (:entity/hp target)))
 
-(defmethod effect/transactions :effect/damage
-  [{:keys [effect/source
-           effect/target] :as context} [_ {dmg-type 0 :as damage}]]
-  (cond
-   (no-hp-left? (:entity/hp target))
-   nil
+  (effect/transactions [_ {:keys [effect/source effect/target] :as ctx}]
+    (cond
+     (no-hp-left? (:entity/hp target))
+     nil
 
-   (blocks? (effective-block-rate source target :shield dmg-type))
-   [(shield-blocked-tx context target)]
+     (blocks? (effective-block-rate source target :shield dmg-type))
+     [(shield-blocked-tx ctx target)]
 
-   (blocks? (effective-block-rate source target :armor dmg-type))
-   [(armor-blocked-tx context target)]
+     (blocks? (effective-block-rate source target :armor dmg-type))
+     [(armor-blocked-tx ctx target)]
 
-   :else
-   (let [[dmg-type min-max-dmg] (effective-damage damage source target)
-         dmg-amount (random/rand-int-between min-max-dmg)
-         target (-> target
-                     (entity/add-text-effect context (str "[RED]" dmg-amount))
-                     (update :entity/hp apply-val #(- % dmg-amount)))]
-     [[:tx/audiovisual (:entity/position target) (keyword (str "effects.damage." (name dmg-type)) "hit-effect")]
-      target
-      [:tx/event target (if (no-hp-left? (:entity/hp target)) :kill :alert)]])))
+     :else
+     (let [[dmg-type min-max-dmg] (effective-damage damage source target)
+           dmg-amount (random/rand-int-between min-max-dmg)
+           target (-> target
+                      (entity/add-text-effect ctx (str "[RED]" dmg-amount))
+                      (update :entity/hp apply-val #(- % dmg-amount)))]
+       [[:tx/audiovisual (:entity/position target) (keyword (str "effects.damage." (name dmg-type)) "hit-effect")]
+        target
+        [:tx/event target (if (no-hp-left? (:entity/hp target)) :kill :alert)]]))))

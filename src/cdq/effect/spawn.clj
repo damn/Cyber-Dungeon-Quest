@@ -1,5 +1,6 @@
 (ns cdq.effect.spawn
   (:require [malli.core :as m]
+            [x.x :refer [defcomponent]]
             [cdq.context :refer [creature]]
             [cdq.effect :as effect]
             [cdq.state.npc :as npc-state]))
@@ -27,30 +28,28 @@
  ; keys: :faction(:source)/:target-position/:creature-id
  )
 
+; TODO valid-params? could check also schema over value ( but not here then , @ cdq.context.effect)
 (def ^:private schema
   (m/schema [:qualified-keyword {:namespace :creatures}]))
 
-(defmethod effect/value-schema :effect/spawn [_]
-  schema)
+(defcomponent :effect/spawn creature-id
+  (effect/value-schema [_]
+    schema)
 
-(defmethod effect/text :effect/spawn
-  [_context [_ creature-id]]
-  (str "Spawns a " (name creature-id)))
+  (effect/text [_ _ctx]
+    (str "Spawns a " (name creature-id)))
 
-(defmethod effect/valid-params? :effect/spawn
-  [{:keys [effect/source
-           effect/target-position]} _effect]
-  ; TODO line of sight ? / not blocked ..
-  (and source
-       (:entity/faction source)
-       target-position))
+  (effect/valid-params? [_ {:keys [effect/source
+                                   effect/target-position]}]
+    ; TODO line of sight ? / not blocked ..
+    (and source
+         (:entity/faction source)
+         target-position))
 
-(defmethod effect/transactions :effect/spawn
-  [{:keys [effect/source
-           effect/target-position] :as context}
-   [_ creature-id]]
-  [(creature context
-             creature-id
-             target-position
-             {:entity/state (npc-state/->state :idle)
-              :entity/faction (:entity/faction source)})])
+  (effect/transactions [_ {:keys [effect/source
+                                  effect/target-position] :as ctx}]
+    [(creature ctx
+               creature-id
+               target-position
+               {:entity/state (npc-state/->state :idle)
+                :entity/faction (:entity/faction source)})]))

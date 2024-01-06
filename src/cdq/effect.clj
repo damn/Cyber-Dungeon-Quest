@@ -1,23 +1,16 @@
-(ns cdq.effect)
+(ns cdq.effect
+  (:require [x.x :refer [defsystem]]))
 
-; TODO no assert needed ?
-; is throwing on no impl ?
-; => always
-; TODO dispatch first on effect ...
-(defn- by-type [_context [type value]]
-  (assert (keyword? type)
-          (str "Type is not a keyword: " type " and value: " value))
-  (assert (= "effect" (namespace type))
-          (str "Effect keys need to have :effect/ keyword namespace type: " type " , value: " value))
-  type)
+(defsystem value-schema  [_])
 
-(defmulti transactions  by-type)
-(defmulti text          by-type)
-(defmulti valid-params? by-type)
-(defmulti value-schema  identity)
+(defsystem text          [_ ctx])
 
-(defmulti render-info   by-type)
-(defmethod render-info :default [_ _])
+(defsystem valid-params? [_ ctx])
 
-(defmulti useful?       by-type)
+(defsystem useful?       [_ ctx])
 (defmethod useful? :default [_ _] true)
+
+(defsystem transactions  [_ ctx])
+
+(defsystem render-info   [_ ctx])
+(defmethod render-info :default [_ _])

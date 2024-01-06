@@ -1,21 +1,20 @@
 (ns cdq.effect.sound
   (:require [malli.core :as m]
+            [x.x :refer [defcomponent]]
             [cdq.effect :as effect]))
 
 (def ^:private schema
   (m/schema string?))
 
-(defmethod effect/value-schema :effect/sound [_]
-  schema)
+(defcomponent :effect/sound file
+  (effect/value-schema [_]
+    schema)
 
-(defmethod effect/text :effect/sound
-  [_ctx _effect]
-  nil)
+  (effect/text [_ _ctx]
+    nil)
 
-(defmethod effect/valid-params? :effect/sound
-  [_ctx _effect]
-  true)
+  (effect/valid-params? [_ _ctx]
+    true)
 
-(defmethod effect/transactions :effect/sound
-  [ctx [_ file]]
-  [[:tx/sound file]])
+  (effect/transactions [_ _ctx]
+    [[:tx/sound file]]))

@@ -121,7 +121,7 @@
 
 (def ^:private effect-components-schema
   (for [k (keys (methods cdq.effect/transactions))]
-    [k {:optional true} (m/form (cdq.effect/value-schema k))]))
+    [k {:optional true} (m/form (cdq.effect/value-schema [k nil]))]))
 
 ; https://github.com/metosin/malli#built-in-schemas
 (def property-types

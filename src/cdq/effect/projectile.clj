@@ -1,6 +1,7 @@
 (ns cdq.effect.projectile
   (:require [clojure.string :as str]
             [malli.core :as m]
+            [x.x :refer [defcomponent]]
             [gdl.math.vector :as v]
             [gdl.graphics.animation :as animation]
             [gdl.context :refer [get-sprite spritesheet]]
@@ -14,26 +15,6 @@
 (def ^:private maxrange 10)
 (def ^:private speed 10)
 (def ^:private maxtime (/ maxrange speed))
-
-(def ^:private schema
-  (m/schema [:= true]))
-
-(defmethod effect/value-schema :effect/projectile [_]
-  schema)
-
-; TODO valid params direction has to be  non-nil (entities not los player ) ?
-(defmethod effect/useful? :effect/projectile
-  [{:keys [effect/source
-           effect/target] :as context}
-   _effect]
-  (and (not (path-blocked? context
-                           (:entity/position source) ; TODO test
-                           (:entity/position target)
-                           size))
-       ; TODO not taking into account body sizes
-       (< (v/distance (:entity/position source)
-                      (:entity/position target))
-          maxrange)))
 
 (comment
  ; for chance to do hit-effect -> use this code @ hit-effects
@@ -55,38 +36,51 @@
                                  [1 12])]
                     :frame-duration 0.5))
 
-(defmethod effect/text :effect/projectile
-  [context _effect]
-  (effect-text context hit-effect))
-
-(defmethod effect/valid-params? :effect/projectile
-  [{:keys [effect/source
-           effect/target
-           effect/direction]}
-   _effect]
-  (and source direction)) ; faction @ source also ?
-
 (defn- start-point [entity* direction]
   (v/add (:entity/position entity*)
          (v/scale direction
                   (+ (:radius (:entity/body entity*)) size 0.1))))
 
-(defmethod effect/transactions :effect/projectile
-  [{:keys [effect/source
-           effect/direction] :as context}
-   _effect]
-  [#:entity {:position (start-point source direction)
-             :faction (:entity/faction source)
-             :body {:width size
-                    :height size
-                    :solid? false
-                    :rotation-angle (v/get-angle-from-vector direction)}
-             :flying? true
-             :z-order :z-order/effect
-             :movement speed
-             :movement-vector direction
-             :animation (black-projectile context)
-             :delete-after-duration maxtime
-             :plop true
-             :projectile-collision {:hit-effect hit-effect
-                                    :piercing? true}}])
+(def ^:private schema
+  (m/schema [:= true]))
+
+(defcomponent :effect/projectile _
+  (effect/value-schema [_]
+    schema)
+
+  (effect/text [_ ctx]
+    (effect-text ctx hit-effect))
+
+  (effect/valid-params? [_ {:keys [effect/source
+                                   effect/target
+                                   effect/direction]}]
+    (and source direction)) ; faction @ source also ?
+
+  ; TODO valid params direction has to be  non-nil (entities not los player ) ?
+  (effect/useful? [_ {:keys [effect/source effect/target] :as ctx}]
+    (and (not (path-blocked? ctx
+                             (:entity/position source) ; TODO test
+                             (:entity/position target)
+                             size))
+         ; TODO not taking into account body sizes
+         (< (v/distance (:entity/position source)
+                        (:entity/position target))
+            maxrange)))
+
+  (effect/transactions [_ {:keys [effect/source
+                                  effect/direction] :as ctx}]
+    [#:entity {:position (start-point source direction)
+               :faction (:entity/faction source)
+               :body {:width size
+                      :height size
+                      :solid? false
+                      :rotation-angle (v/get-angle-from-vector direction)}
+               :flying? true
+               :z-order :z-order/effect
+               :movement speed
+               :movement-vector direction
+               :animation (black-projectile ctx)
+               :delete-after-duration maxtime
+               :plop true
+               :projectile-collision {:hit-effect hit-effect
+                                      :piercing? true}}]))

@@ -17,22 +17,26 @@
   cdq.context/EffectInterpreter
   (effect-text [ctx effect]
     (let [ctx (deref-source-target ctx)]
-      (->> (keep #(effect/text ctx %) effect)
+      (->> (keep #(effect/text % ctx) effect)
            (str/join "\n"))))
 
   (valid-params? [ctx effect]
-    (every? (partial effect/valid-params? (deref-source-target ctx)) effect))
+    (every? #(effect/valid-params? % (deref-source-target ctx))
+            effect))
+
+  (effect-useful? [ctx effect]
+    (some #(effect/useful? % (deref-source-target ctx)) effect))
 
   (effect-render-info [ctx effect]
     (let [ctx (deref-source-target ctx)]
       (doseq [component effect]
-        (effect/render-info ctx component))))
-
-  (effect-useful? [ctx effect]
-    (some (partial effect/useful? (deref-source-target ctx)) effect)))
+        (effect/render-info component ctx)))))
 
 (defmethod cdq.context/transact! :tx/effect [[_ effect-ctx effect] ctx]
   (let [ctx (merge ctx effect-ctx)]
-    (assert (cdq.context/valid-params? ctx effect)) ; extra line of sight checks TODO performance issue?
+    (assert (cdq.context/valid-params? ctx effect)) ; extra line of sight checks here - although we already check valid-params? before always
     (doseq [component effect]
-      (transact-all! ctx (effect/transactions (deref-source-target ctx) component)))))
+      (->> ctx
+           deref-source-target
+           (effect/transactions component)
+           (transact-all! ctx)))))
