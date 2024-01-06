@@ -27,16 +27,21 @@
   (defn- unique-number! []
     (swap! cnt inc)))
 
-(defmethod cdq.context/transact! :tx/dissoc [[_ entity k] _ctx]
-  (swap! entity dissoc k)
-  nil)
-
 (defmethod cdq.context/transact! :tx/assoc [[_ entity k v] _ctx]
   (swap! entity assoc k v)
   nil)
 
 (defmethod cdq.context/transact! :tx/assoc-in [[_ entity ks v] _ctx]
   (swap! entity assoc-in ks v)
+  nil)
+
+(defmethod cdq.context/transact! :tx/dissoc [[_ entity k] _ctx]
+  (swap! entity dissoc k)
+  nil)
+
+(defmethod cdq.context/transact! :tx/dissoc-in [[_ entity ks] _ctx]
+  (assert (> (count ks) 1))
+  (swap! entity update-in (drop-last ks) dissoc (last ks))
   nil)
 
 (def ^:private log-txs? false)

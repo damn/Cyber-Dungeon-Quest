@@ -21,21 +21,23 @@
 
   (selected-skill [{{:keys [button-group]} ::data}]
     (when-let [skill-button (checked button-group)]
-      (actor/id skill-button)))
+      (actor/id skill-button))))
 
-  (actionbar-add-skill [{{:keys [horizontal-group button-group]} ::data :as ctx}
-                        {:keys [property/id property/image] :as skill}]
-    (let [button (->image-button ctx image (fn [_]))]
-      (actor/set-id! button id)
-      (add-tooltip! button #(tooltip-text % skill))
-      (add-actor! horizontal-group button)
-      (add! button-group button)))
+(defmethod cdq.context/transact! :tx/actionbar-add-skill
+  [[_ {:keys [property/id property/image] :as skill}]
+   {{:keys [horizontal-group button-group]} ::data :as ctx}]
+  (let [button (->image-button ctx image (fn [_]))]
+    (actor/set-id! button id)
+    (add-tooltip! button #(tooltip-text % skill))
+    (add-actor! horizontal-group button)
+    (add! button-group button)))
 
-  (actionbar-remove-skill [{{:keys [horizontal-group button-group]} ::data}
-                           {:keys [property/id]}]
-    (let [button (get horizontal-group id)]
-      (remove! button)
-      (button-group/remove! button-group button))))
+(defmethod cdq.context/transact! :tx/actionbar-remove-skill
+  [[_ {:keys [property/id]}]
+   {{:keys [horizontal-group button-group]} ::data}]
+  (let [button (get horizontal-group id)]
+    (remove! button)
+    (button-group/remove! button-group button)))
 
 (comment
 

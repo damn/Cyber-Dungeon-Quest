@@ -2,7 +2,7 @@
   (:require [x.x :refer [defcomponent]]
             [utils.core :refer [mapvals]]
             [data.val-max :refer [apply-val]]
-            [cdq.context :refer [valid-params? ->counter stopped? actionbar-add-skill actionbar-remove-skill]]
+            [cdq.context :refer [valid-params? ->counter stopped?]]
             [cdq.entity :as entity]))
 
 (defcomponent :entity/skills skills
@@ -27,25 +27,19 @@
       (update entity* :entity/mana apply-val #(- % (:skill/cost skill)))
       entity*)))
 
-(defn- add-skill! [ctx entity {:keys [property/id] :as skill}]
+(defmethod cdq.context/transact! :tx/add-skill [[_ entity {:keys [property/id] :as skill}]
+                                                _ctx]
   (assert (not (entity/has-skill? @entity skill)))
-  (swap! entity update :entity/skills assoc id skill)
-  (when (:entity/player? @entity)
-    (actionbar-add-skill ctx skill)))
+  [[:tx/assoc-in entity [:entity/skills id] skill]
+   (when (:entity/player? @entity)
+     [:tx/actionbar-add-skill skill])])
 
-(defn- remove-skill! [ctx entity {:keys [property/id] :as skill}]
+(defmethod cdq.context/transact! :tx/remove-skill [[_ entity {:keys [property/id] :as skill}]
+                                                   _ctx]
   (assert (entity/has-skill? @entity skill))
-  (swap! entity update :entity/skills dissoc id)
-  (when (:entity/player? @entity)
-    (actionbar-remove-skill ctx skill)))
-
-(defmethod cdq.context/transact! :tx/add-skill [[_ entity skill] ctx]
-  (add-skill! ctx entity skill)
-  nil)
-
-(defmethod cdq.context/transact! :tx/remove-skill [[_ entity skill] ctx]
-  (remove-skill! ctx entity skill)
-  nil)
+  [[:tx/dissoc-in entity [:entity/skills id]]
+   (when (:entity/player? @entity)
+     [:tx/actionbar-remove-skill skill])])
 
 (extend-type gdl.context.Context
   cdq.context/Skills

@@ -68,10 +68,7 @@
 (defprotocol Actionbar
   (->action-bar    [_])
   (reset-actionbar [_])
-  (selected-skill  [_])
-  ; TODO trigger
-  (actionbar-add-skill    [_ skill])
-  (actionbar-remove-skill [_ skill]))
+  (selected-skill  [_]))
 
 (defprotocol DebugRender
   (debug-render-before-entities [_])
