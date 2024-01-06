@@ -1,7 +1,6 @@
 (ns cdq.entity.state
   (:require [reduce-fsm :as fsm]
             [x.x :refer [defcomponent]]
-            gdl.context
             [cdq.context :refer [transact-all!]]
             [cdq.entity :as entity]
             [cdq.state :as state]))
@@ -24,34 +23,31 @@
   (entity/render-above [_ entity* ctx] (state/render-above state-obj entity* ctx))
   (entity/render-info  [_ entity* ctx] (state/render-info  state-obj entity* ctx)))
 
-(extend-type gdl.context.Context
-  cdq.context/FiniteStateMachine
-  (send-event!
-    ([ctx entity* event]
-     (cdq.context/send-event! ctx entity* event nil))
-
-    ([ctx entity* event params]
-     (when-let [{:keys [fsm
-                        state-obj
-                        state-obj-constructors]} (:entity/state entity*)]
-       (let [old-state (:state fsm)
-             new-fsm (fsm/fsm-event fsm event)
-             new-state (:state new-fsm)]
-         (when (not= old-state new-state)
-           (let [constructor (new-state state-obj-constructors)
-                 new-state-obj (if params
-                                 (constructor ctx entity* params)
-                                 (constructor ctx entity*))
-                 entity (entity/reference entity*)]
-             (transact-all! ctx (state/exit      state-obj entity* ctx))
-             (transact-all! ctx (state/enter new-state-obj @entity ctx))
-             (when (:entity/player? entity*)
-               (transact-all! ctx (state/player-enter new-state-obj)))
-             (transact-all!
-              ctx
-              [(update @entity :entity/state #(assoc %
-                                                     :fsm new-fsm
-                                                     :state-obj new-state-obj))]))))))))
+; TODO dangerous getting entity* which is _outdated_
+; multiple tx/event's see item on cursor !
+; pass directly entity only?
+; this whole entity/reference is maybe stupid !
+; just pass 'entity' ??
+(defn- send-event! [ctx entity event params]
+  (when-let [{:keys [fsm
+                     state-obj
+                     state-obj-constructors]} (:entity/state @entity)]
+    (let [old-state (:state fsm)
+          new-fsm (fsm/fsm-event fsm event)
+          new-state (:state new-fsm)]
+      (when (not= old-state new-state)
+        (let [constructor (new-state state-obj-constructors)
+              new-state-obj (if params
+                              (constructor ctx @entity params)
+                              (constructor ctx @entity))]
+          (transact-all! ctx (state/exit      state-obj @entity ctx))
+          (transact-all! ctx (state/enter new-state-obj @entity ctx))
+          (when (:entity/player? @entity)
+            (transact-all! ctx (state/player-enter new-state-obj)))
+          (transact-all! ctx
+                         [(update @entity
+                                  :entity/state
+                                  #(assoc % :fsm new-fsm :state-obj new-state-obj))]))))))
 
 (extend-type cdq.entity.Entity
   cdq.entity/State
@@ -61,6 +57,6 @@
   (state-obj [entity*]
     (-> entity* :entity/state :state-obj)))
 
-(defmethod cdq.context/transact! :tx/event [[_ & params] ctx]
-  (apply cdq.context/send-event! ctx params)
+(defmethod cdq.context/transact! :tx/event [[_ entity* event params] ctx]
+  (send-event! ctx (entity/reference entity*) event params)
   nil)

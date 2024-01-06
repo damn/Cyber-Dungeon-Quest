@@ -1,17 +1,9 @@
 (ns cdq.state.player-item-on-cursor
   (:require [gdl.context :refer [mouse-on-stage-actor? button-just-pressed? draw-centered-image
-                                 world-mouse-position gui-mouse-position
-
-                                 ; TODO return txs
-                                 play-sound!
-                                 ]]
+                                 world-mouse-position gui-mouse-position]]
             [gdl.input.buttons :as buttons]
             [gdl.math.vector :as v]
             [cdq.context :refer [item-entity]]
-
-            ; TODO return txs
-            [cdq.context :refer [show-msg-to-player! send-event! set-item! stack-item! remove-item!]]
-
             [cdq.entity :as entity]
             [cdq.entity.inventory :as inventory]
             [cdq.state :as state]

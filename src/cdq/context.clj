@@ -16,7 +16,7 @@
   (remove-destroyed-entities! [_] "Calls destroy on all entities which are marked as ':entity/destroyed?'"))
 
 (defprotocol PlayerMessage
-  (show-msg-to-player! [_ message])
+  (show-msg-to-player! [_ message]) ; TODO remove
   (->player-message-actor [_]))
 
 (defprotocol MouseOverEntity
@@ -57,10 +57,6 @@
   (update-potential-fields! [_ entities])
   (potential-field-follow-to-enemy [_ entity]))
 
-(defprotocol FiniteStateMachine
-  (send-event! [_ entity event]
-               [_ entity event params]))
-
 (defprotocol PropertyStore
   (get-property [_ id])
   (all-properties [_ type]))
@@ -71,7 +67,7 @@
   (set-item-image-in-widget [_ cell item])
   (remove-item-from-widget [_ cell]))
 
-(defprotocol Inventory
+(defprotocol Inventory ; TODO remove
   (set-item!        [_ entity cell item])
   (remove-item!     [_ entity cell])
   (stack-item!      [_ entity cell item])
@@ -84,7 +80,7 @@
   (finished-ratio [_ counter])
   (update-elapsed-game-time! [_]))
 
-(defprotocol Skills
+(defprotocol Skills ; TODO remove
   (add-skill! [_ entity skill])
   (remove-skill! [_ entity skill])
   (skill-usable-state [effect-context entity* skill]))
