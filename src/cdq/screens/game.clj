@@ -113,7 +113,7 @@
                             cdq.context.ecs/thrown-error]
                      :as ctx}
                     active-entities]
-  (let [state-obj (:state-obj (:entity/state @player-entity))
+  (let [state-obj (entity/state-obj @player-entity)
         _ (transact-all! ctx (state/manual-tick state-obj @player-entity ctx))
         paused? (reset! game-paused? (or @thrown-error
                                          (and pausing? (state/pause-game? state-obj))))

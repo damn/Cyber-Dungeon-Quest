@@ -1,75 +1,20 @@
 (ns cdq.context.ui.inventory-window
-  (:require [clojure.string :as str]
-            [data.grid2d :as grid]
+  (:require [data.grid2d :as grid]
             [gdl.app :refer [current-context]]
             [gdl.context :refer [draw-rectangle draw-filled-rectangle spritesheet get-sprite
-                                 play-sound! gui-mouse-position get-stage ->table ->window
+                                 gui-mouse-position get-stage ->table ->window
                                  ->texture-region-drawable ->color ->stack ->image-widget ->image-button]]
             [gdl.graphics.color :as color]
             [gdl.scene2d.actor :as actor :refer [set-id! add-listener! set-name! add-tooltip! remove-tooltip!]]
             [cdq.entity.inventory :as inventory]
-            [cdq.context :refer [show-msg-to-player! send-event! set-item! stack-item! remove-item! get-property tooltip-text]]
-            [cdq.entity :as entity])
+            [cdq.context :refer [get-property tooltip-text transact-all!]]
+            [cdq.entity :as entity]
+            [cdq.state :as state])
   (:import com.badlogic.gdx.scenes.scene2d.Actor
            (com.badlogic.gdx.scenes.scene2d.ui Widget Image Window Table)
            com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
            com.badlogic.gdx.scenes.scene2d.utils.ClickListener
            com.badlogic.gdx.math.Vector2))
-
-(defn- complain-2h-weapon-and-shield! [context]
-  ;(.play ^Sound (get assets "error.wav"))
-  (show-msg-to-player! context "Two-handed weapon and shield is not possible."))
-
-(defn- clicked-cell [{:keys [context/player-entity] :as context} cell]
-  (let [entity player-entity
-        inventory (:entity/inventory @entity)
-        item (get-in inventory cell)
-        item-on-cursor (:entity/item-on-cursor @entity)]
-    (cond
-     ; PICKUP FROM CELL
-     (and (not item-on-cursor)
-          item)
-     (do
-      (play-sound! context "sounds/bfxr_takeit.wav")
-      (send-event! context @entity :pickup-item item)
-      (remove-item! context entity cell))
-
-     item-on-cursor
-     (cond
-      ; PUT ITEM IN EMPTY CELL
-      (and (not item)
-           (inventory/valid-slot? cell item-on-cursor))
-      (if (inventory/two-handed-weapon-and-shield-together? inventory cell item-on-cursor)
-        (complain-2h-weapon-and-shield! context)
-        (do
-         (play-sound! context "sounds/bfxr_itemput.wav")
-         (set-item! context entity cell item-on-cursor)
-         (swap! entity dissoc :entity/item-on-cursor)
-         (send-event! context @entity :dropped-item)))
-
-      ; STACK ITEMS
-      (and item
-           (inventory/stackable? item item-on-cursor))
-      (do
-       (play-sound! context "sounds/bfxr_itemput.wav")
-       (stack-item! context entity cell item-on-cursor)
-       (swap! entity dissoc :entity/item-on-cursor)
-       (send-event! context @entity :dropped-item))
-
-      ; SWAP ITEMS
-      (and item
-           (inventory/valid-slot? cell item-on-cursor))
-      (if (inventory/two-handed-weapon-and-shield-together? inventory cell item-on-cursor)
-        (complain-2h-weapon-and-shield! context)
-        (do
-         (play-sound! context "sounds/bfxr_itemput.wav")
-         (remove-item! context entity cell)
-         (set-item! context entity cell item-on-cursor)
-         ; need to dissoc and drop otherwise state enter does not trigger picking it up again
-         ; TODO? coud handle pickup-item from item-on-cursor state also
-         (swap! entity dissoc :entity/item-on-cursor)
-         (send-event! context @entity :dropped-item)
-         (send-event! context @entity :pickup-item item)))))))
 
 (def ^:private cell-size 48)
 
@@ -114,6 +59,10 @@
                         (mouseover? this (gui-mouse-position c))
                         (actor/id (actor/parent this)))))))
 
+(defn- clicked-cell [{:keys [context/player-entity] :as ctx} cell]
+  (let [entity* @player-entity]
+    (state/clicked-inventory-cell (entity/state-obj entity*) cell entity* ctx)))
+
 (defn- ->cell [ctx slot->background slot & {:keys [position]}]
   (let [cell [slot (or position [0 0])]
         image-widget (->image-widget ctx (slot->background slot) {:id :image})
@@ -123,9 +72,10 @@
     (set-id! stack cell)
     (add-listener! stack (proxy [ClickListener] []
                            (clicked [event x y]
-                             (let [{:keys [context/player-entity] :as ctx} @current-context]
-                               (when (#{:item-on-cursor :idle} (entity/state @player-entity))
-                                 (clicked-cell ctx cell))))))
+                             (let [ctx @current-context]
+                               (clicked-cell ctx cell)
+                               ; TODO
+                               #_(transact-all! (clicked-cell ctx cell) ctx)))))
     stack))
 
 (defn- redo-table [ctx {:keys [^Table table slot->background]}]

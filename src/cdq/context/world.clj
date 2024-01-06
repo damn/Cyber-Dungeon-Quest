@@ -198,6 +198,8 @@
 
 (def ^:private spawn-enemies? true)
 
+; TODO txs for creating - can re-use on cleared map
+
 ; looping through all tiles of the map 3 times. but dont do it in 1 loop because player needs to be initialized before all monsters!
 (defn- place-entities! [context tiled-map]
   (when spawn-enemies?

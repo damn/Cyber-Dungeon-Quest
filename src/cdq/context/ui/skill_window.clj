@@ -1,16 +1,16 @@
 (ns cdq.context.ui.skill-window
   (:require [gdl.context :refer [->window ->image-button]]
             [gdl.scene2d.actor :refer [add-tooltip!]]
-            [cdq.context :refer [get-property add-skill! tooltip-text]]
-            [cdq.entity :as entity]))
+            [cdq.context :refer [get-property tooltip-text transact-all!]]
+            [cdq.entity :as entity]
+            [cdq.state :as state]))
 
-(defn- pressed-on-skill-in-menu [{:keys [context/player-entity]
-                                  :as context}
-                                 skill]
-  (when (and (pos? (:entity/free-skill-points @player-entity))
-             (not (entity/has-skill? @player-entity skill)))
-    (swap! player-entity update :entity/free-skill-points dec)
-    (add-skill! context player-entity skill)))
+(defn- clicked-skill [{:keys [context/player-entity] :as ctx} id]
+  (let [entity* @player-entity]
+    (state/clicked-skillmenu-skill (entity/state-obj entity*)
+                                   (get-property ctx id)
+                                   entity*
+                                   ctx)))
 
 ; TODO render text label free-skill-points
 ; (str "Free points: " (:entity/free-skill-points @player-entity))
@@ -27,9 +27,10 @@
                                 button (->image-button context
                                                        (:property/image (get-property context id)) ; TODO here anyway taken
                                                        ; => should probably build this window @ game start
-                                                       (fn [{:keys [context/player-entity] :as ctx}]
-                                                         (when (= :idle (entity/state @player-entity))
-                                                           (pressed-on-skill-in-menu ctx (get-property ctx id)))))]]
+                                                       (fn [ctx]
+                                                         (clicked-skill ctx id)
+                                                         ; TODO
+                                                         #_(transact-all! (clicked-skill ctx id) ctx)))]]
                       (do
                        (add-tooltip! button #(tooltip-text % (get-property % id)))
                        button))]

@@ -18,7 +18,8 @@
   (reference [_]))
 
 (defprotocol State
-  (state [_]))
+  (state [_])
+  (state-obj [_]))
 
 (defprotocol Skills
   (has-skill?            [_ skill])

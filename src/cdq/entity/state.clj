@@ -56,7 +56,10 @@
 (extend-type cdq.entity.Entity
   cdq.entity/State
   (state [entity*]
-    (-> entity* :entity/state :fsm :state)))
+    (-> entity* :entity/state :fsm :state))
+
+  (state-obj [entity*]
+    (-> entity* :entity/state :state-obj)))
 
 (defmethod cdq.context/transact! :tx/event [[_ & params] ctx]
   (apply cdq.context/send-event! ctx params)

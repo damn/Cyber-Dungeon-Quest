@@ -4,11 +4,11 @@
 
 (defrecord PlayerMoving [movement-vector]
   state/PlayerState
-  (player-enter [_]
-    [[:tx/cursor :cursors/walking]])
-
+  (player-enter [_] [[:tx/cursor :cursors/walking]])
   (pause-game? [_] false)
   (manual-tick [_ entity* context])
+  (clicked-inventory-cell [_ cell entity* ctx])
+  (clicked-skillmenu-skill [_ skill entity* ctx])
 
   state/State
   (enter [_ entity* _ctx]

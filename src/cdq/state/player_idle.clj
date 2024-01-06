@@ -1,11 +1,19 @@
 (ns cdq.state.player-idle
-  (:require [gdl.context :refer [world-mouse-position mouse-on-stage-actor? button-just-pressed? button-pressed?]]
+  (:require [gdl.context :refer [world-mouse-position mouse-on-stage-actor? button-just-pressed? button-pressed?
+                                 ; fixme
+                                 play-sound!
+                                 ]]
             [gdl.input.buttons :as buttons]
             [gdl.scene2d.actor :refer [visible? toggle-visible! parent] :as actor]
             [gdl.scene2d.ui.button :refer [button?]]
             [gdl.scene2d.ui.window :refer [window-title-bar?]]
             [gdl.math.vector :as v]
-            [cdq.context :refer [get-property inventory-window try-pickup-item! skill-usable-state selected-skill]]
+            [cdq.context :refer [get-property inventory-window try-pickup-item! skill-usable-state selected-skill
+                                 ; fixme
+                                 add-skill!
+                                 send-event!
+                                 remove-item!
+                                 ]]
             [cdq.entity :as entity]
             [cdq.state :as state]
             [cdq.state.wasd-movement :refer [WASD-movement-vector]]))
@@ -128,7 +136,6 @@
   state/PlayerState
   (player-enter [_])
   (pause-game? [_] true)
-
   (manual-tick [_ entity* context]
     (if-let [movement-vector (WASD-movement-vector context)]
       [[:tx/event entity* :movement-input movement-vector]]
@@ -136,6 +143,23 @@
         (cons [:tx/cursor cursor]
               (when (button-just-pressed? context buttons/left)
                 (on-click))))))
+
+  ; TODO return txs
+  (clicked-inventory-cell [_ cell entity* ctx]
+    (let [inventory (:entity/inventory entity*)
+          item (get-in inventory cell)]
+      (when item
+        (do
+         (play-sound! ctx "sounds/bfxr_takeit.wav")
+         (send-event! ctx entity* :pickup-item item)
+         (remove-item! ctx (entity/reference entity*) cell)))))
+
+  ; TODO return txs
+  (clicked-skillmenu-skill [_ skill entity* ctx]
+    (when (and (pos? (:entity/free-skill-points entity*))
+               (not (entity/has-skill? entity* skill)))
+      (swap! (entity/reference entity*) update :entity/free-skill-points dec)
+      (add-skill! ctx (entity/reference entity*) skill)))
 
   state/State
   (enter [_ entity* _ctx])

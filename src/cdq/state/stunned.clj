@@ -5,11 +5,11 @@
 
 (defrecord Stunned [counter]
   state/PlayerState
-  (player-enter [_]
-    [[:tx/cursor :cursors/denied]])
-
+  (player-enter [_] [[:tx/cursor :cursors/denied]])
   (pause-game? [_] false)
   (manual-tick [_ _entity* context])
+  (clicked-inventory-cell [_ cell entity* ctx])
+  (clicked-skillmenu-skill [_ skill entity* ctx])
 
   state/State
   (enter [_ _entity* _ctx])
