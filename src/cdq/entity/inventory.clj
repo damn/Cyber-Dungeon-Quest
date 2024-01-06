@@ -4,7 +4,7 @@
             gdl.context
             [utils.core :refer [find-first]]
             [cdq.entity :as entity]
-            [cdq.context :refer [get-property set-item-image-in-widget remove-item-from-widget apply-modifier! reverse-modifier! try-pickup-item! remove-item! set-item! stack-item! add-skill! remove-skill!]]))
+            [cdq.context :refer [get-property set-item-image-in-widget remove-item-from-widget apply-modifier! reverse-modifier! try-pickup-item! add-skill! remove-skill!]]))
 
 (def empty-inventory
   (->> #:inventory.slot{:bag      [6 4]
@@ -99,13 +99,41 @@
                         true)))]
     picked-up))
 
+(defn- set-item! [context entity cell item]
+  (swap! entity set-item cell item)
+  (when (applies-modifiers? cell)
+    (apply-modifier! context entity (:item/modifier item))
+    (when (and (= (:item/slot item) :inventory.slot/weapon))
+      (add-skill! context entity item)))
+  (when (:entity/player? @entity)
+    (set-item-image-in-widget context cell item)))
+
 (defmethod cdq.context/transact! :tx/set-item [[_ entity* cell item] ctx]
   (set-item! ctx (entity/reference entity*) cell item)
   nil)
 
+(defn- remove-item! [context entity cell]
+  (let [item (get-in (:entity/inventory @entity) cell)]
+    (swap! entity remove-item cell)
+    (when (applies-modifiers? cell)
+      (reverse-modifier! context entity (:item/modifier item))
+      (when (= (:item/slot item) :inventory.slot/weapon)
+        (remove-skill! context entity item)))
+    (when (:entity/player? @entity)
+      (remove-item-from-widget context cell))))
+
 (defmethod cdq.context/transact! :tx/remove-item [[_ entity* cell] ctx]
   (remove-item! ctx (entity/reference entity*) cell)
   nil)
+
+; TODO no items which stack are available
+(defn- stack-item! [context entity cell item]
+  (let [cell-item (get-in (:entity/inventory @entity) cell)]
+    (assert (stackable? item cell-item))
+    ; TODO this doesnt make sense with modifiers ! (triggered 2 times if available)
+    ; first remove and then place, just update directly  item ...
+    (remove-item! context entity cell)
+    (set-item! context entity cell (update cell-item :count + (:count item)))))
 
 (defmethod cdq.context/transact! :tx/stack-item [[_ entity* cell item] ctx]
   (stack-item! ctx (entity/reference entity*) cell item)
@@ -113,34 +141,6 @@
 
 (extend-type gdl.context.Context
   cdq.context/Inventory
-  (set-item! [context entity cell item]
-    (swap! entity set-item cell item)
-    (when (applies-modifiers? cell)
-      (apply-modifier! context entity (:item/modifier item))
-      (when (and (= (:item/slot item) :inventory.slot/weapon))
-        (add-skill! context entity item)))
-    (when (:entity/player? @entity)
-      (set-item-image-in-widget context cell item)))
-
-  (remove-item! [context entity cell]
-    (let [item (get-in (:entity/inventory @entity) cell)]
-      (swap! entity remove-item cell)
-      (when (applies-modifiers? cell)
-        (reverse-modifier! context entity (:item/modifier item))
-        (when (= (:item/slot item) :inventory.slot/weapon)
-          (remove-skill! context entity item)))
-      (when (:entity/player? @entity)
-        (remove-item-from-widget context cell))))
-
-  ; TODO no items which stack are available
-  (stack-item! [context entity cell item]
-    (let [cell-item (get-in (:entity/inventory @entity) cell)]
-      (assert (stackable? item cell-item))
-      ; TODO this doesnt make sense with modifiers ! (triggered 2 times if available)
-      ; first remove and then place, just update directly  item ...
-      (remove-item! context entity cell)
-      (set-item! context entity cell (update cell-item :count + (:count item)))))
-
   (try-pickup-item! [context entity item]
     (or
      (try-put-item-in! context entity (:item/slot item) item)

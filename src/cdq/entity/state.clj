@@ -23,11 +23,6 @@
   (entity/render-above [_ entity* ctx] (state/render-above state-obj entity* ctx))
   (entity/render-info  [_ entity* ctx] (state/render-info  state-obj entity* ctx)))
 
-; TODO dangerous getting entity* which is _outdated_
-; multiple tx/event's see item on cursor !
-; pass directly entity only?
-; this whole entity/reference is maybe stupid !
-; just pass 'entity' ??
 (defn- send-event! [ctx entity event params]
   (when-let [{:keys [fsm
                      state-obj

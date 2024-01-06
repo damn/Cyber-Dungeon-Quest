@@ -1,12 +1,13 @@
 (ns cdq.context)
 
+; TODO cdq.transaction
 (defmulti transact! (fn [[k] _ctx] k))
 
 (defprotocol TransactionHandler
   (transact-all! [_ txs]))
 
 (defprotocol EntityComponentSystem
-  (create-entity! [_ components-map]
+  (create-entity! [_ components-map] ; TODO remove
                   "Entities should not have :entity/id component, will get added.
                   Calls create-componenet/create on components.
                   Returns the entity.")
@@ -14,10 +15,6 @@
   (tick-entity! [_ entity] "Calls tick on all components of the entity.")
   (render-entities* [_ entities*] "Draws entities* in the correct z-order and in the order of render-systems for each z-order.")
   (remove-destroyed-entities! [_] "Calls destroy on all entities which are marked as ':entity/destroyed?'"))
-
-(defprotocol PlayerMessage
-  (show-msg-to-player! [_ message]) ; TODO remove
-  (->player-message-actor [_]))
 
 (defprotocol MouseOverEntity
   (update-mouseover-entity! [_]))
@@ -43,11 +40,13 @@
   (effect-useful?     [_ effect]))
 
 (defprotocol Modifier
+  ; TODO remove
   (apply-modifier!   [_ entity modifier])
   (reverse-modifier! [_ entity modifier])
   (modifier-text     [_ modifier]))
 
 (defprotocol Builder
+  ; TODO ?
   (creature [_ creature-id position extra-components])
   (item-entity [_ position item])
   (line-entity [_ {:keys [start end duration color thick?]}]))
@@ -64,14 +63,12 @@
 (defprotocol InventoryWindow
   (inventory-window [_])
   (rebuild-inventory-widgets [_])
+  ; TODO trigger
   (set-item-image-in-widget [_ cell item])
   (remove-item-from-widget [_ cell]))
 
-(defprotocol Inventory ; TODO remove
-  (set-item!        [_ entity cell item])
-  (remove-item!     [_ entity cell])
-  (stack-item!      [_ entity cell item])
-  (try-pickup-item! [_ entity item]))
+(defprotocol Inventory
+  (try-pickup-item! [_ entity item])) ; TODO remove
 
 (defprotocol Counter
   (->counter [_ duration])
@@ -89,6 +86,7 @@
   (->action-bar    [_])
   (reset-actionbar [_])
   (selected-skill  [_])
+  ; TODO trigger
   (actionbar-add-skill    [_ skill])
   (actionbar-remove-skill [_ skill]))
 
