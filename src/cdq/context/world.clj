@@ -196,7 +196,7 @@
 ; --> mach prozedural generierte maps mit prostprocessing (fill-singles/set-cells-behind-walls-nil/remove-nads/..?)
 ;& assertions 0 NADS z.b. ...?
 
-(def ^:private spawn-enemies? false)
+(def ^:private spawn-enemies? true)
 
 ; TODO txs for creating - can re-use on cleared map
 

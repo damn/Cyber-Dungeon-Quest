@@ -82,23 +82,6 @@
        (set-item! context entity cell (update item :count dec)))
       (remove-item! context entity cell))))
 
-(defn- try-put-item-in!
-  "returns true when the item was picked up"
-  [context entity slot item]
-  (let [inventory (:entity/inventory @entity)
-        cells-items (cells-and-items inventory slot)
-        [cell cell-item] (find-first (fn [[cell cell-item]] (stackable? item cell-item))
-                                     cells-items)
-        picked-up (if cell
-                    (do (stack-item! context entity cell item)
-                        true)
-                    (when-let [[empty-cell] (find-first (fn [[cell item]] (nil? item))
-                                                        cells-items)]
-                      (when-not (two-handed-weapon-and-shield-together? inventory empty-cell item)
-                        (set-item! context entity empty-cell item)
-                        true)))]
-    picked-up))
-
 (defn- set-item! [context entity cell item]
   (swap! entity set-item cell item)
   (when (applies-modifiers? cell)
@@ -138,6 +121,23 @@
 (defmethod cdq.context/transact! :tx/stack-item [[_ entity* cell item] ctx]
   (stack-item! ctx (entity/reference entity*) cell item)
   nil)
+
+(defn- try-put-item-in!
+  "returns true when the item was picked up"
+  [context entity slot item]
+  (let [inventory (:entity/inventory @entity)
+        cells-items (cells-and-items inventory slot)
+        [cell cell-item] (find-first (fn [[cell cell-item]] (stackable? item cell-item))
+                                     cells-items)
+        picked-up (if cell
+                    (do (stack-item! context entity cell item)
+                        true)
+                    (when-let [[empty-cell] (find-first (fn [[cell item]] (nil? item))
+                                                        cells-items)]
+                      (when-not (two-handed-weapon-and-shield-together? inventory empty-cell item)
+                        (set-item! context entity empty-cell item)
+                        true)))]
+    picked-up))
 
 (extend-type gdl.context.Context
   cdq.context/Inventory

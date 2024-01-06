@@ -39,7 +39,7 @@
   (swap! (entity/reference entity*) assoc-in ks v)
   nil)
 
-(def ^:private log-txs? true)
+(def ^:private log-txs? false)
 
 (defn- debug-print-tx [tx]
   (pr-str (mapv #(if (instance? cdq.entity.Entity %) (:entity/id %) %)

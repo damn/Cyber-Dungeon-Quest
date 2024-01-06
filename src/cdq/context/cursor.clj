@@ -30,3 +30,7 @@
   {:context/cursors (mapvals (fn [[file x y]]
                                (->cursor ctx (str "cursors/" file ".png") x y))
                              cursors)})
+
+(defmethod cdq.context/transact! :tx/cursor [[_ cursor-key] ctx]
+  (cdq.context/set-cursor! ctx cursor-key)
+  nil)

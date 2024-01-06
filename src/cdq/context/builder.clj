@@ -1,9 +1,13 @@
 (ns cdq.context.builder
   (:require [x.x :refer [defcomponent]]
-            [gdl.context :refer [play-sound!]]
-            [cdq.context :refer [get-property set-cursor!]]
+            gdl.context
+            [cdq.context :refer [get-property]]
             [cdq.entity :as entity]
             [cdq.entity.body :refer (assoc-left-bottom)]))
+
+(defmethod cdq.context/transact! :tx/sound [[_ file] ctx]
+  (gdl.context/play-sound! ctx file)
+  nil)
 
 (defn- create-creature-data [{:keys [property/id
                                      property/animation
@@ -63,10 +67,6 @@
               :line-render {:thick? thick? :end end :color color}
               :delete-after-duration duration}))
 
-(defmethod cdq.context/transact! :tx/sound [[_ file] ctx]
-  (play-sound! ctx file)
-  nil)
-
 (defmethod cdq.context/transact! :tx/audiovisual [[_ position id] ctx]
   (let [{:keys [property/sound
                 property/animation]} (get-property ctx id)]
@@ -75,7 +75,3 @@
                :animation animation
                :z-order :z-order/effect
                :delete-after-animation-stopped? true}]))
-
-(defmethod cdq.context/transact! :tx/cursor [[_ cursor-key] ctx]
-  (set-cursor! ctx cursor-key)
-  nil)
