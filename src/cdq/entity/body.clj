@@ -11,10 +11,6 @@
 (defn- draw-bounds [c {[x y] :left-bottom :keys [width height solid?]}]
   (draw-rectangle c x y width height (if solid? color/white color/gray)))
 
-(defn assoc-left-bottom [{:keys [entity/body] [x y] :entity/position :as entity*}]
-  (assoc-in entity* [:entity/body :left-bottom] [(- x (/ (:width body)  2))
-                                                 (- y (/ (:height body) 2))]))
-
 (def show-body-bounds false)
 
 (defrecord Body [width
@@ -51,10 +47,13 @@
       :rotation-angle (or rotation-angle 0)
       :rotate-in-movement-direction? rotate-in-movement-direction?}))
 
-  (entity/create [_ entity* _ctx]
-    ; TODO VALID POSITION CHECK (done @ world-grid?)
-    (assert (:entity/position entity*))
-    [(assoc-left-bottom entity*)])
+  (entity/create [_ {:keys [entity/id
+                            entity/position
+                            entity/body]
+                     [x y] :entity/position} _ctx]
+    (assert position)
+    [[:tx/assoc-in id [:entity/body :left-bottom] [(- x (/ (:width body)  2))
+                                                   (- y (/ (:height body) 2))]]])
 
   (entity/render-debug [_ _entity* context]
     (when show-body-bounds

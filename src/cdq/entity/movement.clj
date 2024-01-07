@@ -39,12 +39,6 @@
         (try-move ctx entity* [xdir 0])
         (try-move ctx entity* [0 ydir]))))
 
-; TO BODY?
-(defn- check-rotate [entity* direction]
-  (if (:rotate-in-movement-direction? (:entity/body entity*))
-    (assoc-in entity* [:entity/body :rotation-angle] (v/get-angle-from-vector direction))
-    entity*))
-
 (defcomponent :entity/movement tiles-per-second
   (entity/create [_ entity* _ctx]
     (assert (and (:entity/body entity*)
@@ -56,8 +50,13 @@
       (assert (or (zero? (v/length direction))
                   (v/normalised? direction)))
       (when-not (zero? (v/length direction))
-        (when-let [moved-entity* (if (:solid? (:entity/body entity*))
-                                   (update-position-solid     ctx entity* direction)
-                                   (update-position-non-solid ctx entity* direction))]
-          [(check-rotate moved-entity* direction)
-           [:tx/position-changed (:entity/id moved-entity*)]])))))
+        (when-let [{:keys [entity/id
+                           entity/position
+                           entity/body]} (if (:solid? (:entity/body entity*))
+                                           (update-position-solid     ctx entity* direction)
+                                           (update-position-non-solid ctx entity* direction))]
+          [[:tx/assoc    id [:entity/position] position]
+           [:tx/assoc-in id [:entity/body :left-bottom] (:left-bottom body)]
+           (when (:rotate-in-movement-direction? body)
+             [:tx/assoc-in id [:entity/body :rotation-angle] (v/get-angle-from-vector direction)])
+           [:tx/position-changed id]])))))
