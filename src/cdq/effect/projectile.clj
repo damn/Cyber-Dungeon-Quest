@@ -69,18 +69,18 @@
 
   (effect/transactions [_ {:keys [effect/source
                                   effect/direction] :as ctx}]
-    [#:entity {:position (start-point source direction)
-               :faction (:entity/faction source)
-               :body {:width size
-                      :height size
-                      :solid? false
-                      :rotation-angle (v/get-angle-from-vector direction)}
-               :flying? true
-               :z-order :z-order/effect
-               :movement speed
-               :movement-vector direction
-               :animation (black-projectile ctx)
-               :delete-after-duration maxtime
-               :plop true
-               :projectile-collision {:hit-effect hit-effect
-                                      :piercing? true}}]))
+    [[:tx/create #:entity {:position (start-point source direction)
+                           :faction (:entity/faction source)
+                           :body {:width size
+                                  :height size
+                                  :solid? false
+                                  :rotation-angle (v/get-angle-from-vector direction)}
+                           :flying? true
+                           :z-order :z-order/effect
+                           :movement speed
+                           :movement-vector direction
+                           :animation (black-projectile ctx)
+                           :delete-after-duration maxtime
+                           :plop true
+                           :projectile-collision {:hit-effect hit-effect
+                                                  :piercing? true}}]]))

@@ -16,10 +16,10 @@
   (exit [_ entity* ctx]
     ; TODO make state = alerted, and shout at the end of that !
     ; then nice alert '!' and different entities different alert time
-    [(entity/add-text-effect entity* ctx "!")
-     #:entity {:position (:entity/position entity*)
-               :faction  (:entity/faction  entity*)
-               :shout (->counter ctx 0.2)}])
+    [(entity/add-text-effect entity* ctx "!") ; TODO FIXME
+     [:tx/create #:entity {:position (:entity/position entity*)
+                           :faction  (:entity/faction  entity*)
+                           :shout (->counter ctx 0.2)}]])
 
   (tick [_ entity* context]
     (let [cell (get (world-grid context)

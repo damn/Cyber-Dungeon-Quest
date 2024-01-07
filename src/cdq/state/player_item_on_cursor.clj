@@ -53,7 +53,6 @@
 ; Because line of sight checks center of entity only, not corners
 ; this is okay, you have thrown the item over a hill, thats possible.
 
-
 (defn- placement-point [player target maxrange]
   (v/add player
          (v/scale (v/direction player target)
@@ -93,7 +92,9 @@
     ; on the ground
     (when (:entity/item-on-cursor entity*)
       [[:tx/sound "sounds/bfxr_itemputground.wav"]
-       (item-entity ctx (item-place-position ctx entity*) (:entity/item-on-cursor entity*))
+       [:tx/create (item-entity ctx
+                                (item-place-position ctx entity*)
+                                (:entity/item-on-cursor entity*))]
        [:tx/dissoc id :entity/item-on-cursor]]))
 
   (tick [_ entity* _ctx])

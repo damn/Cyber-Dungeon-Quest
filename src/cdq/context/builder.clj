@@ -35,11 +35,11 @@
          (when (= id :creatures/lady-a) {:entity/clickable {:type :clickable/princess}})))
 
 (defmethod cdq.context/transact! :tx/creature [[_ creature-id position extra-components] ctx]
-  [(-> ctx
-       (get-property creature-id)
-       (create-creature-data extra-components ctx)
-       (assoc :entity/position position)
-       assoc-left-bottom)])
+  [[:tx/create (-> ctx
+                   (get-property creature-id)
+                   (create-creature-data extra-components ctx)
+                   (assoc :entity/position position)
+                   assoc-left-bottom)]])
 
 (defcomponent :entity/plop _
   (entity/destroy [_ entity* ctx]
@@ -71,7 +71,7 @@
   (let [{:keys [property/sound
                 property/animation]} (get-property ctx id)]
     [[:tx/sound sound]
-     #:entity {:position position
-               :animation animation
-               :z-order :z-order/effect
-               :delete-after-animation-stopped? true}]))
+     [:tx/create #:entity {:position position
+                           :animation animation
+                           :z-order :z-order/effect
+                           :delete-after-animation-stopped? true}]]))

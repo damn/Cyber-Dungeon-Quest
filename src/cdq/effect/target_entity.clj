@@ -49,12 +49,12 @@
 
   (effect/transactions [_ {:keys [effect/source effect/target] :as ctx}]
     (if (in-range? source target maxrange)
-      [(line-entity ctx
-                    {:start (start-point source target)
-                     :end (:entity/position target)
-                     :duration 0.05
-                     :color [1 0 0 0.75]
-                     :thick? true})
+      [[:tx/create (line-entity ctx
+                                {:start (start-point source target)
+                                 :end (:entity/position target)
+                                 :duration 0.05
+                                 :color [1 0 0 0.75]
+                                 :thick? true})]
        ; TODO => make new context with end-point ... and check on point entity
        ; friendly fire ?!
        ; player maybe just direction possible ?!

@@ -44,6 +44,12 @@
   (swap! entity update-in (drop-last ks) dissoc (last ks))
   nil)
 
+(declare create-entity!)
+
+(defmethod transact! :tx/create [[_ components] ctx]
+  (create-entity! ctx components)
+  nil)
+
 (defmethod transact! :tx/destroy [[_ entity] _ctx]
   (swap! entity assoc :entity/destroyed? true)
   nil)
@@ -58,18 +64,14 @@
                   :else %)
                 tx)))
 
-(declare create-entity!)
-
 (defn- handle-transaction! [tx ctx]
   (when log-txs?
     (when-not (and (vector? tx)
                    (= :tx/cursor (first tx)))
       (println "tx: " (cond (instance? cdq.entity.Entity tx) "(reset! (:entity/id tx) tx)"
-                            (map? tx) "(create-entity! ctx tx)"
                             (vector? tx) (debug-print-tx tx)))))
   (cond
    (instance? cdq.entity.Entity tx) (reset! (:entity/id tx) tx)
-   (map? tx) (create-entity! ctx tx)
    (vector? tx) (doseq [tx (transact! tx ctx) :when tx]
                   (handle-transaction! tx ctx))
    :else (throw (Error. (str "Unknown transaction: " (pr-str tx))))))
