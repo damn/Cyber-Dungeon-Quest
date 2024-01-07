@@ -13,6 +13,7 @@
 ; also tooltips sometimes out of screen first showing ...
 ; magic mult ring also not working?
 
+; TODO move cdq.modifier & only defmodifier
 
 (defn- check-plus-symbol [n]
   (case (math/signum n) 1.0 "+" -1.0 ""))
@@ -26,6 +27,12 @@
 ; a modifier is two effects together for apply/reverse!
 ; so I have equip item apply-effects & reverse-effects ?
 ; can have permanent apply/reverse effects too
+
+(comment
+ {:modifier/armor [:effect/target :physical 0.75],
+  :modifier/max-hp 5}
+ [:tx/assoc id :entity/hp (apply-max (:entity/hp entity*) #(+ % v))]
+ [:tx/assoc id :entity/hp (apply-max (:entity/hp entity*) #(- % v))])
 
 (modifier/defmodifier :modifier/max-hp
   {:text    (partial plus-max-modifier-text "HP")

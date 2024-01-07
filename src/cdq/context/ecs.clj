@@ -63,28 +63,22 @@
                   (instance? clojure.lang.Atom %) (:entity/uid @%)
                   (instance? gdl.backends.libgdx.context.image_drawer_creator.Image %) "<Image>"
                   (instance? gdl.graphics.animation.ImmutableAnimation %) "<Animation>"
+                  (instance? gdl.context.Context %) "<Context>"
                   :else %)
                 tx)))
 
-(defn- handle-transaction! [tx ctx]
-  (when log-txs?
-    (when-not (and (vector? tx)
-                   (= :tx/cursor (first tx)))
-      (println "tx: " (cond (instance? cdq.entity.Entity tx) "(reset! (:entity/id tx) tx)"
-                            (vector? tx) (debug-print-tx tx)))))
-  (cond
-   (instance? cdq.entity.Entity tx) (reset! (:entity/id tx) tx)
-   (vector? tx) (doseq [tx (transact! tx ctx) :when tx]
-                  (handle-transaction! tx ctx))
-   :else (throw (Error. (str "Unknown transaction: " (pr-str tx))))))
+(defn- log-tx [tx]
+  (when-not (= :tx/cursor (first tx))
+    (println (debug-print-tx tx))))
 
 (extend-type gdl.context.Context
   cdq.context/TransactionHandler
   (transact-all! [ctx txs]
     (doseq [tx txs :when tx]
-      (try (handle-transaction! tx ctx)
+      (when log-txs? (log-tx tx))
+      (try (transact-all! ctx (transact! tx ctx))
            (catch Throwable t
-             (println "Error with transaction: \n" (pr-str tx))
+             (println "Error with transaction: \n" (debug-print-tx tx))
              (throw t))))))
 
 (defn- system-transactions! [system entity ctx]
@@ -92,13 +86,14 @@
           :let [entity* @entity
                 v (k entity*)]
           :when v]
-    (when-let [txs (system [k v] entity* ctx)]
-      (when log-txs?
-        (println "~~txs:" (:entity/uid entity*) "-" k))
-      (try (transact-all! ctx txs)
-           (catch Throwable t
-             (println "Error with " k " and txs: \n" (pr-str txs))
-             (throw t))))))
+    (let [txs (system [k v] entity* ctx)]
+      (when (seq txs)
+        (when log-txs?
+          (println (:entity/uid entity*) "-" k))
+        (try (transact-all! ctx txs)
+             (catch Throwable t
+               (println "Error with " k " and txs: \n" (map debug-print-tx txs))
+               (throw t)))))))
 
 (defn- create-entity! [{::keys [uids->entities] :as context} components-map]
   {:pre [(not (contains? components-map :entity/id))

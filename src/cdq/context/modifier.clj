@@ -9,30 +9,9 @@
   (alter-var-root #'modifier-definitions assoc k modifier)
   k)
 
-(defn- call-modifier-fn [fn-k entity* [modifier-key modifier-value]]
-  {:pre [(#{:apply :reverse} fn-k)]}
-  (let [modifier-def (get modifier-definitions modifier-key)
-        modify (fn-k modifier-def)]
-    (assert modifier-def (str "Could not find modifier: " modifier-key))
-    (update-in entity* (:keys modifier-def) modify modifier-value)))
-
-(defn- reduce-modifier [entity* fn-k modifier]
-  (reduce (partial call-modifier-fn fn-k)
-          entity*
-          modifier))
-
-(defn- apply-modifier   [entity* modifier] (reduce-modifier entity* :apply   modifier))
-(defn- reverse-modifier [entity* modifier] (reduce-modifier entity* :reverse modifier))
-
 (defn- text [[modifier-type value]]
   ((:text (modifier-type modifier-definitions))
    value))
-
-(defmethod cdq.context/transact! :tx/apply-modifier [[_ entity modifier] ctx]
-  [(apply-modifier @entity modifier)])
-
-(defmethod cdq.context/transact! :tx/reverse-modifier [[_ entity modifier] ctx]
-  [(reverse-modifier @entity modifier)])
 
 (extend-type gdl.context.Context
   cdq.context/Modifier
@@ -40,3 +19,21 @@
     (->> (for [component modifier]
            (text component))
          (str/join "\n"))))
+
+(defn- modifier-tx [fn-k entity [modifier-key modifier-value]]
+  {:pre [(#{:apply :reverse} fn-k)]}
+  (let [modifier-def (get modifier-definitions modifier-key)
+        modify (fn-k modifier-def)
+        ks (:keys modifier-def)]
+    (assert modifier-def (str "Could not find modifier: " modifier-key))
+    [:tx/assoc-in entity ks (modify (get-in @entity ks) modifier-value)]))
+
+(defn- gen-txs [fn-k entity modifier]
+  (for [component modifier]
+    (modifier-tx fn-k entity component)))
+
+(defmethod cdq.context/transact! :tx/apply-modifier [[_ entity modifier] ctx]
+  (gen-txs :apply entity modifier))
+
+(defmethod cdq.context/transact! :tx/reverse-modifier [[_ entity modifier] ctx]
+  (gen-txs :reverse entity modifier))
