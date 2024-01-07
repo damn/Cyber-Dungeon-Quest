@@ -30,10 +30,10 @@
 (defrecord NpcIdle []
   state/State
   (enter [_ entity* _ctx])
-  (exit  [_ entity* _ctx]
-    [(assoc entity* :entity/movement-vector nil)])
+  (exit  [_ {:keys [entity/id]} _ctx]
+    [[:tx/assoc id :entity/movement-vector nil]])
   (tick [_ {:keys [entity/id] :as entity*} context]
-    [(assoc entity* :entity/movement-vector (potential-field-follow-to-enemy context id))
+    [[:tx/assoc id :entity/movement-vector (potential-field-follow-to-enemy context id)]
      (let [effect-context (effect-context context entity*)]
        (when-let [skill (npc-choose-skill (merge context effect-context) entity*)]
          [:tx/event id :start-action [skill effect-context]]))])
