@@ -2,8 +2,7 @@
   (:require [x.x :refer [defcomponent]]
             gdl.context
             [cdq.context :refer [get-property]]
-            [cdq.entity :as entity]
-            [cdq.entity.body :refer (assoc-left-bottom)]))
+            [cdq.entity :as entity]))
 
 (defmethod cdq.context/transact! :tx/sound [[_ file] ctx]
   (gdl.context/play-sound! ctx file)
@@ -38,8 +37,7 @@
   [[:tx/create (-> ctx
                    (get-property creature-id)
                    (create-creature-data extra-components ctx)
-                   (assoc :entity/position position)
-                   assoc-left-bottom)]])
+                   (assoc :entity/position position))]])
 
 (defcomponent :entity/plop _
   (entity/destroy [_ entity* ctx]
