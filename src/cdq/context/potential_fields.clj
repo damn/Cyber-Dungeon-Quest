@@ -14,6 +14,40 @@
             [cdq.world.grid :refer [cached-adjacent-cells rectangle->cells]]
             [cdq.world.cell :as cell]))
 
+
+(comment
+ (defrecord Foo [a b c])
+
+ (let [^Foo foo (->Foo 1 2 3)]
+   (time (dotimes [_ 10000000] (:a foo)))
+   (time (dotimes [_ 10000000] (.a foo)))
+   ; .a 7x faster ! => use for faction/distance & make record?
+   ))
+
+(comment
+ ; Stepping through manually
+ (clear-marked-cells! :faction/good (get @faction->marked-cells :faction/good))
+
+ (defn- faction->tiles->entities-map* [entities]
+   (into {}
+         (for [[faction entities] (->> entities
+                                       (filter   #(:entity/faction @%))
+                                       (group-by #(:entity/faction @%)))]
+           [faction
+            (zipmap (map #(->tile (:entity/position @%)) entities)
+                    entities)])))
+
+ (def max-iterations 1)
+
+ (let [entities (map db/get-entity [140 110 91])
+       tl->es (:faction/good (faction->tiles->entities-map* entities))]
+   tl->es
+   (def last-marked-cells (generate-potential-field :faction/good tl->es)))
+ (println *1)
+ (def marked *2)
+ (step :faction/good *1)
+ )
+
 (def ^:private max-iterations 15)
 
 (defn- diagonal-direction? [[x y]]
@@ -34,6 +68,38 @@
     (and (not= x1 x2)
          (not= y1 y2))))
 
+(comment
+ (let [ctx @gdl.app/current-context
+       position [53 42]
+       grid (world-grid ctx)
+       cell (get grid position)]
+   (keys @cell)
+   (comment
+    [:good :evil :faction/good :faction/evil]
+    ; no record access -> just keyword access !
+    ; but used in lots of places ....
+    ; => make protocol for that don't expose internals so ?
+    ; => but also do not generate it every frame
+    ; or hold in cell -> :potential-field
+    ; then a vector or something fast
+    ; could do java field access (.evil ^Cell cell)
+
+    ; also make a defrecord for the :entity / :distance pair
+    ; with protocol access
+    ; so can change it later....
+
+    )
+   )
+ )
+
+(defrecord FieldData [distance entity])
+
+(defn- add-field-data! [cell faction distance entity]
+  (swap! cell assoc faction (->FieldData distance entity)))
+
+(defn- remove-field-data! [cell faction]  ; don't dissoc - will lose the Cell record type
+  (swap! cell assoc faction nil))
+
 ; TODO performance
 ; * cached-adjacent-non-blocked-cells ? -> no need for cell blocked check?
 ; * sorted-set-by ?
@@ -41,7 +107,7 @@
 ; (or teleported?)
 (defn- step [grid faction last-marked-cells]
   (let [marked-cells (transient [])
-        distance       #(-> % faction :distance) ; profiled, faster than get-in
+        distance       #(-> % faction :distance)
         nearest-entity #(-> % faction :entity)
         marked? faction]
     ; sorting important because of diagonal-cell values, flow from lower dist first for correct distance
@@ -52,53 +118,12 @@
             :when (not (or (cell/blocked? adjacent-cell*)
                            (marked? adjacent-cell*)))
             :let [distance-value (+ (distance cell*)
-                                    ; TODO new bottleneck is-diagonal?
                                     (if (fast-is-diagonal? cell* adjacent-cell*)
                                       14 ; square root of 2 * 10
                                       10))]]
-      (swap! adjacent-cell assoc faction {:distance distance-value
-                                          :entity (nearest-entity cell*)})
+      (add-field-data! adjacent-cell faction distance-value (nearest-entity cell*))
       (conj! marked-cells adjacent-cell))
     (persistent! marked-cells)))
-
-
-(comment
- (defrecord Foo [a b c])
-
- (let [^Foo foo (->Foo 1 2 3)]
-   (time (dotimes [_ 10000000] (:a foo)))
-   (time (dotimes [_ 10000000] (.a foo)))
-   ; .a 7x faster ! => use for faction/distance & make record?
-   ))
-
-(comment
-
- ; Stepping through manually
-
- (clear-marked-cells! :faction/good (get @faction->marked-cells :faction/good))
-
- (defn- faction->tiles->entities-map* [entities]
-   (into {}
-         (for [[faction entities] (->> entities
-                                       (filter   #(:entity/faction @%))
-                                       (group-by #(:entity/faction @%)))]
-           [faction
-            (zipmap (map #(->tile (:entity/position @%)) entities)
-                    entities)])))
-
- (def max-iterations 1)
-
- (let [entities (map db/get-entity [140 110 91])
-       tl->es (:faction/good (faction->tiles->entities-map* entities))
-       ]
-   tl->es
-
-   (def last-marked-cells (generate-potential-field :faction/good tl->es))
-   )
- (println *1)
- (def marked *2)
- (step :faction/good *1)
- )
 
 (defn- generate-potential-field
   "returns the marked-cells"
@@ -107,8 +132,7 @@
                           [entity (get grid tile)])
         marked (map second entity-cell-seq)]
     (doseq [[entity cell] entity-cell-seq]
-      (swap! cell assoc faction {:distance 0
-                                 :entity entity}))
+      (add-field-data! cell faction 0 entity))
     (loop [marked-cells     marked
            new-marked-cells marked
            iterations 0]
@@ -134,7 +158,7 @@
     (when-not (= (get-in @cache last-state) tiles->entities)
       (swap! cache assoc-in last-state tiles->entities)
       (doseq [cell (get-in @cache marked-cells)]
-        (swap! cell assoc faction nil)) ; don't dissoc - will lose the Cell record type
+        (remove-field-data! cell faction))
       (swap! cache assoc-in marked-cells (generate-potential-field
                                           grid
                                           faction
@@ -194,8 +218,8 @@
   "returns {:target-entity entity} or {:target-cell cell}. Cell can be nil."
   [grid entity own-cell]
   (let [faction (entity/enemy-faction @entity)
-        distance-to    #(-> @% faction :distance) ; see above, is faster than get-in, why do I have 2 functions for this? maybe put in 4 fields in cell, direct access ?
-        nearest-entity #(-> @% faction :entity)
+        distance-to    #(cell/nearest-entity-distance @% faction)
+        nearest-entity #(cell/nearest-entity          @% faction)
         own-dist (distance-to own-cell)
         adjacent-cells (cached-adjacent-cells grid own-cell)]
     (if (and own-dist (zero? own-dist))
