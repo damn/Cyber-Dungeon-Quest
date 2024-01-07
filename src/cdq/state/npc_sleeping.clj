@@ -13,12 +13,14 @@
   state/State
   (enter [_ entity* _ctx])
 
-  (exit [_ entity* ctx]
+  (exit [_ {:keys [entity/id
+                   entity/position
+                   entity/faction]} ctx]
     ; TODO make state = alerted, and shout at the end of that !
     ; then nice alert '!' and different entities different alert time
-    [(entity/add-text-effect entity* ctx "!") ; TODO FIXME
-     [:tx/create #:entity {:position (:entity/position entity*)
-                           :faction  (:entity/faction  entity*)
+    [[:tx/add-text-effect id "[WHITE]!"]
+     [:tx/create #:entity {:position position
+                           :faction  faction
                            :shout (->counter ctx 0.2)}]])
 
   (tick [_ entity* context]

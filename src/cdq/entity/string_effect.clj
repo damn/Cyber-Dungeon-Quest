@@ -6,9 +6,9 @@
             [cdq.entity :as entity]))
 
 (defcomponent :entity/string-effect {:keys [text counter] :as this}
-  (entity/tick [[k _] entity* context]
+  (entity/tick [[k _] {:keys [entity/id]} context]
     (when (stopped? context counter)
-      [(dissoc entity* k)]))
+      [[:tx/dissoc id k]]))
 
   (entity/render-above [_ {[x y] :entity/position :keys [entity/body]} c]
     (draw-text c
@@ -18,13 +18,13 @@
                 :scale 2
                 :up? true})))
 
-(extend-type cdq.entity.Entity
-  cdq.entity/TextEffect
-  (add-text-effect [entity* ctx text]
-    (if (:entity/string-effect entity*)
-      (update entity* :entity/string-effect #(-> %
-                                                 (update :text str "\n" text)
-                                                 (update :counter (fn [cnt]
-                                                                    (reset ctx cnt)))))
-      (assoc entity* :entity/string-effect {:text text
-                                            :counter (->counter ctx 0.4)}))))
+(defmethod cdq.context/transact! :tx/add-text-effect [[_ entity text] ctx]
+  [[:tx/assoc
+    entity
+    :entity/string-effect
+    (if-let [string-effect (:entity/string-effect @entity)]
+      (-> string-effect
+          (update :text str "\n" text)
+          (update :counter #(reset ctx %)))
+      {:text text
+       :counter (->counter ctx 0.4)})]])

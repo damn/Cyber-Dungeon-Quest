@@ -98,12 +98,6 @@
  [:physical [1 20]]
  )
 
-(defn- shield-blocked-tx [context entity*]
-  (entity/add-text-effect entity* context "SHIELD"))
-
-(defn- armor-blocked-tx [context entity*]
-  (entity/add-text-effect entity* context "ARMOR"))
-
 (defn- blocks? [block-rate]
   (< (rand) block-rate))
 
@@ -131,23 +125,25 @@
   (effect/valid-params? [_ {:keys [effect/source effect/target]}]
     (and source target (:entity/hp target)))
 
-  (effect/transactions [_ {:keys [effect/source effect/target] :as ctx}]
+  (effect/transactions [_ {:keys [effect/source effect/target]
+                           {:keys [entity/position
+                                   entity/id
+                                   entity/hp]} :effect/target}]
     (cond
-     (no-hp-left? (:entity/hp target))
+     (no-hp-left? hp)
      nil
 
      (blocks? (effective-block-rate source target :shield dmg-type))
-     [(shield-blocked-tx ctx target)]
+     [[:tx/add-text-effect id "[WHITE]SHIELD"]]
 
      (blocks? (effective-block-rate source target :armor dmg-type))
-     [(armor-blocked-tx ctx target)]
+     [[:tx/add-text-effect id "[WHITE]ARMOR"]]
 
      :else
      (let [[dmg-type min-max-dmg] (effective-damage damage source target)
            dmg-amount (random/rand-int-between min-max-dmg)
-           target (-> target
-                      (entity/add-text-effect ctx (str "[RED]" dmg-amount))
-                      (update :entity/hp apply-val #(- % dmg-amount)))]
-       [[:tx/audiovisual (:entity/position target) (keyword (str "effects.damage." (name dmg-type)) "hit-effect")]
-        target
-        [:tx/event (:entity/id target) (if (no-hp-left? (:entity/hp target)) :kill :alert)]]))))
+           hp (apply-val hp #(- % dmg-amount))]
+       [[:tx/audiovisual position (keyword (str "effects.damage." (name dmg-type)) "hit-effect")]
+        [:tx/add-text-effect id (str "[RED]" dmg-amount)]
+        [:tx/assoc id :entity/hp hp]
+        [:tx/event id (if (no-hp-left? hp) :kill :alert)]]))))
