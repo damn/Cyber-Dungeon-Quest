@@ -272,7 +272,7 @@
 ; different attack/cast speed modifier & text
 ; => dispatch on skill.type/weapon or skill.type/spell
 ; => :start-action-sound / :action-time-modifier / :action-time-pretty-name
-(defmethod property->text :property.type/spell [{:keys [context/player-entity] :as context}
+(defmethod property->text :property.type/spell [ctx
                                                 {:keys [property/id
                                                         skill/cost
                                                         skill/action-time
@@ -284,7 +284,7 @@
    (when cost (str "Cost: " cost))
    (str (if spell?  "Cast-Time" "Attack-time") ": " (readable-number action-time) " seconds")
    (when cooldown (str "Cooldown: " (readable-number cooldown)))
-   (effect-text context effect)])
+   (effect-text ctx effect)])
 
 (defmethod property->text :property.type/item [ctx
                                                {:keys [property/pretty-name
@@ -293,7 +293,7 @@
   [(str pretty-name (when-let [cnt (:count item)] (str " (" cnt ")")))
    (when (seq modifier) (modifier-text ctx modifier))])
 
-(defmethod property->text :property.type/weapon [{:keys [context/player-entity] :as ctx}
+(defmethod property->text :property.type/weapon [ctx
                                                  {:keys [property/pretty-name
                                                          item/two-handed?
                                                          item/modifier
