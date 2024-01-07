@@ -19,9 +19,7 @@
   (state-obj [_]))
 
 (defprotocol Skills
-  (has-skill?            [_ skill])
-  (set-skill-to-cooldown [_ ctx skill])
-  (pay-skill-mana-cost   [_ skill]))
+  (has-skill? [_ skill]))
 
 (defprotocol EffectModifiers
   (effect-source-modifiers [_ effect-type])

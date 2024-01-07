@@ -4,8 +4,8 @@
             [cdq.entity :as entity]))
 
 (defcomponent :entity/delete-after-duration counter
-  (entity/create [[k duration] entity* ctx]
-    [(assoc entity* k (->counter ctx duration))])
+  (entity/create [[k duration] {:keys [entity/id]} ctx]
+    [[:tx/assoc id k (->counter ctx duration)]])
   (entity/tick [_ {:keys [entity/id]} ctx]
     (when (stopped? ctx counter)
       [[:tx/destroy id]])))

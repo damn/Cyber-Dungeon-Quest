@@ -6,6 +6,12 @@
             [gdl.scene2d.ui.label :refer [set-text!]]
             [gdl.scene2d.ui.widget-group :refer [pack!]]))
 
+(defn- skill-info [{:keys [entity/skills]}]
+  (clojure.string/join "\n"
+                       (for [{:keys [property/id skill/cooling-down?]} (vals skills)
+                             :when cooling-down? ]
+                         [id [:cooling-down? (boolean cooling-down?)]])))
+
 (defn- debug-infos [{:keys [context/game-paused?
                             context/player-entity
                             cdq.context.ecs/thrown-error
@@ -21,7 +27,8 @@
          (when @thrown-error
            (str "\nERROR!\n " @thrown-error "\n\n"))
          "game-paused? " @game-paused? "\n"
-         "elapsed-game-time " (utils.core/readable-number @elapsed-game-time) " seconds "
+         "elapsed-game-time " (utils.core/readable-number @elapsed-game-time) " seconds \n"
+         (skill-info @player-entity)
          ;"\nMouseover-Actor:\n"
          #_(when-let [actor (mouse-on-stage-actor? c)]
            (str "TRUE - name:" (.getName actor)

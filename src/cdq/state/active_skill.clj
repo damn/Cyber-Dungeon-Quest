@@ -1,5 +1,6 @@
 (ns cdq.state.active-skill
   (:require [gdl.context :refer [draw-filled-circle draw-sector draw-image]]
+            [data.val-max :refer [apply-val]]
             [cdq.context :refer [valid-params? effect-render-info stopped? finished-ratio ->counter]]
             [cdq.entity :as entity]
             [cdq.state :as state]))
@@ -17,6 +18,14 @@
                  [1 1 1 0.5])
     (draw-image c icon [(- x radius) y])))
 
+(defn- set-skill-to-cooldown [entity* {:keys [property/id skill/cooldown] :as skill} ctx]
+  (when cooldown
+    [:tx/assoc-in (:entity/id entity*) [:entity/skills id :skill/cooling-down?] (->counter ctx cooldown)]))
+
+(defn- pay-skill-mana-cost [{:keys [entity/id entity/mana]} {:keys [skill/cost]}]
+  (when cost
+    [:tx/assoc id :entity/mana (apply-val mana #(- % cost))]))
+
 (defrecord ActiveSkill [skill effect-context counter]
   state/PlayerState
   (player-enter [_] [[:tx/cursor :cursors/sandclock]])
@@ -26,17 +35,15 @@
   (clicked-skillmenu-skill [_ entity* skill])
 
   state/State
+  ; should assert enough mana
+  ; but should also assert usable-state = :usable
+  ; but do not want to call again valid-params? (expensive)
+  ; i know i do it before only @ player & creature idle so ok
+  ; also mana cost could be part of effect ? idk. (immediate effect, not delayed)
   (enter [_ entity* ctx]
-    ; TODO all only called here => start-skill-bla
-    ; make all this context context.entity.skill extension ?
     [[:tx/sound (str "sounds/" (if (:spell? skill) "shoot.wav" "slash.wav"))]
-     (-> entity*
-         (entity/set-skill-to-cooldown ctx skill)
-         ; should assert enough mana
-         ; but should also assert usable-state = :usable
-         ; but do not want to call again valid-params? (expensive)
-         ; i know i do it before only @ player & creature idle so ok
-         (entity/pay-skill-mana-cost skill))])
+     (set-skill-to-cooldown entity* skill ctx)
+     (pay-skill-mana-cost entity* skill)])
 
   (exit [_ entity* _ctx])
 
