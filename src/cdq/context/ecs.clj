@@ -111,7 +111,7 @@
      (swap! entity assoc :entity/id entity :entity/uid uid)
      (swap! uids->entities assoc uid entity)
      (system-transactions! entity/create entity context)
-     (add-entity! context entity) ; no left-bottom! thats why put after entity/create (x.x)
+     (add-entity! context entity)
      entity)
    (catch Throwable t
      (println "Error with: " components-map)

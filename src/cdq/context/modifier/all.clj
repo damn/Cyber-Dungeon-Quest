@@ -6,24 +6,13 @@
 
 ; TODO dissoc again if value == default value -> into modifier logic, e.g. modifiers blocks 0 , just dissoc then ?
 ; TODO add movement speed +/- modifier.
-
-; * shield-wood-buckler / rings not having modifiers anymore
 ; * center sprites (staff not centered for example)
+; TODO modified sword dmg not shown !
+; spell also not
+; want different colors too @ tooltip
+; also tooltips sometimes out of screen first showing ...
+; magic mult ring also not working?
 
-; TODO inventory x2 size ?
-; :modifiers [[:shield [:target :physical 0.2]]]
-;-    <property name="modifiers" value="[[:shield [:target :physical 0.2]]]"/>
-;-    <property name="name" value="shield-wood-buckler"/>
-;
-;-    <property name="modifiers" value="[[:damage [:source :physical [:val :inc] 5]]]"/>
-;-    <property name="name" value="ring-gold"/>
-;
-;-    <property name="modifiers" value="[[:damage [:source :magic [:max :mult] 0.5]]]"/>
-;-    <property name="name" value="ring-azure"/>
-
-; TODO - also show all modifiers ? how to show +- max - hp ?
-
-; TODO armor sometimes [RED] ! string effect doesnt reset colors ....
 
 (defn- check-plus-symbol [n]
   (case (math/signum n) 1.0 "+" -1.0 ""))
@@ -33,6 +22,10 @@
 
 (defn- apply-max-plus  [vmx v] (apply-max vmx #(+ % v)))
 (defn- apply-max-minus [vmx v] (apply-max vmx #(- % v)))
+
+; a modifier is two effects together for apply/reverse!
+; so I have equip item apply-effects & reverse-effects ?
+; can have permanent apply/reverse effects too
 
 (modifier/defmodifier :modifier/max-hp
   {:values  [[15 25] [35 45] [55 65]]
