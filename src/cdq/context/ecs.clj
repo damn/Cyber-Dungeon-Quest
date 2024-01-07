@@ -28,6 +28,7 @@
     (swap! cnt inc)))
 
 (defmethod transact! :tx/assoc [[_ entity k v] _ctx]
+  (assert (keyword? k))
   (swap! entity assoc k v)
   nil)
 
@@ -36,6 +37,7 @@
   nil)
 
 (defmethod transact! :tx/dissoc [[_ entity k] _ctx]
+  (assert (keyword? k))
   (swap! entity dissoc k)
   nil)
 
