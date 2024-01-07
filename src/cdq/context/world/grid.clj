@@ -101,17 +101,18 @@
       (filter #(geom/point-in-rect? position (:entity/body @%))
               (:entities @cell))))
 
-  (valid-position? [grid entity*]
-    (let [cells* (map deref (rectangle->cells grid (:entity/body entity*)))]
+  (valid-position? [grid {:keys [entity/body entity/uid] :as entity*}]
+    (let [cells* (map deref (rectangle->cells grid body))]
       (and (not-any? #(cell/blocked? % entity*) cells*)
-           (or (not (:solid? (:entity/body entity*)))
+           (or (not (:solid? body))
                (->> cells*
                     cells->entities
                     (map deref)
-                    (not-any? #(and (not= (:entity/uid %) (:entity/uid entity*))
-                                    (:solid? (:entity/body %))
-                                    (geom/collides? (:entity/body %)
-                                                    (:entity/body entity*)))))))))
+                    (not-any? (fn [other-entity*]
+                                (let [other-body (:entity/body other-entity*)]
+                                  (and (not= (:entity/uid other-entity*) uid)
+                                       (:solid? other-body)
+                                       (geom/collides? other-body body))))))))))
 
   (add-entity! [grid entity]
     ;(assert (valid-position? grid @entity)) ; TODO deactivate because projectile no left-bottom remove that field or update properly for all
