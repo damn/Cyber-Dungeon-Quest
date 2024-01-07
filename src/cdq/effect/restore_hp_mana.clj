@@ -7,6 +7,12 @@
 (def ^:private schema
   (m/schema [:= true]))
 
+(defn- restore-hp-tx [{:keys [entity/id entity/hp]}]
+  [:tx/assoc id :entity/hp (set-to-max hp)])
+
+(defn- restore-mana-tx [{:keys [entity/id entity/mana]}]
+  [:tx/assoc id :entity/mana (set-to-max mana)])
+
 (defcomponent :effect/restore-hp-mana _
   (effect/value-schema [_]
     schema)
@@ -22,6 +28,5 @@
         (lower-than-max? (:entity/hp   source))))
 
   (effect/transactions [_ {:keys [effect/source]}]
-    [(-> source
-         (update :entity/hp set-to-max)
-         (update :entity/mana set-to-max))]))
+    [(restore-hp-tx source)
+     (restore-mana-tx source)]))
