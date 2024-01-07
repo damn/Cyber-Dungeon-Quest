@@ -28,15 +28,13 @@
 ; can have permanent apply/reverse effects too
 
 (modifier/defmodifier :modifier/max-hp
-  {:values  [[15 25] [35 45] [55 65]]
-   :text    (partial plus-max-modifier-text "HP")
+  {:text    (partial plus-max-modifier-text "HP")
    :keys    [:entity/hp]
    :apply   apply-max-plus
    :reverse apply-max-minus})
 
 (modifier/defmodifier :modifier/max-mana
-  {:values  [[15 25] [35 45] [55 65]]
-   :text    (partial plus-max-modifier-text "Mana")
+  {:text    (partial plus-max-modifier-text "Mana")
    :keys    [:entity/mana]
    :apply   apply-max-plus
    :reverse apply-max-minus})
@@ -45,15 +43,13 @@
 ; new calculations
 
 (modifier/defmodifier :modifier/cast-speed
-  {:values  [[15 25] [35 45] [50 60]]
-   :text    (fn [v] (str "+" v "% Casting-Speed"))
+  {:text    (fn [v] (str "+" v "% Casting-Speed"))
    :keys    [:entity/modifiers :cast-speed]
    :apply   #(+ (or %1 1) (/ %2 100))
    :reverse #(- %1 (/ %2 100))})
 
 (modifier/defmodifier :modifier/attack-speed
-  {:values  [[15 25] [35 45] [50 60]]
-   :text    (fn [v] (str "+" v "% Attack-Speed"))
+  {:text    (fn [v] (str "+" v "% Attack-Speed"))
    :keys    [:entity/modifiers :attack-speed]
    :apply   #(+ (or %1 1) (/ %2 100))
    :reverse #(- %1 (/ %2 100))})
