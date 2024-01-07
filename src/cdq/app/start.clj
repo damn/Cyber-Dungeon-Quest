@@ -17,7 +17,7 @@
    :debug-options? true
    :assert? true})
 
-(def ^:private config production-config)
+(def ^:private config dev-config)
 
 (set! *assert* (safe-get config :assert?))
 
