@@ -23,14 +23,19 @@
 (defn- init-explored-tile-color [ctx]
   (.bindRoot #'explored-tile-color (->color ctx 0.5 0.5 0.5 1)))
 
+(declare ^:private map-render-data)
+
+(defn- set-map-render-data! [{:keys [world-camera] :as ctx}]
+  (let [light-position (camera/position world-camera)] ; == player position use ?
+    (.bindRoot #'map-render-data [light-position ctx])))
+
 ; TODO performance - need to deref current-context at every tile corner !!
 ; => see with prformance check later
 ; => need to pass to orthogonaltiledmap bla
 ; or pass only necessary data structures  (explored grid)
 ;=> the rays are more of a problem after sampling visualvm
 (defn- tile-color-setter [_ x y]
-  (let [{:keys [world-camera] :as context} @current-context
-        light-position (camera/position world-camera) ; == player position use ?
+  (let [[light-position context] map-render-data
         position [x y]
         explored? (explored? context position)
         base-color (if explored?
@@ -89,6 +94,7 @@
                      :as context}
                     active-entities]
   (camera/set-position! world-camera (:entity/position @player-entity))
+  (set-map-render-data! context)
   (render-tiled-map context
                     (:tiled-map world-map)
                     tile-color-setter)
