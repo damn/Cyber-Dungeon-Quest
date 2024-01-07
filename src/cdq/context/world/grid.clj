@@ -176,7 +176,7 @@
     (-> this faction :entity))
 
   (nearest-entity-distance [this faction]
-    (-> this faction :distance)))
+    (-> this faction :distance (* 10))))
 
 (defn- create-cell [position movement]
   {:pre [(#{:none :air :all} movement)]}
