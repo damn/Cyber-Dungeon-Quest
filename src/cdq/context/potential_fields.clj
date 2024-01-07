@@ -119,8 +119,8 @@
                            (marked? adjacent-cell*)))
             :let [distance-value (+ (distance cell*)
                                     (if (fast-is-diagonal? cell* adjacent-cell*)
-                                      14 ; square root of 2 * 10
-                                      10))]]
+                                      1.4 ; square root of 2 * 10
+                                      1))]]
       (add-field-data! adjacent-cell faction distance-value (nearest-entity cell*))
       (conj! marked-cells adjacent-cell))
     (persistent! marked-cells)))
