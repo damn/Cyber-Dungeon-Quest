@@ -75,7 +75,7 @@
 ; => pass to value-widget the value-widget attrs.
 (defn enum-attribute->items [k]
   (case k
-    :creature/faction [:faction/good :faction/evil]))
+    :creature/faction [:good :evil]))
 
 (doseq [k (concat (keys cdq.context.modifier/modifier-definitions)
                   (keys (methods cdq.effect/transactions)))]
@@ -136,8 +136,8 @@
                                                             (name (:creature/species %))
                                                             (name (:property/id %)))
                                        :extra-info-text #(str (:creature/level %) (case (:creature/faction %)
-                                                                                    :faction/good "g"
-                                                                                    :faction/evil "e"))}
+                                                                                    :good "g"
+                                                                                    :evil "e"))}
                             :schema (m/schema
                                      [:map {:closed true}
                                       [:property/id [:qualified-keyword {:namespace :creatures}]]
@@ -145,7 +145,7 @@
                                       [:property/dimensions [:tuple pos? pos?]] ; & > max size?
                                       [:property/animation :some]
                                       [:creature/species [:qualified-keyword {:namespace :species}]] ; one of species
-                                      [:creature/faction [:enum :faction/good :faction/evil]]
+                                      [:creature/faction [:enum :good :evil]]
                                       [:creature/speed pos?]
                                       [:creature/hp pos-int?]
                                       [:creature/mana nat-int?]

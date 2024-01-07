@@ -56,7 +56,7 @@
                           color/green))
 
       (when potential-field-colors?
-        (let [faction :faction/good
+        (let [faction :good
               {:keys [distance entity]} (faction cell*)]
           (when distance
             (let [ratio (/ (int (/ distance 10)) 15) ]

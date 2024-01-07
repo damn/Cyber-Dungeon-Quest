@@ -26,7 +26,7 @@
 
 (comment
  ; Stepping through manually
- (clear-marked-cells! :faction/good (get @faction->marked-cells :faction/good))
+ (clear-marked-cells! :good (get @faction->marked-cells :good))
 
  (defn- faction->tiles->entities-map* [entities]
    (into {}
@@ -40,12 +40,12 @@
  (def max-iterations 1)
 
  (let [entities (map db/get-entity [140 110 91])
-       tl->es (:faction/good (faction->tiles->entities-map* entities))]
+       tl->es (:good (faction->tiles->entities-map* entities))]
    tl->es
-   (def last-marked-cells (generate-potential-field :faction/good tl->es)))
+   (def last-marked-cells (generate-potential-field :good tl->es)))
  (println *1)
  (def marked *2)
- (step :faction/good *1)
+ (step :good *1)
  )
 
 (def ^:private max-iterations 15)
@@ -67,30 +67,6 @@
         [x2 y2] (:position other-cell*)]
     (and (not= x1 x2)
          (not= y1 y2))))
-
-(comment
- (let [ctx @gdl.app/current-context
-       position [53 42]
-       grid (world-grid ctx)
-       cell (get grid position)]
-   (keys @cell)
-   (comment
-    [:good :evil :faction/good :faction/evil]
-    ; no record access -> just keyword access !
-    ; but used in lots of places ....
-    ; => make protocol for that don't expose internals so ?
-    ; => but also do not generate it every frame
-    ; or hold in cell -> :potential-field
-    ; then a vector or something fast
-    ; could do java field access (.evil ^Cell cell)
-
-    ; also make a defrecord for the :entity / :distance pair
-    ; with protocol access
-    ; so can change it later....
-
-    )
-   )
- )
 
 (defrecord FieldData [distance entity])
 
@@ -166,7 +142,7 @@
 
 (defn- update-potential-fields*! [context entities] ; TODO call on world-grid ?!..
   (let [grid (world-grid context)]
-    (doseq [faction [:faction/good :faction/evil]]
+    (doseq [faction [:good :evil]]
       (update-faction-potential-field grid faction entities))))
 
 ;; MOVEMENT AI
