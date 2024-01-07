@@ -27,24 +27,24 @@
   (defn- unique-number! []
     (swap! cnt inc)))
 
-(defmethod cdq.context/transact! :tx/assoc [[_ entity k v] _ctx]
+(defmethod transact! :tx/assoc [[_ entity k v] _ctx]
   (swap! entity assoc k v)
   nil)
 
-(defmethod cdq.context/transact! :tx/assoc-in [[_ entity ks v] _ctx]
+(defmethod transact! :tx/assoc-in [[_ entity ks v] _ctx]
   (swap! entity assoc-in ks v)
   nil)
 
-(defmethod cdq.context/transact! :tx/dissoc [[_ entity k] _ctx]
+(defmethod transact! :tx/dissoc [[_ entity k] _ctx]
   (swap! entity dissoc k)
   nil)
 
-(defmethod cdq.context/transact! :tx/dissoc-in [[_ entity ks] _ctx]
+(defmethod transact! :tx/dissoc-in [[_ entity ks] _ctx]
   (assert (> (count ks) 1))
   (swap! entity update-in (drop-last ks) dissoc (last ks))
   nil)
 
-(defmethod cdq.context/transact! :tx/destroy [[_ entity] _ctx]
+(defmethod transact! :tx/destroy [[_ entity] _ctx]
   (swap! entity assoc :entity/destroyed? true)
   nil)
 
