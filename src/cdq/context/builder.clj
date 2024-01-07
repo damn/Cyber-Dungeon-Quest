@@ -16,7 +16,8 @@
                                      creature/hp
                                      creature/mana
                                      creature/skills
-                                     creature/items]
+                                     creature/items
+                                     creature/reaction-time]
                               [width height] :property/dimensions}
                              extra-components
                              context]
@@ -29,7 +30,8 @@
                    :inventory items
                    :flying? flying?
                    :faction faction
-                   :z-order (if flying? :z-order/flying :z-order/ground)}
+                   :z-order (if flying? :z-order/flying :z-order/ground)
+                   :reaction-time reaction-time}
          extra-components
          (when (= id :creatures/lady-a) {:entity/clickable {:type :clickable/princess}})))
 

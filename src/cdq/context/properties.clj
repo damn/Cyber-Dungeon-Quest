@@ -55,6 +55,7 @@
    :creature/flying? :check-box
    :creature/hp :text-field
    :creature/speed :text-field
+   :creature/reaction-time :text-field
    :spell? :label
    :skill/action-time :text-field
    :skill/cooldown :text-field
@@ -149,6 +150,7 @@
                                       [:creature/hp pos-int?]
                                       [:creature/mana nat-int?]
                                       [:creature/flying? :boolean]
+                                      [:creature/reaction-time pos?]
                                       [:creature/skills [:set :qualified-keyword]] ; one of spells/skills
                                       [:creature/items  [:set :qualified-keyword]] ; one of items
                                       [:creature/level [:maybe pos-int?]]])} ; >0, <max-lvls (9 ?)
@@ -424,10 +426,9 @@
 (comment
  ; # Add new attributes
  (let [ctx @gdl.app/current-context
-       props (cdq.context/all-properties ctx :property.type/item)
-       props (for [prop props
-                   :when (not (:item/modifier prop))]
-               (assoc prop :item/modifier {}))]
+       props (cdq.context/all-properties ctx :property.type/creature)
+       props (for [prop props]
+               (assoc prop :creature/reaction-time 0.2))]
    (def write-to-file? false)
    (doseq [prop props]
      (swap! gdl.app/current-context update-and-write-to-file! prop))
@@ -442,7 +443,7 @@
   {:pre [(contains? data :property/id)
          (contains? properties id)]}
   (validate data :humanize? true)
-  (binding [*print-level* nil] (clojure.pprint/pprint data))
+  ;(binding [*print-level* nil] (clojure.pprint/pprint data))
   (let [properties (assoc properties id data)]
     (when write-to-file?
       (.start (Thread. (fn [] (write-to-file! properties properties-file)))))

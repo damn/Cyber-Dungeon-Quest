@@ -20,7 +20,5 @@
   (render-above [_ entity* c])
   (render-info  [_ entity* c]))
 
-; TODO 0.5 = moving-state-time / reaction-time
-; (* 0.2 (rand))
-(defn ->npc-moving [ctx _entity* movement-direction]
-  (->NpcMoving movement-direction (->counter ctx 0.2)))
+(defn ->npc-moving [ctx {:keys [entity/reaction-time]} movement-direction]
+  (->NpcMoving movement-direction (->counter ctx reaction-time)))
