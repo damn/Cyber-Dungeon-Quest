@@ -26,17 +26,16 @@
                      (effect-useful? effect-context (:skill/effect %))))
        first))
 
-; TODO == NpcMoving !!
 (defrecord NpcIdle []
   state/State
   (enter [_ entity* _ctx])
-  (exit  [_ {:keys [entity/id]} _ctx]
-    [[:tx/assoc id :entity/movement-vector nil]])
+  (exit  [_ entity* _ctx])
   (tick [_ {:keys [entity/id] :as entity*} context]
-    [[:tx/assoc id :entity/movement-vector (potential-field-follow-to-enemy context id)]
-     (let [effect-context (effect-context context entity*)]
-       (when-let [skill (npc-choose-skill (merge context effect-context) entity*)]
-         [:tx/event id :start-action [skill effect-context]]))])
+    (let [effect-context (effect-context context entity*)]
+      (if-let [skill (npc-choose-skill (merge context effect-context) entity*)]
+        [[:tx/event id :start-action [skill effect-context]]]
+        [[:tx/event id :movement-direction (or (potential-field-follow-to-enemy context id)
+                                               [0 0])]]))) ; nil param not accepted @ entity.state
 
   (render-below [_ entity* c])
   (render-above [_ entity* c])

@@ -29,11 +29,6 @@
   (let [light-position (camera/position world-camera)] ; == player position use ?
     (.bindRoot #'map-render-data [light-position ctx])))
 
-; TODO performance - need to deref current-context at every tile corner !!
-; => see with prformance check later
-; => need to pass to orthogonaltiledmap bla
-; or pass only necessary data structures  (explored grid)
-;=> the rays are more of a problem after sampling visualvm
 (defn- tile-color-setter [_ x y]
   (let [[light-position context] map-render-data
         position [x y]
@@ -43,7 +38,7 @@
                      color/black)
         blocked? (ray-blocked? context light-position position)]
     (if blocked?
-      base-color ; color/white TODO here set view all tiles debug
+      base-color ; TODO here set color/white view all tiles debug
       (do
        (when-not explored?
          (set-explored! context position))
