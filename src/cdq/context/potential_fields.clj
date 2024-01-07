@@ -184,8 +184,8 @@
   "returns {:target-entity entity} or {:target-cell cell}. Cell can be nil."
   [grid entity own-cell]
   (let [faction (entity/enemy-faction @entity)
-        distance-to    #(get-in @% [faction :distance])
-        nearest-entity #(get-in @% [faction :entity])
+        distance-to    #(-> @% faction :distance) ; see above, is faster than get-in, why do I have 2 functions for this? maybe put in 4 fields in cell, direct access ?
+        nearest-entity #(-> @% faction :entity)
         own-dist (distance-to own-cell)
         adjacent-cells (cached-adjacent-cells grid own-cell)]
     (if (and own-dist (zero? own-dist))

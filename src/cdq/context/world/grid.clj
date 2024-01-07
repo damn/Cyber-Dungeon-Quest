@@ -168,7 +168,8 @@
       :all false))
 
   (occupied-by-other? [_ entity]
-    (seq (disj occupied entity)))
+    ;(seq (disj occupied entity)) VERY SLOW!
+    (some #(not= % entity) occupied))
 
   (nearest-entity [this faction]
     (-> this faction :entity))
