@@ -82,9 +82,9 @@
   (clicked-skillmenu-skill [_ entity* skill])
 
   state/State
-  (enter [_ entity* _ctx]
+  (enter [_ {:keys [entity/id]} _ctx]
     [[:tx/cursor :cursors/hand-grab]
-     (assoc entity* :entity/item-on-cursor item)])
+     [:tx/assoc id :entity/item-on-cursor item]])
 
   (exit [_ {:keys [entity/id] :as entity*} ctx]
     ; at context.ui.inventory-window/clicked-cell when we put it into a inventory-cell

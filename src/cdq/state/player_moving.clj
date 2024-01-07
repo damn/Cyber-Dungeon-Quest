@@ -11,14 +11,14 @@
   (clicked-skillmenu-skill [_ entity* skill])
 
   state/State
-  (enter [_ entity* _ctx]
-    [(assoc entity* :entity/movement-vector movement-vector)])
-  (exit [_ entity* _ctx]
-    [(dissoc entity* :entity/movement-vector movement-vector)])
-  (tick [_ entity* context]
+  (enter [_ {:keys [entity/id]} _ctx]
+    [[:tx/assoc id :entity/movement-vector movement-vector]])
+  (exit [_ {:keys [entity/id]} _ctx]
+    [[:tx/dissoc id :entity/movement-vector movement-vector]])
+  (tick [_ {:keys [entity/id]} context]
     (if-let [movement-vector (WASD-movement-vector context)]
-      [(assoc entity* :entity/movement-vector movement-vector)]
-      [[:tx/event (:entity/id entity*) :no-movement-input]]))
+      [[:tx/assoc id :entity/movement-vector movement-vector]]
+      [[:tx/event id :no-movement-input]]))
   (render-below [_ entity* c])
   (render-above [_ entity* c])
   (render-info  [_ entity* c]))

@@ -10,18 +10,28 @@
                                     state-obj
                                     state-obj-constructors]}
   (entity/create [[k _] entity* ctx]
-    [(assoc entity* k
-            ; if :state = nil in fsm => set to initial-state
-            ; TODO make PR / bug report.
-            {:fsm (assoc (fsm initial-state nil)  ; throws when initial-state is not part of states
-                         :state initial-state)
-             :state-obj ((initial-state state-obj-constructors) ctx entity*)
-             :state-obj-constructors state-obj-constructors})])
+    [[:tx/assoc
+      (:entity/id entity*)
+      k
+      ; initial state is nil, so associng it.
+      ; make bug report TODO
+      {:fsm (assoc (fsm initial-state nil)  ; throws when initial-state is not part of states
+                   :state initial-state)
+       :state-obj ((initial-state state-obj-constructors) ctx entity*)
+       :state-obj-constructors state-obj-constructors}]])
 
   (entity/tick         [_ entity* ctx]         (state/tick state-obj entity* ctx))
   (entity/render-below [_ entity* ctx] (state/render-below state-obj entity* ctx))
   (entity/render-above [_ entity* ctx] (state/render-above state-obj entity* ctx))
   (entity/render-info  [_ entity* ctx] (state/render-info  state-obj entity* ctx)))
+
+(extend-type cdq.entity.Entity
+  cdq.entity/State
+  (state [entity*]
+    (-> entity* :entity/state :fsm :state))
+
+  (state-obj [entity*]
+    (-> entity* :entity/state :state-obj)))
 
 (defn- send-event! [ctx entity event params]
   (when-let [{:keys [fsm
@@ -39,18 +49,8 @@
           (transact-all! ctx (state/enter new-state-obj @entity ctx))
           (when (:entity/player? @entity)
             (transact-all! ctx (state/player-enter new-state-obj)))
-          (transact-all! ctx
-                         [(update @entity
-                                  :entity/state
-                                  #(assoc % :fsm new-fsm :state-obj new-state-obj))]))))))
-
-(extend-type cdq.entity.Entity
-  cdq.entity/State
-  (state [entity*]
-    (-> entity* :entity/state :fsm :state))
-
-  (state-obj [entity*]
-    (-> entity* :entity/state :state-obj)))
+          (transact-all! ctx [[:tx/assoc-in entity [:entity/state :fsm] new-fsm]
+                              [:tx/assoc-in entity [:entity/state :state-obj] new-state-obj]]))))))
 
 (defmethod cdq.context/transact! :tx/event [[_ entity event params] ctx]
   (send-event! ctx entity event params)
