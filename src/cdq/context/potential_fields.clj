@@ -61,6 +61,16 @@
       (conj! marked-cells adjacent-cell))
     (persistent! marked-cells)))
 
+
+(comment
+ (defrecord Foo [a b c])
+
+ (let [^Foo foo (->Foo 1 2 3)]
+   (time (dotimes [_ 10000000] (:a foo)))
+   (time (dotimes [_ 10000000] (.a foo)))
+   ; .a 7x faster ! => use for faction/distance & make record?
+   ))
+
 (comment
 
  ; Stepping through manually

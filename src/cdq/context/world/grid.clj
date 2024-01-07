@@ -126,6 +126,7 @@
       (remove-from-occupied-cells! entity)))
 
   (entity-position-changed! [grid entity]
+    ; do not check this here, as it costs performance. we already have checked before changing position.
     ;(assert (valid-position? grid @entity)) ; TODO deactivate because projectile no left-bottom remove that field or update properly for all
     (update-cells! grid entity)
     (when (:solid? (:entity/body @entity))

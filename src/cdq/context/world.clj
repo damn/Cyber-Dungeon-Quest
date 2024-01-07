@@ -55,7 +55,7 @@
 ; ! entities creation fns and audiovisual also cdq.context protocols !
 ; idk how to call it
 
-(defn- on-screen? [entity* {:keys [world-camera world-viewport-width world-viewport-height]}]
+#_(defn- on-screen? [entity* {:keys [world-camera world-viewport-width world-viewport-height]}]
   (let [[x y] (:entity/position entity*)
         x (float x)
         y (float y)
@@ -89,8 +89,8 @@
   cdq.context/World
   (line-of-sight? [context source* target*]
     (and (:entity/z-order target*)  ; is even an entity which renders something
-         (or (not (:entity/player? source*))
-             (on-screen? target* context))
+         #_(or (not (:entity/player? source*)) ; deactivated because performance, also not really needed then
+               (on-screen? target* context))
          (not (ray-blocked? context (:entity/position source*) (:entity/position target*)))))
 
   (ray-blocked? [{:keys [context/world-map]} start target]
