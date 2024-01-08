@@ -49,12 +49,15 @@
   (and (#{:effect/source :effect/target} source-or-target) ; TODO use other names (block-absorb,block-ignore?)
        (#{:physical :magic} damage-type)))
 
+(defn- dmg-type-text [damage-type]
+  (str (str/capitalize (name damage-type)) " damage"))
+
 (defn- damage-block-modifier-text [block-type
                                    [source-or-target
                                     damage-type
                                     value-delta]]
   (str/join " "
-            [(str (str/capitalize (name damage-type)) " damage")
+            [(dmg-type-text damage-type)
              (case block-type
                :shield "shield"
                :armor  "armor")
@@ -102,19 +105,29 @@
 
 (defn- damage-modifier-text [[source-or-target
                               damage-type
-                              application-type
+                              [val-or-max inc-or-mult]
                               value-delta]]
-  (str (name damage-type)
-       (when (:target source-or-target)
-         " received ")))
+  (str/join " "
+            [(case val-or-max
+                      :val "Minimum"
+                      :max "Maximum")
+             (dmg-type-text damage-type)
+             (case source-or-target
+               :effect/source "dealt"
+               :effect/target "received")
+             (case inc-or-mult
+               :inc "+"
+               :mult "+")
+             (case inc-or-mult
+               :inc value-delta
+               :mult (str (int (* value-delta 100)) "%"))]))
 
 ; example: [:damage [:effect/source :physical [:max :mult] 3]]
 (modifier/defmodifier :modifier/damage
   {:text (fn [value]
            (assert (check-damage-modifier-value value)
                    (str "Wrong value for damage modifier: " value))
-           #_(damage-modifier-text value)
-           (pr-str value))
+           (damage-modifier-text value))
    :keys [:entity/modifiers :effect/damage]
    :apply (fn [component value]
             (assert (check-damage-modifier-value value)
