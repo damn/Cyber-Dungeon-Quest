@@ -1,19 +1,11 @@
 (ns cdq.context.modifier.all
-  (:require [clojure.math :as math]
+  (:require [clojure.string :as str]
+            [clojure.math :as math]
             [utils.core :refer [readable-number]]
             [data.val-max :refer [apply-max]]
             [cdq.context.modifier :as modifier]))
 
-; TODO dissoc again if value == default value -> into modifier logic, e.g. modifiers blocks 0 , just dissoc then ?
 ; TODO add movement speed +/- modifier.
-; * center sprites (staff not centered for example)
-; TODO modified sword dmg not shown !
-; spell also not
-; want different colors too @ tooltip
-; also tooltips sometimes out of screen first showing ...
-; magic mult ring also not working?
-
-; TODO move cdq.modifier & only defmodifier
 
 (defn- check-plus-symbol [n]
   (case (math/signum n) 1.0 "+" -1.0 ""))
@@ -23,16 +15,6 @@
 
 (defn- apply-max-plus  [vmx v] (apply-max vmx #(+ % v)))
 (defn- apply-max-minus [vmx v] (apply-max vmx #(- % v)))
-
-; a modifier is two effects together for apply/reverse!
-; so I have equip item apply-effects & reverse-effects ?
-; can have permanent apply/reverse effects too
-
-(comment
- {:modifier/armor [:effect/target :physical 0.75],
-  :modifier/max-hp 5}
- [:tx/assoc id :entity/hp (apply-max (:entity/hp entity*) #(+ % v))]
- [:tx/assoc id :entity/hp (apply-max (:entity/hp entity*) #(- % v))])
 
 (modifier/defmodifier :modifier/max-hp
   {:text    (partial plus-max-modifier-text "HP")
@@ -67,13 +49,26 @@
   (and (#{:effect/source :effect/target} source-or-target) ; TODO use other names (block-absorb,block-ignore?)
        (#{:physical :magic} damage-type)))
 
-; TODO make shield or armor part of the modifier data ...
-; -> only 1 modifier then with :shield or :armor as first value.
+(defn- damage-block-modifier-text [block-type
+                                   [source-or-target
+                                    damage-type
+                                    value-delta]]
+  (str/join " "
+            [(str (str/capitalize (name damage-type)) " damage")
+             (case block-type
+               :shield "shield"
+               :armor  "armor")
+             (case source-or-target
+               :effect/source "ignore"
+               :effect/target "block")
+             ; TODO signum ! negativ possible?
+             (str "+" (int (* value-delta 100)) "%")]))
+
 (defn- damage-block-modifier [block-type]
   {:text (fn [value]
            (assert (check-damage-block-modifier-value value)
                    (str "Wrong value for modifier: " value))
-           (str value))
+           (damage-block-modifier-text block-type value))
    :keys [:entity/modifiers block-type]
    :apply (fn [component value]
             (assert (check-damage-block-modifier-value value)
@@ -89,17 +84,13 @@
 (modifier/defmodifier :modifier/armor
   (damage-block-modifier :armor))
 
-; TODO just use a spec  !
-; or malli
-; => I also want to edit it later @ property-editor
-; hmm
 (defn- check-damage-modifier-value [[source-or-target
                                      damage-type
                                      application-type
                                      value-delta]]
   (and (#{:effect/source :effect/target} source-or-target)
        (#{:physical :magic} damage-type)
-       (let [[val-or-max inc-or-mult] application-type] ; TODO this is schema for val-max-modifiers !
+       (let [[val-or-max inc-or-mult] application-type]
          (and (#{:val :max} val-or-max)
               (#{:inc :mult} inc-or-mult)))))
 
@@ -118,15 +109,12 @@
          " received ")))
 
 ; example: [:damage [:effect/source :physical [:max :mult] 3]]
-; TODO => effect-modifier-modifier
 (modifier/defmodifier :modifier/damage
   {:text (fn [value]
            (assert (check-damage-modifier-value value)
                    (str "Wrong value for damage modifier: " value))
            #_(damage-modifier-text value)
-           (pr-str value)
-
-           )
+           (pr-str value))
    :keys [:entity/modifiers :effect/damage]
    :apply (fn [component value]
             (assert (check-damage-modifier-value value)

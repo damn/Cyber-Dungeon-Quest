@@ -3249,8 +3249,8 @@
   :property/pretty-name "Buckler Vorpal Shield",
   :item/slot :inventory.slot/shield,
   :item/modifier
-  {:modifier/armor [:effect/target :physical 0.75],
-   :modifier/max-hp 5}}
+  {:modifier/max-hp 5,
+   :modifier/shield [:effect/target :physical 0.75]}}
  {:property/image
   {:file "items/images.png", :sub-image-bounds [288 528 48 48]},
   :item/slot :inventory.slot/leg,
@@ -3559,12 +3559,12 @@
   :property/id :items/shield-gold-great,
   :property/pretty-name "Great Gold Shield",
   :item/modifier {}}
- {:property/image
+ {:property/id :items/blood-chest,
+  :property/image
   {:file "items/images.png", :sub-image-bounds [336 480 48 48]},
-  :item/slot :inventory.slot/chest,
-  :property/id :items/blood-chest,
   :property/pretty-name "Chest Blood",
-  :item/modifier {}}
+  :item/slot :inventory.slot/chest,
+  :item/modifier {:modifier/armor [:effect/target :physical 0.2]}}
  {:property/image
   {:file "items/images.png", :sub-image-bounds [864 384 48 48]},
   :item/slot :inventory.slot/necklace,
@@ -4344,8 +4344,8 @@
   :property/pretty-name "Exotic3 Sword",
   :item/modifier {}}
  {:property/id :worlds/first-level,
-  :world/map-size 3,
-  :world/max-area-level 3,
+  :world/map-size 1,
+  :world/max-area-level 1,
   :world/princess :creatures/lady-a,
   :world/spawn-rate 0.2}
  {:property/image
