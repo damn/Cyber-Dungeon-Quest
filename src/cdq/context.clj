@@ -78,7 +78,8 @@
   (set-cursor! [_ cursor-key]))
 
 (defprotocol TooltipText
-  (tooltip-text [_ property]))
+  (tooltip-text [_ property])
+  (player-tooltip-text [_ property]))
 
 (defprotocol ErrorModal
   (->error-window [_ throwable]))

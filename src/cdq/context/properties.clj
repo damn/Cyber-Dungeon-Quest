@@ -317,7 +317,12 @@
               (remove nil?)
               (str/join "\n"))
          (catch Throwable t
-           (str t))))) ; TODO not implemented weapons.
+           (str t)))); TODO not implemented weapons.
+
+  (player-tooltip-text [ctx property]
+    (cdq.context/tooltip-text
+     (assoc ctx :effect/source-entity (:context/player-entity ctx))
+     property)))
 
 ;;
 

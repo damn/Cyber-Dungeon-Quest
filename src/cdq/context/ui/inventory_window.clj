@@ -7,7 +7,7 @@
             [gdl.graphics.color :as color]
             [gdl.scene2d.actor :as actor :refer [set-id! add-listener! set-name! add-tooltip! remove-tooltip!]]
             [cdq.entity.inventory :as inventory]
-            [cdq.context :refer [get-property tooltip-text transact-all!]]
+            [cdq.context :refer [get-property player-tooltip-text transact-all!]]
             [cdq.entity :as entity]
             [cdq.state :as state])
   (:import com.badlogic.gdx.scenes.scene2d.Actor
@@ -116,7 +116,7 @@
         drawable (->texture-region-drawable ctx (:texture (:property/image item)))]
     (.setMinSize drawable (float cell-size) (float cell-size))
     (.setDrawable image-widget drawable)
-    (add-tooltip! cell-widget #(tooltip-text % item))))
+    (add-tooltip! cell-widget #(player-tooltip-text % item))))
 
 (defmethod cdq.context/transact! :tx/remove-item-from-widget [[_ cell]
                                                               {{:keys [table slot->background]} :context/inventory :as ctx}]

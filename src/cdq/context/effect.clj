@@ -8,8 +8,9 @@
                                     effect/target-entity]
                              :as effect-ctx}]
   (-> effect-ctx
-      (dissoc :effect/source-entity
-              :effect/target-entity)
+      ; do not dissoc, there are nested effect/text
+      ; for example for projectile -> hit-effect -> damage
+      ;(dissoc :effect/source-entity :effect/target-entity)
       (assoc :effect/source (when source-entity @source-entity)
              :effect/target (when target-entity @target-entity))))
 

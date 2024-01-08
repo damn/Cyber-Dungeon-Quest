@@ -1,7 +1,7 @@
 (ns cdq.context.ui.skill-window
   (:require [gdl.context :refer [->window ->image-button]]
             [gdl.scene2d.actor :refer [add-tooltip!]]
-            [cdq.context :refer [get-property tooltip-text transact-all!]]
+            [cdq.context :refer [get-property player-tooltip-text transact-all!]]
             [cdq.entity :as entity]
             [cdq.state :as state]))
 
@@ -29,6 +29,6 @@
                                                        (fn [ctx]
                                                          (transact-all! ctx (clicked-skill ctx id))))]]
                       (do
-                       (add-tooltip! button #(tooltip-text % (get-property % id)))
+                       (add-tooltip! button #(player-tooltip-text % (get-property % id)))
                        button))]
              :pack? true}))

@@ -3,7 +3,7 @@
             [gdl.scene2d.actor :as actor :refer [remove! add-tooltip!]]
             [gdl.scene2d.group :refer [clear-children! add-actor!]]
             [gdl.scene2d.ui.button-group :refer [clear! add! checked] :as button-group]
-            [cdq.context :refer [tooltip-text]]))
+            [cdq.context :refer [player-tooltip-text]]))
 
 (defn ->context [ctx]
   {::data {:horizontal-group (->horizontal-group ctx)
@@ -28,7 +28,7 @@
    {{:keys [horizontal-group button-group]} ::data :as ctx}]
   (let [button (->image-button ctx image (fn [_]))]
     (actor/set-id! button id)
-    (add-tooltip! button #(tooltip-text % skill))
+    (add-tooltip! button #(player-tooltip-text % skill))
     (add-actor! horizontal-group button)
     (add! button-group button)))
 
