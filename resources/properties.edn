@@ -3947,7 +3947,7 @@
   :skill/effect
   {:effect/target-entity
    {:hit-effect
-    {:effect/damage {:damage/min-max [2 1], :damage/type :magic}},
+    {:effect/damage {:damage/min-max [3 5], :damage/type :physical}},
     :maxrange 0.5}},
   :item/modifier {}}
  {:item/slot :inventory.slot/weapon,
