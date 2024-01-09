@@ -113,9 +113,10 @@
         :creature/faction 5
         :creature/flying? 6
         :creature/speed 7
-        :creature/hp 8
-        :creature/mana 9
-        10)
+        :creature/reaction-time 8
+        :creature/hp 9
+        :creature/mana 10
+        11)
       (name k)])
    properties))
 
