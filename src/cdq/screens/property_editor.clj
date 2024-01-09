@@ -247,6 +247,30 @@
 
 ;;
 
+(defn- sort-attributes [properties]
+  (sort-by
+   (fn [[k _v]]
+     [(case k
+        :property/id 0
+        :property/image 1
+        :property/animation 2
+        :property/dimensions 3
+        :property/pretty-name 2
+        :spell? 3
+        :creature/level 3
+        :item/slot 3
+        :weapon/two-handed? 4
+        :creature/species 4
+        :creature/faction 5
+        :creature/flying? 6
+        :creature/speed 7
+        :creature/reaction-time 8
+        :creature/hp 9
+        :creature/mana 10
+        11)
+      (name k)])
+   properties))
+
 (defn ->attribute-widget-table [ctx [k v] & {:keys [horizontal-sep?]}]
   (let [label (->label ctx (name k))
         value-widget (->value-widget [k v] ctx)
@@ -272,7 +296,7 @@
 
 (defn- ->attribute-widget-tables [ctx props]
   (let [first-row? (atom true)]
-    (for [[k v] (properties/attribute-widget-sort-attributes props)
+    (for [[k v] (sort-attributes props)
           :let [sep? (not @first-row?)
                 _ (reset! first-row? false)]]
       (->attribute-widget-table ctx [k v] :horizontal-sep? sep?))))

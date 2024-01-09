@@ -15,6 +15,8 @@
 
 (def attributes {})
 
+; TODO attr schema !
+
 (defn- defattr [k data]
   (alter-var-root #'attributes assoc k data))
 
@@ -23,6 +25,13 @@
 
 (defattr :property/animation {:widget :animation
                               :schema :some})
+
+; TODO >+ max bodyt size?
+(defattr :property/dimensions {:widget :label
+                               :schema [:tuple pos? pos?]})
+
+(defattr :creature/species {:widget :label
+                            :schema [:qualified-keyword {:namespace :species}]})
 
 (defattr :property/sound {:widget :sound
                           :schema :string})
@@ -79,6 +88,8 @@
 (defattr :modifier/max-mana     {:widget :text-field :schema number?})
 (defattr :modifier/cast-speed   {:widget :text-field :schema number?})
 (defattr :modifier/attack-speed {:widget :text-field :schema number?})
+
+; TODO these 3 !
 (defattr :modifier/shield       {:widget :text-field :schema :some})
 (defattr :modifier/armor        {:widget :text-field :schema :some})
 (defattr :modifier/damage       {:widget :text-field :schema :some})
@@ -93,11 +104,15 @@
     [k {:optional true} (:schema (get attributes k))]))
 
 (defattr :item/modifier {:widget :nested-map
-                         :schema [:map]
+                         :schema (vec (concat [:map {:closed true}] modifier-components-schema))
                          :components modifier-attributes
                          :add-components? true})
 
+(defattr :item/slot {:widget :label
+                     :schema [:qualified-keyword {:namespace :inventory.slot}]})
+
 (defattr :skill/effect {:widget :nested-map
+                        :schema (vec (concat [:map {:closed true}] effect-components-schema))
                         :components effect-attributes
                         :add-components? true})
 
@@ -108,54 +123,58 @@
                             :schema [:enum :good :evil]
                             :items [:good :evil]})
 
+; TODO >0, <max-lvls (9 ?)
 (defattr :creature/level {:widget :text-field
                           :schema [:maybe pos-int?]})
 
+; TODO one of spells/skills
 (defattr :creature/skills {:widget :one-to-many
+                           :schema [:set :qualified-keyword]
                            :linked-property-type :property.type/spell})
 
+; TODO one of items
 (defattr :creature/items {:widget :one-to-many
+                          :schema [:set :qualified-keyword]
                           :linked-property-type :property.type/item})
 
-(defattr :creature/mana {:widget :text-field})
-(defattr :creature/flying? {:widget :check-box})
-(defattr :creature/hp {:widget :text-field})
-(defattr :creature/speed {:widget :text-field})
-(defattr :creature/reaction-time {:widget :text-field})
-(defattr :skill/action-time {:widget :text-field})
-(defattr :skill/cooldown {:widget :text-field})
-(defattr :skill/cost {:widget :text-field})
+(defattr :creature/mana {:widget :text-field
+                         :schema nat-int?})
+
+(defattr :creature/flying? {:widget :check-box
+                            :schema :boolean})
+
+(defattr :creature/hp {:widget :text-field
+                       :schema pos-int?})
+
+(defattr :creature/speed {:widget :text-field
+                          :schema pos?})
+
+(defattr :creature/reaction-time {:widget :text-field
+                                  :schema pos?})
+
+(defattr :spell? {:widget :label
+                  :schema [:= true]})
+
+(defattr :skill/action-time {:widget :text-field
+                             :schema pos?})
+
+(defattr :skill/cooldown {:widget :text-field
+                          :schema nat-int?})
+
+(defattr :skill/cost {:widget :text-field
+                      :schema nat-int?})
+
 (defattr :maxrange {:widget :text-field})
 (defattr :world/map-size {:widget :text-field})
 (defattr :world/max-area-level {:widget :text-field})
 (defattr :world/spawn-rate {:widget :text-field})
 
-; Take from property-type schema  ?
-(defn attribute-widget-sort-attributes [properties]
-  (sort-by
-   (fn [[k _v]]
-     [(case k
-        :property/id 0
-        :property/image 1
-        :property/animation 2
-        :property/dimensions 3
-        :property/pretty-name 2
-        :spell? 3
-        :creature/level 3
-        :item/slot 3
-        :weapon/two-handed? 4
-        :creature/species 4
-        :creature/faction 5
-        :creature/flying? 6
-        :creature/speed 7
-        :creature/reaction-time 8
-        :creature/hp 9
-        :creature/mana 10
-        11)
-      (name k)])
-   properties))
+(defn- map-attribute-schema [id-attribute attr-ks]
+  (m/schema
+   (vec (concat [:map {:closed true} id-attribute]
+                (for [k attr-ks]
+                  (vector k (:schema (get attributes k))))))))
 
-; TODO use defattr schemas
 (def property-types
   {:property.type/creature {:of-type? :creature/species
                             :edn-file-sort-order 1
@@ -169,22 +188,21 @@
                                        :extra-info-text #(str (:creature/level %) (case (:creature/faction %)
                                                                                     :good "g"
                                                                                     :evil "e"))}
-                            :schema (m/schema
-                                     [:map {:closed true}
-                                      [:property/id [:qualified-keyword {:namespace :creatures}]]
-                                      [:property/image :some]
-                                      [:property/dimensions [:tuple pos? pos?]] ; & > max size?
-                                      [:property/animation :some]
-                                      [:creature/species [:qualified-keyword {:namespace :species}]] ; one of species
-                                      [:creature/faction [:enum :good :evil]]
-                                      [:creature/speed pos?]
-                                      [:creature/hp pos-int?]
-                                      [:creature/mana nat-int?]
-                                      [:creature/flying? :boolean]
-                                      [:creature/reaction-time pos?]
-                                      [:creature/skills [:set :qualified-keyword]] ; one of spells/skills
-                                      [:creature/items  [:set :qualified-keyword]] ; one of items
-                                      [:creature/level [:maybe pos-int?]]])} ; >0, <max-lvls (9 ?)
+                            :schema (map-attribute-schema
+                                     [:property/id [:qualified-keyword {:namespace :creatures}]]
+                                     [:property/image
+                                      :property/animation
+                                      :property/dimensions
+                                      :creature/species
+                                      :creature/faction
+                                      :creature/speed
+                                      :creature/hp
+                                      :creature/mana
+                                      :creature/flying?
+                                      :creature/reaction-time
+                                      :creature/skills
+                                      :creature/items
+                                      :creature/level])}
    :property.type/spell {:of-type? (fn [{:keys [item/slot skill/effect]}]
                                      (and (not slot) effect))
                          :edn-file-sort-order 0
@@ -192,16 +210,14 @@
                          :overview {:title "Spells"
                                     :columns 16
                                     :image/dimensions [70 70]}
-                         :schema (m/schema
-                                  [:map {:closed true}
-                                   [:property/id [:qualified-keyword {:namespace :spells}]]
-                                   [:property/image :some]
-                                   [:spell? :boolean] ; true
-                                   [:skill/action-time pos?]
-                                   [:skill/cooldown nat-int?]
-                                   [:skill/cost nat-int?]
-                                   [:skill/effect (vec (concat [:map {:closed true}]
-                                                               effect-components-schema))]])}
+                         :schema (map-attribute-schema
+                                  [:property/id [:qualified-keyword {:namespace :spells}]]
+                                  [:property/image
+                                   :spell?
+                                   :skill/action-time
+                                   :skill/cooldown
+                                   :skill/cost
+                                   :skill/effect])}
    ; weapons before items checking
    :property.type/weapon {:of-type? (fn [{:keys [item/slot]}]
                                       (and slot (= slot :inventory.slot/weapon)))
@@ -218,7 +234,7 @@
                                     [:property/image :some]
                                     [:weapon/two-handed? :boolean]
                                     [:skill/action-time {:optional true} [:maybe pos?]] ; not optional
-                                    [:skill/effect {:optional true} [:map]]
+                                    [:skill/effect {:optional true} [:map ]] ; can be nil not implemented weapons.
                                     [:item/modifier [:map ]]])}
    :property.type/item {:of-type? :item/slot
                         :edn-file-sort-order 3
@@ -230,14 +246,12 @@
                                                           (name slot)
                                                           "")
                                                         (name (:property/id %)))}
-                        :schema (m/schema
-                                 [:map
-                                  [:property/id [:qualified-keyword {:namespace :items}]]
-                                  [:property/pretty-name :string]
-                                  [:item/slot [:qualified-keyword {:namespace :inventory.slot}]]
-                                  [:property/image :some]
-                                  [:item/modifier (vec (concat [:map {:closed true}]
-                                                               modifier-components-schema))]])}
+                        :schema (map-attribute-schema
+                                 [:property/id [:qualified-keyword {:namespace :items}]]
+                                 [:property/pretty-name
+                                  :item/slot
+                                  :property/image
+                                  :item/modifier])}
    :property.type/world {:of-type? :world/princess
                          :edn-file-sort-order 5
                          :title "World"
