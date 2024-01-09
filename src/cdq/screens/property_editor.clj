@@ -13,14 +13,6 @@
             [cdq.context.properties :as properties]
             [cdq.context :refer [get-property all-properties tooltip-text ->error-window]]))
 
-; TODO use findByName & actor name as id with pr-str and ->edn for keywords
-; userObject keep as is, can add both then !
-; ADD SOUNDS TO SPELLS MANDATORY - move out of restoration - also hp / mana separate
-; LET ME EDIT for example spawn which creature
-; also :vampire, :lady-a , everything, game-speed, zoom-level,...
-; => SCHEMA
-; => let me ADD effect components like sound & SELECT sound ! file chooser
-; do it properly right do it with your editor not text ....
 ; TODO refresh overview table after property-editor save something (callback ?)
 
 ;;
