@@ -25,7 +25,7 @@
      (random/percent-chance chance)))
 
 (def ^:private hit-effect
-  [[:effect/damage [:magic [4 8]]]
+  [[:effect/damage {:damage/type :magic :damage/min-max [4 8]}]
    [:effect/stun 0.5]
    ;[:stun {:duration 0.2} {:chance 100}]
    ])

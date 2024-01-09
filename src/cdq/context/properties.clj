@@ -30,7 +30,15 @@
                                 :schema :string})
 
 (defattr :effect/sound {:widget :sound})
-(defattr :effect/damage {:widget :text-field})
+
+; Creature 'stats':
+; attackspeed (cooldown ?)
+; damage physical,magic min-max
+; range
+
+; & skill 'melee-attack' -> uses stats as target-entity
+
+; ranged attacks ? sth else ?
 
 #_[:effect/damage  ; => ! widget !
  :effect/projectile  ; true
@@ -57,6 +65,18 @@
 
 ; (m/schema [:tuple [:enum :physical :magic] (m/form val-max-schema)])
 ; => widget ?
+
+(defattr :effect/damage {:widget :nested-map
+                         :components [:damage/type :damage/min-max]
+                         :add-components? false})
+; TODO needs default value to set up widgets
+; also not using attr- schema
+; TODO can put damage [2 1] not validated.
+
+(defattr :damage/type {:widget :enum
+                       :items [:physical :magic]})
+
+(defattr :damage/min-max {:widget :text-field})
 
 (defattr :item/modifier {:widget :nested-map
                          :schema [:map]

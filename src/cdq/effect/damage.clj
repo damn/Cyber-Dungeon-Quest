@@ -25,40 +25,42 @@
    (effective-block-rate source target :shield :physical))
  )
 
-(defn- apply-damage-modifiers [[damage-type min-max] modifiers]
-  [damage-type (if modifiers
-                 (apply-val-max-modifiers min-max modifiers)
-                 min-max)])
+(defn- apply-damage-modifiers [{:keys [damage/min-max] :as damage}
+                               modifiers]
+  (if modifiers
+    (update damage :damage/min-max apply-val-max-modifiers modifiers)
+    damage))
 
 (comment
- (apply-damage-modifiers [:physical [5 10]]
+ (apply-damage-modifiers {:damage/type :physical :damage/min-max [5 10]}
                          {[:val :inc] 3})
- [:physical [8 10]]
+ #:damage{:type :physical, :min-max [8 10]}
  )
 
-(defn- apply-source-modifiers [{damage-type 0 :as damage} source]
+(defn- apply-source-modifiers [{:keys [damage/type] :as damage} source]
   (apply-damage-modifiers damage
-                          (-> source (entity/effect-source-modifiers :effect/damage) damage-type)))
+                          (-> source (entity/effect-source-modifiers :effect/damage) type)))
 
-(defn- apply-target-modifiers [{damage-type 0 :as damage} target]
+(defn- apply-target-modifiers [{:keys [damage/type] :as damage} target]
   (apply-damage-modifiers damage
-                          (-> target (entity/effect-target-modifiers :effect/damage) damage-type)))
+                          (-> target (entity/effect-target-modifiers :effect/damage) type)))
 
 (comment
  (set! *print-level* nil)
- (apply-source-modifiers [:physical [5 10]]
+ (apply-source-modifiers {:damage/type :physical :damage/min-max [5 10]}
                          (cdq.entity/map->Entity
                           {:entity/modifiers {:effect/damage {:effect/source {:physical {[:val :inc] 1}}}}}))
- [:physical [6 10]]
- (apply-source-modifiers [:magic [5 10]]
-                         (cdq.entity/map->Entity
-                          {:entity/modifiers {:effect/damage {:effect/source {:physical {[:val :inc] 1}}}}}))
- [:magic [5 10]]
+ #:damage{:type :physical, :min-max [6 10]}
 
- (apply-source-modifiers [:magic [5 10]]
+ (apply-source-modifiers {:damage/type :magic :damage/min-max [5 10]}
+                         (cdq.entity/map->Entity
+                          {:entity/modifiers {:effect/damage {:effect/source {:physical {[:val :inc] 1}}}}}))
+ #:damage{:type :magic, :min-max [5 10]}
+
+ (apply-source-modifiers {:damage/type :magic :damage/min-max [5 10]}
                          (cdq.entity/map->Entity
                           {:entity/modifiers {:effect/damage {:effect/source {:magic {[:max :mult] 3}}}}}))
- [:magic [5 30]]
+ #:damage{:type :magic, :min-max [5 30]}
  )
 
 (defn- effective-damage
@@ -71,31 +73,32 @@
        (apply-target-modifiers target))))
 
 (comment
- (apply-damage-modifiers [:physical [3 10]]
+ (apply-damage-modifiers {:damage/type :physical :damage/min-max [3 10]}
                          {[:max :mult] 2
                           [:val :mult] 1.5
                           [:val :inc] 1
                           [:max :inc] 0})
- [:physical [6 20]]
- (apply-damage-modifiers [:physical [6 20]]
+ #:damage{:type :physical, :min-max [6 20]}
+
+ (apply-damage-modifiers {:damage/type :physical :damage/min-max [6 20]}
                          {[:max :mult] 1
                           [:val :mult] 1
                           [:val :inc] -5
                           [:max :inc] 0})
- [:physical [1 20]]
+ #:damage{:type :physical, :min-max [1 20]}
 
- (effective-damage [:physical [3 10]]
+ (effective-damage {:damage/type :physical :damage/min-max [3 10]}
                    (cdq.entity/map->Entity
-                    {:entity/modifiers {:effect/damage {:effect/source {:physical  {[:max :mult] 2
-                                                                                    [:val :mult] 1.5
-                                                                                    [:val :inc] 1
-                                                                                    [:max :inc] 0}}}}})
+                    {:entity/modifiers {:effect/damage {:effect/source {:physical {[:max :mult] 2
+                                                                                   [:val :mult] 1.5
+                                                                                   [:val :inc] 1
+                                                                                   [:max :inc] 0}}}}})
                    (cdq.entity/map->Entity
-                    {:entity/modifiers {:effect/damage {:target {:physical  {[:max :mult] 1
-                                                                             [:val :mult] 1
-                                                                             [:val :inc] -5
-                                                                             [:max :inc] 0}}}}}))
- [:physical [1 20]]
+                    {:entity/modifiers {:effect/damage {:effect/target {:physical {[:max :mult] 1
+                                                                                   [:val :mult] 1
+                                                                                   [:val :inc] -5
+                                                                                   [:max :inc] 0}}}}}))
+ #:damage{:type :physical, :min-max [1 20]}
  )
 
 (defn- blocks? [block-rate]
@@ -104,13 +107,15 @@
 (defn- no-hp-left? [hp]
   (zero? (hp 0)))
 
-(defn- damage->text [[dmg-type [min-dmg max-dmg]]]
-  (str min-dmg "-" max-dmg " " (name dmg-type) " damage"))
+(defn- damage->text [{:keys [damage/type] [min-dmg max-dmg] :damage/min-max}]
+  (str min-dmg "-" max-dmg " " (name type) " damage"))
 
 (def ^:private damage-schema
-  (m/schema [:tuple [:enum :physical :magic] (m/form val-max-schema)]))
+  (m/schema [:map {:closed true}
+             [:damage/type [:enum :physical :magic]]
+             [:damage/min-max (m/form val-max-schema)]]))
 
-(defcomponent :effect/damage {dmg-type 0 :as damage}
+(defcomponent :effect/damage {:keys [damage/type] :as damage}
   (effect/value-schema [_]
     damage-schema)
 
@@ -133,17 +138,17 @@
      (no-hp-left? hp)
      nil
 
-     (blocks? (effective-block-rate source target :shield dmg-type))
+     (blocks? (effective-block-rate source target :shield type))
      [[:tx/add-text-effect id "[WHITE]SHIELD"]]
 
-     (blocks? (effective-block-rate source target :armor dmg-type))
+     (blocks? (effective-block-rate source target :armor type))
      [[:tx/add-text-effect id "[WHITE]ARMOR"]]
 
      :else
-     (let [[dmg-type min-max-dmg] (effective-damage damage source target)
-           dmg-amount (random/rand-int-between min-max-dmg)
+     (let [{:keys [damage/type damage/min-max]} (effective-damage damage source target)
+           dmg-amount (random/rand-int-between min-max)
            hp (apply-val hp #(- % dmg-amount))]
-       [[:tx/audiovisual position (keyword (str "effects.damage." (name dmg-type)) "hit-effect")]
+       [[:tx/audiovisual position (keyword (str "effects.damage." (name type)) "hit-effect")]
         [:tx/add-text-effect id (str "[RED]" dmg-amount)]
         [:tx/assoc id :entity/hp hp]
         [:tx/event id (if (no-hp-left? hp) :kill :alert)]]))))

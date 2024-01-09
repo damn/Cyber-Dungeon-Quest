@@ -7,13 +7,15 @@
   :property/image
   {:file "skills/images.png", :sub-image-bounds [96 32 32 32]}}
  {:property/id :spells/spawn,
+  :property/image
+  {:file "skills/images.png", :sub-image-bounds [160 64 32 32]},
   :spell? true,
   :skill/action-time 0.4,
   :skill/cooldown 0,
   :skill/cost 0,
-  :skill/effect {:effect/spawn :creatures/bat},
-  :property/image
-  {:file "skills/images.png", :sub-image-bounds [160 64 32 32]}}
+  :skill/effect
+  {:effect/sound "sounds/bfxr_shield_consume.wav",
+   :effect/spawn :creatures/skeleton-warrior}}
  {:property/id :spells/meditation,
   :spell? true,
   :skill/action-time 7,
@@ -2119,7 +2121,7 @@
   :creature/reaction-time 0.2,
   :creature/species :species/elemental,
   :creature/mana 11,
-  :creature/level nil,
+  :creature/level 1,
   :creature/skills #{},
   :property/dimensions [7/12 13/16],
   :creature/hp 22,
@@ -3916,7 +3918,10 @@
   {:file "items/images.png", :sub-image-bounds [528 144 48 48]},
   :skill/effect
   {:effect/target-entity
-   {:maxrange 0.6, :hit-effect [[:effect/damage [:physical [3 6]]]]}},
+   {:maxrange 0.6,
+    :hit-effect
+    [[:effect/damage
+      {:damage/type :physical, :damage/min-max [3 6]}]]}},
   :item/modifier {}}
  {:item/slot :inventory.slot/weapon,
   :weapon/two-handed? true,
@@ -3927,18 +3932,23 @@
   {:file "items/images.png", :sub-image-bounds [336 96 48 48]},
   :skill/effect
   {:effect/target-entity
-   {:maxrange 0.5, :hit-effect [[:effect/damage [:physical [5 10]]]]}},
+   {:maxrange 0.5,
+    :hit-effect
+    [[:effect/damage
+      {:damage/type :physical, :damage/min-max [5 10]}]]}},
   :item/modifier {}}
- {:item/slot :inventory.slot/weapon,
-  :weapon/two-handed? false,
-  :property/pretty-name "Dagger",
-  :skill/action-time 0.25,
-  :property/id :items/dagger,
+ {:property/id :items/dagger,
   :property/image
   {:file "items/images.png", :sub-image-bounds [48 96 48 48]},
+  :property/pretty-name "Dagger",
+  :item/slot :inventory.slot/weapon,
+  :weapon/two-handed? false,
+  :skill/action-time 0.25,
   :skill/effect
   {:effect/target-entity
-   {:maxrange 0.5, :hit-effect [[:effect/damage [:physical [2 5]]]]}},
+   {:hit-effect
+    {:effect/damage {:damage/min-max [2 1], :damage/type :magic}},
+    :maxrange 0.5}},
   :item/modifier {}}
  {:item/slot :inventory.slot/weapon,
   :skill/action-time nil,
@@ -4053,7 +4063,9 @@
   {:file "items/images.png", :sub-image-bounds [0 96 48 48]},
   :skill/effect
   {:effect/target-entity
-   {:hit-effect {:effect/damage [:physical [5 10]]}, :maxrange 0.5}},
+   {:hit-effect
+    {:effect/damage {:damage/type :physical, :damage/min-max [5 10]}},
+    :maxrange 0.5}},
   :item/modifier {}}
  {:item/slot :inventory.slot/weapon,
   :skill/action-time nil,
@@ -4072,7 +4084,10 @@
   {:file "items/images.png", :sub-image-bounds [624 144 48 48]},
   :skill/effect
   {:effect/target-entity
-   {:maxrange 0.6, :hit-effect [[:effect/damage [:physical [3 6]]]]}},
+   {:maxrange 0.6,
+    :hit-effect
+    [[:effect/damage
+      {:damage/type :physical, :damage/min-max [3 6]}]]}},
   :item/modifier {}}
  {:item/slot :inventory.slot/weapon,
   :skill/action-time nil,
@@ -4099,7 +4114,10 @@
   {:file "items/images.png", :sub-image-bounds [0 192 48 48]},
   :skill/effect
   {:effect/target-entity
-   {:maxrange 0.5, :hit-effect [[:effect/damage [:physical [5 10]]]]}},
+   {:maxrange 0.5,
+    :hit-effect
+    [[:effect/damage
+      {:damage/type :physical, :damage/min-max [5 10]}]]}},
   :item/modifier {}}
  {:property/image
   {:file "items/images.png", :sub-image-bounds [432 192 48 48]},
@@ -4117,7 +4135,10 @@
   {:file "items/images.png", :sub-image-bounds [192 144 48 48]},
   :skill/effect
   {:effect/target-entity
-   {:maxrange 0.75, :hit-effect [[:effect/damage [:physical [3 7]]]]}},
+   {:maxrange 0.75,
+    :hit-effect
+    [[:effect/damage
+      {:damage/type :physical, :damage/min-max [3 7]}]]}},
   :item/modifier {}}
  {:item/slot :inventory.slot/weapon,
   :skill/action-time nil,
@@ -4136,7 +4157,10 @@
   {:file "items/images.png", :sub-image-bounds [192 96 48 48]},
   :skill/effect
   {:effect/target-entity
-   {:maxrange 0.5, :hit-effect [[:effect/damage [:physical [3 7]]]]}},
+   {:maxrange 0.5,
+    :hit-effect
+    [[:effect/damage
+      {:damage/type :physical, :damage/min-max [3 7]}]]}},
   :item/modifier {}}
  {:item/slot :inventory.slot/weapon,
   :skill/action-time nil,
@@ -4172,7 +4196,9 @@
   :skill/effect
   {:effect/target-entity
    {:maxrange 5.0,
-    :hit-effect [[:effect/damage [:physical [10 20]]]]}},
+    :hit-effect
+    [[:effect/damage
+      {:damage/type :physical, :damage/min-max [10 20]}]]}},
   :item/modifier {}}
  {:item/slot :inventory.slot/weapon,
   :skill/action-time nil,
@@ -4191,7 +4217,10 @@
   {:file "items/images.png", :sub-image-bounds [528 96 48 48]},
   :skill/effect
   {:effect/target-entity
-   {:maxrange 0.5, :hit-effect [[:effect/damage [:physical [6 13]]]]}},
+   {:maxrange 0.5,
+    :hit-effect
+    [[:effect/damage
+      {:damage/type :physical, :damage/min-max [6 13]}]]}},
   :item/modifier {}}
  {:item/slot :inventory.slot/weapon,
   :skill/action-time nil,
@@ -4211,7 +4240,9 @@
   :skill/effect
   {:effect/target-entity
    {:maxrange 7.5,
-    :hit-effect [[:effect/damage [:physical [15 30]]]]}},
+    :hit-effect
+    [[:effect/damage
+      {:damage/type :physical, :damage/min-max [15 30]}]]}},
   :item/modifier {}}
  {:item/slot :inventory.slot/weapon,
   :skill/action-time nil,
@@ -4238,7 +4269,10 @@
   {:file "items/images.png", :sub-image-bounds [480 144 48 48]},
   :skill/effect
   {:effect/target-entity
-   {:maxrange 0.6, :hit-effect [[:effect/damage [:physical [3 6]]]]}},
+   {:maxrange 0.6,
+    :hit-effect
+    [[:effect/damage
+      {:damage/type :physical, :damage/min-max [3 6]}]]}},
   :item/modifier {}}
  {:item/slot :inventory.slot/weapon,
   :weapon/two-handed? false,
@@ -4249,7 +4283,10 @@
   {:file "items/images.png", :sub-image-bounds [624 96 48 48]},
   :skill/effect
   {:effect/target-entity
-   {:maxrange 0.5, :hit-effect [[:effect/damage [:physical [7 14]]]]}},
+   {:maxrange 0.5,
+    :hit-effect
+    [[:effect/damage
+      {:damage/type :physical, :damage/min-max [7 14]}]]}},
   :item/modifier {}}
  {:item/slot :inventory.slot/weapon,
   :skill/action-time nil,
@@ -4268,7 +4305,10 @@
   {:file "items/images.png", :sub-image-bounds [576 144 48 48]},
   :skill/effect
   {:effect/target-entity
-   {:maxrange 0.6, :hit-effect [[:effect/damage [:physical [3 6]]]]}},
+   {:maxrange 0.6,
+    :hit-effect
+    [[:effect/damage
+      {:damage/type :physical, :damage/min-max [3 6]}]]}},
   :item/modifier {}}
  {:item/slot :inventory.slot/weapon,
   :weapon/two-handed? false,
@@ -4279,7 +4319,10 @@
   {:file "items/images.png", :sub-image-bounds [96 144 48 48]},
   :skill/effect
   {:effect/target-entity
-   {:maxrange 1.0, :hit-effect [[:effect/damage [:physical [5 11]]]]}},
+   {:maxrange 1.0,
+    :hit-effect
+    [[:effect/damage
+      {:damage/type :physical, :damage/min-max [5 11]}]]}},
   :item/modifier {}}
  {:item/slot :inventory.slot/weapon,
   :skill/action-time nil,
@@ -4306,7 +4349,9 @@
   {:file "items/images.png", :sub-image-bounds [48 144 48 48]},
   :skill/effect
   {:effect/target-entity
-   {:hit-effect {:effect/damage [:physical [6 13]]}, :maxrange 1.0}},
+   {:hit-effect
+    {:effect/damage {:damage/type :physical, :damage/min-max [6 13]}},
+    :maxrange 1.0}},
   :item/modifier {}}
  {:item/slot :inventory.slot/weapon,
   :weapon/two-handed? false,
@@ -4317,7 +4362,10 @@
   {:file "items/images.png", :sub-image-bounds [240 96 48 48]},
   :skill/effect
   {:effect/target-entity
-   {:maxrange 0.5, :hit-effect [[:effect/damage [:physical [6 12]]]]}},
+   {:maxrange 0.5,
+    :hit-effect
+    [[:effect/damage
+      {:damage/type :physical, :damage/min-max [6 12]}]]}},
   :item/modifier {}}
  {:item/slot :inventory.slot/weapon,
   :skill/action-time nil,
