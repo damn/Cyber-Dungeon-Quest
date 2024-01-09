@@ -4,7 +4,7 @@
             [gdl.app :as app :refer [change-screen!]]
             [gdl.context :refer [get-stage ->text-button ->image-button ->label ->text-field ->image-widget ->table ->stack ->window all-sound-files play-sound! ->vertical-group ->check-box ->select-box ->actor key-just-pressed? add-to-stage!]]
             [gdl.input.keys :as input.keys]
-            [gdl.scene2d.actor :as actor :refer [remove! set-touchable! parent add-listener! add-tooltip!]]
+            [gdl.scene2d.actor :as actor :refer [remove! set-touchable! parent add-listener! add-tooltip! find-ancestor-window pack-ancestor-window!]]
             [gdl.scene2d.group :refer [add-actor! clear-children! children]]
             [gdl.scene2d.ui.text-field :as text-field]
             [gdl.scene2d.ui.table :refer [add! add-rows! cells ->horizontal-separator-cell ->vertical-separator-cell]]
@@ -13,7 +13,38 @@
             [cdq.context.properties :as properties]
             [cdq.context :refer [get-property all-properties tooltip-text ->error-window]]))
 
+(defn ->scroll-pane [_ actor]
+  (let [widget (com.kotcrab.vis.ui.widget.VisScrollPane. actor)]
+    (.setFlickScroll widget false)
+    (.setFadeScrollBars widget false)
+    widget))
+
+(defn ->scrollable-choose-window [ctx rows]
+  (let [window (->window ctx {:title "Choose"
+                              :modal? true
+                              :close-button? true
+                              :center? true
+                              :close-on-escape? true})
+        table (->table ctx {:rows rows
+                            :cell-defaults {:pad 1}})]
+    (.width
+     (.height (.add window (->scroll-pane ctx table))
+              (float (- (:gui-viewport-height ctx) 50)))
+     (float (+ 100 (/ (:gui-viewport-width ctx) 2))))
+    (.pack window)
+    window))
+
+;;
+
+
 ; TODO refresh overview table after property-editor save something (callback ?)
+; or remove it after opening ?
+
+; use def attribute with keys :value-widget, :linked-type, etc.
+
+; each attribute explicit -> :label ! no :default !
+
+; :attribute-widget/foo
 
 ;;
 
@@ -60,29 +91,6 @@
 
 ;;
 
-(defn ->scroll-pane [_ actor]
-  (let [widget (com.kotcrab.vis.ui.widget.VisScrollPane. actor)]
-    (.setFlickScroll widget false)
-    (.setFadeScrollBars widget false)
-    widget))
-
-(defn ->scrollable-choose-window [ctx rows]
-  (let [window (->window ctx {:title "Choose"
-                              :modal? true
-                              :close-button? true
-                              :center? true
-                              :close-on-escape? true})
-        table (->table ctx {:rows rows
-                            :cell-defaults {:pad 1}})]
-    (.width
-     (.height (.add window (->scroll-pane ctx table))
-              (float (- (:gui-viewport-height ctx) 50)))
-     (float (+ 100 (/ (:gui-viewport-width ctx) 2))))
-    (.pack window)
-    window))
-
-;;
-
 ; TODO too many ! too big ! scroll ... only show files first & preview?
 ; TODO make tree view from folders, etc. .. !! all creatures animations showing...
 (defn- texture-rows [ctx]
@@ -122,17 +130,6 @@
   (->text-button context (name prop-id) #(open-property-editor-window! % prop-id)))
 
 ;;
-
-(defn- window? [actor]
-  (instance? com.badlogic.gdx.scenes.scene2d.ui.Window actor))
-
-(defn- find-ancestor-window [actor]
-  (if-let [p (parent actor)]
-    (if (window? p) p (find-ancestor-window p))
-    (throw (Error. (str "Actor has no parent window " actor)))))
-
-(defn- pack-ancestor-window! [actor]
-  (pack! (find-ancestor-window actor)))
 
 (declare ->attribute-widget-table
          attribute-widget-group->data)
@@ -310,8 +307,6 @@
                                   :cell-defaults {:pad 5}})
         widgets (->attribute-widget-group context props)
         save! (fn [ctx]
-                ; TODO error modal like map editor?
-                ; TODO refresh overview creatures lvls,etc. ?
                 (try
                  (swap! app/current-context properties/update-and-write-to-file!
                         (attribute-widget-group->data widgets))
