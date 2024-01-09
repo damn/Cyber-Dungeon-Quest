@@ -49,8 +49,11 @@
 
 ;;
 
-(defmulti ->value-widget     (fn [[k _v] _ctx] (get properties/attribute->value-widget k)))
-(defmulti value-widget->data (fn [k _widget]   (get properties/attribute->value-widget k)))
+(defn- attr->value-widget [k]
+  (or (get properties/attribute->value-widget k) :label))
+
+(defmulti ->value-widget     (fn [[k _v] _ctx] (attr->value-widget k)))
+(defmulti value-widget->data (fn [k _widget]   (attr->value-widget k)))
 
 ;;
 
@@ -58,10 +61,10 @@
   (binding [*print-level* nil]
     (pr-str v)))
 
-(defmethod ->value-widget :default [[_ v] ctx]
+(defmethod ->value-widget :label [[_ v] ctx]
   (->label ctx (->edn v)))
 
-(defmethod value-widget->data :default [_ widget]
+(defmethod value-widget->data :label [_ widget]
   (actor/id widget))
 
 ;;

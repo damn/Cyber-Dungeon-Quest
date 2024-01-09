@@ -13,7 +13,6 @@
             [cdq.context :refer [modifier-text effect-text]]))
 
 ; TODO
-; * eother use table or scrollable pane for windoe (too hig h)
 ; * text-field make validateabletextfield/number spinners, etc.
 ; * schema/value-ranges/value-widgets for all modifiers/effects, e.g. damage select physical,magical,...
 ; * filter out not implemented weapons, etc.  mark them somehow
@@ -35,18 +34,12 @@
     :creature/skills :property.type/spell
     :creature/items  :property.type/item))
 
-; TODO label does not exist anymore.
-; maybe no default widget & assert for all attributes are explicitly defined?
-; also :property-widget/foo
 (def attribute->value-widget
-  {:property/id :label
-   :property/image :image
+  {:property/image :image
    :property/animation :animation
    :property/sound :sound
    :property/pretty-name :text-field
-   :item/slot :label
    :item/modifier :nested-map
-   :weapon/two-handed? :label
    :creature/faction :enum
    :creature/level :text-field
    :creature/skills :one-to-many
@@ -56,7 +49,6 @@
    :creature/hp :text-field
    :creature/speed :text-field
    :creature/reaction-time :text-field
-   :spell? :label
    :skill/action-time :text-field
    :skill/cooldown :text-field
    :skill/cost :text-field
@@ -68,8 +60,7 @@
    :hit-effect :nested-map
    :world/map-size :text-field
    :world/max-area-level :text-field
-   :world/spawn-rate :text-field
-   :world/princess :label})
+   :world/spawn-rate :text-field})
 
 ; TODO make each attribute a map with :widget and extra keys => move into 1 place...
 ; => pass to value-widget the value-widget attrs.
