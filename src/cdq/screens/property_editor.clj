@@ -13,24 +13,30 @@
             [cdq.context.properties :as properties]
             [cdq.context :refer [get-property all-properties tooltip-text ->error-window]]))
 
-(defn ->scrollable-choose-window [{:keys [gui-viewport-width
-                                          gui-viewport-height]
-                                   :as ctx}
-                                  rows]
+(defn- ->scroll-pane-cell [{:keys [gui-viewport-height] :as ctx} rows]
   (let [table (->table ctx {:rows rows
-                            :cell-defaults {:pad 1}})]
-    (->window ctx {:title "Choose"
-                   :modal? true
-                   :close-button? true
-                   :center? true
-                   :close-on-escape? true
-                   :rows [[{:actor (->scroll-pane ctx table)
-                            :width (+ 100 (/ gui-viewport-width 2))
-                            :height (- gui-viewport-height 50)}]]
-                   :pack? true})))
+                            :cell-defaults {:pad 1}
+                            :pack? true})
+        scroll-pane (->scroll-pane ctx table)]
+    {:actor scroll-pane
+     :width (+ (actor/width table) 50)
+     :height (min (- gui-viewport-height 50) (actor/height table))}))
+
+(defn ->scrollable-choose-window [ctx rows]
+  (->window ctx {:title "Choose"
+                 :modal? true
+                 :close-button? true
+                 :center? true
+                 :close-on-escape? true
+                 :rows [[(->scroll-pane-cell ctx rows)]]
+                 :pack? true}))
 
 ;;
 
+; TODO default value for nested attr key, move other TODOs up here
+
+; TODO SHOW IF CHANGES MADE then SAVE otherwise different color etc.
+; when closing (lose changes? yes no)
 
 ; TODO refresh overview table after property-editor save something (callback ?)
 ; or remove it after opening ?
@@ -82,7 +88,7 @@
                      :selected (->edn v)}))
 
 (defmethod value-widget->data :enum [_ widget]
-  (edn/read-string (.getSelected widget)))
+  (edn/read-string (.getSelected ^com.kotcrab.vis.ui.widget.VisSelectBox widget)))
 
 ;;
 
@@ -278,10 +284,7 @@
       (->attribute-widget-table ctx [k v] :horizontal-sep? sep?))))
 
 (defn- ->attribute-widget-group [ctx props]
-  (let [group (->vertical-group ctx (->attribute-widget-tables ctx props))]
-    ;(.left group)
-    group
-    ))
+  (->vertical-group ctx (->attribute-widget-tables ctx props)))
 
 (defn- attribute-widget-group->data [group]
   (into {} (for [k (map actor/id (children group))
@@ -291,7 +294,9 @@
 
 ;;
 
-(defn ->property-editor-window [context id]
+(defn ->property-editor-window [{:keys [gui-viewport-height]
+                                 :as context}
+                                id]
   (let [props (get-property context id)
         {:keys [title]} (get properties/property-types (cdq.context.properties/property-type props))
         window (->window context {:title (or title (name id))
@@ -303,15 +308,14 @@
         widgets (->attribute-widget-group context props)
         save! (fn [ctx]
                 (try
-                 (swap! app/current-context properties/update-and-write-to-file!
+                 (swap! app/current-context
+                        properties/update-and-write-to-file!
                         (attribute-widget-group->data widgets))
                  (remove! window)
                  (catch Throwable t
                    (->error-window ctx t))))]
-    (add-rows! window [[widgets]
-                       ; TODO SHOW IF CHANGES MADE then SAVE otherwise different color etc.
-                       ; when closing (lose changes? yes no)
-                       [(->text-button context "Save" save!)]])
+    (add-rows! window [[(->scroll-pane-cell context [[widgets]
+                                                     [(->text-button context "Save" save!)]])]])
     (add-actor! window (->actor context {:act #(when (key-just-pressed? % input.keys/enter)
                                                  (save! %))}))
     (pack! window)
