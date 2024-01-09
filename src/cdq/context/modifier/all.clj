@@ -115,6 +115,7 @@
              (case source-or-target
                :effect/source "dealt"
                :effect/target "received")
+             ; TODO not handling negative values yet (do I need that ?)
              (case inc-or-mult
                :inc "+"
                :mult "+")

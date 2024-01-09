@@ -239,6 +239,25 @@
   (cons [:TODO (property-type properties)]
         properties))
 
+(comment
+ (defn- all-text-colors []
+   (let [colors (seq (.keys (com.badlogic.gdx.graphics.Colors/getColors)))]
+     (str/join "\n"
+               (for [colors (partition-all 4 colors)]
+                 (str/join " , " (map #(str "[" % "]" %) colors)))))))
+
+(com.badlogic.gdx.graphics.Colors/put "ITEM_GOLD"
+                                      (com.badlogic.gdx.graphics.Color. (float 0.84)
+                                                                        (float 0.8)
+                                                                        (float 0.52)
+                                                                        (float 1)))
+
+(com.badlogic.gdx.graphics.Colors/put "MODIFIER_BLUE"
+                                      (com.badlogic.gdx.graphics.Color. (float 0.38)
+                                                                        (float 0.47)
+                                                                        (float 1)
+                                                                        (float 1)))
+
 (defmethod property->text :property.type/creature [_ctx
                                                    {:keys [property/id
                                                            creature/species
@@ -247,11 +266,17 @@
                                                            creature/items
                                                            creature/level]}]
   [(str/capitalize (name id))
-   (str "Species: " (str/capitalize (name species)))
+   (str/capitalize (name species))
    (when level (str "Level: " level))
    (str "Flying? " flying?)
    (when (seq skills) (str "Spells: " (str/join "," (map name skills))))
    (when (seq items) (str "Items: "   (str/join "," (map name items))))])
+
+(def ^:private skill-cost-color "[CYAN]")
+(def ^:private action-time-color "[GOLD]")
+(def ^:private cooldown-color "[SKY]")
+(def ^:private effect-color "[CHARTREUSE]")
+(def ^:private modifier-color "[MODIFIER_BLUE]")
 
 ; TODO spell? why needed ... => use :property.type/spell or :property.type/weapon instead
 ; different enter active skill state sound
@@ -266,18 +291,18 @@
                                                         spell?
                                                         skill/effect]}]
   [(str/capitalize (name id))
-   (if spell? "Spell" "Weapon")
-   (when cost (str "Cost: " cost))
-   (str (if spell?  "Cast-Time" "Attack-time") ": " (readable-number action-time) " seconds")
-   (when cooldown (str "Cooldown: " (readable-number cooldown)))
-   (effect-text ctx effect)])
+   ;(if spell? "Spell" "Weapon")
+   (when cost (str skill-cost-color "Cost: " cost "[]"))
+   (str action-time-color (if spell?  "Cast-Time" "Attack-time") ": " (readable-number action-time) " seconds" "[]")
+   (when cooldown (str cooldown-color "Cooldown: " (readable-number cooldown) "[]"))
+   (str effect-color (effect-text ctx effect) "[]")])
 
 (defmethod property->text :property.type/item [ctx
                                                {:keys [property/pretty-name
                                                        item/modifier]
                                                 :as item}]
-  [(str pretty-name (when-let [cnt (:count item)] (str " (" cnt ")")))
-   (when (seq modifier) (modifier-text ctx modifier))])
+  [(str "[ITEM_GOLD]" pretty-name (when-let [cnt (:count item)] (str " (" cnt ")")) "[]")
+   (when (seq modifier) (str modifier-color (modifier-text ctx modifier) "[]"))])
 
 (defmethod property->text :property.type/weapon [ctx
                                                  {:keys [property/pretty-name
@@ -289,9 +314,9 @@
                                                   :as item}]
   [(str pretty-name (when-let [cnt (:count item)] (str " (" cnt ")")))
    (when two-handed? "Two-handed")
-   (str (if spell?  "Cast-Time" "Attack-time") ": " (readable-number action-time) " seconds") ; TODO
-   (when (seq modifier) (modifier-text ctx modifier))
-   (effect-text ctx effect)])
+   (str action-time-color (if spell?  "Cast-Time" "Attack-time") ": " (readable-number action-time) " seconds" "[]")
+   (when (seq modifier) (str modifier-color (modifier-text ctx modifier) "[]"))
+   (str effect-color (effect-text ctx effect) "[]")])
 
 (extend-type gdl.context.Context
   cdq.context/TooltipText
