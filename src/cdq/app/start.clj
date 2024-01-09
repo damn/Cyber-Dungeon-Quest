@@ -1,27 +1,4 @@
 (ns cdq.app.start
-  (:require [utils.core :refer [safe-get]]))
-
-(def ^:private production-config
-  {:full-screen? true
-   :map-editor? false
-   :property-editor? false
-   :debug-windows? false
-   :debug-options? false
-   :assert? false})
-
-(def ^:private dev-config
-  {:full-screen? false
-   :map-editor? true
-   :property-editor? true
-   :debug-windows? true
-   :debug-options? true
-   :assert? true})
-
-(def ^:private config dev-config)
-
-(set! *assert* (safe-get config :assert?))
-
-(ns cdq.app.start
   (:require [gdl.backends.libgdx.app :as app]
             [gdl.context :refer [generate-ttf ->stage-screen ->image-widget create-image]]
             [utils.core :refer [safe-get]]
@@ -45,7 +22,29 @@
                          property-editor)
             [cdq.context :refer [set-cursor!]]))
 
+(def ^:private production-config
+  {:full-screen? true
+   :map-editor? false
+   :property-editor? false
+   :debug-windows? false
+   :debug-options? false
+   :assert? false})
+
+(def ^:private dev-config
+  {:full-screen? false
+   :map-editor? true
+   :property-editor? true
+   :debug-windows? true
+   :debug-options? true
+   :assert? true})
+
+(def ^:private config dev-config)
+
+; TODO do @ gloal vars, has to be done before ns requires.
+; (set! *assert* (safe-get config :assert?))
+
 (defn- create-context [default-context]
+  (println "CREAT ECONTEXT ")
   (let [context (merge default-context
                        (properties/->context default-context "resources/properties.edn"))
         context (merge context
