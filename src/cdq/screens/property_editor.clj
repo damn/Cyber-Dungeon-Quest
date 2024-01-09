@@ -2,7 +2,7 @@
   (:require [clojure.edn :as edn]
             [clojure.string :as str]
             [gdl.app :as app :refer [change-screen!]]
-            [gdl.context :refer [get-stage ->text-button ->image-button ->label ->text-field ->image-widget ->table ->stack ->window all-sound-files play-sound! ->vertical-group ->check-box ->select-box ->actor key-just-pressed? add-to-stage!]]
+            [gdl.context :refer [get-stage ->text-button ->image-button ->label ->text-field ->image-widget ->table ->stack ->window all-sound-files play-sound! ->vertical-group ->check-box ->select-box ->actor key-just-pressed? add-to-stage! ->scroll-pane]]
             [gdl.input.keys :as input.keys]
             [gdl.scene2d.actor :as actor :refer [remove! set-touchable! parent add-listener! add-tooltip! find-ancestor-window pack-ancestor-window!]]
             [gdl.scene2d.group :refer [add-actor! clear-children! children]]
@@ -13,26 +13,21 @@
             [cdq.context.properties :as properties]
             [cdq.context :refer [get-property all-properties tooltip-text ->error-window]]))
 
-(defn ->scroll-pane [_ actor]
-  (let [widget (com.kotcrab.vis.ui.widget.VisScrollPane. actor)]
-    (.setFlickScroll widget false)
-    (.setFadeScrollBars widget false)
-    widget))
-
-(defn ->scrollable-choose-window [ctx rows]
-  (let [window (->window ctx {:title "Choose"
-                              :modal? true
-                              :close-button? true
-                              :center? true
-                              :close-on-escape? true})
-        table (->table ctx {:rows rows
+(defn ->scrollable-choose-window [{:keys [gui-viewport-width
+                                          gui-viewport-height]
+                                   :as ctx}
+                                  rows]
+  (let [table (->table ctx {:rows rows
                             :cell-defaults {:pad 1}})]
-    (.width
-     (.height (.add window (->scroll-pane ctx table))
-              (float (- (:gui-viewport-height ctx) 50)))
-     (float (+ 100 (/ (:gui-viewport-width ctx) 2))))
-    (.pack window)
-    window))
+    (->window ctx {:title "Choose"
+                   :modal? true
+                   :close-button? true
+                   :center? true
+                   :close-on-escape? true
+                   :rows [[{:actor (->scroll-pane ctx table)
+                            :width (+ 100 (/ gui-viewport-width 2))
+                            :height (- gui-viewport-height 50)}]]
+                   :pack? true})))
 
 ;;
 
