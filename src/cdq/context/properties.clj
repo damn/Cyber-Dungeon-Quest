@@ -233,22 +233,6 @@
 
 ;;
 
-(set! com.kotcrab.vis.ui.widget.Tooltip/DEFAULT_APPEAR_DELAY_TIME (float 0))
-
-(comment
- ;com.kotcrab.vis.ui.widget.Tooltip
- ;static float 	DEFAULT_APPEAR_DELAY_TIME
- ;static float 	DEFAULT_FADE_TIME
- ;static boolean 	MOUSE_MOVED_FADEOUT
- ;Controls whether to fade out tooltip when mouse was moved.
- (set! com.kotcrab.vis.ui.widget.Tooltip/DEFAULT_FADE_TIME (float 0.3))
- ;(set! com.kotcrab.vis.ui.widget.Tooltip/MOUSE_MOVED_FADEOUT false)
- ; _IMPORTANT_
- ; TODO always show BELOW the/ABOVE actor nicely not near mouse thing or ABOVE centered ?
- ; https://github.com/kotcrab/vis-ui/blob/master/ui/src/main/java/com/kotcrab/vis/ui/widget/Tooltip.java#L267
- )
-
-
 (defmulti property->text (fn [_ctx property] (property-type property)))
 
 (defmethod property->text :default [_ctx properties]
