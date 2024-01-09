@@ -1,6 +1,5 @@
 (ns cdq.effect.spawn
-  (:require [malli.core :as m]
-            [x.x :refer [defcomponent]]
+  (:require [x.x :refer [defcomponent]]
             [cdq.effect :as effect]
             [cdq.state.npc :as npc-state]))
 
@@ -27,14 +26,7 @@
  ; keys: :faction(:source)/:target-position/:creature-id
  )
 
-; TODO valid-params? could check also schema over value ( but not here then , @ cdq.context.effect)
-(def ^:private schema
-  (m/schema [:qualified-keyword {:namespace :creatures}]))
-
 (defcomponent :effect/spawn creature-id
-  (effect/value-schema [_]
-    schema)
-
   (effect/text [_ _ctx]
     (str "Spawns a " (name creature-id)))
 

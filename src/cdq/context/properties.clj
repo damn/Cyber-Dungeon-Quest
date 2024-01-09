@@ -5,6 +5,7 @@
             [malli.error :as me]
             [gdl.context :refer [get-sprite create-image]]
             [gdl.graphics.animation :as animation]
+            [data.val-max :refer [val-max-schema]]
             [utils.core :refer [safe-get readable-number]]
             [cdq.context.modifier :as modifier]
             cdq.context.modifier.all
@@ -29,54 +30,67 @@
 (defattr :property/pretty-name {:widget :text-field
                                 :schema :string})
 
-(defattr :effect/sound {:widget :sound})
-
-; Creature 'stats':
-; attackspeed (cooldown ?)
-; damage physical,magic min-max
-; range
-
-; & skill 'melee-attack' -> uses stats as target-entity
-
-; ranged attacks ? sth else ?
-
-#_[:effect/damage  ; => ! widget !
- :effect/projectile  ; true
- :effect/stun  ; duration ?
- :effect/spawn  ; select ?
- :effect/restore-hp-mana ; ..
- :effect/sound  ; OK
- :effect/target-entity] ; ?
-
-(def ^:private effect-attributes (keys (methods effect/transactions)))
-(def ^:private modifier-attributes (keys modifier/modifier-definitions))
-
-(doseq [k (concat modifier-attributes
-                  effect-attributes)]
-  (alter-var-root #'attributes (fn [attrs]
-                                 (if (contains? attrs k)
-                                   attrs
-                                   (assoc attrs k {:widget :text-field})))))
-; => default :text-field ?
-
-(def ^:private effect-components-schema
-  (for [k effect-attributes]
-    [k {:optional true} (m/form (effect/value-schema [k nil]))]))
-
-; (m/schema [:tuple [:enum :physical :magic] (m/form val-max-schema)])
-; => widget ?
-
-(defattr :effect/damage {:widget :nested-map
-                         :components [:damage/type :damage/min-max]
-                         :add-components? false})
-; TODO needs default value to set up widgets
-; also not using attr- schema
-; TODO can put damage [2 1] not validated.
+(defattr :effect/sound {:widget :sound
+                        :schema :string})
 
 (defattr :damage/type {:widget :enum
                        :items [:physical :magic]})
 
 (defattr :damage/min-max {:widget :text-field})
+
+(defattr :effect/damage {:widget :nested-map
+                         :components [:damage/type :damage/min-max]
+                         :add-components? false
+                         :schema [:map {:closed true}
+                                  [:damage/type [:enum :physical :magic]]
+                                  [:damage/min-max (m/form val-max-schema)]]})
+
+(defattr :effect/spawn {:widget :text-field
+                        :schema [:qualified-keyword {:namespace :creatures}]})
+
+(defattr :effect/stun {:widget :text-field
+                       :schema [:and number? pos?]})
+
+(defattr :effect/restore-hp-mana {:widget :text-field
+                                  :schema [:= true]})
+
+(defattr :effect/projectile {:widget :text-field
+                             :schema [:= true]})
+
+(defattr :effect/target-entity {:widget :nested-map
+                                :schema [:map {:closed true}
+                                         [:hit-effect [:map]]
+                                         [:maxrange pos?]]})
+
+(def ^:private effect-attributes (keys (methods effect/transactions)))
+
+(assert (= (set (filter #(= "effect" (namespace %)) (keys attributes)))
+           (set effect-attributes)))
+
+(def ^:private effect-components-schema
+  (for [k effect-attributes]
+    [k {:optional true} (:schema (get attributes k))]))
+
+(defattr :hit-effect {:widget :nested-map
+                      :components effect-attributes
+                      :add-components? true})
+
+(defattr :modifier/max-hp       {:widget :text-field :schema number?})
+(defattr :modifier/max-mana     {:widget :text-field :schema number?})
+(defattr :modifier/cast-speed   {:widget :text-field :schema number?})
+(defattr :modifier/attack-speed {:widget :text-field :schema number?})
+(defattr :modifier/shield       {:widget :text-field :schema :some})
+(defattr :modifier/armor        {:widget :text-field :schema :some})
+(defattr :modifier/damage       {:widget :text-field :schema :some})
+
+(def ^:private modifier-attributes (keys modifier/modifier-definitions))
+
+(assert (= (set (filter #(= "modifier" (namespace %)) (keys attributes)))
+           (set modifier-attributes)))
+
+(def ^:private modifier-components-schema
+  (for [k modifier-attributes]
+    [k {:optional true} (:schema (get attributes k))]))
 
 (defattr :item/modifier {:widget :nested-map
                          :schema [:map]
@@ -87,15 +101,8 @@
                         :components effect-attributes
                         :add-components? true})
 
-; ? of target-entity ? part of 'attack-skill' ?
-(defattr :hit-effect {:widget :nested-map
-                      :components effect-attributes ; TODO only those with 'source/target'
-                      :add-components? true})
-
-(defn removable-attribute? [k] ; TODO ?? attack-skill ! no weapon !
+(defn removable-attribute? [k]
   (#{"effect" "modifier"} (namespace k)))
-
-(defattr :effect/target-entity {:widget :nested-map}) ; TODO ?? attack-skill ! no weapon !
 
 (defattr :creature/faction {:widget :enum
                             :schema [:enum :good :evil]
@@ -229,7 +236,8 @@
                                   [:property/pretty-name :string]
                                   [:item/slot [:qualified-keyword {:namespace :inventory.slot}]]
                                   [:property/image :some]
-                                  [:item/modifier [:map ]]])}
+                                  [:item/modifier (vec (concat [:map {:closed true}]
+                                                               modifier-components-schema))]])}
    :property.type/world {:of-type? :world/princess
                          :edn-file-sort-order 5
                          :title "World"

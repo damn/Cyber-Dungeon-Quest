@@ -1,10 +1,7 @@
 (ns cdq.effect
   (:require [x.x :refer [defsystem]]))
 
-(defsystem value-schema  [_])
-
 (defsystem text          [_ ctx])
-
 (defsystem valid-params? [_ ctx])
 
 (defsystem useful?       [_ ctx])

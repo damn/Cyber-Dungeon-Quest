@@ -1,6 +1,5 @@
 (ns cdq.effect.projectile
   (:require [clojure.string :as str]
-            [malli.core :as m]
             [x.x :refer [defcomponent]]
             [gdl.math.vector :as v]
             [gdl.graphics.animation :as animation]
@@ -41,13 +40,7 @@
          (v/scale direction
                   (+ (:radius (:entity/body entity*)) size 0.1))))
 
-(def ^:private schema
-  (m/schema [:= true]))
-
 (defcomponent :effect/projectile _
-  (effect/value-schema [_]
-    schema)
-
   (effect/text [_ ctx]
     (effect-text ctx hit-effect))
 

@@ -1,11 +1,7 @@
 (ns cdq.effect.restore-hp-mana
-  (:require [malli.core :as m]
-            [x.x :refer [defcomponent]]
+  (:require [x.x :refer [defcomponent]]
             [data.val-max :refer [lower-than-max? set-to-max]]
             [cdq.effect :as effect]))
-
-(def ^:private schema
-  (m/schema [:= true]))
 
 (defn- restore-hp-tx [{:keys [entity/id entity/hp]}]
   [:tx/assoc id :entity/hp (set-to-max hp)])
@@ -14,9 +10,6 @@
   [:tx/assoc id :entity/mana (set-to-max mana)])
 
 (defcomponent :effect/restore-hp-mana _
-  (effect/value-schema [_]
-    schema)
-
   (effect/text [_ _ctx]
     "Restores full hp and mana.")
 

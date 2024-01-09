@@ -1,6 +1,5 @@
 (ns cdq.effect.target-entity
-  (:require [malli.core :as m]
-            [x.x :refer [defcomponent]]
+  (:require [x.x :refer [defcomponent]]
             [gdl.context :refer [draw-line]]
             [gdl.math.vector :as v]
             [cdq.context :refer (effect-text line-of-sight? line-entity)]
@@ -26,13 +25,7 @@
                                (:entity/position target))
                   maxrange)))
 
-(def ^:private schema
-  (m/schema [:map [:hit-effect [:map]] [:maxrange pos?]]))
-
 (defcomponent :effect/target-entity {:keys [maxrange hit-effect]}
-  (effect/value-schema [_]
-    schema)
-
   (effect/text [_ ctx]
     (str "Range " maxrange " meters\n" (effect-text ctx hit-effect)))
 

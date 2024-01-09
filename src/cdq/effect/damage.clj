@@ -1,7 +1,6 @@
 (ns cdq.effect.damage
-  (:require [malli.core :as m]
-            [x.x :refer [defcomponent]]
-            [data.val-max :refer [apply-val apply-val-max-modifiers val-max-schema]]
+  (:require [x.x :refer [defcomponent]]
+            [data.val-max :refer [apply-val apply-val-max-modifiers]]
             [utils.random :as random]
             [cdq.effect :as effect]
             [cdq.entity :as entity]))
@@ -110,15 +109,7 @@
 (defn- damage->text [{:keys [damage/type] [min-dmg max-dmg] :damage/min-max}]
   (str min-dmg "-" max-dmg " " (name type) " damage"))
 
-(def ^:private damage-schema
-  (m/schema [:map {:closed true}
-             [:damage/type [:enum :physical :magic]]
-             [:damage/min-max (m/form val-max-schema)]]))
-
 (defcomponent :effect/damage {:keys [damage/type] :as damage}
-  (effect/value-schema [_]
-    damage-schema)
-
   (effect/text [_ {:keys [effect/source]}]
     (if source
       (let [modified (effective-damage damage source)]
