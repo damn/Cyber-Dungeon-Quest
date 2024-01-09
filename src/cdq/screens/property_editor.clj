@@ -33,24 +33,15 @@
 
 ;;
 
-; TODO default value for nested attr key, move other TODOs up here
-
-; TODO SHOW IF CHANGES MADE then SAVE otherwise different color etc.
+; TODO save button show if changes made, otherwise disabled?
 ; when closing (lose changes? yes no)
 
-; TODO refresh overview table after property-editor save something (callback ?)
-; or remove it after opening ?
-
-; use def attribute with keys :value-widget, :linked-type, etc.
-
-; each attribute explicit -> :label ! no :default !
-
-; :attribute-widget/foo
+; TODO overview table not refreshed after changes in property editor window
 
 ;;
 
 (defn- attr->value-widget [k]
-  (or (get properties/attribute->value-widget k) :label))
+  (or (:widget (get properties/attributes k)) :label))
 
 (defmulti ->value-widget     (fn [[k _v] _ctx] (attr->value-widget k)))
 (defmulti value-widget->data (fn [k _widget]   (attr->value-widget k)))
@@ -87,7 +78,7 @@
 ;;
 
 (defmethod ->value-widget :enum [[k v] ctx]
-  (->select-box ctx {:items (map ->edn (properties/enum-attribute->items k))
+  (->select-box ctx {:items (map ->edn (:items (properties/attributes k)))
                      :selected (->edn v)}))
 
 (defmethod value-widget->data :enum [_ widget]
@@ -147,7 +138,7 @@
                                  :center? true
                                  :close-on-escape? true})]
        (add-rows! window (for [nested-k (remove (set (keys (attribute-widget-group->data attribute-widget-group)))
-                                                (properties/nested-map->components k))]
+                                                (:components (properties/attributes k)))]
                            [(->text-button ctx (name nested-k)
                                            (fn [ctx]
                                              (remove! window)
@@ -167,9 +158,9 @@
     (actor/set-id! attribute-widget-group :attribute-widget-group)
     (->table ctx {:cell-defaults {:pad 5}
                   :rows (remove nil?
-                                [(when (properties/nested-map-attribute-add-components? k)
+                                [(when (:add-components? (properties/attributes k))
                                    [(->add-nested-map-button ctx k attribute-widget-group)])
-                                 (when (properties/nested-map-attribute-add-components? k)
+                                 (when (:add-components? (properties/attributes k))
                                    [(->horizontal-separator-cell 1)])
                                  [attribute-widget-group]])})))
 
@@ -246,7 +237,7 @@
   (let [table (->table context {:cell-defaults {:pad 5}})]
     (add-one-to-many-rows context
                           table
-                          (properties/one-to-many-attribute->linked-property-type attribute)
+                          (:linked-property-type (properties/attributes attribute))
                           property-ids)
     table))
 

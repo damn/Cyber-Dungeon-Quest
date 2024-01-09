@@ -13,80 +13,99 @@
             [cdq.context :refer [modifier-text effect-text]]))
 
 ; TODO
+; * modifier component schemas
+; * effect/modifier component widgets , not just textfield (select damage physical/magic ..)
+; * allowed value-ranges ?
 ; * text-field make validateabletextfield/number spinners, etc.
-; * schema/value-ranges/value-widgets for all modifiers/effects, e.g. damage select physical,magical,...
-; * filter out not implemented weapons, etc.  mark them somehow
-; aggro range wakup time, etc what else is hidden?!, unique death animation/sound/attacksound each weapon/spell etc.
-; alert sound, etc., mana, hp, speed.... default block modifiers
-; ASSERT & LOAD EDN / WRITE EDN / BEFORE SAVE DATA
-; also things like target-entity props should be a map , :hit-effect & :maxrange, it was a list...
-; Later
-; * move other game params like aggro-range, wakeup/alert state time into creature props
-; * unique death animations/sounds
-; * attacksound each weapon/spell/effect/etc. grep play-sound! & image/animation all in properties.edn
-; * sounds play/open bfxr
-; * open tmx file, tiled editor
-; * components editor creatures, etc. & builder
+; * move hardcoded sounds, params here (aggro range, wakeup-time, death anim,sounds, attacksounds )
+; => grep play-sound! & image/animation
 ; * also item needs to be in certain slot, each slot only once, etc. also max-items ...?
 
-(defn one-to-many-attribute->linked-property-type [k]
-  (case k
-    :creature/skills :property.type/spell
-    :creature/items  :property.type/item))
 
-(def attribute->value-widget
-  {:property/image :image
-   :property/animation :animation
-   :property/sound :sound
-   :property/pretty-name :text-field
-   :item/modifier :nested-map
-   :creature/faction :enum
-   :creature/level :text-field
-   :creature/skills :one-to-many
-   :creature/items :one-to-many
-   :creature/mana :text-field
-   :creature/flying? :check-box
-   :creature/hp :text-field
-   :creature/speed :text-field
-   :creature/reaction-time :text-field
-   :skill/action-time :text-field
-   :skill/cooldown :text-field
-   :skill/cost :text-field
-   :skill/effect :nested-map
-   :effect/sound :sound
-   :effect/damage :text-field
-   :effect/target-entity :nested-map
-   :maxrange :text-field
-   :hit-effect :nested-map
-   :world/map-size :text-field
-   :world/max-area-level :text-field
-   :world/spawn-rate :text-field})
-
-; TODO make each attribute a map with :widget and extra keys => move into 1 place...
+; TODO  each attribute a map with all info, not split into different fns
+; make each attribute a map with :widget and extra keys => move into 1 place...
 ; => pass to value-widget the value-widget attrs.
-(defn enum-attribute->items [k]
-  (case k
-    :creature/faction [:good :evil]))
+
+(def attributes {})
+
+(defn defattr [k data]
+  (alter-var-root #'attributes assoc k data)
+  k)
+
+(defattr :property/image {:widget :image
+                          :schema :some})
+
+(defattr :property/animation {:widget :animation
+                              :schema :some})
+
+(defattr :property/sound {:widget :sound
+                          :schema :string})
+
+(defattr :property/pretty-name {:widget :text-field
+                                :schema :string})
+
+(defattr :effect/sound {:widget :sound})
+
+(defattr :effect/damage {:widget :text-field})
 
 (doseq [k (concat (keys cdq.context.modifier/modifier-definitions)
                   (keys (methods cdq.effect/transactions)))]
-  (alter-var-root #'attribute->value-widget (fn [m]
-                                              (if (contains? m k) m (assoc m k :text-field)))))
-; TODO schema/default-values/nicer text?
+  (alter-var-root #'attributes (fn [attrs]
+                                 (if (contains? attrs k)
+                                   attrs
+                                   (assoc attrs k :text-field)))))
+; => default :text-field ?
 
-(defn removable-attribute? [k]
+(def ^:private effect-components-schema
+  (for [k (keys (methods cdq.effect/transactions))]
+    [k {:optional true} (m/form (cdq.effect/value-schema [k nil]))]))
+
+(defattr :item/modifier {:widget :nested-map
+                         :schema [:map]
+                         :components (keys cdq.context.modifier/modifier-definitions)
+                         :add-components? true})
+
+(defattr :skill/effect {:widget :nested-map
+                        :components (keys (methods cdq.effect/transactions))
+                        :add-components? true})
+
+; ? of target-entity ? part of 'attack-skill' ?
+(defattr :hit-effect {:widget :nested-map
+                      :components (keys (methods cdq.effect/transactions)) ; TODO only those with 'source/target'
+                      :add-components? true})
+
+(defn removable-attribute? [k] ; TODO ?? attack-skill ! no weapon !
   (#{"effect" "modifier"} (namespace k)))
 
-(defn nested-map-attribute-add-components? [k]
-  (#{:item/modifier :skill/effect :hit-effect} k))
+(defattr :effect/target-entity {:widget :nested-map}) ; TODO ?? attack-skill ! no weapon !
 
-(defn nested-map->components [k]
-  (case k
-    :item/modifier (keys cdq.context.modifier/modifier-definitions)
-    :skill/effect (keys (methods cdq.effect/transactions))
-    :hit-effect   (keys (methods cdq.effect/transactions)) ; TODO only those with 'source/target'
-    ))
+(defattr :creature/faction {:widget :enum
+                            :schema [:enum :good :evil]
+                            :items [:good :evil]})
 
+(defattr :creature/level {:widget :text-field
+                          :schema [:maybe pos-int?]})
+
+(defattr :creature/skills {:widget :one-to-many
+                           :linked-property-type :property.type/spell})
+
+(defattr :creature/items {:widget :one-to-many
+                          :linked-property-type :property.type/item})
+
+(defattr :creature/mana {:widget :text-field})
+(defattr :creature/flying? {:widget :check-box})
+(defattr :creature/hp {:widget :text-field})
+(defattr :creature/speed {:widget :text-field})
+(defattr :creature/reaction-time {:widget :text-field})
+(defattr :skill/action-time {:widget :text-field})
+(defattr :skill/cooldown {:widget :text-field})
+(defattr :skill/cost {:widget :text-field})
+(defattr :maxrange {:widget :text-field})
+(defattr :world/map-size {:widget :text-field})
+(defattr :world/max-area-level {:widget :text-field})
+(defattr :world/spawn-rate {:widget :text-field})
+
+; Take from property-type schema  ?
 (defn attribute-widget-sort-attributes [properties]
   (sort-by
    (fn [[k _v]]
@@ -110,11 +129,6 @@
         11)
       (name k)])
    properties))
-
-
-(def ^:private effect-components-schema
-  (for [k (keys (methods cdq.effect/transactions))]
-    [k {:optional true} (m/form (cdq.effect/value-schema [k nil]))]))
 
 ; https://github.com/metosin/malli#built-in-schemas
 (def property-types
