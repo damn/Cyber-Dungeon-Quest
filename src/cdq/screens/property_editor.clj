@@ -2,7 +2,7 @@
   (:require [clojure.edn :as edn]
             [clojure.string :as str]
             [gdl.app :as app :refer [change-screen!]]
-            [gdl.context :refer [get-stage ->text-button ->image-button ->label ->text-field ->image-widget ->table ->stack ->window all-sound-files play-sound! ->vertical-group ->check-box ->select-box ->actor key-just-pressed?]]
+            [gdl.context :refer [get-stage ->text-button ->image-button ->label ->text-field ->image-widget ->table ->stack ->window all-sound-files play-sound! ->vertical-group ->check-box ->select-box ->actor key-just-pressed? add-to-stage!]]
             [gdl.input.keys :as input.keys]
             [gdl.scene2d.actor :as actor :refer [remove! set-touchable! parent add-listener! add-tooltip!]]
             [gdl.scene2d.group :refer [add-actor! clear-children! children]]
@@ -15,7 +15,6 @@
 
 ; TODO use findByName & actor name as id with pr-str and ->edn for keywords
 ; userObject keep as is, can add both then !
-; TODO check syntax colors gdl.context names set special (gold)
 ; ADD SOUNDS TO SPELLS MANDATORY - move out of restoration - also hp / mana separate
 ; LET ME EDIT for example spawn which creature
 ; also :vampire, :lady-a , everything, game-speed, zoom-level,...
@@ -23,15 +22,6 @@
 ; => let me ADD effect components like sound & SELECT sound ! file chooser
 ; do it properly right do it with your editor not text ....
 ; TODO refresh overview table after property-editor save something (callback ?)
-
-; used @ player-modal / error-window , can move to gdl.context
-(defn- add-to-stage! [ctx actor]
-  (-> ctx get-stage (add-actor! actor))
-  (.setScrollFocus (get-stage ctx) actor) ; TODO not working
-  (.setKeyboardFocus (get-stage ctx) actor)
-  ; TODO set touch focus , have to click first to use scroll pad
-  ; TODO use scrollpad ingame too
-  )
 
 ;;
 
