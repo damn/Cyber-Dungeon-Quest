@@ -46,6 +46,9 @@
 (defmulti ->value-widget     (fn [[k _v] _ctx] (attr->value-widget k)))
 (defmulti value-widget->data (fn [k _widget]   (attr->value-widget k)))
 
+(defmethod value-widget->data :default [_ widget]
+  (actor/id widget))
+
 ;;
 
 (defn ->edn [v]
@@ -54,9 +57,6 @@
 
 (defmethod ->value-widget :label [[_ v] ctx]
   (->label ctx (->edn v)))
-
-(defmethod value-widget->data :label [_ widget]
-  (actor/id widget))
 
 ;;
 

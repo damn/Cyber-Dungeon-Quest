@@ -6,31 +6,16 @@
             [gdl.context :refer [get-sprite create-image]]
             [gdl.graphics.animation :as animation]
             [utils.core :refer [safe-get readable-number]]
-            cdq.context.modifier
+            [cdq.context.modifier :as modifier]
             cdq.context.modifier.all
-            cdq.effect
+            [cdq.effect :as effect]
             cdq.effect.all
             [cdq.context :refer [modifier-text effect-text]]))
 
-; TODO
-; * modifier component schemas
-; * effect/modifier component widgets , not just textfield (select damage physical/magic ..)
-; * allowed value-ranges ?
-; * text-field make validateabletextfield/number spinners, etc.
-; * move hardcoded sounds, params here (aggro range, wakeup-time, death anim,sounds, attacksounds )
-; => grep play-sound! & image/animation
-; * also item needs to be in certain slot, each slot only once, etc. also max-items ...?
-
-
-; TODO  each attribute a map with all info, not split into different fns
-; make each attribute a map with :widget and extra keys => move into 1 place...
-; => pass to value-widget the value-widget attrs.
-
 (def attributes {})
 
-(defn defattr [k data]
-  (alter-var-root #'attributes assoc k data)
-  k)
+(defn- defattr [k data]
+  (alter-var-root #'attributes assoc k data))
 
 (defattr :property/image {:widget :image
                           :schema :some})
@@ -45,33 +30,46 @@
                                 :schema :string})
 
 (defattr :effect/sound {:widget :sound})
-
 (defattr :effect/damage {:widget :text-field})
 
-(doseq [k (concat (keys cdq.context.modifier/modifier-definitions)
-                  (keys (methods cdq.effect/transactions)))]
+#_[:effect/damage  ; => ! widget !
+ :effect/projectile  ; true
+ :effect/stun  ; duration ?
+ :effect/spawn  ; select ?
+ :effect/restore-hp-mana ; ..
+ :effect/sound  ; OK
+ :effect/target-entity] ; ?
+
+(def ^:private effect-attributes (keys (methods effect/transactions)))
+(def ^:private modifier-attributes (keys modifier/modifier-definitions))
+
+(doseq [k (concat modifier-attributes
+                  effect-attributes)]
   (alter-var-root #'attributes (fn [attrs]
                                  (if (contains? attrs k)
                                    attrs
-                                   (assoc attrs k :text-field)))))
+                                   (assoc attrs k {:widget :text-field})))))
 ; => default :text-field ?
 
 (def ^:private effect-components-schema
-  (for [k (keys (methods cdq.effect/transactions))]
-    [k {:optional true} (m/form (cdq.effect/value-schema [k nil]))]))
+  (for [k effect-attributes]
+    [k {:optional true} (m/form (effect/value-schema [k nil]))]))
+
+; (m/schema [:tuple [:enum :physical :magic] (m/form val-max-schema)])
+; => widget ?
 
 (defattr :item/modifier {:widget :nested-map
                          :schema [:map]
-                         :components (keys cdq.context.modifier/modifier-definitions)
+                         :components modifier-attributes
                          :add-components? true})
 
 (defattr :skill/effect {:widget :nested-map
-                        :components (keys (methods cdq.effect/transactions))
+                        :components effect-attributes
                         :add-components? true})
 
 ; ? of target-entity ? part of 'attack-skill' ?
 (defattr :hit-effect {:widget :nested-map
-                      :components (keys (methods cdq.effect/transactions)) ; TODO only those with 'source/target'
+                      :components effect-attributes ; TODO only those with 'source/target'
                       :add-components? true})
 
 (defn removable-attribute? [k] ; TODO ?? attack-skill ! no weapon !
@@ -130,7 +128,7 @@
       (name k)])
    properties))
 
-; https://github.com/metosin/malli#built-in-schemas
+; TODO use defattr schemas
 (def property-types
   {:property.type/creature {:of-type? :creature/species
                             :edn-file-sort-order 1
