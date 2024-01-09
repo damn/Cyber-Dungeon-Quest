@@ -196,7 +196,7 @@
 ; --> mach prozedural generierte maps mit prostprocessing (fill-singles/set-cells-behind-walls-nil/remove-nads/..?)
 ;& assertions 0 NADS z.b. ...?
 
-(def ^:private spawn-enemies? true)
+(def ^:private spawn-enemies? false)
 
 (defn- create-entities-from-tiledmap! [{:keys [context/world-map] :as ctx}]
   (let [tiled-map (:tiled-map world-map)]

@@ -1,4 +1,4 @@
-(ns cdq.effect.damage
+(ns cdq.tx.damage
   (:require [x.x :refer [defcomponent]]
             [data.val-max :refer [apply-val apply-val-max-modifiers]]
             [utils.random :as random]
@@ -39,27 +39,27 @@
 
 (defn- apply-source-modifiers [{:keys [damage/type] :as damage} source]
   (apply-damage-modifiers damage
-                          (-> source (entity/effect-source-modifiers :effect/damage) type)))
+                          (-> source (entity/effect-source-modifiers :tx/damage) type)))
 
 (defn- apply-target-modifiers [{:keys [damage/type] :as damage} target]
   (apply-damage-modifiers damage
-                          (-> target (entity/effect-target-modifiers :effect/damage) type)))
+                          (-> target (entity/effect-target-modifiers :tx/damage) type)))
 
 (comment
  (set! *print-level* nil)
  (apply-source-modifiers {:damage/type :physical :damage/min-max [5 10]}
                          (cdq.entity/map->Entity
-                          {:entity/modifiers {:effect/damage {:effect/source {:physical {[:val :inc] 1}}}}}))
+                          {:entity/modifiers {:tx/damage {:effect/source {:physical {[:val :inc] 1}}}}}))
  #:damage{:type :physical, :min-max [6 10]}
 
  (apply-source-modifiers {:damage/type :magic :damage/min-max [5 10]}
                          (cdq.entity/map->Entity
-                          {:entity/modifiers {:effect/damage {:effect/source {:physical {[:val :inc] 1}}}}}))
+                          {:entity/modifiers {:tx/damage {:effect/source {:physical {[:val :inc] 1}}}}}))
  #:damage{:type :magic, :min-max [5 10]}
 
  (apply-source-modifiers {:damage/type :magic :damage/min-max [5 10]}
                          (cdq.entity/map->Entity
-                          {:entity/modifiers {:effect/damage {:effect/source {:magic {[:max :mult] 3}}}}}))
+                          {:entity/modifiers {:tx/damage {:effect/source {:magic {[:max :mult] 3}}}}}))
  #:damage{:type :magic, :min-max [5 30]}
  )
 
@@ -89,12 +89,12 @@
 
  (effective-damage {:damage/type :physical :damage/min-max [3 10]}
                    (cdq.entity/map->Entity
-                    {:entity/modifiers {:effect/damage {:effect/source {:physical {[:max :mult] 2
+                    {:entity/modifiers {:tx/damage {:effect/source {:physical {[:max :mult] 2
                                                                                    [:val :mult] 1.5
                                                                                    [:val :inc] 1
                                                                                    [:max :inc] 0}}}}})
                    (cdq.entity/map->Entity
-                    {:entity/modifiers {:effect/damage {:effect/target {:physical {[:max :mult] 1
+                    {:entity/modifiers {:tx/damage {:effect/target {:physical {[:max :mult] 1
                                                                                    [:val :mult] 1
                                                                                    [:val :inc] -5
                                                                                    [:max :inc] 0}}}}}))
@@ -110,7 +110,7 @@
 (defn- damage->text [{:keys [damage/type] [min-dmg max-dmg] :damage/min-max}]
   (str min-dmg "-" max-dmg " " (name type) " damage"))
 
-(defcomponent :effect/damage {:keys [damage/type] :as damage}
+(defcomponent :tx/damage {:keys [damage/type] :as damage}
   (effect/text [_ {:keys [effect/source]}]
     (if source
       (let [modified (effective-damage damage @source)]

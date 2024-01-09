@@ -1,4 +1,4 @@
-(ns cdq.effect.restore-hp-mana
+(ns cdq.tx.restore-hp-mana
   (:require [x.x :refer [defcomponent]]
             [data.val-max :refer [lower-than-max? set-to-max]]
             [cdq.context :refer [transact!]]
@@ -14,7 +14,7 @@
 ; [:tx/update entity :entity/mana set-to-max]
 ; send a function ? not over wire but no problem because its not a low-level txs...
 
-(defcomponent :effect/restore-hp-mana _
+(defcomponent :tx/restore-hp-mana _
   (effect/text [_ _ctx]
     "Restores full hp and mana.")
 

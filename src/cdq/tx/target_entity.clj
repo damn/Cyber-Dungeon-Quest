@@ -1,4 +1,4 @@
-(ns cdq.effect.target-entity
+(ns cdq.tx.target-entity
   (:require [x.x :refer [defcomponent]]
             [gdl.context :refer [draw-line]]
             [gdl.math.vector :as v]
@@ -25,7 +25,7 @@
                                (:entity/position target))
                   maxrange)))
 
-(defcomponent :effect/target-entity {:keys [maxrange hit-effect]}
+(defcomponent :tx/target-entity {:keys [maxrange hit-effect]}
   (effect/text [_ ctx]
     (str "Range " maxrange " meters\n" (effect-text ctx hit-effect)))
 

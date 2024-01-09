@@ -1,4 +1,4 @@
-(ns cdq.effect.projectile
+(ns cdq.tx.projectile
   (:require [clojure.string :as str]
             [x.x :refer [defcomponent]]
             [gdl.math.vector :as v]
@@ -24,8 +24,8 @@
      (random/percent-chance chance)))
 
 (def ^:private hit-effect
-  [[:effect/damage {:damage/type :magic :damage/min-max [4 8]}]
-   [:effect/stun 0.5]
+  [[:tx/damage {:damage/type :magic :damage/min-max [4 8]}]
+   [:tx/stun 0.5]
    ;[:stun {:duration 0.2} {:chance 100}]
    ])
 
@@ -40,7 +40,7 @@
          (v/scale direction
                   (+ (:radius (:entity/body entity*)) size 0.1))))
 
-(defcomponent :effect/projectile _
+(defcomponent :tx/projectile _
   (effect/text [_ ctx]
     (effect-text ctx hit-effect))
 

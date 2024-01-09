@@ -129,7 +129,7 @@
            (assert (check-damage-modifier-value value)
                    (str "Wrong value for damage modifier: " value))
            (damage-modifier-text value))
-   :keys [:entity/modifiers :effect/damage]
+   :keys [:entity/modifiers :tx/damage]
    :apply (fn [component value]
             (assert (check-damage-modifier-value value)
                     (str "Wrong value for damage modifier: " value))

@@ -44,7 +44,6 @@
 ; (set! *assert* (safe-get config :assert?))
 
 (defn- create-context [default-context]
-  (println "CREAT ECONTEXT ")
   (let [context (merge default-context
                        (properties/->context default-context "resources/properties.edn"))
         context (merge context

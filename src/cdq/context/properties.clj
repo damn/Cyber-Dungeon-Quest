@@ -10,7 +10,7 @@
             [cdq.context.modifier :as modifier]
             cdq.context.modifier.all
             [cdq.effect :as effect]
-            cdq.effect.all
+            cdq.tx.all
             [cdq.context :refer [modifier-text effect-text]]))
 
 (def attributes {})
@@ -49,34 +49,34 @@
 
 (defattribute :damage/min-max {:widget :text-field})
 
-(defattribute :effect/damage {:widget :nested-map
-                              :components [:damage/type :damage/min-max]
-                              :add-components? false
-                              :schema [:map {:closed true}
-                                       [:damage/type [:enum :physical :magic]]
-                                       [:damage/min-max (m/form val-max-schema)]]})
+(defattribute :tx/damage {:widget :nested-map
+                          :components [:damage/type :damage/min-max]
+                          :add-components? false
+                          :schema [:map {:closed true}
+                                   [:damage/type [:enum :physical :magic]]
+                                   [:damage/min-max (m/form val-max-schema)]]})
 
 ; to builder ?
 (defattribute :tx/spawn {:widget :text-field
                          :schema [:qualified-keyword {:namespace :creatures}]})
 
 ; this has to go where ?
-(defattribute :effect/stun {:widget :text-field
-                            :schema [:and number? pos?]})
+(defattribute :tx/stun {:widget :text-field
+                        :schema [:and number? pos?]})
 
 ; this has to become 2 txs from hp/mana
-(defattribute :effect/restore-hp-mana {:widget :text-field
-                                       :schema [:= true]})
+(defattribute :tx/restore-hp-mana {:widget :text-field
+                                   :schema [:= true]})
 
-(defattribute :effect/projectile {:widget :text-field
-                                  :schema [:= true]})
+(defattribute :tx/projectile {:widget :text-field
+                              :schema [:= true]})
 
-(defattribute :effect/target-entity {:widget :nested-map
-                                     :schema [:map {:closed true}
-                                              [:hit-effect [:map]]
-                                              [:maxrange pos?]]})
+(defattribute :tx/target-entity {:widget :nested-map
+                                 :schema [:map {:closed true}
+                                          [:hit-effect [:map]]
+                                          [:maxrange pos?]]})
 
-(def ^:private effect-attributes (filter #(#{"tx" "effect"} (namespace %)) (keys attributes)))
+(def ^:private effect-attributes (filter #(#{"tx"} (namespace %)) (keys attributes)))
 
 (def ^:private effect-components-schema
   (for [k effect-attributes]
@@ -119,7 +119,7 @@
                              :add-components? true})
 
 (defn removable-attribute? [k]
-  (#{"tx" "effect" "modifier"} (namespace k)))
+  (#{"tx" "modifier"} (namespace k)))
 
 (defattribute :creature/faction {:widget :enum
                                  :schema [:enum :good :evil]

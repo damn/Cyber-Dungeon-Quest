@@ -1,12 +1,9 @@
 (ns cdq.context.builder
   (:require [x.x :refer [defcomponent]]
             gdl.context
-            [cdq.context :refer [get-property]]
+            [cdq.context :refer [transact! get-property]]
             [cdq.entity :as entity]))
 
-(defmethod cdq.context/transact! :tx/sound [[_ file] ctx]
-  (gdl.context/play-sound! ctx file)
-  nil)
 
 (defn- create-creature-data [{:keys [property/id
                                      property/animation
