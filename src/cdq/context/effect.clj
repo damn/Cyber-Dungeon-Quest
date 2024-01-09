@@ -10,10 +10,10 @@
     (->> (keep #(effect/text % ctx) txs)
          (str/join "\n")))
 
-  (valid-params? [ctx effect]
+  (valid-params? [ctx txs]
     (every? #(effect/valid-params? % ctx) txs))
 
-  (effect-useful? [ctx effect]
+  (effect-useful? [ctx txs]
     (some #(effect/useful? % ctx) txs))
 
   (effect-render-info [ctx txs]
@@ -22,5 +22,5 @@
 
 (defmethod cdq.context/transact! :tx/effect [[_ effect-ctx txs] ctx]
   (let [ctx (merge ctx effect-ctx)]
-    (assert (effect/valid-params? ctx txs))
+    (assert (cdq.context/valid-params? ctx txs))
     (transact-all! ctx txs)))

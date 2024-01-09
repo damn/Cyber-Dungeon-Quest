@@ -1,8 +1,7 @@
-(ns cdq.context)
+(ns cdq.context
+  (:require [x.x :refer [defsystem]]))
 
-(defmulti transact!
-  (fn [{tx-key 0 :as transaction} context]
-    tx-key))
+(defsystem transact! [_ ctx])
 
 (comment
  (clojure.pprint/pprint (sort (keys (methods transact!))))

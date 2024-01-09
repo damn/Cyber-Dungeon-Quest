@@ -1,8 +1,8 @@
 (ns cdq.effect.target-entity
   (:require [x.x :refer [defcomponent]]
-            [gdl.context :refer [draw-line transact!]]
+            [gdl.context :refer [draw-line]]
             [gdl.math.vector :as v]
-            [cdq.context :refer (effect-text line-of-sight? line-entity)]
+            [cdq.context :refer [transact! effect-text line-of-sight? line-entity]]
             [cdq.effect :as effect]))
 
 (defn- in-range? [entity* target maxrange] ; == circle-collides?

@@ -21,68 +21,70 @@
   (alter-var-root #'attributes assoc k data))
 
 (defattribute :property/image {:widget :image
-                          :schema :some})
+                               :schema :some})
 
 (defattribute :property/animation {:widget :animation
-                              :schema :some})
+                                   :schema :some})
 
 ; TODO >+ max bodyt size?
 (defattribute :property/dimensions {:widget :label
-                               :schema [:tuple pos? pos?]})
+                                    :schema [:tuple pos? pos?]})
 
 (defattribute :creature/species {:widget :label
-                            :schema [:qualified-keyword {:namespace :species}]})
+                                 :schema [:qualified-keyword {:namespace :species}]})
 
 (defattribute :property/sound {:widget :sound
-                          :schema :string})
+                               :schema :string})
 
 (defattribute :property/pretty-name {:widget :text-field
-                                :schema :string})
+                                     :schema :string})
 
-(defattribute :effect/sound {:widget :sound
-                        :schema :string})
+(defattribute :tx/sound {:widget :sound
+                         :schema :string})
+
+; => then stun is an enum or what
 
 (defattribute :damage/type {:widget :enum
-                       :items [:physical :magic]})
+                            :items [:physical :magic]})
 
 (defattribute :damage/min-max {:widget :text-field})
 
 (defattribute :effect/damage {:widget :nested-map
-                         :components [:damage/type :damage/min-max]
-                         :add-components? false
-                         :schema [:map {:closed true}
-                                  [:damage/type [:enum :physical :magic]]
-                                  [:damage/min-max (m/form val-max-schema)]]})
+                              :components [:damage/type :damage/min-max]
+                              :add-components? false
+                              :schema [:map {:closed true}
+                                       [:damage/type [:enum :physical :magic]]
+                                       [:damage/min-max (m/form val-max-schema)]]})
 
-(defattribute :effect/spawn {:widget :text-field
-                        :schema [:qualified-keyword {:namespace :creatures}]})
+; to builder ?
+(defattribute :tx/spawn {:widget :text-field
+                         :schema [:qualified-keyword {:namespace :creatures}]})
 
+; this has to go where ?
 (defattribute :effect/stun {:widget :text-field
-                       :schema [:and number? pos?]})
+                            :schema [:and number? pos?]})
 
+; this has to become 2 txs from hp/mana
 (defattribute :effect/restore-hp-mana {:widget :text-field
-                                  :schema [:= true]})
+                                       :schema [:= true]})
 
 (defattribute :effect/projectile {:widget :text-field
-                             :schema [:= true]})
+                                  :schema [:= true]})
 
 (defattribute :effect/target-entity {:widget :nested-map
-                                :schema [:map {:closed true}
-                                         [:hit-effect [:map]]
-                                         [:maxrange pos?]]})
+                                     :schema [:map {:closed true}
+                                              [:hit-effect [:map]]
+                                              [:maxrange pos?]]})
 
-(def ^:private effect-attributes (keys (methods effect/transactions)))
-
-(assert (= (set (filter #(= "effect" (namespace %)) (keys attributes)))
-           (set effect-attributes)))
+(def ^:private effect-attributes (filter #(#{"tx" "effect"} (namespace %)) (keys attributes)))
 
 (def ^:private effect-components-schema
   (for [k effect-attributes]
     [k {:optional true} (:schema (get attributes k))]))
 
 (defattribute :hit-effect {:widget :nested-map
-                      :components effect-attributes
-                      :add-components? true})
+                           :components effect-attributes
+                           :add-components? true})
 
 (defattribute :modifier/max-hp       {:widget :text-field :schema number?})
 (defattribute :modifier/max-mana     {:widget :text-field :schema number?})
@@ -104,65 +106,65 @@
     [k {:optional true} (:schema (get attributes k))]))
 
 (defattribute :item/modifier {:widget :nested-map
-                         :schema (vec (concat [:map {:closed true}] modifier-components-schema))
-                         :components modifier-attributes
-                         :add-components? true})
+                              :schema (vec (concat [:map {:closed true}] modifier-components-schema))
+                              :components modifier-attributes
+                              :add-components? true})
 
 (defattribute :item/slot {:widget :label
-                     :schema [:qualified-keyword {:namespace :inventory.slot}]})
+                          :schema [:qualified-keyword {:namespace :inventory.slot}]})
 
 (defattribute :skill/effect {:widget :nested-map
-                        :schema (vec (concat [:map {:closed true}] effect-components-schema))
-                        :components effect-attributes
-                        :add-components? true})
+                             :schema (vec (concat [:map {:closed true}] effect-components-schema))
+                             :components effect-attributes
+                             :add-components? true})
 
 (defn removable-attribute? [k]
-  (#{"effect" "modifier"} (namespace k)))
+  (#{"tx" "effect" "modifier"} (namespace k)))
 
 (defattribute :creature/faction {:widget :enum
-                            :schema [:enum :good :evil]
-                            :items [:good :evil]})
+                                 :schema [:enum :good :evil]
+                                 :items [:good :evil]})
 
 ; TODO >0, <max-lvls (9 ?)
 (defattribute :creature/level {:widget :text-field
-                          :schema [:maybe pos-int?]})
+                               :schema [:maybe pos-int?]})
 
 ; TODO one of spells/skills
 (defattribute :creature/skills {:widget :one-to-many
-                           :schema [:set :qualified-keyword]
-                           :linked-property-type :property.type/spell})
+                                :schema [:set :qualified-keyword]
+                                :linked-property-type :property.type/spell})
 
 ; TODO one of items
 (defattribute :creature/items {:widget :one-to-many
-                          :schema [:set :qualified-keyword]
-                          :linked-property-type :property.type/item})
+                               :schema [:set :qualified-keyword]
+                               :linked-property-type :property.type/item})
 
 (defattribute :creature/mana {:widget :text-field
-                         :schema nat-int?})
+                              :schema nat-int?})
 
 (defattribute :creature/flying? {:widget :check-box
-                            :schema :boolean})
+                                 :schema :boolean})
 
 (defattribute :creature/hp {:widget :text-field
-                       :schema pos-int?})
+                            :schema pos-int?})
 
 (defattribute :creature/speed {:widget :text-field
-                          :schema pos?})
+                               :schema pos?})
 
 (defattribute :creature/reaction-time {:widget :text-field
-                                  :schema pos?})
+                                       :schema pos?})
 
 (defattribute :spell? {:widget :label
-                  :schema [:= true]})
+                       :schema [:= true]})
 
 (defattribute :skill/action-time {:widget :text-field
-                             :schema pos?})
+                                  :schema pos?})
 
 (defattribute :skill/cooldown {:widget :text-field
-                          :schema nat-int?})
+                               :schema nat-int?})
 
 (defattribute :skill/cost {:widget :text-field
-                      :schema nat-int?})
+                           :schema nat-int?})
 
 (defattribute :maxrange {:widget :text-field})
 (defattribute :world/map-size {:widget :text-field})

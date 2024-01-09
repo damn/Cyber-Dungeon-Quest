@@ -2,6 +2,7 @@
   (:require [x.x :refer [defcomponent]]
             [data.val-max :refer [apply-val apply-val-max-modifiers]]
             [utils.random :as random]
+            [cdq.context :refer [transact!]]
             [cdq.effect :as effect]
             [cdq.entity :as entity]))
 
@@ -129,10 +130,10 @@
        nil
 
        (blocks? (effective-block-rate source* target* :shield type))
-       [[:tx/add-text-effect id "[WHITE]SHIELD"]]
+       [[:tx/add-text-effect target "[WHITE]SHIELD"]]
 
        (blocks? (effective-block-rate source* target* :armor type))
-       [[:tx/add-text-effect id "[WHITE]ARMOR"]]
+       [[:tx/add-text-effect target "[WHITE]ARMOR"]]
 
        :else
        (let [{:keys [damage/type damage/min-max]} (effective-damage damage source* target*)
