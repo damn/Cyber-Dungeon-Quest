@@ -7,30 +7,14 @@
             [gdl.scene2d.actor :as actor :refer [remove! set-touchable! parent add-listener! add-tooltip!]]
             [gdl.scene2d.group :refer [add-actor! clear-children! children]]
             [gdl.scene2d.ui.text-field :as text-field]
-            [gdl.scene2d.ui.table :refer [add! add-rows cells]]
+            [gdl.scene2d.ui.table :refer [add! add-rows! cells ->horizontal-separator-cell ->vertical-separator-cell]]
             [gdl.scene2d.ui.cell :refer [set-actor!]]
             [gdl.scene2d.ui.widget-group :refer [pack!]]
             [cdq.context.properties :as properties]
             [cdq.context :refer [get-property all-properties tooltip-text ->error-window]]))
 
-(defn- ->horizontal-separator-cell [colspan]
-  {:actor (com.kotcrab.vis.ui.widget.Separator. "default")
-   :pad-top 2
-   :pad-bottom 2
-   :colspan colspan
-   :fill-x? true
-   :expand-x? true})
-
-(defn- ->vertical-separator-cell []
-  {:actor (com.kotcrab.vis.ui.widget.Separator. "vertical")
-   :pad-top 2
-   :pad-bottom 2
-   :fill-y? true
-   :expand-y? true})
-
 ; TODO use findByName & actor name as id with pr-str and ->edn for keywords
 ; userObject keep as is, can add both then !
-; TODO rename 'add-rows!'
 ; TODO check syntax colors gdl.context names set special (gold)
 ; ADD SOUNDS TO SPELLS MANDATORY - move out of restoration - also hp / mana separate
 ; LET ME EDIT for example spawn which creature
@@ -179,17 +163,17 @@
                                  :close-button? true
                                  :center? true
                                  :close-on-escape? true})]
-       (add-rows window (for [nested-k (remove (set (keys (attribute-widget-group->data attribute-widget-group)))
-                                               (properties/nested-map->components k))]
-                          [(->text-button ctx (name nested-k)
-                            (fn [ctx]
-                              (remove! window)
-                              (add-actor! attribute-widget-group
-                                          (->attribute-widget-table ctx
-                                                                    [nested-k nil] ; TODO default value ? important for target-entity otherwise no hit-effect & maxrange because cannot add ! ..............
-                                                                    :horizontal-sep?
-                                                                    (pos? (count (children attribute-widget-group)))))
-                              (pack-ancestor-window! attribute-widget-group)))]))
+       (add-rows! window (for [nested-k (remove (set (keys (attribute-widget-group->data attribute-widget-group)))
+                                                (properties/nested-map->components k))]
+                           [(->text-button ctx (name nested-k)
+                                           (fn [ctx]
+                                             (remove! window)
+                                             (add-actor! attribute-widget-group
+                                                         (->attribute-widget-table ctx
+                                                                                   [nested-k nil] ; TODO default value ? important for target-entity otherwise no hit-effect & maxrange because cannot add ! ..............
+                                                                                   :horizontal-sep?
+                                                                                   (pos? (count (children attribute-widget-group)))))
+                                             (pack-ancestor-window! attribute-widget-group)))]))
        (pack! window)
        (add-to-stage! ctx window)))))
 
@@ -222,7 +206,7 @@
                [(->text-button ctx (str/replace-first sound-file "sounds/" "")
                                (fn [{:keys [actor] :as ctx}]
                                  (clear-children! table)
-                                 (add-rows table [(->sound-columns ctx table sound-file)])
+                                 (add-rows! table [(->sound-columns ctx table sound-file)])
                                  (remove! (find-ancestor-window actor))
                                  (pack-ancestor-window! table)
                                  (actor/set-id! table sound-file)))
@@ -235,9 +219,9 @@
 
 (defmethod ->value-widget :sound [ctx [_ sound-file]]
   (let [table (->table ctx {:cell-defaults {:pad 5}})]
-    (add-rows table [(if sound-file
-                       (->sound-columns ctx table sound-file)
-                       [(->text-button ctx "No sound" #(open-sounds-window! % table))])])
+    (add-rows! table [(if sound-file
+                        (->sound-columns ctx table sound-file)
+                        [(->text-button ctx "No sound" #(open-sounds-window! % table))])])
     table))
 
 ;;
@@ -249,31 +233,31 @@
                     (clear-children! table)
                     (add-one-to-many-rows ctx table property-type property-ids)
                     (pack-ancestor-window! table))]
-    (add-rows table
-              [[(->text-button ctx "+"
-                               (fn [ctx]
-                                 (let [window (->window ctx {:title "Choose"
-                                                             :modal? true
-                                                             :close-button? true
-                                                             :center? true
-                                                             :close-on-escape? true})
-                                       clicked-id-fn (fn [ctx id]
-                                                       (remove! window)
-                                                       (redo-rows ctx (conj (set property-ids) id)))]
-                                   (add! window (->overview-table ctx property-type clicked-id-fn))
-                                   (pack! window)
-                                   (add-to-stage! ctx window))))]
-               (for [prop-id property-ids]
-                 (let [props (get-property ctx prop-id)
-                       ; TODO also x2 dimensions
-                       image-widget (->image-widget ctx ; TODO image-button (link)
-                                                    (:property/image props)
-                                                    {:id (:property/id props)})]
-                   (add-tooltip! image-widget #(tooltip-text % props))
-                   image-widget))
-               (for [prop-id property-ids]
-                 (->text-button ctx "-"
-                                #(redo-rows % (disj (set property-ids) prop-id))))])))
+    (add-rows! table
+               [[(->text-button ctx "+"
+                                (fn [ctx]
+                                  (let [window (->window ctx {:title "Choose"
+                                                              :modal? true
+                                                              :close-button? true
+                                                              :center? true
+                                                              :close-on-escape? true})
+                                        clicked-id-fn (fn [ctx id]
+                                                        (remove! window)
+                                                        (redo-rows ctx (conj (set property-ids) id)))]
+                                    (add! window (->overview-table ctx property-type clicked-id-fn))
+                                    (pack! window)
+                                    (add-to-stage! ctx window))))]
+                (for [prop-id property-ids]
+                  (let [props (get-property ctx prop-id)
+                        ; TODO also x2 dimensions
+                        image-widget (->image-widget ctx ; TODO image-button (link)
+                                                     (:property/image props)
+                                                     {:id (:property/id props)})]
+                    (add-tooltip! image-widget #(tooltip-text % props))
+                    image-widget))
+                (for [prop-id property-ids]
+                  (->text-button ctx "-"
+                                 #(redo-rows % (disj (set property-ids) prop-id))))])))
 
 (defmethod ->value-widget :one-to-many [context [attribute property-ids]]
   (let [table (->table context {:cell-defaults {:pad 5}})]
@@ -306,7 +290,7 @@
         rows [(when horizontal-sep? [(->horizontal-separator-cell (count column))])
               column]]
     (actor/set-id! value-widget v)
-    (add-rows table (remove nil? rows))
+    (add-rows! table (remove nil? rows))
     table))
 
 (defn- attribute-widget-table->value-widget [table]
@@ -352,10 +336,10 @@
                  (remove! window)
                  (catch Throwable t
                    (->error-window ctx t))))]
-    (add-rows window [[widgets]
-                      ; TODO SHOW IF CHANGES MADE then SAVE otherwise different color etc.
-                      ; when closing (lose changes? yes no)
-                      [(->text-button context "Save" save!)]])
+    (add-rows! window [[widgets]
+                       ; TODO SHOW IF CHANGES MADE then SAVE otherwise different color etc.
+                       ; when closing (lose changes? yes no)
+                       [(->text-button context "Save" save!)]])
     (add-actor! window (->actor context {:act #(when (key-just-pressed? % input.keys/enter)
                                                  (save! %))}))
     (pack! window)
