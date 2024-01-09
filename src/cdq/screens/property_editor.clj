@@ -17,7 +17,7 @@
 
 ;;
 
-(defmulti ->value-widget     (fn [_ctx [k _v]] (get properties/attribute->value-widget k)))
+(defmulti ->value-widget     (fn [[k _v] _ctx] (get properties/attribute->value-widget k)))
 (defmulti value-widget->data (fn [k _widget]   (get properties/attribute->value-widget k)))
 
 ;;
@@ -26,7 +26,7 @@
   (binding [*print-level* nil]
     (pr-str v)))
 
-(defmethod ->value-widget :default [ctx [_ v]]
+(defmethod ->value-widget :default [[_ v] ctx]
   (->label ctx (->edn v)))
 
 (defmethod value-widget->data :default [_ widget]
@@ -34,7 +34,7 @@
 
 ;;
 
-(defmethod ->value-widget :text-field [ctx [_ v]]
+(defmethod ->value-widget :text-field [[_ v] ctx]
   (->text-field ctx (->edn v) {}))
 
 (defmethod value-widget->data :text-field [_ widget]
@@ -42,7 +42,7 @@
 
 ;;
 
-(defmethod ->value-widget :check-box [ctx [k checked?]]
+(defmethod ->value-widget :check-box [[k checked?] ctx]
   (assert (boolean? checked?))
   (->check-box ctx "" (fn [_]) checked?))
 
@@ -51,7 +51,7 @@
 
 ;;
 
-(defmethod ->value-widget :enum [ctx [k v]]
+(defmethod ->value-widget :enum [[k v] ctx]
   (->select-box ctx {:items (map ->edn (properties/enum-attribute->items k))
                      :selected (->edn v)}))
 
@@ -94,7 +94,7 @@
                     file
                     (fn [_ctx]))]))
 
-(defmethod ->value-widget :image [ctx [_ image]]
+(defmethod ->value-widget :image [[_ image] ctx]
   (->image-widget ctx image {})
   #_(->image-button ctx image
                   #(add-to-stage! % (->scrollable-choose-window % (texture-rows %)))
@@ -106,7 +106,7 @@
 ; frame-duration
 ; frames ....
 ; hidden actor act tick atom animation & set current frame image drawable
-(defmethod ->value-widget :animation [ctx [_ animation]]
+(defmethod ->value-widget :animation [[_ animation] ctx]
   (->table ctx {:rows [(for [image (:frames animation)]
                          (->image-widget ctx image {}))]
                 :cell-defaults {:pad 1}}))
@@ -118,7 +118,7 @@
 (defn open-property-editor-window! [context property-id]
   (add-to-stage! context (->property-editor-window context property-id)))
 
-(defmethod ->value-widget :link-button [context [_ prop-id]]
+(defmethod ->value-widget :link-button [[_ prop-id] context]
   (->text-button context (name prop-id) #(open-property-editor-window! % prop-id)))
 
 ;;
@@ -161,7 +161,7 @@
 
 (declare ->attribute-widget-group)
 
-(defmethod ->value-widget :nested-map [ctx [k props]]
+(defmethod ->value-widget :nested-map [[k props] ctx]
   (let [attribute-widget-group (->attribute-widget-group ctx props)]
     (actor/set-id! attribute-widget-group :attribute-widget-group)
     (->table ctx {:cell-defaults {:pad 5}
@@ -199,7 +199,7 @@
   [(->text-button ctx (name sound-file) #(open-sounds-window! % table))
    (->play-sound-button ctx sound-file)])
 
-(defmethod ->value-widget :sound [ctx [_ sound-file]]
+(defmethod ->value-widget :sound [[_ sound-file] ctx]
   (let [table (->table ctx {:cell-defaults {:pad 5}})]
     (add-rows! table [(if sound-file
                         (->sound-columns ctx table sound-file)
@@ -241,7 +241,7 @@
                   (->text-button ctx "-"
                                  #(redo-rows % (disj (set property-ids) prop-id))))])))
 
-(defmethod ->value-widget :one-to-many [context [attribute property-ids]]
+(defmethod ->value-widget :one-to-many [[attribute property-ids] context]
   (let [table (->table context {:cell-defaults {:pad 5}})]
     (add-one-to-many-rows context
                           table
@@ -257,7 +257,7 @@
 
 (defn ->attribute-widget-table [ctx [k v] & {:keys [horizontal-sep?]}]
   (let [label (->label ctx (name k))
-        value-widget (->value-widget ctx [k v])
+        value-widget (->value-widget [k v] ctx)
         table (->table ctx {:id k
                             :cell-defaults {:pad 4}})
         column (remove nil?
