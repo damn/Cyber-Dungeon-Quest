@@ -1,6 +1,6 @@
 (ns cdq.effect.target-entity
   (:require [x.x :refer [defcomponent]]
-            [gdl.context :refer [draw-line]]
+            [gdl.context :refer [draw-line transact!]]
             [gdl.math.vector :as v]
             [cdq.context :refer (effect-text line-of-sight? line-entity)]
             [cdq.effect :as effect]))
@@ -34,17 +34,17 @@
   (effect/valid-params? [_ {:keys [effect/source effect/target] :as ctx}]
     (and source
          target
-         (line-of-sight? ctx source target)
-         (:entity/hp target)))
+         (line-of-sight? ctx @source @target)
+         (:entity/hp @target)))
 
   (effect/useful? [_ {:keys [effect/source effect/target]}]
-    (in-range? source target maxrange))
+    (in-range? @source @target maxrange))
 
-  (effect/transactions [_ {:keys [effect/source effect/target] :as ctx}]
-    (if (in-range? source target maxrange)
+  (transact! [_ {:keys [effect/source effect/target] :as ctx}]
+    (if (in-range? @source @target maxrange)
       [[:tx/create (line-entity ctx
-                                {:start (start-point source target)
-                                 :end (:entity/position target)
+                                {:start (start-point @source @target)
+                                 :end (:entity/position @target)
                                  :duration 0.05
                                  :color [1 0 0 0.75]
                                  :thick? true})]
@@ -57,12 +57,12 @@
        ; * hitting ground in front of you ( there is another monster )
        ; * -> it doesn't get hit ! hmmm
        ; * either use 'MISS' or get enemy entities at end-point
-       [:tx/audiovisual (end-point source target maxrange) :effects.target-entity/hit-ground-effect]]))
+       [:tx/audiovisual (end-point @source @target maxrange) :effects.target-entity/hit-ground-effect]]))
 
   (effect/render-info [_ {:keys [effect/source effect/target] :as ctx}]
     (draw-line ctx
-               (start-point source target)
-               (end-point   source target maxrange)
-               (if (in-range? source target maxrange)
+               (start-point @source @target)
+               (end-point   @source @target maxrange)
+               (if (in-range? @source @target maxrange)
                  [1 0 0 0.5]
                  [1 1 0 0.5]))))

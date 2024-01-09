@@ -7,7 +7,5 @@
 (defsystem useful?       [_ ctx])
 (defmethod useful? :default [_ _] true)
 
-(defsystem transactions  [_ ctx])
-
 (defsystem render-info   [_ ctx])
 (defmethod render-info :default [_ _])

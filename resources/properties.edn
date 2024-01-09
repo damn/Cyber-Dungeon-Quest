@@ -14,8 +14,8 @@
   :skill/cooldown 0,
   :skill/cost 0,
   :skill/effect
-  {:effect/sound "sounds/bfxr_shield_consume.wav",
-   :effect/spawn :creatures/skeleton-warrior}}
+  {:tx/sound "sounds/bfxr_shield_consume.wav",
+   :tx/spawn :creatures/skeleton-warrior}}
  {:property/id :spells/meditation,
   :spell? true,
   :skill/action-time 7,
@@ -23,7 +23,7 @@
   :skill/cost 1,
   :skill/effect
   {:effect/restore-hp-mana true,
-   :effect/sound "sounds/bfxr_drugsuse.wav"},
+   :tx/sound "sounds/bfxr_drugsuse.wav"},
   :property/image
   {:file "skills/images.png", :sub-image-bounds [64 96 32 32]}}
  {:property/image

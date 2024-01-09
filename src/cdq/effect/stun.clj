@@ -1,6 +1,7 @@
 (ns cdq.effect.stun
   (:require [x.x :refer [defcomponent]]
             [utils.core :refer [readable-number]]
+            [cdq.context :refer [transact!]]
             [cdq.effect :as effect]))
 
 (defcomponent :effect/stun duration
@@ -10,5 +11,5 @@
   (effect/valid-params? [_ {:keys [effect/source effect/target]}]
     (and target))
 
-  (effect/transactions [_ {:keys [effect/target]}]
-    [[:tx/event (:entity/id target) :stun duration]]))
+  (transact! [_ {:keys [effect/target]}]
+    [[:tx/event target :stun duration]]))

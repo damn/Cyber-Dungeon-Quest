@@ -1,5 +1,6 @@
 (ns cdq.effect.spawn
   (:require [x.x :refer [defcomponent]]
+            [cdq.context :refer [transact!]]
             [cdq.effect :as effect]
             [cdq.state.npc :as npc-state]))
 
@@ -26,7 +27,7 @@
  ; keys: :faction(:source)/:target-position/:creature-id
  )
 
-(defcomponent :effect/spawn creature-id
+(defcomponent :tx/spawn creature-id
   (effect/text [_ _ctx]
     (str "Spawns a " (name creature-id)))
 
@@ -34,13 +35,13 @@
                                    effect/target-position]}]
     ; TODO line of sight ? / not blocked ..
     (and source
-         (:entity/faction source)
+         (:entity/faction @source)
          target-position))
 
-  (effect/transactions [_ {:keys [effect/source
-                                  effect/target-position] :as ctx}]
+  (transact! [_ {:keys [effect/source
+                        effect/target-position] :as ctx}]
     [[:tx/creature
       creature-id
       target-position
       {:entity/state (npc-state/->state :idle)
-       :entity/faction (:entity/faction source)}]]))
+       :entity/faction (:entity/faction @source)}]]))

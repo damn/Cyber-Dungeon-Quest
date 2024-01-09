@@ -68,8 +68,8 @@
   (let [target @mouseover-entity
         target-position (or (and target (:entity/position @target))
                             (world-mouse-position context))]
-    {:effect/source-entity (:entity/id entity*)
-     :effect/target-entity target
+    {:effect/source (:entity/id entity*)
+     :effect/target target
      :effect/target-position target-position
      :effect/direction (v/direction (:entity/position entity*) target-position)}))
 

@@ -9,8 +9,8 @@
   (let [cell (get (world-grid context)
                   (utils.core/->tile (:entity/position entity*)))
         target (cell/nearest-entity @cell (entity/enemy-faction entity*))]
-    {:effect/source-entity (:entity/id entity*)
-     :effect/target-entity target
+    {:effect/source (:entity/id entity*)
+     :effect/target target
      :effect/direction (when target
                          (v/direction (:entity/position entity*)
                                       (:entity/position @target)))}))

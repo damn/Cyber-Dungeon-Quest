@@ -31,7 +31,4 @@
        (when destroy?
          [:tx/destroy id])
        (when hit-entity
-         [:tx/effect
-          {:effect/source-entity id
-           :effect/target-entity hit-entity}
-          hit-effect])])))
+         [:tx/effect {:effect/source id :effect/target hit-entity} hit-effect])])))

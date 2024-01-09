@@ -1,13 +1,18 @@
 (ns cdq.effect.restore-hp-mana
   (:require [x.x :refer [defcomponent]]
             [data.val-max :refer [lower-than-max? set-to-max]]
+            [cdq.context :refer [transact!]]
             [cdq.effect :as effect]))
 
-(defn- restore-hp-tx [{:keys [entity/id entity/hp]}]
-  [:tx/assoc id :entity/hp (set-to-max hp)])
+(defn- restore-hp-tx [entity]
+  [:tx/assoc entity :entity/hp (set-to-max (:entity/hp @entity))])
 
-(defn- restore-mana-tx [{:keys [entity/id entity/mana]}]
-  [:tx/assoc id :entity/mana (set-to-max mana)])
+(defn- restore-mana-tx [entity]
+  [:tx/assoc entity :entity/mana (set-to-max (:entity/mana @entity))])
+
+; => tx/update ?
+; [:tx/update entity :entity/mana set-to-max]
+; send a function ? not over wire but no problem because its not a low-level txs...
 
 (defcomponent :effect/restore-hp-mana _
   (effect/text [_ _ctx]
@@ -17,9 +22,9 @@
     source)
 
   (effect/useful? [_ {:keys [effect/source]}]
-    (or (lower-than-max? (:entity/mana source))
-        (lower-than-max? (:entity/hp   source))))
+    (or (lower-than-max? (:entity/mana @source))
+        (lower-than-max? (:entity/hp   @source))))
 
-  (effect/transactions [_ {:keys [effect/source]}]
+  (transact! [_ {:keys [effect/source]}]
     [(restore-hp-tx source)
      (restore-mana-tx source)]))

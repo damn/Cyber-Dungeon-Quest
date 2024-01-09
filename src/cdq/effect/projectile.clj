@@ -3,7 +3,7 @@
             [x.x :refer [defcomponent]]
             [gdl.math.vector :as v]
             [gdl.graphics.animation :as animation]
-            [gdl.context :refer [get-sprite spritesheet]]
+            [gdl.context :refer [get-sprite spritesheet transact!]]
             [cdq.context :refer [effect-text path-blocked?]]
             [cdq.effect :as effect]))
 
@@ -51,19 +51,21 @@
 
   ; TODO valid params direction has to be  non-nil (entities not los player ) ?
   (effect/useful? [_ {:keys [effect/source effect/target] :as ctx}]
-    (and (not (path-blocked? ctx
-                             (:entity/position source) ; TODO test
-                             (:entity/position target)
-                             size))
-         ; TODO not taking into account body sizes
-         (< (v/distance (:entity/position source)
-                        (:entity/position target))
-            maxrange)))
+    (let [source-p (:entity/position @source)
+          target-p (:entit/position @target)]
+      (and (not (path-blocked? ctx
+                               source-p ; TODO test
+                               target-p
+                               size))
+           ; TODO not taking into account body sizes
+           (< (v/distance source-p ; entity/distance function protocol EntityPosition
+                          target-p)
+              maxrange))))
 
-  (effect/transactions [_ {:keys [effect/source
-                                  effect/direction] :as ctx}]
-    [[:tx/create #:entity {:position (start-point source direction)
-                           :faction (:entity/faction source)
+  (transact! [_ {:keys [effect/source
+                        effect/direction] :as ctx}]
+    [[:tx/create #:entity {:position (start-point @source direction)
+                           :faction (:entity/faction @source)
                            :body {:width size
                                   :height size
                                   :solid? false

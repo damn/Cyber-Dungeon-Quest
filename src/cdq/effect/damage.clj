@@ -112,7 +112,7 @@
 (defcomponent :effect/damage {:keys [damage/type] :as damage}
   (effect/text [_ {:keys [effect/source]}]
     (if source
-      (let [modified (effective-damage damage source)]
+      (let [modified (effective-damage damage @source)]
         (if (= damage modified)
           (damage->text damage)
           (str (damage->text damage) "\nModified: " (damage->text modified))))
@@ -121,25 +121,24 @@
   (effect/valid-params? [_ {:keys [effect/source effect/target]}]
     (and source target (:entity/hp target)))
 
-  (effect/transactions [_ {:keys [effect/source effect/target]
-                           {:keys [entity/position
-                                   entity/id
-                                   entity/hp]} :effect/target}]
-    (cond
-     (no-hp-left? hp)
-     nil
+  (transact! [_ {:keys [effect/source effect/target]}]
+    (let [source* @source
+          {:keys [entity/position entity/hp] :as target*} @target]
+      (cond
+       (no-hp-left? hp)
+       nil
 
-     (blocks? (effective-block-rate source target :shield type))
-     [[:tx/add-text-effect id "[WHITE]SHIELD"]]
+       (blocks? (effective-block-rate source* target* :shield type))
+       [[:tx/add-text-effect id "[WHITE]SHIELD"]]
 
-     (blocks? (effective-block-rate source target :armor type))
-     [[:tx/add-text-effect id "[WHITE]ARMOR"]]
+       (blocks? (effective-block-rate source* target* :armor type))
+       [[:tx/add-text-effect id "[WHITE]ARMOR"]]
 
-     :else
-     (let [{:keys [damage/type damage/min-max]} (effective-damage damage source target)
-           dmg-amount (random/rand-int-between min-max)
-           hp (apply-val hp #(- % dmg-amount))]
-       [[:tx/audiovisual position (keyword (str "effects.damage." (name type)) "hit-effect")]
-        [:tx/add-text-effect id (str "[RED]" dmg-amount)]
-        [:tx/assoc id :entity/hp hp]
-        [:tx/event id (if (no-hp-left? hp) :kill :alert)]]))))
+       :else
+       (let [{:keys [damage/type damage/min-max]} (effective-damage damage source* target*)
+             dmg-amount (random/rand-int-between min-max)
+             hp (apply-val hp #(- % dmg-amount))]
+         [[:tx/audiovisual position (keyword (str "effects.damage." (name type)) "hit-effect")]
+          [:tx/add-text-effect target (str "[RED]" dmg-amount)]
+          [:tx/assoc target :entity/hp hp]
+          [:tx/event target (if (no-hp-left? hp) :kill :alert)]])))))

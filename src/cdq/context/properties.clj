@@ -376,7 +376,7 @@
 
   (player-tooltip-text [ctx property]
     (cdq.context/tooltip-text
-     (assoc ctx :effect/source-entity (:context/player-entity ctx))
+     (assoc ctx :effect/source (:context/player-entity ctx))
      property)))
 
 ;;
