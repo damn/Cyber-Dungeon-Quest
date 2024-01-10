@@ -27,11 +27,14 @@
                                  :schema :some})
 
 ; TODO >+ max bodyt size?
-(defattribute :entity/body {:widget :label
+(defattribute :entity/body {:widget :nested-map
                             :schema [:map {:closed true}
                                      [:width pos?]
                                      [:height pos?]
-                                     [:solid? :boolean]]})
+                                     [:solid? :boolean]]
+                            :default-value {:width 0.5
+                                            :height 0.5
+                                            :solid? true}})
 
 (defattribute :entity/faction {:widget :enum
                                :schema [:enum :good :evil]
@@ -135,7 +138,7 @@
 ; TODO entity non removable, what is optional, what depends on what?
 ; reaction time?
 (defn removable-attribute? [k]
-  (#{"tx" "modifier"} (namespace k)))
+  (#{"tx" "modifier" "entity"} (namespace k)))
 
 (def ^:private entity-attributes (filter #(#{"entity"} (namespace %)) (keys attributes)))
 

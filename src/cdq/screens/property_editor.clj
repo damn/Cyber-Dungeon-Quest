@@ -130,7 +130,7 @@
          attribute-widget-group->data)
 
 (defn- ->add-nested-map-button [ctx k attribute-widget-group]
-  (->text-button ctx (str "Add " (name k))
+  (->text-button ctx (str "Add " (name k) " component")
    (fn [ctx]
      (let [window (->window ctx {:title "Choose"
                                  :modal? true
