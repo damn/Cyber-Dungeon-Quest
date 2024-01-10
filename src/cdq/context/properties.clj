@@ -43,6 +43,14 @@
 (defn- defattribute [k data]
   (alter-var-root #'attributes assoc k data))
 
+(def ^:private sound {:widget :sound
+                      :schema :string})
+
+(defn- enum [& items]
+  {:widget :enum
+   :schema (apply vector :enum items)
+   :items items})
+
 (defattribute :property/image {:widget :image
                                :schema :some})
 
@@ -58,9 +66,7 @@
                                             :height 0.5
                                             :solid? true}})
 
-(defattribute :entity/faction {:widget :enum
-                               :schema [:enum :good :evil]
-                               :items [:good :evil]})
+(defattribute :entity/faction (enum :good :evil))
 
 (defattribute :entity/skills {:widget :one-to-many
                               :schema [:set :qualified-keyword]
@@ -86,17 +92,14 @@
 (defattribute :entity/reaction-time {:widget :text-field
                                      :schema pos?})
 
-(defattribute :property/sound {:widget :sound
-                               :schema :string})
+(defattribute :property/sound sound)
 
-(defattribute :tx/sound {:widget :sound
-                         :schema :string})
+(defattribute :tx/sound sound)
 
 (defattribute :property/pretty-name {:widget :text-field
                                      :schema :string})
 
-(defattribute :damage/type {:widget :enum
-                            :items [:physical :magic]})
+(defattribute :damage/type (enum :physical :magic))
 
 (defattribute :damage/min-max {:widget :text-field})
 
@@ -164,13 +167,9 @@
 (defattribute :creature/level {:widget :text-field
                                :schema [:maybe pos-int?]})
 
-; TODO enum & sound attribute make
-(defattribute :skill/start-action-sound {:widget :sound
-                                         :schema :string})
+(defattribute :skill/start-action-sound sound)
 
-(defattribute :skill/action-time-modifier-key {:widget :enum
-                                               :schema [:enum :cast-speed :attack-speed]
-                                               :items [:cast-speed :attack-speed]})
+(defattribute :skill/action-time-modifier-key (enum :cast-speed :attack-speed))
 
 (defattribute :skill/action-time {:widget :text-field
                                   :schema pos?})

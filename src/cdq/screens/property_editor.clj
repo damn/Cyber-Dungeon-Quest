@@ -267,6 +267,7 @@
         :entity/reaction-time 8
         :entity/hp 9
         :entity/mana 10
+        :skill/start-action-sound 3
         11)
       (name k)])
    properties))
