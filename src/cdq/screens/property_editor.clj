@@ -257,7 +257,6 @@
         :entity/animation 2
         :entity/body 3
         :property/pretty-name 2
-        :spell? 3
         :creature/level 3
         :item/slot 3
         :weapon/two-handed? 4

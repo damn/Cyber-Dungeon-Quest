@@ -36,7 +36,7 @@
 
   state/State
   (enter [_ entity* ctx]
-    [[:tx/sound (str "sounds/" (if (:spell? skill) "shoot.wav" "slash.wav"))]
+    [[:tx/sound (:skill/start-action-sound skill)]
      (set-skill-to-cooldown entity* skill ctx)
      (pay-skill-mana-cost entity* skill)])
 
@@ -61,11 +61,10 @@
       (effect-render-info (merge ctx effect-context) effect))))
 
 (defn- apply-action-speed-modifier [entity* skill action-time]
-  (let [{:keys [cast-speed attack-speed]} (:entity/modifiers entity*)
-        modified-action-time (/ action-time
-                                (or (if (:spell? skill) cast-speed attack-speed)
-                                    1))]
-    (max 0 modified-action-time)))
+  (/ action-time
+     (or (get (:entity/modifiers entity*)
+              (:skill/action-time-modifier-key skill))
+         1)))
 
 (defn ->CreateWithCounter [context entity* [skill effect-context]]
   ; assert keys effect-context only with 'effect/'

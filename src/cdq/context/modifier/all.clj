@@ -28,8 +28,13 @@
    :apply   apply-max-plus
    :reverse apply-max-minus})
 
-; TODO (/ action-time cast-speed)
-; new calculations
+; TODO
+; new calculations at creating counter:
+; (/ action-time modifier)
+; 2 => 2x speed
+; 1 => normal speede
+; => 0.5 => slower !
+; has to be pos?
 
 (modifier/defmodifier :modifier/cast-speed
   {:text    (fn [v] (str "+" v "% Casting-Speed"))

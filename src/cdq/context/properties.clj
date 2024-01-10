@@ -15,22 +15,6 @@
 
 (def attributes {})
 
-; TODO What is spell?
-
-
-; => a 'skill' is an action? (actionbar ?)
-
-; * different enter active skill state sound => move into the skill
-
-; * different attack/cast speed _modifier_ & _text_ -> just show action-time?
-; => but cast-speed modifier / attack-speed modifier
-; => skill can be 'spell' or 'attack' (melee, ranged)
-
-; skill => :action-time-modifier => :attack-speed / :cast-speed
-
-; => dispatch on skill.type/weapon or skill.type/spell
-; => :start-action-sound / :action-time-modifier / :action-time-pretty-name
-
 ; TODO attr schema !
 ; * for adding entity components -> need default-value ???
 ; TODO all used @ :components (tx/,modifier) = add default-value
@@ -180,8 +164,13 @@
 (defattribute :creature/level {:widget :text-field
                                :schema [:maybe pos-int?]})
 
-(defattribute :spell? {:widget :label
-                       :schema [:= true]})
+; TODO enum & sound attribute make
+(defattribute :skill/start-action-sound {:widget :sound
+                                         :schema :string})
+
+(defattribute :skill/action-time-modifier-key {:widget :enum
+                                               :schema [:enum :cast-speed :attack-speed]
+                                               :items [:cast-speed :attack-speed]})
 
 (defattribute :skill/action-time {:widget :text-field
                                   :schema pos?})
@@ -233,11 +222,12 @@
                          :schema (map-attribute-schema
                                   [:property/id [:qualified-keyword {:namespace :spells}]]
                                   [:property/image
-                                   :spell?
                                    :skill/action-time
                                    :skill/cooldown
                                    :skill/cost
-                                   :skill/effect])}
+                                   :skill/effect
+                                   :skill/start-action-sound
+                                   :skill/action-time-modifier-key])}
 
    ; weapons before items checking
    :property.type/weapon {:of-type? (fn [{:keys [item/slot]}]
@@ -353,12 +343,10 @@
                                                         skill/cost
                                                         skill/action-time
                                                         skill/cooldown
-                                                        spell?
                                                         skill/effect]}]
   [(str/capitalize (name id))
-   ;(if spell? "Spell" "Weapon")
    (when cost (str skill-cost-color "Cost: " cost "[]"))
-   (str action-time-color (if spell?  "Cast-Time" "Attack-time") ": " (readable-number action-time) " seconds" "[]")
+   (str action-time-color "Cast-Time: " (readable-number action-time) " seconds" "[]")
    (when cooldown (str cooldown-color "Cooldown: " (readable-number cooldown) "[]"))
    (str effect-color (effect-text ctx effect) "[]")])
 
@@ -373,13 +361,12 @@
                                                  {:keys [property/pretty-name
                                                          item/two-handed?
                                                          item/modifier
-                                                         spell? ; TODO
                                                          skill/action-time
                                                          skill/effect]
                                                   :as item}]
   [(str pretty-name (when-let [cnt (:count item)] (str " (" cnt ")")))
    (when two-handed? "Two-handed")
-   (str action-time-color (if spell?  "Cast-Time" "Attack-time") ": " (readable-number action-time) " seconds" "[]")
+   (str action-time-color "Attack-time: " (readable-number action-time) " seconds" "[]")
    (when (seq modifier) (str modifier-color (modifier-text ctx modifier) "[]"))
    (str effect-color (effect-text ctx effect) "[]")])
 
@@ -520,9 +507,11 @@
 (comment
  ; # Add new attributes
  (let [ctx @gdl.app/current-context
-       props (cdq.context/all-properties ctx :property.type/creature)
+       props (cdq.context/all-properties ctx :property.type/weapon)
        props (for [prop props]
-               (assoc prop :entity/reaction-time 0.2))]
+               (-> prop
+                   (assoc :skill/start-action-sound "sounds/slash.wav"
+                          :skill/action-time-modifier-key :attack-speed)))]
    (def write-to-file? false)
    (doseq [prop props]
      (swap! gdl.app/current-context update! prop))
