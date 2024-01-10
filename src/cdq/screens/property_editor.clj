@@ -19,7 +19,7 @@
                             :pack? true})
         scroll-pane (->scroll-pane ctx table)]
     {:actor scroll-pane
-     :width (+ (actor/width table) 50)
+     :width (+ (actor/width table) 200)
      :height (min (- gui-viewport-height 50) (actor/height table))}))
 
 (defn ->scrollable-choose-window [ctx rows]
