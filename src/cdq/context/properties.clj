@@ -33,8 +33,34 @@
                                      [:height pos?]
                                      [:solid? :boolean]]})
 
-(defattribute :creature/species {:widget :label
-                                 :schema [:qualified-keyword {:namespace :species}]})
+(defattribute :entity/faction {:widget :enum
+                               :schema [:enum :good :evil]
+                               :items [:good :evil]})
+
+; TODO one of spells/skills
+(defattribute :entity/skills {:widget :one-to-many
+                              :schema [:set :qualified-keyword]
+                              :linked-property-type :property.type/spell})
+
+; TODO one of items
+(defattribute :entity/inventory {:widget :one-to-many
+                                 :schema [:set :qualified-keyword]
+                                 :linked-property-type :property.type/item})
+
+(defattribute :entity/mana {:widget :text-field
+                            :schema nat-int?})
+
+(defattribute :entity/flying? {:widget :check-box
+                               :schema :boolean})
+
+(defattribute :entity/hp {:widget :text-field
+                          :schema pos-int?})
+
+(defattribute :entity/movement {:widget :text-field
+                                :schema pos?})
+
+(defattribute :entity/reaction-time {:widget :text-field
+                                     :schema pos?})
 
 (defattribute :property/sound {:widget :sound
                                :schema :string})
@@ -106,14 +132,22 @@
 (defattribute :modifier/armor  {:widget :text-field :schema :some})
 (defattribute :modifier/damage {:widget :text-field :schema :some})
 
+; TODO entity non removable, what is optional, what depends on what?
+; reaction time?
 (defn removable-attribute? [k]
   (#{"tx" "modifier"} (namespace k)))
+
+(def ^:private entity-attributes (filter #(#{"entity"} (namespace %)) (keys attributes)))
 
 (def ^:private effect-attributes (filter #(#{"tx"} (namespace %)) (keys attributes)))
 
 (def ^:private modifier-attributes (keys modifier/modifier-definitions))
 (assert (= (set (filter #(= "modifier" (namespace %)) (keys attributes)))
            (set modifier-attributes)))
+
+(def ^:private entity-component-schema
+  (for [k entity-attributes]
+    [k {:optional true} (:schema (get attributes k))]))
 
 (def ^:private effect-components-schema
   (for [k effect-attributes]
@@ -122,6 +156,10 @@
 (def ^:private modifier-components-schema
   (for [k modifier-attributes]
     [k {:optional true} (:schema (get attributes k))]))
+
+(defattribute :property/entity {:widget :nested-map
+                                :schema (vec (concat [:map {:closed true}] entity-component-schema))
+                                :components entity-attributes})
 
 (defattribute :hit-effect {:widget :nested-map
                            ; TODO no schema !
@@ -138,38 +176,13 @@
 (defattribute :item/slot {:widget :label
                           :schema [:qualified-keyword {:namespace :inventory.slot}]})
 
-(defattribute :entity/faction {:widget :enum
-                               :schema [:enum :good :evil]
-                               :items [:good :evil]})
+
+(defattribute :creature/species {:widget :label
+                                 :schema [:qualified-keyword {:namespace :species}]})
 
 ; TODO >0, <max-lvls (9 ?)
 (defattribute :creature/level {:widget :text-field
                                :schema [:maybe pos-int?]})
-
-; TODO one of spells/skills
-(defattribute :entity/skills {:widget :one-to-many
-                              :schema [:set :qualified-keyword]
-                              :linked-property-type :property.type/spell})
-
-; TODO one of items
-(defattribute :entity/inventory {:widget :one-to-many
-                                 :schema [:set :qualified-keyword]
-                                 :linked-property-type :property.type/item})
-
-(defattribute :entity/mana {:widget :text-field
-                            :schema nat-int?})
-
-(defattribute :entity/flying? {:widget :check-box
-                               :schema :boolean})
-
-(defattribute :entity/hp {:widget :text-field
-                          :schema pos-int?})
-
-(defattribute :entity/movement {:widget :text-field
-                                :schema pos?})
-
-(defattribute :entity/reaction-time {:widget :text-field
-                                     :schema pos?})
 
 (defattribute :spell? {:widget :label
                        :schema [:= true]})
@@ -203,24 +216,16 @@
                                        :sort-by-fn #(vector (or (:creature/level %) 9)
                                                             (name (:creature/species %))
                                                             (name (:property/id %)))
-                                       :extra-info-text #(str (:creature/level %) (case (:entity/faction %)
-                                                                                    :good "g"
-                                                                                    :evil "e"))}
+                                       :extra-info-text #(str (:creature/level %)
+                                                              (case (:entity/faction (:property/entity %))
+                                                                :good "g"
+                                                                :evil "e"))}
                             :schema (map-attribute-schema
                                      [:property/id [:qualified-keyword {:namespace :creatures}]]
                                      [:property/image
                                       :creature/species
-                                      :creature/level    ; not entity (only used for spawn area lvls)
-                                      :entity/animation
-                                      :entity/body
-                                      :entity/faction
-                                      :entity/movement
-                                      :entity/hp
-                                      :entity/mana
-                                      :entity/flying?
-                                      :entity/reaction-time
-                                      :entity/skills
-                                      :entity/inventory])}
+                                      :creature/level
+                                      :property/entity])}
 
    :property.type/spell {:of-type? (fn [{:keys [item/slot skill/effect]}]
                                      (and (not slot) effect))
@@ -448,8 +453,12 @@
        (#(if (:property/image %)
            (update % :property/image (fn [img] (deserialize-image context img)))
            %))
+       ; audiovisual
        (#(if (:entity/animation %)
            (update % :entity/animation (fn [anim] (deserialize-animation context anim)))
+           %))
+       (#(if (:entity/animation (:property/entity %))
+           (update-in % [:property/entity :entity/animation] (fn [anim] (deserialize-animation context anim)))
            %))))
 
 ; Other approaches to serialization:
@@ -460,7 +469,10 @@
 (defn- serialize [data]
   (->> data
        (#(if (:property/image %) (update % :property/image serialize-image) %))
-       (#(if (:entity/animation %) (update % :entity/animation serialize-animation) %))))
+       (#(if (:entity/animation %)
+           (update % :entity/animation serialize-animation) %))
+       (#(if (:entity/animation (:property/entity %))
+           (update-in % [:property/entity :entity/animation] serialize-animation) %))))
 
 (defn- validate [property & {:keys [humanize?]}]
   (if-let [schema (:schema (get property-types (property-type property)))]
