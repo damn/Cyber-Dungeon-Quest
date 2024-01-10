@@ -16,8 +16,7 @@
                                      entity/mana
                                      entity/skills
                                      entity/inventory
-                                     entity/reaction-time]
-                              [width height] :entity/body}]
+                                     entity/reaction-time]}]
   #:entity {:animation animation
             :body body
             :movement movement
@@ -27,13 +26,13 @@
             :inventory inventory
             :flying? flying?
             :faction faction
-            :z-order (if flying? :z-order/flying :z-order/ground)
             :reaction-time reaction-time})
 
 (defmethod cdq.context/transact! :tx/creature [[_ creature-id extra-components] ctx]
   (let [entity-components (create-creature-data (get-property ctx creature-id))]
     [[:tx/create (merge entity-components
                         extra-components
+                        {:entity/z-order (if (:entity/flying? entity-components) :z-order/flying :z-order/ground)}
                         (when (= creature-id :creatures/lady-a)
                           {:entity/clickable {:type :clickable/princess}}))]]))
 
