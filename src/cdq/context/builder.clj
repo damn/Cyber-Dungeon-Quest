@@ -5,7 +5,7 @@
             [cdq.entity :as entity]))
 
 (defn- create-creature-data [{:keys [property/id
-                                     property/animation
+                                     entity/animation
                                      entity/flying?
                                      entity/faction
                                      creature/speed
@@ -65,7 +65,7 @@
 
 (defmethod cdq.context/transact! :tx/audiovisual [[_ position id] ctx]
   (let [{:keys [property/sound
-                property/animation]} (get-property ctx id)]
+                entity/animation]} (get-property ctx id)]
     [[:tx/sound sound]
      [:tx/create #:entity {:position position
                            :animation animation

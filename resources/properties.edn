@@ -29,7 +29,7 @@
   {:file "creatures/images.png", :sub-image-bounds [240 576 48 48]},
   :creature/speed 1.6,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/toad-horned-1.png",
      :sub-image-bounds nil}
@@ -55,7 +55,7 @@
   {:file "creatures/images.png", :sub-image-bounds [240 144 48 48]},
   :creature/speed 2.4,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/goblin-warrior-1.png",
      :sub-image-bounds nil}
@@ -81,7 +81,7 @@
   {:file "creatures/images.png", :sub-image-bounds [336 288 48 48]},
   :creature/speed 2.0,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/lizardman-blue-shaman-1.png",
      :sub-image-bounds nil}
@@ -107,7 +107,7 @@
   {:file "creatures/images.png", :sub-image-bounds [288 0 48 48]},
   :creature/speed 2.0,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/barbarian-f-1.png",
      :sub-image-bounds nil}
@@ -133,7 +133,7 @@
   {:file "creatures/images.png", :sub-image-bounds [144 432 48 48]},
   :creature/speed 1.6,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/mummy-1.png", :sub-image-bounds nil}
     {:file "creatures/animations/mummy-2.png", :sub-image-bounds nil}
@@ -155,7 +155,7 @@
   {:file "creatures/images.png", :sub-image-bounds [432 0 48 48]},
   :creature/speed 2.0,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/helion-1.png", :sub-image-bounds nil}
     {:file "creatures/animations/helion-2.png", :sub-image-bounds nil}
@@ -178,7 +178,7 @@
   {:file "creatures/images.png", :sub-image-bounds [192 0 48 48]},
   :creature/speed 2.0,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/priest-1.png", :sub-image-bounds nil}
     {:file "creatures/animations/priest-2.png", :sub-image-bounds nil}
@@ -201,7 +201,7 @@
   {:file "creatures/images.png", :sub-image-bounds [144 288 48 48]},
   :creature/speed 2.0,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/lizardman-green-spear-1.png",
      :sub-image-bounds nil}
@@ -227,7 +227,7 @@
   {:file "creatures/images.png", :sub-image-bounds [48 192 48 48]},
   :creature/speed 1.6,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/dwarf-cleric-1.png",
      :sub-image-bounds nil}
@@ -253,7 +253,7 @@
   {:file "creatures/images.png", :sub-image-bounds [336 0 48 48]},
   :creature/speed 2.0,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/thief-1.png", :sub-image-bounds nil}
     {:file "creatures/animations/thief-2.png", :sub-image-bounds nil}
@@ -275,7 +275,7 @@
   {:file "creatures/images.png", :sub-image-bounds [192 288 48 48]},
   :creature/speed 2.0,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/lizardman-green-shaman-1.png",
      :sub-image-bounds nil}
@@ -301,7 +301,7 @@
   {:file "creatures/images.png", :sub-image-bounds [384 288 48 48]},
   :creature/speed 2.4,
   :entity/flying? true,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/beholder-1.png",
      :sub-image-bounds nil}
@@ -327,7 +327,7 @@
   {:file "creatures/images.png", :sub-image-bounds [336 192 48 48]},
   :creature/speed 2.4,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/spider-brown-1.png",
      :sub-image-bounds nil}
@@ -353,7 +353,7 @@
   {:file "creatures/images.png", :sub-image-bounds [384 240 48 48]},
   :creature/speed 6,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/vampire-lord-1.png",
      :sub-image-bounds nil}
@@ -379,7 +379,7 @@
   {:file "creatures/images.png", :sub-image-bounds [384 48 48 48]},
   :creature/speed 2.0,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/witch-1.png", :sub-image-bounds nil}
     {:file "creatures/animations/witch-2.png", :sub-image-bounds nil}
@@ -401,7 +401,7 @@
   {:file "creatures/images.png", :sub-image-bounds [192 48 48 48]},
   :creature/speed 2.0,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/minstrel-f-1.png",
      :sub-image-bounds nil}
@@ -427,7 +427,7 @@
   {:file "creatures/images.png", :sub-image-bounds [144 480 48 48]},
   :creature/speed 2.0,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/lady-b-1.png", :sub-image-bounds nil}
     {:file "creatures/animations/lady-b-2.png", :sub-image-bounds nil}
@@ -450,7 +450,7 @@
   {:file "creatures/images.png", :sub-image-bounds [0 192 48 48]},
   :creature/speed 1.6,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/dwarf-1.png", :sub-image-bounds nil}
     {:file "creatures/animations/dwarf-2.png", :sub-image-bounds nil}
@@ -472,7 +472,7 @@
   {:file "creatures/images.png", :sub-image-bounds [144 528 48 48]},
   :creature/speed 2.0,
   :entity/flying? true,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/elemental-air-1.png",
      :sub-image-bounds nil}
@@ -498,7 +498,7 @@
   {:file "creatures/images.png", :sub-image-bounds [336 480 48 48]},
   :creature/speed 1.6,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/beetle-fire-1.png",
      :sub-image-bounds nil}
@@ -524,7 +524,7 @@
   {:file "creatures/images.png", :sub-image-bounds [96 48 48 48]},
   :creature/speed 2.0,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/warrior-f-1.png",
      :sub-image-bounds nil}
@@ -550,7 +550,7 @@
   {:file "creatures/images.png", :sub-image-bounds [336 432 48 48]},
   :creature/speed 2,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/golem-mud-1.png",
      :sub-image-bounds nil}
@@ -576,7 +576,7 @@
   {:file "creatures/images.png", :sub-image-bounds [432 576 48 48]},
   :creature/speed 2.0,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/merchant-f-1.png",
      :sub-image-bounds nil}
@@ -602,7 +602,7 @@
   {:file "creatures/images.png", :sub-image-bounds [144 48 48 48]},
   :creature/speed 2.0,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/minstrel-m-1.png",
      :sub-image-bounds nil}
@@ -628,7 +628,7 @@
   {:file "creatures/images.png", :sub-image-bounds [432 480 48 48]},
   :creature/speed 2.0,
   :entity/flying? true,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/spirit-greater-1.png",
      :sub-image-bounds nil}
@@ -654,7 +654,7 @@
   {:file "creatures/images.png", :sub-image-bounds [96 0 48 48]},
   :creature/speed 2.0,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/knight-1.png", :sub-image-bounds nil}
     {:file "creatures/animations/knight-2.png", :sub-image-bounds nil}
@@ -677,7 +677,7 @@
   {:file "creatures/images.png", :sub-image-bounds [144 240 48 48]},
   :creature/speed 1.0,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/zombie-b-1.png",
      :sub-image-bounds nil}
@@ -703,7 +703,7 @@
   {:file "creatures/images.png", :sub-image-bounds [336 336 48 48]},
   :creature/speed 3.0,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/demon-green-1.png",
      :sub-image-bounds nil}
@@ -729,7 +729,7 @@
   {:file "creatures/images.png", :sub-image-bounds [384 96 48 48]},
   :creature/speed 2.0,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/drow-wizard-1.png",
      :sub-image-bounds nil}
@@ -755,7 +755,7 @@
   {:file "creatures/images.png", :sub-image-bounds [288 144 48 48]},
   :creature/speed 2.4,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/goblin-shaman-1.png",
      :sub-image-bounds nil}
@@ -781,7 +781,7 @@
   {:file "creatures/images.png", :sub-image-bounds [192 480 48 48]},
   :creature/speed 1.6,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/beetle-giant-1.png",
      :sub-image-bounds nil}
@@ -807,7 +807,7 @@
   {:file "creatures/images.png", :sub-image-bounds [96 96 48 48]},
   :creature/speed 2.0,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/prisoner-b-1.png",
      :sub-image-bounds nil}
@@ -833,7 +833,7 @@
   {:file "creatures/images.png", :sub-image-bounds [96 192 48 48]},
   :creature/speed 1.6,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/dwarf-mage-1.png",
      :sub-image-bounds nil}
@@ -859,7 +859,7 @@
   {:file "creatures/images.png", :sub-image-bounds [48 432 48 48]},
   :creature/speed 4,
   :entity/flying? true,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/bird-hawk-1.png",
      :sub-image-bounds nil}
@@ -885,7 +885,7 @@
   {:file "creatures/images.png", :sub-image-bounds [192 336 48 48]},
   :creature/speed 3.0,
   :entity/flying? true,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/pixie-b-1.png", :sub-image-bounds nil}
     {:file "creatures/animations/pixie-b-2.png", :sub-image-bounds nil}
@@ -908,7 +908,7 @@
   {:file "creatures/images.png", :sub-image-bounds [48 480 48 48]},
   :creature/speed 2.0,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/lady-a-1.png", :sub-image-bounds nil}
     {:file "creatures/animations/lady-a-2.png", :sub-image-bounds nil}
@@ -931,7 +931,7 @@
   {:file "creatures/images.png", :sub-image-bounds [336 96 48 48]},
   :creature/speed 2.0,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/drow-1.png", :sub-image-bounds nil}
     {:file "creatures/animations/drow-2.png", :sub-image-bounds nil}
@@ -953,7 +953,7 @@
   {:file "creatures/images.png", :sub-image-bounds [192 144 48 48]},
   :creature/speed 2.4,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/goblin-1.png", :sub-image-bounds nil}
     {:file "creatures/animations/goblin-2.png", :sub-image-bounds nil}
@@ -976,7 +976,7 @@
   {:file "creatures/images.png", :sub-image-bounds [0 288 48 48]},
   :creature/speed 2.4,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/wolf-black-1.png",
      :sub-image-bounds nil}
@@ -1002,7 +1002,7 @@
   {:file "creatures/images.png", :sub-image-bounds [96 432 48 48]},
   :creature/speed 4,
   :entity/flying? true,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/bird-crow-1.png",
      :sub-image-bounds nil}
@@ -1028,7 +1028,7 @@
   {:file "creatures/images.png", :sub-image-bounds [240 336 48 48]},
   :creature/speed 3.0,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/demon-red-1.png",
      :sub-image-bounds nil}
@@ -1054,7 +1054,7 @@
   {:file "creatures/images.png", :sub-image-bounds [144 336 48 48]},
   :creature/speed 3.0,
   :entity/flying? true,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/pixie-a-1.png", :sub-image-bounds nil}
     {:file "creatures/animations/pixie-a-2.png", :sub-image-bounds nil}
@@ -1077,7 +1077,7 @@
   {:file "creatures/images.png", :sub-image-bounds [144 0 48 48]},
   :creature/speed 2.0,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/archer-1.png", :sub-image-bounds nil}
     {:file "creatures/animations/archer-2.png", :sub-image-bounds nil}
@@ -1100,7 +1100,7 @@
   {:file "creatures/images.png", :sub-image-bounds [48 240 48 48]},
   :creature/speed 3.0,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/rat-giant-1.png",
      :sub-image-bounds nil}
@@ -1126,7 +1126,7 @@
   {:file "creatures/images.png", :sub-image-bounds [0 480 48 48]},
   :creature/speed 2.0,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/lord-a-1.png", :sub-image-bounds nil}
     {:file "creatures/animations/lord-a-2.png", :sub-image-bounds nil}
@@ -1149,7 +1149,7 @@
   {:file "creatures/images.png", :sub-image-bounds [96 336 48 48]},
   :creature/speed 3.0,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/wraith-black-1.png",
      :sub-image-bounds nil}
@@ -1175,7 +1175,7 @@
   {:file "creatures/images.png", :sub-image-bounds [48 336 48 48]},
   :creature/speed 3.0,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/wraith-red-1.png",
      :sub-image-bounds nil}
@@ -1201,7 +1201,7 @@
   {:file "creatures/images.png", :sub-image-bounds [288 432 48 48]},
   :creature/speed 2,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/golem-fire-1.png",
      :sub-image-bounds nil}
@@ -1227,7 +1227,7 @@
   {:file "creatures/images.png", :sub-image-bounds [192 384 48 48]},
   :creature/speed 2.0,
   :entity/flying? true,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/wisp-ancient-1.png",
      :sub-image-bounds nil}
@@ -1253,7 +1253,7 @@
   {:file "creatures/images.png", :sub-image-bounds [336 144 48 48]},
   :creature/speed 1.0,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/troll-1.png", :sub-image-bounds nil}
     {:file "creatures/animations/troll-2.png", :sub-image-bounds nil}
@@ -1275,7 +1275,7 @@
   {:file "creatures/images.png", :sub-image-bounds [0 336 48 48]},
   :creature/speed 3.0,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/wraith-blue-1.png",
      :sub-image-bounds nil}
@@ -1301,7 +1301,7 @@
   {:file "creatures/images.png", :sub-image-bounds [240 480 48 48]},
   :creature/speed 1.6,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/beetle-fire-giant-1.png",
      :sub-image-bounds nil}
@@ -1327,7 +1327,7 @@
   {:file "creatures/images.png", :sub-image-bounds [288 288 48 48]},
   :creature/speed 2.0,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/lizardman-blue-spear-1.png",
      :sub-image-bounds nil}
@@ -1353,7 +1353,7 @@
   {:file "creatures/images.png", :sub-image-bounds [288 48 48 48]},
   :creature/speed 2.0,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/dark-knight-1.png",
      :sub-image-bounds nil}
@@ -1379,7 +1379,7 @@
   {:file "creatures/images.png", :sub-image-bounds [48 288 48 48]},
   :creature/speed 2.4,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/wolf-brown-1.png",
      :sub-image-bounds nil}
@@ -1405,7 +1405,7 @@
   {:file "creatures/images.png", :sub-image-bounds [288 336 48 48]},
   :creature/speed 3.0,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/demon-blue-1.png",
      :sub-image-bounds nil}
@@ -1431,7 +1431,7 @@
   {:file "creatures/images.png", :sub-image-bounds [48 576 48 48]},
   :creature/speed 3.0,
   :entity/flying? true,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/moth-red-1.png",
      :sub-image-bounds nil}
@@ -1457,7 +1457,7 @@
   {:file "creatures/images.png", :sub-image-bounds [144 96 48 48]},
   :creature/speed 2.0,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/prisoner-c-1.png",
      :sub-image-bounds nil}
@@ -1483,7 +1483,7 @@
   {:file "creatures/images.png", :sub-image-bounds [336 576 48 48]},
   :creature/speed 1.6,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/mimic-1.png", :sub-image-bounds nil}
     {:file "creatures/animations/mimic-2.png", :sub-image-bounds nil}
@@ -1505,7 +1505,7 @@
   {:file "creatures/images.png", :sub-image-bounds [96 288 48 48]},
   :creature/speed 2.0,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/lizardman-green-1.png",
      :sub-image-bounds nil}
@@ -1531,7 +1531,7 @@
   {:file "creatures/images.png", :sub-image-bounds [240 48 48 48]},
   :creature/speed 2.0,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/paladin-1.png", :sub-image-bounds nil}
     {:file "creatures/animations/paladin-2.png", :sub-image-bounds nil}
@@ -1554,7 +1554,7 @@
   {:file "creatures/images.png", :sub-image-bounds [432 384 48 48]},
   :creature/speed 1.0,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/dragon-green-1.png",
      :sub-image-bounds nil}
@@ -1580,7 +1580,7 @@
   {:file "creatures/images.png", :sub-image-bounds [0 240 48 48]},
   :creature/speed 3.0,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/rat-1.png", :sub-image-bounds nil}
     {:file "creatures/animations/rat-2.png", :sub-image-bounds nil}
@@ -1602,7 +1602,7 @@
   {:file "creatures/images.png", :sub-image-bounds [0 528 48 48]},
   :creature/speed 2.0,
   :entity/flying? true,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/elemental-vorpal-1.png",
      :sub-image-bounds nil}
@@ -1628,7 +1628,7 @@
   {:file "creatures/images.png", :sub-image-bounds [96 240 48 48]},
   :creature/speed 1.0,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/zombie-a-1.png",
      :sub-image-bounds nil}
@@ -1654,7 +1654,7 @@
   {:file "creatures/images.png", :sub-image-bounds [384 384 48 48]},
   :creature/speed 1.0,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/dragon-blue-1.png",
      :sub-image-bounds nil}
@@ -1680,7 +1680,7 @@
   {:file "creatures/images.png", :sub-image-bounds [432 192 48 48]},
   :creature/speed 2.4,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/spider-black-1.png",
      :sub-image-bounds nil}
@@ -1706,7 +1706,7 @@
   {:file "creatures/images.png", :sub-image-bounds [432 144 48 48]},
   :creature/speed 1.6,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/ogre-1.png", :sub-image-bounds nil}
     {:file "creatures/animations/ogre-2.png", :sub-image-bounds nil}
@@ -1728,7 +1728,7 @@
   {:file "creatures/images.png", :sub-image-bounds [0 0 48 48]},
   :creature/speed 2.0,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/wizard-1.png", :sub-image-bounds nil}
     {:file "creatures/animations/wizard-2.png", :sub-image-bounds nil}
@@ -1751,7 +1751,7 @@
   {:file "creatures/images.png", :sub-image-bounds [192 528 48 48]},
   :creature/speed 2.0,
   :entity/flying? true,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/elemental-earth-1.png",
      :sub-image-bounds nil}
@@ -1777,7 +1777,7 @@
   {:file "creatures/images.png", :sub-image-bounds [288 384 48 48]},
   :creature/speed 1.0,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/dragon-shadow-1.png",
      :sub-image-bounds nil}
@@ -1803,7 +1803,7 @@
   {:file "creatures/images.png", :sub-image-bounds [144 192 48 48]},
   :creature/speed 2.4,
   :entity/flying? true,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/banshee-1.png", :sub-image-bounds nil}
     {:file "creatures/animations/banshee-2.png", :sub-image-bounds nil}
@@ -1826,7 +1826,7 @@
   {:file "creatures/images.png", :sub-image-bounds [48 48 48 48]},
   :creature/speed 2.0,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/warrior-m-1.png",
      :sub-image-bounds nil}
@@ -1852,7 +1852,7 @@
   {:file "creatures/images.png", :sub-image-bounds [0 576 48 48]},
   :creature/speed 3.0,
   :entity/flying? true,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/moth-white-1.png",
      :sub-image-bounds nil}
@@ -1878,7 +1878,7 @@
   {:file "creatures/images.png", :sub-image-bounds [0 432 48 48]},
   :creature/speed 4,
   :entity/flying? true,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/bird-dove-1.png",
      :sub-image-bounds nil}
@@ -1904,7 +1904,7 @@
   {:file "creatures/images.png", :sub-image-bounds [240 288 48 48]},
   :creature/speed 2.0,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/lizardman-blue-1.png",
      :sub-image-bounds nil}
@@ -1930,7 +1930,7 @@
   {:file "creatures/images.png", :sub-image-bounds [336 384 48 48]},
   :creature/speed 1.0,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/dragon-red-1.png",
      :sub-image-bounds nil}
@@ -1956,7 +1956,7 @@
   {:file "creatures/images.png", :sub-image-bounds [288 192 48 48]},
   :creature/speed 2.4,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/spider-brown-giant-1.png",
      :sub-image-bounds nil}
@@ -1982,7 +1982,7 @@
   {:file "creatures/images.png", :sub-image-bounds [384 480 48 48]},
   :creature/speed 2.0,
   :entity/flying? true,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/spirit-1.png", :sub-image-bounds nil}
     {:file "creatures/animations/spirit-2.png", :sub-image-bounds nil}
@@ -2005,7 +2005,7 @@
   {:file "creatures/images.png", :sub-image-bounds [432 240 48 48]},
   :creature/speed 2.4,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/lich-1.png", :sub-image-bounds nil}
     {:file "creatures/animations/lich-2.png", :sub-image-bounds nil}
@@ -2027,7 +2027,7 @@
   {:file "creatures/images.png", :sub-image-bounds [144 144 48 48]},
   :creature/speed 2.0,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/skeleton-archer-1.png",
      :sub-image-bounds nil}
@@ -2053,7 +2053,7 @@
   {:file "creatures/images.png", :sub-image-bounds [384 144 48 48]},
   :creature/speed 1.6,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/ogre-mystic-1.png",
      :sub-image-bounds nil}
@@ -2079,7 +2079,7 @@
   {:file "creatures/images.png", :sub-image-bounds [432 432 48 48]},
   :creature/speed 2,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/golem-metal-1.png",
      :sub-image-bounds nil}
@@ -2105,7 +2105,7 @@
   {:file "creatures/images.png", :sub-image-bounds [96 528 48 48]},
   :creature/speed 2.0,
   :entity/flying? true,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/elemental-fire-1.png",
      :sub-image-bounds nil}
@@ -2131,7 +2131,7 @@
   {:file "creatures/images.png", :sub-image-bounds [336 48 48 48]},
   :creature/speed 2.0,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/templar-1.png", :sub-image-bounds nil}
     {:file "creatures/animations/templar-2.png", :sub-image-bounds nil}
@@ -2154,7 +2154,7 @@
   {:file "creatures/images.png", :sub-image-bounds [240 384 48 48]},
   :creature/speed 2.0,
   :entity/flying? true,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/wisp-1.png", :sub-image-bounds nil}
     {:file "creatures/animations/wisp-2.png", :sub-image-bounds nil}
@@ -2176,7 +2176,7 @@
   {:file "creatures/images.png", :sub-image-bounds [192 240 48 48]},
   :creature/speed 2.0,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/snake-giant-1.png",
      :sub-image-bounds nil}
@@ -2202,7 +2202,7 @@
   {:file "creatures/images.png", :sub-image-bounds [288 240 48 48]},
   :creature/speed 1.6,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/minotaur-1.png",
      :sub-image-bounds nil}
@@ -2228,7 +2228,7 @@
   {:file "creatures/images.png", :sub-image-bounds [384 336 48 48]},
   :creature/speed 2.0,
   :entity/flying? true,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/valkyrie-a-1.png",
      :sub-image-bounds nil}
@@ -2254,7 +2254,7 @@
   {:file "creatures/images.png", :sub-image-bounds [144 576 48 48]},
   :creature/speed 1.6,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/toad-green-1.png",
      :sub-image-bounds nil}
@@ -2280,7 +2280,7 @@
   {:file "creatures/images.png", :sub-image-bounds [336 240 48 48]},
   :creature/speed 6,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/vampire-1.png", :sub-image-bounds nil}
     {:file "creatures/animations/vampire-2.png", :sub-image-bounds nil}
@@ -2310,7 +2310,7 @@
   {:file "creatures/images.png", :sub-image-bounds [96 576 48 48]},
   :creature/speed 3.0,
   :entity/flying? true,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/moth-black-1.png",
      :sub-image-bounds nil}
@@ -2336,7 +2336,7 @@
   {:file "creatures/images.png", :sub-image-bounds [432 48 48 48]},
   :creature/speed 2.0,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/monk-1.png", :sub-image-bounds nil}
     {:file "creatures/animations/monk-2.png", :sub-image-bounds nil}
@@ -2358,7 +2358,7 @@
   {:file "creatures/images.png", :sub-image-bounds [96 480 48 48]},
   :creature/speed 2.0,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/lord-b-1.png", :sub-image-bounds nil}
     {:file "creatures/animations/lord-b-2.png", :sub-image-bounds nil}
@@ -2381,7 +2381,7 @@
   {:file "creatures/images.png", :sub-image-bounds [0 96 48 48]},
   :creature/speed 2.0,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/warden-1.png", :sub-image-bounds nil}
     {:file "creatures/animations/warden-2.png", :sub-image-bounds nil}
@@ -2404,7 +2404,7 @@
   {:file "creatures/images.png", :sub-image-bounds [384 0 48 48]},
   :creature/speed 2.0,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/druid-1.png", :sub-image-bounds nil}
     {:file "creatures/animations/druid-2.png", :sub-image-bounds nil}
@@ -2426,7 +2426,7 @@
   {:file "creatures/images.png", :sub-image-bounds [240 96 48 48]},
   :creature/speed 3.0,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/elf-wizard-1.png",
      :sub-image-bounds nil}
@@ -2452,7 +2452,7 @@
   {:file "creatures/images.png", :sub-image-bounds [96 144 48 48]},
   :creature/speed 2.0,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/skeleton-mage-1.png",
      :sub-image-bounds nil}
@@ -2478,7 +2478,7 @@
   {:file "creatures/images.png", :sub-image-bounds [96 384 48 48]},
   :creature/speed 2.0,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/halfling-fighter-1.png",
      :sub-image-bounds nil}
@@ -2504,7 +2504,7 @@
   {:file "creatures/images.png", :sub-image-bounds [48 144 48 48]},
   :creature/speed 2.0,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/skeleton-warrior-1.png",
      :sub-image-bounds nil}
@@ -2530,7 +2530,7 @@
   {:file "creatures/images.png", :sub-image-bounds [0 384 48 48]},
   :creature/speed 2.0,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/halfling-thief-1.png",
      :sub-image-bounds nil}
@@ -2556,7 +2556,7 @@
   {:file "creatures/images.png", :sub-image-bounds [240 0 48 48]},
   :creature/speed 2.0,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/barbarian-m-1.png",
      :sub-image-bounds nil}
@@ -2582,7 +2582,7 @@
   {:file "creatures/images.png", :sub-image-bounds [288 96 48 48]},
   :creature/speed 3.0,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/elf-bowman-1.png",
      :sub-image-bounds nil}
@@ -2608,7 +2608,7 @@
   {:file "creatures/images.png", :sub-image-bounds [288 480 48 48]},
   :creature/speed 1.6,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/beetle-1.png", :sub-image-bounds nil}
     {:file "creatures/animations/beetle-2.png", :sub-image-bounds nil}
@@ -2631,7 +2631,7 @@
   {:file "creatures/images.png", :sub-image-bounds [192 192 48 48]},
   :creature/speed 3.0,
   :entity/flying? true,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/bat-giant-1.png",
      :sub-image-bounds nil}
@@ -2657,7 +2657,7 @@
   {:file "creatures/images.png", :sub-image-bounds [192 576 48 48]},
   :creature/speed 1.6,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/toad-blue-1.png",
      :sub-image-bounds nil}
@@ -2683,7 +2683,7 @@
   {:file "creatures/images.png", :sub-image-bounds [240 432 48 48]},
   :creature/speed 2,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/golem-stone-1.png",
      :sub-image-bounds nil}
@@ -2709,7 +2709,7 @@
   {:file "creatures/images.png", :sub-image-bounds [0 48 48 48]},
   :creature/speed 2.0,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/necromancer-1.png",
      :sub-image-bounds nil}
@@ -2735,7 +2735,7 @@
   {:file "creatures/images.png", :sub-image-bounds [384 192 48 48]},
   :creature/speed 2.4,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/spider-black-giant-1.png",
      :sub-image-bounds nil}
@@ -2761,7 +2761,7 @@
   {:file "creatures/images.png", :sub-image-bounds [432 336 48 48]},
   :creature/speed 2.0,
   :entity/flying? true,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/valkyrie-b-1.png",
      :sub-image-bounds nil}
@@ -2787,7 +2787,7 @@
   {:file "creatures/images.png", :sub-image-bounds [240 192 48 48]},
   :creature/speed 3.0,
   :entity/flying? true,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/bat-1.png", :sub-image-bounds nil}
     {:file "creatures/animations/bat-2.png", :sub-image-bounds nil}
@@ -2809,7 +2809,7 @@
   {:file "creatures/images.png", :sub-image-bounds [240 240 48 48]},
   :creature/speed 2.0,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/snake-1.png", :sub-image-bounds nil}
     {:file "creatures/animations/snake-2.png", :sub-image-bounds nil}
@@ -2831,7 +2831,7 @@
   {:file "creatures/images.png", :sub-image-bounds [288 576 48 48]},
   :creature/speed 3.0,
   :entity/flying? true,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/flies-1.png", :sub-image-bounds nil}
     {:file "creatures/animations/flies-2.png", :sub-image-bounds nil}
@@ -2853,7 +2853,7 @@
   {:file "creatures/images.png", :sub-image-bounds [48 96 48 48]},
   :creature/speed 2.0,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/prisoner-a-1.png",
      :sub-image-bounds nil}
@@ -2879,7 +2879,7 @@
   {:file "creatures/images.png", :sub-image-bounds [432 288 48 48]},
   :creature/speed 2.4,
   :entity/flying? true,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/beholder-deep-1.png",
      :sub-image-bounds nil}
@@ -2905,7 +2905,7 @@
   {:file "creatures/images.png", :sub-image-bounds [0 144 48 48]},
   :creature/speed 2.0,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/skeleton-1.png",
      :sub-image-bounds nil}
@@ -2931,7 +2931,7 @@
   {:file "creatures/images.png", :sub-image-bounds [48 528 48 48]},
   :creature/speed 2.0,
   :entity/flying? true,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/elemental-water-1.png",
      :sub-image-bounds nil}
@@ -2957,7 +2957,7 @@
   {:file "creatures/images.png", :sub-image-bounds [48 0 48 48]},
   :creature/speed 2.0,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/cultist-1.png", :sub-image-bounds nil}
     {:file "creatures/animations/cultist-2.png", :sub-image-bounds nil}
@@ -2980,7 +2980,7 @@
   {:file "creatures/images.png", :sub-image-bounds [192 432 48 48]},
   :creature/speed 1.6,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/mummy-pharao-1.png",
      :sub-image-bounds nil}
@@ -3006,7 +3006,7 @@
   {:file "creatures/images.png", :sub-image-bounds [144 384 48 48]},
   :creature/speed 2.0,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/halfling-wizard-1.png",
      :sub-image-bounds nil}
@@ -3032,7 +3032,7 @@
   {:file "creatures/images.png", :sub-image-bounds [432 96 48 48]},
   :creature/speed 2.0,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/drow-bowman-1.png",
      :sub-image-bounds nil}
@@ -3058,7 +3058,7 @@
   {:file "creatures/images.png", :sub-image-bounds [288 528 48 48]},
   :creature/speed 2.4,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/worm-giant-1.png",
      :sub-image-bounds nil}
@@ -3084,7 +3084,7 @@
   {:file "creatures/images.png", :sub-image-bounds [384 576 48 48]},
   :creature/speed 2.0,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/merchant-m-1.png",
      :sub-image-bounds nil}
@@ -3110,7 +3110,7 @@
   {:file "creatures/images.png", :sub-image-bounds [192 96 48 48]},
   :creature/speed 3.0,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/elf-1.png", :sub-image-bounds nil}
     {:file "creatures/animations/elf-2.png", :sub-image-bounds nil}
@@ -3132,7 +3132,7 @@
   {:file "creatures/images.png", :sub-image-bounds [240 528 48 48]},
   :creature/speed 2.4,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/worm-1.png", :sub-image-bounds nil}
     {:file "creatures/animations/worm-2.png", :sub-image-bounds nil}
@@ -3154,7 +3154,7 @@
   {:file "creatures/images.png", :sub-image-bounds [48 384 48 48]},
   :creature/speed 2.0,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/halfling-sling-1.png",
      :sub-image-bounds nil}
@@ -3180,7 +3180,7 @@
   {:file "creatures/images.png", :sub-image-bounds [384 432 48 48]},
   :creature/speed 2,
   :entity/flying? false,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "creatures/animations/golem-ice-1.png",
      :sub-image-bounds nil}
@@ -4474,7 +4474,7 @@
   :property/id :torch-lit,
   :property/pretty-name "Lit Torch"}
  {:property/sound "sounds/bfxr_fisthit.wav",
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "fx/uf_FX_impact.png", :sub-image-bounds [0 48 48 48]}
     {:file "fx/uf_FX_impact.png", :sub-image-bounds [48 48 48 48]}
@@ -4503,7 +4503,7 @@
   :property/id :chest-silver-,
   :property/pretty-name "Silver Chest"}
  {:property/sound "sounds/bfxr_normalhit.wav",
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "fx/uf_FX_impact.png", :sub-image-bounds [144 0 48 48]}
     {:file "fx/uf_FX_impact.png", :sub-image-bounds [192 0 48 48]}
@@ -4536,7 +4536,7 @@
   :property/id :chest-gold,
   :property/pretty-name "Gold Chest"}
  {:property/sound "sounds/bfxr_projectile_wallhit.wav",
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "fx/uf_FX.png", :sub-image-bounds [0 168 24 24]}
     {:file "fx/uf_FX.png", :sub-image-bounds [24 168 24 24]}
@@ -4560,7 +4560,7 @@
   :property/id :drumstick,
   :property/pretty-name "Drumstick"}
  {:property/id :creature/die-effect,
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "fx/uf_FX.png", :sub-image-bounds [96 144 24 24]}
     {:file "fx/uf_FX.png", :sub-image-bounds [120 144 24 24]}
@@ -4664,7 +4664,7 @@
   :skill.type/action-time-modifier-key :attack-speed,
   :skill.type/action-time-pretty-name "Attack-Time"}
  {:property/sound "sounds/bfxr_curse.wav",
-  :property/animation
+  :entity/animation
   {:frames
    ({:file "fx/uf_FX_impact.png", :sub-image-bounds [288 48 48 48]}
     {:file "fx/uf_FX_impact.png", :sub-image-bounds [336 48 48 48]}

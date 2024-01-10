@@ -253,7 +253,7 @@
      [(case k
         :property/id 0
         :property/image 1
-        :property/animation 2
+        :entity/animation 2
         :property/dimensions 3
         :property/pretty-name 2
         :spell? 3

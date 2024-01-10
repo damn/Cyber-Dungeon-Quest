@@ -23,8 +23,8 @@
 (defattribute :property/image {:widget :image
                                :schema :some})
 
-(defattribute :property/animation {:widget :animation
-                                   :schema :some})
+(defattribute :entity/animation {:widget :animation
+                                 :schema :some})
 
 ; TODO >+ max bodyt size?
 (defattribute :property/dimensions {:widget :label
@@ -207,7 +207,7 @@
                                      [:property/id [:qualified-keyword {:namespace :creatures}]]
                                      [:property/image
                                       ; property/entity?
-                                      :property/animation
+                                      :entity/animation
                                       :property/dimensions
                                       :creature/species ; not entity
                                       :entity/faction
@@ -446,8 +446,8 @@
        (#(if (:property/image %)
            (update % :property/image (fn [img] (deserialize-image context img)))
            %))
-       (#(if (:property/animation %)
-           (update % :property/animation (fn [anim] (deserialize-animation context anim)))
+       (#(if (:entity/animation %)
+           (update % :entity/animation (fn [anim] (deserialize-animation context anim)))
            %))))
 
 ; Other approaches to serialization:
@@ -458,7 +458,7 @@
 (defn- serialize [data]
   (->> data
        (#(if (:property/image %) (update % :property/image serialize-image) %))
-       (#(if (:property/animation %) (update % :property/animation serialize-animation) %))))
+       (#(if (:entity/animation %) (update % :entity/animation serialize-animation) %))))
 
 (defn- validate [property & {:keys [humanize?]}]
   (if-let [schema (:schema (get property-types (property-type property)))]
