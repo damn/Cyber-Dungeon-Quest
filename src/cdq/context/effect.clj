@@ -1,7 +1,7 @@
 (ns cdq.context.effect
   (:require [clojure.string :as str]
             gdl.context
-            [cdq.context :refer [transact-all!]]
+            [cdq.context :refer [transact-all! valid-params?]]
             [cdq.effect :as effect]))
 
 (extend-type gdl.context.Context
@@ -22,5 +22,5 @@
 
 (defmethod cdq.context/transact! :tx/effect [[_ effect-ctx txs] ctx]
   (let [ctx (merge ctx effect-ctx)]
-    (assert (cdq.context/valid-params? ctx txs))
+    (assert (valid-params? ctx txs))
     (transact-all! ctx txs)))
