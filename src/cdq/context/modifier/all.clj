@@ -35,13 +35,13 @@
     (str (check-plus-symbol v) (int (* 100 v)))))
 
 (modifier/defmodifier :modifier/cast-speed
-  {:text    #(str  (actions-speed-percent %) "% Casting-Speed")
+  {:text    #(str (actions-speed-percent %) "% Casting-Speed")
    :keys    [:entity/modifiers :cast-speed]
    :apply   #(+ (or %1 1) %2)
    :reverse -})
 
 (modifier/defmodifier :modifier/attack-speed
-  {:text    #(str  (actions-speed-percent %) "% Attack-Speed")
+  {:text    #(str (actions-speed-percent %) "% Attack-Speed")
    :keys    [:entity/modifiers :attack-speed]
    :apply   #(+ (or %1 1) %2)
    :reverse -})
