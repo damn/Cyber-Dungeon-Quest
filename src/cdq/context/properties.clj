@@ -36,11 +36,11 @@
 (defattribute :property/sound {:widget :sound
                                :schema :string})
 
-(defattribute :property/pretty-name {:widget :text-field
-                                     :schema :string})
-
 (defattribute :tx/sound {:widget :sound
                          :schema :string})
+
+(defattribute :property/pretty-name {:widget :text-field
+                                     :schema :string})
 
 ; => then stun is an enum or what
 
@@ -71,20 +71,12 @@
 (defattribute :tx/projectile {:widget :text-field
                               :schema [:= true]})
 
+(defattribute :maxrange {:widget :text-field})
+
 (defattribute :tx/target-entity {:widget :nested-map
                                  :schema [:map {:closed true}
                                           [:hit-effect [:map]]
                                           [:maxrange pos?]]})
-
-(def ^:private effect-attributes (filter #(#{"tx"} (namespace %)) (keys attributes)))
-
-(def ^:private effect-components-schema
-  (for [k effect-attributes]
-    [k {:optional true} (:schema (get attributes k))]))
-
-(defattribute :hit-effect {:widget :nested-map
-                           :components effect-attributes
-                           :add-components? true})
 
 (defattribute :modifier/max-hp       {:widget :text-field :schema number?})
 (defattribute :modifier/max-mana     {:widget :text-field :schema number?})
@@ -92,18 +84,35 @@
 (defattribute :modifier/attack-speed {:widget :text-field :schema number?})
 
 ; TODO these 3 !
-(defattribute :modifier/shield       {:widget :text-field :schema :some})
-(defattribute :modifier/armor        {:widget :text-field :schema :some})
-(defattribute :modifier/damage       {:widget :text-field :schema :some})
+(defattribute :modifier/shield {:widget :text-field :schema :some})
+(defattribute :modifier/armor  {:widget :text-field :schema :some})
+(defattribute :modifier/damage {:widget :text-field :schema :some})
+
+(defn removable-attribute? [k]
+  (#{"tx" "modifier"} (namespace k)))
+
+(def ^:private effect-attributes (filter #(#{"tx"} (namespace %)) (keys attributes)))
 
 (def ^:private modifier-attributes (keys modifier/modifier-definitions))
-
 (assert (= (set (filter #(= "modifier" (namespace %)) (keys attributes)))
            (set modifier-attributes)))
+
+(def ^:private effect-components-schema
+  (for [k effect-attributes]
+    [k {:optional true} (:schema (get attributes k))]))
 
 (def ^:private modifier-components-schema
   (for [k modifier-attributes]
     [k {:optional true} (:schema (get attributes k))]))
+
+(defattribute :hit-effect {:widget :nested-map
+                           :components effect-attributes
+                           :add-components? true})
+
+(defattribute :skill/effect {:widget :nested-map
+                             :schema (vec (concat [:map {:closed true}] effect-components-schema))
+                             :components effect-attributes
+                             :add-components? true})
 
 (defattribute :item/modifier {:widget :nested-map
                               :schema (vec (concat [:map {:closed true}] modifier-components-schema))
@@ -112,14 +121,6 @@
 
 (defattribute :item/slot {:widget :label
                           :schema [:qualified-keyword {:namespace :inventory.slot}]})
-
-(defattribute :skill/effect {:widget :nested-map
-                             :schema (vec (concat [:map {:closed true}] effect-components-schema))
-                             :components effect-attributes
-                             :add-components? true})
-
-(defn removable-attribute? [k]
-  (#{"tx" "modifier"} (namespace k)))
 
 (defattribute :creature/faction {:widget :enum
                                  :schema [:enum :good :evil]
@@ -166,7 +167,6 @@
 (defattribute :skill/cost {:widget :text-field
                            :schema nat-int?})
 
-(defattribute :maxrange {:widget :text-field})
 (defattribute :world/map-size {:widget :text-field})
 (defattribute :world/max-area-level {:widget :text-field})
 (defattribute :world/spawn-rate {:widget :text-field})
