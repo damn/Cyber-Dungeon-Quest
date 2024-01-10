@@ -2,7 +2,7 @@
   (:require [x.x :refer [defcomponent]]
             [utils.core :refer [mapvals]]
             [data.val-max :refer [apply-val]]
-            [cdq.context :refer [valid-params? ->counter stopped?]]
+            [cdq.context :refer [get-property valid-params? ->counter stopped?]]
             [cdq.entity :as entity]))
 
 (defcomponent :entity/skills skills
