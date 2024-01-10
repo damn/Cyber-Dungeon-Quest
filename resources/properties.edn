@@ -2415,6 +2415,7 @@
      :items/ring-gold
      :items/sword
      :items/blood-chest
+     :items/necklace-dark
      :items/cloak-blood
      :items/greatspear},
    :entity/mana 100,
@@ -3727,7 +3728,7 @@
   :property/image
   {:file "items/images.png", :sub-image-bounds [336 480 48 48]},
   :property/pretty-name "Chest Blood"}
- {:item/modifier {},
+ {:item/modifier {:modifier/attack-speed 1.5},
   :item/slot :inventory.slot/necklace,
   :property/id :items/necklace-dark,
   :property/image
