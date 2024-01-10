@@ -133,8 +133,9 @@
 
 (defattribute :modifier/max-hp       {:widget :text-field :schema number?})
 (defattribute :modifier/max-mana     {:widget :text-field :schema number?})
-(defattribute :modifier/cast-speed   {:widget :text-field :schema number?})
-(defattribute :modifier/attack-speed {:widget :text-field :schema number?})
+
+(defattribute :modifier/cast-speed   {:widget :text-field :schema pos?})
+(defattribute :modifier/attack-speed {:widget :text-field :schema pos?})
 
 (defattribute :modifier/shield {:widget :text-field :schema :some})
 (defattribute :modifier/armor  {:widget :text-field :schema :some})

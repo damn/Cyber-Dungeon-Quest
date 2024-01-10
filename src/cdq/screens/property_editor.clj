@@ -268,6 +268,7 @@
         :entity/hp 9
         :entity/mana 10
         :skill/start-action-sound 3
+        :skill/action-time-modifier-key 4
         11)
       (name k)])
    properties))

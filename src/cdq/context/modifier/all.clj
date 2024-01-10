@@ -8,7 +8,9 @@
 ; TODO add movement speed +/- modifier.
 
 (defn- check-plus-symbol [n]
-  (case (math/signum n) 1.0 "+" -1.0 ""))
+  (case (math/signum n)
+    (0.0 1.0) "+"
+    -1.0 ""))
 
 (defn- plus-max-modifier-text [modified-value-name v]
   (str (check-plus-symbol v) v " " modified-value-name))
@@ -28,25 +30,21 @@
    :apply   apply-max-plus
    :reverse apply-max-minus})
 
-; TODO
-; new calculations at creating counter:
-; (/ action-time modifier)
-; 2 => 2x speed
-; 1 => normal speede
-; => 0.5 => slower !
-; has to be pos?
+(defn- actions-speed-percent [v]
+  (let [v (dec v)]
+    (str (check-plus-symbol v) (int (* 100 v)))))
 
 (modifier/defmodifier :modifier/cast-speed
-  {:text    (fn [v] (str "+" v "% Casting-Speed"))
+  {:text    #(str  (actions-speed-percent %) "% Casting-Speed")
    :keys    [:entity/modifiers :cast-speed]
-   :apply   #(+ (or %1 1) (/ %2 100))
-   :reverse #(- %1 (/ %2 100))})
+   :apply   #(+ (or %1 1) %2)
+   :reverse -})
 
 (modifier/defmodifier :modifier/attack-speed
-  {:text    (fn [v] (str "+" v "% Attack-Speed"))
+  {:text    #(str  (actions-speed-percent %) "% Attack-Speed")
    :keys    [:entity/modifiers :attack-speed]
-   :apply   #(+ (or %1 1) (/ %2 100))
-   :reverse #(- %1 (/ %2 100))})
+   :apply   #(+ (or %1 1) %2)
+   :reverse -})
 
 (defn- check-damage-block-modifier-value [[source-or-target
                                            damage-type
