@@ -18,8 +18,6 @@
   (entity/destroy [_ entity* ctx]
     [[:tx/audiovisual (:entity/position entity*) :projectile/hit-wall-effect]]))
 
-; TODO if pass skills & creature props itself, function does not need context.
-; properties themself could be the creature map even somehow
 (extend-type gdl.context.Context
   cdq.context/Builder
   ; TODO use image w. shadows spritesheet

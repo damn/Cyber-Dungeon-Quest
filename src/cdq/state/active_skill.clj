@@ -35,11 +35,6 @@
   (clicked-skillmenu-skill [_ entity* skill])
 
   state/State
-  ; should assert enough mana
-  ; but should also assert usable-state = :usable
-  ; but do not want to call again valid-params? (expensive)
-  ; i know i do it before only @ player & creature idle so ok
-  ; also mana cost could be part of effect ? idk. (immediate effect, not delayed)
   (enter [_ entity* ctx]
     [[:tx/sound (str "sounds/" (if (:spell? skill) "shoot.wav" "slash.wav"))]
      (set-skill-to-cooldown entity* skill ctx)
