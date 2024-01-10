@@ -3919,8 +3919,7 @@
   {:tx/target-entity
    {:maxrange 0.6,
     :hit-effect
-    [[:tx/damage
-      {:damage/type :physical, :damage/min-max [3 6]}]]}},
+    [[:tx/damage {:damage/type :physical, :damage/min-max [3 6]}]]}},
   :item/modifier {}}
  {:item/slot :inventory.slot/weapon,
   :weapon/two-handed? true,
@@ -3933,8 +3932,7 @@
   {:tx/target-entity
    {:maxrange 0.5,
     :hit-effect
-    [[:tx/damage
-      {:damage/type :physical, :damage/min-max [5 10]}]]}},
+    [[:tx/damage {:damage/type :physical, :damage/min-max [5 10]}]]}},
   :item/modifier {}}
  {:property/id :items/dagger,
   :property/image
@@ -4085,8 +4083,7 @@
   {:tx/target-entity
    {:maxrange 0.6,
     :hit-effect
-    [[:tx/damage
-      {:damage/type :physical, :damage/min-max [3 6]}]]}},
+    [[:tx/damage {:damage/type :physical, :damage/min-max [3 6]}]]}},
   :item/modifier {}}
  {:item/slot :inventory.slot/weapon,
   :skill/action-time nil,
@@ -4115,8 +4112,7 @@
   {:tx/target-entity
    {:maxrange 0.5,
     :hit-effect
-    [[:tx/damage
-      {:damage/type :physical, :damage/min-max [5 10]}]]}},
+    [[:tx/damage {:damage/type :physical, :damage/min-max [5 10]}]]}},
   :item/modifier {}}
  {:property/image
   {:file "items/images.png", :sub-image-bounds [432 192 48 48]},
@@ -4136,8 +4132,7 @@
   {:tx/target-entity
    {:maxrange 0.75,
     :hit-effect
-    [[:tx/damage
-      {:damage/type :physical, :damage/min-max [3 7]}]]}},
+    [[:tx/damage {:damage/type :physical, :damage/min-max [3 7]}]]}},
   :item/modifier {}}
  {:item/slot :inventory.slot/weapon,
   :skill/action-time nil,
@@ -4158,8 +4153,7 @@
   {:tx/target-entity
    {:maxrange 0.5,
     :hit-effect
-    [[:tx/damage
-      {:damage/type :physical, :damage/min-max [3 7]}]]}},
+    [[:tx/damage {:damage/type :physical, :damage/min-max [3 7]}]]}},
   :item/modifier {}}
  {:item/slot :inventory.slot/weapon,
   :skill/action-time nil,
@@ -4196,8 +4190,7 @@
   {:tx/target-entity
    {:maxrange 5.0,
     :hit-effect
-    [[:tx/damage
-      {:damage/type :physical, :damage/min-max [10 20]}]]}},
+    [[:tx/damage {:damage/type :physical, :damage/min-max [10 20]}]]}},
   :item/modifier {}}
  {:item/slot :inventory.slot/weapon,
   :skill/action-time nil,
@@ -4218,8 +4211,7 @@
   {:tx/target-entity
    {:maxrange 0.5,
     :hit-effect
-    [[:tx/damage
-      {:damage/type :physical, :damage/min-max [6 13]}]]}},
+    [[:tx/damage {:damage/type :physical, :damage/min-max [6 13]}]]}},
   :item/modifier {}}
  {:item/slot :inventory.slot/weapon,
   :skill/action-time nil,
@@ -4240,8 +4232,7 @@
   {:tx/target-entity
    {:maxrange 7.5,
     :hit-effect
-    [[:tx/damage
-      {:damage/type :physical, :damage/min-max [15 30]}]]}},
+    [[:tx/damage {:damage/type :physical, :damage/min-max [15 30]}]]}},
   :item/modifier {}}
  {:item/slot :inventory.slot/weapon,
   :skill/action-time nil,
@@ -4270,8 +4261,7 @@
   {:tx/target-entity
    {:maxrange 0.6,
     :hit-effect
-    [[:tx/damage
-      {:damage/type :physical, :damage/min-max [3 6]}]]}},
+    [[:tx/damage {:damage/type :physical, :damage/min-max [3 6]}]]}},
   :item/modifier {}}
  {:item/slot :inventory.slot/weapon,
   :weapon/two-handed? false,
@@ -4284,8 +4274,7 @@
   {:tx/target-entity
    {:maxrange 0.5,
     :hit-effect
-    [[:tx/damage
-      {:damage/type :physical, :damage/min-max [7 14]}]]}},
+    [[:tx/damage {:damage/type :physical, :damage/min-max [7 14]}]]}},
   :item/modifier {}}
  {:item/slot :inventory.slot/weapon,
   :skill/action-time nil,
@@ -4306,8 +4295,7 @@
   {:tx/target-entity
    {:maxrange 0.6,
     :hit-effect
-    [[:tx/damage
-      {:damage/type :physical, :damage/min-max [3 6]}]]}},
+    [[:tx/damage {:damage/type :physical, :damage/min-max [3 6]}]]}},
   :item/modifier {}}
  {:item/slot :inventory.slot/weapon,
   :weapon/two-handed? false,
@@ -4320,8 +4308,7 @@
   {:tx/target-entity
    {:maxrange 1.0,
     :hit-effect
-    [[:tx/damage
-      {:damage/type :physical, :damage/min-max [5 11]}]]}},
+    [[:tx/damage {:damage/type :physical, :damage/min-max [5 11]}]]}},
   :item/modifier {}}
  {:item/slot :inventory.slot/weapon,
   :skill/action-time nil,
@@ -4363,8 +4350,7 @@
   {:tx/target-entity
    {:maxrange 0.5,
     :hit-effect
-    [[:tx/damage
-      {:damage/type :physical, :damage/min-max [6 12]}]]}},
+    [[:tx/damage {:damage/type :physical, :damage/min-max [6 12]}]]}},
   :item/modifier {}}
  {:item/slot :inventory.slot/weapon,
   :skill/action-time nil,
