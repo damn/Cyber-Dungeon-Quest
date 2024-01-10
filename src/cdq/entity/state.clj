@@ -45,12 +45,13 @@
               new-state-obj (if params
                               (constructor ctx @entity params)
                               (constructor ctx @entity))]
-          (transact-all! ctx (state/exit      state-obj @entity ctx))
-          (transact-all! ctx (state/enter new-state-obj @entity ctx))
-          (when (:entity/player? @entity)
-            (transact-all! ctx (state/player-enter new-state-obj)))
-          (transact-all! ctx [[:tx/assoc-in entity [:entity/state :fsm] new-fsm]
-                              [:tx/assoc-in entity [:entity/state :state-obj] new-state-obj]]))))))
+          (doseq [txs-fn [#(state/exit      state-obj @entity ctx)
+                          #(state/enter new-state-obj @entity ctx)
+                          #(if (:entity/player? @entity) (state/player-enter new-state-obj) [])
+                          #(vector
+                            [:tx/assoc-in entity [:entity/state :fsm] new-fsm]
+                            [:tx/assoc-in entity [:entity/state :state-obj] new-state-obj])]]
+            (transact-all! ctx (txs-fn))))))))
 
 (defmethod cdq.context/transact! :tx/event [[_ entity event params] ctx]
   (send-event! ctx entity event params)
