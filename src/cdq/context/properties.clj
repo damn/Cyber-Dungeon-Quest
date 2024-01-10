@@ -15,7 +15,43 @@
 
 (def attributes {})
 
+; TODO What is spell?
+
+; * different enter active skill state sound => move into the skill
+
+; * different attack/cast speed _modifier_ & _text_ -> just show action-time?
+; => but cast-speed modifier / attack-speed modifier
+; => skill can be 'spell' or 'attack' (melee, ranged)
+
+; skill => :action-time-modifier => :attack-speed / :cast-speed
+
+; => dispatch on skill.type/weapon or skill.type/spell
+; => :start-action-sound / :action-time-modifier / :action-time-pretty-name
+
 ; TODO attr schema !
+; * for adding entity components -> need default-value ???
+; TODO all used @ :components (tx/,modifier) = add default-value
+; (nested map attr needs default-value to add, but I can place this in the components right?)
+; see damage
+; min-max no schema?
+; TODO modifer shield/damage/armor not done, validatable
+; TODO one-tomany - one of spells/skills
+; TODO one-tomany - one of items
+; TODO body assert >+ min body size?
+; TODO entity non removable! are removalbe right now!, what is optional, what depends on what?
+; reaction time?
+; TODO also which attribute is optional or not ? see ... default-values calculate from that?
+; TODO creature lvl >0, <max-lvls (9 ?)
+
+; TODO ___ weapon / skill / item mess ____
+
+; TODO make misc is when no property-type matches ? :else case?
+
+(comment
+ ; this is not done anymore @ tx/entity -> do it? how to?
+ (def ^:private modifier-attributes (keys modifier/modifier-definitions))
+ (assert (= (set (filter #(= "modifier" (namespace %)) (keys attributes)))
+            (set modifier-attributes))))
 
 (defn- defattribute [k data]
   (alter-var-root #'attributes assoc k data))
@@ -23,10 +59,10 @@
 (defattribute :property/image {:widget :image
                                :schema :some})
 
+
 (defattribute :entity/animation {:widget :animation
                                  :schema :some})
 
-; TODO >+ max bodyt size?
 (defattribute :entity/body {:widget :nested-map
                             :schema [:map {:closed true}
                                      [:width pos?]
@@ -40,12 +76,10 @@
                                :schema [:enum :good :evil]
                                :items [:good :evil]})
 
-; TODO one of spells/skills
 (defattribute :entity/skills {:widget :one-to-many
                               :schema [:set :qualified-keyword]
                               :linked-property-type :property.type/spell})
 
-; TODO one of items
 (defattribute :entity/inventory {:widget :one-to-many
                                  :schema [:set :qualified-keyword]
                                  :linked-property-type :property.type/item})
@@ -75,26 +109,11 @@
 (defattribute :property/pretty-name {:widget :text-field
                                      :schema :string})
 
-; => then stun is an enum or what
-
-; TODO all used @ :components (tx/,modifier) = add default-value
-
 (defattribute :damage/type {:widget :enum
-                            :items [:physical :magic]
-                            ;:default-value :physical
+                            :items [:physical :magic]})
 
-                            })
+(defattribute :damage/min-max {:widget :text-field})
 
-(defattribute :damage/min-max {:widget :text-field
-                               ;:default-value [1 10]
-
-                               })
-
-; why this has components/add-components/>?? and target-entity not
-; confused
-; where does default value go ? to components no ?
-; => add-components & :components is one key !
-; => nested-map schema also take always from components...
 (defattribute :tx/damage {:widget :nested-map
                           :schema [:map {:closed true}
                                    [:damage/type [:enum :physical :magic]]
@@ -102,15 +121,12 @@
                           :default-value {:damage/type :physical
                                           :damage/min-max [1 10]}})
 
-; to builder ?
 (defattribute :tx/spawn {:widget :text-field
                          :schema [:qualified-keyword {:namespace :creatures}]})
 
-; this has to go where ?
 (defattribute :tx/stun {:widget :text-field
                         :schema [:and number? pos?]})
 
-; this has to become 2 txs from hp/mana
 (defattribute :tx/restore-hp-mana {:widget :text-field
                                    :schema [:= true]})
 
@@ -131,20 +147,12 @@
 (defattribute :modifier/cast-speed   {:widget :text-field :schema number?})
 (defattribute :modifier/attack-speed {:widget :text-field :schema number?})
 
-; TODO these 3 !
 (defattribute :modifier/shield {:widget :text-field :schema :some})
 (defattribute :modifier/armor  {:widget :text-field :schema :some})
 (defattribute :modifier/damage {:widget :text-field :schema :some})
 
-; TODO entity non removable, what is optional, what depends on what?
-; reaction time?
-; TODO also which attribute is optional or not ? see ... default-values calculate from that?
 (defn removable-attribute? [k]
   (#{"tx" "modifier" "entity"} (namespace k)))
-
-(def ^:private modifier-attributes (keys modifier/modifier-definitions))
-(assert (= (set (filter #(= "modifier" (namespace %)) (keys attributes)))
-           (set modifier-attributes)))
 
 (defn- components-attribute [component-namespace]
   (let [component-attributes (filter #(= (name component-namespace) (namespace %))
@@ -167,7 +175,6 @@
 (defattribute :creature/species {:widget :label
                                  :schema [:qualified-keyword {:namespace :species}]})
 
-; TODO >0, <max-lvls (9 ?)
 (defattribute :creature/level {:widget :text-field
                                :schema [:maybe pos-int?]})
 
@@ -273,7 +280,6 @@
                                     :columns 10
                                     :image/dimensions [96 96]}}
 
-   ; TODO make misc is when no property-type matches ? :else case?
    :property.type/misc {:of-type? (fn [{:keys [entity/hp
                                                creature/species
                                                item/slot
@@ -340,11 +346,6 @@
 (def ^:private effect-color "[CHARTREUSE]")
 (def ^:private modifier-color "[MODIFIER_BLUE]")
 
-; TODO spell? why needed ... => use :property.type/spell or :property.type/weapon instead
-; different enter active skill state sound
-; different attack/cast speed modifier & text
-; => dispatch on skill.type/weapon or skill.type/spell
-; => :start-action-sound / :action-time-modifier / :action-time-pretty-name
 (defmethod property->text :property.type/spell [ctx
                                                 {:keys [property/id
                                                         skill/cost
@@ -456,6 +457,7 @@
 (defn- serialize [data]
   (->> data
        (#(if (:property/image %) (update % :property/image serialize-image) %))
+       ; audiovisual
        (#(if (:entity/animation %)
            (update % :entity/animation serialize-animation) %))
        (#(if (:entity/animation (:property/entity %))

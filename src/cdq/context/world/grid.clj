@@ -170,6 +170,7 @@
       :all false))
 
   (occupied-by-other? [_ entity]
+    ; contains?
     (some #(not= % entity) occupied))
 
   (nearest-entity [this faction]
