@@ -42,6 +42,6 @@
                         effect/target-position] :as ctx}]
     [[:tx/creature
       creature-id
-      target-position
-      {:entity/state (npc-state/->state :idle)
-       :entity/faction (:entity/faction @source)}]]))
+      #:entity {:position target-position
+                :state (npc-state/->state :idle)
+                :faction (:entity/faction @source)}]]))

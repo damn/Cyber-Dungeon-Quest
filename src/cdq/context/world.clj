@@ -205,16 +205,16 @@
                      (for [[posi creature-id] (tiled/positions-with-property tiled-map :creatures :id)]
                        [:tx/creature
                         creature-id
-                        (tile->middle posi)
-                        {:entity/state (npc-state/->state :sleeping)}])))
+                        #:entity {:position (tile->middle posi)
+                                  :state (npc-state/->state :sleeping)}])))
     (tiled/remove-layer! tiled-map :creatures)) ; otherwise will be rendered, is visible
   (transact-all! ctx [[:tx/creature
                        :creatures/vampire
-                       (:start-position world-map)
-                       {:entity/state (player-state/->state :idle)
-                        :entity/player? true
-                        :entity/free-skill-points 3
-                        :entity/clickable {:type :clickable/player}}]]))
+                       #:entity {:position (:start-position world-map)
+                                 :state (player-state/->state :idle)
+                                 :player? true
+                                 :free-skill-points 3
+                                 :clickable {:type :clickable/player}}]]))
 
 (defn- fetch-player-entity [ctx]
   {:post [%]}

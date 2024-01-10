@@ -8,8 +8,7 @@
 ; * => property/entity or something -> make also remove/add components
 ; => z-order ?! makes the constructor ?
 
-(defn- create-creature-data [{:keys [property/id
-                                     entity/animation
+(defn- create-creature-data [{:keys [entity/animation
                                      entity/flying?
                                      entity/faction
                                      entity/movement
@@ -31,14 +30,12 @@
             :z-order (if flying? :z-order/flying :z-order/ground)
             :reaction-time reaction-time})
 
-(defmethod cdq.context/transact! :tx/creature [[_ creature-id position extra-components] ctx]
-  [[:tx/create (-> ctx
-                   (get-property creature-id)
-                   create-creature-data
-                   (merge extra-components)
-                   (merge (when (= creature-id :creatures/lady-a)
-                            {:entity/clickable {:type :clickable/princess}}))
-                   (assoc :entity/position position))]])
+(defmethod cdq.context/transact! :tx/creature [[_ creature-id extra-components] ctx]
+  (let [entity-components (create-creature-data (get-property ctx creature-id))]
+    [[:tx/create (merge entity-components
+                        extra-components
+                        (when (= creature-id :creatures/lady-a)
+                          {:entity/clickable {:type :clickable/princess}}))]]))
 
 (defcomponent :entity/plop _
   (entity/destroy [_ entity* ctx]
