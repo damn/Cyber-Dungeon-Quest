@@ -261,12 +261,12 @@
         :item/slot 3
         :weapon/two-handed? 4
         :creature/species 4
-        :creature/faction 5
-        :creature/flying? 6
+        :entity/faction 5
+        :entity/flying? 6
         :creature/speed 7
-        :creature/reaction-time 8
-        :creature/hp 9
-        :creature/mana 10
+        :entity/reaction-time 8
+        :entity/hp 9
+        :entity/mana 10
         11)
       (name k)])
    properties))

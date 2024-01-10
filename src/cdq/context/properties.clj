@@ -135,9 +135,9 @@
 (defattribute :item/slot {:widget :label
                           :schema [:qualified-keyword {:namespace :inventory.slot}]})
 
-(defattribute :creature/faction {:widget :enum
-                                 :schema [:enum :good :evil]
-                                 :items [:good :evil]})
+(defattribute :entity/faction {:widget :enum
+                               :schema [:enum :good :evil]
+                               :items [:good :evil]})
 
 ; TODO >0, <max-lvls (9 ?)
 (defattribute :creature/level {:widget :text-field
@@ -153,20 +153,20 @@
                                :schema [:set :qualified-keyword]
                                :linked-property-type :property.type/item})
 
-(defattribute :creature/mana {:widget :text-field
-                              :schema nat-int?})
+(defattribute :entity/mana {:widget :text-field
+                            :schema nat-int?})
 
-(defattribute :creature/flying? {:widget :check-box
-                                 :schema :boolean})
+(defattribute :entity/flying? {:widget :check-box
+                               :schema :boolean})
 
-(defattribute :creature/hp {:widget :text-field
-                            :schema pos-int?})
+(defattribute :entity/hp {:widget :text-field
+                          :schema pos-int?})
 
 (defattribute :creature/speed {:widget :text-field
                                :schema pos?})
 
-(defattribute :creature/reaction-time {:widget :text-field
-                                       :schema pos?})
+(defattribute :entity/reaction-time {:widget :text-field
+                                     :schema pos?})
 
 (defattribute :spell? {:widget :label
                        :schema [:= true]})
@@ -200,7 +200,7 @@
                                        :sort-by-fn #(vector (or (:creature/level %) 9)
                                                             (name (:creature/species %))
                                                             (name (:property/id %)))
-                                       :extra-info-text #(str (:creature/level %) (case (:creature/faction %)
+                                       :extra-info-text #(str (:creature/level %) (case (:entity/faction %)
                                                                                     :good "g"
                                                                                     :evil "e"))}
                             :schema (map-attribute-schema
@@ -210,12 +210,12 @@
                                       :property/animation
                                       :property/dimensions
                                       :creature/species ; not entity
-                                      :creature/faction
+                                      :entity/faction
                                       :creature/speed
-                                      :creature/hp
-                                      :creature/mana
-                                      :creature/flying?
-                                      :creature/reaction-time
+                                      :entity/hp
+                                      :entity/mana
+                                      :entity/flying?
+                                      :entity/reaction-time
                                       :creature/skills
                                       :creature/items
                                       :creature/level])} ; not entity (only used for spawn area lvls)
@@ -280,7 +280,7 @@
                                     :image/dimensions [96 96]}}
 
    ; TODO make misc is when no property-type matches ? :else case?
-   :property.type/misc {:of-type? (fn [{:keys [creature/hp
+   :property.type/misc {:of-type? (fn [{:keys [entity/hp
                                                creature/species
                                                item/slot
                                                skill/effect
@@ -329,7 +329,7 @@
 (defmethod property->text :property.type/creature [_ctx
                                                    {:keys [property/id
                                                            creature/species
-                                                           creature/flying?
+                                                           entity/flying?
                                                            creature/skills
                                                            creature/items
                                                            creature/level]}]
@@ -510,7 +510,7 @@
  (let [ctx @gdl.app/current-context
        props (cdq.context/all-properties ctx :property.type/creature)
        props (for [prop props]
-               (assoc prop :creature/reaction-time 0.2))]
+               (assoc prop :entity/reaction-time 0.2))]
    (def write-to-file? false)
    (doseq [prop props]
      (swap! gdl.app/current-context update-and-write-to-file! prop))

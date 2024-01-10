@@ -6,14 +6,14 @@
 
 (defn- create-creature-data [{:keys [property/id
                                      property/animation
-                                     creature/flying?
-                                     creature/faction
+                                     entity/flying?
+                                     entity/faction
                                      creature/speed
-                                     creature/hp
-                                     creature/mana
+                                     entity/hp
+                                     entity/mana
                                      creature/skills
                                      creature/items
-                                     creature/reaction-time]
+                                     entity/reaction-time]
                               [width height] :property/dimensions}
                              extra-components
                              context]
