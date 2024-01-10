@@ -325,16 +325,18 @@
                                   :close-on-escape? true
                                   :cell-defaults {:pad 5}})
         widgets (->attribute-widget-group context props)
-        save! (fn [ctx]
-                (try
-                 (swap! app/current-context
-                        properties/update-and-write-to-file!
-                        (attribute-widget-group->data widgets))
-                 (remove! window)
-                 (catch Throwable t
-                   (->error-window ctx t))))]
-    (add-rows! window [[(->scroll-pane-cell context [[widgets]
-                                                     [(->text-button context "Save" save!)]])]])
+        apply-context! (fn [f]
+                         (fn [ctx]
+                           (try
+                            (swap! app/current-context f)
+                            (remove! window)
+                            (catch Throwable t
+                              (->error-window ctx t)))))
+        save!   (apply-context! #(properties/update! % (attribute-widget-group->data widgets)))
+        delete! (apply-context! #(properties/delete! % id))]
+    (add-rows! window [[(->scroll-pane-cell context [[{:actor widgets :colspan 2}]
+                                                     [(->text-button context "Save" save!)
+                                                      (->text-button context "Delete" delete!)]])]])
     (add-actor! window (->actor context {:act #(when (key-just-pressed? % input.keys/enter)
                                                  (save! %))}))
     (pack! window)

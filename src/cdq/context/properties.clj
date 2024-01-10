@@ -17,6 +17,9 @@
 
 ; TODO What is spell?
 
+
+; => a 'skill' is an action? (actionbar ?)
+
 ; * different enter active skill state sound => move into the skill
 
 ; * different attack/cast speed _modifier_ & _text_ -> just show action-time?
@@ -58,7 +61,6 @@
 
 (defattribute :property/image {:widget :image
                                :schema :some})
-
 
 (defattribute :entity/animation {:widget :animation
                                  :schema :some})
@@ -499,15 +501,21 @@
   (sort-by #(-> % property-type property-types :edn-file-sort-order)
            properties))
 
-(defn- write-to-file! [properties properties-file]
-  (->> properties
-       vals
-       sort-by-type
-       (map serialize)
-       (map #(into (sorted-map) %))
-       (pprint-spit properties-file)))
-
 (def ^:private write-to-file? true)
+
+(defn- write-properties-to-file! [{:keys [context/properties
+                               context/properties-file]}]
+  (when write-to-file?
+    (.start
+     (Thread.
+      (fn []
+        (->> properties
+             vals
+             sort-by-type
+             (map serialize)
+             (map #(into (sorted-map) %))
+             (pprint-spit properties-file)))))))
+
 
 (comment
  ; # Add new attributes
@@ -517,20 +525,26 @@
                (assoc prop :entity/reaction-time 0.2))]
    (def write-to-file? false)
    (doseq [prop props]
-     (swap! gdl.app/current-context update-and-write-to-file! prop))
+     (swap! gdl.app/current-context update! prop))
    (def ^:private write-to-file? true)
-   (swap! gdl.app/current-context update-and-write-to-file! (cdq.context/get-property ctx :creatures/vampire))
+   (swap! gdl.app/current-context update! (cdq.context/get-property ctx :creatures/vampire))
    nil)
  )
 
-(defn update-and-write-to-file! [{:keys [context/properties
-                                         context/properties-file] :as context}
-                                 {:keys [property/id] :as data}]
+(defn update! [{:keys [context/properties] :as context}
+               {:keys [property/id] :as data}]
   {:pre [(contains? data :property/id)
          (contains? properties id)]}
   (validate data :humanize? true)
   ;(binding [*print-level* nil] (clojure.pprint/pprint data))
-  (let [properties (assoc properties id data)]
-    (when write-to-file?
-      (.start (Thread. (fn [] (write-to-file! properties properties-file)))))
-    (assoc context :context/properties properties)))
+  (let [context (update context :context/properties assoc id data)]
+    (write-properties-to-file! context)
+    context))
+
+(defn delete! [{:keys [context/properties
+                       context/properties-file] :as context}
+               property-id]
+  {:pre [(contains? properties property-id)]}
+  (let [context (update context :context/properties dissoc property-id)]
+    (write-properties-to-file! context)
+    context))

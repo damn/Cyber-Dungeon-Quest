@@ -4536,15 +4536,11 @@
   :world/map-size 1,
   :world/max-area-level 1,
   :world/princess :creatures/lady-a,
-  :world/spawn-rate 0.2}
+  :world/spawn-rate 0.05}
  {:property/id :skull-small-gold,
   :property/image
   {:file "items/images.png", :sub-image-bounds [192 384 48 48]},
   :property/pretty-name "Gold Small Skull"}
- {:property/id :skill.type/spell,
-  :skill.type/action-time-modifier-key :cast-speed,
-  :skill.type/action-time-pretty-name "Cast-Time",
-  :skill.type/start-action-sound "sounds/shoot.wav"}
  {:property/id :crystal-dragon,
   :property/image
   {:file "items/images.png", :sub-image-bounds [624 336 48 48]},
@@ -4815,10 +4811,6 @@
   :property/image
   {:file "items/images.png", :sub-image-bounds [288 0 48 48]},
   :property/pretty-name "Ornate Key"}
- {:property/id :skill.type/weapon,
-  :skill.type/action-time-modifier-key :attack-speed,
-  :skill.type/action-time-pretty-name "Attack-Time",
-  :skill.type/start-action-sound "sounds/slash.wav"}
  {:entity/animation
   {:frames
    ({:file "fx/uf_FX_impact.png", :sub-image-bounds [288 48 48 48]}
