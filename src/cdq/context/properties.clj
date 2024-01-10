@@ -137,44 +137,27 @@
 
 ; TODO entity non removable, what is optional, what depends on what?
 ; reaction time?
+; TODO also which attribute is optional or not ? see ... default-values calculate from that?
 (defn removable-attribute? [k]
   (#{"tx" "modifier" "entity"} (namespace k)))
-
-(def ^:private entity-attributes (filter #(#{"entity"} (namespace %)) (keys attributes)))
-
-(def ^:private effect-attributes (filter #(#{"tx"} (namespace %)) (keys attributes)))
 
 (def ^:private modifier-attributes (keys modifier/modifier-definitions))
 (assert (= (set (filter #(= "modifier" (namespace %)) (keys attributes)))
            (set modifier-attributes)))
 
-(def ^:private entity-component-schema
-  (for [k entity-attributes]
-    [k {:optional true} (:schema (get attributes k))]))
+(defn- components-attribute [component-namespace]
+  (let [component-attributes (filter #(= (name component-namespace) (namespace %))
+                                     (keys attributes))]
+    {:widget :nested-map
+     :schema (vec (concat [:map {:closed true}]
+                          (for [k component-attributes]
+                            [k {:optional true} (:schema (get attributes k))])))
+     :components component-attributes}))
 
-(def ^:private effect-components-schema
-  (for [k effect-attributes]
-    [k {:optional true} (:schema (get attributes k))]))
-
-(def ^:private modifier-components-schema
-  (for [k modifier-attributes]
-    [k {:optional true} (:schema (get attributes k))]))
-
-(defattribute :property/entity {:widget :nested-map
-                                :schema (vec (concat [:map {:closed true}] entity-component-schema))
-                                :components entity-attributes})
-
-(defattribute :hit-effect {:widget :nested-map
-                           ; TODO no schema !
-                           :components effect-attributes})
-
-(defattribute :skill/effect {:widget :nested-map
-                             :schema (vec (concat [:map {:closed true}] effect-components-schema))
-                             :components effect-attributes})
-
-(defattribute :item/modifier {:widget :nested-map
-                              :schema (vec (concat [:map {:closed true}] modifier-components-schema))
-                              :components modifier-attributes})
+(defattribute :property/entity (components-attribute :entity))
+(defattribute :skill/effect    (components-attribute :tx))
+(defattribute :hit-effect      (components-attribute :tx))
+(defattribute :item/modifier   (components-attribute :modifier))
 
 (defattribute :item/slot {:widget :label
                           :schema [:qualified-keyword {:namespace :inventory.slot}]})
