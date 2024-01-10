@@ -501,6 +501,7 @@
        vals
        sort-by-type
        (map serialize)
+       (map #(into (sorted-map) %))
        (pprint-spit properties-file)))
 
 (def ^:private write-to-file? true)
