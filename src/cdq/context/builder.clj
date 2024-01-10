@@ -4,11 +4,11 @@
             [cdq.context :refer [transact! get-property]]
             [cdq.entity :as entity]))
 
-; * entity/body props => :width :height :solid? (also rotation angle, hmm)
 ; * => property/entity or something -> make also remove/add components
 ; => z-order ?! makes the constructor ?
 
 (defn- create-creature-data [{:keys [entity/animation
+                                     entity/body
                                      entity/flying?
                                      entity/faction
                                      entity/movement
@@ -19,7 +19,7 @@
                                      entity/reaction-time]
                               [width height] :entity/body}]
   #:entity {:animation animation
-            :body {:width width :height height :solid? true}
+            :body body
             :movement movement
             :hp hp
             :mana mana

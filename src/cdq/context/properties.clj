@@ -28,7 +28,10 @@
 
 ; TODO >+ max bodyt size?
 (defattribute :entity/body {:widget :label
-                            :schema [:tuple pos? pos?]})
+                            :schema [:map {:closed true}
+                                     [:width pos?]
+                                     [:height pos?]
+                                     [:solid? :boolean]]})
 
 (defattribute :creature/species {:widget :label
                                  :schema [:qualified-keyword {:namespace :species}]})
