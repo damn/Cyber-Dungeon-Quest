@@ -54,7 +54,8 @@
                             :schema nat-int?})
 
 (defattribute :entity/flying? {:widget :check-box
-                               :schema :boolean})
+                               :schema :boolean
+                               :default-value true})
 
 (defattribute :entity/hp {:widget :text-field
                           :schema pos-int?})
