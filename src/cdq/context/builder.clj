@@ -18,27 +18,26 @@
                                      entity/skills
                                      entity/inventory
                                      entity/reaction-time]
-                              [width height] :entity/body}
-                             extra-components
-                             context]
-  (merge #:entity {:animation animation
-                   :body {:width width :height height :solid? true}
-                   :movement movement
-                   :hp hp
-                   :mana mana
-                   :skills skills
-                   :inventory inventory
-                   :flying? flying?
-                   :faction faction
-                   :z-order (if flying? :z-order/flying :z-order/ground)
-                   :reaction-time reaction-time}
-         extra-components
-         (when (= id :creatures/lady-a) {:entity/clickable {:type :clickable/princess}})))
+                              [width height] :entity/body}]
+  #:entity {:animation animation
+            :body {:width width :height height :solid? true}
+            :movement movement
+            :hp hp
+            :mana mana
+            :skills skills
+            :inventory inventory
+            :flying? flying?
+            :faction faction
+            :z-order (if flying? :z-order/flying :z-order/ground)
+            :reaction-time reaction-time})
 
 (defmethod cdq.context/transact! :tx/creature [[_ creature-id position extra-components] ctx]
   [[:tx/create (-> ctx
                    (get-property creature-id)
-                   (create-creature-data extra-components ctx)
+                   create-creature-data
+                   (merge extra-components)
+                   (merge (when (= creature-id :creatures/lady-a)
+                            {:entity/clickable {:type :clickable/princess}}))
                    (assoc :entity/position position))]])
 
 (defcomponent :entity/plop _
