@@ -44,17 +44,30 @@
 
 ; => then stun is an enum or what
 
+; TODO all used @ :components (tx/,modifier) = add default-value
+
 (defattribute :damage/type {:widget :enum
-                            :items [:physical :magic]})
+                            :items [:physical :magic]
+                            ;:default-value :physical
 
-(defattribute :damage/min-max {:widget :text-field})
+                            })
 
+(defattribute :damage/min-max {:widget :text-field
+                               ;:default-value [1 10]
+
+                               })
+
+; why this has components/add-components/>?? and target-entity not
+; confused
+; where does default value go ? to components no ?
+; => add-components & :components is one key !
+; => nested-map schema also take always from components...
 (defattribute :tx/damage {:widget :nested-map
-                          :components [:damage/type :damage/min-max]
-                          :add-components? false
                           :schema [:map {:closed true}
                                    [:damage/type [:enum :physical :magic]]
-                                   [:damage/min-max (m/form val-max-schema)]]})
+                                   [:damage/min-max (m/form val-max-schema)]]
+                          :default-value {:damage/type :physical
+                                          :damage/min-max [1 10]}})
 
 ; to builder ?
 (defattribute :tx/spawn {:widget :text-field
@@ -76,7 +89,9 @@
 (defattribute :tx/target-entity {:widget :nested-map
                                  :schema [:map {:closed true}
                                           [:hit-effect [:map]]
-                                          [:maxrange pos?]]})
+                                          [:maxrange pos?]]
+                                 :default-value {:hit-effect {}
+                                                 :max-range 2.0}})
 
 (defattribute :modifier/max-hp       {:widget :text-field :schema number?})
 (defattribute :modifier/max-mana     {:widget :text-field :schema number?})
@@ -106,18 +121,16 @@
     [k {:optional true} (:schema (get attributes k))]))
 
 (defattribute :hit-effect {:widget :nested-map
-                           :components effect-attributes
-                           :add-components? true})
+                           ; TODO no schema !
+                           :components effect-attributes})
 
 (defattribute :skill/effect {:widget :nested-map
                              :schema (vec (concat [:map {:closed true}] effect-components-schema))
-                             :components effect-attributes
-                             :add-components? true})
+                             :components effect-attributes})
 
 (defattribute :item/modifier {:widget :nested-map
                               :schema (vec (concat [:map {:closed true}] modifier-components-schema))
-                              :components modifier-attributes
-                              :add-components? true})
+                              :components modifier-attributes})
 
 (defattribute :item/slot {:widget :label
                           :schema [:qualified-keyword {:namespace :inventory.slot}]})
@@ -193,9 +206,10 @@
                             :schema (map-attribute-schema
                                      [:property/id [:qualified-keyword {:namespace :creatures}]]
                                      [:property/image
+                                      ; property/entity?
                                       :property/animation
                                       :property/dimensions
-                                      :creature/species
+                                      :creature/species ; not entity
                                       :creature/faction
                                       :creature/speed
                                       :creature/hp
@@ -204,7 +218,8 @@
                                       :creature/reaction-time
                                       :creature/skills
                                       :creature/items
-                                      :creature/level])}
+                                      :creature/level])} ; not entity (only used for spawn area lvls)
+
    :property.type/spell {:of-type? (fn [{:keys [item/slot skill/effect]}]
                                      (and (not slot) effect))
                          :edn-file-sort-order 0
@@ -220,6 +235,7 @@
                                    :skill/cooldown
                                    :skill/cost
                                    :skill/effect])}
+
    ; weapons before items checking
    :property.type/weapon {:of-type? (fn [{:keys [item/slot]}]
                                       (and slot (= slot :inventory.slot/weapon)))
@@ -238,6 +254,7 @@
                                     [:skill/action-time {:optional true} [:maybe pos?]] ; not optional
                                     [:skill/effect {:optional true} [:map ]] ; can be nil not implemented weapons.
                                     [:item/modifier [:map ]]])}
+
    :property.type/item {:of-type? :item/slot
                         :edn-file-sort-order 3
                         :title "Item"
@@ -254,12 +271,15 @@
                                   :item/slot
                                   :property/image
                                   :item/modifier])}
+
    :property.type/world {:of-type? :world/princess
                          :edn-file-sort-order 5
                          :title "World"
                          :overview {:title "Worlds"
                                     :columns 10
                                     :image/dimensions [96 96]}}
+
+   ; TODO make misc is when no property-type matches ? :else case?
    :property.type/misc {:of-type? (fn [{:keys [creature/hp
                                                creature/species
                                                item/slot

@@ -144,7 +144,7 @@
                                              (remove! window)
                                              (add-actor! attribute-widget-group
                                                          (->attribute-widget-table ctx
-                                                                                   [nested-k nil] ; TODO default value ? important for target-entity otherwise no hit-effect & maxrange because cannot add ! ..............
+                                                                                   [nested-k (:default-value (properties/attributes nested-k))]
                                                                                    :horizontal-sep?
                                                                                    (pos? (count (children attribute-widget-group)))))
                                              (pack-ancestor-window! attribute-widget-group)))]))
@@ -158,9 +158,9 @@
     (actor/set-id! attribute-widget-group :attribute-widget-group)
     (->table ctx {:cell-defaults {:pad 5}
                   :rows (remove nil?
-                                [(when (:add-components? (properties/attributes k))
+                                [(when (:components (properties/attributes k))
                                    [(->add-nested-map-button ctx k attribute-widget-group)])
-                                 (when (:add-components? (properties/attributes k))
+                                 (when (:components (properties/attributes k))
                                    [(->horizontal-separator-cell 1)])
                                  [attribute-widget-group]])})))
 

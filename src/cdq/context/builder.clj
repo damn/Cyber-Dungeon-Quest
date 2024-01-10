@@ -4,7 +4,6 @@
             [cdq.context :refer [transact! get-property]]
             [cdq.entity :as entity]))
 
-
 (defn- create-creature-data [{:keys [property/id
                                      property/animation
                                      creature/flying?
