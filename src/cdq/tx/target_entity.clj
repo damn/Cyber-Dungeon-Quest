@@ -41,28 +41,32 @@
     (in-range? @source @target maxrange))
 
   (transact! [_ {:keys [effect/source effect/target] :as ctx}]
-    (if (in-range? @source @target maxrange)
-      [[:tx/create (line-entity ctx
-                                {:start (start-point @source @target)
-                                 :end (:entity/position @target)
-                                 :duration 0.05
-                                 :color [1 0 0 0.75]
-                                 :thick? true})]
-       ; TODO => make new context with end-point ... and check on point entity
-       ; friendly fire ?!
-       ; player maybe just direction possible ?!
-       [:tx/effect ctx hit-effect]]
-      [; TODO
-       ; * clicking on far away monster
-       ; * hitting ground in front of you ( there is another monster )
-       ; * -> it doesn't get hit ! hmmm
-       ; * either use 'MISS' or get enemy entities at end-point
-       [:tx/audiovisual (end-point @source @target maxrange) :effects.target-entity/hit-ground-effect]]))
+    (let [source* @source
+          target* @target]
+      (if (in-range? source* target* maxrange)
+        [[:tx/create (line-entity ctx
+                                  {:start (start-point source* target*)
+                                   :end (:entity/position target*)
+                                   :duration 0.05
+                                   :color [1 0 0 0.75]
+                                   :thick? true})]
+         ; TODO => make new context with end-point ... and check on point entity
+         ; friendly fire ?!
+         ; player maybe just direction possible ?!
+         [:tx/effect ctx hit-effect]]
+        [; TODO
+         ; * clicking on far away monster
+         ; * hitting ground in front of you ( there is another monster )
+         ; * -> it doesn't get hit ! hmmm
+         ; * either use 'MISS' or get enemy entities at end-point
+         [:tx/audiovisual (end-point source* target* maxrange) :effects.target-entity/hit-ground-effect]])))
 
   (effect/render-info [_ {:keys [effect/source effect/target] :as ctx}]
-    (draw-line ctx
-               (start-point @source @target)
-               (end-point   @source @target maxrange)
-               (if (in-range? @source @target maxrange)
-                 [1 0 0 0.5]
-                 [1 1 0 0.5]))))
+    (let [source* @source
+          target* @target]
+      (draw-line ctx
+                 (start-point source* target*)
+                 (end-point   source* target* maxrange)
+                 (if (in-range? source* target* maxrange)
+                   [1 0 0 0.5]
+                   [1 1 0 0.5])))))
