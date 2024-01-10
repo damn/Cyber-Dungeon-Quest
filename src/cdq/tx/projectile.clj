@@ -52,7 +52,7 @@
   ; TODO valid params direction has to be  non-nil (entities not los player ) ?
   (effect/useful? [_ {:keys [effect/source effect/target] :as ctx}]
     (let [source-p (:entity/position @source)
-          target-p (:entit/position @target)]
+          target-p (:entity/position @target)]
       (and (not (path-blocked? ctx
                                source-p ; TODO test
                                target-p
