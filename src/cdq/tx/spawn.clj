@@ -1,4 +1,4 @@
-(ns cdq.effect.spawn
+(ns cdq.tx.spawn
   (:require [x.x :refer [defcomponent]]
             [cdq.context :refer [transact!]]
             [cdq.effect :as effect]
