@@ -120,7 +120,7 @@
       (damage->text damage))) ; property menu no source,modifiers
 
   (effect/valid-params? [_ {:keys [effect/source effect/target]}]
-    (and source target (:entity/hp target)))
+    (and source target (:entity/hp @target)))
 
   (transact! [_ {:keys [effect/source effect/target]}]
     (let [source* @source
