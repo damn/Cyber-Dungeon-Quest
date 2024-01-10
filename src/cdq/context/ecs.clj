@@ -101,7 +101,7 @@
          (:entity/position components-map)]}
   (try
    (let [entity (-> components-map
-                    (update-map entity/create-component)
+                    (update-map entity/create-component context)
                     map->Entity
                     atom)
          uid (unique-number!)]

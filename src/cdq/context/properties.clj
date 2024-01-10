@@ -27,8 +27,8 @@
                                  :schema :some})
 
 ; TODO >+ max bodyt size?
-(defattribute :property/dimensions {:widget :label
-                                    :schema [:tuple pos? pos?]})
+(defattribute :entity/body {:widget :label
+                            :schema [:tuple pos? pos?]})
 
 (defattribute :creature/species {:widget :label
                                  :schema [:qualified-keyword {:namespace :species}]})
@@ -144,14 +144,14 @@
                                :schema [:maybe pos-int?]})
 
 ; TODO one of spells/skills
-(defattribute :creature/skills {:widget :one-to-many
-                                :schema [:set :qualified-keyword]
-                                :linked-property-type :property.type/spell})
+(defattribute :entity/skills {:widget :one-to-many
+                              :schema [:set :qualified-keyword]
+                              :linked-property-type :property.type/spell})
 
 ; TODO one of items
-(defattribute :creature/items {:widget :one-to-many
-                               :schema [:set :qualified-keyword]
-                               :linked-property-type :property.type/item})
+(defattribute :entity/inventory {:widget :one-to-many
+                                 :schema [:set :qualified-keyword]
+                                 :linked-property-type :property.type/item})
 
 (defattribute :entity/mana {:widget :text-field
                             :schema nat-int?})
@@ -162,8 +162,8 @@
 (defattribute :entity/hp {:widget :text-field
                           :schema pos-int?})
 
-(defattribute :creature/speed {:widget :text-field
-                               :schema pos?})
+(defattribute :entity/movement {:widget :text-field
+                                :schema pos?})
 
 (defattribute :entity/reaction-time {:widget :text-field
                                      :schema pos?})
@@ -206,19 +206,18 @@
                             :schema (map-attribute-schema
                                      [:property/id [:qualified-keyword {:namespace :creatures}]]
                                      [:property/image
-                                      ; property/entity?
+                                      :creature/species
+                                      :creature/level    ; not entity (only used for spawn area lvls)
                                       :entity/animation
-                                      :property/dimensions
-                                      :creature/species ; not entity
+                                      :entity/body
                                       :entity/faction
-                                      :creature/speed
+                                      :entity/movement
                                       :entity/hp
                                       :entity/mana
                                       :entity/flying?
                                       :entity/reaction-time
-                                      :creature/skills
-                                      :creature/items
-                                      :creature/level])} ; not entity (only used for spawn area lvls)
+                                      :entity/skills
+                                      :entity/inventory])}
 
    :property.type/spell {:of-type? (fn [{:keys [item/slot skill/effect]}]
                                      (and (not slot) effect))
@@ -330,15 +329,15 @@
                                                    {:keys [property/id
                                                            creature/species
                                                            entity/flying?
-                                                           creature/skills
-                                                           creature/items
+                                                           entity/skills
+                                                           entity/inventory
                                                            creature/level]}]
   [(str/capitalize (name id))
    (str/capitalize (name species))
    (when level (str "Level: " level))
    (str "Flying? " flying?)
    (when (seq skills) (str "Spells: " (str/join "," (map name skills))))
-   (when (seq items) (str "Items: "   (str/join "," (map name items))))])
+   (when (seq inventory) (str "Items: "   (str/join "," (map name inventory))))])
 
 (def ^:private skill-cost-color "[CYAN]")
 (def ^:private action-time-color "[GOLD]")

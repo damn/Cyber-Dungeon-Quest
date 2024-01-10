@@ -4,26 +4,30 @@
             [cdq.context :refer [transact! get-property]]
             [cdq.entity :as entity]))
 
+; * entity/body props => :width :height :solid? (also rotation angle, hmm)
+; * => property/entity or something -> make also remove/add components
+; => z-order ?! makes the constructor ?
+
 (defn- create-creature-data [{:keys [property/id
                                      entity/animation
                                      entity/flying?
                                      entity/faction
-                                     creature/speed
+                                     entity/movement
                                      entity/hp
                                      entity/mana
-                                     creature/skills
-                                     creature/items
+                                     entity/skills
+                                     entity/inventory
                                      entity/reaction-time]
-                              [width height] :property/dimensions}
+                              [width height] :entity/body}
                              extra-components
                              context]
   (merge #:entity {:animation animation
                    :body {:width width :height height :solid? true}
-                   :movement speed
+                   :movement movement
                    :hp hp
                    :mana mana
-                   :skills (zipmap skills (map #(get-property context %) skills)) ; TODO just set of skills use?
-                   :inventory items
+                   :skills skills
+                   :inventory inventory
                    :flying? flying?
                    :faction faction
                    :z-order (if flying? :z-order/flying :z-order/ground)

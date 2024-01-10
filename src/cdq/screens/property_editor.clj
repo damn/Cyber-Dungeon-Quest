@@ -254,7 +254,7 @@
         :property/id 0
         :property/image 1
         :entity/animation 2
-        :property/dimensions 3
+        :entity/body 3
         :property/pretty-name 2
         :spell? 3
         :creature/level 3
@@ -263,7 +263,7 @@
         :creature/species 4
         :entity/faction 5
         :entity/flying? 6
-        :creature/speed 7
+        :entity/movement 7
         :entity/reaction-time 8
         :entity/hp 9
         :entity/mana 10

@@ -6,6 +6,9 @@
             [cdq.entity :as entity]))
 
 (defcomponent :entity/skills skills
+  (entity/create-component [_ ctx]
+    (zipmap skills (map #(get-property ctx %) skills)))
+
   (entity/tick [[k _] entity* ctx]
     (for [{:keys [property/id skill/cooling-down?]} (vals skills)
           :when (and cooling-down?

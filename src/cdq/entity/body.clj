@@ -28,7 +28,7 @@
                                    solid?
                                    rotation-angle
                                    rotate-in-movement-direction?] :as body}
-  (entity/create-component [_]
+  (entity/create-component [_ _ctx]
     (assert (and width height
                  (>= width  (if solid? min-solid-body-size 0))
                  (>= height (if solid? min-solid-body-size 0))
