@@ -12,6 +12,7 @@
             [gdl.scene2d.ui.cell :refer [set-actor!]]
             [gdl.scene2d.ui.widget-group :refer [pack!]]
             [cdq.context.properties :as properties]
+            [cdq.context.properties.attributes :as attributes]
             [cdq.context :refer [get-property all-properties tooltip-text ->error-window]]))
 
 (defn- ->scroll-pane-cell [{:keys [gui-viewport-height] :as ctx} rows]
@@ -42,7 +43,7 @@
 ;;
 
 (defn- attr->value-widget [k]
-  (or (:widget (get properties/attributes k)) :label))
+  (or (:widget (get attributes/attributes k)) :label))
 
 (defmulti ->value-widget     (fn [[k _v] _ctx] (attr->value-widget k)))
 (defmulti value-widget->data (fn [k _widget]   (attr->value-widget k)))
@@ -63,7 +64,7 @@
 
 (defmethod ->value-widget :text-field [[k v] ctx]
   (let [widget (->text-field ctx (->edn v) {})]
-    (add-tooltip! widget (str "Schema: " (pr-str (m/form (:schema (get properties/attributes k))))))
+    (add-tooltip! widget (str "Schema: " (pr-str (m/form (:schema (get attributes/attributes k))))))
     widget))
 
 (defmethod value-widget->data :text-field [_ widget]
@@ -81,7 +82,7 @@
 ;;
 
 (defmethod ->value-widget :enum [[k v] ctx]
-  (->select-box ctx {:items (map ->edn (:items (properties/attributes k)))
+  (->select-box ctx {:items (map ->edn (:items (attributes/attributes k)))
                      :selected (->edn v)}))
 
 (defmethod value-widget->data :enum [_ widget]
@@ -142,13 +143,13 @@
                                  :close-on-escape? true
                                  :cell-defaults {:pad 5}})]
        (add-rows! window (for [nested-k (remove (set (keys (attribute-widget-group->data attribute-widget-group)))
-                                                (:components (properties/attributes k)))]
+                                                (:components (attributes/attributes k)))]
                            [(->text-button ctx (name nested-k)
                                            (fn [ctx]
                                              (remove! window)
                                              (add-actor! attribute-widget-group
                                                          (->attribute-widget-table ctx
-                                                                                   [nested-k (:default-value (properties/attributes nested-k))]
+                                                                                   [nested-k (:default-value (attributes/attributes nested-k))]
                                                                                    :horizontal-sep?
                                                                                    (pos? (count (children attribute-widget-group)))))
                                              (pack-ancestor-window! attribute-widget-group)))]))
@@ -162,9 +163,9 @@
     (actor/set-id! attribute-widget-group :attribute-widget-group)
     (->table ctx {:cell-defaults {:pad 5}
                   :rows (remove nil?
-                                [(when (:components (properties/attributes k))
+                                [(when (:components (attributes/attributes k))
                                    [(->add-nested-map-button ctx k attribute-widget-group)])
-                                 (when (:components (properties/attributes k))
+                                 (when (:components (attributes/attributes k))
                                    [(->horizontal-separator-cell 1)])
                                  [attribute-widget-group]])})))
 
@@ -241,7 +242,7 @@
   (let [table (->table context {:cell-defaults {:pad 5}})]
     (add-one-to-many-rows context
                           table
-                          (:linked-property-type (properties/attributes attribute))
+                          (:linked-property-type (attributes/attributes attribute))
                           property-ids)
     table))
 
@@ -251,6 +252,9 @@
 
 ;;
 
+; define for each property-type as exactly the order for property-editor-window
+; :property-editor-order
+; or make always alphabetically?
 (defn- sort-attributes [properties]
   (sort-by
    (fn [[k _v]]
@@ -282,7 +286,7 @@
         table (->table ctx {:id k
                             :cell-defaults {:pad 4}})
         column (remove nil?
-                       [(when (properties/removable-attribute? k)
+                       [(when (attributes/removable-attribute? k)
                           (->text-button ctx "-" (fn [_ctx]
                                                    (let [window (find-ancestor-window table)]
                                                      (remove! table)
