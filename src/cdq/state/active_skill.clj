@@ -62,7 +62,7 @@
 
 (defn- apply-action-speed-modifier [entity* skill action-time]
   (/ action-time
-     (or (get (:entity/modifiers entity*)
+     (or (get (:entity/stats entity*)
               (:skill/action-time-modifier-key skill))
          1)))
 

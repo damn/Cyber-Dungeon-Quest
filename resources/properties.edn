@@ -2,7 +2,7 @@
   :property/image
   {:file "skills/images.png", :sub-image-bounds [96 32 32 32]},
   :skill/action-time 0.4,
-  :skill/action-time-modifier-key :cast-speed,
+  :skill/action-time-modifier-key :stats/cast-speed,
   :skill/cooldown 0,
   :skill/cost 4,
   :skill/effect
@@ -12,7 +12,7 @@
   :property/image
   {:file "skills/images.png", :sub-image-bounds [160 64 32 32]},
   :skill/action-time 0.4,
-  :skill/action-time-modifier-key :cast-speed,
+  :skill/action-time-modifier-key :stats/cast-speed,
   :skill/cooldown 0,
   :skill/cost 0,
   :skill/effect
@@ -23,7 +23,7 @@
   :property/image
   {:file "skills/images.png", :sub-image-bounds [64 96 32 32]},
   :skill/action-time 7,
-  :skill/action-time-modifier-key :cast-speed,
+  :skill/action-time-modifier-key :stats/cast-speed,
   :skill/cooldown 0,
   :skill/cost 1,
   :skill/effect
@@ -4077,7 +4077,7 @@
   {:file "items/images.png", :sub-image-bounds [528 144 48 48]},
   :property/pretty-name "Staff",
   :skill/action-time 0.5,
-  :skill/action-time-modifier-key :attack-speed,
+  :skill/action-time-modifier-key :stats/attack-speed,
   :skill/effect
   {:tx/target-entity
    {:maxrange 0.6,
@@ -4092,7 +4092,7 @@
   {:file "items/images.png", :sub-image-bounds [336 96 48 48]},
   :property/pretty-name "Axe",
   :skill/action-time 0.5,
-  :skill/action-time-modifier-key :attack-speed,
+  :skill/action-time-modifier-key :stats/attack-speed,
   :skill/effect
   {:tx/target-entity
    {:maxrange 0.5,
@@ -4107,7 +4107,7 @@
   {:file "items/images.png", :sub-image-bounds [48 96 48 48]},
   :property/pretty-name "Dagger",
   :skill/action-time 0.25,
-  :skill/action-time-modifier-key :attack-speed,
+  :skill/action-time-modifier-key :stats/attack-speed,
   :skill/effect
   {:tx/target-entity
    {:hit-effect
@@ -4122,7 +4122,7 @@
   {:file "items/images.png", :sub-image-bounds [288 96 48 48]},
   :property/pretty-name "Handaxe",
   :skill/action-time nil,
-  :skill/action-time-modifier-key :attack-speed,
+  :skill/action-time-modifier-key :stats/attack-speed,
   :skill/start-action-sound "sounds/slash.wav",
   :weapon/two-handed? false}
  {:item/modifier {},
@@ -4132,7 +4132,7 @@
   {:file "items/images.png", :sub-image-bounds [192 192 48 48]},
   :property/pretty-name "Sun Hammer Magic",
   :skill/action-time nil,
-  :skill/action-time-modifier-key :attack-speed,
+  :skill/action-time-modifier-key :stats/attack-speed,
   :skill/start-action-sound "sounds/slash.wav",
   :weapon/two-handed? true}
  {:item/modifier {},
@@ -4142,7 +4142,7 @@
   {:file "items/images.png", :sub-image-bounds [672 96 48 48]},
   :property/pretty-name "Spiked Club",
   :skill/action-time nil,
-  :skill/action-time-modifier-key :attack-speed,
+  :skill/action-time-modifier-key :stats/attack-speed,
   :skill/start-action-sound "sounds/slash.wav",
   :weapon/two-handed? false}
  {:item/modifier {},
@@ -4152,7 +4152,7 @@
   {:file "items/images.png", :sub-image-bounds [288 192 48 48]},
   :property/pretty-name "Flame Sword Magic",
   :skill/action-time nil,
-  :skill/action-time-modifier-key :attack-speed,
+  :skill/action-time-modifier-key :stats/attack-speed,
   :skill/start-action-sound "sounds/slash.wav",
   :weapon/two-handed? false}
  {:item/modifier {},
@@ -4162,7 +4162,7 @@
   {:file "items/images.png", :sub-image-bounds [768 144 48 48]},
   :property/pretty-name "Exotic1 Hammer",
   :skill/action-time nil,
-  :skill/action-time-modifier-key :attack-speed,
+  :skill/action-time-modifier-key :stats/attack-speed,
   :skill/start-action-sound "sounds/slash.wav",
   :weapon/two-handed? true}
  {:item/modifier {},
@@ -4172,7 +4172,7 @@
   {:file "items/images.png", :sub-image-bounds [336 144 48 48]},
   :property/pretty-name "Crossbow",
   :skill/action-time nil,
-  :skill/action-time-modifier-key :attack-speed,
+  :skill/action-time-modifier-key :stats/attack-speed,
   :skill/start-action-sound "sounds/slash.wav",
   :weapon/two-handed? true}
  {:item/modifier {},
@@ -4182,7 +4182,7 @@
   {:file "items/images.png", :sub-image-bounds [144 96 48 48]},
   :property/pretty-name "Dirk",
   :skill/action-time nil,
-  :skill/action-time-modifier-key :attack-speed,
+  :skill/action-time-modifier-key :stats/attack-speed,
   :skill/start-action-sound "sounds/slash.wav",
   :weapon/two-handed? false}
  {:item/modifier {},
@@ -4192,7 +4192,7 @@
   {:file "items/images.png", :sub-image-bounds [528 192 48 48]},
   :property/pretty-name "Blood Spear Magic",
   :skill/action-time nil,
-  :skill/action-time-modifier-key :attack-speed,
+  :skill/action-time-modifier-key :stats/attack-speed,
   :skill/start-action-sound "sounds/slash.wav",
   :weapon/two-handed? true}
  {:item/modifier {},
@@ -4202,7 +4202,7 @@
   {:file "items/images.png", :sub-image-bounds [0 144 48 48]},
   :property/pretty-name "Spear",
   :skill/action-time nil,
-  :skill/action-time-modifier-key :attack-speed,
+  :skill/action-time-modifier-key :stats/attack-speed,
   :skill/start-action-sound "sounds/slash.wav",
   :weapon/two-handed? true}
  {:item/modifier {},
@@ -4212,7 +4212,7 @@
   {:file "items/images.png", :sub-image-bounds [768 96 48 48]},
   :property/pretty-name "Exotic2 Sword",
   :skill/action-time nil,
-  :skill/action-time-modifier-key :attack-speed,
+  :skill/action-time-modifier-key :stats/attack-speed,
   :skill/start-action-sound "sounds/slash.wav",
   :weapon/two-handed? true}
  {:item/modifier {},
@@ -4222,7 +4222,7 @@
   {:file "items/images.png", :sub-image-bounds [288 144 48 48]},
   :property/pretty-name "Shortbow",
   :skill/action-time nil,
-  :skill/action-time-modifier-key :attack-speed,
+  :skill/action-time-modifier-key :stats/attack-speed,
   :skill/start-action-sound "sounds/slash.wav",
   :weapon/two-handed? true}
  {:item/modifier {},
@@ -4232,7 +4232,7 @@
   {:file "items/images.png", :sub-image-bounds [432 96 48 48]},
   :property/pretty-name "Mace",
   :skill/action-time nil,
-  :skill/action-time-modifier-key :attack-speed,
+  :skill/action-time-modifier-key :stats/attack-speed,
   :skill/start-action-sound "sounds/slash.wav",
   :weapon/two-handed? false}
  {:item/modifier {},
@@ -4242,7 +4242,7 @@
   {:file "items/images.png", :sub-image-bounds [96 96 48 48]},
   :property/pretty-name "Stiletto",
   :skill/action-time nil,
-  :skill/action-time-modifier-key :attack-speed,
+  :skill/action-time-modifier-key :stats/attack-speed,
   :skill/start-action-sound "sounds/slash.wav",
   :weapon/two-handed? false}
  {:item/modifier {},
@@ -4252,7 +4252,7 @@
   {:file "items/images.png", :sub-image-bounds [0 96 48 48]},
   :property/pretty-name "Sword",
   :skill/action-time 0.5,
-  :skill/action-time-modifier-key :attack-speed,
+  :skill/action-time-modifier-key :stats/attack-speed,
   :skill/effect
   {:tx/target-entity
    {:hit-effect
@@ -4267,7 +4267,7 @@
   {:file "items/images.png", :sub-image-bounds [48 192 48 48]},
   :property/pretty-name "Hellfire Sword Magic",
   :skill/action-time nil,
-  :skill/action-time-modifier-key :attack-speed,
+  :skill/action-time-modifier-key :stats/attack-speed,
   :skill/start-action-sound "sounds/slash.wav",
   :weapon/two-handed? true}
  {:item/modifier {},
@@ -4277,7 +4277,7 @@
   {:file "items/images.png", :sub-image-bounds [624 144 48 48]},
   :property/pretty-name "Ankh Staff",
   :skill/action-time 0.5,
-  :skill/action-time-modifier-key :attack-speed,
+  :skill/action-time-modifier-key :stats/attack-speed,
   :skill/effect
   {:tx/target-entity
    {:maxrange 0.6,
@@ -4292,7 +4292,7 @@
   {:file "items/images.png", :sub-image-bounds [240 192 48 48]},
   :property/pretty-name "Venom Staff Magic",
   :skill/action-time nil,
-  :skill/action-time-modifier-key :attack-speed,
+  :skill/action-time-modifier-key :stats/attack-speed,
   :skill/start-action-sound "sounds/slash.wav",
   :weapon/two-handed? true}
  {:item/modifier {},
@@ -4302,7 +4302,7 @@
   {:file "items/images.png", :sub-image-bounds [384 96 48 48]},
   :property/pretty-name "Greataxe",
   :skill/action-time nil,
-  :skill/action-time-modifier-key :attack-speed,
+  :skill/action-time-modifier-key :stats/attack-speed,
   :skill/start-action-sound "sounds/slash.wav",
   :weapon/two-handed? true}
  {:item/modifier {},
@@ -4312,7 +4312,7 @@
   {:file "items/images.png", :sub-image-bounds [0 192 48 48]},
   :property/pretty-name "Vorpal Sword Magic",
   :skill/action-time 0.5,
-  :skill/action-time-modifier-key :attack-speed,
+  :skill/action-time-modifier-key :stats/attack-speed,
   :skill/effect
   {:tx/target-entity
    {:maxrange 0.5,
@@ -4326,7 +4326,7 @@
   :property/image
   {:file "items/images.png", :sub-image-bounds [432 192 48 48]},
   :property/pretty-name "Winged Staff Magic",
-  :skill/action-time-modifier-key :attack-speed,
+  :skill/action-time-modifier-key :stats/attack-speed,
   :skill/start-action-sound "sounds/slash.wav",
   :weapon/two-handed? true}
  {:item/modifier {},
@@ -4336,7 +4336,7 @@
   {:file "items/images.png", :sub-image-bounds [192 144 48 48]},
   :property/pretty-name "Quarterstaff",
   :skill/action-time 0.45,
-  :skill/action-time-modifier-key :attack-speed,
+  :skill/action-time-modifier-key :stats/attack-speed,
   :skill/effect
   {:tx/target-entity
    {:maxrange 0.75,
@@ -4351,7 +4351,7 @@
   {:file "items/images.png", :sub-image-bounds [720 144 48 48]},
   :property/pretty-name "Exotic1 Axe",
   :skill/action-time nil,
-  :skill/action-time-modifier-key :attack-speed,
+  :skill/action-time-modifier-key :stats/attack-speed,
   :skill/start-action-sound "sounds/slash.wav",
   :weapon/two-handed? true}
  {:item/modifier {},
@@ -4361,7 +4361,7 @@
   {:file "items/images.png", :sub-image-bounds [192 96 48 48]},
   :property/pretty-name "Falchion",
   :skill/action-time 0.375,
-  :skill/action-time-modifier-key :attack-speed,
+  :skill/action-time-modifier-key :stats/attack-speed,
   :skill/effect
   {:tx/target-entity
    {:maxrange 0.5,
@@ -4376,7 +4376,7 @@
   {:file "items/images.png", :sub-image-bounds [96 192 48 48]},
   :property/pretty-name "Lightning Sword Magic",
   :skill/action-time nil,
-  :skill/action-time-modifier-key :attack-speed,
+  :skill/action-time-modifier-key :stats/attack-speed,
   :skill/start-action-sound "sounds/slash.wav",
   :weapon/two-handed? false}
  {:item/modifier {},
@@ -4386,7 +4386,7 @@
   {:file "items/images.png", :sub-image-bounds [144 192 48 48]},
   :property/pretty-name "Frost Axe Magic",
   :skill/action-time nil,
-  :skill/action-time-modifier-key :attack-speed,
+  :skill/action-time-modifier-key :stats/attack-speed,
   :skill/start-action-sound "sounds/slash.wav",
   :weapon/two-handed? true}
  {:item/modifier {},
@@ -4396,7 +4396,7 @@
   {:file "items/images.png", :sub-image-bounds [720 96 48 48]},
   :property/pretty-name "Exotic1 Sword",
   :skill/action-time nil,
-  :skill/action-time-modifier-key :attack-speed,
+  :skill/action-time-modifier-key :stats/attack-speed,
   :skill/start-action-sound "sounds/slash.wav",
   :weapon/two-handed? true}
  {:item/modifier {},
@@ -4406,7 +4406,7 @@
   {:file "items/images.png", :sub-image-bounds [384 144 48 48]},
   :property/pretty-name "Sling",
   :skill/action-time 1,
-  :skill/action-time-modifier-key :attack-speed,
+  :skill/action-time-modifier-key :stats/attack-speed,
   :skill/effect
   {:tx/target-entity
    {:maxrange 5.0,
@@ -4421,7 +4421,7 @@
   {:file "items/images.png", :sub-image-bounds [672 144 48 48]},
   :property/pretty-name "Winged Staff",
   :skill/action-time nil,
-  :skill/action-time-modifier-key :attack-speed,
+  :skill/action-time-modifier-key :stats/attack-speed,
   :skill/start-action-sound "sounds/slash.wav",
   :weapon/two-handed? true}
  {:item/modifier {},
@@ -4431,7 +4431,7 @@
   {:file "items/images.png", :sub-image-bounds [528 96 48 48]},
   :property/pretty-name "Hammer",
   :skill/action-time 0.65,
-  :skill/action-time-modifier-key :attack-speed,
+  :skill/action-time-modifier-key :stats/attack-speed,
   :skill/effect
   {:tx/target-entity
    {:maxrange 0.5,
@@ -4446,7 +4446,7 @@
   {:file "items/images.png", :sub-image-bounds [384 192 48 48]},
   :property/pretty-name "Acid Sword Magic",
   :skill/action-time nil,
-  :skill/action-time-modifier-key :attack-speed,
+  :skill/action-time-modifier-key :stats/attack-speed,
   :skill/start-action-sound "sounds/slash.wav",
   :weapon/two-handed? false}
  {:item/modifier {},
@@ -4456,7 +4456,7 @@
   {:file "items/images.png", :sub-image-bounds [240 144 48 48]},
   :property/pretty-name "Longbow",
   :skill/action-time 1.5,
-  :skill/action-time-modifier-key :attack-speed,
+  :skill/action-time-modifier-key :stats/attack-speed,
   :skill/effect
   {:tx/target-entity
    {:maxrange 7.5,
@@ -4471,7 +4471,7 @@
   {:file "items/images.png", :sub-image-bounds [480 192 48 48]},
   :property/pretty-name "Chaos Staff Magic",
   :skill/action-time nil,
-  :skill/action-time-modifier-key :attack-speed,
+  :skill/action-time-modifier-key :stats/attack-speed,
   :skill/start-action-sound "sounds/slash.wav",
   :weapon/two-handed? true}
  {:item/modifier {},
@@ -4481,7 +4481,7 @@
   {:file "items/images.png", :sub-image-bounds [576 192 48 48]},
   :property/pretty-name "Horned Bow Magic",
   :skill/action-time nil,
-  :skill/action-time-modifier-key :attack-speed,
+  :skill/action-time-modifier-key :stats/attack-speed,
   :skill/start-action-sound "sounds/slash.wav",
   :weapon/two-handed? true}
  {:item/modifier {},
@@ -4491,7 +4491,7 @@
   {:file "items/images.png", :sub-image-bounds [480 144 48 48]},
   :property/pretty-name "Branch Staff",
   :skill/action-time 0.5,
-  :skill/action-time-modifier-key :attack-speed,
+  :skill/action-time-modifier-key :stats/attack-speed,
   :skill/effect
   {:tx/target-entity
    {:maxrange 0.6,
@@ -4506,7 +4506,7 @@
   {:file "items/images.png", :sub-image-bounds [624 96 48 48]},
   :property/pretty-name "Club",
   :skill/action-time 0.7,
-  :skill/action-time-modifier-key :attack-speed,
+  :skill/action-time-modifier-key :stats/attack-speed,
   :skill/effect
   {:tx/target-entity
    {:maxrange 0.5,
@@ -4521,7 +4521,7 @@
   {:file "items/images.png", :sub-image-bounds [480 96 48 48]},
   :property/pretty-name "Greatmace",
   :skill/action-time nil,
-  :skill/action-time-modifier-key :attack-speed,
+  :skill/action-time-modifier-key :stats/attack-speed,
   :skill/start-action-sound "sounds/slash.wav",
   :weapon/two-handed? true}
  {:item/modifier {},
@@ -4531,7 +4531,7 @@
   {:file "items/images.png", :sub-image-bounds [576 144 48 48]},
   :property/pretty-name "Jeweled Staff",
   :skill/action-time 0.5,
-  :skill/action-time-modifier-key :attack-speed,
+  :skill/action-time-modifier-key :stats/attack-speed,
   :skill/effect
   {:tx/target-entity
    {:maxrange 0.6,
@@ -4546,7 +4546,7 @@
   {:file "items/images.png", :sub-image-bounds [96 144 48 48]},
   :property/pretty-name "Trident",
   :skill/action-time 0.55,
-  :skill/action-time-modifier-key :attack-speed,
+  :skill/action-time-modifier-key :stats/attack-speed,
   :skill/effect
   {:tx/target-entity
    {:maxrange 1.0,
@@ -4561,7 +4561,7 @@
   {:file "items/images.png", :sub-image-bounds [576 96 48 48]},
   :property/pretty-name "Maul",
   :skill/action-time nil,
-  :skill/action-time-modifier-key :attack-speed,
+  :skill/action-time-modifier-key :stats/attack-speed,
   :skill/start-action-sound "sounds/slash.wav",
   :weapon/two-handed? true}
  {:item/modifier {},
@@ -4571,7 +4571,7 @@
   {:file "items/images.png", :sub-image-bounds [144 144 48 48]},
   :property/pretty-name "Lance",
   :skill/action-time nil,
-  :skill/action-time-modifier-key :attack-speed,
+  :skill/action-time-modifier-key :stats/attack-speed,
   :skill/start-action-sound "sounds/slash.wav",
   :weapon/two-handed? true}
  {:item/modifier {},
@@ -4581,7 +4581,7 @@
   {:file "items/images.png", :sub-image-bounds [48 144 48 48]},
   :property/pretty-name "Greatspear",
   :skill/action-time 0.65,
-  :skill/action-time-modifier-key :attack-speed,
+  :skill/action-time-modifier-key :stats/attack-speed,
   :skill/effect
   {:tx/target-entity
    {:hit-effect
@@ -4596,7 +4596,7 @@
   {:file "items/images.png", :sub-image-bounds [240 96 48 48]},
   :property/pretty-name "Broadsword",
   :skill/action-time 0.6,
-  :skill/action-time-modifier-key :attack-speed,
+  :skill/action-time-modifier-key :stats/attack-speed,
   :skill/effect
   {:tx/target-entity
    {:maxrange 0.5,
@@ -4611,7 +4611,7 @@
   {:file "items/images.png", :sub-image-bounds [432 144 48 48]},
   :property/pretty-name "Cross",
   :skill/action-time nil,
-  :skill/action-time-modifier-key :attack-speed,
+  :skill/action-time-modifier-key :stats/attack-speed,
   :skill/start-action-sound "sounds/slash.wav",
   :weapon/two-handed? false}
  {:item/modifier {},
@@ -4621,7 +4621,7 @@
   {:file "items/images.png", :sub-image-bounds [336 192 48 48]},
   :property/pretty-name "Cold Sword Magic",
   :skill/action-time nil,
-  :skill/action-time-modifier-key :attack-speed,
+  :skill/action-time-modifier-key :stats/attack-speed,
   :skill/start-action-sound "sounds/slash.wav",
   :weapon/two-handed? false}
  {:item/modifier {},
@@ -4631,7 +4631,7 @@
   {:file "items/images.png", :sub-image-bounds [816 96 48 48]},
   :property/pretty-name "Exotic3 Sword",
   :skill/action-time nil,
-  :skill/action-time-modifier-key :attack-speed,
+  :skill/action-time-modifier-key :stats/attack-speed,
   :skill/start-action-sound "sounds/slash.wav",
   :weapon/two-handed? false}
  {:property/id :worlds/first-level,

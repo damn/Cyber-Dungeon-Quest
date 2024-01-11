@@ -36,13 +36,13 @@
 
 (modifier/defmodifier :modifier/cast-speed
   {:text    #(str (actions-speed-percent %) "% Casting-Speed")
-   :keys    [:entity/modifiers :cast-speed]
+   :keys    [:entity/stats :stats/cast-speed]
    :apply   #(+ (or %1 1) %2)
    :reverse -})
 
 (modifier/defmodifier :modifier/attack-speed
   {:text    #(str (actions-speed-percent %) "% Attack-Speed")
-   :keys    [:entity/modifiers :attack-speed]
+   :keys    [:entity/stats :stats/attack-speed]
    :apply   #(+ (or %1 1) %2)
    :reverse -})
 

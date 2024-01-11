@@ -45,7 +45,7 @@
 
 (def ^:private sound    {:widget :sound     :schema :string})
 (def ^:priate  image    {:widget :image     :schema :some})
-(def ^:private aimation {:widget :animation :schema :some})
+(def ^:private animation {:widget :animation :schema :some})
 
 (defn- enum [& items]
   {:widget :enum
@@ -169,7 +169,7 @@
 
 (defattribute :skill/start-action-sound sound)
 
-(defattribute :skill/action-time-modifier-key (enum :cast-speed :attack-speed))
+(defattribute :skill/action-time-modifier-key (enum :stats/cast-speed :stats/attack-speed))
 
 (defattribute :skill/action-time {:widget :text-field
                                   :schema pos?})
