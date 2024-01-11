@@ -2412,11 +2412,13 @@
    #{:items/shield-vorpal-buckler
      :items/ring-flame
      :items/blood-helm
+     :items/wild-leg
      :items/ring-gold
      :items/sword
      :items/blood-chest
      :items/necklace-dark
      :items/cloak-blood
+     :items/blood-glove
      :items/greatspear},
    :entity/mana 100,
    :entity/body {:height 2/3, :solid? true, :width 17/24},
@@ -3407,8 +3409,7 @@
   {:file "items/images.png", :sub-image-bounds [480 528 48 48]},
   :property/pretty-name "Royal Cloak"}
  {:item/modifier
-  {:modifier/max-hp 5,
-   :modifier/shield [:block/rate :physical 0.75]},
+  {:modifier/max-hp 5, :modifier/shield [:block/rate :physical 0.75]},
   :item/slot :inventory.slot/shield,
   :property/id :items/shield-vorpal-buckler,
   :property/image
@@ -3637,7 +3638,8 @@
   :property/image
   {:file "items/images.png", :sub-image-bounds [48 336 48 48]},
   :property/pretty-name "Copper Ring"}
- {:item/modifier {},
+ {:item/modifier
+  {:modifier/damage [:damage/receive :physical [:max :inc] -1]},
   :item/slot :inventory.slot/leg,
   :property/id :items/wild-leg,
   :property/image
@@ -3824,7 +3826,8 @@
   :property/image
   {:file "items/images.png", :sub-image-bounds [336 336 48 48]},
   :property/pretty-name "Pearl Ring"}
- {:item/modifier {},
+ {:item/modifier
+  {:modifier/damage [:damage/receive :magic [:val :inc] -3]},
   :item/slot :inventory.slot/glove,
   :property/id :items/blood-glove,
   :property/image
