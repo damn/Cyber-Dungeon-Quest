@@ -43,21 +43,35 @@
 (defn- defattribute [k data]
   (alter-var-root #'attributes assoc k data))
 
-(def ^:private sound     {:widget :sound     :schema :string})
-(def ^:priate  image     {:widget :image     :schema :some})
-(def ^:private animation {:widget :animation :schema :some})
+;;
+
+(def ^:private sound        {:widget :sound      :schema :string})
+(def ^:priate  image        {:widget :image      :schema :some})
+(def ^:private animation    {:widget :animation  :schema :some})
+(def ^:private string-attr  {:widget :text-field :schema :string})
+(def ^:private boolean-attr {:widget :check-box  :schema :boolean :default-value true})
+(def ^:private val-max-attr {:widget :text-field :schema (m/form val-max-schema)})
+
+; numbers
+(def ^:private nat-int-attr {:widget :text-field :schema nat-int?})
+(def ^:private pos-attr     {:widget :text-field :schema pos?})
+(def ^:private pos-int-attr {:widget :text-field :schema pos-int?})
 
 (defn- enum [& items]
   {:widget :enum
    :schema (apply vector :enum items)
    :items items})
 
-; TODO namespaced attr
-; one-liner, sorted alphabetically with constructor fns
+(defn- one-to-many-ids [property-type]
+  {:widget :one-to-many
+   :schema [:set :qualified-keyword]
+   :linked-property-type property-type})
+
+;;
 
 (defattribute :property/image       image)
 (defattribute :property/sound       sound)
-(defattribute :property/pretty-name {:widget :text-field :schema :string})
+(defattribute :property/pretty-name string-attr)
 
 (defattribute :entity/body {:widget :nested-map ; -> reuse map-attribute-schema, just list nested attributes
                             :schema [:map {:closed true}
@@ -68,23 +82,18 @@
                                             :height 0.5
                                             :solid? true}})
 
-; these two make common fn
-(defattribute :entity/skills {:widget :one-to-many
-                              :schema [:set :qualified-keyword]
-                              :linked-property-type :property.type/spell})
-(defattribute :entity/inventory {:widget :one-to-many
-                                 :schema [:set :qualified-keyword]
-                                 :linked-property-type :property.type/item})
+(defattribute :entity/skills        (one-to-many-ids :property.type/spell))
+(defattribute :entity/inventory     (one-to-many-ids :property.type/item))
 (defattribute :entity/animation     animation)
-(defattribute :entity/mana          {:widget :text-field :schema nat-int?}) ; each number has an attr-fn which creates text-field
-(defattribute :entity/flying?       {:widget :check-box :schema :boolean :default-value true}) ; boolean-attr
-(defattribute :entity/hp            {:widget :text-field :schema pos-int?})
-(defattribute :entity/movement      {:widget :text-field :schema pos?})
-(defattribute :entity/reaction-time {:widget :text-field :schema pos?})
+(defattribute :entity/mana          nat-int-attr)
+(defattribute :entity/flying?       boolean-attr)
+(defattribute :entity/hp            pos-int-attr)
+(defattribute :entity/movement      pos-attr)
+(defattribute :entity/reaction-time pos-attr)
 (defattribute :entity/faction       (enum :good :evil))
 
 (defattribute :damage/type    (enum :physical :magic))
-(defattribute :damage/min-max {:widget :text-field :schema (m/form val-max-schema)})
+(defattribute :damage/min-max val-max-attr)
 
 (defattribute :tx/damage {:widget :nested-map
                           :schema [:map {:closed true}
@@ -95,11 +104,11 @@
 
 (defattribute :tx/sound sound)
 (defattribute :tx/spawn           {:widget :text-field :schema [:qualified-keyword {:namespace :creatures}]})
-(defattribute :tx/stun            {:widget :text-field :schema [:and number? pos?]})
+(defattribute :tx/stun            pos-attr)
 (defattribute :tx/restore-hp-mana {:widget :text-field :schema [:= true]})
 (defattribute :tx/projectile      {:widget :text-field :schema [:= true]})
 
-(defattribute :maxrange {:widget :text-field})
+(defattribute :maxrange {:widget :text-field}) ; TODO no schema
 
 (defattribute :tx/target-entity {:widget :nested-map
                                  :schema [:map {:closed true}
@@ -110,8 +119,8 @@
 
 (defattribute :modifier/max-hp       {:widget :text-field :schema number?})
 (defattribute :modifier/max-mana     {:widget :text-field :schema number?})
-(defattribute :modifier/cast-speed   {:widget :text-field :schema pos?})
-(defattribute :modifier/attack-speed {:widget :text-field :schema pos?})
+(defattribute :modifier/cast-speed   pos-attr)
+(defattribute :modifier/attack-speed pos-attr)
 (defattribute :modifier/shield       {:widget :text-field :schema :some})
 (defattribute :modifier/armor        {:widget :text-field :schema :some})
 (defattribute :modifier/damage       {:widget :text-field :schema :some})
@@ -136,17 +145,17 @@
 (defattribute :item/slot     {:widget :label :schema [:qualified-keyword {:namespace :inventory.slot}]})
 
 (defattribute :creature/species {:widget :label      :schema [:qualified-keyword {:namespace :species}]})
-(defattribute :creature/level   {:widget :text-field :schema [:maybe pos-int?]})
+(defattribute :creature/level   {:widget :text-field :schema [:maybe pos-int?]}) ; pos-int-attr ?
 
 (defattribute :skill/start-action-sound       sound)
 (defattribute :skill/action-time-modifier-key (enum :stats/cast-speed :stats/attack-speed))
-(defattribute :skill/action-time              {:widget :text-field :schema pos?})
-(defattribute :skill/cooldown                 {:widget :text-field :schema nat-int?})
-(defattribute :skill/cost                     {:widget :text-field :schema nat-int?})
+(defattribute :skill/action-time              pos-attr)
+(defattribute :skill/cooldown                 nat-int-attr)
+(defattribute :skill/cost                     nat-int-attr)
 
-(defattribute :world/map-size       {:widget :text-field :schema pos-int?})
-(defattribute :world/max-area-level {:widget :text-field :schema pos-int?}) ; TODO <= map-size !?
-(defattribute :world/spawn-rate     {:widget :text-field :schema pos?}) ; TODO <1 !
+(defattribute :world/map-size       pos-int-attr)
+(defattribute :world/max-area-level pos-int-attr) ; TODO <= map-size !?
+(defattribute :world/spawn-rate     pos-attr) ; TODO <1 !
 
 (defn- map-attribute-schema [id-attribute attr-ks]
   (m/schema
