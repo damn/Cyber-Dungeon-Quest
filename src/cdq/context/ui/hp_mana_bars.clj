@@ -26,7 +26,7 @@
              {:draw (fn [{:keys [gui-viewport-width context/player-entity] :as c}]
                       (let [x (- (/ gui-viewport-width 2)
                                  (/ rahmenw 2))
-                            y-hp 54
+                            y-hp 5
                             y-mana (+ y-hp rahmenh)]
                         (render-hpmana-bar c x y-hp   hpcontent   (:entity/hp  @player-entity) "HP")
                         (render-hpmana-bar c x y-mana manacontent (:entity/mana @player-entity) "MP")))})))

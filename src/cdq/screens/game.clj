@@ -1,17 +1,15 @@
 (ns cdq.screens.game
   (:require [gdl.app :refer [current-context change-screen!]]
-            [gdl.context :refer [get-stage render-world-view delta-time draw-text key-just-pressed? key-pressed? ->color render-tiled-map]]
+            [gdl.context :refer [render-world-view delta-time draw-text key-just-pressed? key-pressed? ->color render-tiled-map]]
             [gdl.screen :refer [Screen]]
             [gdl.graphics.color :as color]
             [gdl.graphics.camera :as camera]
             [gdl.input.keys :as input.keys]
             [gdl.scene2d.actor :refer [visible? set-visible! toggle-visible!]]
-            [gdl.scene2d.group :refer [children]]
             [utils.core :refer [safe-get]]
             [cdq.context :refer [render-entities* ray-blocked? explored? set-explored! line-of-sight? content-grid
                                   tick-entity! remove-destroyed-entities! update-mouseover-entity! update-potential-fields!
-                                  update-elapsed-game-time! debug-render-after-entities debug-render-before-entities set-cursor!
-                                  transact-all!]]
+                                  update-elapsed-game-time! debug-render-after-entities debug-render-before-entities set-cursor! transact-all! windows id->window]]
             cdq.context.ui.actors
             [cdq.entity :as entity]
             [cdq.entity.movement :as movement]
@@ -54,10 +52,10 @@
    input.keys/h :help-window
    input.keys/z :debug-window})
 
-(defn- check-window-hotkeys [context group]
+(defn- check-window-hotkeys [ctx]
   (doseq [[hotkey window] (hotkey->window)
-          :when (key-just-pressed? context hotkey)]
-    (toggle-visible! (get group window))))
+          :when (key-just-pressed? ctx hotkey)]
+    (toggle-visible! (id->window ctx window))))
 
 (defn- adjust-zoom [camera by] ; DRY map editor
   (camera/set-zoom! camera (max 0.1 (+ (camera/zoom camera) by))))
@@ -71,12 +69,11 @@
   (when (key-pressed? context input.keys/minus)
     (adjust-zoom world-camera (- zoom-speed)))
 
-  (let [group (:windows (get-stage context))
-        windows (children group)]
-    (when (safe-get config :debug-windows?)
-      (check-window-hotkeys context group))
+  (when (safe-get config :debug-windows?)
+    (check-window-hotkeys context))
 
-    (when (key-just-pressed? context input.keys/escape)
+  (when (key-just-pressed? context input.keys/escape)
+    (let [windows (windows context)]
       (cond (some visible? windows) (run! #(set-visible! % false) windows)
             :else (change-screen! :screens/options-menu))))
 

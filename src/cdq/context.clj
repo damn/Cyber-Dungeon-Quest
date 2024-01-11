@@ -84,3 +84,7 @@
 
 (defprotocol ErrorModal
   (->error-window [_ throwable]))
+
+(defprotocol Windows
+  (windows [_])
+  (id->window [_ window-id]))

@@ -3,11 +3,11 @@
             [gdl.app :refer [current-context]]
             [gdl.context :refer [draw-rectangle draw-filled-rectangle spritesheet get-sprite
                                  gui-mouse-position get-stage ->table ->window
-                                 ->texture-region-drawable ->color ->stack ->image-widget ->image-button]]
+                                 ->texture-region-drawable ->color ->stack ->image-widget]]
             [gdl.graphics.color :as color]
             [gdl.scene2d.actor :as actor :refer [set-id! add-listener! set-name! add-tooltip! remove-tooltip!]]
             [cdq.entity.inventory :as inventory]
-            [cdq.context :refer [get-property player-tooltip-text transact-all!]]
+            [cdq.context :refer [player-tooltip-text transact-all!]]
             [cdq.entity :as entity]
             [cdq.state :as state])
   (:import com.badlogic.gdx.scenes.scene2d.Actor
@@ -158,12 +158,6 @@
                                                     :visible? false
                                                     :position [gui-viewport-width
                                                                gui-viewport-height]
-                                                    :rows [[{:actor table :pad 2 :colspan 2}]
-                                                           [(->image-button context (:property/image (get-property context :book-latch))
-                                                                            (fn [_]
-                                                                              (gdl.app/change-screen! :screens/minimap)))
-                                                            (->image-button context  (:property/image (get-property context :key-bone))
-                                                                            (fn [_]
-                                                                              (gdl.app/change-screen! :screens/options-menu)))]]})
+                                                    :rows [[{:actor table :pad 2}]]})
                          :slot->background (slot->background context)
                          :table table})})
