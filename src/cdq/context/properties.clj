@@ -14,6 +14,9 @@
             cdq.tx.all
             [cdq.context :refer [modifier-text effect-text]]))
 
+; TODO make misc is when no property-type matches ? :else case?
+; TODO weapon mess
+
 (defn- map-attribute-schema [id-attribute attr-ks]
   (m/schema
    (vec (concat [:map {:closed true} id-attribute] ; TODO same id-attribute w. different namespaces ...

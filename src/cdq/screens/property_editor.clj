@@ -286,7 +286,7 @@
         table (->table ctx {:id k
                             :cell-defaults {:pad 4}})
         column (remove nil?
-                       [(when (attributes/removable-attribute? k)
+                       [(when (attributes/removable-component? k)
                           (->text-button ctx "-" (fn [_ctx]
                                                    (let [window (find-ancestor-window table)]
                                                      (remove! table)
