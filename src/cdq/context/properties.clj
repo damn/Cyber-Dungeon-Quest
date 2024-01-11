@@ -43,8 +43,8 @@
 (defn- defattribute [k data]
   (alter-var-root #'attributes assoc k data))
 
-(def ^:private sound    {:widget :sound     :schema :string})
-(def ^:priate  image    {:widget :image     :schema :some})
+(def ^:private sound     {:widget :sound     :schema :string})
+(def ^:priate  image     {:widget :image     :schema :some})
 (def ^:private animation {:widget :animation :schema :some})
 
 (defn- enum [& items]
@@ -52,11 +52,14 @@
    :schema (apply vector :enum items)
    :items items})
 
-(defattribute :property/image image)
+; TODO namespaced attr
+; one-liner, sorted alphabetically with constructor fns
 
-(defattribute :entity/animation animation)
+(defattribute :property/image       image)
+(defattribute :property/sound       sound)
+(defattribute :property/pretty-name {:widget :text-field :schema :string})
 
-(defattribute :entity/body {:widget :nested-map
+(defattribute :entity/body {:widget :nested-map ; -> reuse map-attribute-schema, just list nested attributes
                             :schema [:map {:closed true}
                                      [:width pos?]
                                      [:height pos?]
@@ -65,43 +68,23 @@
                                             :height 0.5
                                             :solid? true}})
 
-(defattribute :entity/faction (enum :good :evil))
-
+; these two make common fn
 (defattribute :entity/skills {:widget :one-to-many
                               :schema [:set :qualified-keyword]
                               :linked-property-type :property.type/spell})
-
 (defattribute :entity/inventory {:widget :one-to-many
                                  :schema [:set :qualified-keyword]
                                  :linked-property-type :property.type/item})
+(defattribute :entity/animation     animation)
+(defattribute :entity/mana          {:widget :text-field :schema nat-int?}) ; each number has an attr-fn which creates text-field
+(defattribute :entity/flying?       {:widget :check-box :schema :boolean :default-value true}) ; boolean-attr
+(defattribute :entity/hp            {:widget :text-field :schema pos-int?})
+(defattribute :entity/movement      {:widget :text-field :schema pos?})
+(defattribute :entity/reaction-time {:widget :text-field :schema pos?})
+(defattribute :entity/faction       (enum :good :evil))
 
-(defattribute :entity/mana {:widget :text-field
-                            :schema nat-int?})
-
-(defattribute :entity/flying? {:widget :check-box
-                               :schema :boolean
-                               :default-value true})
-
-(defattribute :entity/hp {:widget :text-field
-                          :schema pos-int?})
-
-(defattribute :entity/movement {:widget :text-field
-                                :schema pos?})
-
-(defattribute :entity/reaction-time {:widget :text-field
-                                     :schema pos?})
-
-(defattribute :property/sound sound)
-
-(defattribute :tx/sound sound)
-
-(defattribute :property/pretty-name {:widget :text-field
-                                     :schema :string})
-
-(defattribute :damage/type (enum :physical :magic))
-
-(defattribute :damage/min-max {:widget :text-field
-                               :schema (m/form val-max-schema)})
+(defattribute :damage/type    (enum :physical :magic))
+(defattribute :damage/min-max {:widget :text-field :schema (m/form val-max-schema)})
 
 (defattribute :tx/damage {:widget :nested-map
                           :schema [:map {:closed true}
@@ -110,17 +93,11 @@
                           :default-value {:damage/type :physical
                                           :damage/min-max [1 10]}})
 
-(defattribute :tx/spawn {:widget :text-field
-                         :schema [:qualified-keyword {:namespace :creatures}]})
-
-(defattribute :tx/stun {:widget :text-field
-                        :schema [:and number? pos?]})
-
-(defattribute :tx/restore-hp-mana {:widget :text-field
-                                   :schema [:= true]})
-
-(defattribute :tx/projectile {:widget :text-field
-                              :schema [:= true]})
+(defattribute :tx/sound sound)
+(defattribute :tx/spawn           {:widget :text-field :schema [:qualified-keyword {:namespace :creatures}]})
+(defattribute :tx/stun            {:widget :text-field :schema [:and number? pos?]})
+(defattribute :tx/restore-hp-mana {:widget :text-field :schema [:= true]})
+(defattribute :tx/projectile      {:widget :text-field :schema [:= true]})
 
 (defattribute :maxrange {:widget :text-field})
 
@@ -133,13 +110,11 @@
 
 (defattribute :modifier/max-hp       {:widget :text-field :schema number?})
 (defattribute :modifier/max-mana     {:widget :text-field :schema number?})
-
 (defattribute :modifier/cast-speed   {:widget :text-field :schema pos?})
 (defattribute :modifier/attack-speed {:widget :text-field :schema pos?})
-
-(defattribute :modifier/shield {:widget :text-field :schema :some})
-(defattribute :modifier/armor  {:widget :text-field :schema :some})
-(defattribute :modifier/damage {:widget :text-field :schema :some})
+(defattribute :modifier/shield       {:widget :text-field :schema :some})
+(defattribute :modifier/armor        {:widget :text-field :schema :some})
+(defattribute :modifier/damage       {:widget :text-field :schema :some})
 
 (defn removable-attribute? [k]
   (#{"tx" "modifier" "entity"} (namespace k)))
@@ -156,39 +131,22 @@
 (defattribute :property/entity (components-attribute :entity))
 (defattribute :skill/effect    (components-attribute :tx))
 (defattribute :hit-effect      (components-attribute :tx))
-(defattribute :item/modifier   (components-attribute :modifier))
 
-(defattribute :item/slot {:widget :label
-                          :schema [:qualified-keyword {:namespace :inventory.slot}]})
+(defattribute :item/modifier (components-attribute :modifier))
+(defattribute :item/slot     {:widget :label :schema [:qualified-keyword {:namespace :inventory.slot}]})
 
+(defattribute :creature/species {:widget :label      :schema [:qualified-keyword {:namespace :species}]})
+(defattribute :creature/level   {:widget :text-field :schema [:maybe pos-int?]})
 
-(defattribute :creature/species {:widget :label
-                                 :schema [:qualified-keyword {:namespace :species}]})
-
-(defattribute :creature/level {:widget :text-field
-                               :schema [:maybe pos-int?]})
-
-(defattribute :skill/start-action-sound sound)
-
+(defattribute :skill/start-action-sound       sound)
 (defattribute :skill/action-time-modifier-key (enum :stats/cast-speed :stats/attack-speed))
+(defattribute :skill/action-time              {:widget :text-field :schema pos?})
+(defattribute :skill/cooldown                 {:widget :text-field :schema nat-int?})
+(defattribute :skill/cost                     {:widget :text-field :schema nat-int?})
 
-(defattribute :skill/action-time {:widget :text-field
-                                  :schema pos?})
-
-(defattribute :skill/cooldown {:widget :text-field
-                               :schema nat-int?})
-
-(defattribute :skill/cost {:widget :text-field
-                           :schema nat-int?})
-
-(defattribute :world/map-size {:widget :text-field
-                               :schema pos-int?})
-
-(defattribute :world/max-area-level {:widget :text-field
-                                     :schema pos-int?}) ; TODO <= map-size !?
-
-(defattribute :world/spawn-rate {:widget :text-field
-                                 :schema pos?}) ; TODO <1 !
+(defattribute :world/map-size       {:widget :text-field :schema pos-int?})
+(defattribute :world/max-area-level {:widget :text-field :schema pos-int?}) ; TODO <= map-size !?
+(defattribute :world/spawn-rate     {:widget :text-field :schema pos?}) ; TODO <1 !
 
 (defn- map-attribute-schema [id-attribute attr-ks]
   (m/schema
@@ -508,9 +466,8 @@
              (map #(into (sorted-map) %))
              (pprint-spit properties-file)))))))
 
-
 (comment
- ; # Add new attributes
+ ; # Add new attributes => make into fn for property-type apply fn to all props
  (let [ctx @gdl.app/current-context
        props (cdq.context/all-properties ctx :property.type/weapon)
        props (for [prop props]
@@ -527,7 +484,7 @@
 
 (defn update! [{:keys [context/properties] :as context}
                {:keys [property/id] :as data}]
-  {:pre [(contains? data :property/id)
+  {:pre [(contains? data :property/id) ; <=  part of validate - but misc does not have property/id -> add !
          (contains? properties id)]}
   (validate data :humanize? true)
   ;(binding [*print-level* nil] (clojure.pprint/pprint data))
