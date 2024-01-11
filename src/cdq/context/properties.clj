@@ -43,19 +43,18 @@
 (defn- defattribute [k data]
   (alter-var-root #'attributes assoc k data))
 
-(def ^:private sound {:widget :sound
-                      :schema :string})
+(def ^:private sound    {:widget :sound     :schema :string})
+(def ^:priate  image    {:widget :image     :schema :some})
+(def ^:private aimation {:widget :animation :schema :some})
 
 (defn- enum [& items]
   {:widget :enum
    :schema (apply vector :enum items)
    :items items})
 
-(defattribute :property/image {:widget :image
-                               :schema :some})
+(defattribute :property/image image)
 
-(defattribute :entity/animation {:widget :animation
-                                 :schema :some})
+(defattribute :entity/animation animation)
 
 (defattribute :entity/body {:widget :nested-map
                             :schema [:map {:closed true}
