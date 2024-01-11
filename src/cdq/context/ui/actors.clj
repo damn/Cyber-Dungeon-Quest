@@ -3,6 +3,7 @@
             [gdl.context :refer [->actor ->table ->group ->text-button get-stage]]
             [gdl.scene2d.actor :refer [toggle-visible! add-tooltip!]]
             [gdl.scene2d.group :refer [children]]
+            [utils.core :refer [safe-get]]
             [cdq.context.ui.hp-mana-bars :refer [->hp-mana-bars]]
             [cdq.context.ui.debug-window :as debug-window]
             [cdq.context.ui.help-window :as help-window]
@@ -42,20 +43,34 @@
             button)
    :bottom? true})
 
+; TODO show hotkeys - move controls/hotkeys/help window together
+; I hotkey for inventory doesnt work production
+
 ; TODO change-screen here ok?
-; TODO debug-windows disable when not debug mode
+(defn- ->buttons [{:keys [context/config] :as ctx}]
+  (let [debug-windows? (safe-get config :debug-windows?)
+        toggle! (fn [id]
+                  (fn [ctx] (toggle-visible! (id->window ctx id))))]
+    (for [[sprite-idx tooltip-text f] [[[7 1]   "Options" (fn [_] (change-screen! :screens/options-menu))]
+                                       [[4 1]   "Minimap" (fn [_] (change-screen! :screens/minimap))]
+                                       [[10 1]  "Inventory"   (toggle! :inventory-window)]
+                                       [[6 1]   "Skills"      (toggle! :skill-window)]
+                                       [[9 0]   "Help"        (toggle! :help-window)]
+                                       (when debug-windows?
+                                         [[8 0] "Entity Info" (toggle! :entity-info-window)])
+                                       (when debug-windows?
+                                         [[3 0] "Debug"       (toggle! :debug-window)])]
+          :when sprite-idx]
+      (->option-button-cell ctx sprite-idx tooltip-text f))))
+
+; TODO same space/pad as action-bar (actually inventory cells too)
+; => global setting use ?
 (defn- ->base-table [ctx]
-  (->table ctx {:rows [[{:actor (->action-bar ctx)
-                         :expand? true
-                         :bottom? true
-                         :left? true}
-                        (->option-button-cell ctx [7 1] "Options" (fn [_] (change-screen! :screens/options-menu)))
-                        (->option-button-cell ctx [4 1] "Minimap" (fn [_] (change-screen! :screens/minimap)))
-                        (->option-button-cell ctx [10 1] "Inventory" (fn [ctx] (toggle-visible! (id->window ctx :inventory-window))))
-                        (->option-button-cell ctx [6 1] "Skills" (fn [ctx] (toggle-visible! (id->window ctx :skill-window))))
-                        (->option-button-cell ctx [9 0] "Help" (fn [ctx] (toggle-visible! (id->window ctx :help-window))))
-                        (->option-button-cell ctx [8 0] "Entity Info" (fn [ctx] (toggle-visible! (id->window ctx :entity-info-window))))
-                        (->option-button-cell ctx [3 0] "Debug" (fn [ctx] (toggle-visible! (id->window ctx :debug-window))))]]
+  (->table ctx {:rows [(cons {:actor (->action-bar ctx)
+                              :expand? true
+                              :bottom? true
+                              :left? true}
+                             (remove nil? (->buttons ctx)))]
                 :cell-defaults {:pad 2}
                 :fill-parent? true}))
 

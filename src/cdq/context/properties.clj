@@ -336,7 +336,7 @@
 (def ^:private action-time-color "[GOLD]")
 (def ^:private cooldown-color "[SKY]")
 (def ^:private effect-color "[CHARTREUSE]")
-(def ^:private modifier-color "[MODIFIER_BLUE]")
+(def ^:private modifier-color "[VIOLET]")
 
 (defmethod property->text :property.type/spell [ctx
                                                 {:keys [property/id

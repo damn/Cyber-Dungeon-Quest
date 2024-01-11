@@ -7,7 +7,7 @@
 
 (defn ->context [ctx]
   {::data {:horizontal-group (->horizontal-group ctx {:pad 2
-                                                      :space 5})
+                                                      :space 2})
            :button-group (->button-group ctx {:max-check-count 1
                                               :min-check-count 0})}})
 
