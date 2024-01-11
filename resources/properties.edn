@@ -3408,7 +3408,7 @@
   :property/pretty-name "Royal Cloak"}
  {:item/modifier
   {:modifier/max-hp 5,
-   :modifier/shield [:effect/target :physical 0.75]},
+   :modifier/shield [:block/rate :physical 0.75]},
   :item/slot :inventory.slot/shield,
   :property/id :items/shield-vorpal-buckler,
   :property/image
@@ -3583,7 +3583,7 @@
   {:file "items/images.png", :sub-image-bounds [144 576 48 48]},
   :property/pretty-name "Glove Chain"}
  {:item/modifier
-  {:modifier/damage [:effect/source :magic [:max :mult] 2]},
+  {:modifier/damage [:damage/deal :magic [:max :mult] 2]},
   :item/slot :inventory.slot/rings,
   :property/id :items/ring-flame,
   :property/image
@@ -3656,7 +3656,7 @@
   {:file "items/images.png", :sub-image-bounds [48 240 48 48]},
   :property/pretty-name "Heater Wood Shield"}
  {:item/modifier
-  {:modifier/damage [:effect/source :physical [:val :inc] 5]},
+  {:modifier/damage [:damage/deal :physical [:val :inc] 5]},
   :item/slot :inventory.slot/rings,
   :property/id :items/ring-gold,
   :property/image
@@ -3722,7 +3722,7 @@
   :property/image
   {:file "items/images.png", :sub-image-bounds [720 240 48 48]},
   :property/pretty-name "Great Gold Shield"}
- {:item/modifier {:modifier/armor [:effect/target :physical 0.2]},
+ {:item/modifier {:modifier/armor [:block/rate :physical 0.2]},
   :item/slot :inventory.slot/chest,
   :property/id :items/blood-chest,
   :property/image

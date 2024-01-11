@@ -11,7 +11,9 @@
      (clojure.pprint/pprint
       {:uid   (:entity/uid entity*)
        :state (entity/state entity*)
-       :faction (:entity/faction entity*)}))))
+       :faction (:entity/faction entity*)
+       :stats (:entity/stats entity*)
+       }))))
 
 (defn create [{:keys [gui-viewport-width] :as context}]
   (let [label (->label context "")

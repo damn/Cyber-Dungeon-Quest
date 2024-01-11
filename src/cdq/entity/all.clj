@@ -9,7 +9,6 @@
                         image
                         line-render
                         mana
-                        modifiers
                         mouseover
                         projectile-collision
                         shout

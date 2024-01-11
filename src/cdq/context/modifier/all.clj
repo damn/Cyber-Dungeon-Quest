@@ -46,55 +46,48 @@
    :apply   #(+ (or %1 1) %2)
    :reverse -})
 
-(defn- check-damage-block-modifier-value [[source-or-target
-                                           damage-type
-                                           value-delta]]
-  (and (#{:effect/source :effect/target} source-or-target) ; TODO use other names (block-absorb,block-ignore?)
+(defn- check-block-modifier-value [[source-or-target
+                                    damage-type
+                                    value-delta]]
+  (and (#{:block/ignore :block/rate} source-or-target)
        (#{:physical :magic} damage-type)))
 
 (defn- dmg-type-text [damage-type]
   (str (str/capitalize (name damage-type)) " damage"))
 
-(defn- damage-block-modifier-text [block-type
-                                   [source-or-target
-                                    damage-type
-                                    value-delta]]
+(defn- block-modifier-text [block-type [source-or-target damage-type value-delta]]
   (str/join " "
             [(dmg-type-text damage-type)
              (case block-type
-               :shield "shield"
-               :armor  "armor")
+               :stats/shield "shield"
+               :stats/armor  "armor")
              (case source-or-target
-               :effect/source "ignore"
-               :effect/target "block")
+               :block/ignore "ignore"
+               :block/rate "block")
              ; TODO signum ! negativ possible?
              (str "+" (int (* value-delta 100)) "%")]))
 
-(defn- damage-block-modifier [block-type]
+(defn- block-modifier [block-type]
   {:text (fn [value]
-           (assert (check-damage-block-modifier-value value)
+           (assert (check-block-modifier-value value)
                    (str "Wrong value for modifier: " value))
-           (damage-block-modifier-text block-type value))
-   :keys [:entity/modifiers block-type]
+           (block-modifier-text block-type value))
+   :keys [:entity/stats block-type]
    :apply (fn [component value]
-            (assert (check-damage-block-modifier-value value)
+            (assert (check-block-modifier-value value)
                     (str "Wrong value for shield/armor modifier: " value))
             (update-in component (drop-last value) #(+ (or % 0) (last value))))
    :reverse (fn [component value]
               (update-in component (drop-last value) - (last value)))})
 
-; Example: [:modifier/shield [:effect/target :physical 0.3]]
-(modifier/defmodifier :modifier/shield
-  (damage-block-modifier :shield))
-
-(modifier/defmodifier :modifier/armor
-  (damage-block-modifier :armor))
+(modifier/defmodifier :modifier/shield (block-modifier :stats/shield))
+(modifier/defmodifier :modifier/armor  (block-modifier :stats/armor))
 
 (defn- check-damage-modifier-value [[source-or-target
                                      damage-type
                                      application-type
                                      value-delta]]
-  (and (#{:effect/source :effect/target} source-or-target)
+  (and (#{:damage/deal :damage/receive} source-or-target)
        (#{:physical :magic} damage-type)
        (let [[val-or-max inc-or-mult] application-type]
          (and (#{:val :max} val-or-max)
@@ -116,8 +109,8 @@
                       :max "Maximum")
              (dmg-type-text damage-type)
              (case source-or-target
-               :effect/source "dealt"
-               :effect/target "received")
+               :damage/deal "dealt"
+               :damage/receive "received")
              ; TODO not handling negative values yet (do I need that ?)
              (case inc-or-mult
                :inc "+"
@@ -126,13 +119,12 @@
                :inc value-delta
                :mult (str (int (* value-delta 100)) "%"))]))
 
-; example: [:damage [:effect/source :physical [:max :mult] 3]]
 (modifier/defmodifier :modifier/damage
   {:text (fn [value]
            (assert (check-damage-modifier-value value)
                    (str "Wrong value for damage modifier: " value))
            (damage-modifier-text value))
-   :keys [:entity/modifiers :tx/damage]
+   :keys [:entity/stats :stats/damage]
    :apply (fn [component value]
             (assert (check-damage-modifier-value value)
                     (str "Wrong value for damage modifier: " value))

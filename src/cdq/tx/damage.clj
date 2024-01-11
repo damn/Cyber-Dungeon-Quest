@@ -3,26 +3,28 @@
             [data.val-max :refer [apply-val apply-val-max-modifiers]]
             [utils.random :as random]
             [cdq.context :refer [transact!]]
-            [cdq.effect :as effect]
-            [cdq.entity :as entity]))
+            [cdq.effect :as effect]))
 
-(defn- source-block-ignore [entity* block-type damage-type]
-  (-> entity* (entity/effect-source-modifiers block-type) damage-type))
+(defn- block-stats  [entity* block-stat] (-> entity* :entity/stats block-stat))
+(defn- damage-stats [entity*]            (-> entity* :entity/stats :stats/damage))
 
-(defn- target-block-rate [entity* block-type damage-type]
-  (-> entity* (entity/effect-target-modifiers block-type) damage-type))
+(defn- block-rate   [entity* block-stat damage-type] (-> entity* (block-stats block-stat) :block/rate   damage-type))
+(defn- block-ignore [entity* block-stat damage-type] (-> entity* (block-stats block-stat) :block/ignore damage-type))
 
-(defn- effective-block-rate [source target block-type damage-type]
-  (max (- (or (target-block-rate   target block-type damage-type) 0)
-          (or (source-block-ignore source block-type damage-type) 0))
+(defn- effective-block-rate [source target block-stat damage-type]
+  (max (- (or (block-rate   target block-stat damage-type) 0)
+          (or (block-ignore source block-stat damage-type) 0))
        0))
 
 (comment
- (let [block-ignore 0.4
-       block-rate 0.5
-       source {:entity/modifiers {:shield {:effect/source {:physical block-ignore}}}}
-       target {:entity/modifiers {:shield {:effect/target {:physical block-rate}}}}]
-   (effective-block-rate source target :shield :physical))
+ (let [ignore 0.4
+       rate 0.5
+       block-stat :stats/shield
+       source {:entity/stats {block-stat {:block/ignore {:physical ignore}}}}
+       target {:entity/stats {block-stat {:block/rate   {:physical rate}}}}]
+   [(block-rate target block-stat :physical)
+    (block-ignore source block-stat :physical)
+    (effective-block-rate source target block-stat :physical)])
  )
 
 (defn- apply-damage-modifiers [{:keys [damage/min-max] :as damage}
@@ -32,35 +34,29 @@
     damage))
 
 (comment
- (apply-damage-modifiers {:damage/type :physical :damage/min-max [5 10]}
-                         {[:val :inc] 3})
- #:damage{:type :physical, :min-max [8 10]}
+ (= (apply-damage-modifiers {:damage/type :physical :damage/min-max [5 10]}
+                            {[:val :inc] 3})
+    #:damage{:type :physical, :min-max [8 10]})
  )
 
 (defn- apply-source-modifiers [{:keys [damage/type] :as damage} source]
-  (apply-damage-modifiers damage
-                          (-> source (entity/effect-source-modifiers :tx/damage) type)))
+  (apply-damage-modifiers damage (-> source damage-stats :damage/deal type)))
 
 (defn- apply-target-modifiers [{:keys [damage/type] :as damage} target]
-  (apply-damage-modifiers damage
-                          (-> target (entity/effect-target-modifiers :tx/damage) type)))
+  (apply-damage-modifiers damage (-> target damage-stats :damage/receive type)))
 
 (comment
- (set! *print-level* nil)
- (apply-source-modifiers {:damage/type :physical :damage/min-max [5 10]}
-                         (cdq.entity/map->Entity
-                          {:entity/modifiers {:tx/damage {:effect/source {:physical {[:val :inc] 1}}}}}))
- #:damage{:type :physical, :min-max [6 10]}
+ (= (apply-source-modifiers {:damage/type :physical :damage/min-max [5 10]}
+                            {:entity/stats {:stats/damage {:damage/deal {:physical {[:val :inc] 1}}}}})
+    #:damage{:type :physical, :min-max [6 10]})
 
- (apply-source-modifiers {:damage/type :magic :damage/min-max [5 10]}
-                         (cdq.entity/map->Entity
-                          {:entity/modifiers {:tx/damage {:effect/source {:physical {[:val :inc] 1}}}}}))
- #:damage{:type :magic, :min-max [5 10]}
+ (= (apply-source-modifiers {:damage/type :magic :damage/min-max [5 10]}
+                            {:entity/stats {:stats/damage {:damage/deal {:physical {[:val :inc] 1}}}}})
+    #:damage{:type :magic , :min-max [5 10]})
 
- (apply-source-modifiers {:damage/type :magic :damage/min-max [5 10]}
-                         (cdq.entity/map->Entity
-                          {:entity/modifiers {:tx/damage {:effect/source {:magic {[:max :mult] 3}}}}}))
- #:damage{:type :magic, :min-max [5 30]}
+ (= (apply-source-modifiers {:damage/type :magic :damage/min-max [5 10]}
+                            {:entity/stats {:stats/damage {:damage/deal {:magic {[:max :mult] 3}}}}})
+    #:damage{:type :magic, :min-max [5 30]})
  )
 
 (defn- effective-damage
@@ -73,32 +69,30 @@
        (apply-target-modifiers target))))
 
 (comment
- (apply-damage-modifiers {:damage/type :physical :damage/min-max [3 10]}
-                         {[:max :mult] 2
-                          [:val :mult] 1.5
-                          [:val :inc] 1
-                          [:max :inc] 0})
- #:damage{:type :physical, :min-max [6 20]}
+ (= (apply-damage-modifiers {:damage/type :physical :damage/min-max [3 10]}
+                            {[:max :mult] 2
+                             [:val :mult] 1.5
+                             [:val :inc] 1
+                             [:max :inc] 0})
+    #:damage{:type :physical, :min-max [6 20]})
 
- (apply-damage-modifiers {:damage/type :physical :damage/min-max [6 20]}
-                         {[:max :mult] 1
-                          [:val :mult] 1
-                          [:val :inc] -5
-                          [:max :inc] 0})
- #:damage{:type :physical, :min-max [1 20]}
+ (= (apply-damage-modifiers {:damage/type :physical :damage/min-max [6 20]}
+                            {[:max :mult] 1
+                             [:val :mult] 1
+                             [:val :inc] -5
+                             [:max :inc] 0})
+    #:damage{:type :physical, :min-max [1 20]})
 
- (effective-damage {:damage/type :physical :damage/min-max [3 10]}
-                   (cdq.entity/map->Entity
-                    {:entity/modifiers {:tx/damage {:effect/source {:physical {[:max :mult] 2
-                                                                                   [:val :mult] 1.5
-                                                                                   [:val :inc] 1
-                                                                                   [:max :inc] 0}}}}})
-                   (cdq.entity/map->Entity
-                    {:entity/modifiers {:tx/damage {:effect/target {:physical {[:max :mult] 1
-                                                                                   [:val :mult] 1
-                                                                                   [:val :inc] -5
-                                                                                   [:max :inc] 0}}}}}))
- #:damage{:type :physical, :min-max [1 20]}
+ (= (effective-damage {:damage/type :physical :damage/min-max [3 10]}
+                      {:entity/stats {:stats/damage {:damage/deal {:physical {[:max :mult] 2
+                                                                              [:val :mult] 1.5
+                                                                              [:val :inc] 1
+                                                                              [:max :inc] 0}}}}}
+                      {:entity/stats {:stats/damage {:damage/receive {:physical {[:max :mult] 1
+                                                                                 [:val :mult] 1
+                                                                                 [:val :inc] -5
+                                                                                 [:max :inc] 0}}}}})
+    #:damage{:type :physical, :min-max [1 20]})
  )
 
 (defn- blocks? [block-rate]
@@ -129,10 +123,10 @@
        (no-hp-left? hp)
        nil
 
-       (blocks? (effective-block-rate source* target* :shield type))
+       (blocks? (effective-block-rate source* target* :stats/shield type))
        [[:tx/add-text-effect target "[WHITE]SHIELD"]]
 
-       (blocks? (effective-block-rate source* target* :armor type))
+       (blocks? (effective-block-rate source* target* :stats/armor type))
        [[:tx/add-text-effect target "[WHITE]ARMOR"]]
 
        :else
