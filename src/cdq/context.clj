@@ -3,49 +3,6 @@
 
 (defsystem transact! [_ ctx])
 
-(comment
- (clojure.pprint/pprint (sort (keys (methods transact!))))
- #_(; # entity
-    ; ## ecs core
-    :tx/create
-    :tx/destroy
-    :tx/assoc
-    :tx/assoc-in
-    :tx/dissoc
-    :tx/dissoc-in
-    ; ## skills
-    :tx/add-skill
-    :tx/remove-skill
-    :tx/add-text-effect
-    :tx/apply-modifier
-    :tx/reverse-modifier
-    ; ## state
-    :tx/event
-    :tx/position-changed
-    ; ## inventory
-    :tx/set-item
-    :tx/remove-item
-    :tx/pickup-item
-    :tx/stack-item
-    ; # builders
-    :tx/audiovisual
-    :tx/creature
-    ; # other
-    :tx/cursor
-    :tx/sound
-    :tx/effect
-    ; # ui
-    :tx/msg-to-player
-    :tx/player-modal
-    ; ## inventory
-    :tx/set-item-image-in-widget
-    :tx/remove-item-from-widget
-    ; ## actionbar
-    :tx/actionbar-add-skill
-    :tx/actionbar-remove-skill
-    )
- )
-
 (defprotocol TransactionHandler
   (transact-all! [_ txs]))
 
