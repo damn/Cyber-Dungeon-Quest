@@ -1,6 +1,7 @@
 (ns cdq.screens.property-editor
   (:require [clojure.edn :as edn]
             [clojure.string :as str]
+            [malli.core :as m]
             [gdl.app :as app :refer [change-screen!]]
             [gdl.context :refer [get-stage ->text-button ->image-button ->label ->text-field ->image-widget ->table ->stack ->window all-sound-files play-sound! ->vertical-group ->check-box ->select-box ->actor key-just-pressed? add-to-stage! ->scroll-pane]]
             [gdl.input.keys :as input.keys]
@@ -60,8 +61,10 @@
 
 ;;
 
-(defmethod ->value-widget :text-field [[_ v] ctx]
-  (->text-field ctx (->edn v) {}))
+(defmethod ->value-widget :text-field [[k v] ctx]
+  (let [widget (->text-field ctx (->edn v) {})]
+    (add-tooltip! widget (str "Schema: " (pr-str (m/form (:schema (get properties/attributes k))))))
+    widget))
 
 (defmethod value-widget->data :text-field [_ widget]
   (edn/read-string (text-field/text widget)))

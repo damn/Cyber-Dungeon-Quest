@@ -39,7 +39,7 @@
                                                     (->sprite ctx sprite-idx)
                                                     f
                                                     {:dimensions [32 32]})]
-            (add-tooltip! button (fn [_] tooltip-text))
+            (add-tooltip! button tooltip-text)
             button)
    :bottom? true})
 

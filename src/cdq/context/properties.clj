@@ -100,7 +100,8 @@
 
 (defattribute :damage/type (enum :physical :magic))
 
-(defattribute :damage/min-max {:widget :text-field})
+(defattribute :damage/min-max {:widget :text-field
+                               :schema (m/form val-max-schema)})
 
 (defattribute :tx/damage {:widget :nested-map
                           :schema [:map {:closed true}
@@ -180,9 +181,14 @@
 (defattribute :skill/cost {:widget :text-field
                            :schema nat-int?})
 
-(defattribute :world/map-size {:widget :text-field})
-(defattribute :world/max-area-level {:widget :text-field})
-(defattribute :world/spawn-rate {:widget :text-field})
+(defattribute :world/map-size {:widget :text-field
+                               :schema pos-int?})
+
+(defattribute :world/max-area-level {:widget :text-field
+                                     :schema pos-int?}) ; TODO <= map-size !?
+
+(defattribute :world/spawn-rate {:widget :text-field
+                                 :schema pos?}) ; TODO <1 !
 
 (defn- map-attribute-schema [id-attribute attr-ks]
   (m/schema
