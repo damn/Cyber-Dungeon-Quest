@@ -1,7 +1,7 @@
 (ns cdq.context.ui.actors
   (:require [gdl.app :refer [change-screen!]]
             [gdl.context :refer [->actor ->table ->group ->text-button get-stage]]
-            [gdl.scene2d.actor :refer [toggle-visible!]]
+            [gdl.scene2d.actor :refer [toggle-visible! add-tooltip!]]
             [gdl.scene2d.group :refer [children]]
             [cdq.context.ui.hp-mana-bars :refer [->hp-mana-bars]]
             [cdq.context.ui.debug-window :as debug-window]
@@ -16,9 +16,6 @@
 (defn- ->item-on-cursor-actor [context]
   (->actor context {:draw draw-item-on-cursor}))
 
-(defn- ->option-button-cell [ctx text f]
-  {:actor (->text-button ctx text f) :bottom? true})
-
 (extend-type gdl.context.Context
   cdq.context/Windows
   (windows [ctx]
@@ -27,6 +24,24 @@
   (id->window [ctx window-id]
     (get (:windows (get-stage ctx)) window-id)))
 
+; TODO reused from properties, move gdl.
+(defn ->sprite [ctx sprite-idx]
+  (gdl.backends.libgdx.context.image-drawer-creator/map->Image
+   (gdl.context/get-sprite ctx
+                           {:file "ui/uf_interface.png"
+                            :tilew 24
+                            :tileh 24}
+                           sprite-idx)))
+
+(defn- ->option-button-cell [ctx sprite-idx tooltip-text f]
+  {:actor (let [button  (gdl.context/->image-button ctx
+                                                    (->sprite ctx sprite-idx)
+                                                    f
+                                                    {:dimensions [32 32]})]
+            (add-tooltip! button (fn [_] tooltip-text))
+            button)
+   :bottom? true})
+
 ; TODO change-screen here ok?
 ; TODO debug-windows disable when not debug mode
 (defn- ->base-table [ctx]
@@ -34,21 +49,14 @@
                          :expand? true
                          :bottom? true
                          :left? true}
-                        (->option-button-cell ctx "Options" (fn [_]
-                                                              (change-screen! :screens/options-menu)))
-                        (->option-button-cell ctx "Minimap" (fn [_]
-                                                              (change-screen! :screens/minimap)))
-                        (->option-button-cell ctx "Inventory" (fn [ctx]
-                                                                (toggle-visible! (id->window ctx :inventory-window))))
-                        (->option-button-cell ctx "Skills" (fn [ctx]
-                                                             (toggle-visible! (id->window ctx :skill-window))))
-                        (->option-button-cell ctx "Help" (fn [ctx]
-                                                           (toggle-visible! (id->window ctx :help-window))))
-                        (->option-button-cell ctx "Entity info" (fn [ctx]
-                                                                  (toggle-visible! (id->window ctx :entity-info-window))))
-                        (->option-button-cell ctx "Debug" (fn [ctx]
-                                                            (toggle-visible! (id->window ctx :debug-window))))]]
-                :cell-defaults {:pad 5}
+                        (->option-button-cell ctx [7 1] "Options" (fn [_] (change-screen! :screens/options-menu)))
+                        (->option-button-cell ctx [4 1] "Minimap" (fn [_] (change-screen! :screens/minimap)))
+                        (->option-button-cell ctx [10 1] "Inventory" (fn [ctx] (toggle-visible! (id->window ctx :inventory-window))))
+                        (->option-button-cell ctx [6 1] "Skills" (fn [ctx] (toggle-visible! (id->window ctx :skill-window))))
+                        (->option-button-cell ctx [9 0] "Help" (fn [ctx] (toggle-visible! (id->window ctx :help-window))))
+                        (->option-button-cell ctx [8 0] "Entity Info" (fn [ctx] (toggle-visible! (id->window ctx :entity-info-window))))
+                        (->option-button-cell ctx [3 0] "Debug" (fn [ctx] (toggle-visible! (id->window ctx :debug-window))))]]
+                :cell-defaults {:pad 2}
                 :fill-parent? true}))
 
 (defn- ->windows [context]
