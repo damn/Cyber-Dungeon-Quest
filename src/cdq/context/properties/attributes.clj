@@ -61,7 +61,7 @@
 
 ; TODO this is == :optional key @ components-attribute ?
 (defn removable-component? [k]
-  (#{"tx" "modifier" "entity"} (namespace k)))
+  (#{"tx" "modifier" #_"entity"} (namespace k)))
 
 ;;
 
@@ -73,9 +73,10 @@
 ; similar to components nested-map
 ;:default-value {:width 0.5 :height 0.5 :solid? true}
 
-(defattribute :width  pos-attr)
-(defattribute :height pos-attr)
-(defattribute :solid? boolean-attr)
+; TODO label == not editable
+(defattribute :width  {:widget :label :schema pos?}) ; TODO make px
+(defattribute :height {:widget :label :schema pos?}) ; TODO make px
+(defattribute :solid? {:widget :label :schema boolean?})
 
 (defattribute :entity/body          (map-attribute :width :height :solid?)) ; TODO body assert >+ min body size?
 (defattribute :entity/skills        (one-to-many-ids :property.type/spell))
