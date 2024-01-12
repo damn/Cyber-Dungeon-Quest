@@ -15,14 +15,12 @@
 ; TODO use at projectile & also adjust rotation
 (defn- start-point [entity* target]
   (v/add (:entity/position entity*)
-         (v/scale (v/direction (:entity/position entity*)
-                               (:entity/position target))
+         (v/scale (entity/direction entity* target)
                   (:radius (:entity/body entity*)))))
 
 (defn- end-point [entity* target maxrange]
   (v/add (start-point entity* target)
-         (v/scale (v/direction (:entity/position entity*)
-                               (:entity/position target))
+         (v/scale (entity/direction entity* target)
                   maxrange)))
 
 (defcomponent :tx/target-entity {:keys [maxrange hit-effect]}

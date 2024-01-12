@@ -14,6 +14,10 @@
 
 (defrecord Entity [])
 
+(defprotocol Position
+  (tile [_] "Center integer coordinates")
+  (direction [_ other-entity*] "Returns direction vector from this entity to the other entity."))
+
 (defprotocol State
   (state [_])
   (state-obj [_]))

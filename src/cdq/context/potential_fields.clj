@@ -34,7 +34,7 @@
                                        (filter   #(:entity/faction @%))
                                        (group-by #(:entity/faction @%)))]
            [faction
-            (zipmap (map #(->tile (:entity/position @%)) entities)
+            (zipmap (map #(entity/tile @%) entities)
                     entities)])))
 
  (def max-iterations 1)
@@ -122,7 +122,7 @@
 (defn- tiles->entities [entities faction]
   (let [entities (filter #(= (:entity/faction @%) faction)
                          entities)]
-    (zipmap (map #(->tile (:entity/position @%)) entities)
+    (zipmap (map #(entity/tile @%) entities)
             entities)))
 
 (def ^:private cache (atom nil)) ; TODO move to context?

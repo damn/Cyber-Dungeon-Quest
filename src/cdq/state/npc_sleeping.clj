@@ -24,8 +24,7 @@
                            :shout (->counter ctx 0.2)}]])
 
   (tick [_ entity* context]
-    (let [cell (get (world-grid context)
-                    (utils.core/->tile (:entity/position entity*)))]
+    (let [cell ((world-grid context) (entity/tile entity*))]
       (when-let [distance (cell/nearest-entity-distance @cell (entity/enemy-faction entity*))]
         (when (<= distance aggro-range)
           [[:tx/event (:entity/id entity*) :alert]]))))

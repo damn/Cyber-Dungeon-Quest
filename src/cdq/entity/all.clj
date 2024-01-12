@@ -10,6 +10,7 @@
                         line-render
                         mana
                         mouseover
+                        position
                         projectile-collision
                         shout
                         skills

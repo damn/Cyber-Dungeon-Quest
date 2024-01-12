@@ -1,19 +1,16 @@
 (ns cdq.state.npc-idle
-  (:require [gdl.math.vector :as v]
-            [cdq.context :refer [effect-useful? world-grid potential-field-follow-to-enemy skill-usable-state]]
+  (:require [cdq.context :refer [effect-useful? world-grid potential-field-follow-to-enemy skill-usable-state]]
             [cdq.entity :as entity]
             [cdq.state :as state]
             [cdq.world.cell :as cell]))
 
 (defn- effect-context [context entity*]
-  (let [cell (get (world-grid context)
-                  (utils.core/->tile (:entity/position entity*)))
+  (let [cell ((world-grid context) (entity/tile entity*))
         target (cell/nearest-entity @cell (entity/enemy-faction entity*))]
     {:effect/source (:entity/id entity*)
      :effect/target target
      :effect/direction (when target
-                         (v/direction (:entity/position entity*)
-                                      (:entity/position @target)))}))
+                         (entity/direction entity* @target))}))
 
 (defn- npc-choose-skill [effect-context entity*]
   (->> entity*
