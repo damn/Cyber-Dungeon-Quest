@@ -30,7 +30,7 @@
     (str "Range " maxrange " meters\n" (effect-text ctx hit-effect)))
 
   ; TODO target still exists ?! necessary ? what if disappears/dead?
-  ; TODO this is valid-params of hit-effect damage !!
+  ; TODO (:entity/hp @target) is valid-params of hit-effect damage !! -> allow anyway and just do nothing then?
   (effect/valid-params? [_ {:keys [effect/source effect/target] :as ctx}]
     (and source
          target
