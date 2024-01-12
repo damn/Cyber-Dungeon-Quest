@@ -58,8 +58,6 @@
   (swap! entity assoc :entity/destroyed? true)
   nil)
 
-; TODO maybe thrown-error move to screens/game !
-; maybe even z-orders ?!
 (defn- render-entity* [system entity* {::keys [thrown-error] :as ctx}]
   (try
    (dorun (apply-system system entity* ctx))
@@ -68,9 +66,7 @@
        (p/pretty-pst t)
        (reset! thrown-error t))
      (let [[x y] (:entity/position entity*)]
-       (draw-text ctx {:text (str "Render error entity " (:entity/uid entity*)
-                                  "\n"system
-                                  "\n" @thrown-error)
+       (draw-text ctx {:text (str "Error " (:entity/uid entity*))
                        :x x
                        :y y
                        :up? true})))))
