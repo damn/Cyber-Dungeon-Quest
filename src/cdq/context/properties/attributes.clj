@@ -6,6 +6,9 @@
 ; which components depend on which?
 ; which can not be removed?
 ; => removable/optional !
+; => for creature npc state it needs skills, etc.
+; => property/creature or creature/entity has different optional/required than other entities (stones)
+; because for creature we are adding npc-state / !player-state!
 
 ; TODO namespaced attr all sub-attrs (hit-effect, etc. , body not is record ? or transform @ body create-component)
 
@@ -79,13 +82,13 @@
 (defattribute :solid? {:widget :label :schema boolean?})
 
 (defattribute :entity/body          (map-attribute :width :height :solid?)) ; TODO body assert >+ min body size?
-(defattribute :entity/skills        (one-to-many-ids :property.type/spell))
-(defattribute :entity/inventory     (one-to-many-ids :property.type/item))
-(defattribute :entity/animation     animation)
-(defattribute :entity/mana          nat-int-attr)
-(defattribute :entity/flying?       boolean-attr)
-(defattribute :entity/hp            pos-int-attr)
-(defattribute :entity/movement      pos-attr)
+(defattribute :entity/skills        (one-to-many-ids :property.type/spell)) ; required by npc state, also mana!, also movement (no not needed, doesnt do anything then)
+(defattribute :entity/inventory     (one-to-many-ids :property.type/item)) ; optional
+(defattribute :entity/animation     animation) ; optional
+(defattribute :entity/mana          nat-int-attr) ; required @ npc state, for cost, check if nil
+(defattribute :entity/flying?       boolean-attr) ; optional, mixed with z-order
+(defattribute :entity/hp            pos-int-attr) ; required for target-entity (remove)
+(defattribute :entity/movement      pos-attr) ; optional, only assoc'ing movement-vector
 (defattribute :entity/reaction-time pos-attr)
 (defattribute :entity/faction       (enum :good :evil))
 
