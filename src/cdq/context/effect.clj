@@ -21,9 +21,7 @@
       (effect/render-info tx ctx))))
 
 (defn- invalid-tx [ctx txs]
-  (some #(when (not (effect/valid-params? % ctx))
-           %)
-        txs))
+  (some #(when (not (effect/valid-params? % ctx)) %) txs))
 
 (defmethod cdq.context/transact! :tx/effect [[_ effect-ctx txs] ctx]
   (let [ctx (merge ctx effect-ctx)]
