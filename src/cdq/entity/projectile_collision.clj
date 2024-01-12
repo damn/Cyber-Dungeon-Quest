@@ -11,7 +11,7 @@
 (defcomponent :entity/projectile-collision {:keys [hit-effect
                                                    already-hit-bodies
                                                    piercing?]}
-  (entity/create-component [[_ v] _ctx]
+  (entity/create-component [[_ v] _components _ctx]
     (assoc v :already-hit-bodies #{}))
 
   (entity/tick [[k _] entity* ctx]

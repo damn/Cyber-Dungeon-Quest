@@ -1,10 +1,10 @@
 (ns cdq.entity
   (:require [x.x :refer [defsystem]]))
 
-(defsystem create-component [_ ctx])
-(defsystem create  [_ entity* ctx])
-(defsystem destroy [_ entity* ctx])
-(defsystem tick    [_ entity* ctx])
+(defsystem create-component [_ components ctx])
+(defsystem create           [_ entity* ctx])
+(defsystem destroy          [_ entity* ctx])
+(defsystem tick             [_ entity* ctx])
 
 (defsystem render-below   [_ entity* ctx])
 (defsystem render-default [_ entity* ctx])

@@ -4,7 +4,7 @@
             [gdl.context :refer [draw-text]]
             [utils.core :refer [define-order sort-by-order]]
             [cdq.entity :as entity :refer [map->Entity]]
-            [cdq.context :refer [transact! transact-all! get-entity add-entity! remove-entity!]]))
+            [cdq.context :refer [transact! transact-all! get-entity]]))
 
 (defn- apply-system-transact-all! [ctx system entity*]
   (run! #(transact-all! ctx %) (apply-system system entity* ctx)))
@@ -46,12 +46,11 @@
          (not (contains? components :entity/uid))]}
   (let [entity (-> components
                    (assoc :entity/uid (unique-number!))
-                   (update-map entity/create-component ctx)
+                   (update-map entity/create-component components ctx)
                    map->Entity
                    atom)]
     (swap! entity assoc :entity/id entity)
-    (apply-system-transact-all! ctx entity/create @entity)
-    (add-entity! ctx entity))
+    (apply-system-transact-all! ctx entity/create @entity))
   nil)
 
 (defmethod transact! :tx/destroy [[_ entity] _ctx]
@@ -102,8 +101,7 @@
 
   (remove-destroyed-entities! [{::keys [uids->entities] :as ctx}]
     (doseq [entity (filter (comp :entity/destroyed? deref) (vals @uids->entities))]
-      (apply-system-transact-all! ctx entity/destroy @entity)
-      (remove-entity! ctx entity))))
+      (apply-system-transact-all! ctx entity/destroy @entity))))
 
 (defn ->context [& {:keys [z-orders]}]
   (assert (every? #(= "z-order" (namespace %)) z-orders))

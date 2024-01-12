@@ -3,5 +3,5 @@
             [cdq.entity :as entity]))
 
 (defcomponent :entity/mana max-mana
-  (entity/create-component [_ _ctx]
+  (entity/create-component [_ _components _ctx]
     [max-mana max-mana]))

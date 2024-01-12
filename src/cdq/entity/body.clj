@@ -22,13 +22,16 @@
                  rotation-angle
                  rotate-in-movement-direction?])
 
-(defcomponent :entity/body {:keys [left-bottom
-                                   width
-                                   height
-                                   solid?
-                                   rotation-angle
-                                   rotate-in-movement-direction?] :as body}
-  (entity/create-component [_ _ctx]
+(defcomponent :entity/body body
+  (entity/create-component [_ {:keys [entity/position]
+                               [x y] :entity/position
+                               {:keys [left-bottom
+                                       width
+                                       height
+                                       solid?
+                                       rotation-angle
+                                       rotate-in-movement-direction?]} :entity/body} _ctx]
+    (assert position)
     (assert (and width height
                  (>= width  (if solid? min-solid-body-size 0))
                  (>= height (if solid? min-solid-body-size 0))
@@ -36,7 +39,8 @@
                  (or (nil? rotation-angle)
                      (<= 0 rotation-angle 360))))
     (map->Body
-     {:left-bottom left-bottom
+     {:left-bottom [(- x (/ width  2))
+                    (- y (/ height 2))]
       :width  (float width)
       :height (float height)
       :half-width  (float (/ width  2))
@@ -46,14 +50,6 @@
       :solid? solid?
       :rotation-angle (or rotation-angle 0)
       :rotate-in-movement-direction? rotate-in-movement-direction?}))
-
-  (entity/create [_ {:keys [entity/id
-                            entity/position
-                            entity/body]
-                     [x y] :entity/position} _ctx]
-    (assert position)
-    [[:tx/assoc-in id [:entity/body :left-bottom] [(- x (/ (:width body)  2))
-                                                   (- y (/ (:height body) 2))]]])
 
   (entity/render-debug [_ _entity* context]
     (when show-body-bounds

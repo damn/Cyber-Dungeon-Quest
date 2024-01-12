@@ -6,7 +6,7 @@
             [gdl.math.vector :as v]
             [data.grid2d :as grid2d]
             [utils.core :refer [->tile tile->middle]]
-            [cdq.context :refer [transact-all! ray-blocked? content-grid world-grid get-property]]
+            [cdq.context :refer [transact! transact-all! ray-blocked? content-grid world-grid get-property]]
             [cdq.context.world.grid :refer [create-grid]]
             [cdq.context.world.content-grid :refer [->content-grid]]
             [cdq.state.player :as player-state]
@@ -117,25 +117,22 @@
   (world-grid [{:keys [context/world-map]}]
     (:grid world-map)))
 
-(extend-type gdl.context.Context
-  cdq.context/EntityWorld
-  (add-entity! [ctx entity]
-    (content-grid/update-entity! (content-grid ctx) entity)
-    (when (:entity/body @entity)
-      (world-grid/add-entity! (world-grid ctx) entity)))
-
-  (remove-entity! [ctx entity]
-    (content-grid/remove-entity! (content-grid ctx) entity)
-    (when (:entity/body @entity)
-      (world-grid/remove-entity! (world-grid ctx) entity))))
-
-(defn- position-changed! [ctx entity]
+(defmethod transact! :tx/add-to-world [[_ entity] ctx]
   (content-grid/update-entity! (content-grid ctx) entity)
   (when (:entity/body @entity)
-    (world-grid/entity-position-changed! (world-grid ctx) entity)))
+    (world-grid/add-entity! (world-grid ctx) entity))
+  nil)
 
-(defmethod cdq.context/transact! :tx/position-changed [[_ entity] ctx]
-  (position-changed! ctx entity)
+(defmethod transact! :tx/remove-from-world [[_ entity] ctx]
+  (content-grid/remove-entity! (content-grid ctx) entity)
+  (when (:entity/body @entity)
+    (world-grid/remove-entity! (world-grid ctx) entity))
+  nil)
+
+(defmethod transact! :tx/position-changed [[_ entity] ctx]
+  (content-grid/update-entity! (content-grid ctx) entity)
+  (when (:entity/body @entity)
+    (world-grid/entity-position-changed! (world-grid ctx) entity))
   nil)
 
 (defn- first-level [context]

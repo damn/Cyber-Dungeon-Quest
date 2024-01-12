@@ -24,7 +24,7 @@
 (def ^:private borders-px 1)
 
 (defcomponent :entity/hp hp
-  (entity/create-component [[_ max-hp] _ctx]
+  (entity/create-component [[_ max-hp] _components _ctx]
     [max-hp max-hp])
 
   (entity/render-info [_ {[x y] :entity/position

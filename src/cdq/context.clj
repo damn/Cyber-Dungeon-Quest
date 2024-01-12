@@ -25,10 +25,6 @@
   (content-grid [_])
   (world-grid [_]))
 
-(defprotocol EntityWorld
-  (add-entity! [_ entity])
-  (remove-entity! [_ entity]))
-
 (defprotocol EffectInterpreter
   (effect-text        [_ effect])
   (valid-params?      [_ effect])

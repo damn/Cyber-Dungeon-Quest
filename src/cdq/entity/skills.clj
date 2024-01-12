@@ -6,7 +6,7 @@
             [cdq.entity :as entity]))
 
 (defcomponent :entity/skills skills
-  (entity/create-component [_ ctx]
+  (entity/create-component [_ _components ctx]
     (zipmap skills (map #(get-property ctx %) skills)))
 
   (entity/tick [[k _] entity* ctx]

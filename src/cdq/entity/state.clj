@@ -9,16 +9,13 @@
                                     fsm
                                     state-obj
                                     state-obj-constructors]}
-  (entity/create [[k _] entity* ctx]
-    [[:tx/assoc
-      (:entity/id entity*)
-      k
-      ; initial state is nil, so associng it.
-      ; make bug report TODO
-      {:fsm (assoc (fsm initial-state nil)  ; throws when initial-state is not part of states
-                   :state initial-state)
-       :state-obj ((initial-state state-obj-constructors) ctx entity*)
-       :state-obj-constructors state-obj-constructors}]])
+  (entity/create-component [_ _components ctx]
+    ; initial state is nil, so associng it.
+    ; make bug report TODO
+    {:fsm (assoc (fsm initial-state nil)  ; throws when initial-state is not part of states
+                 :state initial-state)
+     :state-obj ((initial-state state-obj-constructors) ctx nil)
+     :state-obj-constructors state-obj-constructors})
 
   (entity/tick         [_ entity* ctx]         (state/tick state-obj entity* ctx))
   (entity/render-below [_ entity* ctx] (state/render-below state-obj entity* ctx))
