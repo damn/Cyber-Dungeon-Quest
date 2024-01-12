@@ -1,31 +1,51 @@
 (ns cdq.context.ecs
   (:require [clj-commons.pretty.repl :as p]
-            [x.x :refer [update-map]]
+            [x.x :refer [defcomponent update-map]]
             [gdl.context :refer [draw-text]]
             [utils.core :refer [define-order sort-by-order]]
             [cdq.entity :as entity :refer [map->Entity]]
             [cdq.context :refer [transact! transact-all! get-entity add-entity! remove-entity!]]))
 
-(defn- render-entity* [system entity* {::keys [thrown-error] :as context}]
-  (doseq [k (keys (methods @system))
-          :let [v (k entity*)]
-          :when v]
-    (try
-     (system [k v] entity* context)
-     (catch Throwable t
-       (when-not @thrown-error
-         (println "Render error for: entity " (:entity/uid entity*) " \n k " k "\n system" system)
-         (p/pretty-pst t)
-         (reset! thrown-error t))
-       (let [[x y] (:entity/position entity*)]
-         (draw-text context {:text (str "Render error entity " (:entity/uid entity*) "\n" k "\n"system "\n" @thrown-error)
-                             :x x
-                             :y y
-                             :up? true}))))))
+(def ^:private log-txs? false)
 
-(let [cnt (atom 0)]
-  (defn- unique-number! []
-    (swap! cnt inc)))
+(defn- debug-print-tx [tx]
+  (pr-str (mapv #(cond
+                  (instance? clojure.lang.Atom %) (str "<Entity[uid=" (:entity/uid @%) "]>")
+                  (instance? gdl.backends.libgdx.context.image_drawer_creator.Image %) "<Image>"
+                  (instance? gdl.graphics.animation.ImmutableAnimation %) "<Animation>"
+                  (instance? gdl.context.Context %) "<Context>"
+                  :else %)
+                tx)))
+
+(defn- log-tx [tx]
+  (when-not (= :tx/cursor (first tx))
+    (println (debug-print-tx tx))))
+
+(extend-type gdl.context.Context
+  cdq.context/TransactionHandler
+  (transact-all! [ctx txs]
+    (doseq [tx txs :when tx]
+      (try (let [result (transact! tx ctx)]
+             (if (and (nil? result) log-txs?)
+               (log-tx tx)
+               (transact-all! ctx result)))
+           (catch Throwable t
+             (println "Error with transaction: \n" (debug-print-tx tx))
+             (throw t))))))
+
+(defn- system-transactions! [system entity ctx]
+  (doseq [k (keys (methods @system))
+          :let [entity* @entity
+                v (k entity*)]
+          :when v]
+    (let [txs (system [k v] entity* ctx)]
+      (when (seq txs)
+        (when log-txs?
+          (println (:entity/uid entity*) "-" k))
+        (try (transact-all! ctx txs)
+             (catch Throwable t
+               (println "Error with defcomponent:" k "system:" system "txs: \n" (map debug-print-tx txs))
+               (throw t)))))))
 
 (defmethod transact! :tx/assoc [[_ entity k v] _ctx]
   (assert (keyword? k))
@@ -46,73 +66,52 @@
   (swap! entity update-in (drop-last ks) dissoc (last ks))
   nil)
 
-(declare create-entity!)
+(defcomponent :entity/uid uid
+  (entity/create [_ {:keys [entity/id]} {::keys [uids->entities]}]
+    (swap! uids->entities assoc uid id)
+    nil)
+
+  (entity/destroy [_ _entity* {::keys [uids->entities]}]
+    (swap! uids->entities dissoc uid)
+    nil))
+
+(let [cnt (atom 0)]
+  (defn- unique-number! []
+    (swap! cnt inc)))
 
 (defmethod transact! :tx/create [[_ components] ctx]
-  (create-entity! ctx components)
+  {:pre [(not (contains? components :entity/id))
+         (not (contains? components :entity/uid))]}
+  (let [entity (-> components
+                   (assoc :entity/uid (unique-number!))
+                   (update-map entity/create-component ctx)
+                   map->Entity
+                   atom)]
+    (swap! entity assoc :entity/id entity)
+    (system-transactions! #'entity/create entity ctx)
+    (add-entity! ctx entity))
   nil)
 
 (defmethod transact! :tx/destroy [[_ entity] _ctx]
   (swap! entity assoc :entity/destroyed? true)
   nil)
 
-(def ^:private log-txs? false)
-
-(defn- debug-print-tx [tx]
-  (pr-str (mapv #(cond
-                  (instance? clojure.lang.Atom %) (:entity/uid @%)
-                  (instance? gdl.backends.libgdx.context.image_drawer_creator.Image %) "<Image>"
-                  (instance? gdl.graphics.animation.ImmutableAnimation %) "<Animation>"
-                  (instance? gdl.context.Context %) "<Context>"
-                  :else %)
-                tx)))
-
-(defn- log-tx [tx]
-  (when-not (= :tx/cursor (first tx))
-    (println (debug-print-tx tx))))
-
-(extend-type gdl.context.Context
-  cdq.context/TransactionHandler
-  (transact-all! [ctx txs]
-    (doseq [tx txs :when tx]
-      (when log-txs? (log-tx tx))
-      (try (transact-all! ctx (transact! tx ctx))
-           (catch Throwable t
-             (println "Error with transaction: \n" (debug-print-tx tx))
-             (throw t))))))
-
-(defn- system-transactions! [system entity ctx]
-  (doseq [k (keys (methods system))
-          :let [entity* @entity
-                v (k entity*)]
+(defn- render-entity* [system entity* {::keys [thrown-error] :as context}]
+  (doseq [k (keys (methods @system))
+          :let [v (k entity*)]
           :when v]
-    (let [txs (system [k v] entity* ctx)]
-      (when (seq txs)
-        (when log-txs?
-          (println (:entity/uid entity*) "-" k))
-        (try (transact-all! ctx txs)
-             (catch Throwable t
-               (println "Error with " k " and txs: \n" (map debug-print-tx txs))
-               (throw t)))))))
-
-(defn- create-entity! [{::keys [uids->entities] :as context} components-map]
-  {:pre [(not (contains? components-map :entity/id))
-         (not (contains? components-map :entity/uid))
-         (:entity/position components-map)]}
-  (try
-   (let [entity (-> components-map
-                    (update-map entity/create-component context)
-                    map->Entity
-                    atom)
-         uid (unique-number!)]
-     (swap! entity assoc :entity/id entity :entity/uid uid)
-     (swap! uids->entities assoc uid entity)
-     (system-transactions! entity/create entity context)
-     (add-entity! context entity)
-     entity)
-   (catch Throwable t
-     (println "Error with: " components-map)
-     (throw t))))
+    (try
+     (system [k v] entity* context)
+     (catch Throwable t
+       (when-not @thrown-error
+         (println "Render error for: entity " (:entity/uid entity*) " \n k " k "\n system" system)
+         (p/pretty-pst t)
+         (reset! thrown-error t))
+       (let [[x y] (:entity/position entity*)]
+         (draw-text context {:text (str "Render error entity " (:entity/uid entity*) "\n" k "\n"system "\n" @thrown-error)
+                             :x x
+                             :y y
+                             :up? true}))))))
 
 (extend-type gdl.context.Context
   cdq.context/EntityComponentSystem
@@ -121,7 +120,7 @@
 
   (tick-entity! [{::keys [thrown-error] :as context} entity]
     (try
-     (system-transactions! entity/tick entity context)
+     (system-transactions! #'entity/tick entity context)
      (catch Throwable t
        (p/pretty-pst t)
        (println "Entity id: " (:entity/uid @entity))
@@ -144,8 +143,7 @@
 
   (remove-destroyed-entities! [{::keys [uids->entities] :as context}]
     (doseq [entity (filter (comp :entity/destroyed? deref) (vals @uids->entities))]
-      (system-transactions! entity/destroy entity context)
-      (swap! uids->entities dissoc (:entity/uid @entity))
+      (system-transactions! #'entity/destroy entity context)
       (remove-entity! context entity))))
 
 (defn ->context [& {:keys [z-orders]}]
