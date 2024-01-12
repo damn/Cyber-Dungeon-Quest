@@ -80,6 +80,11 @@
        (p/pretty-pst t)
        (reset! thrown-error t)))))
 
+(def ^:private render-systems [entity/render-below
+                               entity/render-default
+                               entity/render-above
+                               entity/render-info])
+
 (extend-type gdl.context.Context
   cdq.context/EntityComponentSystem
   (get-entity [{::keys [uids->entities]} uid]
@@ -90,10 +95,7 @@
                            (sort-by-order (group-by :entity/z-order entities*)
                                           first
                                           render-on-map-order))
-            system [entity/render-below
-                    entity/render-default
-                    entity/render-above
-                    entity/render-info]
+            system render-systems
             entity* entities*]
       (render-entity* system entity* context))
     (doseq [entity* entities*]
