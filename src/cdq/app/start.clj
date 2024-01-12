@@ -7,7 +7,8 @@
                          builder
                          effect
                          potential-fields
-                         render-debug)
+                         render-debug
+                         transaction-handler)
             cdq.entity.all
             [cdq.entity.movement :refer [frames-per-second]]
             (cdq.context.ui [action-bar :as action-bar]

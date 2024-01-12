@@ -84,7 +84,7 @@
                             context/player-entity
                             world-camera]
                      :as context}
-                    active-entities]
+                    active-entities*]
   (camera/set-position! world-camera (:entity/position @player-entity))
   (set-map-render-data! context)
   (render-tiled-map context
@@ -94,8 +94,7 @@
                      (fn [context]
                        (debug-render-before-entities context)
                        (render-entities* context
-                                         (->> active-entities
-                                              (map deref)
+                                         (->> active-entities*
                                               (filter :entity/z-order)
                                               (filter #(line-of-sight? context @player-entity %)))) ; TODO here debug los disable
                        (debug-render-after-entities context))))
@@ -123,8 +122,8 @@
       (update-elapsed-game-time! ctx)
       ; sowieso keine bewegungen / kein update gemacht ? checkt nur tiles ?
       (update-potential-fields! ctx active-entities)
-      (doseq [entity active-entities]
-        (tick-entity! ctx entity)))
+      (doseq [entity* (map deref active-entities)]
+        (tick-entity! ctx entity*)))
     ; do not pause this as for example pickup item, should be destroyed.
     (remove-destroyed-entities! ctx)
     (end-of-frame-checks! ctx)))
@@ -138,7 +137,7 @@
 
   (render [_ {:keys [context/player-entity] :as context}]
     (let [active-entities (active-entities (content-grid context) player-entity)]
-      (render-game context active-entities)
+      (render-game context (map deref active-entities))
       (update-game context active-entities))))
 
 (defn screen [context]
