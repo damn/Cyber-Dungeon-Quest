@@ -3,7 +3,7 @@
   :dependencies [[org.clojure/clojure "1.11.1"]
                  [com.github.damn/grid2d "1.0"]
                  [com.github.damn/gdl "18af6da"]
-                 [com.github.damn/x.x "f9bf4a2"]
+                 [com.github.damn/x.x "55f3c15"]
                  [reduce-fsm "0.1.4"]
                  [metosin/malli "0.13.0"]
                  ;[lein-hiera "2.0.0"]
