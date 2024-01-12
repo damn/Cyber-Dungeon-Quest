@@ -114,12 +114,15 @@
       (damage->text damage))) ; property menu no source,modifiers
 
   (effect/valid-params? [_ {:keys [effect/source effect/target]}]
-    (and source target (:entity/hp @target)))
+    (and source target))
 
   (transact! [_ {:keys [effect/source effect/target]}]
     (let [source* @source
           {:keys [entity/position entity/hp] :as target*} @target]
       (cond
+       (not hp)
+       nil
+
        (no-hp-left? hp)
        nil
 
