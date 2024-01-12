@@ -1,26 +1,13 @@
 (ns cdq.context.ecs
   (:require [clj-commons.pretty.repl :as p]
-            [x.x :refer [defcomponent update-map]]
+            [x.x :refer [defcomponent update-map apply-system]]
             [gdl.context :refer [draw-text]]
             [utils.core :refer [define-order sort-by-order]]
             [cdq.entity :as entity :refer [map->Entity]]
             [cdq.context :refer [transact! transact-all! get-entity add-entity! remove-entity!]]))
 
-(def ^:private log-systems? false)
-
-(defn- apply-system [system-var entity* ctx]
-  (for [k (keys (methods @system-var))
-        :let [v (k entity*)]
-        :when v]
-    (do
-     (when log-systems? (println [(:entity/uid entity*) k]))
-     (try (system-var [k v] entity* ctx)
-          (catch Throwable t
-            (println "Error with entity" (:entity/uid entity*) "defcomponent:" k "system:" system-var)
-            (throw t))))))
-
-(defn- apply-system-transact-all! [ctx system-var entity*]
-  (run! #(transact-all! ctx %) (apply-system system-var entity* ctx)))
+(defn- apply-system-transact-all! [ctx system entity*]
+  (run! #(transact-all! ctx %) (apply-system system entity* ctx)))
 
 (defmethod transact! :tx/assoc [[_ entity k v] _ctx]
   (assert (keyword? k))
@@ -63,7 +50,7 @@
                    map->Entity
                    atom)]
     (swap! entity assoc :entity/id entity)
-    (apply-system-transact-all! ctx #'entity/create @entity)
+    (apply-system-transact-all! ctx entity/create @entity)
     (add-entity! ctx entity))
   nil)
 
@@ -71,16 +58,18 @@
   (swap! entity assoc :entity/destroyed? true)
   nil)
 
-(defn- render-entity* [system-var entity* {::keys [thrown-error] :as ctx}]
+; TODO maybe thrown-error move to screens/game !
+; maybe even z-orders ?!
+(defn- render-entity* [system entity* {::keys [thrown-error] :as ctx}]
   (try
-   (dorun (apply-system system-var entity* ctx))
+   (dorun (apply-system system entity* ctx))
    (catch Throwable t
      (when-not @thrown-error
        (p/pretty-pst t)
        (reset! thrown-error t))
      (let [[x y] (:entity/position entity*)]
        (draw-text ctx {:text (str "Render error entity " (:entity/uid entity*)
-                                  "\n"system-var
+                                  "\n"system
                                   "\n" @thrown-error)
                        :x x
                        :y y
@@ -90,7 +79,7 @@
   entity/Tick
   (tick! [entity* {::keys [thrown-error] :as ctx}]
     (try
-     (apply-system-transact-all! ctx #'entity/tick entity*)
+     (apply-system-transact-all! ctx entity/tick entity*)
      (catch Throwable t
        (p/pretty-pst t)
        (reset! thrown-error t)))))
@@ -105,18 +94,18 @@
                            (sort-by-order (group-by :entity/z-order entities*)
                                           first
                                           render-on-map-order))
-            system [#'entity/render-below
-                    #'entity/render-default
-                    #'entity/render-above
-                    #'entity/render-info]
+            system [entity/render-below
+                    entity/render-default
+                    entity/render-above
+                    entity/render-info]
             entity* entities*]
       (render-entity* system entity* context))
     (doseq [entity* entities*]
-      (render-entity* #'entity/render-debug entity* context)))
+      (render-entity* entity/render-debug entity* context)))
 
   (remove-destroyed-entities! [{::keys [uids->entities] :as ctx}]
     (doseq [entity (filter (comp :entity/destroyed? deref) (vals @uids->entities))]
-      (apply-system-transact-all! ctx #'entity/destroy @entity)
+      (apply-system-transact-all! ctx entity/destroy @entity)
       (remove-entity! ctx entity))))
 
 (defn ->context [& {:keys [z-orders]}]
