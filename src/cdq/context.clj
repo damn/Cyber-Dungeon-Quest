@@ -7,8 +7,9 @@
   (transact-all! [_ txs]))
 
 (defprotocol EntityComponentSystem
-  (get-entity [_ id])
-  (render-entities* [_ entities*] "Draws entities* in the correct z-order and in the order of render-systems for each z-order.")
+  (get-entity [_ uid])
+  (tick-entities!   [_ entities*] "Calls tick system on all components of entities.")
+  (render-entities! [_ entities*] "Draws entities* in the correct z-order and in the order of render-systems for each z-order.")
   (remove-destroyed-entities! [_] "Calls destroy on all entities which are marked with ':tx/destroy'"))
 
 (defprotocol MouseOverEntity

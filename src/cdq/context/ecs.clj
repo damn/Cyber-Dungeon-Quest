@@ -71,15 +71,6 @@
                        :y y
                        :up? true})))))
 
-(extend-type cdq.entity.Entity
-  entity/Tick
-  (tick! [entity* {::keys [thrown-error] :as ctx}]
-    (try
-     (apply-system-transact-all! ctx entity/tick entity*)
-     (catch Throwable t
-       (p/pretty-pst t)
-       (reset! thrown-error t)))))
-
 (def ^:private render-systems [entity/render-below
                                entity/render-default
                                entity/render-above
@@ -90,7 +81,15 @@
   (get-entity [{::keys [uids->entities]} uid]
     (get @uids->entities uid))
 
-  (render-entities* [{::keys [render-on-map-order] :as context} entities*]
+  (tick-entities! [{::keys [thrown-error] :as ctx} entities*]
+    (doseq [entity* entities*]
+      (try
+       (apply-system-transact-all! ctx entity/tick entity*)
+       (catch Throwable t
+         (p/pretty-pst t)
+         (reset! thrown-error t)))))
+
+  (render-entities! [{::keys [render-on-map-order] :as context} entities*]
     (doseq [entities* (map second
                            (sort-by-order (group-by :entity/z-order entities*)
                                           first

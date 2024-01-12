@@ -7,9 +7,7 @@
             [gdl.input.keys :as input.keys]
             [gdl.scene2d.actor :refer [visible? set-visible! toggle-visible!]]
             [utils.core :refer [safe-get]]
-            [cdq.context :refer [render-entities* ray-blocked? explored? set-explored! line-of-sight? content-grid
-                                  remove-destroyed-entities! update-mouseover-entity! update-potential-fields!
-                                  update-elapsed-game-time! debug-render-after-entities debug-render-before-entities set-cursor! transact-all! windows id->window]]
+            [cdq.context :refer [render-entities! tick-entities! ray-blocked? explored? set-explored! line-of-sight? content-grid remove-destroyed-entities! update-mouseover-entity! update-potential-fields! update-elapsed-game-time! debug-render-after-entities debug-render-before-entities set-cursor! transact-all! windows id->window]]
             cdq.context.ui.actors
             [cdq.entity :as entity]
             [cdq.entity.movement :as movement]
@@ -93,7 +91,7 @@
   (render-world-view context
                      (fn [context]
                        (debug-render-before-entities context)
-                       (render-entities* context
+                       (render-entities! context
                                          (->> active-entities*
                                               (filter :entity/z-order)
                                               (filter #(line-of-sight? context @player-entity %)))) ; TODO here debug los disable
@@ -124,7 +122,7 @@
     (when-not paused?
       (update-elapsed-game-time! ctx)
       (update-potential-fields! ctx active-entities)
-      (run! #(entity/tick! % ctx) (map deref active-entities)))
+      (tick-entities! ctx (map deref active-entities)))
     (remove-destroyed-entities! ctx) ; do not pause this as for example pickup item, should be destroyed.
     (end-of-frame-checks! ctx)))
 
