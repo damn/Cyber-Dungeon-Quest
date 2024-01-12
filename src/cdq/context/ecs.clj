@@ -86,21 +86,20 @@
                        :y y
                        :up? true})))))
 
+(extend-type cdq.entity.Entity
+  entity/Tick
+  (tick! [entity* {::keys [thrown-error] :as ctx}]
+    (try
+     (apply-system-transact-all! ctx #'entity/tick entity*)
+     (catch Throwable t
+       (p/pretty-pst t)
+       (reset! thrown-error t)))))
+
 (extend-type gdl.context.Context
   cdq.context/EntityComponentSystem
   ; uid->entity ?
   (get-entity [{::keys [uids->entities]} uid]
     (get @uids->entities uid))
-
-  ; entity/tick! ? entity protocol ?
-  ; entity* first arg ?
-  ; entity/render! too ?
-  (tick-entity! [{::keys [thrown-error] :as ctx} entity*]
-    (try
-     (apply-system-transact-all! ctx #'entity/tick entity*)
-     (catch Throwable t
-       (p/pretty-pst t)
-       (reset! thrown-error t))))
 
   (render-entities* [{::keys [render-on-map-order] :as context} entities*]
     (doseq [entities* (map second

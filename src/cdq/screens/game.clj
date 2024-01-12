@@ -8,7 +8,7 @@
             [gdl.scene2d.actor :refer [visible? set-visible! toggle-visible!]]
             [utils.core :refer [safe-get]]
             [cdq.context :refer [render-entities* ray-blocked? explored? set-explored! line-of-sight? content-grid
-                                  tick-entity! remove-destroyed-entities! update-mouseover-entity! update-potential-fields!
+                                  remove-destroyed-entities! update-mouseover-entity! update-potential-fields!
                                   update-elapsed-game-time! debug-render-after-entities debug-render-before-entities set-cursor! transact-all! windows id->window]]
             cdq.context.ui.actors
             [cdq.entity :as entity]
@@ -105,6 +105,9 @@
   (assoc ctx :context/delta-time (min (delta-time ctx)
                                       movement/max-delta-time)))
 
+(defn- step-one-frame? [ctx]
+  (key-just-pressed? ctx input.keys/p))
+
 (defn- update-game [{:keys [context/player-entity
                             context/game-paused?
                             cdq.context.ecs/thrown-error]
@@ -113,19 +116,16 @@
   (let [state-obj (entity/state-obj @player-entity)
         _ (transact-all! ctx (state/manual-tick state-obj @player-entity ctx))
         paused? (reset! game-paused? (or @thrown-error
-                                         (and pausing? (state/pause-game? state-obj))))
+                                         (and pausing?
+                                              (state/pause-game? state-obj)
+                                              (not (step-one-frame? ctx)))))
         ctx (assoc-delta-time ctx)]
-    ; this do always so can get debug info even when game not running
-    (update-mouseover-entity! ctx)
-    (when (or (not paused?)
-              (key-just-pressed? ctx input.keys/p))
+    (update-mouseover-entity! ctx) ; this do always so can get debug info even when game not running
+    (when-not paused?
       (update-elapsed-game-time! ctx)
-      ; sowieso keine bewegungen / kein update gemacht ? checkt nur tiles ?
       (update-potential-fields! ctx active-entities)
-      (doseq [entity* (map deref active-entities)]
-        (tick-entity! ctx entity*)))
-    ; do not pause this as for example pickup item, should be destroyed.
-    (remove-destroyed-entities! ctx)
+      (run! #(entity/tick! % ctx) (map deref active-entities)))
+    (remove-destroyed-entities! ctx) ; do not pause this as for example pickup item, should be destroyed.
     (end-of-frame-checks! ctx)))
 
 (defrecord SubScreen []

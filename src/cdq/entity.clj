@@ -14,6 +14,9 @@
 
 (defrecord Entity [])
 
+(defprotocol Tick
+  (tick! [_ ctx] "Calls all tick systems on all components."))
+
 (defprotocol Position
   (tile [_] "Center integer coordinates")
   (direction [_ other-entity*] "Returns direction vector from this entity to the other entity."))
