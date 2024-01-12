@@ -2,22 +2,20 @@
   (:require [malli.core :as m]
             [data.val-max :refer [val-max-schema]]))
 
-; TODO attributes themself schema & namespaced keys & data-based attribute editor?
-; TODO entity components, what subset is allowed? which components depend on which? which can not be removed?
-; TODO namespaced attr all sub-attrs.
-; TODO one-liner, use constructor for type, sorted alphabetically with constructor fns
+; TODO entity components, what subset is allowed?
+; which components depend on which?
+; which can not be removed?
+; => removable/optional !
 
-(comment
- ; this is not done anymore @ tx/entity -> do it? how to?
- (def ^:private modifier-attributes (keys modifier/modifier-definitions))
- (assert (= (set (filter #(= "modifier" (namespace %)) (keys attributes)))
-            (set modifier-attributes))))
+; TODO namespaced attr all sub-attrs (hit-effect, etc. , body not is record ? or transform @ body create-component)
 
 ;;
 
 (def attributes {})
 
 (defn- defattribute [k data]
+  (assert (:schema data) k)
+  (assert (:widget data) k)
   (alter-var-root #'attributes assoc k data))
 
 ;; attribute types
@@ -38,10 +36,17 @@
    :items items})
 
 ; TODO not checking if one of existing ids used
+; widget requires property/image.
 (defn- one-to-many-ids [property-type]
   {:widget :one-to-many
    :schema [:set :qualified-keyword]
-   :linked-property-type property-type})
+   :linked-property-type property-type}) ; => fetch from schema namespaced ?
+
+(defn- map-attribute [& attr-ks] ; TODO similar to components-attribute
+  {:widget :nested-map
+   :schema (vec (concat [:map {:closed true}]
+                        (for [k attr-ks]
+                          (vector k (:schema (get attributes k))))))})
 
 (defn- components-attribute [component-namespace]
   (let [component-attributes (filter #(= (name component-namespace) (namespace %))
@@ -50,8 +55,11 @@
      :schema (vec (concat [:map {:closed true}]
                           (for [k component-attributes]
                             [k {:optional true} (:schema (get attributes k))])))
-     :components component-attributes}))
+     :components component-attributes})) ; => fetch from schema ? (optional? )
 
+;;
+
+; TODO this is == :optional key @ components-attribute ?
 (defn removable-component? [k]
   (#{"tx" "modifier" "entity"} (namespace k)))
 
@@ -61,15 +69,15 @@
 (defattribute :property/sound       sound)
 (defattribute :property/pretty-name string-attr)
 
-; TODO body assert >+ min body size?
-(defattribute :entity/body {:widget :nested-map ; -> reuse map-attribute-schema, just list nested attributes
-                            :schema [:map {:closed true}
-                                     [:width pos?]
-                                     [:height pos?]
-                                     [:solid? :boolean]]
-                            :default-value {:width 0.5
-                                            :height 0.5
-                                            :solid? true}})
+; TODO how 2 do default values,its not default-values , its non-optional attributes !
+; similar to components nested-map
+;:default-value {:width 0.5 :height 0.5 :solid? true}
+
+(defattribute :width  pos-attr)
+(defattribute :height pos-attr)
+(defattribute :solid? boolean-attr)
+
+(defattribute :entity/body          (map-attribute :width :height :solid?)) ; TODO body assert >+ min body size?
 (defattribute :entity/skills        (one-to-many-ids :property.type/spell))
 (defattribute :entity/inventory     (one-to-many-ids :property.type/item))
 (defattribute :entity/animation     animation)
@@ -82,25 +90,20 @@
 
 (defattribute :property/entity (components-attribute :entity))
 
-; TODO not used @ tx/damage map attr
 (defattribute :damage/type    (enum :physical :magic))
 (defattribute :damage/min-max val-max-attr)
 
-(defattribute :tx/damage          {:widget :nested-map
-                                   :schema [:map {:closed true}
-                                            [:damage/type [:enum :physical :magic]]
-                                            [:damage/min-max (m/form val-max-schema)]]
-                                   :default-value {:damage/type :physical
-                                                   :damage/min-max [1 10]}})
+(defattribute :maxrange           pos-attr)
+
+(defattribute :tx/damage          (map-attribute :damage/type :damage/min-max))
 (defattribute :tx/sound           sound)
 (defattribute :tx/spawn           {:widget :text-field :schema [:qualified-keyword {:namespace :creatures}]}) ; => one to one attr!
 (defattribute :tx/stun            pos-attr)
 (defattribute :tx/restore-hp-mana {:widget :text-field :schema [:= true]}) ; TODO no schema
 (defattribute :tx/projectile      {:widget :text-field :schema [:= true]})
-(defattribute :maxrange           {:widget :text-field}) ; TODO no schema
-(defattribute :tx/target-entity   {:widget :nested-map
+(defattribute :tx/target-entity   {:widget :nested-map ; TODO circular depdenency components-attribute  - cannot use map-attribute..
                                    :schema [:map {:closed true}
-                                            [:hit-effect [:map]] ; TODO circular depdenency components-attribute
+                                            [:hit-effect [:map]]
                                             [:maxrange pos?]]
                                    :default-value {:hit-effect {}
                                                    :max-range 2.0}})
@@ -117,7 +120,7 @@
 (defattribute :modifier/damage       {:widget :text-field :schema :some}) ; TODO no schema
 
 (defattribute :item/modifier (components-attribute :modifier))
-(defattribute :item/slot     {:widget :label :schema [:qualified-keyword {:namespace :inventory.slot}]}) ; TODO one of ...
+(defattribute :item/slot     {:widget :label :schema [:qualified-keyword {:namespace :inventory.slot}]}) ; TODO one of ... == 'enum' !!
 
 (defattribute :creature/species {:widget :label      :schema [:qualified-keyword {:namespace :species}]}) ; TODO not used ... but one of?
 (defattribute :creature/level   {:widget :text-field :schema [:maybe pos-int?]}) ; pos-int-attr ? ; TODO creature lvl >0, <max-lvls (9 ?)
