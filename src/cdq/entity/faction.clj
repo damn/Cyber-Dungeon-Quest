@@ -1,5 +1,5 @@
 (ns cdq.entity.faction
-  (:require cdq.entity))
+  (:require [cdq.entity :as entity]))
 
 (extend-type cdq.entity.Entity
   entity/Faction

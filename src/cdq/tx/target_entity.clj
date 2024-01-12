@@ -3,7 +3,8 @@
             [gdl.context :refer [draw-line]]
             [gdl.math.vector :as v]
             [cdq.context :refer [transact! effect-text line-of-sight? line-entity]]
-            [cdq.effect :as effect]))
+            [cdq.effect :as effect]
+            [cdq.entity :as entity]))
 
 (defn- in-range? [entity* target maxrange] ; == circle-collides?
   (< (- (v/distance (:entity/position entity*)
