@@ -42,7 +42,7 @@
         "modules.tmx"
     ],
     "project": "project.tiled-project",
-    "property.type": "movement",
+    "property.type": "string",
     "recentFiles": [
         "modules.tmx",
         "floor.tsx",

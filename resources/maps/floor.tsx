@@ -71,6 +71,41 @@
    <property name="movement" value="all"/>
   </properties>
  </tile>
+ <tile id="14">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="15">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="16">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="17">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="18">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="19">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="20">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
  <tile id="56">
   <properties>
    <property name="movement" value="all"/>
@@ -137,6 +172,41 @@
   </properties>
  </tile>
  <tile id="69">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="70">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="71">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="72">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="73">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="74">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="75">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="76">
   <properties>
    <property name="movement" value="all"/>
   </properties>
@@ -211,6 +281,41 @@
    <property name="movement" value="all"/>
   </properties>
  </tile>
+ <tile id="126">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="127">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="128">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="129">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="130">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="131">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="132">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
  <tile id="168">
   <properties>
    <property name="movement" value="all"/>
@@ -277,6 +382,41 @@
   </properties>
  </tile>
  <tile id="181">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="182">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="183">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="184">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="185">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="186">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="187">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="188">
   <properties>
    <property name="movement" value="all"/>
   </properties>
@@ -351,6 +491,41 @@
    <property name="movement" value="all"/>
   </properties>
  </tile>
+ <tile id="238">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="239">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="240">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="241">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="242">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="243">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="244">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
  <tile id="280">
   <properties>
    <property name="movement" value="all"/>
@@ -411,6 +586,36 @@
    <property name="movement" value="all"/>
   </properties>
  </tile>
+ <tile id="294">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="295">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="296">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="297">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="298">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="299">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
  <tile id="336">
   <properties>
    <property name="movement" value="all"/>
@@ -467,6 +672,36 @@
   </properties>
  </tile>
  <tile id="348">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="350">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="351">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="352">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="353">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="354">
+  <properties>
+   <property name="movement" value="all"/>
+  </properties>
+ </tile>
+ <tile id="355">
   <properties>
    <property name="movement" value="all"/>
   </properties>
