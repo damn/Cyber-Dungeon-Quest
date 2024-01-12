@@ -97,7 +97,6 @@
 
 (extend-type gdl.context.Context
   cdq.context/EntityComponentSystem
-  ; uid->entity ?
   (get-entity [{::keys [uids->entities]} uid]
     (get @uids->entities uid))
 
@@ -106,7 +105,6 @@
                            (sort-by-order (group-by :entity/z-order entities*)
                                           first
                                           render-on-map-order))
-            ; vars so I can see the function name @ error (can I do this with x.x? give multimethods names?)
             system [#'entity/render-below
                     #'entity/render-default
                     #'entity/render-above
