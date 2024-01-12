@@ -4,7 +4,7 @@
             [cdq.context :refer [transact! get-property]]
             [cdq.entity :as entity]))
 
-(defmethod cdq.context/transact! :tx/creature [[_ creature-id extra-components] ctx]
+(defmethod transact! :tx/creature [[_ creature-id extra-components] ctx]
   (let [entity-components (:property/entity (get-property ctx creature-id))]
     [[:tx/create (merge entity-components
                         extra-components
@@ -38,7 +38,7 @@
               :line-render {:thick? thick? :end end :color color}
               :delete-after-duration duration}))
 
-(defmethod cdq.context/transact! :tx/audiovisual [[_ position id] ctx]
+(defmethod transact! :tx/audiovisual [[_ position id] ctx]
   (let [{:keys [property/sound
                 entity/animation]} (get-property ctx id)]
     [[:tx/sound sound]
