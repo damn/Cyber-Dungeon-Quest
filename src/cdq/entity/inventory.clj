@@ -132,7 +132,7 @@
   (pickup-item @entity item))
 
 (extend-type cdq.entity.Entity
-  cdq.entity/Inventory
+  entity/Inventory
   (can-pickup-item? [entity* item]
     (boolean (pickup-item entity* item))))
 

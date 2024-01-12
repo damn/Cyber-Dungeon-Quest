@@ -26,7 +26,7 @@
   (entity/render-info  [_ entity* ctx] (state/render-info  state-obj entity* ctx)))
 
 (extend-type cdq.entity.Entity
-  cdq.entity/State
+  entity/State
   (state [entity*]
     (-> entity* :entity/state :fsm :state))
 

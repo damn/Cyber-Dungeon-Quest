@@ -16,7 +16,7 @@
       [:tx/assoc-in (:entity/id entity*) [k id :skill/cooling-down?] false])))
 
 (extend-type cdq.entity.Entity
-  cdq.entity/Skills
+  entity/Skills
   (has-skill? [{:keys [entity/skills]} {:keys [property/id]}]
     (contains? skills id)))
 

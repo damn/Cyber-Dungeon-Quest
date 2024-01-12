@@ -2,7 +2,7 @@
   (:require cdq.entity))
 
 (extend-type cdq.entity.Entity
-  cdq.entity/Faction
+  entity/Faction
   (enemy-faction [{:keys [entity/faction]}]
     (case faction
       :evil :good
