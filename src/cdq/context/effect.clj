@@ -20,7 +20,12 @@
     (doseq [tx txs]
       (effect/render-info tx ctx))))
 
+(defn- invalid-tx [ctx txs]
+  (some #(when (not (effect/valid-params? % ctx))
+           %)
+        txs))
+
 (defmethod cdq.context/transact! :tx/effect [[_ effect-ctx txs] ctx]
   (let [ctx (merge ctx effect-ctx)]
-    (assert (valid-params? ctx txs))
+    (assert (valid-params? ctx txs) (pr-str (invalid-tx ctx txs)))
     (transact-all! ctx txs)))
