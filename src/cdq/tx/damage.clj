@@ -121,10 +121,10 @@
           {:keys [entity/position entity/hp] :as target*} @target]
       (cond
        (not hp)
-       nil
+       []
 
        (no-hp-left? hp)
-       nil
+       []
 
        (blocks? (effective-block-rate source* target* :stats/shield type))
        [[:tx/add-text-effect target "[WHITE]SHIELD"]]

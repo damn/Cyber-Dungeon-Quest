@@ -31,14 +31,18 @@
     (actor/set-id! button id)
     (add-tooltip! button #(player-tooltip-text % skill))
     (add-actor! horizontal-group button)
-    (add! button-group button)))
+    (add! button-group button)
+    nil
+    ))
 
 (defmethod cdq.context/transact! :tx/actionbar-remove-skill
   [[_ {:keys [property/id]}]
    {{:keys [horizontal-group button-group]} ::data}]
   (let [button (get horizontal-group id)]
     (remove! button)
-    (button-group/remove! button-group button)))
+    (button-group/remove! button-group button)
+    nil
+    ))
 
 (comment
 

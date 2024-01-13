@@ -95,6 +95,25 @@
     (remove-destroyed-entities! ctx) ; do not pause this as for example pickup item, should be destroyed.
     (end-of-frame-checks! ctx)))
 
+; TODO RESET WORLD STATE
+; * ecs
+; * world
+
+; * 1. :tx/destroy ALL entities
+; * 2. replay create entities txs (can only do this too)
+; * 3. reset player-entity atom
+
+(defn- replay-frame! []
+
+  ; * count game logic frame #
+  ; * save TXS for each frame
+  ; * just replay them in same order
+  ; * first for replay -> reset the world and change to replay-frame logic
+
+  ; * explored tile corners atom (txs ?) - can keep as is for now.
+
+  )
+
 (defrecord SubScreen []
   Screen
   (show [_ _context])

@@ -52,4 +52,4 @@
 
 (defmethod cdq.context/transact! :tx/event [[_ entity event params] ctx]
   (send-event! ctx entity event params)
-  nil)
+  [])

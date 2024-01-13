@@ -116,14 +116,18 @@
         drawable (->texture-region-drawable ctx (:texture (:property/image item)))]
     (.setMinSize drawable (float cell-size) (float cell-size))
     (.setDrawable image-widget drawable)
-    (add-tooltip! cell-widget #(player-tooltip-text % item))))
+    (add-tooltip! cell-widget #(player-tooltip-text % item))
+    nil
+    ))
 
 (defmethod cdq.context/transact! :tx/remove-item-from-widget [[_ cell]
                                                               {{:keys [table slot->background]} :context/inventory :as ctx}]
   (let [^Actor cell-widget (get table cell)
         ^Image image-widget (get cell-widget :image)]
     (.setDrawable image-widget (slot->background (cell 0)))
-    (remove-tooltip! cell-widget)))
+    (remove-tooltip! cell-widget)
+    nil
+    ))
 
 (defn- slot->background [ctx]
   (let [sheet (spritesheet ctx "items/images.png" 48 48)]

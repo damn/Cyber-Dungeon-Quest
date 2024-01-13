@@ -21,7 +21,6 @@
             mapgen.module-gen)
   (:import com.badlogic.gdx.graphics.Color))
 
-; TODO put tile param already
 (defn- set-explored! [{:keys [context/world] :as context} position]
   (swap! (:explored-tile-corners world) assoc (->tile position) true))
 
@@ -208,9 +207,84 @@
   (first (filter #(:entity/player? @%)
                  (vals @(:cdq.context.ecs/uids->entities ctx))))) ; TODO private ! move to ecs ! forgot uid change
 
+(require 'cdq.context.transaction-handler)
+
+; (first (deref @#'cdq.context.transaction-handler/txs-coll))
+; first is assoc uid entity 1 and the CURRENT ATOM VALUE
+
+(comment
+ ([:tx/setup-entity 1]
+  [:tx/assoc 2]
+  [:tx/assoc-in 22]
+  [:tx/set-item-image-in-widget 11] ; TODO error, attaching same tooltip! have to rebuilt inventory...
+  [:tx/actionbar-add-skill 1]
+  [:tx/add-to-world 1])
+
+  (clojure.pprint/pprint
+   (let [ctx @gdl.app/current-context
+        entities (vals @(:cdq.context.ecs/uids->entities ctx))
+        ]
+    (map deref entities)
+    ))
+  ; 2 entities - item & player -> both tx/destroy
+  ; after reset again 2 players !
+
+
+  ; TODO tx/destroy 'plop' triggers
+  ; appearing !
+  ; I want to clean up the whole ecs system
+  ; => recreate ecs/world context
+  ; (Only I don't have rand-gen for map)
+
+  (.postRunnable com.badlogic.gdx.Gdx/app
+                 (fn []
+                   (let [ctx @gdl.app/current-context
+                         entities (vals @(:cdq.context.ecs/uids->entities ctx))
+                         txs (deref @#'cdq.context.transaction-handler/txs-coll)]
+                     (println (count entities)) ; TODO count is '2' after first reset !!!
+
+                     ; I don't want to call tx/destroy and remove all but
+                     ; _CLEAR_ the whole system ...
+                     ; that means world-grid,content-grid, ? explored-tiles? (TODO)
+                     ; ecs ...
+                     (transact-all! ctx (for [e entities] [:tx/destroy e]))
+                     (cdq.context/remove-destroyed-entities! ctx)
+                     ; only I want to keep tiled-map ... !
+                     ; but also remember the creatures layer was removed from tiledmap
+
+                     (cdq.context/rebuild-inventory-widgets ctx)
+                     (cdq.context/reset-actionbar ctx)
+                     (transact-all! ctx txs)
+                     (swap! gdl.app/current-context merge {:context/player-entity (fetch-player-entity ctx)})
+                     nil
+                     ))))
+
 (defn merge->context [context]
   (when-let [world (:context/world context)]
     (dispose (:tiled-map world)))
-  (let [context (merge context {:context/world (create-world-map (first-level context))})]
+  (let [context (merge context
+                       {:context/world (create-world-map (first-level context))})]
+
+    (.bindRoot #'cdq.context.transaction-handler/log-txs? true)
+    (reset! @#'cdq.context.transaction-handler/txs-coll [])
+    (println "~~ logging xs - " (count @@#'cdq.context.transaction-handler/txs-coll))
+
     (create-entities-from-tiledmap! context)
-    (merge context {:context/player-entity (fetch-player-entity context)})))
+
+    (.bindRoot #'cdq.context.transaction-handler/log-txs? false)
+    (println "~~ stop logging xs - " (count @@#'cdq.context.transaction-handler/txs-coll))
+
+
+    (clojure.pprint/pprint
+     (for [[txk txs] (group-by first @@#'cdq.context.transaction-handler/txs-coll)]
+       [txk (count txs)]))
+
+    #_([:tx/assoc 314]
+       [:tx/assoc-uid-entity 157]
+       [:tx/add-to-world 157]
+       [:tx/create 157]
+       [:tx/assoc-in 156]
+       [:tx/set-item-image-in-widget 11]
+       [:tx/actionbar-add-skill 1])
+    (merge context
+           {:context/player-entity (fetch-player-entity context)})))
