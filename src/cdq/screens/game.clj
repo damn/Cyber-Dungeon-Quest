@@ -25,20 +25,17 @@
   (let [light-position (camera/position world-camera)] ; == player position use ?
     (.bindRoot #'map-render-data [light-position ctx])))
 
+(def ^:private see-all-tiles? false)
+
 (defn- tile-color-setter [_ x y]
-  (let [[light-position context] map-render-data
+  (let [[light-position ctx] map-render-data
         position [x y]
-        explored? (explored? context position)
-        base-color (if explored?
-                     explored-tile-color
-                     color/black)
-        blocked? (ray-blocked? context light-position position)]
-    (if blocked?
-      base-color ; TODO here set color/white view all tiles debug
-      (do
-       (when-not explored?
-         (set-explored! context position))
-       color/white))))
+        explored? (explored? ctx position)
+        base-color (if explored? explored-tile-color color/black)]
+    (if (ray-blocked? ctx light-position position)
+      (if see-all-tiles? color/white base-color)
+      (do (when-not explored? (set-explored! ctx position))
+          color/white))))
 
 ; for now a function, see gdl.backends.libgdx.context.input reload bug
 ; otherwise keys in dev mode may be unbound because dependency order not reflected

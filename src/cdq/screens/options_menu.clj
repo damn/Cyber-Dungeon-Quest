@@ -38,6 +38,7 @@
 ; add line of sight activate, shadows on/off, see through walls etc.
 (def ^:private debug-flags (map ->debug-flag
                                 [#'cdq.entity.body/show-body-bounds
+                                 #'cdq.screens.game/see-all-tiles?
                                  #'cdq.context.transaction-handler/log-txs?
                                  #'cdq.context.render-debug/tile-grid?
                                  #'cdq.context.render-debug/cell-occupied?
@@ -45,6 +46,7 @@
                                  #'cdq.context.render-debug/cell-entities?
                                  #'cdq.context.render-debug/potential-field-colors?
                                  #'cdq.screens.game/pausing?
+                                 #'cdq.context.world/player-los-checks?
                                  #'cdq.context.world/spawn-enemies?]))
 
 (defn- exit []
