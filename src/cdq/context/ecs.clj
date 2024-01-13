@@ -49,10 +49,9 @@
                            :entity/uid (unique-number!))))  ; TODO maybe pass in tx-data then do not need to reset id-counter
   nil)
 
-; TODO maybe do not need to pass both entity and uid (it holds it)
-(defmethod transact! :tx/assoc-uids->entities [[_ entity uid] {::keys [uids->entities]}]
-  {:pre [(= (:entity/uid @entity) uid)]}
-  (swap! uids->entities assoc uid entity)
+(defmethod transact! :tx/assoc-uids->entities [[_ entity] {::keys [uids->entities]}]
+  {:pre [(number? (:entity/uid @entity))]}
+  (swap! uids->entities assoc (:entity/uid @entity) entity)
   nil)
 
 (defmethod transact! :tx/dissoc-uids->entities [[_ uid] {::keys [uids->entities]}]
@@ -61,8 +60,8 @@
   nil)
 
 (defcomponent :entity/uid uid
-  (entity/create  [_ {:keys [entity/id]}  _ctx] [[:tx/assoc-uids->entities id uid]])
-  (entity/destroy [_ _entity*             _ctx] [[:tx/dissoc-uids->entities uid]]))
+  (entity/create  [_ {:keys [entity/id]} _ctx] [[:tx/assoc-uids->entities   id]])
+  (entity/destroy [_ _entity*            _ctx] [[:tx/dissoc-uids->entities uid]]))
 
 (defmethod transact! :tx/create [[_ components] ctx]
   (let [entity (atom nil)]
