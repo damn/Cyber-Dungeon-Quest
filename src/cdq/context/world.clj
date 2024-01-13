@@ -1,6 +1,6 @@
 (ns cdq.context.world
   (:require [gdl.context :refer [render-tiled-map]]
-            gdl.disposable
+            [gdl.disposable :refer [dispose]]
             [gdl.graphics.camera :as camera]
             [gdl.graphics.color :as color]
             [gdl.maps.tiled :as tiled]
@@ -20,14 +20,6 @@
             [mapgen.movement-property :refer (movement-property)]
             mapgen.module-gen)
   (:import com.badlogic.gdx.graphics.Color))
-
-; TODO name cdq.context.world/data
-; TODO grid is an atom, not cells
-; TODO (:grid world-map) dangerous ! => if multiple maps ! thats why world-map usage limit
-
-; rename this to context.world (can have multiple world-maps later)
-; (maybe world-map can be a record with functions too ? ...)
-; rename grid just to grid
 
 ; TODO put tile param already
 (defn- set-explored! [{:keys [context/world] :as context} position]
@@ -66,7 +58,7 @@
      (<= xdist (inc (/ world-viewport-width  2)))
      (<= ydist (inc (/ world-viewport-height 2))))))
 
-; TO gdl.math....
+; TO gdl.math.... // not tested
 (defn- create-double-ray-endpositions
   "path-w in tiles."
   [[start-x start-y] [target-x target-y] path-w]
@@ -157,10 +149,7 @@
 
 (defn- set-cell-blocked-boolean-array [arr cell*]
   (let [[x y] (:position cell*)]
-    (aset arr
-          x
-          y
-          (boolean (cell/blocked? cell* {:entity/flying? true})))))
+    (aset arr x y (boolean (cell/blocked? cell* {:entity/flying? true})))))
 
 (defn- create-cell-blocked-boolean-array [grid]
   (let [arr (make-array Boolean/TYPE
@@ -220,10 +209,8 @@
                  (vals @(:cdq.context.ecs/uids->entities ctx))))) ; TODO private ! move to ecs ! forgot uid change
 
 (defn merge->context [context]
-  ; TODO when (:context/world context)
-  ; dispose (:tiled-map ... )
-  ; check if it works
-  (let [context (merge context
-                       {:context/world (create-world-map (first-level context))})]
+  (when-let [world (:context/world context)]
+    (dispose (:tiled-map world)))
+  (let [context (merge context {:context/world (create-world-map (first-level context))})]
     (create-entities-from-tiledmap! context)
     (merge context {:context/player-entity (fetch-player-entity context)})))
