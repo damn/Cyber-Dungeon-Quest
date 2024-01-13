@@ -4,7 +4,7 @@
 
 ; TODO main issue -> player idle cursor ? do not track cursors?
 
-(def log-txs? true)
+(def log-txs? true) ; call 'record?' ??
 
 
 (comment

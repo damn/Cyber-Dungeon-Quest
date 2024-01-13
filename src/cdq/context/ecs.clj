@@ -31,13 +31,13 @@
 ; simple rule:
 ; all side effects have to be in a tx which returns nil and lead to same side effects
 
+; part of ecs?
 (def id-counter (atom 0))
 
 (defn- unique-number! []
   (swap! id-counter inc))
 
-; sets the specific atom to initial-value ( pass uid also)
-; this atom is used in all future txs of that entity ! its the entity/id !
+; ::namespaced-txs?
 (defmethod transact! :tx/setup-entity [[_ an-atom components] ctx]
   {:pre [(not (contains? components :entity/id))
          (not (contains? components :entity/uid))]}
@@ -49,11 +49,13 @@
                            :entity/uid (unique-number!))))  ; TODO maybe pass in tx-data then do not need to reset id-counter
   nil)
 
+; ::namespaced-txs?
 (defmethod transact! :tx/assoc-uids->entities [[_ entity] {::keys [uids->entities]}]
   {:pre [(number? (:entity/uid @entity))]}
   (swap! uids->entities assoc (:entity/uid @entity) entity)
   nil)
 
+; ::namespaced-txs?
 (defmethod transact! :tx/dissoc-uids->entities [[_ uid] {::keys [uids->entities]}]
   {:pre [(contains? @uids->entities uid)]}
   (swap! uids->entities dissoc uid)
@@ -65,6 +67,13 @@
 
 (defmethod transact! :tx/create [[_ components] ctx]
   (let [entity (atom nil)]
+    ; completely return all txs??
+    ; but anonym fn which derefs only after the first tx
+    ; like state
+    ; monads?
+    ; tx-fn
+    ; or transact-all! returns []
+    ; and others ':record-tx'
     (transact-all! ctx [[:tx/setup-entity entity components]])
     (apply-system-transact-all! ctx entity/create @entity))
   [])

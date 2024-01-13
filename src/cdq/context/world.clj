@@ -218,8 +218,15 @@
   ; (Only I don't have rand-gen for map & spawn entities )
   ; that means world-grid,content-grid, ? explored-tiles? (TODO)
 
-  ; TODO initial setup doesnt work even,
-  ; later do replay-loop!
+  ; #1 #1 !
+  ; -> clear up ecs / world(?) completely
+
+  ; => use change-screen ? and on enter/exit I can change stuffs
+
+  ; kA warum dann alle verschwinden
+  ; kA warum animation nicht andert skill icon!
+  ; ansonsten -> funzt !
+
   (.postRunnable com.badlogic.gdx.Gdx/app
                  (fn []
                    (let [ctx @gdl.app/current-context
@@ -232,6 +239,9 @@
                         [txk (count txs)]))
 
                      ; remove all entities
+                     ; cleanup / >dispose< / on-destroy ? = plop
+                     ; call fn dispose all entities (because I keep world, and remove references there)
+                     ; then recreate ecs
                      (transact-all! ctx (for [e entities] [:tx/destroy e]))
                      (cdq.context/remove-destroyed-entities! ctx)
 
@@ -240,14 +250,15 @@
                      (cdq.context/reset-actionbar ctx)
 
                      ; reset counters
-                     (reset! cdq.context.ecs/id-counter 0)
-                     (reset! (:context/game-logic-frame ctx) 0)
+                     (reset! cdq.context.ecs/id-counter 0) ; <- part of ecs
+                     (reset! (:context/game-logic-frame ctx) 0) ; <- part of replay-game-screen enter
 
                      ; Do not log the replayed txs !
-                     (.bindRoot #'txs/log-txs? false)
+                     (.bindRoot #'txs/log-txs? false) ; <- part of replay-game-screen enter
                      ; set game to replay loop
                      (.bindRoot #'cdq.screens.game/replay-game? true)
 
+                     ; those 2 below also part of replay-game-screen enter
                      ; apply initial txs
                      (transact-all! ctx initial-txs)
 
