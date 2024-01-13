@@ -14,7 +14,7 @@
    ))
 
 (defn- get-namespaces []
-   (filter #(#{"data" "game" "mapgen" "property-editor" "utils"}
+   (filter #(#{"data" "cdq" "mapgen" "utils" "gdl"}
              (first (str/split (name (ns-name %)) #"\.")))
            (all-ns)))
 
