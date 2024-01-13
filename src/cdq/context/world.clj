@@ -182,7 +182,7 @@
 ; --> mach prozedural generierte maps mit prostprocessing (fill-singles/set-cells-behind-walls-nil/remove-nads/..?)
 ;& assertions 0 NADS z.b. ...?
 
-(def ^:private spawn-enemies? true)
+(def ^:private spawn-enemies? false)
 
 (defn- create-entities-from-tiledmap! [{:keys [context/world] :as ctx}]
   (let [tiled-map (:tiled-map world)]
@@ -236,6 +236,43 @@
   ; => recreate ecs/world context
   ; (Only I don't have rand-gen for map)
 
+  ; ERROR ! killed goblin after some resets:
+  ; happens after 1 reset !
+  ; -> remove-destroyed-entities! called twice?
+  ; but shouldnt be in list anymore
+  ; [:tx/dissoc-uids->entities 1516]
+  ; [:tx/remove-from-world "<entity-atom{uid=1516}>"]
+  ; [:tx/dissoc-uids->entities 1516]
+
+  ; => why 2x dissoc-uid?
+
+  ; => 2x called remove-destroyed-entities!
+
+  ; ~ update-game, call remove-destroyed-entities! ctx ~
+  ; ~~ remove-destroyed-entities! count:  4
+  ; remove-destroyed-entities! on  298
+  ; [:tx/dissoc-uids->entities 298]
+  ; [:tx/remove-from-world "<entity-atom{uid=298}>"]
+  ; remove-destroyed-entities! on  317
+  ; [:tx/dissoc-uids->entities 317]
+  ; [:tx/remove-from-world "<entity-atom{uid=317}>"]
+  ; remove-destroyed-entities! on  316
+  ; [:tx/dissoc-uids->entities 316]
+  ; [:tx/remove-from-world "<entity-atom{uid=316}>"]
+  ; remove-destroyed-entities! on  315
+  ; [:tx/dissoc-uids->entities 315]
+  ; [:tx/remove-from-world "<entity-atom{uid=315}>"]
+  ; ~ finished update-game call to r-d-es ~
+  ; ~ update-game, call remove-destroyed-entities! ctx ~
+  ; ~~ remove-destroyed-entities! count:  1
+  ; remove-destroyed-entities! on  298
+  ; [:tx/dissoc-uids->entities 298]
+  ; Error with transaction:
+  ;  [:tx/remove-from-world "<entity-atom{uid=298}>"]
+
+  ; TODO the original txs is done with ANOTHER ID !
+  ;IDS NEED TO MATCH BECAUSE WE DONT USE ONLY FOR DEBUG
+
   (.postRunnable com.badlogic.gdx.Gdx/app
                  (fn []
                    (let [ctx @gdl.app/current-context
@@ -247,12 +284,18 @@
                      ; _CLEAR_ the whole system ...
                      ; that means world-grid,content-grid, ? explored-tiles? (TODO)
                      ; ecs ...
+                     (println "mark all destroyed")
                      (transact-all! ctx (for [e entities] [:tx/destroy e]))
+                     (println "call manually remove-destroyed-entities!")
                      (cdq.context/remove-destroyed-entities! ctx)
+                     (println "Amount of entities left: "
+                              (count (filter (comp :entity/destroyed? deref) (vals @(:cdq.context.ecs/uids->entities ctx))))
+                              )
                      ; only I want to keep tiled-map ... !
                      ; but also remember the creatures layer was removed from tiledmap
                      (cdq.context/rebuild-inventory-widgets ctx)
                      (cdq.context/reset-actionbar ctx)
+                     (reset! cdq.context.ecs/id-counter 0)
 
                      ; apply initial txs
                      (transact-all! ctx txs)

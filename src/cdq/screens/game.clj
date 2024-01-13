@@ -92,7 +92,9 @@
       (update-elapsed-game-time! ctx)
       (update-potential-fields! ctx active-entities)
       (tick-entities! ctx (map deref active-entities)))
+    ;(println "~ update-game, call remove-destroyed-entities! ctx ~")
     (remove-destroyed-entities! ctx) ; do not pause this as for example pickup item, should be destroyed.
+    ;(println "~ finished update-game call to r-d-es ~")
     (end-of-frame-checks! ctx)))
 
 ; TODO RESET WORLD STATE

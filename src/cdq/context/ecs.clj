@@ -28,27 +28,51 @@
   (swap! entity update-in (drop-last ks) dissoc (last ks))
   nil)
 
-(let [cnt (atom 0)]
-  (defn- unique-number! []
-    (swap! cnt inc)))
+; I could also pass to setup-entity the uid, then the counter will not be used and does not need to match up
+(def id-counter (atom 0))
+
+(defn- unique-number! []
+  (swap! id-counter inc))
+
+; TODO its really complicated, re-using atoms, having an uid counter which has to match up etc.
+; setting up entity ...
+
+; => because atom has to match up, all txs are with the atom
+; or I convert each txs to uid and have to chance transact! fns
 
 ; giving , saving the initial value as tx
 ; and setting with newid always (doesnt matter reuse ids , not using other than debugging)
 ; by the way could add debug helper rightclick adds the entity in src/dev.clj to a var ?
-(defmethod transact! :tx/setup-entity [[_ entity entity*] _ctx]
-  (reset! entity (assoc entity*
-                        :entity/id entity
-                        :entity/uid (unique-number!))) ; need to make here so the component systems are called, otherwise it does not have those components
+
+; sets the specific atom to initial-value ( pass uid also)
+; this atom is used in all future txs of that entity ! its the entity/id !
+(defmethod transact! :tx/setup-entity [[_ an-atom components] ctx]
+  {:pre [(not (contains? components :entity/id))
+         (not (contains? components :entity/uid))]}
+  (let [entity* (-> components
+                    (update-map entity/create-component components ctx)
+                    map->Entity)]
+    (reset! an-atom (assoc entity*
+                           :entity/id an-atom
+                           :entity/uid (unique-number!)))) ; need to make here so the component systems are called, otherwise it does not have those components
   nil)
 
 ;; START uid system - only for debugging entities - orthogonal to rest of code - NOT! because the uid component needs to be added
 
+; TODO why pass both? entity contains the uid ? this was the problem before !
+; stupid uid !!
+; see that each code is simpel
 (defmethod transact! :tx/assoc-uids->entities [[_ entity uid] {::keys [uids->entities]}]
+  {:pre [(:entity/uid @uids->entities uid)]}
   (swap! uids->entities assoc uid entity)
   nil)
 
 (defmethod transact! :tx/dissoc-uids->entities [[_ uid] {::keys [uids->entities]}]
+  {:pre [(contains? @uids->entities uid)]}
+  (println "(swap! uids->entities dissoc uid) " uid)
+  (println "before: (contains? @uids->entities uid)" (contains? @uids->entities uid))
   (swap! uids->entities dissoc uid)
+  (println "after: (contains? @uids->entities uid)" (contains? @uids->entities uid))
   nil)
 
 (defcomponent :entity/uid uid
@@ -62,13 +86,8 @@
 ; but for effect need extra ctx??
 
 (defmethod transact! :tx/create [[_ components] ctx]
-  {:pre [(not (contains? components :entity/id))
-         (not (contains? components :entity/uid))]}
-  (let [entity* (-> components
-                    (update-map entity/create-component components ctx)
-                    map->Entity)
-        entity (atom nil)]
-    (transact-all! ctx [[:tx/setup-entity entity entity*]])
+  (let [entity (atom nil)]
+    (transact-all! ctx [[:tx/setup-entity entity components]])
     (apply-system-transact-all! ctx entity/create @entity))
   [])
 
@@ -119,8 +138,26 @@
       (render-entity* entity/render-debug entity* context)))
 
   (remove-destroyed-entities! [{::keys [uids->entities] :as ctx}]
-    (doseq [entity (filter (comp :entity/destroyed? deref) (vals @uids->entities))]
-      (apply-system-transact-all! ctx entity/destroy @entity))))
+
+    (let [cnt #(count (filter (comp :entity/destroyed? deref) (vals @uids->entities)))]
+      (when (>  (cnt) 0)
+        (println "~~ remove-destroyed-entities! count: " (cnt)))
+
+      (doseq [entity (filter (comp :entity/destroyed? deref) (vals @uids->entities))]
+
+        (println "remove-destroyed-entities! on " @entity)
+
+        (apply-system-transact-all! ctx entity/destroy @entity))
+
+      (when (> (cnt) 0)
+        (let [entity (first (filter (comp :entity/destroyed? deref) (vals @uids->entities)))]
+          (println " ~~~ after removed doseq => count is " (cnt))
+          (println "Remaining entity: " (select-keys @entity [:entity/uid]))
+          (println "after all doseq,  (contains? @uids->entities (:entity/uid @entity))" (contains? @uids->entities (:entity/uid @entity))))
+        )
+
+      ; => count was '1' ! then one I destroyed by attacking !
+      )))
 
 (defn ->context [& {:keys [z-orders]}]
   (assert (every? #(= "z-order" (namespace %)) z-orders))

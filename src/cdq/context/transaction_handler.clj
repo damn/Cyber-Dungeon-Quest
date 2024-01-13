@@ -42,8 +42,8 @@
       (try (let [result (transact! tx ctx)]
              (if (nil? result)
                (do
-                (when-not (= :tx/cursor (first tx)) (println (debug-print-tx tx)))
-                (when log-txs?  (swap! txs-coll conj tx)))
+                ;(when-not (= :tx/cursor (first tx)) (println (debug-print-tx tx)))
+                (when log-txs? (swap! txs-coll conj tx)))
                (transact-all! ctx result)))
            (catch Throwable t
              (println "Error with transaction: \n" (debug-print-tx tx))
