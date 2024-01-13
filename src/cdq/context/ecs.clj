@@ -28,14 +28,17 @@
   (swap! entity update-in (drop-last ks) dissoc (last ks))
   nil)
 
-(defcomponent :entity/uid uid
-  (entity/create [_ {:keys [entity/id]} {::keys [uids->entities]}]
-    (swap! uids->entities assoc uid id)
-    nil)
+(defmethod transact! :tx/assoc-uid-entity [[_ uid entity] {::keys [uids->entities]}]
+  (swap! uids->entities assoc uid entity)
+  nil)
 
-  (entity/destroy [_ _entity* {::keys [uids->entities]}]
-    (swap! uids->entities dissoc uid)
-    nil))
+(defmethod transact! :tx/dissoc-uid [[_ uid] {::keys [uids->entities]}]
+  (swap! uids->entities dissoc uid)
+  nil)
+
+(defcomponent :entity/uid uid
+  (entity/create  [_ {:keys [entity/id]} _ctx] [[:tx/assoc-uid-entity uid id]])
+  (entity/destroy [_ {:keys [entity/id]} _ctx] [[:tx/dissoc-uid       uid]]))
 
 (let [cnt (atom 0)]
   (defn- unique-number! []
