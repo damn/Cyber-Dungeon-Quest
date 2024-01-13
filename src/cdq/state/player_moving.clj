@@ -14,7 +14,7 @@
   (enter [_ {:keys [entity/id]} _ctx]
     [[:tx/assoc id :entity/movement-vector movement-vector]])
   (exit [_ {:keys [entity/id]} _ctx]
-    [[:tx/dissoc id :entity/movement-vector movement-vector]])
+    [[:tx/dissoc id :entity/movement-vector]])
   (tick [_ {:keys [entity/id]} context]
     (if-let [movement-vector (WASD-movement-vector context)]
       [[:tx/assoc id :entity/movement-vector movement-vector]]

@@ -10,7 +10,7 @@
     [[:tx/assoc id :entity/movement-vector movement-vector]])
 
   (exit [_ {:keys [entity/id]} _ctx]
-    [[:tx/dissoc id :entity/movement-vector movement-vector]])
+    [[:tx/dissoc id :entity/movement-vector]])
 
   (tick [_ {:keys [entity/id]} ctx]
     (when (stopped? ctx counter)
