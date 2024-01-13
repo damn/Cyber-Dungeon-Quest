@@ -1,6 +1,84 @@
 (ns dev
   (:require [clojure.pprint :refer :all]
-            [clojure.string :as str]))
+            [clojure.string :as str]
+            [gdl.context :refer :all]
+            [gdl.scene2d.actor :as actor]
+            ))
+
+(import 'com.badlogic.gdx.scenes.scene2d.ui.Tree$Node)
+(import 'com.kotcrab.vis.ui.widget.VisTree)
+
+(defn- ->node [actor]
+  (proxy [Tree$Node] [actor]))
+
+(defn- ->tree []
+  (VisTree.))
+
+(defn- expand? [v]
+  (or (map? v) (vector? v)))
+
+(defn ->v-str [v]
+  (cond
+   (number? v) v
+   (keyword? v) v
+   (string? v) (pr-str v)
+   (boolean? v) v
+   (expand? v) "[SKY]->[]"
+   :else (str "[GRAY]" (str v) "[]")))
+
+(defn ->labelstr [k v]
+  (str "[LIGHT_GRAY]:"
+       (when-let [ns (namespace k)] (str ns "/")) "[WHITE]" (name k)
+       ": [GOLD]" (str (->v-str v))))
+
+(defn add-map-nodes! [ctx parent-node m level]
+  (when true #_(< @level 2)
+    ;(swap! level inc)
+    (doseq [[k v] (into (sorted-map) m)]
+      (try
+       (let [node (->node (->label ctx (->labelstr k v)))]
+         (.add parent-node node)
+         (when (map? v)
+           (add-map-nodes! ctx node v level))
+         (when (vector? v)
+           (doseq [element v
+                   :let [el-node (->node (->label ctx (str (->v-str element))))]]
+             (.add node el-node))))
+       (catch Throwable t
+         (println "Error for" k)
+         (.add parent-node (->node (->label ctx (str "[RED] "k " - " t)))))))))
+
+(defn- ->prop-tree [ctx prop]
+  (let [tree (->tree)]
+    (add-map-nodes! ctx tree prop (atom 0))
+    tree))
+
+(defn- ->scroll-pane-cell [{:keys [gui-viewport-height] :as ctx} rows]
+  (let [table (->table ctx {:rows rows
+                            :cell-defaults {:pad 1}
+                            :pack? true})
+        scroll-pane (->scroll-pane ctx table)]
+    {:actor scroll-pane
+     :height (min (- gui-viewport-height 50) (actor/height table))}))
+
+(comment
+ ; TODO make tree of namespace parts ! not so many elements
+ ; and all components namespaced names
+
+ ; and make for entities/cells too !
+
+ ; and cells no atoms! grid! I change multiple at once ...
+
+ ; maybe only add elements on click -> somehow glyphlayout breaks AFTER this returns successfully
+ (let [ctx @gdl.app/current-context
+       tree-map @@(:context/mouseover-entity ctx)
+       ]
+   (add-to-stage! ctx (->window ctx {:title "Context Overview"
+                                     :close-button? true
+                                     :close-on-escape? true
+                                     :center? true
+                                     :rows [[(->scroll-pane-cell ctx [[(->prop-tree ctx (into (sorted-map) tree-map))]])]]
+                                     :pack? true}))))
 
 (comment
  (let [ctx @gdl.app/current-context
@@ -14,18 +92,18 @@
    ))
 
 (defn- get-namespaces []
-   (filter #(#{"data" "cdq" "mapgen" "utils" "gdl"}
-             (first (str/split (name (ns-name %)) #"\.")))
-           (all-ns)))
+  (filter #(#{"data" "cdq" "mapgen" "utils" "gdl"}
+            (first (str/split (name (ns-name %)) #"\.")))
+          (all-ns)))
 
 (defn- get-non-fn-vars [nmspace]
-   (for [[sym avar] (ns-interns nmspace)
-         :let [value @avar]
-         :when (not (or (fn? value)
-                        (instance? clojure.lang.MultiFn value)
-                        #_(:method-map value) ; breaks for stage Ilookup
-                        ))]
-     avar))
+  (for [[sym avar] (ns-interns nmspace)
+        :let [value @avar]
+        :when (not (or (fn? value)
+                       (instance? clojure.lang.MultiFn value)
+                       #_(:method-map value) ; breaks for stage Ilookup
+                       ))]
+    avar))
 
 (comment
  (gdl.backends.libgdx.dev/restart!)
