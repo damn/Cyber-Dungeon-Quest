@@ -7,8 +7,8 @@
             [cdq.context :refer [rebuild-inventory-widgets reset-actionbar]]))
 
 (defn start-game-context [context]
-  (rebuild-inventory-widgets context) ; before adding entities ( player gets items )
-  (reset-actionbar context) ; empties skills -> before adding player
+  (rebuild-inventory-widgets context)
+  (reset-actionbar context)
   (let [context (merge context
                        (ecs/->context :z-orders [:z-order/on-ground
                                                  :z-order/ground

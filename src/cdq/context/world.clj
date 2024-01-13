@@ -18,42 +18,14 @@
             [mapgen.movement-property :refer (movement-property)]
             mapgen.module-gen))
 
-; TODO Check rule context data only accessed in context ns. (even for properties)
-; => no dependency on implementation
-
-
-  ; TODO (:grid world-map) dangerous ! => if multiple maps ! thats why world-map usage limit
-  ; ! all context data internal limit & offer protocol !
-  ; e.g. id->entity-map ... @ position or @ body/movement check ...
-
-; world map only used @ render tiledmap & minimap & minimap explored tile corners
-; => remove so can later add multiple maps if needed
-; move content field out
-; check usages of grid @ body / potential field / movement where can simplify or collect fns
+; TODO name cdq.context.world/data
+; TODO (:grid world-map) dangerous ! => if multiple maps ! thats why world-map usage limit
 
 ; rename this to context.world (can have multiple world-maps later)
 ; (maybe world-map can be a record with functions too ? ...)
 ; rename grid just to grid
-; and protocols also rename folders
 
 ; TODO forgot to filter nil cells , e.g. cached-adjcent cells or something
-
-;;
-
-;; just grep context/world-map and move into API
-
-;;;
-
-; TODO world-map context , all access to that data cdq.context fn
-; check also other contexts keep private
-
-; ONLY HERE context/world-map !!!
-; if multiple maps in 'world => code doesnt change outside protocols
-
-; maybe call context/world ?? world protocol
-
-; ! entities creation fns and audiovisual also cdq.context protocols !
-; idk how to call it
 
 #_(defn- on-screen? [entity* {:keys [world-camera world-viewport-width world-viewport-height]}]
   (let [[x y] (:entity/position entity*)
