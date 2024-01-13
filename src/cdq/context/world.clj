@@ -251,10 +251,13 @@
                      (cdq.context/remove-destroyed-entities! ctx)
                      ; only I want to keep tiled-map ... !
                      ; but also remember the creatures layer was removed from tiledmap
-
                      (cdq.context/rebuild-inventory-widgets ctx)
                      (cdq.context/reset-actionbar ctx)
+
+                     ; apply initial txs
                      (transact-all! ctx txs)
+
+                     ; set up player-entity
                      (swap! gdl.app/current-context merge {:context/player-entity (fetch-player-entity ctx)})
                      nil
                      ))))
@@ -286,5 +289,4 @@
        [:tx/assoc-in 156]
        [:tx/set-item-image-in-widget 11]
        [:tx/actionbar-add-skill 1])
-    (merge context
-           {:context/player-entity (fetch-player-entity context)})))
+    (merge context {:context/player-entity (fetch-player-entity context)})))

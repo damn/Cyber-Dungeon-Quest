@@ -15,8 +15,8 @@
   :target-path "target/%s/" ; https://stackoverflow.com/questions/44246924/clojure-tools-namespace-refresh-fails-with-no-namespace-foo
   :uberjar-name "cdq_3.jar"
   :omit-source true
-  :jvm-opts ["-Xms256m"
-             "-Xmx256m"
+  :jvm-opts ["-Xms512m"
+             "-Xmx512m"
              "-Dvisualvm.display.name=CDQ"
              "-XX:-OmitStackTraceInFastThrow" ; disappeared stacktraces
              ; for visualvm profiling

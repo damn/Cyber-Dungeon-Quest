@@ -32,21 +32,30 @@
   (defn- unique-number! []
     (swap! cnt inc)))
 
-; TODO setup has nothing to do with uid stuff, just assigning an atom to initial value
-; uid can be separate component ? not logged? then we dont have uids->entities map..
-(defmethod transact! :tx/setup-entity [[_ entity entity*] {::keys [uids->entities]}]
-  (let [uid (unique-number!)]
-    (reset! entity (assoc entity* :entity/id entity :entity/uid uid))
-    (swap! uids->entities assoc uid entity))
+; giving , saving the initial value as tx
+; and setting with newid always (doesnt matter reuse ids , not using other than debugging)
+; by the way could add debug helper rightclick adds the entity in src/dev.clj to a var ?
+(defmethod transact! :tx/setup-entity [[_ entity entity*] _ctx]
+  (reset! entity (assoc entity*
+                        :entity/id entity
+                        :entity/uid (unique-number!))) ; need to make here so the component systems are called, otherwise it does not have those components
   nil)
 
-(defmethod transact! :tx/dissoc-uid [[_ uid] {::keys [uids->entities]}]
+;; START uid system - only for debugging entities - orthogonal to rest of code - NOT! because the uid component needs to be added
+
+(defmethod transact! :tx/assoc-uids->entities [[_ entity uid] {::keys [uids->entities]}]
+  (swap! uids->entities assoc uid entity)
+  nil)
+
+(defmethod transact! :tx/dissoc-uids->entities [[_ uid] {::keys [uids->entities]}]
   (swap! uids->entities dissoc uid)
   nil)
 
-#_(defcomponent :entity/uid uid
-  (entity/create  [_ {:keys [entity/id]} _ctx] [[:tx/assoc-uid-entity uid id]])
-  (entity/destroy [_ {:keys [entity/id]} _ctx] [[:tx/dissoc-uid       uid]]))
+(defcomponent :entity/uid uid
+  (entity/create  [_ {:keys [entity/id]}  _ctx] [[:tx/assoc-uids->entities id uid]])
+  (entity/destroy [_ _entity*             _ctx] [[:tx/dissoc-uids->entities uid]]))
+
+;; END uid system - only for debugging entities - orthogonal to rest of code
 
 
 ; TODO don't call transact-all! in a transact!, just return the txs ??
@@ -111,9 +120,7 @@
 
   (remove-destroyed-entities! [{::keys [uids->entities] :as ctx}]
     (doseq [entity (filter (comp :entity/destroyed? deref) (vals @uids->entities))]
-      (apply-system-transact-all! ctx entity/destroy @entity)
-      (transact-all! ctx [[:tx/dissoc-uid (:entity/uid @entity)]])
-      )))
+      (apply-system-transact-all! ctx entity/destroy @entity))))
 
 (defn ->context [& {:keys [z-orders]}]
   (assert (every? #(= "z-order" (namespace %)) z-orders))

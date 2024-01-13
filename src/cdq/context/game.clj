@@ -6,6 +6,11 @@
             [cdq.context.world :as world]
             [cdq.context :refer [rebuild-inventory-widgets reset-actionbar]]))
 
+; include in new-game-context:
+; cdq.app.start - game screen actors clear, inventory-window, actionbar
+; make interface
+; (w/o world ?)
+; cursor also?
 (defn start-game-context [context]
   (rebuild-inventory-widgets context)
   (reset-actionbar context)
