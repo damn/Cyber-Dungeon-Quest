@@ -22,5 +22,7 @@
                        (mouseover-entity/->context)
                        (player-message/->context)
                        (counter/->context)
-                       {:context/game-paused? (atom true)})]
+                       {:context/game-paused? (atom true)
+                        :context/game-logic-frame (atom 0)
+                        })]
     (world/merge->context context)))

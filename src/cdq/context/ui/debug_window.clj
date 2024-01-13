@@ -16,24 +16,27 @@
                             context/player-entity
                             cdq.context.ecs/thrown-error
                             context/elapsed-game-time
+                            context/game-logic-frame
                             world-camera] :as c}]
   (let [world-mouse (world-mouse-position c)]
-    (str "FPS: " (frames-per-second c)  "\n"
-         "Zoom: " (camera/zoom world-camera) "\n"
-         "World: "(mapv int world-mouse) "\n"
-         "X:" (world-mouse 0) "\n"
-         "Y:" (world-mouse 1) "\n"
-         "GUI: " (gui-mouse-position c) "\n"
-         (when @thrown-error
-           (str "\nERROR!\n " @thrown-error "\n\n"))
-         "game-paused? " @game-paused? "\n"
-         "elapsed-game-time " (utils.core/readable-number @elapsed-game-time) " seconds \n"
-         (skill-info @player-entity)
-         ;"\nMouseover-Actor:\n"
-         #_(when-let [actor (mouse-on-stage-actor? c)]
-           (str "TRUE - name:" (.getName actor)
-                "id: " (gdl.scene2d.actor/id actor)
-                )))))
+    (str
+     "@game-logic-frame: " @game-logic-frame "\n"
+     "FPS: " (frames-per-second c)  "\n"
+     "Zoom: " (camera/zoom world-camera) "\n"
+     "World: "(mapv int world-mouse) "\n"
+     "X:" (world-mouse 0) "\n"
+     "Y:" (world-mouse 1) "\n"
+     "GUI: " (gui-mouse-position c) "\n"
+     (when @thrown-error
+       (str "\nERROR!\n " @thrown-error "\n\n"))
+     "game-paused? " @game-paused? "\n"
+     "elapsed-game-time " (utils.core/readable-number @elapsed-game-time) " seconds \n"
+     (skill-info @player-entity)
+     ;"\nMouseover-Actor:\n"
+     #_(when-let [actor (mouse-on-stage-actor? c)]
+         (str "TRUE - name:" (.getName actor)
+              "id: " (gdl.scene2d.actor/id actor)
+              )))))
 
 (defn create [{:keys [gui-viewport-height] :as context}]
   (let [label (->label context "")

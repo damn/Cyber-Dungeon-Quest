@@ -207,15 +207,9 @@
   (first (filter #(:entity/player? @%)
                  (vals @(:cdq.context.ecs/uids->entities ctx))))) ; TODO private ! move to ecs ! forgot uid change
 
-(require 'cdq.context.transaction-handler)
+(require '[cdq.context.transaction-handler :as txs])
 
 (comment
- ([:tx/setup-entity 1]
-  [:tx/assoc 2]
-  [:tx/assoc-in 22]
-  [:tx/set-item-image-in-widget 11]
-  [:tx/actionbar-add-skill 1]
-  [:tx/add-to-world 1])
 
   ; TODO tx/destroy 'plop' triggers
   ; appearing !
@@ -224,25 +218,48 @@
   ; (Only I don't have rand-gen for map & spawn entities )
   ; that means world-grid,content-grid, ? explored-tiles? (TODO)
 
+  ; TODO initial setup doesnt work even,
+  ; later do replay-loop!
   (.postRunnable com.badlogic.gdx.Gdx/app
                  (fn []
                    (let [ctx @gdl.app/current-context
                          entities (vals @(:cdq.context.ecs/uids->entities ctx))
-                         txs (deref @#'cdq.context.transaction-handler/txs-coll)]
+                         initial-txs (get @txs/txs-coll 0)]
+                     (println "(count initial-txs)" (count initial-txs))
+                     (println "Initial-txs:")
+                     (clojure.pprint/pprint
+                      (for [[txk txs] (group-by first initial-txs)]
+                        [txk (count txs)]))
 
+                     ; remove all entities
                      (transact-all! ctx (for [e entities] [:tx/destroy e]))
                      (cdq.context/remove-destroyed-entities! ctx)
+
+                     ; reset UI
                      (cdq.context/rebuild-inventory-widgets ctx)
                      (cdq.context/reset-actionbar ctx)
+
+                     ; reset counters
                      (reset! cdq.context.ecs/id-counter 0)
+                     (reset! (:context/game-logic-frame ctx) 0)
+
+                     ; Do not log the replayed txs !
+                     (.bindRoot #'txs/log-txs? false)
+                     ; set game to replay loop
+                     (.bindRoot #'cdq.screens.game/replay-game? true)
 
                      ; apply initial txs
-                     (transact-all! ctx txs)
+                     (transact-all! ctx initial-txs)
 
                      ; set up player-entity
                      (swap! gdl.app/current-context merge {:context/player-entity (fetch-player-entity ctx)})
+
+
+                     (println "frames/txs - " [(keys @txs/txs-coll) (map count (vals @txs/txs-coll))])
                      nil
                      ))))
+
+(require 'cdq.context.ecs)
 
 (defn merge->context [context]
   (when-let [world (:context/world context)]
@@ -250,18 +267,40 @@
   (let [context (merge context
                        {:context/world (create-world-map (first-level context))})]
 
-    (.bindRoot #'cdq.context.transaction-handler/log-txs? true)
-    (reset! @#'cdq.context.transaction-handler/txs-coll [])
-    (println "~~ logging txs - " (count @@#'cdq.context.transaction-handler/txs-coll))
+    (.bindRoot #'txs/log-txs? true)
+    (.bindRoot #'cdq.screens.game/replay-game? false)
+    ; ?
+    (reset! cdq.context.ecs/id-counter 0)
 
+    ;(.bindRoot #'txs//log-txs? true)
+    (println "Starting world - txs/log-txs? " txs/log-txs?)
+    (reset! txs/txs-coll {})
+    (println "~~ logging initial txs - " [(keys @txs/txs-coll) (map count (vals @txs/txs-coll))])
+
+    (println "create-entities-from-tiledmap!")
     (create-entities-from-tiledmap! context)
 
-    (.bindRoot #'cdq.context.transaction-handler/log-txs? false)
-    (println "~~ stop logging txs - " (count @@#'cdq.context.transaction-handler/txs-coll))
-
+    (println "~~ logging initial txs - " [(keys @txs/txs-coll) (map count (vals @txs/txs-coll))])
+    ;(.bindRoot #'txs/log-txs? false)
+    ;(println "~~ stop logging txs - " (count @txs/txs-coll))
     (println "Initial entity txs:")
     (clojure.pprint/pprint
-     (for [[txk txs] (group-by first @@#'cdq.context.transaction-handler/txs-coll)]
+     (for [[txk txs] (group-by first (second (first @txs/txs-coll)))]
        [txk (count txs)]))
+    (merge context
+           {:context/player-entity (fetch-player-entity context)})))
 
-    (merge context {:context/player-entity (fetch-player-entity context)})))
+
+(comment
+ ; few hundred txs each frame
+ (sort (map #(count (second %)) @txs/txs-coll))
+
+ ; now player died
+ ; game logic frame 826
+
+ ; => set up replay game loop
+ ; => reset game logic frame / inc each frame (60 FPS playback)
+ ; apply initial ( & dissoc ?)
+ ; (transact-all! ctx (get txs/txs-coll @game-logic-frame))
+ ; when finished? stop don't do anything (if cannot get)
+ )

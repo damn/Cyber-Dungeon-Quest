@@ -77,7 +77,9 @@
 
 (defn- update-game [{:keys [context/player-entity
                             context/game-paused?
-                            cdq.context.ecs/thrown-error]
+                            cdq.context.ecs/thrown-error
+                            context/game-logic-frame
+                            ]
                      :as ctx}
                     active-entities]
   (let [state-obj (entity/state-obj @player-entity)
@@ -89,9 +91,16 @@
         ctx (assoc-delta-time ctx)]
     (update-mouseover-entity! ctx) ; this do always so can get debug info even when game not running
     (when-not paused?
+      ; TODO how does this with remove-destroyed-entities! ???
+      ; -> destroyed item
+
+      (swap! game-logic-frame inc)
       (update-elapsed-game-time! ctx)
       (update-potential-fields! ctx active-entities)
-      (tick-entities! ctx (map deref active-entities)))
+      (tick-entities! ctx (map deref active-entities))
+
+
+      )
     ;(println "~ update-game, call remove-destroyed-entities! ctx ~")
     (remove-destroyed-entities! ctx) ; do not pause this as for example pickup item, should be destroyed.
     ;(println "~ finished update-game call to r-d-es ~")
@@ -105,16 +114,27 @@
 ; * 2. replay create entities txs (can only do this too)
 ; * 3. reset player-entity atom
 
-(defn- replay-frame! []
+(require '[cdq.context.transaction-handler :as txs])
 
-  ; * count game logic frame #
-  ; * save TXS for each frame
-  ; * just replay them in same order
-  ; * first for replay -> reset the world and change to replay-frame logic
+; (take 3 (second (second @txs/txs-coll)))
+; maybe I can make statitics/group by what are themost txs (animation, left-bottom?)
 
-  ; * explored tile corners atom (txs ?) - can keep as is for now.
+(defn- replay-game! [{:keys [context/game-logic-frame] :as ctx}]
+  (update-mouseover-entity! ctx)
+  (update-elapsed-game-time! (assoc-delta-time ctx))
+  (let [txs (get @txs/txs-coll (swap! game-logic-frame inc))]
+    (println @game-logic-frame ". " (count txs))
+    (transact-all! ctx txs))
+  (end-of-frame-checks! ctx))
 
-  )
+(comment
+ (let [frame 1
+       txs (get @txs/txs-coll frame)]
+   (println frame ". " (count txs))
+   )
+ )
+
+(def replay-game? false)
 
 (defrecord SubScreen []
   Screen
@@ -126,7 +146,9 @@
   (render [_ {:keys [context/player-entity] :as context}]
     (let [active-entities (active-entities (content-grid context) player-entity)]
       (render-game context (map deref active-entities))
-      (update-game context active-entities))))
+      (if replay-game?
+        (replay-game! context)
+        (update-game context active-entities)))))
 
 (defn screen [context]
   {:actors (cdq.context.ui.actors/->ui-actors context)
