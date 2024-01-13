@@ -1,12 +1,14 @@
 (ns cdq.context.world
-  (:require gdl.disposable
+  (:require [gdl.context :refer [render-tiled-map]]
+            gdl.disposable
             [gdl.graphics.camera :as camera]
+            [gdl.graphics.color :as color]
             [gdl.maps.tiled :as tiled]
             [gdl.math.raycaster :as raycaster]
             [gdl.math.vector :as v]
             [data.grid2d :as grid2d]
             [utils.core :refer [->tile tile->middle]]
-            [cdq.context :refer [transact! transact-all! ray-blocked? content-grid world-grid get-property]]
+            [cdq.context :refer [explored? transact! transact-all! ray-blocked? content-grid world-grid get-property]]
             [cdq.context.world.grid :refer [create-grid]]
             [cdq.context.world.content-grid :refer [->content-grid]]
             [cdq.state.player :as player-state]
@@ -16,16 +18,40 @@
             [cdq.world.cell :as cell]
             [cdq.entity :as entity]
             [mapgen.movement-property :refer (movement-property)]
-            mapgen.module-gen))
+            mapgen.module-gen)
+  (:import com.badlogic.gdx.graphics.Color))
 
 ; TODO name cdq.context.world/data
+; TODO grid is an atom, not cells
 ; TODO (:grid world-map) dangerous ! => if multiple maps ! thats why world-map usage limit
 
 ; rename this to context.world (can have multiple world-maps later)
 ; (maybe world-map can be a record with functions too ? ...)
 ; rename grid just to grid
 
-; TODO forgot to filter nil cells , e.g. cached-adjcent cells or something
+; TODO put tile param already
+(defn- set-explored! [{:keys [context/world-map] :as context} position]
+  (swap! (:explored-tile-corners world-map) assoc (->tile position) true))
+
+(def ^:private explored-tile-color (Color. (float 0.5) (float 0.5) (float 0.5) (float 1)))
+
+(declare ^:private map-render-data)
+
+(defn- set-map-render-data! [{:keys [world-camera] :as ctx}]
+  (let [light-position (camera/position world-camera)] ; == player position use ?
+    (.bindRoot #'map-render-data [light-position ctx])))
+
+(def ^:private see-all-tiles? false)
+
+(defn- tile-color-setter [_ x y]
+  (let [[light-position ctx] map-render-data
+        position [x y]
+        explored? (explored? ctx position)
+        base-color (if explored? explored-tile-color color/black)]
+    (if (ray-blocked? ctx light-position position)
+      (if see-all-tiles? color/white base-color)
+      (do (when-not explored? (set-explored! ctx position))
+          color/white))))
 
 #_(defn- on-screen? [entity* {:keys [world-camera world-viewport-width world-viewport-height]}]
   (let [[x y] (:entity/position entity*)
@@ -61,6 +87,10 @@
 
 (extend-type gdl.context.Context
   cdq.context/World
+  (render-map [{:keys [context/world-map] :as ctx}]
+    (set-map-render-data! ctx)
+    (render-tiled-map ctx (:tiled-map world-map) tile-color-setter))
+
   (line-of-sight? [context source* target*]
     (and (:entity/z-order target*)  ; is even an entity which renders something
          #_(or (not (:entity/player? source*)) ; deactivated because performance, also not really needed then
@@ -81,10 +111,6 @@
   ; TODO put tile param
   (explored? [{:keys [context/world-map] :as context} position]
     (get @(:explored-tile-corners world-map) position))
-
-  ; TODO put tile param already
-  (set-explored! [{:keys [context/world-map] :as context} position]
-    (swap! (:explored-tile-corners world-map) assoc (->tile position) true))
 
   (content-grid [{:keys [context/world-map]}]
     (:content-grid world-map))

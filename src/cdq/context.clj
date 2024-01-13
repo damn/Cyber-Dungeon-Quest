@@ -16,12 +16,12 @@
   (update-mouseover-entity! [_]))
 
 (defprotocol World
+  (render-map [_])
   (line-of-sight? [_ source* target*])
   (ray-blocked?  [_ start target])
   (path-blocked? [_ start target path-w] "path-w in tiles. casts two rays.")
   ; TODO explored-grid
   (explored?     [_ position])
-  (set-explored! [_ position])
   (content-grid [_])
   (world-grid [_]))
 

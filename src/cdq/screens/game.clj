@@ -1,41 +1,17 @@
 (ns cdq.screens.game
-  (:require [gdl.app :refer [current-context change-screen!]]
-            [gdl.context :refer [render-world-view delta-time draw-text key-just-pressed? key-pressed? ->color render-tiled-map]]
+  (:require [gdl.app :refer [change-screen!]]
+            [gdl.context :refer [render-world-view delta-time key-just-pressed? key-pressed?]]
             [gdl.screen :refer [Screen]]
-            [gdl.graphics.color :as color]
             [gdl.graphics.camera :as camera]
             [gdl.input.keys :as input.keys]
             [gdl.scene2d.actor :refer [visible? set-visible! toggle-visible!]]
             [utils.core :refer [safe-get]]
-            [cdq.context :refer [render-entities! tick-entities! ray-blocked? explored? set-explored! line-of-sight? content-grid remove-destroyed-entities! update-mouseover-entity! update-potential-fields! update-elapsed-game-time! debug-render-after-entities debug-render-before-entities set-cursor! transact-all! windows id->window]]
+            [cdq.context :refer [render-map render-entities! tick-entities! line-of-sight? content-grid remove-destroyed-entities! update-mouseover-entity! update-potential-fields! update-elapsed-game-time! debug-render-after-entities debug-render-before-entities set-cursor! transact-all! windows id->window]]
             cdq.context.ui.actors
             [cdq.entity :as entity]
             [cdq.entity.movement :as movement]
             [cdq.state :as state]
             [cdq.world.content-grid :refer [active-entities]]))
-
-(declare ^:private explored-tile-color)
-
-(defn- init-explored-tile-color [ctx]
-  (.bindRoot #'explored-tile-color (->color ctx 0.5 0.5 0.5 1)))
-
-(declare ^:private map-render-data)
-
-(defn- set-map-render-data! [{:keys [world-camera] :as ctx}]
-  (let [light-position (camera/position world-camera)] ; == player position use ?
-    (.bindRoot #'map-render-data [light-position ctx])))
-
-(def ^:private see-all-tiles? false)
-
-(defn- tile-color-setter [_ x y]
-  (let [[light-position ctx] map-render-data
-        position [x y]
-        explored? (explored? ctx position)
-        base-color (if explored? explored-tile-color color/black)]
-    (if (ray-blocked? ctx light-position position)
-      (if see-all-tiles? color/white base-color)
-      (do (when-not explored? (set-explored! ctx position))
-          color/white))))
 
 ; for now a function, see gdl.backends.libgdx.context.input reload bug
 ; otherwise keys in dev mode may be unbound because dependency order not reflected
@@ -75,23 +51,19 @@
   (when (key-just-pressed? context input.keys/tab)
     (change-screen! :screens/minimap)))
 
-(defn- render-game [{:keys [context/world-map
-                            context/player-entity
+(defn- render-game [{:keys [context/player-entity
                             world-camera]
                      :as context}
                     active-entities*]
   (camera/set-position! world-camera (:entity/position @player-entity))
-  (set-map-render-data! context)
-  (render-tiled-map context
-                    (:tiled-map world-map)
-                    tile-color-setter)
+  (render-map context)
   (render-world-view context
                      (fn [context]
                        (debug-render-before-entities context)
                        (render-entities! context
                                          (->> active-entities*
                                               (filter :entity/z-order)
-                                              (filter #(line-of-sight? context @player-entity %)))) ; TODO here debug los disable
+                                              (filter #(line-of-sight? context @player-entity %))))
                        (debug-render-after-entities context))))
 
 (def ^:private pausing? true)
@@ -136,6 +108,5 @@
       (update-game context active-entities))))
 
 (defn screen [context]
-  (init-explored-tile-color context)
   {:actors (cdq.context.ui.actors/->ui-actors context)
    :sub-screen (->SubScreen)})

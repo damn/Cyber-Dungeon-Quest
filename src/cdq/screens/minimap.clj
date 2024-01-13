@@ -50,9 +50,7 @@
     (camera/reset-zoom! world-camera))
 
   (render [_ {:keys [world-camera context/world-map] :as context}]
-    (render-tiled-map context
-                      (:tiled-map world-map)
-                      tile-corner-color-setter)
+    (render-tiled-map context (:tiled-map world-map) tile-corner-color-setter)
     (render-world-view context
                        #(draw-filled-circle % (camera/position world-camera) 0.5 color/green))
     (when (or (key-just-pressed? context input.keys/tab)

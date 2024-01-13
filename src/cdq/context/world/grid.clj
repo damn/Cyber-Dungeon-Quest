@@ -74,9 +74,7 @@
   (cached-adjacent-cells [grid cell]
     (if-let [result (:adjacent-cells @cell)]
       result
-      (let [result (keep grid (-> @cell
-                                  :position
-                                  grid2d/get-8-neighbour-positions))]
+      (let [result (keep grid (-> @cell :position grid2d/get-8-neighbour-positions))]
         (swap! cell assoc :adjacent-cells result)
         result)))
 
