@@ -17,11 +17,11 @@
 ; we want min/max explored tiles X / Y and show the whole explored area....
 
 (defn- calculate-zoom [{:keys [world-camera
-                               context/world-map]}]
+                               context/world]}]
   (let [positions-explored (map first
                                 (remove (fn [[position value]]
                                           (false? value))
-                                        (seq @(:explored-tile-corners world-map))))
+                                        (seq @(:explored-tile-corners world))))
         left   (apply min-key (fn [[x y]] x) positions-explored)
         top    (apply max-key (fn [[x y]] y) positions-explored)
         right  (apply max-key (fn [[x y]] x) positions-explored)
@@ -49,8 +49,8 @@
   (hide [_ {:keys [world-camera]}]
     (camera/reset-zoom! world-camera))
 
-  (render [_ {:keys [world-camera context/world-map] :as context}]
-    (render-tiled-map context (:tiled-map world-map) tile-corner-color-setter)
+  (render [_ {:keys [world-camera context/world] :as context}]
+    (render-tiled-map context (:tiled-map world) tile-corner-color-setter)
     (render-world-view context
                        #(draw-filled-circle % (camera/position world-camera) 0.5 color/green))
     (when (or (key-just-pressed? context input.keys/tab)

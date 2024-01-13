@@ -30,8 +30,8 @@
 ; rename grid just to grid
 
 ; TODO put tile param already
-(defn- set-explored! [{:keys [context/world-map] :as context} position]
-  (swap! (:explored-tile-corners world-map) assoc (->tile position) true))
+(defn- set-explored! [{:keys [context/world] :as context} position]
+  (swap! (:explored-tile-corners world) assoc (->tile position) true))
 
 (def ^:private explored-tile-color (Color. (float 0.5) (float 0.5) (float 0.5) (float 1)))
 
@@ -87,9 +87,9 @@
 
 (extend-type gdl.context.Context
   cdq.context/World
-  (render-map [{:keys [context/world-map] :as ctx}]
+  (render-map [{:keys [context/world] :as ctx}]
     (set-map-render-data! ctx)
-    (render-tiled-map ctx (:tiled-map world-map) tile-color-setter))
+    (render-tiled-map ctx (:tiled-map world) tile-color-setter))
 
   (line-of-sight? [context source* target*]
     (and (:entity/z-order target*)  ; is even an entity which renders something
@@ -98,8 +98,8 @@
          (not (and player-los-checks?
                    (ray-blocked? context (:entity/position source*) (:entity/position target*))))))
 
-  (ray-blocked? [{:keys [context/world-map]} start target]
-    (let [{:keys [cell-blocked-boolean-array width height]} world-map]
+  (ray-blocked? [{:keys [context/world]} start target]
+    (let [{:keys [cell-blocked-boolean-array width height]} world]
       (raycaster/ray-blocked? cell-blocked-boolean-array width height start target)))
 
   (path-blocked? [context start target path-w]
@@ -109,14 +109,14 @@
        (ray-blocked? context start2 target2))))
 
   ; TODO put tile param
-  (explored? [{:keys [context/world-map] :as context} position]
-    (get @(:explored-tile-corners world-map) position))
+  (explored? [{:keys [context/world] :as context} position]
+    (get @(:explored-tile-corners world) position))
 
-  (content-grid [{:keys [context/world-map]}]
-    (:content-grid world-map))
+  (content-grid [{:keys [context/world]}]
+    (:content-grid world))
 
-  (world-grid [{:keys [context/world-map]}]
-    (:grid world-map)))
+  (world-grid [{:keys [context/world]}]
+    (:grid world)))
 
 (defmethod transact! :tx/add-to-world [[_ entity] ctx]
   (content-grid/update-entity! (content-grid ctx) entity)
@@ -196,8 +196,8 @@
 
 (def ^:private spawn-enemies? true)
 
-(defn- create-entities-from-tiledmap! [{:keys [context/world-map] :as ctx}]
-  (let [tiled-map (:tiled-map world-map)]
+(defn- create-entities-from-tiledmap! [{:keys [context/world] :as ctx}]
+  (let [tiled-map (:tiled-map world)]
     (when spawn-enemies?
       (transact-all! ctx
                      (for [[posi creature-id] (tiled/positions-with-property tiled-map :creatures :id)]
@@ -208,7 +208,7 @@
     (tiled/remove-layer! tiled-map :creatures)) ; otherwise will be rendered, is visible
   (transact-all! ctx [[:tx/creature
                        :creatures/vampire
-                       #:entity {:position (:start-position world-map)
+                       #:entity {:position (:start-position world)
                                  :state (player-state/->state :idle)
                                  :player? true
                                  :free-skill-points 3
@@ -220,10 +220,10 @@
                  (vals @(:cdq.context.ecs/uids->entities ctx))))) ; TODO private ! move to ecs ! forgot uid change
 
 (defn merge->context [context]
-  ; TODO when (:context/world-map context)
+  ; TODO when (:context/world context)
   ; dispose (:tiled-map ... )
   ; check if it works
   (let [context (merge context
-                       {:context/world-map (create-world-map (first-level context))})]
+                       {:context/world (create-world-map (first-level context))})]
     (create-entities-from-tiledmap! context)
     (merge context {:context/player-entity (fetch-player-entity context)})))
