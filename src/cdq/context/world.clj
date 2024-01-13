@@ -182,7 +182,7 @@
 ; --> mach prozedural generierte maps mit prostprocessing (fill-singles/set-cells-behind-walls-nil/remove-nads/..?)
 ;& assertions 0 NADS z.b. ...?
 
-(def ^:private spawn-enemies? false)
+(def ^:private spawn-enemies? true)
 
 (defn- create-entities-from-tiledmap! [{:keys [context/world] :as ctx}]
   (let [tiled-map (:tiled-map world)]
@@ -252,13 +252,14 @@
 
     (.bindRoot #'cdq.context.transaction-handler/log-txs? true)
     (reset! @#'cdq.context.transaction-handler/txs-coll [])
-    (println "~~ logging xs - " (count @@#'cdq.context.transaction-handler/txs-coll))
+    (println "~~ logging txs - " (count @@#'cdq.context.transaction-handler/txs-coll))
 
     (create-entities-from-tiledmap! context)
 
     (.bindRoot #'cdq.context.transaction-handler/log-txs? false)
-    (println "~~ stop logging xs - " (count @@#'cdq.context.transaction-handler/txs-coll))
+    (println "~~ stop logging txs - " (count @@#'cdq.context.transaction-handler/txs-coll))
 
+    (println "Initial entity txs:")
     (clojure.pprint/pprint
      (for [[txk txs] (group-by first @@#'cdq.context.transaction-handler/txs-coll)]
        [txk (count txs)]))
