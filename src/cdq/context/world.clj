@@ -209,90 +209,29 @@
 
 (require 'cdq.context.transaction-handler)
 
-; (first (deref @#'cdq.context.transaction-handler/txs-coll))
-; first is assoc uid entity 1 and the CURRENT ATOM VALUE
-
 (comment
  ([:tx/setup-entity 1]
   [:tx/assoc 2]
   [:tx/assoc-in 22]
-  [:tx/set-item-image-in-widget 11] ; TODO error, attaching same tooltip! have to rebuilt inventory...
+  [:tx/set-item-image-in-widget 11]
   [:tx/actionbar-add-skill 1]
   [:tx/add-to-world 1])
-
-  (clojure.pprint/pprint
-   (let [ctx @gdl.app/current-context
-        entities (vals @(:cdq.context.ecs/uids->entities ctx))
-        ]
-    (map deref entities)
-    ))
-  ; 2 entities - item & player -> both tx/destroy
-  ; after reset again 2 players !
-
 
   ; TODO tx/destroy 'plop' triggers
   ; appearing !
   ; I want to clean up the whole ecs system
   ; => recreate ecs/world context
-  ; (Only I don't have rand-gen for map)
-
-  ; ERROR ! killed goblin after some resets:
-  ; happens after 1 reset !
-  ; -> remove-destroyed-entities! called twice?
-  ; but shouldnt be in list anymore
-  ; [:tx/dissoc-uids->entities 1516]
-  ; [:tx/remove-from-world "<entity-atom{uid=1516}>"]
-  ; [:tx/dissoc-uids->entities 1516]
-
-  ; => why 2x dissoc-uid?
-
-  ; => 2x called remove-destroyed-entities!
-
-  ; ~ update-game, call remove-destroyed-entities! ctx ~
-  ; ~~ remove-destroyed-entities! count:  4
-  ; remove-destroyed-entities! on  298
-  ; [:tx/dissoc-uids->entities 298]
-  ; [:tx/remove-from-world "<entity-atom{uid=298}>"]
-  ; remove-destroyed-entities! on  317
-  ; [:tx/dissoc-uids->entities 317]
-  ; [:tx/remove-from-world "<entity-atom{uid=317}>"]
-  ; remove-destroyed-entities! on  316
-  ; [:tx/dissoc-uids->entities 316]
-  ; [:tx/remove-from-world "<entity-atom{uid=316}>"]
-  ; remove-destroyed-entities! on  315
-  ; [:tx/dissoc-uids->entities 315]
-  ; [:tx/remove-from-world "<entity-atom{uid=315}>"]
-  ; ~ finished update-game call to r-d-es ~
-  ; ~ update-game, call remove-destroyed-entities! ctx ~
-  ; ~~ remove-destroyed-entities! count:  1
-  ; remove-destroyed-entities! on  298
-  ; [:tx/dissoc-uids->entities 298]
-  ; Error with transaction:
-  ;  [:tx/remove-from-world "<entity-atom{uid=298}>"]
-
-  ; TODO the original txs is done with ANOTHER ID !
-  ;IDS NEED TO MATCH BECAUSE WE DONT USE ONLY FOR DEBUG
+  ; (Only I don't have rand-gen for map & spawn entities )
+  ; that means world-grid,content-grid, ? explored-tiles? (TODO)
 
   (.postRunnable com.badlogic.gdx.Gdx/app
                  (fn []
                    (let [ctx @gdl.app/current-context
                          entities (vals @(:cdq.context.ecs/uids->entities ctx))
                          txs (deref @#'cdq.context.transaction-handler/txs-coll)]
-                     (println (count entities)) ; TODO count is '2' after first reset !!!
 
-                     ; I don't want to call tx/destroy and remove all but
-                     ; _CLEAR_ the whole system ...
-                     ; that means world-grid,content-grid, ? explored-tiles? (TODO)
-                     ; ecs ...
-                     (println "mark all destroyed")
                      (transact-all! ctx (for [e entities] [:tx/destroy e]))
-                     (println "call manually remove-destroyed-entities!")
                      (cdq.context/remove-destroyed-entities! ctx)
-                     (println "Amount of entities left: "
-                              (count (filter (comp :entity/destroyed? deref) (vals @(:cdq.context.ecs/uids->entities ctx))))
-                              )
-                     ; only I want to keep tiled-map ... !
-                     ; but also remember the creatures layer was removed from tiledmap
                      (cdq.context/rebuild-inventory-widgets ctx)
                      (cdq.context/reset-actionbar ctx)
                      (reset! cdq.context.ecs/id-counter 0)
@@ -320,16 +259,8 @@
     (.bindRoot #'cdq.context.transaction-handler/log-txs? false)
     (println "~~ stop logging xs - " (count @@#'cdq.context.transaction-handler/txs-coll))
 
-
     (clojure.pprint/pprint
      (for [[txk txs] (group-by first @@#'cdq.context.transaction-handler/txs-coll)]
        [txk (count txs)]))
 
-    #_([:tx/assoc 314]
-       [:tx/assoc-uid-entity 157]
-       [:tx/add-to-world 157]
-       [:tx/create 157]
-       [:tx/assoc-in 156]
-       [:tx/set-item-image-in-widget 11]
-       [:tx/actionbar-add-skill 1])
     (merge context {:context/player-entity (fetch-player-entity context)})))

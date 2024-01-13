@@ -28,21 +28,13 @@
   (swap! entity update-in (drop-last ks) dissoc (last ks))
   nil)
 
-; I could also pass to setup-entity the uid, then the counter will not be used and does not need to match up
+; simple rule:
+; all side effects have to be in a tx which returns nil and lead to same side effects
+
 (def id-counter (atom 0))
 
 (defn- unique-number! []
   (swap! id-counter inc))
-
-; TODO its really complicated, re-using atoms, having an uid counter which has to match up etc.
-; setting up entity ...
-
-; => because atom has to match up, all txs are with the atom
-; or I convert each txs to uid and have to chance transact! fns
-
-; giving , saving the initial value as tx
-; and setting with newid always (doesnt matter reuse ids , not using other than debugging)
-; by the way could add debug helper rightclick adds the entity in src/dev.clj to a var ?
 
 ; sets the specific atom to initial-value ( pass uid also)
 ; this atom is used in all future txs of that entity ! its the entity/id !
@@ -54,14 +46,10 @@
                     map->Entity)]
     (reset! an-atom (assoc entity*
                            :entity/id an-atom
-                           :entity/uid (unique-number!)))) ; need to make here so the component systems are called, otherwise it does not have those components
+                           :entity/uid (unique-number!))))  ; TODO maybe pass in tx-data then do not need to reset id-counter
   nil)
 
-;; START uid system - only for debugging entities - orthogonal to rest of code - NOT! because the uid component needs to be added
-
-; TODO why pass both? entity contains the uid ? this was the problem before !
-; stupid uid !!
-; see that each code is simpel
+; TODO maybe do not need to pass both entity and uid (it holds it)
 (defmethod transact! :tx/assoc-uids->entities [[_ entity uid] {::keys [uids->entities]}]
   {:pre [(:entity/uid @uids->entities uid)]}
   (swap! uids->entities assoc uid entity)
@@ -69,21 +57,12 @@
 
 (defmethod transact! :tx/dissoc-uids->entities [[_ uid] {::keys [uids->entities]}]
   {:pre [(contains? @uids->entities uid)]}
-  (println "(swap! uids->entities dissoc uid) " uid)
-  (println "before: (contains? @uids->entities uid)" (contains? @uids->entities uid))
   (swap! uids->entities dissoc uid)
-  (println "after: (contains? @uids->entities uid)" (contains? @uids->entities uid))
   nil)
 
 (defcomponent :entity/uid uid
   (entity/create  [_ {:keys [entity/id]}  _ctx] [[:tx/assoc-uids->entities id uid]])
   (entity/destroy [_ _entity*             _ctx] [[:tx/dissoc-uids->entities uid]]))
-
-;; END uid system - only for debugging entities - orthogonal to rest of code
-
-
-; TODO don't call transact-all! in a transact!, just return the txs ??
-; but for effect need extra ctx??
 
 (defmethod transact! :tx/create [[_ components] ctx]
   (let [entity (atom nil)]
@@ -138,26 +117,8 @@
       (render-entity* entity/render-debug entity* context)))
 
   (remove-destroyed-entities! [{::keys [uids->entities] :as ctx}]
-
-    (let [cnt #(count (filter (comp :entity/destroyed? deref) (vals @uids->entities)))]
-      (when (>  (cnt) 0)
-        (println "~~ remove-destroyed-entities! count: " (cnt)))
-
-      (doseq [entity (filter (comp :entity/destroyed? deref) (vals @uids->entities))]
-
-        (println "remove-destroyed-entities! on " @entity)
-
-        (apply-system-transact-all! ctx entity/destroy @entity))
-
-      (when (> (cnt) 0)
-        (let [entity (first (filter (comp :entity/destroyed? deref) (vals @uids->entities)))]
-          (println " ~~~ after removed doseq => count is " (cnt))
-          (println "Remaining entity: " (select-keys @entity [:entity/uid]))
-          (println "after all doseq,  (contains? @uids->entities (:entity/uid @entity))" (contains? @uids->entities (:entity/uid @entity))))
-        )
-
-      ; => count was '1' ! then one I destroyed by attacking !
-      )))
+    (doseq [entity (filter (comp :entity/destroyed? deref) (vals @uids->entities))]
+      (apply-system-transact-all! ctx entity/destroy @entity))))
 
 (defn ->context [& {:keys [z-orders]}]
   (assert (every? #(= "z-order" (namespace %)) z-orders))
