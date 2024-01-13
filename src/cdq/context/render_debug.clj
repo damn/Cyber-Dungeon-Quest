@@ -27,6 +27,8 @@
 (def ^:private cell-entities? false)
 (def ^:private cell-occupied? false)
 
+(require '[cdq.context.potential-fields :as potential-field])
+
 (defn- tile-debug [{:keys [world-camera
                            world-viewport-width
                            world-viewport-height] :as ctx}]
@@ -56,12 +58,11 @@
                           color/green))
 
       (when potential-field-colors?
-        (let [faction :good
+        (let [faction :evil
               {:keys [distance entity]} (faction cell*)]
           (when distance
-            (let [ratio (/ (int (/ distance 10)) 15) ]
-              (draw-filled-rectangle ctx x y 1 1
-                                     [ratio (- 1 ratio) ratio 0.6])))))
+            (let [ratio (/ distance @#'potential-field/max-iterations)]
+              (draw-filled-rectangle ctx x y 1 1 [ratio (- 1 ratio) ratio 0.6])))))
       #_(@#'g/draw-string x y (str distance) 1)
       #_(when (:monster @cell)
           (@#'g/draw-string x y (str (:id @(:monster @cell))) 1)))))
