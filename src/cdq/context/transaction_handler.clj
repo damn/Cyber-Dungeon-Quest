@@ -7,20 +7,13 @@
 
 (comment
  (count @txs-coll)
- ; 866 !
+
  (clojure.pprint/pprint
   (for [[txk txs] (group-by first @txs-coll)]
-    [txk (count txs)]
-    )
-  )
+    [txk (count txs)]))
 
- (clojure.pprint/pprint
-  (take 10 (reverse @txs-coll)))
- ; first create txs then :tx/create ... reverse !
- ; is added only when returning nil already done other txs
  )
 
-; TODO RESET!
 (def txs-coll (atom []))
 
 (defn- debug-print-tx [tx]
@@ -31,9 +24,6 @@
                   (instance? gdl.context.Context %) "<Context>"
                   :else %)
                 tx)))
-
-; TODO reset! each new game
-; TODO each frame collect - count game frames ...
 
 (extend-type gdl.context.Context
   cdq.context/TransactionHandler

@@ -51,7 +51,7 @@
 
 ; TODO maybe do not need to pass both entity and uid (it holds it)
 (defmethod transact! :tx/assoc-uids->entities [[_ entity uid] {::keys [uids->entities]}]
-  {:pre [(:entity/uid @uids->entities uid)]}
+  {:pre [(= (:entity/uid @entity) uid)]}
   (swap! uids->entities assoc uid entity)
   nil)
 
