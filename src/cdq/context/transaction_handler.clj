@@ -2,9 +2,24 @@
   (:require gdl.context
             [cdq.context :refer [transact! transact-all!]]))
 
-(def log-txs? true) ; call 'record?' ??
+(def record-txs? true)
 
-(def txs-coll (atom {}))
+(def frame->txs (atom {}))
+
+(defn- add-tx-to-frame [frame->txs frame-num tx]
+  (update frame->txs frame-num (fn [txs-at-frame]
+                                 (if txs-at-frame
+                                   (conj txs-at-frame tx)
+                                   [tx]))))
+
+(comment
+ (= (-> {}
+        (add-tx-to-frame 1 [:foo1 :bar1])
+        (add-tx-to-frame 1 [:foo2 :bar2]))
+    {1 [[:foo1 :bar1] [:foo2 :bar2]]})
+ )
+
+(def debug-print-txs? false)
 
 (defn- debug-print-tx [tx]
   (pr-str (mapv #(cond
@@ -14,20 +29,6 @@
                   (instance? gdl.context.Context %) "<Context>"
                   :else %)
                 tx)))
-
-(defn- add-tx-to-frame [txs-coll frame-num tx]
-  (update txs-coll frame-num (fn [txs-at-frame]
-                               (if txs-at-frame
-                                 (conj txs-at-frame tx)
-                                 [tx]))))
-
-(comment
- (= (add-tx-to-frame (add-tx-to-frame {} 1 [:foo :bar1]) 1 [:foo :bar2])
-    {1 [[:foo :bar1] [:foo :bar2]]})
-
- )
-
-(def debug-print-txs? false)
 
 (extend-type gdl.context.Context
   cdq.context/TransactionHandler
@@ -39,12 +40,12 @@
                (do
                 (when debug-print-txs?
                   (println @game-logic-frame "." (debug-print-tx tx)))
-                (when log-txs?
-                  (swap! txs-coll add-tx-to-frame @game-logic-frame tx)))
+                (when record-txs?
+                  (swap! frame->txs add-tx-to-frame @game-logic-frame tx)))
                (transact-all! ctx result)))
            (catch Throwable t
              (println "Error with transaction: \n" (debug-print-tx tx))
              (throw t)))))
 
   (frame->txs [_ frame-number]
-    (get @txs-coll frame-number)))
+    (@frame->txs frame-number)))

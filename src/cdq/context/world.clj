@@ -184,7 +184,7 @@
 
 (def ^:private spawn-enemies? true)
 
-(defn create-entities-from-tiledmap! [{:keys [context/world] :as ctx}]
+(defn transact-create-entities-from-tiledmap! [{:keys [context/world] :as ctx}]
   (let [tiled-map (:tiled-map world)]
     (when spawn-enemies?
       (transact-all! ctx
