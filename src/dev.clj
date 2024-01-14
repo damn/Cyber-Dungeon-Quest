@@ -32,8 +32,8 @@
        ": [GOLD]" (str (->v-str v))))
 
 (defn add-map-nodes! [ctx parent-node m level]
-  (when true #_(< @level 2)
-    ;(swap! level inc)
+  (when (< @level 2)
+    (swap! level inc)
     (doseq [[k v] (into (sorted-map) m)]
       (try
        (let [node (->node (->label ctx (->labelstr k v)))]
@@ -71,7 +71,9 @@
 
  ; maybe only add elements on click -> somehow glyphlayout breaks AFTER this returns successfully
  (let [ctx @gdl.app/current-context
-       tree-map @@(:context/mouseover-entity ctx)
+       ;tree-map @@(:context/mouseover-entity ctx)
+       tree-map ctx
+
        ]
    (add-to-stage! ctx (->window ctx {:title "Context Overview"
                                      :close-button? true
