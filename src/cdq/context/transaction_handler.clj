@@ -44,8 +44,7 @@
                   (swap! frame->txs add-tx-to-frame @game-logic-frame tx)))
                (transact-all! ctx result)))
            (catch Throwable t
-             (println "Error with transaction: \n" (debug-print-tx tx))
-             (throw t)))))
+             (throw (ex-info "Error with transaction:" {:tx (debug-print-tx tx)} t))))))
 
   (frame->txs [_ frame-number]
     (@frame->txs frame-number)))

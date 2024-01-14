@@ -65,15 +65,18 @@
   (swap! entity assoc :entity/destroyed? true)
   nil)
 
+(defn- handle-entity-error! [{::keys [thrown-error] :as ctx} entity* throwable]
+  (p/pretty-pst (ex-info "" (select-keys entity* [:entity/uid]) throwable))
+  (reset! thrown-error throwable))
+
 (defn- render-entity* [system entity* {::keys [thrown-error] :as ctx}]
   (try
    (dorun (apply-system system entity* ctx))
    (catch Throwable t
      (when-not @thrown-error
-       (p/pretty-pst t)
-       (reset! thrown-error t))
+       (handle-entity-error! ctx entity* t))
      (let [[x y] (:entity/position entity*)]
-       (draw-text ctx {:text (str "Error " (:entity/uid entity*))
+       (draw-text ctx {:text (str "Error / entity uid: " (:entity/uid entity*))
                        :x x
                        :y y
                        :up? true})))))
@@ -93,8 +96,7 @@
       (try
        (apply-system-transact-all! ctx entity/tick entity*)
        (catch Throwable t
-         (p/pretty-pst t)
-         (reset! thrown-error t)))))
+         (handle-entity-error! ctx entity* t)))))
 
   (render-entities! [{::keys [render-on-map-order] :as context} entities*]
     (doseq [entities* (map second

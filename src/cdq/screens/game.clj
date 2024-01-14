@@ -106,7 +106,7 @@
   (end-of-frame-checks! ctx))
 
 ; TODO adjust sound speed also equally ? pitch ?
-(def ^:private replay-speed 1)
+(def ^:private replay-speed 2)
 
 (defn- replay-game! [{:keys [context/game-logic-frame] :as ctx}]
   (dotimes [_ replay-speed]
