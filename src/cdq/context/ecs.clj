@@ -28,34 +28,20 @@
   (swap! entity update-in (drop-last ks) dissoc (last ks))
   nil)
 
-; simple rule:
-; all side effects have to be in a tx which returns nil and lead to same side effects
-
-; part of ecs?
-(def id-counter (atom 0))
-
-(defn- unique-number! []
-  (swap! id-counter inc))
-
-; ::namespaced-txs?
-(defmethod transact! :tx/setup-entity [[_ an-atom components] ctx]
+(defmethod transact! :tx/setup-entity [[_ an-atom uid components] ctx]
   {:pre [(not (contains? components :entity/id))
          (not (contains? components :entity/uid))]}
   (let [entity* (-> components
                     (update-map entity/create-component components ctx)
                     map->Entity)]
-    (reset! an-atom (assoc entity*
-                           :entity/id an-atom
-                           :entity/uid (unique-number!))))  ; TODO maybe pass in tx-data then do not need to reset id-counter
+    (reset! an-atom (assoc entity* :entity/id an-atom :entity/uid uid)))
   nil)
 
-; ::namespaced-txs?
 (defmethod transact! :tx/assoc-uids->entities [[_ entity] {::keys [uids->entities]}]
   {:pre [(number? (:entity/uid @entity))]}
   (swap! uids->entities assoc (:entity/uid @entity) entity)
   nil)
 
-; ::namespaced-txs?
 (defmethod transact! :tx/dissoc-uids->entities [[_ uid] {::keys [uids->entities]}]
   {:pre [(contains? @uids->entities uid)]}
   (swap! uids->entities dissoc uid)
@@ -65,16 +51,13 @@
   (entity/create  [_ {:keys [entity/id]} _ctx] [[:tx/assoc-uids->entities   id]])
   (entity/destroy [_ _entity*            _ctx] [[:tx/dissoc-uids->entities uid]]))
 
+(let [id-counter (atom 0)]
+  (defn- unique-number! []
+    (swap! id-counter inc)))
+
 (defmethod transact! :tx/create [[_ components] ctx]
   (let [entity (atom nil)]
-    ; completely return all txs??
-    ; but anonym fn which derefs only after the first tx
-    ; like state
-    ; monads?
-    ; tx-fn
-    ; or transact-all! returns []
-    ; and others ':record-tx'
-    (transact-all! ctx [[:tx/setup-entity entity components]])
+    (transact-all! ctx [[:tx/setup-entity entity (unique-number!) components]])
     (apply-system-transact-all! ctx entity/create @entity))
   [])
 

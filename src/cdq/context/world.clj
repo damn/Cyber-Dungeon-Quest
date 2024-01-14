@@ -252,7 +252,6 @@
                      (cdq.context/reset-actionbar ctx)
 
                      ; reset counters
-                     (reset! cdq.context.ecs/id-counter 0) ; <- part of ecs
                      (reset! (:context/game-logic-frame ctx) 0) ; <- part of replay-game-screen enter
 
                      ; Do not log the replayed txs !
@@ -282,8 +281,6 @@
 
     (.bindRoot #'txs/log-txs? true)
     (.bindRoot #'cdq.screens.game/replay-game? false)
-    ; ?
-    (reset! cdq.context.ecs/id-counter 0)
 
     ;(.bindRoot #'txs//log-txs? true)
     (println "Starting world - txs/log-txs? " txs/log-txs?)

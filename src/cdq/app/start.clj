@@ -44,13 +44,6 @@
 ; TODO do @ gloal vars, has to be done before ns requires.
 ; (set! *assert* (safe-get config :assert?))
 
-; context merging - certain pattern
-; components w. dependencies
-; !! implicit dependencies !!
-; e.g. ui-actors -> properties ?
-; DECLARE dependencies -> resolve ... there are some clj libraries for that.
-; but also quite complex itself ?
-
 (defn- create-context [default-context]
   (let [context (merge default-context
                        (properties/->context default-context "resources/properties.edn"))
