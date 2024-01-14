@@ -227,6 +227,8 @@
   ; kA warum animation nicht andert skill icon!
   ; ansonsten -> funzt !
 
+  ; Gdx.app.setForegroundFps
+  ; (.setForegroundFps com.badlogic.gdx.Gdx/app 30)
   (.postRunnable com.badlogic.gdx.Gdx/app
                  (fn []
                    (let [ctx @gdl.app/current-context

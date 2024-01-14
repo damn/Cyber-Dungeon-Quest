@@ -119,13 +119,20 @@
 ; (take 3 (second (second @txs/txs-coll)))
 ; maybe I can make statitics/group by what are themost txs (animation, left-bottom?)
 
+(def replay-game? false)
+
+; TODO adjust sound speed also equally ? pitch ?
+(def replay-speed 2)
+
+; TODO also pausable/ set cursor / proper game time / mouseover entity / dbg windows
 (defn- replay-game! [{:keys [context/game-logic-frame] :as ctx}]
-  (update-mouseover-entity! ctx)
-  (update-elapsed-game-time! (assoc-delta-time ctx))
-  (let [txs (get @txs/txs-coll (swap! game-logic-frame inc))]
-    (println @game-logic-frame ". " (count txs))
-    (transact-all! ctx txs))
-  (end-of-frame-checks! ctx))
+  (dotimes [_ replay-speed]
+    (update-mouseover-entity! ctx)
+    (update-elapsed-game-time! (assoc-delta-time ctx))
+    (let [txs (get @txs/txs-coll (swap! game-logic-frame inc))]
+      (println @game-logic-frame ". " (count txs))
+      (transact-all! ctx txs))
+    (end-of-frame-checks! ctx)))
 
 (comment
  (let [frame 1
@@ -134,7 +141,6 @@
    )
  )
 
-(def replay-game? false)
 
 (defrecord SubScreen []
   Screen

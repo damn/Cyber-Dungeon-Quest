@@ -25,6 +25,8 @@
   (get-state [this] #_(.isSoundOn app-game-container))
   (set-state [this is-selected] #_(.setSoundOn app-game-container is-selected)))
 
+; TODO on enter, get-state ! is outdated ! at app start only ...
+
 (defn- ->debug-flag [avar]
   (reify StatusCheckBox
     (get-text [this]

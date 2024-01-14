@@ -11,9 +11,29 @@
 ; make interface
 ; (w/o world ?)
 ; cursor also?
+
+; TODO recored explored-tile-corners ??!
+; or recalculate on the fly with render-map ? just reset ?
+
+; => stateful context somehow mark/remember/list
+
+; can it be simpler?o
+; ecs/everything already set up with render orders
+; just fn / system -> start-new-game-session
+
+; see in the context tree
+; 'game-specific' context components
+; which get reset then
+
+; all these flags/components/resets
+; make with a system.
+
 (defn start-game-context [context]
+
+  ; just move into common fn
   (rebuild-inventory-widgets context)
   (reset-actionbar context)
+
   (let [context (merge context
                        (ecs/->context :z-orders [:z-order/on-ground
                                                  :z-order/ground
