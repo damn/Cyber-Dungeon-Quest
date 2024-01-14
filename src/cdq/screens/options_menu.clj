@@ -35,10 +35,12 @@
     (set-state [this is-selected]
       (.bindRoot ^clojure.lang.Var avar is-selected))))
 
-; add line of sight activate, shadows on/off, see through walls etc.
+; TODO add line of sight activate, shadows on/off, see through walls etc.
+; TODO FIXME IF THE FLAGS ARE CHANGED MANUALLY IN THE REPL THIS IS NOT REFRESHED
 (def ^:private debug-flags (map ->debug-flag
                                 [#'cdq.entity.body/show-body-bounds
-                                 #'cdq.context.transaction-handler/record-txs?
+                                 ;#'cdq.context.transaction-handler/record-txs?
+                                 #'cdq.context.transaction-handler/debug-print-txs?
                                  #'cdq.context.render-debug/tile-grid?
                                  #'cdq.context.render-debug/cell-occupied?
                                  #'cdq.context.render-debug/highlight-blocked-cell?

@@ -35,7 +35,7 @@
                    {:context/replay-mode? false}
                    (world/->context ctx))]
     (txs/clear-recorded-txs!)
-    (txs/set-record-txs! true) ; TODO set in config ? ignores option menu setting and sets true always.
+    ;(txs/set-record-txs! true) ; TODO set in config ? ignores option menu setting and sets true always.
     (world/transact-create-entities-from-tiledmap! ctx)
     (println "Initial entity txs:")
     (txs/summarize-txs (frame->txs ctx 0))
