@@ -4,7 +4,8 @@
 (defsystem transact! [_ ctx])
 
 (defprotocol TransactionHandler
-  (transact-all! [_ txs]))
+  (transact-all! [_ txs])
+  (frame->txs [_ frame-number]))
 
 (defprotocol EntityComponentSystem
   (get-entity [_ uid])

@@ -44,4 +44,7 @@
                (transact-all! ctx result)))
            (catch Throwable t
              (println "Error with transaction: \n" (debug-print-tx tx))
-             (throw t))))))
+             (throw t)))))
+
+  (frame->txs [_ frame-number]
+    (get @txs-coll frame-number)))

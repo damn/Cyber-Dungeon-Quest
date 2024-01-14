@@ -6,7 +6,7 @@
             [gdl.input.keys :as input.keys]
             [gdl.scene2d.actor :refer [visible? set-visible! toggle-visible!]]
             [utils.core :refer [safe-get]]
-            [cdq.context :refer [render-map render-entities! tick-entities! line-of-sight? content-grid remove-destroyed-entities! update-mouseover-entity! update-potential-fields! update-elapsed-game-time! debug-render-after-entities debug-render-before-entities set-cursor! transact-all! windows id->window]]
+            [cdq.context :refer [render-map render-entities! tick-entities! line-of-sight? content-grid remove-destroyed-entities! update-mouseover-entity! update-potential-fields! update-elapsed-game-time! debug-render-after-entities debug-render-before-entities set-cursor! transact-all! frame->txs windows id->window]]
             cdq.context.ui.actors
             [cdq.entity :as entity]
             [cdq.entity.movement :as movement]
@@ -97,21 +97,22 @@
     (remove-destroyed-entities! ctx) ; do not pause this as for example pickup item, should be destroyed.
     (end-of-frame-checks! ctx)))
 
-(require '[cdq.context.transaction-handler :as txs])
-
-(def replay-game? false)
+(defn- replay-frame! [ctx frame-number]
+  (update-mouseover-entity! ctx)
+  (update-elapsed-game-time! (assoc-delta-time ctx))
+  (let [txs (frame->txs ctx frame-number)]
+    ;(println frame-number ". " (count txs))
+    (transact-all! ctx txs))
+  (end-of-frame-checks! ctx))
 
 ; TODO adjust sound speed also equally ? pitch ?
-(def replay-speed 2)
+(def replay-speed 1)
 
 (defn- replay-game! [{:keys [context/game-logic-frame] :as ctx}]
   (dotimes [_ replay-speed]
-    (update-mouseover-entity! ctx)
-    (update-elapsed-game-time! (assoc-delta-time ctx))
-    (let [txs (get @txs/txs-coll (swap! game-logic-frame inc))]
-      (println @game-logic-frame ". " (count txs))
-      (transact-all! ctx txs))
-    (end-of-frame-checks! ctx)))
+    (replay-frame! ctx (swap! game-logic-frame inc))))
+
+(def replay-game? false)
 
 (defrecord SubScreen []
   Screen

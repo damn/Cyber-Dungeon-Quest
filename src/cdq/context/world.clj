@@ -167,24 +167,24 @@
         h (grid2d/height grid)]
     (merge ; TODO no merge, list explicit which keys are there
      (dissoc argsmap :map-key)
-     ; TODO here also namespaced keys  !?
      {:width w
       :height h
       :cell-blocked-boolean-array (create-cell-blocked-boolean-array grid)
       :content-grid (->content-grid w h 16 16)
       :grid grid
-      ; TODO just explored-tiles? or explored-grid ?
-      :explored-tile-corners (atom (grid2d/create-grid w h (constantly false)))})
-    )
+      :explored-tile-corners (atom (grid2d/create-grid w h (constantly false)))}))
+  ; FIXME !
   ;(check-not-allowed-diagonals grid)
   )
 
-; --> mach prozedural generierte maps mit prostprocessing (fill-singles/set-cells-behind-walls-nil/remove-nads/..?)
-;& assertions 0 NADS z.b. ...?
+(defn ->context [ctx]
+  (when-let [world (:context/world ctx)]
+    (dispose (:tiled-map world)))
+  {:context/world (create-world-map (first-level ctx))})
 
 (def ^:private spawn-enemies? true)
 
-(defn- create-entities-from-tiledmap! [{:keys [context/world] :as ctx}]
+(defn create-entities-from-tiledmap! [{:keys [context/world] :as ctx}]
   (let [tiled-map (:tiled-map world)]
     (when spawn-enemies?
       (transact-all! ctx
@@ -202,90 +202,3 @@
                                  :free-skill-points 3
                                  :clickable {:type :clickable/player}}]]))
 
-(defn- fetch-player-entity [ctx]
-  {:post [%]}
-  (first (filter #(:entity/player? @%)
-                 (vals @(:cdq.context.ecs/uids->entities ctx))))) ; TODO private ! move to ecs ! forgot uid change
-
-(require '[cdq.context.transaction-handler :as txs])
-
-(comment
-
-  ; TODO tx/destroy 'plop' triggers
-  ; appearing !
-  ; I want to clean up the whole ecs system
-  ; => recreate ecs/world context
-  ; (Only I don't have rand-gen for map & spawn entities )
-  ; that means world-grid,content-grid, ? explored-tiles? (TODO)
-
-  ; #1 #1 !
-  ; -> clear up ecs / world(?) completely
-
-  ; => use change-screen ? and on enter/exit I can change stuffs
-  ; (cannot share actors game/replay screen !
-
-  (.postRunnable com.badlogic.gdx.Gdx/app
-                 (fn []
-                   (let [ctx @gdl.app/current-context
-                         entities (vals @(:cdq.context.ecs/uids->entities ctx))
-                         initial-txs (get @txs/txs-coll 0)]
-                     (println "(count initial-txs)" (count initial-txs))
-                     (println "Initial-txs:")
-                     (clojure.pprint/pprint
-                      (for [[txk txs] (group-by first initial-txs)]
-                        [txk (count txs)]))
-
-                     ; remove all entities
-                     ; cleanup / >dispose< / on-destroy ? = plop
-                     ; call fn dispose all entities (because I keep world, and remove references there)
-                     ; then recreate ecs
-                     (transact-all! ctx (for [e entities] [:tx/destroy e]))
-                     (cdq.context/remove-destroyed-entities! ctx)
-
-                     ; reset UI
-                     (cdq.context/rebuild-inventory-widgets ctx)
-                     (cdq.context/reset-actionbar ctx)
-
-                     ; reset counters
-                     (reset! (:context/game-logic-frame ctx) 0) ; <- part of replay-game-screen enter
-
-                     ; Do not log the replayed txs !
-                     (.bindRoot #'txs/log-txs? false) ; <- part of replay-game-screen enter
-                     ; set game to replay loop
-                     (.bindRoot #'cdq.screens.game/replay-game? true)
-
-                     ; those 2 below also part of replay-game-screen enter
-                     ; apply initial txs
-                     (transact-all! ctx initial-txs)
-
-                     ; set up player-entity
-                     (swap! gdl.app/current-context merge {:context/player-entity (fetch-player-entity ctx)})
-
-                     (println "frames/txs - " [(keys @txs/txs-coll) (map count (vals @txs/txs-coll))])))))
-
-(require 'cdq.context.ecs)
-
-(defn merge->context [context]
-  (when-let [world (:context/world context)]
-    (dispose (:tiled-map world)))
-  (let [context (merge context
-                       {:context/world (create-world-map (first-level context))})]
-
-    (reset! txs/txs-coll {})
-    (.bindRoot #'txs/log-txs? true)
-    (.bindRoot #'cdq.screens.game/replay-game? false)
-
-    (println "Starting world - txs/log-txs? " txs/log-txs?)
-    (println "~~ logging initial txs - " [(keys @txs/txs-coll) (map count (vals @txs/txs-coll))])
-
-    (println "create-entities-from-tiledmap!")
-    (create-entities-from-tiledmap! context)
-
-    (println "~~ logging initial txs - " [(keys @txs/txs-coll) (map count (vals @txs/txs-coll))])
-
-    (println "Initial entity txs:")
-    (clojure.pprint/pprint
-     (for [[txk txs] (group-by first (second (first @txs/txs-coll)))]
-       [txk (count txs)]))
-    (merge context
-           {:context/player-entity (fetch-player-entity context)})))
