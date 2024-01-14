@@ -222,13 +222,8 @@
   ; -> clear up ecs / world(?) completely
 
   ; => use change-screen ? and on enter/exit I can change stuffs
+  ; (cannot share actors game/replay screen !
 
-  ; kA warum dann alle verschwinden
-  ; kA warum animation nicht andert skill icon!
-  ; ansonsten -> funzt !
-
-  ; Gdx.app.setForegroundFps
-  ; (.setForegroundFps com.badlogic.gdx.Gdx/app 30)
   (.postRunnable com.badlogic.gdx.Gdx/app
                  (fn []
                    (let [ctx @gdl.app/current-context
@@ -266,10 +261,7 @@
                      ; set up player-entity
                      (swap! gdl.app/current-context merge {:context/player-entity (fetch-player-entity ctx)})
 
-
-                     (println "frames/txs - " [(keys @txs/txs-coll) (map count (vals @txs/txs-coll))])
-                     nil
-                     ))))
+                     (println "frames/txs - " [(keys @txs/txs-coll) (map count (vals @txs/txs-coll))])))))
 
 (require 'cdq.context.ecs)
 
@@ -279,38 +271,21 @@
   (let [context (merge context
                        {:context/world (create-world-map (first-level context))})]
 
+    (reset! txs/txs-coll {})
     (.bindRoot #'txs/log-txs? true)
     (.bindRoot #'cdq.screens.game/replay-game? false)
 
-    ;(.bindRoot #'txs//log-txs? true)
     (println "Starting world - txs/log-txs? " txs/log-txs?)
-    (reset! txs/txs-coll {})
     (println "~~ logging initial txs - " [(keys @txs/txs-coll) (map count (vals @txs/txs-coll))])
 
     (println "create-entities-from-tiledmap!")
     (create-entities-from-tiledmap! context)
 
     (println "~~ logging initial txs - " [(keys @txs/txs-coll) (map count (vals @txs/txs-coll))])
-    ;(.bindRoot #'txs/log-txs? false)
-    ;(println "~~ stop logging txs - " (count @txs/txs-coll))
+
     (println "Initial entity txs:")
     (clojure.pprint/pprint
      (for [[txk txs] (group-by first (second (first @txs/txs-coll)))]
        [txk (count txs)]))
     (merge context
            {:context/player-entity (fetch-player-entity context)})))
-
-
-(comment
- ; few hundred txs each frame
- (sort (map #(count (second %)) @txs/txs-coll))
-
- ; now player died
- ; game logic frame 826
-
- ; => set up replay game loop
- ; => reset game logic frame / inc each frame (60 FPS playback)
- ; apply initial ( & dissoc ?)
- ; (transact-all! ctx (get txs/txs-coll @game-logic-frame))
- ; when finished? stop don't do anything (if cannot get)
- )

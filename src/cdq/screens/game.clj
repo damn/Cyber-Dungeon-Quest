@@ -78,8 +78,7 @@
 (defn- update-game [{:keys [context/player-entity
                             context/game-paused?
                             cdq.context.ecs/thrown-error
-                            context/game-logic-frame
-                            ]
+                            context/game-logic-frame]
                      :as ctx}
                     active-entities]
   (let [state-obj (entity/state-obj @player-entity)
@@ -91,40 +90,20 @@
         ctx (assoc-delta-time ctx)]
     (update-mouseover-entity! ctx) ; this do always so can get debug info even when game not running
     (when-not paused?
-      ; TODO how does this with remove-destroyed-entities! ???
-      ; -> destroyed item
-
       (swap! game-logic-frame inc)
       (update-elapsed-game-time! ctx)
       (update-potential-fields! ctx active-entities)
-      (tick-entities! ctx (map deref active-entities))
-
-
-      )
-    ;(println "~ update-game, call remove-destroyed-entities! ctx ~")
+      (tick-entities! ctx (map deref active-entities)))
     (remove-destroyed-entities! ctx) ; do not pause this as for example pickup item, should be destroyed.
-    ;(println "~ finished update-game call to r-d-es ~")
     (end-of-frame-checks! ctx)))
 
-; TODO RESET WORLD STATE
-; * ecs
-; * world
-
-; * 1. :tx/destroy ALL entities
-; * 2. replay create entities txs (can only do this too)
-; * 3. reset player-entity atom
-
 (require '[cdq.context.transaction-handler :as txs])
-
-; (take 3 (second (second @txs/txs-coll)))
-; maybe I can make statitics/group by what are themost txs (animation, left-bottom?)
 
 (def replay-game? false)
 
 ; TODO adjust sound speed also equally ? pitch ?
 (def replay-speed 2)
 
-; TODO also pausable/ set cursor / proper game time / mouseover entity / dbg windows
 (defn- replay-game! [{:keys [context/game-logic-frame] :as ctx}]
   (dotimes [_ replay-speed]
     (update-mouseover-entity! ctx)
@@ -133,14 +112,6 @@
       (println @game-logic-frame ". " (count txs))
       (transact-all! ctx txs))
     (end-of-frame-checks! ctx)))
-
-(comment
- (let [frame 1
-       txs (get @txs/txs-coll frame)]
-   (println frame ". " (count txs))
-   )
- )
-
 
 (defrecord SubScreen []
   Screen

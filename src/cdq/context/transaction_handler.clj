@@ -2,34 +2,9 @@
   (:require gdl.context
             [cdq.context :refer [transact! transact-all!]]))
 
-; TODO main issue -> player idle cursor ? do not track cursors?
-
 (def log-txs? true) ; call 'record?' ??
 
-
-(comment
- (count @txs-coll)
-
- (clojure.pprint/pprint
-  (for [[txk txs] (group-by first @txs-coll)]
-    [txk (count txs)]))
-
- )
-
-;(count (second (first @txs-coll)))
-
 (def txs-coll (atom {}))
-; 1 minute
-; 260 MB
-; delete
-; 40 MB
-; = 220 MB/minute.
-; => 3,6 MB/second
-
-; 213 seconds
-; 522 MB
-; => 40 MB
-; => 2,2 MB/second
 
 (defn- debug-print-tx [tx]
   (pr-str (mapv #(cond
@@ -52,15 +27,7 @@
 
  )
 
-; write them to some kind of vector (per frame ?)
-; and can inspect/filter/sort/group etc.
 (def debug-print-txs? false)
-
-; :record-tx
-; can disable for cursor (return nil there), and player messages ?
-; :ui-tx / :entity-tx / etc.
-; is-a ?
-; but then set cursor for replay somehow or remove
 
 (extend-type gdl.context.Context
   cdq.context/TransactionHandler
@@ -68,12 +35,11 @@
     (doseq [tx txs :when tx]
       (try (let [result (transact! tx ctx)]
              (if (and (nil? result)
-                      ; dispatch on tx - debug log / yes / no
                       (not= :tx/cursor (first tx)))
                (do
                 (when debug-print-txs?
                   (println @game-logic-frame "." (debug-print-tx tx)))
-                (when log-txs? ; when record? and (= result :record) !!
+                (when log-txs?
                   (swap! txs-coll add-tx-to-frame @game-logic-frame tx)))
                (transact-all! ctx result)))
            (catch Throwable t

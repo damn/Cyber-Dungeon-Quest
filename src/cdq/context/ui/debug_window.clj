@@ -20,7 +20,7 @@
                             world-camera] :as c}]
   (let [world-mouse (world-mouse-position c)]
     (str
-     "@game-logic-frame: " @game-logic-frame "\n"
+     "game-logic-frame: " @game-logic-frame "\n"
      "FPS: " (frames-per-second c)  "\n"
      "Zoom: " (camera/zoom world-camera) "\n"
      "World: "(mapv int world-mouse) "\n"

@@ -117,8 +117,7 @@
     (.setMinSize drawable (float cell-size) (float cell-size))
     (.setDrawable image-widget drawable)
     (add-tooltip! cell-widget #(player-tooltip-text % item))
-    nil
-    ))
+    nil))
 
 (defmethod cdq.context/transact! :tx/remove-item-from-widget [[_ cell]
                                                               {{:keys [table slot->background]} :context/inventory :as ctx}]
@@ -126,8 +125,7 @@
         ^Image image-widget (get cell-widget :image)]
     (.setDrawable image-widget (slot->background (cell 0)))
     (remove-tooltip! cell-widget)
-    nil
-    ))
+    nil))
 
 (defn- slot->background [ctx]
   (let [sheet (spritesheet ctx "items/images.png" 48 48)]
