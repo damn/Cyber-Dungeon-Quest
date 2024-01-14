@@ -51,9 +51,9 @@
   (entity/create  [_ {:keys [entity/id]} _ctx] [[:tx/assoc-uids->entities   id]])
   (entity/destroy [_ _entity*            _ctx] [[:tx/dissoc-uids->entities uid]]))
 
-(let [id-counter (atom 0)]
+(let [cnt (atom 0)]
   (defn- unique-number! []
-    (swap! id-counter inc)))
+    (swap! cnt inc)))
 
 (defmethod transact! :tx/create [[_ components] ctx]
   (let [entity (atom nil)]
