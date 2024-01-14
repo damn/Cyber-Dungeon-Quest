@@ -2,7 +2,7 @@
   (:require gdl.context
             [cdq.context :refer [transact! transact-all!]]))
 
-(def ^:private record-txs? true)
+(def ^:private record-txs? false)
 
 (defn set-record-txs! [bool]
   (.bindRoot #'record-txs? bool))
