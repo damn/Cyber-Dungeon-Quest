@@ -2,9 +2,15 @@
   (:require gdl.context
             [cdq.context :refer [transact! transact-all!]]))
 
-(def record-txs? true)
+(def ^:private record-txs? true)
 
-(def frame->txs (atom {}))
+(defn set-record-txs! [bool]
+  (.bindRoot #'record-txs? bool))
+
+(def ^:private frame->txs (atom nil))
+
+(defn clear-recorded-txs! []
+  (reset! frame->txs {}))
 
 (defn- add-tx-to-frame [frame->txs frame-num tx]
   (update frame->txs frame-num (fn [txs-at-frame]
@@ -48,3 +54,8 @@
 
   (frame->txs [_ frame-number]
     (@frame->txs frame-number)))
+
+(defn summarize-txs [txs]
+  (clojure.pprint/pprint
+   (for [[txkey txs] (group-by first txs)]
+     [txkey (count txs)])))
