@@ -12,7 +12,11 @@
   (first (filter #(:entity/player? @%)
                  (vals @(:cdq.context.ecs/uids->entities ctx))))) ; TODO private ! move to ecs ! forgot uid change
 
-(defn start-game-context [ctx]
+; global flags/vars:
+; * txs/frame->txs
+; * txs/record-txs?
+
+(defn start-new-game [ctx]
   (rebuild-inventory-widgets ctx)
   (reset-actionbar ctx)
   (let [ctx (merge ctx
@@ -23,13 +27,14 @@
                    (mouseover-entity/->context)
                    (player-message/->context)
                    (counter/->context)
-                   {:context/game-paused? (atom true)
-                    :context/game-logic-frame (atom 0)}
+                   {:context/game-paused? (atom nil)
+                    :context/game-logic-frame (atom 0)
+                    :context/replay-mode? false}
                    (world/->context ctx))]
 
     (reset! txs/frame->txs {})
     (.bindRoot #'txs/record-txs? true)
-    (.bindRoot #'cdq.screens.game/replay-game? false)
+
     (println "Starting world - txs/record-txs? " txs/record-txs?)
     (println "~~ logging initial txs - " [(keys @txs/frame->txs) (map count (vals @txs/frame->txs))])
     (println "transact-create-entities-from-tiledmap!")
@@ -86,15 +91,15 @@
 
                      ; Do not log the replayed txs !
                      (.bindRoot #'txs/record-txs? false) ; <- part of replay-game-screen enter
-                     ; set game to replay loop
-                     (.bindRoot #'cdq.screens.game/replay-game? true)
 
                      ; those 2 below also part of replay-game-screen enter
                      ; apply initial txs
                      (cdq.context/transact-all! ctx initial-txs)
 
                      ; set up player-entity
-                     (swap! gdl.app/current-context merge {:context/player-entity (fetch-player-entity ctx)})
+                     (swap! gdl.app/current-context merge
+                            {:context/replay-mode? true
+                             :context/player-entity (fetch-player-entity ctx)})
 
                      (println "frames/txs - " [(keys @txs/frame->txs) (map count (vals @txs/frame->txs))])))))
 

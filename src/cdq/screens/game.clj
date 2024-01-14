@@ -106,13 +106,11 @@
   (end-of-frame-checks! ctx))
 
 ; TODO adjust sound speed also equally ? pitch ?
-(def replay-speed 1)
+(def ^:private replay-speed 1)
 
 (defn- replay-game! [{:keys [context/game-logic-frame] :as ctx}]
   (dotimes [_ replay-speed]
     (replay-frame! ctx (swap! game-logic-frame inc))))
-
-(def replay-game? false)
 
 (defrecord SubScreen []
   Screen
@@ -121,10 +119,11 @@
   (hide [_ ctx]
     (set-cursor! ctx :cursors/default))
 
-  (render [_ {:keys [context/player-entity] :as context}]
+  (render [_ {:keys [context/player-entity
+                     context/replay-mode?] :as context}]
     (let [active-entities (active-entities (content-grid context) player-entity)]
       (render-game context (map deref active-entities))
-      (if replay-game?
+      (if replay-mode?
         (replay-game! context)
         (update-game context active-entities)))))
 

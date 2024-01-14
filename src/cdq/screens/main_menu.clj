@@ -4,13 +4,13 @@
             [gdl.input.keys :as input.keys]
             gdl.screen
             [utils.core :refer [safe-get]]
-            [cdq.context.game :refer [start-game-context]]))
+            [cdq.context.game :refer [start-new-game]]))
 
 (defn screen [{:keys [context/config] :as context} background-image]
   (let [table (->table context
                        {:rows (remove nil?
                                       [[(->text-button context "Start game" (fn [_context]
-                                                                              (swap! current-context start-game-context)
+                                                                              (swap! current-context start-new-game)
                                                                               (change-screen! :screens/game)))]
 
                                        (when (safe-get config :map-editor?)
