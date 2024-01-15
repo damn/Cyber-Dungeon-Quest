@@ -44,7 +44,7 @@
       (do (when-not explored? (set-explored! ctx position))
           color/white))))
 
-#_(defn- on-screen? [entity* {:keys [world-camera world-viewport-width world-viewport-height]}]
+(defn- on-screen? [entity* {:keys [world-camera world-viewport-width world-viewport-height]}]
   (let [[x y] (:entity/position entity*)
         x (float x)
         y (float y)
@@ -84,7 +84,7 @@
 
   (line-of-sight? [context source* target*]
     (and (:entity/z-order target*)  ; is even an entity which renders something
-         #_(or (not (:entity/player? source*)) ; deactivated because performance, also not really needed then
+         (or (not (:entity/player? source*))
                (on-screen? target* context))
          (not (and player-los-checks?
                    (ray-blocked? context (:entity/position source*) (:entity/position target*))))))
