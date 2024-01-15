@@ -34,11 +34,11 @@
                    (reset-common-game-context! ctx)
                    {:context/replay-mode? false}
                    (world/->context ctx))]
-    (txs/clear-recorded-txs!)
+    ;(txs/clear-recorded-txs!)
     ;(txs/set-record-txs! true) ; TODO set in config ? ignores option menu setting and sets true always.
     (world/transact-create-entities-from-tiledmap! ctx)
-    (println "Initial entity txs:")
-    (txs/summarize-txs (frame->txs ctx 0))
+    ;(println "Initial entity txs:")
+    ;(txs/summarize-txs (frame->txs ctx 0))
     (assoc ctx :context/player-entity (fetch-player-entity ctx))))
 
 (defn- start-replay-mode! [ctx]
