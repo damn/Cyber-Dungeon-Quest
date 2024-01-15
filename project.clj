@@ -29,7 +29,10 @@
   ;:javac-options ["-target" "1.7" "-source" "1.7" "-Xlint:-options"]
 
   :global-vars {*warn-on-reflection* true
-                *print-level* 3}
+                *print-level* 3
+                ;*assert* false
+                ;*unchecked-math* :warn-on-boxed
+                }
 
   :aliases {"dev" ["run" "-m" "gdl.backends.libgdx.dev" "cdq.app.start" "-main"]})
 
