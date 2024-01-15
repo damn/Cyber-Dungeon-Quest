@@ -16,6 +16,17 @@
             [cdq.world.grid :refer [cached-adjacent-cells rectangle->cells]]
             [cdq.world.cell :as cell]))
 
+; FIXME assert @ mapload no NAD's and @ potential field init & remove from
+; potential-field-following the removal of NAD's.
+
+; TODO remove max pot field movement player screen + 10 tiles as of screen size
+; => is coupled to max-steps & also
+; to friendly units follow player distance
+
+; TODO remove cached get adj cells & use grid as atom not cells ?
+; how to compare perfr ?
+
+; TODO visualize steps, maybe I see something I missed
 
 (comment
  (defrecord Foo [a b c])
@@ -50,21 +61,11 @@
  (step :good *1)
  )
 
-(def ^:private max-iterations 15)
-
 (defn- diagonal-direction? [[x y]]
   (and (not (zero? (float x)))
        (not (zero? (float y)))))
 
-(comment
- (defn is-diagonal? [from to]
-   (let [[fx fy] (:position @from)
-         [tx ty] (:position @to)
-         xdir (- tx fx)
-         ydir (- ty fy)]
-     (diagonal-direction? [xdir ydir]))))
-
-(defn- fast-is-diagonal? [cell* other-cell*]
+(defn- diagonal-cells? [cell* other-cell*]
   (let [[x1 y1] (:position cell*)
         [x2 y2] (:position other-cell*)]
     (and (not= x1 x2)
@@ -96,7 +97,7 @@
             :when (not (or (cell/blocked? adjacent-cell*)
                            (marked? adjacent-cell*)))
             :let [distance-value (+ (float (distance cell*))
-                                    (float (if (fast-is-diagonal? cell* adjacent-cell*)
+                                    (float (if (diagonal-cells? cell* adjacent-cell*)
                                              1.4 ; square root of 2 * 10
                                              1)))]]
       (add-field-data! adjacent-cell faction distance-value (nearest-entity cell*))
@@ -105,8 +106,8 @@
 
 (defn- generate-potential-field
   "returns the marked-cells"
-  [grid faction tiles->entities]
-  (let [entity-cell-seq (for [[tile entity] tiles->entities]
+  [grid faction tiles->entities max-iterations]
+  (let [entity-cell-seq (for [[tile entity] tiles->entities] ; FIXME lazy seq
                           [entity (get grid tile)])
         marked (map second entity-cell-seq)]
     (doseq [[entity cell] entity-cell-seq]
@@ -117,7 +118,7 @@
       (if (= iterations max-iterations)
         marked-cells
         (let [new-marked (step grid faction new-marked-cells)]
-          (recur (concat marked-cells new-marked)
+          (recur (concat marked-cells new-marked) ; FIXME lazy seq
                  new-marked
                  (inc iterations)))))))
 
@@ -129,7 +130,7 @@
 
 (def ^:private cache (atom nil)) ; TODO move to context?
 
-(defn- update-faction-potential-field [grid faction entities]
+(defn- update-faction-potential-field [grid faction entities max-iterations]
   (let [tiles->entities (tiles->entities entities faction)
         last-state   [faction :tiles->entities]
         marked-cells [faction :marked-cells]]
@@ -140,12 +141,17 @@
       (swap! cache assoc-in marked-cells (generate-potential-field
                                           grid
                                           faction
-                                          tiles->entities)))))
+                                          tiles->entities
+                                          max-iterations)))))
+
+; TODO main potential field context component create-component params
+(def ^:private factions-iterations {:good 5
+                                    :evil 15})
 
 (defn- update-potential-fields*! [context entities] ; TODO call on world-grid ?!..
   (let [grid (world-grid context)]
-    (doseq [faction [:good :evil]]
-      (update-faction-potential-field grid faction entities))))
+    (doseq [[faction max-iterations] factions-iterations]
+      (update-faction-potential-field grid faction entities max-iterations))))
 
 ;; MOVEMENT AI
 

@@ -58,10 +58,10 @@
                           color/green))
 
       (when potential-field-colors?
-        (let [faction :evil
+        (let [faction :good
               {:keys [distance entity]} (faction cell*)]
           (when distance
-            (let [ratio (/ distance @#'potential-field/max-iterations)]
+            (let [ratio (/ distance (@#'potential-field/factions-iterations faction))]
               (draw-filled-rectangle ctx x y 1 1 [ratio (- 1 ratio) ratio 0.6])))))
       #_(@#'g/draw-string x y (str distance) 1)
       #_(when (:monster @cell)
