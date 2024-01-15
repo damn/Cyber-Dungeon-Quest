@@ -14,4 +14,4 @@
   (nearest-entity-distance [_ faction]))
 
 (defn cells->entities [cells*]
-  (distinct (mapcat :entities cells*)))
+  (into #{} (mapcat :entities) cells*))

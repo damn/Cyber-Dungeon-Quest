@@ -54,8 +54,8 @@
         xdist (Math/abs (- x px))
         ydist (Math/abs (- y py))]
     (and
-     (<= xdist (inc (/ world-viewport-width  2)))
-     (<= ydist (inc (/ world-viewport-height 2))))))
+     (<= xdist (inc (/ (float world-viewport-width)  2)))
+     (<= ydist (inc (/ (float world-viewport-height) 2))))))
 
 ; TO gdl.math.... // not tested
 (defn- create-double-ray-endpositions

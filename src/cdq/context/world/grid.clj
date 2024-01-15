@@ -16,7 +16,7 @@
         b (int y)
         r (int (+ x width))
         t (int (+ y height))]
-    (distinct
+    (set
      (if (or (> width 1) (> height 1))
        (for [x (range l (inc r))
              y (range b (inc t))]

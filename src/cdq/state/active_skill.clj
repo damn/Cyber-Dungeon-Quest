@@ -8,15 +8,15 @@
 (defn- draw-skill-icon [c icon entity* [x y] action-counter-ratio]
   (let [[width height] (:world-unit-dimensions icon)
         _ (assert (= width height))
-        radius (/ width 2)
-        y (+ y (:half-height (:entity/body entity*)))
+        radius (/ (float width) 2)
+        y (+ (float y) (float (:half-height (:entity/body entity*))))
         center [x (+ y radius)]]
     (draw-filled-circle c center radius [1 1 1 0.125])
     (draw-sector c center radius
                  90 ; start-angle
-                 (* action-counter-ratio 360) ; degree
+                 (* (float action-counter-ratio) 360) ; degree
                  [1 1 1 0.5])
-    (draw-image c icon [(- x radius) y])))
+    (draw-image c icon [(- (float x) radius) y])))
 
 (defn- set-skill-to-cooldown [entity* {:keys [property/id skill/cooldown] :as skill} ctx]
   (when cooldown
