@@ -61,27 +61,21 @@
       (sort-by-order [:b :c :null :null :a] identity (define-order [:c :b :a :null]))
       '(:c :b :a :null :null))))
 
-(defn get-next-idx
-  "returns the next index of a vector.
-  if there is no next -> returns 0"
-  [current-idx coll]
-  (let [next-idx (inc @current-idx)]
-    (reset! current-idx (if (get coll next-idx) next-idx 0))))
-
+; libgdx fn is available:
 ; (MathUtils/isEqual 1 (length v))
 (defn approx-numbers [a b epsilon]
   (<=
     (Math/abs (float (- a b)))
     epsilon))
 
-(defn round-n-decimals [x n]
+(defn- round-n-decimals [^double x n]
   (let [z (Math/pow 10 n)]
     (float
       (/
         (Math/round (float (* x z)))
         z))))
 
-(defn readable-number [x]
+(defn readable-number [^double x]
   {:pre [(number? x)]} ; do not assert (>= x 0) beacuse when using floats x may become -0.000...000something
   (if (or
         (> x 5)

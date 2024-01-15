@@ -1,6 +1,5 @@
 (ns cdq.entity.skills
   (:require [x.x :refer [defcomponent]]
-            [utils.core :refer [mapvals]]
             [data.val-max :refer [apply-val]]
             [cdq.context :refer [get-property valid-params? ->counter stopped?]]
             [cdq.entity :as entity]))

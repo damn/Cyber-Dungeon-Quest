@@ -1,7 +1,6 @@
 (ns cdq.context.modifier.all
   (:require [clojure.string :as str]
             [clojure.math :as math]
-            [utils.core :refer [readable-number]]
             [data.val-max :refer [apply-max]]
             [cdq.context.modifier :as modifier]))
 
