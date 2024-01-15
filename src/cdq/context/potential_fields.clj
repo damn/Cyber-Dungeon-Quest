@@ -1,10 +1,12 @@
+(ns cdq.context.potential-fields
   "Assumption: The map contains no not-allowed diagonal cells, diagonal wall cells where both
   adjacent cells are walls and blocked.
-  (important for wavefront-expansion and field-following)"
-(ns cdq.context.potential-fields
-  ; * entities do not move to NADs (they remove them)
-  ; * the potential field flows into diagonals, so they should be reachable too.
-  ; TODO assert no NADs @ world creation
+  (important for wavefront-expansion and field-following)
+  * entities do not move to NADs (they remove them)
+  * the potential field flows into diagonals, so they should be reachable too.
+
+  TODO assert @ mapload no NAD's and @ potential field init & remove from
+  potential-field-following the removal of NAD's."
   (:require [data.grid2d :as grid2d]
             gdl.context
             [gdl.math.vector :as v]
