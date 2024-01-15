@@ -48,8 +48,8 @@
                                  #'cdq.context.render-debug/potential-field-colors?
                                  #'cdq.screens.game/pausing?
                                  #'cdq.context.world/player-los-checks?
-                                 #'cdq.context.world/see-all-tiles?
-                                 #'cdq.context.world/spawn-enemies?]))
+                                 #'cdq.context.world/spawn-enemies?
+                                 #'cdq.context.world.render/see-all-tiles?]))
 
 (defn- exit []
   (change-screen! :screens/game))
