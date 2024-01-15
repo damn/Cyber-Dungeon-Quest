@@ -23,20 +23,6 @@
   [pred coll]
   (first (filter pred coll)))
 
-(defn distinct-seq?
-  "same as (apply distinct? coll) but returns true if coll is empty/nil."
-  [coll]
-  (if (seq coll)
-    (apply distinct? coll)
-    true))
-
-(defn safe-merge
-  "same as merge but asserts no key is overridden."
-  [& maps]
-  (let [ks (mapcat keys maps)]
-    (assert (distinct-seq? ks) (str "not distinct keys: " (apply str (interpose "," ks)))))
-  (apply merge maps))
-
 (defn mapvals [f m]
   (into {} (for [[k v] m]
              [k (f v)])))

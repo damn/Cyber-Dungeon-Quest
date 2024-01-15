@@ -14,20 +14,20 @@
 (def val-max-schema
   (m/schema [:and
              [:vector {:min 2 :max 2} [:int {:min 0}]]
-             [:fn {:error/fn (fn [{[v mx] :value} _]
+             [:fn {:error/fn (fn [{[^int v ^int mx] :value} _]
                                (when (< mx v)
                                  (format "Expected max (%d) to be smaller than val (%d)" v mx)))}
-              (fn [[a b]] (<= a b))]]))
+              (fn [[^int a ^int b]] (<= a b))]]))
 
 (defn val-max-ratio
   "If mx and v is 0, returns 0, otherwise (/ v mx)"
-  [[v mx]]
+  [[^int v ^int mx]]
   {:pre [(m/validate val-max-schema [v mx])]}
   (if (and (zero? v) (zero? mx))
     0
     (/ v mx)))
 
-(defn lower-than-max? [[v mx]]
+(defn lower-than-max? [[^int v ^int mx]]
   {:pre [(m/validate val-max-schema [v mx])]}
   (< v mx))
 
@@ -44,10 +44,10 @@
   (let [v (zero-or-pos-int (f v))]
     [(min v mx) mx]))
 
-(defn apply-max [[v mx] f]
+(defn apply-max [[^int v mx] f]
   {:pre [(m/validate val-max-schema [v mx])]
    :post [(m/validate val-max-schema %)]}
-  (let [mx (zero-or-pos-int (f mx))]
+  (let [^int mx (zero-or-pos-int (f mx))]
     [(min v mx) mx]))
 
 (comment
@@ -91,19 +91,19 @@
           (sort-by inc<mult modifiers)))
 
 (comment
- (apply-val-max-modifiers
-  [5 10]
-  {[:max :mult] 2
-   [:val :mult] 1.5
-   [:val :inc] 1
-   [:max :inc] 1})
- ; -> [9 22]
+ (= (apply-val-max-modifiers
+     [5 10]
+     {[:max :mult] 2
+      [:val :mult] 1.5
+      [:val :inc] 1
+      [:max :inc] 1})
+    [9 22])
 
- (apply-val-max-modifiers
-  [9 22]
-  {[:max :mult] 0.7
-   [:val :mult] 1
-   [:val :inc] -2
-   [:max :inc] 0})
- ; -> [7 15]
+ (= (apply-val-max-modifiers
+     [9 22]
+     {[:max :mult] 0.7
+      [:val :mult] 1
+      [:val :inc] -2
+      [:max :inc] 0})
+    [7 15])
  )

@@ -49,11 +49,11 @@
 ; could use inside tiles only for >1 tile bodies (for example size 4.5 use 4x4 tiles for occupied)
 ; => only now there are no >1 tile entities anyway
 (defn- rectangle->occupied-cells [grid {:keys [left-bottom width height] :as rectangle}]
-  (if (or (> width 1) (> height 1))
+  (if (or (> (float width) 1) (> (float height) 1))
     (rectangle->cells grid rectangle)
     [(get grid
-          [(int (+ (left-bottom 0) (/ width 2)))
-           (int (+ (left-bottom 1) (/ height 2)))])]))
+          [(int (+ (float (left-bottom 0)) (/ (float width) 2)))
+           (int (+ (float (left-bottom 1)) (/ (float height) 2)))])]))
 
 (defn- set-occupied-cells! [grid entity]
   (let [cells (rectangle->occupied-cells grid (:entity/body @entity))]

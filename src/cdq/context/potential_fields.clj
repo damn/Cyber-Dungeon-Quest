@@ -53,8 +53,8 @@
 (def ^:private max-iterations 15)
 
 (defn- diagonal-direction? [[x y]]
-  (and (not (zero? x))
-       (not (zero? y))))
+  (and (not (zero? (float x)))
+       (not (zero? (float y)))))
 
 (comment
  (defn is-diagonal? [from to]
@@ -95,10 +95,10 @@
                   adjacent-cell* @adjacent-cell]
             :when (not (or (cell/blocked? adjacent-cell*)
                            (marked? adjacent-cell*)))
-            :let [distance-value (+ (distance cell*)
-                                    (if (fast-is-diagonal? cell* adjacent-cell*)
-                                      1.4 ; square root of 2 * 10
-                                      1))]]
+            :let [distance-value (+ (float (distance cell*))
+                                    (float (if (fast-is-diagonal? cell* adjacent-cell*)
+                                             1.4 ; square root of 2 * 10
+                                             1)))]]
       (add-field-data! adjacent-cell faction distance-value (nearest-entity cell*))
       (conj! marked-cells adjacent-cell))
     (persistent! marked-cells)))
@@ -189,7 +189,7 @@
   (when-let [best-cell (get-min-dist-cell
                         distance-to
                         (filter-viable-cells entity (cached-adjacent-cells grid cell)))]
-    (when (< (distance-to best-cell) own-dist)
+    (when (< (float (distance-to best-cell)) (float own-dist))
       cell)))
 
 (defn- find-next-cell
@@ -200,10 +200,10 @@
         nearest-entity #(cell/nearest-entity          @% faction)
         own-dist (distance-to own-cell)
         adjacent-cells (cached-adjacent-cells grid own-cell)]
-    (if (and own-dist (zero? own-dist))
+    (if (and own-dist (zero? (float own-dist)))
       {:target-entity (nearest-entity own-cell)}
       (if-let [adjacent-cell (first (filter #(and (distance-to %)
-                                                  (zero? (distance-to %)))
+                                                  (zero? (float (distance-to %))))
                                             adjacent-cells))]
         {:target-entity (nearest-entity adjacent-cell)}
         {:target-cell (let [cells (filter-viable-cells entity adjacent-cells)
@@ -215,10 +215,10 @@
                          (not own-dist)
                          min-key-cell
 
-                         (> (distance-to min-key-cell) own-dist) ; red
+                         (> (float (distance-to min-key-cell)) (float own-dist)) ; red
                          own-cell
 
-                         (< (distance-to min-key-cell) own-dist) ; green
+                         (< (float (distance-to min-key-cell)) (float own-dist)) ; green
                          min-key-cell
 
                          (= (distance-to min-key-cell) own-dist) ; yellow
