@@ -61,6 +61,7 @@
                      (fn [context]
                        (debug-render-before-entities context)
                        (render-entities! context
+                                         ; TODO lazy seqS everywhere!
                                          (->> active-entities*
                                               (filter :entity/z-order)
                                               (filter #(line-of-sight? context @player-entity %))))
@@ -93,7 +94,7 @@
       (swap! game-logic-frame inc)
       (update-elapsed-game-time! ctx)
       (update-potential-fields! ctx active-entities)
-      (tick-entities! ctx (map deref active-entities)))
+      (tick-entities! ctx (map deref active-entities))) ; TODO lazy seqs everywhere!
     (remove-destroyed-entities! ctx) ; do not pause this as for example pickup item, should be destroyed.
     (end-of-frame-checks! ctx)))
 
@@ -122,6 +123,7 @@
   (render [_ {:keys [context/player-entity
                      context/replay-mode?] :as context}]
     (let [active-entities (active-entities (content-grid context) player-entity)]
+      ; TODO lazy seqS everywhere!
       (render-game context (map deref active-entities))
       (if replay-mode?
         (replay-game! context)
