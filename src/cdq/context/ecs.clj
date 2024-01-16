@@ -99,7 +99,7 @@
          (handle-entity-error! ctx entity* t)))))
 
   (render-entities! [{::keys [render-on-map-order] :as context} entities*]
-    (doseq [entities* (map second
+    (doseq [entities* (map second ; FIXME lazy seq
                            (sort-by-order (group-by :entity/z-order entities*)
                                           first
                                           render-on-map-order))

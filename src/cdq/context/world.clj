@@ -51,7 +51,7 @@
         target2 (v/add [target-x target-y] normal2)]
     [start1,target1,start2,target2]))
 
-(def ^:private player-los-checks? true)
+(def ^:private los-checks? true)
 
 (extend-type gdl.context.Context
   cdq.context/World
@@ -61,8 +61,8 @@
   (line-of-sight? [context source* target*]
     (and (:entity/z-order target*)  ; is even an entity which renders something
          (or (not (:entity/player? source*))
-               (on-screen? target* context))
-         (not (and player-los-checks?
+             (on-screen? target* context))
+         (not (and los-checks?
                    (ray-blocked? context (:entity/position source*) (:entity/position target*))))))
 
   (ray-blocked? [{:keys [context/world]} start target]

@@ -47,7 +47,7 @@
                                  #'cdq.context.render-debug/cell-entities?
                                  #'cdq.context.render-debug/potential-field-colors?
                                  #'cdq.screens.game/pausing?
-                                 #'cdq.context.world/player-los-checks?
+                                 #'cdq.context.world/los-checks?
                                  #'cdq.context.world/spawn-enemies?
                                  #'cdq.context.world.render/see-all-tiles?]))
 
