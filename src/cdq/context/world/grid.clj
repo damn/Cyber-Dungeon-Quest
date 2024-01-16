@@ -74,14 +74,12 @@
   (cached-adjacent-cells [grid cell]
     (if-let [result (:adjacent-cells @cell)]
       result
-      (let [result (keep grid (-> @cell :position grid2d/get-8-neighbour-positions))]
+      (let [result (into [] (keep grid) (-> @cell :position grid2d/get-8-neighbour-positions))]
         (swap! cell assoc :adjacent-cells result)
         result)))
 
   (rectangle->cells [grid rectangle]
-    (->> rectangle
-         rectangle->tiles
-         (keep grid)))
+    (into [] (keep grid) (rectangle->tiles rectangle)))
 
   (circle->cells [grid circle]
     (->> circle
@@ -100,14 +98,14 @@
               (:entities @cell))))
 
   (valid-position? [grid {:keys [entity/body entity/uid] :as entity*}]
-    (let [cells* (map deref (rectangle->cells grid body))]
+    (let [cells* (into [] (map deref) (rectangle->cells grid body))]
       (and (not-any? #(cell/blocked? % entity*) cells*)
            (or (not (:solid? body))
                (->> cells*
-                    cells->entities
-                    (map deref)
-                    (not-any? (fn [other-entity*]
-                                (let [other-body (:entity/body other-entity*)]
+                    cell/cells->entities
+                    (not-any? (fn [other-entity]
+                                (let [other-entity* @other-entity
+                                      other-body (:entity/body other-entity*)]
                                   (and (not= (:entity/uid other-entity*) uid)
                                        (:solid? other-body)
                                        (geom/collides? other-body body))))))))))
