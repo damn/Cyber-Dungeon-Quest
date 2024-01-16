@@ -86,7 +86,7 @@
         _ (transact-all! ctx (state/manual-tick state-obj @player-entity ctx))
         paused? (reset! game-paused? (or @thrown-error
                                          (and pausing?
-                                              (state/pause-game? state-obj)
+                                              (state/pause-game? (entity/state-obj @player-entity))
                                               (not (step-one-frame? ctx)))))
         ctx (assoc-delta-time ctx)]
     (update-mouseover-entity! ctx) ; this do always so can get debug info even when game not running
