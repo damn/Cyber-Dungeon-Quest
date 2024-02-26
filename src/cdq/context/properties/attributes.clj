@@ -2,6 +2,9 @@
   (:require [malli.core :as m]
             [data.val-max :refer [val-max-schema]]))
 
+; TODO new component/modifier/entity component -> add attribute here
+; or add it to the defcomponent ?!
+
 ; TODO entity components, what subset is allowed?
 ; which components depend on which?
 ; which can not be removed?

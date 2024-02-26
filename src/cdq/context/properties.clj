@@ -7,11 +7,7 @@
             [gdl.graphics.animation :as animation]
             [data.val-max :refer [val-max-schema]]
             [utils.core :refer [safe-get readable-number]]
-            [cdq.context.modifier :as modifier]
-            cdq.context.modifier.all
             [cdq.context.properties.attributes :as attributes]
-            [cdq.effect :as effect]
-            cdq.tx.all
             [cdq.context :refer [modifier-text effect-text]]))
 
 ; TODO make misc is when no property-type matches ? :else case?
