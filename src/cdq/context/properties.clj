@@ -3,11 +3,11 @@
             [clojure.string :as str]
             [malli.core :as m]
             [malli.error :as me]
+            [cdq.attributes :as attributes]
             [gdl.context :refer [get-sprite create-image]]
             [gdl.graphics.animation :as animation]
             [data.val-max :refer [val-max-schema]]
             [utils.core :refer [safe-get readable-number]]
-            [cdq.context.properties.attributes :as attributes]
             [cdq.context :refer [modifier-text effect-text]]))
 
 ; TODO make misc is when no property-type matches ? :else case?

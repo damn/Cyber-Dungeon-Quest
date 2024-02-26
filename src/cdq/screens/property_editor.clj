@@ -11,8 +11,8 @@
             [gdl.scene2d.ui.table :refer [add! add-rows! cells ->horizontal-separator-cell ->vertical-separator-cell]]
             [gdl.scene2d.ui.cell :refer [set-actor!]]
             [gdl.scene2d.ui.widget-group :refer [pack!]]
+            [cdq.attributes :as attributes]
             [cdq.context.properties :as properties]
-            [cdq.context.properties.attributes :as attributes]
             [cdq.context :refer [get-property all-properties tooltip-text ->error-window]]))
 
 (defn- ->scroll-pane-cell [{:keys [gui-viewport-height] :as ctx} rows]

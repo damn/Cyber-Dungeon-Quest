@@ -1,4 +1,4 @@
-(ns cdq.context.properties.attributes
+(ns cdq.attributes
   (:require [malli.core :as m]
             [data.val-max :refer [val-max-schema]]))
 
