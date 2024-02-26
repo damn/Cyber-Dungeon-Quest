@@ -7,11 +7,11 @@
             [cdq.entity :as entity]))
 
 (defn- in-range? [entity* target maxrange] ; == circle-collides?
-  (< (- (v/distance (:entity/position entity*)
-                    (:entity/position target))
-        (:radius (:entity/body entity*))
-        (:radius (:entity/body target)))
-     maxrange))
+  (< (- (float (v/distance (:entity/position entity*)
+                           (:entity/position target)))
+        (float (:radius (:entity/body entity*)))
+        (float (:radius (:entity/body target))))
+     (float maxrange)))
 
 ; TODO use at projectile & also adjust rotation
 (defn- start-point [entity* target]
