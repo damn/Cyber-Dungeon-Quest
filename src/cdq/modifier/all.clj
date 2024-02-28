@@ -31,12 +31,7 @@
   (modifier/reverse [_ mana] (apply-max-minus mana amount)))
 
 (defn- actions-speed-percent [v]
-  (let [v (dec v)]
-    (str (check-plus-symbol v) (int (* 100 v)))))
-
-; TODO cast speed 2.3 not 1.3
-; attack speed 2.5 not 1.5
-; amount = '1.3'
+  (str (check-plus-symbol v) (int (* 100 v))))
 
 (defcomponent :modifier/cast-speed amount
   (modifier/text [_] (str (actions-speed-percent amount) "% Casting-Speed"))
@@ -64,7 +59,8 @@
 ; not vector but map ! sub-component edit nested map edit !
 
 (defn- block-modifier-text [block-type [source-or-target damage-type value-delta]]
-  ; TODO mk map
+  ; TODO mk map ( & nested map editor widgets )
+  ; ! & fix all docstrings of those modifiers ! ( + -5 dmg) ..
   #_(assert (check-block-modifier-value value)
           (str "Wrong value for modifier: " value))
   (str/join " "
