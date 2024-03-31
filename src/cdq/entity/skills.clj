@@ -26,6 +26,7 @@
    (when (:entity/player? @entity)
      [:tx/actionbar-add-skill skill])])
 
+; unused ?
 (defmethod cdq.context/transact! :tx/remove-skill [[_ entity {:keys [property/id] :as skill}]
                                                    _ctx]
   (assert (entity/has-skill? @entity skill))

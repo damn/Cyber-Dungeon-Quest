@@ -38,7 +38,7 @@
       (try
        (let [node (->node (->label ctx (->labelstr k v)))]
          (.add parent-node node)
-         (when (map? v)
+         (when (map? v) ; ? not working entity TODO
            (add-map-nodes! ctx node v level))
          (when (vector? v)
            (doseq [element v
@@ -64,16 +64,12 @@
 (comment
  ; TODO make tree of namespace parts ! not so many elements
  ; and all components namespaced names
-
  ; and make for entities/cells too !
-
  ; and cells no atoms! grid! I change multiple at once ...
-
  ; maybe only add elements on click -> somehow glyphlayout breaks AFTER this returns successfully
  (let [ctx @gdl.app/current-context
-       ;tree-map @@(:context/mouseover-entity ctx)
-       tree-map ctx
-
+       tree-map @@(:context/mouseover-entity ctx)
+       ;tree-map ctx
        ]
    (add-to-stage! ctx (->window ctx {:title "Context Overview"
                                      :close-button? true

@@ -9,10 +9,6 @@
             [cdq.state :as state]
             [cdq.state.player-idle :refer [click-distance-tiles]]))
 
-(def ^:private denied-2hw-shield
-  [[:tx/sound "sounds/bfxr_denied.wav"]
-   [:tx/msg-to-player "Two-handed weapon and shield is not possible."]])
-
 (defn- clicked-cell [{:keys [entity/id] :as entity*} cell]
   (let [inventory (:entity/inventory entity*)
         item (get-in inventory cell)
@@ -21,12 +17,10 @@
      ; PUT ITEM IN EMPTY CELL
      (and (not item)
           (inventory/valid-slot? cell item-on-cursor))
-     (if (inventory/two-handed-weapon-and-shield-together? inventory cell item-on-cursor)
-       denied-2hw-shield
-       [[:tx/sound "sounds/bfxr_itemput.wav"]
-        [:tx/set-item id cell item-on-cursor]
-        [:tx/dissoc id :entity/item-on-cursor]
-        [:tx/event id :dropped-item]])
+     [[:tx/sound "sounds/bfxr_itemput.wav"]
+      [:tx/set-item id cell item-on-cursor]
+      [:tx/dissoc id :entity/item-on-cursor]
+      [:tx/event id :dropped-item]]
 
      ; STACK ITEMS
      (and item (inventory/stackable? item item-on-cursor))
@@ -38,16 +32,14 @@
      ; SWAP ITEMS
      (and item
           (inventory/valid-slot? cell item-on-cursor))
-     (if (inventory/two-handed-weapon-and-shield-together? inventory cell item-on-cursor)
-       denied-2hw-shield
-       [[:tx/sound "sounds/bfxr_itemput.wav"]
-        [:tx/remove-item id cell]
-        [:tx/set-item id cell item-on-cursor]
-        ; need to dissoc and drop otherwise state enter does not trigger picking it up again
-        ; TODO? coud handle pickup-item from item-on-cursor state also
-        [:tx/dissoc id :entity/item-on-cursor]
-        [:tx/event id :dropped-item]
-        [:tx/event id :pickup-item item]]))))
+     [[:tx/sound "sounds/bfxr_itemput.wav"]
+      [:tx/remove-item id cell]
+      [:tx/set-item id cell item-on-cursor]
+      ; need to dissoc and drop otherwise state enter does not trigger picking it up again
+      ; TODO? coud handle pickup-item from item-on-cursor state also
+      [:tx/dissoc id :entity/item-on-cursor]
+      [:tx/event id :dropped-item]
+      [:tx/event id :pickup-item item]])))
 
 ; It is possible to put items out of sight, losing them.
 ; Because line of sight checks center of entity only, not corners

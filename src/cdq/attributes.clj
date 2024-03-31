@@ -20,6 +20,7 @@
 (def attributes {})
 
 (defn- defattribute [k data]
+  ; TODO add :optional? key which is optional ....
   (assert (:schema data) k)
   (assert (:widget data) k)
   (alter-var-root #'attributes assoc k data))
@@ -85,7 +86,7 @@
 (defattribute :solid? {:widget :label :schema boolean?})
 
 (defattribute :entity/body          (map-attribute :width :height :solid?)) ; TODO body assert >+ min body size?
-(defattribute :entity/skills        (one-to-many-ids :property.type/spell)) ; required by npc state, also mana!, also movement (no not needed, doesnt do anything then)
+(defattribute :entity/skills        (one-to-many-ids :property.type/skill)) ; required by npc state, also mana!, also movement (no not needed, doesnt do anything then)
 (defattribute :entity/inventory     (one-to-many-ids :property.type/item)) ; optional
 (defattribute :entity/animation     animation) ; optional
 (defattribute :entity/mana          nat-int-attr) ; required @ npc state, for cost, check if nil

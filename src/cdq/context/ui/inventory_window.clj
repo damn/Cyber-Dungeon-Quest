@@ -19,7 +19,6 @@
 (def ^:private cell-size 48)
 
 (def ^:private droppable-color    [0   0.6 0 0.8])
-(def ^:private two-h-shield-color [0.6 0.6 0 0.8])
 (def ^:private not-allowed-color  [0.6 0   0 0.8])
 
 (defn- draw-cell-rect [c player-entity x y mouseover? cell]
@@ -27,17 +26,9 @@
   (when (and mouseover?
              (= :item-on-cursor (entity/state @player-entity)))
     (let [item (:entity/item-on-cursor @player-entity)
-          color (cond
-                 (not (inventory/valid-slot? cell item))
-                 not-allowed-color
-
-                 (inventory/two-handed-weapon-and-shield-together? (:entity/inventory @player-entity)
-                                                                   cell
-                                                                   item)
-                 two-h-shield-color
-
-                 :else
-                 droppable-color)]
+          color (if (inventory/valid-slot? cell item)
+                 droppable-color
+                 not-allowed-color)]
       (draw-filled-rectangle c (inc x) (inc y) (- cell-size 2) (- cell-size 2) color))))
 
 (defn- mouseover? [^Actor actor [x y]]
