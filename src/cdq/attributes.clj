@@ -20,7 +20,6 @@
 (def attributes {})
 
 (defn- defattribute [k data]
-  ; TODO add :optional? key which is optional ....
   (assert (:schema data) k)
   (assert (:widget data) k)
   (alter-var-root #'attributes assoc k data))

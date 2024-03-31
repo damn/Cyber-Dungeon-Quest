@@ -1,4 +1,4 @@
-({:property/id :spells/projectile,
+({:property/id :skills/projectile,
   :property/image
   {:file "skills/images.png", :sub-image-bounds [96 32 32 32]},
   :skill/action-time 0.4,
@@ -8,7 +8,7 @@
   :skill/effect
   {:tx/projectile true, :tx/sound "sounds/bfxr_waypointunlock.wav"},
   :skill/start-action-sound "sounds/bfxr_cast.wav"}
- {:property/id :spells/spawn,
+ {:property/id :skills/spawn,
   :property/image
   {:file "skills/images.png", :sub-image-bounds [160 64 32 32]},
   :skill/action-time 0.4,
@@ -19,7 +19,7 @@
   {:tx/sound "sounds/bfxr_shield_consume.wav",
    :tx/spawn :creatures/skeleton-warrior},
   :skill/start-action-sound "sounds/bfxr_minedeath.wav"}
- {:property/id :spells/attack,
+ {:property/id :skills/attack,
   :property/image
   {:file "skills/images.png", :sub-image-bounds [0 0 32 32]},
   :skill/action-time 0.5,
@@ -32,7 +32,7 @@
     :hit-effect
     {:tx/damage {:damage/type :physical, :damage/min-max [3 6]}}}},
   :skill/start-action-sound "sounds/slash.wav"}
- {:property/id :spells/meditation,
+ {:property/id :skills/meditation,
   :property/image
   {:file "skills/images.png", :sub-image-bounds [64 96 32 32]},
   :skill/action-time 7,
@@ -91,7 +91,7 @@
    :entity/mana 11,
    :entity/body {:height 29/48, :solid? true, :width 2/3},
    :entity/hp 12,
-   :entity/skills #{:spells/attack}},
+   :entity/skills #{:skills/attack}},
   :property/id :creatures/goblin-warrior,
   :property/image
   {:file "creatures/images.png", :sub-image-bounds [240 144 48 48]}}
@@ -715,7 +715,7 @@
    :entity/body {:width 2/3, :height 19/24, :solid? true},
    :entity/flying? false,
    :entity/hp 10,
-   :entity/skills #{:spells/spawn}},
+   :entity/skills #{:skills/spawn}},
   :property/id :creatures/knight,
   :property/image
   {:file "creatures/images.png", :sub-image-bounds [96 0 48 48]}}
@@ -1450,7 +1450,7 @@
    :entity/body {:width 2/3, :height 19/24, :solid? true},
    :entity/flying? false,
    :entity/hp 10,
-   :entity/skills #{:spells/spawn}},
+   :entity/skills #{:skills/spawn}},
   :property/id :creatures/dark-knight,
   :property/image
   {:file "creatures/images.png", :sub-image-bounds [288 48 48 48]}}
@@ -1841,7 +1841,7 @@
    :entity/body {:height 11/16, :solid? true, :width 2/3},
    :entity/flying? false,
    :entity/hp 10,
-   :entity/skills #{:spells/projectile :spells/meditation}},
+   :entity/skills #{:skills/projectile :skills/meditation}},
   :property/id :creatures/wizard,
   :property/image
   {:file "creatures/images.png", :sub-image-bounds [0 0 48 48]}}
@@ -2003,7 +2003,7 @@
    :entity/body {:width 13/24, :height 35/48, :solid? true},
    :entity/flying? true,
    :entity/hp 8,
-   :entity/skills #{:spells/projectile}},
+   :entity/skills #{:skills/projectile}},
   :property/id :creatures/bird-dove,
   :property/image
   {:file "creatures/images.png", :sub-image-bounds [0 432 48 48]}}
@@ -2435,7 +2435,7 @@
    :entity/body {:height 2/3, :solid? true, :width 17/24},
    :entity/flying? false,
    :entity/hp 100,
-   :entity/skills #{:spells/attack}},
+   :entity/skills #{:skills/attack}},
   :property/id :creatures/vampire,
   :property/image
   {:file "creatures/images.png", :sub-image-bounds [336 240 48 48]}}

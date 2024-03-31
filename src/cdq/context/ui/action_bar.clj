@@ -97,10 +97,10 @@
 
 
  ; https://javadoc.io/doc/com.badlogicgames.gdx/gdx/latest/com/badlogic/gdx/scenes/scene2d/ui/Button.html
- (.setProgrammaticChangeEvents ^Button (.findActor horizontal-group ":spells/spawn") true)
+ (.setProgrammaticChangeEvents ^Button (.findActor horizontal-group ":skills/spawn") true)
  ; but doesn't toggle:
- (.toggle ^Button (.findActor horizontal-group ":spells/spawn"))
- (.setChecked ^Button (.findActor horizontal-group ":spells/spawn") true)
+ (.toggle ^Button (.findActor horizontal-group ":skills/spawn"))
+ (.setChecked ^Button (.findActor horizontal-group ":skills/spawn") true)
  ; Toggles the checked state. This method changes the checked state, which fires a ChangeListener.ChangeEvent (if programmatic change events are enabled), so can be used to simulate a button click.
 
  ; => it _worked_ => active skill changed

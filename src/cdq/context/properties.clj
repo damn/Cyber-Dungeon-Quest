@@ -51,7 +51,7 @@
                                     :columns 16
                                     :image/dimensions [70 70]}
                          :schema (map-attribute-schema
-                                  [:property/id [:qualified-keyword {:namespace :spells}]] ; TODO :skills
+                                  [:property/id [:qualified-keyword {:namespace :skills}]]
                                   [:property/image
                                    :skill/action-time
                                    :skill/cooldown
