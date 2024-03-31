@@ -154,17 +154,20 @@
 
 (defmethod property->text :property.type/skill [ctx
                                                 {:keys [property/id
-                                                        skill/cost
                                                         skill/action-time
                                                         skill/cooldown
-                                                        skill/effect]}]
+                                                        skill/cost
+                                                        skill/effect
+                                                        skill/action-time-modifier-key]}]
   [(str/capitalize (name id))
-   (when cost (str skill-cost-color "Cost: " cost "[]"))
-   (str action-time-color "Action-Time: " (readable-number action-time) " seconds" "[]") ; TODO attack-time also ...
-   ; or keep it abstract - GAME ! - action-time! ):
-   ; but what modifier
-   ; so action time modifier key express there still - cast/attack time/speed
-   (when cooldown (str cooldown-color "Cooldown: " (readable-number cooldown) "[]"))
+   (str skill-cost-color "Cost: " cost "[]")
+   (str action-time-color
+        (case action-time-modifier-key
+          :stats/cast-speed "Casting-Time"
+          :stats/attack-speed "Attack-Time")
+        ": "
+        (readable-number action-time) " seconds" "[]")
+   (str cooldown-color "Cooldown: " (readable-number cooldown) "[]")
    (str effect-color (effect-text ctx effect) "[]")])
 
 (defmethod property->text :property.type/item [ctx
