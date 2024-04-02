@@ -4,6 +4,7 @@
             [cdq.context :refer [get-property valid-params? ->counter stopped?]]
             [cdq.entity :as entity]))
 
+; FIXME starting skills do not trigger tx/actionbar-add-skill
 (defcomponent :entity/skills skills
   (entity/create-component [_ _components ctx]
     (zipmap skills (map #(get-property ctx %) skills)))

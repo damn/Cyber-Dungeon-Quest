@@ -1,14 +1,4 @@
-({:property/id :skills/projectile,
-  :property/image
-  {:file "skills/images.png", :sub-image-bounds [96 32 32 32]},
-  :skill/action-time 0.4,
-  :skill/action-time-modifier-key :stats/cast-speed,
-  :skill/cooldown 0,
-  :skill/cost 4,
-  :skill/effect
-  {:tx/projectile true, :tx/sound "sounds/bfxr_waypointunlock.wav"},
-  :skill/start-action-sound "sounds/bfxr_cast.wav"}
- {:property/id :skills/spawn,
+({:property/id :skills/spawn,
   :property/image
   {:file "skills/images.png", :sub-image-bounds [160 64 32 32]},
   :skill/action-time 0.4,
@@ -19,6 +9,16 @@
   {:tx/sound "sounds/bfxr_shield_consume.wav",
    :tx/spawn :creatures/skeleton-warrior},
   :skill/start-action-sound "sounds/bfxr_minedeath.wav"}
+ {:property/id :skills/meditation,
+  :property/image
+  {:file "skills/images.png", :sub-image-bounds [64 96 32 32]},
+  :skill/action-time 7,
+  :skill/action-time-modifier-key :stats/cast-speed,
+  :skill/cooldown 0,
+  :skill/cost 1,
+  :skill/effect
+  {:tx/restore-hp-mana true, :tx/sound "sounds/bfxr_click.wav"},
+  :skill/start-action-sound "sounds/shoot.wav"}
  {:property/id :skills/attack,
   :property/image
   {:file "skills/images.png", :sub-image-bounds [0 0 32 32]},
@@ -32,16 +32,16 @@
     :hit-effect
     {:tx/damage {:damage/type :physical, :damage/min-max [3 6]}}}},
   :skill/start-action-sound "sounds/slash.wav"}
- {:property/id :skills/meditation,
+ {:property/id :skills/projectile,
   :property/image
-  {:file "skills/images.png", :sub-image-bounds [64 96 32 32]},
-  :skill/action-time 7,
+  {:file "skills/images.png", :sub-image-bounds [96 32 32 32]},
+  :skill/action-time 0.4,
   :skill/action-time-modifier-key :stats/cast-speed,
   :skill/cooldown 0,
-  :skill/cost 1,
+  :skill/cost 4,
   :skill/effect
-  {:tx/restore-hp-mana true, :tx/sound "sounds/bfxr_click.wav"},
-  :skill/start-action-sound "sounds/shoot.wav"}
+  {:tx/projectile true, :tx/sound "sounds/bfxr_waypointunlock.wav"},
+  :skill/start-action-sound "sounds/bfxr_cast.wav"}
  {:creature/level nil,
   :creature/species :species/toad,
   :property/entity
@@ -1841,7 +1841,7 @@
    :entity/body {:height 11/16, :solid? true, :width 2/3},
    :entity/flying? false,
    :entity/hp 10,
-   :entity/skills #{:skills/projectile :skills/meditation}},
+   :entity/skills #{:skills/meditation :skills/projectile}},
   :property/id :creatures/wizard,
   :property/image
   {:file "creatures/images.png", :sub-image-bounds [0 0 48 48]}}
@@ -2435,7 +2435,7 @@
    :entity/body {:height 2/3, :solid? true, :width 17/24},
    :entity/flying? false,
    :entity/hp 100,
-   :entity/skills #{:skills/attack}},
+   :entity/skills #{}},
   :property/id :creatures/vampire,
   :property/image
   {:file "creatures/images.png", :sub-image-bounds [336 240 48 48]}}
