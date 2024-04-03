@@ -310,10 +310,6 @@
              (map #(into (sorted-map) %))
              (pprint-spit properties-file)))))))
 
-; TODO
-; * match all weapons
-; * remove skill stuff attrs
-
 (comment
  ; # Add new attributes => make into fn for property-type apply fn to all props
  (let [ctx @gdl.app/current-context
@@ -329,10 +325,6 @@
    (swap! gdl.app/current-context update! (cdq.context/get-property ctx :creatures/vampire))
    nil)
  )
-
-; TODO add new data - same like update! only assert NOT CONTAINS properties id ?
-
-
 
 (defn update! [{:keys [context/properties] :as context}
                {:keys [property/id] :as data}]

@@ -5,6 +5,7 @@
             [cdq.entity :as entity]))
 
 ; FIXME starting skills do not trigger tx/actionbar-add-skill
+; https://trello.com/c/R6GSIDO1/363
 (defcomponent :entity/skills skills
   (entity/create-component [_ _components ctx]
     (zipmap skills (map #(get-property ctx %) skills)))
