@@ -10,9 +10,11 @@
             [utils.core :refer [safe-get readable-number]]
             [cdq.context :refer [modifier-text effect-text]]))
 
-; TODO make misc is when no property-type matches ? :else case?
-; TODO weapon mess
+; TODO all this cdq.property-types // like attributes
 
+; TODO make misc is when no property-type matches ? :else case?
+
+; TODO similar to map-attribute & components-attribute
 (defn- map-attribute-schema [id-attribute attr-ks]
   (m/schema
    (vec (concat [:map {:closed true} id-attribute] ; TODO same id-attribute w. different namespaces ...
@@ -42,15 +44,14 @@
                                       :creature/level
                                       :property/entity])}
 
-   :property.type/spell {:of-type? (fn [{:keys [item/slot skill/effect]}]
-                                     (and (not slot) effect))
+   :property.type/skill {:of-type? :skill/effect
                          :edn-file-sort-order 0
-                         :title "Spell"
-                         :overview {:title "Spells"
+                         :title "Skill"
+                         :overview {:title "Skill"
                                     :columns 16
                                     :image/dimensions [70 70]}
                          :schema (map-attribute-schema
-                                  [:property/id [:qualified-keyword {:namespace :spells}]]
+                                  [:property/id [:qualified-keyword {:namespace :skills}]]
                                   [:property/image
                                    :skill/action-time
                                    :skill/cooldown
@@ -58,25 +59,6 @@
                                    :skill/effect
                                    :skill/start-action-sound
                                    :skill/action-time-modifier-key])}
-
-   ; weapons before items checking
-   :property.type/weapon {:of-type? (fn [{:keys [item/slot]}]
-                                      (and slot (= slot :inventory.slot/weapon)))
-                          :edn-file-sort-order 4
-                          :title "Weapon"
-                          :overview {:title "Weapons"
-                                     :columns 10
-                                     :image/dimensions [96 96]}
-                          :schema (m/schema ; TODO DRY with spell/item
-                                   [:map
-                                    [:property/id [:qualified-keyword {:namespace :items}]]
-                                    [:property/pretty-name :string]
-                                    [:item/slot [:qualified-keyword {:namespace :inventory.slot}]] ; :inventory.slot/weapon
-                                    [:property/image :some]
-                                    [:weapon/two-handed? :boolean]
-                                    [:skill/action-time {:optional true} [:maybe pos?]] ; not optional
-                                    [:skill/effect {:optional true} [:map ]] ; can be nil not implemented weapons.
-                                    [:item/modifier [:map ]]])}
 
    :property.type/item {:of-type? :item/slot
                         :edn-file-sort-order 3
@@ -91,8 +73,8 @@
                         :schema (map-attribute-schema
                                  [:property/id [:qualified-keyword {:namespace :items}]]
                                  [:property/pretty-name
-                                  :item/slot
                                   :property/image
+                                  :item/slot
                                   :item/modifier])}
 
    :property.type/world {:of-type? :world/princess
@@ -168,16 +150,24 @@
 (def ^:private effect-color "[CHARTREUSE]")
 (def ^:private modifier-color "[VIOLET]")
 
-(defmethod property->text :property.type/spell [ctx
+; TODO cdq.tooltips?
+
+(defmethod property->text :property.type/skill [ctx
                                                 {:keys [property/id
-                                                        skill/cost
                                                         skill/action-time
                                                         skill/cooldown
-                                                        skill/effect]}]
+                                                        skill/cost
+                                                        skill/effect
+                                                        skill/action-time-modifier-key]}]
   [(str/capitalize (name id))
-   (when cost (str skill-cost-color "Cost: " cost "[]"))
-   (str action-time-color "Cast-Time: " (readable-number action-time) " seconds" "[]")
-   (when cooldown (str cooldown-color "Cooldown: " (readable-number cooldown) "[]"))
+   (str skill-cost-color "Cost: " cost "[]")
+   (str action-time-color
+        (case action-time-modifier-key
+          :stats/cast-speed "Casting-Time"
+          :stats/attack-speed "Attack-Time")
+        ": "
+        (readable-number action-time) " seconds" "[]")
+   (str cooldown-color "Cooldown: " (readable-number cooldown) "[]")
    (str effect-color (effect-text ctx effect) "[]")])
 
 (defmethod property->text :property.type/item [ctx
@@ -187,19 +177,6 @@
   [(str "[ITEM_GOLD]" pretty-name (when-let [cnt (:count item)] (str " (" cnt ")")) "[]")
    (when (seq modifier) (str modifier-color (modifier-text ctx modifier) "[]"))])
 
-(defmethod property->text :property.type/weapon [ctx
-                                                 {:keys [property/pretty-name
-                                                         item/two-handed?
-                                                         item/modifier
-                                                         skill/action-time
-                                                         skill/effect]
-                                                  :as item}]
-  [(str pretty-name (when-let [cnt (:count item)] (str " (" cnt ")")))
-   (when two-handed? "Two-handed")
-   (str action-time-color "Attack-time: " (readable-number action-time) " seconds" "[]")
-   (when (seq modifier) (str modifier-color (modifier-text ctx modifier) "[]"))
-   (str effect-color (effect-text ctx effect) "[]")])
-
 (extend-type gdl.context.Context
   cdq.context/TooltipText
   (tooltip-text [ctx property]
@@ -208,7 +185,7 @@
               (remove nil?)
               (str/join "\n"))
          (catch Throwable t
-           (str t)))); TODO not implemented weapons.
+           (str t)))); TODO not implemented weapons. ( ?! )
 
   (player-tooltip-text [ctx property]
     (cdq.context/tooltip-text

@@ -4,6 +4,8 @@
             [cdq.context :refer [get-property valid-params? ->counter stopped?]]
             [cdq.entity :as entity]))
 
+; FIXME starting skills do not trigger tx/actionbar-add-skill
+; https://trello.com/c/R6GSIDO1/363
 (defcomponent :entity/skills skills
   (entity/create-component [_ _components ctx]
     (zipmap skills (map #(get-property ctx %) skills)))
@@ -26,6 +28,7 @@
    (when (:entity/player? @entity)
      [:tx/actionbar-add-skill skill])])
 
+; unused ?
 (defmethod cdq.context/transact! :tx/remove-skill [[_ entity {:keys [property/id] :as skill}]
                                                    _ctx]
   (assert (entity/has-skill? @entity skill))

@@ -27,24 +27,12 @@
   (for [[position item] (slot inventory)]
     [[slot position] item]))
 
-(defn- slot->items [inventory slot]
-  (-> inventory slot grid/cells))
-
 (defn- cell-exists? [inventory [slot position]]
   (-> inventory slot (contains? position)))
 
 (defn valid-slot? [[slot _] item]
   (or (= :inventory.slot/bag slot)
       (= (:item/slot item) slot)))
-
-(defn two-handed-weapon-and-shield-together? [inventory {slot 0 :as cell} new-item]
-  (or (and (:weapon/two-handed? new-item)
-           (= slot :inventory.slot/weapon)
-           (first (slot->items inventory :inventory.slot/shield)))
-      (and (= (:item/slot new-item) :inventory.slot/shield)
-           (= slot :inventory.slot/shield)
-           (if-let [weapon (first (slot->items inventory :inventory.slot/weapon))]
-             (:weapon/two-handed? weapon)))))
 
 (defn applies-modifiers? [[slot _]]
   (not= :inventory.slot/bag slot))
@@ -54,19 +42,13 @@
        (:count item-b) ; this is not required but can be asserted, all of one name should have count if others have count
        (= (:property/id item-a) (:property/id item-b))))
 
-(defn- weapon? [{:keys [item/slot]}]
-  (= slot :inventory.slot/weapon))
-
 (defn- set-item [{:keys [entity/id] :as entity*} cell item]
   (let [inventory (:entity/inventory entity*)]
     (assert (and (nil? (get-in inventory cell))
-                 (valid-slot? cell item)
-                 (not (two-handed-weapon-and-shield-together? inventory cell item)))))
+                 (valid-slot? cell item))))
   [[:tx/assoc-in id (cons :entity/inventory cell) item]
    (when (applies-modifiers? cell)
      [:tx/apply-modifier id (:item/modifier item)])
-   (when (and (applies-modifiers? cell) (weapon? item))
-     [:tx/add-skill id item])
    (when (:entity/player? entity*)
      [:tx/set-item-image-in-widget cell item])])
 
@@ -76,8 +58,6 @@
     [[:tx/assoc-in id (cons :entity/inventory cell) nil]
      (when (applies-modifiers? cell)
        [:tx/reverse-modifier id (:item/modifier item)])
-     (when (and (applies-modifiers? cell) (weapon? item))
-       [:tx/remove-skill id item])
      (when (:entity/player? entity*)
        [:tx/remove-item-from-widget cell])]))
 
@@ -120,8 +100,7 @@
       (stack-item entity* cell item)
       (when-let [[empty-cell] (find-first (fn [[cell item]] (nil? item))
                                           cells-items)]
-        (when-not (two-handed-weapon-and-shield-together? inventory empty-cell item)
-          (set-item entity* empty-cell item))))))
+        (set-item entity* empty-cell item)))))
 
 (defn- pickup-item [entity* item]
   (or

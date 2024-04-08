@@ -266,7 +266,6 @@
         :property/pretty-name 2
         :creature/level 3
         :item/slot 3
-        :weapon/two-handed? 4
         :creature/species 4
         :entity/faction 5
         :entity/flying? 6

@@ -28,6 +28,8 @@
   (effect/text [_ ctx]
     (str "Range " maxrange " meters\n" (effect-text ctx hit-effect)))
 
+  ; TODO lOs move to effect/target effect-context creation?
+
   ; TODO target still exists ?! necessary ? what if disappears/dead?
   ; TODO (:entity/hp @target) is valid-params of hit-effect damage !! -> allow anyway and just do nothing then?
   (effect/valid-params? [_ {:keys [effect/source effect/target] :as ctx}]

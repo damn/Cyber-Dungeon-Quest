@@ -1,14 +1,4 @@
-({:property/id :spells/projectile,
-  :property/image
-  {:file "skills/images.png", :sub-image-bounds [96 32 32 32]},
-  :skill/action-time 0.4,
-  :skill/action-time-modifier-key :stats/cast-speed,
-  :skill/cooldown 0,
-  :skill/cost 4,
-  :skill/effect
-  {:tx/projectile true, :tx/sound "sounds/bfxr_waypointunlock.wav"},
-  :skill/start-action-sound "sounds/bfxr_cast.wav"}
- {:property/id :spells/spawn,
+({:property/id :skills/spawn,
   :property/image
   {:file "skills/images.png", :sub-image-bounds [160 64 32 32]},
   :skill/action-time 0.4,
@@ -19,7 +9,7 @@
   {:tx/sound "sounds/bfxr_shield_consume.wav",
    :tx/spawn :creatures/skeleton-warrior},
   :skill/start-action-sound "sounds/bfxr_minedeath.wav"}
- {:property/id :spells/meditation,
+ {:property/id :skills/meditation,
   :property/image
   {:file "skills/images.png", :sub-image-bounds [64 96 32 32]},
   :skill/action-time 7,
@@ -29,6 +19,27 @@
   :skill/effect
   {:tx/restore-hp-mana true, :tx/sound "sounds/bfxr_click.wav"},
   :skill/start-action-sound "sounds/shoot.wav"}
+ {:property/id :skills/projectile,
+  :property/image
+  {:file "skills/images.png", :sub-image-bounds [96 32 32 32]},
+  :skill/action-time 0.4,
+  :skill/action-time-modifier-key :stats/cast-speed,
+  :skill/cooldown 0,
+  :skill/cost 4,
+  :skill/effect
+  {:tx/projectile true, :tx/sound "sounds/bfxr_waypointunlock.wav"},
+  :skill/start-action-sound "sounds/bfxr_cast.wav"}
+ {:property/id :skills/melee-attack,
+  :property/image
+  {:file "skills/images.png", :sub-image-bounds [0 0 32 32]},
+  :skill/action-time 0.5,
+  :skill/action-time-modifier-key :stats/attack-speed,
+  :skill/cooldown 0,
+  :skill/cost 0,
+  :skill/effect
+  {:tx/target-entity
+   {:maxrange 0.5, :hit-effect {:tx/melee-damage true}}},
+  :skill/start-action-sound "sounds/slash.wav"}
  {:creature/level nil,
   :creature/species :species/toad,
   :property/entity
@@ -78,7 +89,7 @@
    :entity/mana 11,
    :entity/body {:height 29/48, :solid? true, :width 2/3},
    :entity/hp 12,
-   :entity/skills #{}},
+   :entity/skills #{:skills/attack}},
   :property/id :creatures/goblin-warrior,
   :property/image
   {:file "creatures/images.png", :sub-image-bounds [240 144 48 48]}}
@@ -702,7 +713,7 @@
    :entity/body {:width 2/3, :height 19/24, :solid? true},
    :entity/flying? false,
    :entity/hp 10,
-   :entity/skills #{:spells/spawn}},
+   :entity/skills #{:skills/spawn}},
   :property/id :creatures/knight,
   :property/image
   {:file "creatures/images.png", :sub-image-bounds [96 0 48 48]}}
@@ -1437,7 +1448,7 @@
    :entity/body {:width 2/3, :height 19/24, :solid? true},
    :entity/flying? false,
    :entity/hp 10,
-   :entity/skills #{:spells/spawn}},
+   :entity/skills #{:skills/spawn}},
   :property/id :creatures/dark-knight,
   :property/image
   {:file "creatures/images.png", :sub-image-bounds [288 48 48 48]}}
@@ -1828,7 +1839,7 @@
    :entity/body {:height 11/16, :solid? true, :width 2/3},
    :entity/flying? false,
    :entity/hp 10,
-   :entity/skills #{:spells/projectile :spells/meditation}},
+   :entity/skills #{:skills/meditation :skills/projectile}},
   :property/id :creatures/wizard,
   :property/image
   {:file "creatures/images.png", :sub-image-bounds [0 0 48 48]}}
@@ -1990,7 +2001,7 @@
    :entity/body {:width 13/24, :height 35/48, :solid? true},
    :entity/flying? true,
    :entity/hp 8,
-   :entity/skills #{:spells/projectile}},
+   :entity/skills #{:skills/projectile}},
   :property/id :creatures/bird-dove,
   :property/image
   {:file "creatures/images.png", :sub-image-bounds [0 432 48 48]}}
@@ -3365,6 +3376,12 @@
   :property/image
   {:file "creatures/images.png", :sub-image-bounds [384 432 48 48]}}
  {:item/modifier {},
+  :item/slot :inventory.slot/weapon,
+  :property/id :items/staff,
+  :property/image
+  {:file "items/images.png", :sub-image-bounds [528 144 48 48]},
+  :property/pretty-name "Staff"}
+ {:item/modifier {},
   :item/slot :inventory.slot/cloak,
   :property/id :items/cloak-cloth,
   :property/image
@@ -3376,6 +3393,12 @@
   :property/image
   {:file "items/images.png", :sub-image-bounds [624 240 48 48]},
   :property/pretty-name "Heater Gold Shield"}
+ {:item/modifier {},
+  :item/slot :inventory.slot/weapon,
+  :property/id :items/axe,
+  :property/image
+  {:file "items/images.png", :sub-image-bounds [336 96 48 48]},
+  :property/pretty-name "Axe"}
  {:item/modifier {},
   :item/slot :inventory.slot/boot,
   :property/id :items/mystic-boot,
@@ -3401,6 +3424,12 @@
   {:file "items/images.png", :sub-image-bounds [144 288 48 48]},
   :property/pretty-name "Great Flame Shield"}
  {:item/modifier {},
+  :item/slot :inventory.slot/weapon,
+  :property/id :items/dagger,
+  :property/image
+  {:file "items/images.png", :sub-image-bounds [48 96 48 48]},
+  :property/pretty-name "Dagger"}
+ {:item/modifier {},
   :item/slot :inventory.slot/cloak,
   :property/id :items/cloak-royal,
   :property/image
@@ -3419,6 +3448,12 @@
   :property/image
   {:file "items/images.png", :sub-image-bounds [288 528 48 48]},
   :property/pretty-name "Leg Gold"}
+ {:item/modifier {},
+  :item/slot :inventory.slot/weapon,
+  :property/id :items/handaxe,
+  :property/image
+  {:file "items/images.png", :sub-image-bounds [288 96 48 48]},
+  :property/pretty-name "Handaxe"}
  {:item/modifier {},
   :item/slot :inventory.slot/shield,
   :property/id :items/shield-vorpal-great,
@@ -3468,6 +3503,18 @@
   {:file "items/images.png", :sub-image-bounds [528 624 48 48]},
   :property/pretty-name "Eye Cloak"}
  {:item/modifier {},
+  :item/slot :inventory.slot/weapon,
+  :property/id :items/magic-hammer-sun,
+  :property/image
+  {:file "items/images.png", :sub-image-bounds [192 192 48 48]},
+  :property/pretty-name "Sun Hammer Magic"}
+ {:item/modifier {},
+  :item/slot :inventory.slot/weapon,
+  :property/id :items/club-spiked,
+  :property/image
+  {:file "items/images.png", :sub-image-bounds [672 96 48 48]},
+  :property/pretty-name "Spiked Club"}
+ {:item/modifier {},
   :item/slot :inventory.slot/necklace,
   :property/id :items/necklace-tourmaline,
   :property/image
@@ -3498,6 +3545,12 @@
   {:file "items/images.png", :sub-image-bounds [240 624 48 48]},
   :property/pretty-name "Boot Royal"}
  {:item/modifier {},
+  :item/slot :inventory.slot/weapon,
+  :property/id :items/magic-sword-flame,
+  :property/image
+  {:file "items/images.png", :sub-image-bounds [288 192 48 48]},
+  :property/pretty-name "Flame Sword Magic"}
+ {:item/modifier {},
   :item/slot :inventory.slot/chest,
   :property/id :items/mystic-chest,
   :property/image
@@ -3510,11 +3563,35 @@
   {:file "items/images.png", :sub-image-bounds [432 528 48 48]},
   :property/pretty-name "Leg Mystic"}
  {:item/modifier {},
+  :item/slot :inventory.slot/weapon,
+  :property/id :items/hammer-exotic1,
+  :property/image
+  {:file "items/images.png", :sub-image-bounds [768 144 48 48]},
+  :property/pretty-name "Exotic1 Hammer"}
+ {:item/modifier {},
+  :item/slot :inventory.slot/weapon,
+  :property/id :items/crossbow,
+  :property/image
+  {:file "items/images.png", :sub-image-bounds [336 144 48 48]},
+  :property/pretty-name "Crossbow"}
+ {:item/modifier {},
+  :item/slot :inventory.slot/weapon,
+  :property/id :items/dirk,
+  :property/image
+  {:file "items/images.png", :sub-image-bounds [144 96 48 48]},
+  :property/pretty-name "Dirk"}
+ {:item/modifier {},
   :item/slot :inventory.slot/shield,
   :property/id :items/shield-mystic-buckler,
   :property/image
   {:file "items/images.png", :sub-image-bounds [768 240 48 48]},
   :property/pretty-name "Buckler Mystic Shield"}
+ {:item/modifier {},
+  :item/slot :inventory.slot/weapon,
+  :property/id :items/magic-spear-blood,
+  :property/image
+  {:file "items/images.png", :sub-image-bounds [528 192 48 48]},
+  :property/pretty-name "Blood Spear Magic"}
  {:item/modifier {},
   :item/slot :inventory.slot/rings,
   :property/id :items/ring-ornate,
@@ -3581,6 +3658,12 @@
   :property/image
   {:file "items/images.png", :sub-image-bounds [144 576 48 48]},
   :property/pretty-name "Glove Chain"}
+ {:item/modifier {},
+  :item/slot :inventory.slot/weapon,
+  :property/id :items/spear,
+  :property/image
+  {:file "items/images.png", :sub-image-bounds [0 144 48 48]},
+  :property/pretty-name "Spear"}
  {:item/modifier
   {:modifier/damage [:damage/deal :magic [:max :mult] 2]},
   :item/slot :inventory.slot/rings,
@@ -3606,6 +3689,12 @@
   :property/image
   {:file "items/images.png", :sub-image-bounds [480 384 48 48]},
   :property/pretty-name "Amethyst Necklace"}
+ {:item/modifier {},
+  :item/slot :inventory.slot/weapon,
+  :property/id :items/sword-exotic2,
+  :property/image
+  {:file "items/images.png", :sub-image-bounds [768 96 48 48]},
+  :property/pretty-name "Exotic2 Sword"}
  {:item/modifier {:modifier/cast-speed 0.3},
   :item/slot :inventory.slot/helm,
   :property/id :items/blood-helm,
@@ -3631,6 +3720,12 @@
   {:file "items/images.png", :sub-image-bounds [192 624 48 48]},
   :property/pretty-name "Boot Plate"}
  {:item/modifier {},
+  :item/slot :inventory.slot/weapon,
+  :property/id :items/shortbow,
+  :property/image
+  {:file "items/images.png", :sub-image-bounds [288 144 48 48]},
+  :property/pretty-name "Shortbow"}
+ {:item/modifier {},
   :item/slot :inventory.slot/rings,
   :property/id :items/ring-copper,
   :property/image
@@ -3655,6 +3750,12 @@
   :property/image
   {:file "items/images.png", :sub-image-bounds [48 240 48 48]},
   :property/pretty-name "Heater Wood Shield"}
+ {:item/modifier {},
+  :item/slot :inventory.slot/weapon,
+  :property/id :items/mace,
+  :property/image
+  {:file "items/images.png", :sub-image-bounds [432 96 48 48]},
+  :property/pretty-name "Mace"}
  {:item/modifier
   {:modifier/damage [:damage/deal :physical [:val :inc] 5]},
   :item/slot :inventory.slot/rings,
@@ -3675,17 +3776,35 @@
   {:file "items/images.png", :sub-image-bounds [768 384 48 48]},
   :property/pretty-name "Eye Necklace"}
  {:item/modifier {},
+  :item/slot :inventory.slot/weapon,
+  :property/id :items/stiletto,
+  :property/image
+  {:file "items/images.png", :sub-image-bounds [96 96 48 48]},
+  :property/pretty-name "Stiletto"}
+ {:item/modifier {},
   :item/slot :inventory.slot/shield,
   :property/id :items/shield-elven-heater,
   :property/image
   {:file "items/images.png", :sub-image-bounds [624 288 48 48]},
   :property/pretty-name "Heater Elven Shield"}
  {:item/modifier {},
+  :item/slot :inventory.slot/weapon,
+  :property/id :items/sword,
+  :property/image
+  {:file "items/images.png", :sub-image-bounds [0 96 48 48]},
+  :property/pretty-name "Sword"}
+ {:item/modifier {},
   :item/slot :inventory.slot/glove,
   :property/id :items/leather-glove,
   :property/image
   {:file "items/images.png", :sub-image-bounds [48 576 48 48]},
   :property/pretty-name "Glove Leather"}
+ {:item/modifier {},
+  :item/slot :inventory.slot/weapon,
+  :property/id :items/magic-sword-hellfire,
+  :property/image
+  {:file "items/images.png", :sub-image-bounds [48 192 48 48]},
+  :property/pretty-name "Hellfire Sword Magic"}
  {:item/modifier {},
   :item/slot :inventory.slot/helm,
   :property/id :items/wild-helm,
@@ -3722,18 +3841,48 @@
   :property/image
   {:file "items/images.png", :sub-image-bounds [720 240 48 48]},
   :property/pretty-name "Great Gold Shield"}
+ {:item/modifier {},
+  :item/slot :inventory.slot/weapon,
+  :property/id :items/staff-ankh,
+  :property/image
+  {:file "items/images.png", :sub-image-bounds [624 144 48 48]},
+  :property/pretty-name "Ankh Staff"}
+ {:item/modifier {},
+  :item/slot :inventory.slot/weapon,
+  :property/id :items/magic-staff-venom,
+  :property/image
+  {:file "items/images.png", :sub-image-bounds [240 192 48 48]},
+  :property/pretty-name "Venom Staff Magic"}
+ {:item/modifier {},
+  :item/slot :inventory.slot/weapon,
+  :property/id :items/greataxe,
+  :property/image
+  {:file "items/images.png", :sub-image-bounds [384 96 48 48]},
+  :property/pretty-name "Greataxe"}
  {:item/modifier {:modifier/armor [:block/rate :physical 0.2]},
   :item/slot :inventory.slot/chest,
   :property/id :items/blood-chest,
   :property/image
   {:file "items/images.png", :sub-image-bounds [336 480 48 48]},
   :property/pretty-name "Chest Blood"}
+ {:item/modifier {},
+  :item/slot :inventory.slot/weapon,
+  :property/id :items/magic-sword-vorpal,
+  :property/image
+  {:file "items/images.png", :sub-image-bounds [0 192 48 48]},
+  :property/pretty-name "Vorpal Sword Magic"}
  {:item/modifier {:modifier/attack-speed 0.5},
   :item/slot :inventory.slot/necklace,
   :property/id :items/necklace-dark,
   :property/image
   {:file "items/images.png", :sub-image-bounds [864 384 48 48]},
   :property/pretty-name "Dark Necklace"}
+ {:item/modifier {},
+  :item/slot :inventory.slot/weapon,
+  :property/id :items/magic-staff-winged,
+  :property/image
+  {:file "items/images.png", :sub-image-bounds [432 192 48 48]},
+  :property/pretty-name "Winged Staff Magic"}
  {:item/modifier {},
   :item/slot :inventory.slot/necklace,
   :property/id :items/necklace-ruby,
@@ -3765,6 +3914,12 @@
   {:file "items/images.png", :sub-image-bounds [0 240 48 48]},
   :property/pretty-name "Buckler Wood Shield"}
  {:item/modifier {},
+  :item/slot :inventory.slot/weapon,
+  :property/id :items/quarterstaff,
+  :property/image
+  {:file "items/images.png", :sub-image-bounds [192 144 48 48]},
+  :property/pretty-name "Quarterstaff"}
+ {:item/modifier {},
   :item/slot :inventory.slot/rings,
   :property/id :items/ring-cold,
   :property/image
@@ -3783,6 +3938,24 @@
   {:file "items/images.png", :sub-image-bounds [528 528 48 48]},
   :property/pretty-name "Ornate Cloak"}
  {:item/modifier {},
+  :item/slot :inventory.slot/weapon,
+  :property/id :items/axe-exotic1,
+  :property/image
+  {:file "items/images.png", :sub-image-bounds [720 144 48 48]},
+  :property/pretty-name "Exotic1 Axe"}
+ {:item/modifier {},
+  :item/slot :inventory.slot/weapon,
+  :property/id :items/falchion,
+  :property/image
+  {:file "items/images.png", :sub-image-bounds [192 96 48 48]},
+  :property/pretty-name "Falchion"}
+ {:item/modifier {},
+  :item/slot :inventory.slot/weapon,
+  :property/id :items/magic-sword-lightning,
+  :property/image
+  {:file "items/images.png", :sub-image-bounds [96 192 48 48]},
+  :property/pretty-name "Lightning Sword Magic"}
+ {:item/modifier {},
   :item/slot :inventory.slot/shield,
   :property/id :items/shield-vorpal-heater,
   :property/image
@@ -3794,6 +3967,12 @@
   :property/image
   {:file "items/images.png", :sub-image-bounds [672 240 48 48]},
   :property/pretty-name "Kite Gold Shield"}
+ {:item/modifier {},
+  :item/slot :inventory.slot/weapon,
+  :property/id :items/magic-axe-frost,
+  :property/image
+  {:file "items/images.png", :sub-image-bounds [144 192 48 48]},
+  :property/pretty-name "Frost Axe Magic"}
  {:item/modifier {},
   :item/slot :inventory.slot/leg,
   :property/id :items/leather-leg,
@@ -3807,17 +3986,41 @@
   {:file "items/images.png", :sub-image-bounds [528 432 48 48]},
   :property/pretty-name "Gold Cloak"}
  {:item/modifier {},
+  :item/slot :inventory.slot/weapon,
+  :property/id :items/sword-exotic1,
+  :property/image
+  {:file "items/images.png", :sub-image-bounds [720 96 48 48]},
+  :property/pretty-name "Exotic1 Sword"}
+ {:item/modifier {},
   :item/slot :inventory.slot/shield,
   :property/id :items/shield-ice-heater,
   :property/image
   {:file "items/images.png", :sub-image-bounds [240 288 48 48]},
   :property/pretty-name "Heater Ice Shield"}
  {:item/modifier {},
+  :item/slot :inventory.slot/weapon,
+  :property/id :items/sling,
+  :property/image
+  {:file "items/images.png", :sub-image-bounds [384 144 48 48]},
+  :property/pretty-name "Sling"}
+ {:item/modifier {},
+  :item/slot :inventory.slot/weapon,
+  :property/id :items/staff-winged,
+  :property/image
+  {:file "items/images.png", :sub-image-bounds [672 144 48 48]},
+  :property/pretty-name "Winged Staff"}
+ {:item/modifier {},
   :item/slot :inventory.slot/chest,
   :property/id :items/chain-chest,
   :property/image
   {:file "items/images.png", :sub-image-bounds [144 480 48 48]},
   :property/pretty-name "Chest Chain"}
+ {:item/modifier {},
+  :item/slot :inventory.slot/weapon,
+  :property/id :items/hammer,
+  :property/image
+  {:file "items/images.png", :sub-image-bounds [528 96 48 48]},
+  :property/pretty-name "Hammer"}
  {:item/modifier {},
   :item/slot :inventory.slot/rings,
   :property/id :items/ring-pearl,
@@ -3831,6 +4034,12 @@
   :property/image
   {:file "items/images.png", :sub-image-bounds [336 576 48 48]},
   :property/pretty-name "Glove Blood"}
+ {:item/modifier {},
+  :item/slot :inventory.slot/weapon,
+  :property/id :items/magic-sword-acid,
+  :property/image
+  {:file "items/images.png", :sub-image-bounds [384 192 48 48]},
+  :property/pretty-name "Acid Sword Magic"}
  {:item/modifier {},
   :item/slot :inventory.slot/helm,
   :property/id :items/gold-helm,
@@ -3849,6 +4058,12 @@
   :property/image
   {:file "items/images.png", :sub-image-bounds [336 528 48 48]},
   :property/pretty-name "Leg Blood"}
+ {:item/modifier {},
+  :item/slot :inventory.slot/weapon,
+  :property/id :items/longbow,
+  :property/image
+  {:file "items/images.png", :sub-image-bounds [240 144 48 48]},
+  :property/pretty-name "Longbow"}
  {:item/modifier {},
   :item/slot :inventory.slot/boot,
   :property/id :items/studded-boot,
@@ -3886,6 +4101,12 @@
   {:file "items/images.png", :sub-image-bounds [624 384 48 48]},
   :property/pretty-name "Emerald Necklace"}
  {:item/modifier {},
+  :item/slot :inventory.slot/weapon,
+  :property/id :items/magic-staff-chaos,
+  :property/image
+  {:file "items/images.png", :sub-image-bounds [480 192 48 48]},
+  :property/pretty-name "Chaos Staff Magic"}
+ {:item/modifier {},
   :item/slot :inventory.slot/chest,
   :property/id :items/royal-chest,
   :property/image
@@ -3910,6 +4131,12 @@
   {:file "items/images.png", :sub-image-bounds [0 480 48 48]},
   :property/pretty-name "Chest Cloth"}
  {:item/modifier {},
+  :item/slot :inventory.slot/weapon,
+  :property/id :items/magic-bow-horned,
+  :property/image
+  {:file "items/images.png", :sub-image-bounds [576 192 48 48]},
+  :property/pretty-name "Horned Bow Magic"}
+ {:item/modifier {},
   :item/slot :inventory.slot/shield,
   :property/id :items/shield-wood-kite,
   :property/image
@@ -3921,6 +4148,18 @@
   :property/image
   {:file "items/images.png", :sub-image-bounds [384 480 48 48]},
   :property/pretty-name "Chest Wild"}
+ {:item/modifier {},
+  :item/slot :inventory.slot/weapon,
+  :property/id :items/staff-branch,
+  :property/image
+  {:file "items/images.png", :sub-image-bounds [480 144 48 48]},
+  :property/pretty-name "Branch Staff"}
+ {:item/modifier {},
+  :item/slot :inventory.slot/weapon,
+  :property/id :items/club,
+  :property/image
+  {:file "items/images.png", :sub-image-bounds [624 96 48 48]},
+  :property/pretty-name "Club"}
  {:item/modifier {},
   :item/slot :inventory.slot/shield,
   :property/id :items/shield-ice-buckler,
@@ -3934,11 +4173,29 @@
   {:file "items/images.png", :sub-image-bounds [336 240 48 48]},
   :property/pretty-name "Great Iron Shield"}
  {:item/modifier {},
+  :item/slot :inventory.slot/weapon,
+  :property/id :items/greatmace,
+  :property/image
+  {:file "items/images.png", :sub-image-bounds [480 96 48 48]},
+  :property/pretty-name "Greatmace"}
+ {:item/modifier {},
+  :item/slot :inventory.slot/weapon,
+  :property/id :items/staff-jeweled,
+  :property/image
+  {:file "items/images.png", :sub-image-bounds [576 144 48 48]},
+  :property/pretty-name "Jeweled Staff"}
+ {:item/modifier {},
   :item/slot :inventory.slot/glove,
   :property/id :items/royal-glove,
   :property/image
   {:file "items/images.png", :sub-image-bounds [240 576 48 48]},
   :property/pretty-name "Glove Royal"}
+ {:item/modifier {},
+  :item/slot :inventory.slot/weapon,
+  :property/id :items/trident,
+  :property/image
+  {:file "items/images.png", :sub-image-bounds [96 144 48 48]},
+  :property/pretty-name "Trident"}
  {:item/modifier {},
   :item/slot :inventory.slot/chest,
   :property/id :items/studded-chest,
@@ -3976,6 +4233,12 @@
   {:file "items/images.png", :sub-image-bounds [192 480 48 48]},
   :property/pretty-name "Chest Plate"}
  {:item/modifier {},
+  :item/slot :inventory.slot/weapon,
+  :property/id :items/maul,
+  :property/image
+  {:file "items/images.png", :sub-image-bounds [576 96 48 48]},
+  :property/pretty-name "Maul"}
+ {:item/modifier {},
   :item/slot :inventory.slot/shield,
   :property/id :items/shield-vorpal-kite,
   :property/image
@@ -3993,6 +4256,18 @@
   :property/image
   {:file "items/images.png", :sub-image-bounds [384 240 48 48]},
   :property/pretty-name "Buckler Royal Shield"}
+ {:item/modifier {},
+  :item/slot :inventory.slot/weapon,
+  :property/id :items/lance,
+  :property/image
+  {:file "items/images.png", :sub-image-bounds [144 144 48 48]},
+  :property/pretty-name "Lance"}
+ {:item/modifier {},
+  :item/slot :inventory.slot/weapon,
+  :property/id :items/greatspear,
+  :property/image
+  {:file "items/images.png", :sub-image-bounds [48 144 48 48]},
+  :property/pretty-name "Greatspear"}
  {:item/modifier {},
   :item/slot :inventory.slot/shield,
   :property/id :items/shield-ice-kite,
@@ -4018,6 +4293,12 @@
   {:file "items/images.png", :sub-image-bounds [528 480 48 48]},
   :property/pretty-name "Tattered Cloak"}
  {:item/modifier {},
+  :item/slot :inventory.slot/weapon,
+  :property/id :items/broadsword,
+  :property/image
+  {:file "items/images.png", :sub-image-bounds [240 96 48 48]},
+  :property/pretty-name "Broadsword"}
+ {:item/modifier {},
   :item/slot :inventory.slot/shield,
   :property/id :items/shield-royal-heater,
   :property/image
@@ -4030,11 +4311,23 @@
   {:file "items/images.png", :sub-image-bounds [480 240 48 48]},
   :property/pretty-name "Kite Royal Shield"}
  {:item/modifier {},
+  :item/slot :inventory.slot/weapon,
+  :property/id :items/cross,
+  :property/image
+  {:file "items/images.png", :sub-image-bounds [432 144 48 48]},
+  :property/pretty-name "Cross"}
+ {:item/modifier {},
   :item/slot :inventory.slot/glove,
   :property/id :items/mystic-glove,
   :property/image
   {:file "items/images.png", :sub-image-bounds [432 576 48 48]},
   :property/pretty-name "Glove Mystic"}
+ {:item/modifier {},
+  :item/slot :inventory.slot/weapon,
+  :property/id :items/magic-sword-cold,
+  :property/image
+  {:file "items/images.png", :sub-image-bounds [336 192 48 48]},
+  :property/pretty-name "Cold Sword Magic"}
  {:item/modifier {},
   :item/slot :inventory.slot/shield,
   :property/id :items/shield-flame-kite,
@@ -4060,6 +4353,12 @@
   {:file "items/images.png", :sub-image-bounds [0 288 48 48]},
   :property/pretty-name "Buckler Flame Shield"}
  {:item/modifier {},
+  :item/slot :inventory.slot/weapon,
+  :property/id :items/sword-exotic3,
+  :property/image
+  {:file "items/images.png", :sub-image-bounds [816 96 48 48]},
+  :property/pretty-name "Exotic3 Sword"}
+ {:item/modifier {},
   :item/slot :inventory.slot/chest,
   :property/id :items/gold-chest,
   :property/image
@@ -4071,570 +4370,6 @@
   :property/image
   {:file "items/images.png", :sub-image-bounds [816 240 48 48]},
   :property/pretty-name "Heater Mystic Shield"}
- {:item/modifier {},
-  :item/slot :inventory.slot/weapon,
-  :property/id :items/staff,
-  :property/image
-  {:file "items/images.png", :sub-image-bounds [528 144 48 48]},
-  :property/pretty-name "Staff",
-  :skill/action-time 0.5,
-  :skill/action-time-modifier-key :stats/attack-speed,
-  :skill/effect
-  {:tx/target-entity
-   {:maxrange 0.6,
-    :hit-effect
-    [[:tx/damage {:damage/type :physical, :damage/min-max [3 6]}]]}},
-  :skill/start-action-sound "sounds/slash.wav",
-  :weapon/two-handed? true}
- {:item/modifier {},
-  :item/slot :inventory.slot/weapon,
-  :property/id :items/axe,
-  :property/image
-  {:file "items/images.png", :sub-image-bounds [336 96 48 48]},
-  :property/pretty-name "Axe",
-  :skill/action-time 0.5,
-  :skill/action-time-modifier-key :stats/attack-speed,
-  :skill/effect
-  {:tx/target-entity
-   {:maxrange 0.5,
-    :hit-effect
-    [[:tx/damage {:damage/type :physical, :damage/min-max [5 10]}]]}},
-  :skill/start-action-sound "sounds/slash.wav",
-  :weapon/two-handed? true}
- {:item/modifier {},
-  :item/slot :inventory.slot/weapon,
-  :property/id :items/dagger,
-  :property/image
-  {:file "items/images.png", :sub-image-bounds [48 96 48 48]},
-  :property/pretty-name "Dagger",
-  :skill/action-time 0.25,
-  :skill/action-time-modifier-key :stats/attack-speed,
-  :skill/effect
-  {:tx/target-entity
-   {:hit-effect
-    {:tx/damage {:damage/min-max [3 5], :damage/type :physical}},
-    :maxrange 0.5}},
-  :skill/start-action-sound "sounds/slash.wav",
-  :weapon/two-handed? false}
- {:item/modifier {},
-  :item/slot :inventory.slot/weapon,
-  :property/id :items/handaxe,
-  :property/image
-  {:file "items/images.png", :sub-image-bounds [288 96 48 48]},
-  :property/pretty-name "Handaxe",
-  :skill/action-time nil,
-  :skill/action-time-modifier-key :stats/attack-speed,
-  :skill/start-action-sound "sounds/slash.wav",
-  :weapon/two-handed? false}
- {:item/modifier {},
-  :item/slot :inventory.slot/weapon,
-  :property/id :items/magic-hammer-sun,
-  :property/image
-  {:file "items/images.png", :sub-image-bounds [192 192 48 48]},
-  :property/pretty-name "Sun Hammer Magic",
-  :skill/action-time nil,
-  :skill/action-time-modifier-key :stats/attack-speed,
-  :skill/start-action-sound "sounds/slash.wav",
-  :weapon/two-handed? true}
- {:item/modifier {},
-  :item/slot :inventory.slot/weapon,
-  :property/id :items/club-spiked,
-  :property/image
-  {:file "items/images.png", :sub-image-bounds [672 96 48 48]},
-  :property/pretty-name "Spiked Club",
-  :skill/action-time nil,
-  :skill/action-time-modifier-key :stats/attack-speed,
-  :skill/start-action-sound "sounds/slash.wav",
-  :weapon/two-handed? false}
- {:item/modifier {},
-  :item/slot :inventory.slot/weapon,
-  :property/id :items/magic-sword-flame,
-  :property/image
-  {:file "items/images.png", :sub-image-bounds [288 192 48 48]},
-  :property/pretty-name "Flame Sword Magic",
-  :skill/action-time nil,
-  :skill/action-time-modifier-key :stats/attack-speed,
-  :skill/start-action-sound "sounds/slash.wav",
-  :weapon/two-handed? false}
- {:item/modifier {},
-  :item/slot :inventory.slot/weapon,
-  :property/id :items/hammer-exotic1,
-  :property/image
-  {:file "items/images.png", :sub-image-bounds [768 144 48 48]},
-  :property/pretty-name "Exotic1 Hammer",
-  :skill/action-time nil,
-  :skill/action-time-modifier-key :stats/attack-speed,
-  :skill/start-action-sound "sounds/slash.wav",
-  :weapon/two-handed? true}
- {:item/modifier {},
-  :item/slot :inventory.slot/weapon,
-  :property/id :items/crossbow,
-  :property/image
-  {:file "items/images.png", :sub-image-bounds [336 144 48 48]},
-  :property/pretty-name "Crossbow",
-  :skill/action-time nil,
-  :skill/action-time-modifier-key :stats/attack-speed,
-  :skill/start-action-sound "sounds/slash.wav",
-  :weapon/two-handed? true}
- {:item/modifier {},
-  :item/slot :inventory.slot/weapon,
-  :property/id :items/dirk,
-  :property/image
-  {:file "items/images.png", :sub-image-bounds [144 96 48 48]},
-  :property/pretty-name "Dirk",
-  :skill/action-time nil,
-  :skill/action-time-modifier-key :stats/attack-speed,
-  :skill/start-action-sound "sounds/slash.wav",
-  :weapon/two-handed? false}
- {:item/modifier {},
-  :item/slot :inventory.slot/weapon,
-  :property/id :items/magic-spear-blood,
-  :property/image
-  {:file "items/images.png", :sub-image-bounds [528 192 48 48]},
-  :property/pretty-name "Blood Spear Magic",
-  :skill/action-time nil,
-  :skill/action-time-modifier-key :stats/attack-speed,
-  :skill/start-action-sound "sounds/slash.wav",
-  :weapon/two-handed? true}
- {:item/modifier {},
-  :item/slot :inventory.slot/weapon,
-  :property/id :items/spear,
-  :property/image
-  {:file "items/images.png", :sub-image-bounds [0 144 48 48]},
-  :property/pretty-name "Spear",
-  :skill/action-time nil,
-  :skill/action-time-modifier-key :stats/attack-speed,
-  :skill/start-action-sound "sounds/slash.wav",
-  :weapon/two-handed? true}
- {:item/modifier {},
-  :item/slot :inventory.slot/weapon,
-  :property/id :items/sword-exotic2,
-  :property/image
-  {:file "items/images.png", :sub-image-bounds [768 96 48 48]},
-  :property/pretty-name "Exotic2 Sword",
-  :skill/action-time nil,
-  :skill/action-time-modifier-key :stats/attack-speed,
-  :skill/start-action-sound "sounds/slash.wav",
-  :weapon/two-handed? true}
- {:item/modifier {},
-  :item/slot :inventory.slot/weapon,
-  :property/id :items/shortbow,
-  :property/image
-  {:file "items/images.png", :sub-image-bounds [288 144 48 48]},
-  :property/pretty-name "Shortbow",
-  :skill/action-time nil,
-  :skill/action-time-modifier-key :stats/attack-speed,
-  :skill/start-action-sound "sounds/slash.wav",
-  :weapon/two-handed? true}
- {:item/modifier {},
-  :item/slot :inventory.slot/weapon,
-  :property/id :items/mace,
-  :property/image
-  {:file "items/images.png", :sub-image-bounds [432 96 48 48]},
-  :property/pretty-name "Mace",
-  :skill/action-time nil,
-  :skill/action-time-modifier-key :stats/attack-speed,
-  :skill/start-action-sound "sounds/slash.wav",
-  :weapon/two-handed? false}
- {:item/modifier {},
-  :item/slot :inventory.slot/weapon,
-  :property/id :items/stiletto,
-  :property/image
-  {:file "items/images.png", :sub-image-bounds [96 96 48 48]},
-  :property/pretty-name "Stiletto",
-  :skill/action-time nil,
-  :skill/action-time-modifier-key :stats/attack-speed,
-  :skill/start-action-sound "sounds/slash.wav",
-  :weapon/two-handed? false}
- {:item/modifier {},
-  :item/slot :inventory.slot/weapon,
-  :property/id :items/sword,
-  :property/image
-  {:file "items/images.png", :sub-image-bounds [0 96 48 48]},
-  :property/pretty-name "Sword",
-  :skill/action-time 0.5,
-  :skill/action-time-modifier-key :stats/attack-speed,
-  :skill/effect
-  {:tx/target-entity
-   {:hit-effect
-    {:tx/damage {:damage/type :physical, :damage/min-max [5 10]}},
-    :maxrange 0.5}},
-  :skill/start-action-sound "sounds/slash.wav",
-  :weapon/two-handed? false}
- {:item/modifier {},
-  :item/slot :inventory.slot/weapon,
-  :property/id :items/magic-sword-hellfire,
-  :property/image
-  {:file "items/images.png", :sub-image-bounds [48 192 48 48]},
-  :property/pretty-name "Hellfire Sword Magic",
-  :skill/action-time nil,
-  :skill/action-time-modifier-key :stats/attack-speed,
-  :skill/start-action-sound "sounds/slash.wav",
-  :weapon/two-handed? true}
- {:item/modifier {},
-  :item/slot :inventory.slot/weapon,
-  :property/id :items/staff-ankh,
-  :property/image
-  {:file "items/images.png", :sub-image-bounds [624 144 48 48]},
-  :property/pretty-name "Ankh Staff",
-  :skill/action-time 0.5,
-  :skill/action-time-modifier-key :stats/attack-speed,
-  :skill/effect
-  {:tx/target-entity
-   {:maxrange 0.6,
-    :hit-effect
-    [[:tx/damage {:damage/type :physical, :damage/min-max [3 6]}]]}},
-  :skill/start-action-sound "sounds/slash.wav",
-  :weapon/two-handed? true}
- {:item/modifier {},
-  :item/slot :inventory.slot/weapon,
-  :property/id :items/magic-staff-venom,
-  :property/image
-  {:file "items/images.png", :sub-image-bounds [240 192 48 48]},
-  :property/pretty-name "Venom Staff Magic",
-  :skill/action-time nil,
-  :skill/action-time-modifier-key :stats/attack-speed,
-  :skill/start-action-sound "sounds/slash.wav",
-  :weapon/two-handed? true}
- {:item/modifier {},
-  :item/slot :inventory.slot/weapon,
-  :property/id :items/greataxe,
-  :property/image
-  {:file "items/images.png", :sub-image-bounds [384 96 48 48]},
-  :property/pretty-name "Greataxe",
-  :skill/action-time nil,
-  :skill/action-time-modifier-key :stats/attack-speed,
-  :skill/start-action-sound "sounds/slash.wav",
-  :weapon/two-handed? true}
- {:item/modifier {},
-  :item/slot :inventory.slot/weapon,
-  :property/id :items/magic-sword-vorpal,
-  :property/image
-  {:file "items/images.png", :sub-image-bounds [0 192 48 48]},
-  :property/pretty-name "Vorpal Sword Magic",
-  :skill/action-time 0.5,
-  :skill/action-time-modifier-key :stats/attack-speed,
-  :skill/effect
-  {:tx/target-entity
-   {:maxrange 0.5,
-    :hit-effect
-    [[:tx/damage {:damage/type :physical, :damage/min-max [5 10]}]]}},
-  :skill/start-action-sound "sounds/slash.wav",
-  :weapon/two-handed? false}
- {:item/modifier {},
-  :item/slot :inventory.slot/weapon,
-  :property/id :items/magic-staff-winged,
-  :property/image
-  {:file "items/images.png", :sub-image-bounds [432 192 48 48]},
-  :property/pretty-name "Winged Staff Magic",
-  :skill/action-time-modifier-key :stats/attack-speed,
-  :skill/start-action-sound "sounds/slash.wav",
-  :weapon/two-handed? true}
- {:item/modifier {},
-  :item/slot :inventory.slot/weapon,
-  :property/id :items/quarterstaff,
-  :property/image
-  {:file "items/images.png", :sub-image-bounds [192 144 48 48]},
-  :property/pretty-name "Quarterstaff",
-  :skill/action-time 0.45,
-  :skill/action-time-modifier-key :stats/attack-speed,
-  :skill/effect
-  {:tx/target-entity
-   {:maxrange 0.75,
-    :hit-effect
-    [[:tx/damage {:damage/type :physical, :damage/min-max [3 7]}]]}},
-  :skill/start-action-sound "sounds/slash.wav",
-  :weapon/two-handed? true}
- {:item/modifier {},
-  :item/slot :inventory.slot/weapon,
-  :property/id :items/axe-exotic1,
-  :property/image
-  {:file "items/images.png", :sub-image-bounds [720 144 48 48]},
-  :property/pretty-name "Exotic1 Axe",
-  :skill/action-time nil,
-  :skill/action-time-modifier-key :stats/attack-speed,
-  :skill/start-action-sound "sounds/slash.wav",
-  :weapon/two-handed? true}
- {:item/modifier {},
-  :item/slot :inventory.slot/weapon,
-  :property/id :items/falchion,
-  :property/image
-  {:file "items/images.png", :sub-image-bounds [192 96 48 48]},
-  :property/pretty-name "Falchion",
-  :skill/action-time 0.375,
-  :skill/action-time-modifier-key :stats/attack-speed,
-  :skill/effect
-  {:tx/target-entity
-   {:maxrange 0.5,
-    :hit-effect
-    [[:tx/damage {:damage/type :physical, :damage/min-max [3 7]}]]}},
-  :skill/start-action-sound "sounds/slash.wav",
-  :weapon/two-handed? false}
- {:item/modifier {},
-  :item/slot :inventory.slot/weapon,
-  :property/id :items/magic-sword-lightning,
-  :property/image
-  {:file "items/images.png", :sub-image-bounds [96 192 48 48]},
-  :property/pretty-name "Lightning Sword Magic",
-  :skill/action-time nil,
-  :skill/action-time-modifier-key :stats/attack-speed,
-  :skill/start-action-sound "sounds/slash.wav",
-  :weapon/two-handed? false}
- {:item/modifier {},
-  :item/slot :inventory.slot/weapon,
-  :property/id :items/magic-axe-frost,
-  :property/image
-  {:file "items/images.png", :sub-image-bounds [144 192 48 48]},
-  :property/pretty-name "Frost Axe Magic",
-  :skill/action-time nil,
-  :skill/action-time-modifier-key :stats/attack-speed,
-  :skill/start-action-sound "sounds/slash.wav",
-  :weapon/two-handed? true}
- {:item/modifier {},
-  :item/slot :inventory.slot/weapon,
-  :property/id :items/sword-exotic1,
-  :property/image
-  {:file "items/images.png", :sub-image-bounds [720 96 48 48]},
-  :property/pretty-name "Exotic1 Sword",
-  :skill/action-time nil,
-  :skill/action-time-modifier-key :stats/attack-speed,
-  :skill/start-action-sound "sounds/slash.wav",
-  :weapon/two-handed? true}
- {:item/modifier {},
-  :item/slot :inventory.slot/weapon,
-  :property/id :items/sling,
-  :property/image
-  {:file "items/images.png", :sub-image-bounds [384 144 48 48]},
-  :property/pretty-name "Sling",
-  :skill/action-time 1,
-  :skill/action-time-modifier-key :stats/attack-speed,
-  :skill/effect
-  {:tx/target-entity
-   {:maxrange 5.0,
-    :hit-effect
-    [[:tx/damage {:damage/type :physical, :damage/min-max [10 20]}]]}},
-  :skill/start-action-sound "sounds/slash.wav",
-  :weapon/two-handed? false}
- {:item/modifier {},
-  :item/slot :inventory.slot/weapon,
-  :property/id :items/staff-winged,
-  :property/image
-  {:file "items/images.png", :sub-image-bounds [672 144 48 48]},
-  :property/pretty-name "Winged Staff",
-  :skill/action-time nil,
-  :skill/action-time-modifier-key :stats/attack-speed,
-  :skill/start-action-sound "sounds/slash.wav",
-  :weapon/two-handed? true}
- {:item/modifier {},
-  :item/slot :inventory.slot/weapon,
-  :property/id :items/hammer,
-  :property/image
-  {:file "items/images.png", :sub-image-bounds [528 96 48 48]},
-  :property/pretty-name "Hammer",
-  :skill/action-time 0.65,
-  :skill/action-time-modifier-key :stats/attack-speed,
-  :skill/effect
-  {:tx/target-entity
-   {:maxrange 0.5,
-    :hit-effect
-    [[:tx/damage {:damage/type :physical, :damage/min-max [6 13]}]]}},
-  :skill/start-action-sound "sounds/slash.wav",
-  :weapon/two-handed? false}
- {:item/modifier {},
-  :item/slot :inventory.slot/weapon,
-  :property/id :items/magic-sword-acid,
-  :property/image
-  {:file "items/images.png", :sub-image-bounds [384 192 48 48]},
-  :property/pretty-name "Acid Sword Magic",
-  :skill/action-time nil,
-  :skill/action-time-modifier-key :stats/attack-speed,
-  :skill/start-action-sound "sounds/slash.wav",
-  :weapon/two-handed? false}
- {:item/modifier {},
-  :item/slot :inventory.slot/weapon,
-  :property/id :items/longbow,
-  :property/image
-  {:file "items/images.png", :sub-image-bounds [240 144 48 48]},
-  :property/pretty-name "Longbow",
-  :skill/action-time 1.5,
-  :skill/action-time-modifier-key :stats/attack-speed,
-  :skill/effect
-  {:tx/target-entity
-   {:maxrange 7.5,
-    :hit-effect
-    [[:tx/damage {:damage/type :physical, :damage/min-max [15 30]}]]}},
-  :skill/start-action-sound "sounds/slash.wav",
-  :weapon/two-handed? true}
- {:item/modifier {},
-  :item/slot :inventory.slot/weapon,
-  :property/id :items/magic-staff-chaos,
-  :property/image
-  {:file "items/images.png", :sub-image-bounds [480 192 48 48]},
-  :property/pretty-name "Chaos Staff Magic",
-  :skill/action-time nil,
-  :skill/action-time-modifier-key :stats/attack-speed,
-  :skill/start-action-sound "sounds/slash.wav",
-  :weapon/two-handed? true}
- {:item/modifier {},
-  :item/slot :inventory.slot/weapon,
-  :property/id :items/magic-bow-horned,
-  :property/image
-  {:file "items/images.png", :sub-image-bounds [576 192 48 48]},
-  :property/pretty-name "Horned Bow Magic",
-  :skill/action-time nil,
-  :skill/action-time-modifier-key :stats/attack-speed,
-  :skill/start-action-sound "sounds/slash.wav",
-  :weapon/two-handed? true}
- {:item/modifier {},
-  :item/slot :inventory.slot/weapon,
-  :property/id :items/staff-branch,
-  :property/image
-  {:file "items/images.png", :sub-image-bounds [480 144 48 48]},
-  :property/pretty-name "Branch Staff",
-  :skill/action-time 0.5,
-  :skill/action-time-modifier-key :stats/attack-speed,
-  :skill/effect
-  {:tx/target-entity
-   {:maxrange 0.6,
-    :hit-effect
-    [[:tx/damage {:damage/type :physical, :damage/min-max [3 6]}]]}},
-  :skill/start-action-sound "sounds/slash.wav",
-  :weapon/two-handed? true}
- {:item/modifier {},
-  :item/slot :inventory.slot/weapon,
-  :property/id :items/club,
-  :property/image
-  {:file "items/images.png", :sub-image-bounds [624 96 48 48]},
-  :property/pretty-name "Club",
-  :skill/action-time 0.7,
-  :skill/action-time-modifier-key :stats/attack-speed,
-  :skill/effect
-  {:tx/target-entity
-   {:maxrange 0.5,
-    :hit-effect
-    [[:tx/damage {:damage/type :physical, :damage/min-max [7 14]}]]}},
-  :skill/start-action-sound "sounds/slash.wav",
-  :weapon/two-handed? false}
- {:item/modifier {},
-  :item/slot :inventory.slot/weapon,
-  :property/id :items/greatmace,
-  :property/image
-  {:file "items/images.png", :sub-image-bounds [480 96 48 48]},
-  :property/pretty-name "Greatmace",
-  :skill/action-time nil,
-  :skill/action-time-modifier-key :stats/attack-speed,
-  :skill/start-action-sound "sounds/slash.wav",
-  :weapon/two-handed? true}
- {:item/modifier {},
-  :item/slot :inventory.slot/weapon,
-  :property/id :items/staff-jeweled,
-  :property/image
-  {:file "items/images.png", :sub-image-bounds [576 144 48 48]},
-  :property/pretty-name "Jeweled Staff",
-  :skill/action-time 0.5,
-  :skill/action-time-modifier-key :stats/attack-speed,
-  :skill/effect
-  {:tx/target-entity
-   {:maxrange 0.6,
-    :hit-effect
-    [[:tx/damage {:damage/type :physical, :damage/min-max [3 6]}]]}},
-  :skill/start-action-sound "sounds/slash.wav",
-  :weapon/two-handed? true}
- {:item/modifier {},
-  :item/slot :inventory.slot/weapon,
-  :property/id :items/trident,
-  :property/image
-  {:file "items/images.png", :sub-image-bounds [96 144 48 48]},
-  :property/pretty-name "Trident",
-  :skill/action-time 0.55,
-  :skill/action-time-modifier-key :stats/attack-speed,
-  :skill/effect
-  {:tx/target-entity
-   {:maxrange 1.0,
-    :hit-effect
-    [[:tx/damage {:damage/type :physical, :damage/min-max [5 11]}]]}},
-  :skill/start-action-sound "sounds/slash.wav",
-  :weapon/two-handed? false}
- {:item/modifier {},
-  :item/slot :inventory.slot/weapon,
-  :property/id :items/maul,
-  :property/image
-  {:file "items/images.png", :sub-image-bounds [576 96 48 48]},
-  :property/pretty-name "Maul",
-  :skill/action-time nil,
-  :skill/action-time-modifier-key :stats/attack-speed,
-  :skill/start-action-sound "sounds/slash.wav",
-  :weapon/two-handed? true}
- {:item/modifier {},
-  :item/slot :inventory.slot/weapon,
-  :property/id :items/lance,
-  :property/image
-  {:file "items/images.png", :sub-image-bounds [144 144 48 48]},
-  :property/pretty-name "Lance",
-  :skill/action-time nil,
-  :skill/action-time-modifier-key :stats/attack-speed,
-  :skill/start-action-sound "sounds/slash.wav",
-  :weapon/two-handed? true}
- {:item/modifier {},
-  :item/slot :inventory.slot/weapon,
-  :property/id :items/greatspear,
-  :property/image
-  {:file "items/images.png", :sub-image-bounds [48 144 48 48]},
-  :property/pretty-name "Greatspear",
-  :skill/action-time 0.65,
-  :skill/action-time-modifier-key :stats/attack-speed,
-  :skill/effect
-  {:tx/target-entity
-   {:hit-effect
-    {:tx/damage {:damage/type :physical, :damage/min-max [6 13]}},
-    :maxrange 1.0}},
-  :skill/start-action-sound "sounds/slash.wav",
-  :weapon/two-handed? true}
- {:item/modifier {},
-  :item/slot :inventory.slot/weapon,
-  :property/id :items/broadsword,
-  :property/image
-  {:file "items/images.png", :sub-image-bounds [240 96 48 48]},
-  :property/pretty-name "Broadsword",
-  :skill/action-time 0.6,
-  :skill/action-time-modifier-key :stats/attack-speed,
-  :skill/effect
-  {:tx/target-entity
-   {:maxrange 0.5,
-    :hit-effect
-    [[:tx/damage {:damage/type :physical, :damage/min-max [6 12]}]]}},
-  :skill/start-action-sound "sounds/slash.wav",
-  :weapon/two-handed? false}
- {:item/modifier {},
-  :item/slot :inventory.slot/weapon,
-  :property/id :items/cross,
-  :property/image
-  {:file "items/images.png", :sub-image-bounds [432 144 48 48]},
-  :property/pretty-name "Cross",
-  :skill/action-time nil,
-  :skill/action-time-modifier-key :stats/attack-speed,
-  :skill/start-action-sound "sounds/slash.wav",
-  :weapon/two-handed? false}
- {:item/modifier {},
-  :item/slot :inventory.slot/weapon,
-  :property/id :items/magic-sword-cold,
-  :property/image
-  {:file "items/images.png", :sub-image-bounds [336 192 48 48]},
-  :property/pretty-name "Cold Sword Magic",
-  :skill/action-time nil,
-  :skill/action-time-modifier-key :stats/attack-speed,
-  :skill/start-action-sound "sounds/slash.wav",
-  :weapon/two-handed? false}
- {:item/modifier {},
-  :item/slot :inventory.slot/weapon,
-  :property/id :items/sword-exotic3,
-  :property/image
-  {:file "items/images.png", :sub-image-bounds [816 96 48 48]},
-  :property/pretty-name "Exotic3 Sword",
-  :skill/action-time nil,
-  :skill/action-time-modifier-key :stats/attack-speed,
-  :skill/start-action-sound "sounds/slash.wav",
-  :weapon/two-handed? false}
  {:property/id :worlds/first-level,
   :world/map-size 1,
   :world/max-area-level 1,

@@ -4,6 +4,7 @@
 
 ; TODO new component/modifier/entity component -> add attribute here
 ; or add it to the defcomponent ?!
+; & documentation string also included? for editor ?
 
 ; TODO entity components, what subset is allowed?
 ; which components depend on which?
@@ -85,7 +86,7 @@
 (defattribute :solid? {:widget :label :schema boolean?})
 
 (defattribute :entity/body          (map-attribute :width :height :solid?)) ; TODO body assert >+ min body size?
-(defattribute :entity/skills        (one-to-many-ids :property.type/spell)) ; required by npc state, also mana!, also movement (no not needed, doesnt do anything then)
+(defattribute :entity/skills        (one-to-many-ids :property.type/skill)) ; required by npc state, also mana!, also movement (no not needed, doesnt do anything then)
 (defattribute :entity/inventory     (one-to-many-ids :property.type/item)) ; optional
 (defattribute :entity/animation     animation) ; optional
 (defattribute :entity/mana          nat-int-attr) ; required @ npc state, for cost, check if nil
@@ -94,6 +95,11 @@
 (defattribute :entity/movement      pos-attr) ; optional, only assoc'ing movement-vector
 (defattribute :entity/reaction-time pos-attr)
 (defattribute :entity/faction       (enum :good :evil))
+
+(defattribute :stats/strength       nat-int-attr)
+(defattribute :entity/stats         (assoc (map-attribute :stats/strength)
+                                           :default-value {:stats/strength 1}
+                                           )) ; TODO default value missing... empty when created
 
 (defattribute :property/entity (components-attribute :entity))
 

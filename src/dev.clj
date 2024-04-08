@@ -32,14 +32,15 @@
        ": [GOLD]" (str (->v-str v))))
 
 (defn add-map-nodes! [ctx parent-node m level]
-  (when (< @level 2)
-    (swap! level inc)
+  ;(println "Level: " level " - go deeper? " (< level 4))
+  (when (< level 4)
     (doseq [[k v] (into (sorted-map) m)]
+      ;(println "add-map-nodes! k " k)
       (try
        (let [node (->node (->label ctx (->labelstr k v)))]
          (.add parent-node node)
          (when (map? v)
-           (add-map-nodes! ctx node v level))
+           (add-map-nodes! ctx node v (inc level)))
          (when (vector? v)
            (doseq [element v
                    :let [el-node (->node (->label ctx (str (->v-str element))))]]
@@ -50,7 +51,7 @@
 
 (defn- ->prop-tree [ctx prop]
   (let [tree (->tree)]
-    (add-map-nodes! ctx tree prop (atom 0))
+    (add-map-nodes! ctx tree prop 0)
     tree))
 
 (defn- ->scroll-pane-cell [{:keys [gui-viewport-height] :as ctx} rows]
@@ -64,16 +65,12 @@
 (comment
  ; TODO make tree of namespace parts ! not so many elements
  ; and all components namespaced names
-
  ; and make for entities/cells too !
-
  ; and cells no atoms! grid! I change multiple at once ...
-
  ; maybe only add elements on click -> somehow glyphlayout breaks AFTER this returns successfully
  (let [ctx @gdl.app/current-context
-       ;tree-map @@(:context/mouseover-entity ctx)
-       tree-map ctx
-
+       tree-map @@(:context/mouseover-entity ctx)
+       ;tree-map ctx
        ]
    (add-to-stage! ctx (->window ctx {:title "Context Overview"
                                      :close-button? true

@@ -19,9 +19,10 @@
              :id :skill-window
              :visible? false
              :cell-defaults {:pad 10}
-             :rows [(for [id [:spells/projectile
-                              :spells/meditation
-                              :spells/spawn]
+             :rows [(for [id [:skills/projectile
+                              :skills/meditation
+                              :skills/spawn
+                              :skills/melee-attack]
                           :let [; get-property in callbacks if they get changed, this is part of context permanently
                                 button (->image-button context
                                                        (:property/image (get-property context id)) ; TODO here anyway taken
