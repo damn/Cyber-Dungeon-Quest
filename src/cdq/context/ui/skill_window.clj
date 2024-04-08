@@ -22,7 +22,7 @@
              :rows [(for [id [:skills/projectile
                               :skills/meditation
                               :skills/spawn
-                              :skills/attack]
+                              :skills/melee-attack]
                           :let [; get-property in callbacks if they get changed, this is part of context permanently
                                 button (->image-button context
                                                        (:property/image (get-property context id)) ; TODO here anyway taken
