@@ -4,6 +4,7 @@
 
 ; TODO new component/modifier/entity component -> add attribute here
 ; or add it to the defcomponent ?!
+; & documentation string also included? for editor ?
 
 ; TODO entity components, what subset is allowed?
 ; which components depend on which?
@@ -94,6 +95,11 @@
 (defattribute :entity/movement      pos-attr) ; optional, only assoc'ing movement-vector
 (defattribute :entity/reaction-time pos-attr)
 (defattribute :entity/faction       (enum :good :evil))
+
+(defattribute :stats/strength       nat-int-attr)
+(defattribute :entity/stats         (assoc (map-attribute :stats/strength)
+                                           :default-value {:stats/strength 1}
+                                           )) ; TODO default value missing... empty when created
 
 (defattribute :property/entity (components-attribute :entity))
 
