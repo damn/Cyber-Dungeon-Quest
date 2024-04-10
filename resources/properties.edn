@@ -89,7 +89,7 @@
    :entity/mana 11,
    :entity/body {:height 29/48, :solid? true, :width 2/3},
    :entity/hp 12,
-   :entity/skills #{:skills/attack}},
+   :entity/skills #{:skills/melee-attack}},
   :property/id :creatures/goblin-warrior,
   :property/image
   {:file "creatures/images.png", :sub-image-bounds [240 144 48 48]}}
