@@ -25,8 +25,7 @@
 (defcomponent :entity/body body
   (entity/create-component [_ {:keys [entity/position]
                                [x y] :entity/position
-                               {:keys [left-bottom
-                                       width
+                               {:keys [width
                                        height
                                        solid?
                                        rotation-angle
