@@ -3,9 +3,11 @@
             [cdq.effect :as effect]
             [cdq.context :refer [transact!]]))
 
-; TODO use stats/strength
-(defn- entity*->melee-damage [_entity*]
-  {:damage/type :physical, :damage/min-max [3 6]})
+(defn- entity*->melee-damage [entity*]
+  (let [strength (or (:stats/strength (:entity/stats entity*))
+                     0)]
+    {:damage/type :physical,
+     :damage/min-max [strength strength]}))
 
 (defcomponent :tx/melee-damage _
   (effect/text [_ {:keys [effect/source] :as ctx}]
