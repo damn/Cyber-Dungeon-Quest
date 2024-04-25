@@ -116,8 +116,8 @@
                               value-delta]]
   (str/join " "
             [(case val-or-max
-                      :val "Minimum"
-                      :max "Maximum")
+               :val "Minimum"
+               :max "Maximum")
              (dmg-type-text damage-type)
              (case source-or-target
                :damage/deal "dealt"
