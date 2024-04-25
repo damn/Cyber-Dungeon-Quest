@@ -124,8 +124,8 @@
 (defattribute :skill/effect (components-attribute :tx))
 (defattribute :hit-effect   (components-attribute :tx))
 
-(defattribute :modifier/max-hp       {:widget :text-field :schema number?})
-(defattribute :modifier/max-mana     {:widget :text-field :schema number?})
+(defattribute :modifier/max-hp       {:widget :text-field :schema number?}) ; TODO has to be integer ?
+(defattribute :modifier/max-mana     {:widget :text-field :schema number?}) ; TODO has to be integer ?
 (defattribute :modifier/cast-speed   pos-attr)
 (defattribute :modifier/attack-speed pos-attr)
 (defattribute :modifier/shield       {:widget :text-field :schema :some}) ; TODO no schema
