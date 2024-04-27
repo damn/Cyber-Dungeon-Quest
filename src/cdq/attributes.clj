@@ -23,6 +23,7 @@
 (defn- defattribute [k data]
   (assert (:schema data) k)
   (assert (:widget data) k)
+  ; optional: :doc
   (alter-var-root #'attributes assoc k data))
 
 ;; attribute types
@@ -96,10 +97,32 @@
 (defattribute :entity/reaction-time pos-attr)
 (defattribute :entity/faction       (enum :good :evil))
 
-(defattribute :stats/strength       nat-int-attr)
-(defattribute :entity/stats         (assoc (map-attribute :stats/strength)
-                                           :default-value {:stats/strength 1}
-                                           )) ; TODO default value missing... empty when created
+(defattribute :stats/strength nat-int-attr)
+
+(let [doc "action-time divided by this stat when a skill is being used.
+          Default value 1.
+
+          For example:
+          attack/cast-speed 1.5 => (/ action-time 1.5) => 150% attackspeed."
+      skill-speed-stat (assoc pos-attr :doc doc)]
+  (defattribute :stats/cast-speed   skill-speed-stat)
+  (defattribute :stats/attack-speed skill-speed-stat))
+
+; TODO
+; * :stats/shield & :stats/armor & :stats/damage
+; => put directly in shield armor different 'separate!' stats
+; => instead of vector of stuff.
+; => more stuff but simpler - keep stats separate !
+; other solution: make into map instead of vector ...
+
+(defattribute :entity/stats (assoc (map-attribute :stats/strength
+                                                  :stats/cast-speed
+                                                  :stats/attack-speed)
+                                   ; TODO also DRY @ modifier.all is default value 1 too...
+                                   :default-value {:stats/strength 1
+                                                   :stats/cast-speed 1
+                                                   :stats/attack-speed 1}
+                                   )) ; TODO default value missing... empty when created
 
 (defattribute :property/entity (components-attribute :entity))
 
