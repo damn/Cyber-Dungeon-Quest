@@ -58,16 +58,14 @@
 ; tests ?
 ; not vector but map ! sub-component edit nested map edit !
 
-(defn- block-modifier-text [block-type [source-or-target damage-type value-delta]]
+(defn- block-modifier-text [[source-or-target damage-type value-delta]]
   ; TODO mk map ( & nested map editor widgets )
   ; ! & fix all docstrings of those modifiers ! ( + -5 dmg) ..
   #_(assert (check-block-modifier-value value)
           (str "Wrong value for modifier: " value))
   (str/join " "
             [(dmg-type-text damage-type)
-             (case block-type
-               :stats/shield "shield"
-               :stats/armor  "armor")
+             "armor"
              (case source-or-target
                :block/ignore "ignore"
                :block/rate "block")
@@ -82,14 +80,8 @@
 (defn- reverse-block-stat [stat value]
   (update-in stat (drop-last value) - (last value)))
 
-(defcomponent :modifier/shield value
-  (modifier/text [_] (block-modifier-text :stats/shield value))
-  (modifier/keys [_] [:entity/stats :stats/shield])
-  (modifier/apply   [_ stat] (apply-block-stat   stat value))
-  (modifier/reverse [_ stat] (reverse-block-stat stat value)))
-
 (defcomponent :modifier/armor value
-  (modifier/text [_] (block-modifier-text :stats/armor value))
+  (modifier/text [_] (block-modifier-text value))
   (modifier/keys [_] [:entity/stats :stats/armor])
   (modifier/apply   [_ stat] (apply-block-stat   stat value))
   (modifier/reverse [_ stat] (reverse-block-stat stat value)))

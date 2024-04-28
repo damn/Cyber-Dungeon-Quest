@@ -109,8 +109,8 @@
   (defattribute :stats/attack-speed skill-speed-stat))
 
 ; TODO
-; * :stats/shield & :stats/armor & :stats/damage
-; => put directly in shield armor different 'separate!' stats
+; * :stats/armor & :stats/damage
+; => put directly in different separate stats
 ; => instead of vector of stuff.
 ; => more stuff but simpler - keep stats separate !
 ; other solution: make into map instead of vector ...
@@ -151,7 +151,6 @@
 (defattribute :modifier/max-mana     {:widget :text-field :schema number?}) ; TODO has to be integer ?
 (defattribute :modifier/cast-speed   pos-attr)
 (defattribute :modifier/attack-speed pos-attr)
-(defattribute :modifier/shield       {:widget :text-field :schema :some}) ; TODO no schema
 (defattribute :modifier/armor        {:widget :text-field :schema :some}) ; TODO no schema
 (defattribute :modifier/damage       {:widget :text-field :schema :some}) ; TODO no schema
 

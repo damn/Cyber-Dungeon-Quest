@@ -5,26 +5,25 @@
             [cdq.context :refer [transact!]]
             [cdq.effect :as effect]))
 
-(defn- block-stats  [entity* block-stat] (-> entity* :entity/stats block-stat))
-(defn- damage-stats [entity*]            (-> entity* :entity/stats :stats/damage))
+(defn- block-stats [entity*]
+  (-> entity* :entity/stats :stats/armor))
 
-(defn- block-rate   [entity* block-stat damage-type] (-> entity* (block-stats block-stat) :block/rate   damage-type))
-(defn- block-ignore [entity* block-stat damage-type] (-> entity* (block-stats block-stat) :block/ignore damage-type))
+(defn- block-rate   [entity* damage-type] (-> entity* block-stats :block/rate   damage-type))
+(defn- block-ignore [entity* damage-type] (-> entity* block-stats :block/ignore damage-type))
 
-(defn- effective-block-rate [source target block-stat damage-type]
-  (max (- (or (block-rate   target block-stat damage-type) 0)
-          (or (block-ignore source block-stat damage-type) 0))
+(defn- effective-block-rate [source target damage-type]
+  (max (- (or (block-rate   target damage-type) 0)
+          (or (block-ignore source damage-type) 0))
        0))
 
 (comment
  (let [ignore 0.4
        rate 0.5
-       block-stat :stats/shield
-       source {:entity/stats {block-stat {:block/ignore {:physical ignore}}}}
-       target {:entity/stats {block-stat {:block/rate   {:physical rate}}}}]
-   [(block-rate target block-stat :physical)
-    (block-ignore source block-stat :physical)
-    (effective-block-rate source target block-stat :physical)])
+       source {:entity/stats {:stats/armor {:block/ignore {:physical ignore}}}}
+       target {:entity/stats {:stats/armor {:block/rate   {:physical rate}}}}]
+   [(block-rate target :physical)
+    (block-ignore source :physical)
+    (effective-block-rate source target :physical)])
  )
 
 (defn- apply-damage-modifiers [{:keys [damage/min-max] :as damage}
@@ -38,6 +37,9 @@
                             {[:val :inc] 3})
     #:damage{:type :physical, :min-max [8 10]})
  )
+
+(defn- damage-stats [entity*]
+  (-> entity* :entity/stats :stats/damage))
 
 (defn- apply-source-modifiers [{:keys [damage/type] :as damage} source]
   (apply-damage-modifiers damage (-> source damage-stats :damage/deal type)))
@@ -126,10 +128,7 @@
        (no-hp-left? hp)
        []
 
-       (blocks? (effective-block-rate source* target* :stats/shield type))
-       [[:tx/add-text-effect target "[WHITE]SHIELD"]]
-
-       (blocks? (effective-block-rate source* target* :stats/armor type))
+       (blocks? (effective-block-rate source* target* type))
        [[:tx/add-text-effect target "[WHITE]ARMOR"]]
 
        :else

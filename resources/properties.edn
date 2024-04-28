@@ -3313,7 +3313,7 @@
   {:file "items/images.png", :sub-image-bounds [480 528 48 48]},
   :property/pretty-name "Royal Cloak"}
  {:item/modifier
-  {:modifier/max-hp 5, :modifier/shield [:block/rate :physical 0.75]},
+  {:modifier/max-hp 5, :modifier/armor [:block/rate :physical 0.5]},
   :item/slot :inventory.slot/shield,
   :property/id :items/shield-vorpal-buckler,
   :property/image
