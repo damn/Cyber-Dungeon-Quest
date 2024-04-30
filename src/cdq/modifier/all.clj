@@ -54,15 +54,9 @@
 (defn- dmg-type-text [damage-type]
   (str (str/capitalize (name damage-type)) " damage"))
 
-; TODO assert modifier value  & props / attrs, not here
-; tests ?
-; not vector but map ! sub-component edit nested map edit !
-
 (defn- block-modifier-text [[source-or-target damage-type value-delta]]
-  ; TODO mk map ( & nested map editor widgets )
-  ; ! & fix all docstrings of those modifiers ! ( + -5 dmg) ..
   #_(assert (check-block-modifier-value value)
-          (str "Wrong value for modifier: " value))
+            (str "Wrong value for modifier: " value))
   (str/join " "
             [(dmg-type-text damage-type)
              "armor"
