@@ -16,6 +16,9 @@
    (effective-armor-save source target))
  )
 
+(defn- armor-saves? [source target]
+  (< (rand) (effective-armor-save source target)))
+
 (defn- apply-damage-modifiers [{:keys [damage/min-max] :as damage}
                                modifiers]
   (if modifiers
@@ -87,9 +90,6 @@
     #:damage{:min-max [1 20]})
  )
 
-(defn- saves? [armor-save]
-  (< (rand) armor-save))
-
 (defn- no-hp-left? [hp]
   (zero? (hp 0)))
 
@@ -118,7 +118,7 @@
        (no-hp-left? hp)
        []
 
-       (saves? (effective-armor-save source* target*)) ; TODO this 2 in 1 fn ?!
+       (armor-saves? source* target*)
        [[:tx/add-text-effect target "[WHITE]ARMOR"]] ; TODO !_!_!_!_!_!
 
        :else
