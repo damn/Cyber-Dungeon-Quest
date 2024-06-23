@@ -85,9 +85,12 @@
     :looping? true},
    :entity/reaction-time 0.5,
    :entity/mana 11,
-   :entity/stats {:stats/attack-speed 3, :stats/cast-speed 1, :stats/strength 1,
-                  :stats/armor-save 0,
-                  :stats/armor-pierce 0},
+   :entity/stats
+   {:stats/attack-speed 3,
+    :stats/cast-speed 1,
+    :stats/strength 1,
+    :stats/armor-save 0,
+    :stats/armor-pierce 0},
    :entity/body {:height 29/48, :solid? true, :width 2/3},
    :entity/hp 12,
    :entity/skills #{:skills/melee-attack}},
@@ -672,7 +675,7 @@
   :property/id :creatures/spirit-greater,
   :property/image
   {:file "creatures/images.png", :sub-image-bounds [432 480 48 48]}}
- {:creature/level 2,
+ {:creature/level 1,
   :creature/species :species/human,
   :property/entity
   {:entity/faction :good,
@@ -688,10 +691,16 @@
     :looping? true},
    :entity/reaction-time 0.2,
    :entity/mana 11,
-   :entity/body {:width 2/3, :height 19/24, :solid? true},
+   :entity/stats
+   {:stats/armor-pierce 0,
+    :stats/armor-save 0.7,
+    :stats/attack-speed 2,
+    :stats/cast-speed 1,
+    :stats/strength 2},
+   :entity/body {:height 19/24, :solid? true, :width 2/3},
    :entity/flying? false,
    :entity/hp 10,
-   :entity/skills #{:skills/spawn}},
+   :entity/skills #{:skills/melee-attack}},
   :property/id :creatures/knight,
   :property/image
   {:file "creatures/images.png", :sub-image-bounds [96 0 48 48]}}
@@ -3313,8 +3322,7 @@
   :property/image
   {:file "items/images.png", :sub-image-bounds [480 528 48 48]},
   :property/pretty-name "Royal Cloak"}
- {:item/modifier
-  {:modifier/max-hp 5, :modifier/armor-save 0.5},
+ {:item/modifier {:modifier/max-hp 5, :modifier/armor-save 0.5},
   :item/slot :inventory.slot/shield,
   :property/id :items/shield-vorpal-buckler,
   :property/image
@@ -3542,8 +3550,7 @@
   :property/image
   {:file "items/images.png", :sub-image-bounds [0 144 48 48]},
   :property/pretty-name "Spear"}
- {:item/modifier
-  {:modifier/damage [:damage/deal [:max :mult] 2]},
+ {:item/modifier {:modifier/damage [:damage/deal [:max :mult] 2]},
   :item/slot :inventory.slot/rings,
   :property/id :items/ring-flame,
   :property/image
@@ -3609,8 +3616,7 @@
   :property/image
   {:file "items/images.png", :sub-image-bounds [48 336 48 48]},
   :property/pretty-name "Copper Ring"}
- {:item/modifier
-  {:modifier/damage [:damage/receive [:max :inc] -1]},
+ {:item/modifier {:modifier/damage [:damage/receive [:max :inc] -1]},
   :item/slot :inventory.slot/leg,
   :property/id :items/wild-leg,
   :property/image
@@ -3634,8 +3640,7 @@
   :property/image
   {:file "items/images.png", :sub-image-bounds [432 96 48 48]},
   :property/pretty-name "Mace"}
- {:item/modifier
-  {:modifier/damage [:damage/deal [:val :inc] 5]},
+ {:item/modifier {:modifier/damage [:damage/deal [:val :inc] 5]},
   :item/slot :inventory.slot/rings,
   :property/id :items/ring-gold,
   :property/image
@@ -3905,8 +3910,7 @@
   :property/image
   {:file "items/images.png", :sub-image-bounds [336 336 48 48]},
   :property/pretty-name "Pearl Ring"}
- {:item/modifier
-  {:modifier/damage [:damage/receive [:val :inc] -3]},
+ {:item/modifier {:modifier/damage [:damage/receive [:val :inc] -3]},
   :item/slot :inventory.slot/glove,
   :property/id :items/blood-glove,
   :property/image
@@ -4253,6 +4257,15 @@
   :world/max-area-level 1,
   :world/princess :creatures/lady-a,
   :world/spawn-rate 0.05}
+ {:entity/animation
+  {:frames
+   ({:file "fx/uf_FX_impact.png", :sub-image-bounds [144 0 48 48]}
+    {:file "fx/uf_FX_impact.png", :sub-image-bounds [192 0 48 48]}
+    {:file "fx/uf_FX_impact.png", :sub-image-bounds [240 0 48 48]}),
+   :frame-duration 0.05,
+   :looping? nil},
+  :property/id :effects.damage/hit-effect,
+  :property/sound "sounds/bfxr_normalhit.wav"}
  {:property/id :skull-small-gold,
   :property/image
   {:file "items/images.png", :sub-image-bounds [192 384 48 48]},
@@ -4301,6 +4314,15 @@
   :property/image
   {:file "items/images.png", :sub-image-bounds [384 384 48 48]},
   :property/pretty-name "Sapphire Gem"}
+ {:entity/animation
+  {:frames
+   ({:file "fx/uf_FX_impact.png", :sub-image-bounds [288 48 48 48]}
+    {:file "fx/uf_FX_impact.png", :sub-image-bounds [336 48 48 48]}
+    {:file "fx/uf_FX_impact.png", :sub-image-bounds [384 48 48 48]}),
+   :frame-duration 0.05,
+   :looping? nil},
+  :property/id :effects.damage.magic/hit-effect_UNUSED,
+  :property/sound "sounds/bfxr_curse.wav"}
  {:property/id :potion-red,
   :property/image
   {:file "items/images.png", :sub-image-bounds [480 0 48 48]},
@@ -4370,15 +4392,6 @@
   :property/image
   {:file "items/images.png", :sub-image-bounds [480 48 48 48]},
   :property/pretty-name "Silver Chest"}
- {:entity/animation
-  {:frames
-   ({:file "fx/uf_FX_impact.png", :sub-image-bounds [144 0 48 48]}
-    {:file "fx/uf_FX_impact.png", :sub-image-bounds [192 0 48 48]}
-    {:file "fx/uf_FX_impact.png", :sub-image-bounds [240 0 48 48]}),
-   :frame-duration 0.05,
-   :looping? nil},
-  :property/id :effects.damage/hit-effect,
-  :property/sound "sounds/bfxr_normalhit.wav"}
  {:property/id :crystal-cloud,
   :property/image
   {:file "items/images.png", :sub-image-bounds [720 336 48 48]},
@@ -4526,13 +4539,4 @@
  {:property/id :key-ornate,
   :property/image
   {:file "items/images.png", :sub-image-bounds [288 0 48 48]},
-  :property/pretty-name "Ornate Key"}
- {:entity/animation
-  {:frames
-   ({:file "fx/uf_FX_impact.png", :sub-image-bounds [288 48 48 48]}
-    {:file "fx/uf_FX_impact.png", :sub-image-bounds [336 48 48 48]}
-    {:file "fx/uf_FX_impact.png", :sub-image-bounds [384 48 48 48]}),
-   :frame-duration 0.05,
-   :looping? nil},
-  :property/id :effects.damage.magic/hit-effect_UNUSED,
-  :property/sound "sounds/bfxr_curse.wav"})
+  :property/pretty-name "Ornate Key"})
