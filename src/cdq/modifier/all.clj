@@ -7,6 +7,11 @@
 
 ; TODO add movement speed +/- modifier.
 
+; TODO consistent name: 'delta' & 'value'
+
+; TODO modifier is always for a stat? move hp/mana into stats? and modifier/stat somehow
+; make common code/namings?! lets see...
+
 (defn- check-plus-symbol [n]
   (case (math/signum n)
     (0.0 1.0) "+"
@@ -45,44 +50,30 @@
   (modifier/apply   [_ value] (+ (or value 1) amount))
   (modifier/reverse [_ value] (- value amount)))
 
-(defn- dmg-type-text [damage-type]
-  (str (str/capitalize (name damage-type)) " damage"))
-
-(defn- armor-modifier-text [modifier-attribute [damage-type value-delta]]
+; TODO move into down modifier/text and common fn ... percent etc. anyway use integer later
+; also negative possible ?!
+(defn- armor-modifier-text [modifier-attribute delta]
   (str/join " "
-            [(name modifier-attribute)
-             (dmg-type-text damage-type)
-             ; TODO signum ! negativ possible?
-             (str "+" (int (* value-delta 100)) "%")]))
+            [(str "+" (int (* delta 100)) "%")  ; TODO signum ! negativ possible?
+             (name modifier-attribute)
+             ]))
 
-(defn- apply-block-stat [stat [damage-type value-delta]]
-  (update stat damage-type #(+ (or % 0) value-delta)))
-
-(defn- reverse-block-stat [stat [damage-type value-delta]]
-  (update stat damage-type - value-delta))
-
-; TODO
-; stat: existing value of stat accessed through modifier/keys.
-; call maybe 'value' and 'delta'
-
-(defcomponent :modifier/armor-save value
-  (modifier/text [[k _]] (armor-modifier-text k value))
+(defcomponent :modifier/armor-save delta
+  (modifier/text [[k _]] (armor-modifier-text k delta))
   (modifier/keys [_] [:entity/stats :stats/armor-save])
-  (modifier/apply   [_ stat] (apply-block-stat   stat value))
-  (modifier/reverse [_ stat] (reverse-block-stat stat value)))
+  (modifier/apply   [_ value] (+ (or value 0) delta))
+  (modifier/reverse [_ value] (- value delta)))
 
-(defcomponent :modifier/armor-pierce value
-  (modifier/text [_] (armor-modifier-text value))
+(defcomponent :modifier/armor-pierce delta
+  (modifier/text [[k _]] (armor-modifier-text delta))
   (modifier/keys [_] [:entity/stats :stats/armor-pierce])
-  (modifier/apply   [_ stat] (apply-block-stat   stat value))
-  (modifier/reverse [_ stat] (reverse-block-stat stat value)))
+  (modifier/apply   [_ value] (+ (or value 0) delta))
+  (modifier/reverse [_ value] (- value delta)))
 
 (defn- check-damage-modifier-value [[source-or-target
-                                     damage-type
                                      application-type
                                      value-delta]]
   (and (#{:damage/deal :damage/receive} source-or-target)
-       (#{:physical :magic} damage-type)
        (let [[val-or-max inc-or-mult] application-type]
          (and (#{:val :max} val-or-max)
               (#{:inc :mult} inc-or-mult)))))
@@ -94,14 +85,12 @@
       :mult 1)))
 
 (defn- damage-modifier-text [[source-or-target
-                              damage-type
                               [val-or-max inc-or-mult]
                               value-delta]]
   (str/join " "
             [(case val-or-max
                :val "Minimum"
                :max "Maximum")
-             (dmg-type-text damage-type)
              (case source-or-target
                :damage/deal "dealt"
                :damage/receive "received")
@@ -122,7 +111,7 @@
   (modifier/apply [_ stat]
     (assert (check-damage-modifier-value value)
             (str "Wrong value for damage modifier: " value))
-    (update-in stat (drop-last value) #(+ (or % (default-value (get value 2)))
+    (update-in stat (drop-last value) #(+ (or % (default-value (get value 1)))
                                           (last value))))
   (modifier/reverse [_ stat]
     (assert (check-damage-modifier-value value)

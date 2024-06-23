@@ -6,8 +6,7 @@
 (defn- entity*->melee-damage [entity*]
   (let [strength (or (:stats/strength (:entity/stats entity*))
                      0)]
-    {:damage/type :physical,
-     :damage/min-max [strength strength]}))
+    {:damage/min-max [strength strength]}))
 
 (defcomponent :tx/melee-damage _
   (effect/text [_ {:keys [effect/source] :as ctx}]

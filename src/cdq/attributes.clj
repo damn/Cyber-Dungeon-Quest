@@ -108,18 +108,8 @@
   (defattribute :stats/cast-speed   skill-speed-stat)
   (defattribute :stats/attack-speed skill-speed-stat))
 
-(defattribute :physical {:widget :text-field :schema number?})
-(defattribute :magic    {:widget :text-field :schema number?})
-
-(defattribute :stats/armor-save
-  (assoc (map-attribute :physical :magic)
-         :default-value {:physical 0
-                         :magic 0}))
-
-(defattribute :stats/armor-pierce
-  (assoc (map-attribute :physical :magic)
-         :default-value {:physical 0
-                         :magic 0}))
+(defattribute :stats/armor-save   {:widget :text-field :schema number?})
+(defattribute :stats/armor-pierce {:widget :text-field :schema number?})
 
 (defattribute :entity/stats (assoc (map-attribute :stats/strength
                                                   :stats/cast-speed
@@ -131,19 +121,18 @@
                                    :default-value {:stats/strength 1
                                                    :stats/cast-speed 1
                                                    :stats/attack-speed 1
-                                                   :stats/armor-save   (:default-value (:stats/armor-save   attributes))
-                                                   :stats/armor-pierce (:default-value (:stats/armor-pierce attributes))
+                                                   :stats/armor-save  0
+                                                   :stats/armor-pierce 0
                                                    }
                                    )) ; TODO default value missing... empty when created
 
 (defattribute :property/entity (components-attribute :entity))
 
-(defattribute :damage/type    (enum :physical :magic))
 (defattribute :damage/min-max val-max-attr)
 
 (defattribute :maxrange           pos-attr)
 
-(defattribute :tx/damage          (map-attribute :damage/type :damage/min-max))
+(defattribute :tx/damage          (map-attribute :damage/min-max))
 (defattribute :tx/sound           sound)
 (defattribute :tx/spawn           {:widget :text-field :schema [:qualified-keyword {:namespace :creatures}]}) ; => one to one attr!
 (defattribute :tx/stun            pos-attr)

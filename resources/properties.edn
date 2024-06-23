@@ -86,8 +86,8 @@
    :entity/reaction-time 0.5,
    :entity/mana 11,
    :entity/stats {:stats/attack-speed 3, :stats/cast-speed 1, :stats/strength 1,
-                  :stats/armor-save {:physical 0, :magic 0},
-                  :stats/armor-pierce {:physical 0, :magic 0}},
+                  :stats/armor-save 0,
+                  :stats/armor-pierce 0},
    :entity/body {:height 29/48, :solid? true, :width 2/3},
    :entity/hp 12,
    :entity/skills #{:skills/melee-attack}},
@@ -3314,7 +3314,7 @@
   {:file "items/images.png", :sub-image-bounds [480 528 48 48]},
   :property/pretty-name "Royal Cloak"}
  {:item/modifier
-  {:modifier/max-hp 5, :modifier/armor-save [:physical 0.5]},
+  {:modifier/max-hp 5, :modifier/armor-save 0.5},
   :item/slot :inventory.slot/shield,
   :property/id :items/shield-vorpal-buckler,
   :property/image
@@ -3543,7 +3543,7 @@
   {:file "items/images.png", :sub-image-bounds [0 144 48 48]},
   :property/pretty-name "Spear"}
  {:item/modifier
-  {:modifier/damage [:damage/deal :magic [:max :mult] 2]},
+  {:modifier/damage [:damage/deal [:max :mult] 2]},
   :item/slot :inventory.slot/rings,
   :property/id :items/ring-flame,
   :property/image
@@ -3610,7 +3610,7 @@
   {:file "items/images.png", :sub-image-bounds [48 336 48 48]},
   :property/pretty-name "Copper Ring"}
  {:item/modifier
-  {:modifier/damage [:damage/receive :physical [:max :inc] -1]},
+  {:modifier/damage [:damage/receive [:max :inc] -1]},
   :item/slot :inventory.slot/leg,
   :property/id :items/wild-leg,
   :property/image
@@ -3635,7 +3635,7 @@
   {:file "items/images.png", :sub-image-bounds [432 96 48 48]},
   :property/pretty-name "Mace"}
  {:item/modifier
-  {:modifier/damage [:damage/deal :physical [:val :inc] 5]},
+  {:modifier/damage [:damage/deal [:val :inc] 5]},
   :item/slot :inventory.slot/rings,
   :property/id :items/ring-gold,
   :property/image
@@ -3737,7 +3737,7 @@
   :property/image
   {:file "items/images.png", :sub-image-bounds [384 96 48 48]},
   :property/pretty-name "Greataxe"}
- {:item/modifier {:modifier/armor-save [:physical 0.2]},
+ {:item/modifier {:modifier/armor-save 0.2},
   :item/slot :inventory.slot/chest,
   :property/id :items/blood-chest,
   :property/image
@@ -3906,7 +3906,7 @@
   {:file "items/images.png", :sub-image-bounds [336 336 48 48]},
   :property/pretty-name "Pearl Ring"}
  {:item/modifier
-  {:modifier/damage [:damage/receive :magic [:val :inc] -3]},
+  {:modifier/damage [:damage/receive [:val :inc] -3]},
   :item/slot :inventory.slot/glove,
   :property/id :items/blood-glove,
   :property/image
@@ -4377,7 +4377,7 @@
     {:file "fx/uf_FX_impact.png", :sub-image-bounds [240 0 48 48]}),
    :frame-duration 0.05,
    :looping? nil},
-  :property/id :effects.damage.physical/hit-effect,
+  :property/id :effects.damage/hit-effect,
   :property/sound "sounds/bfxr_normalhit.wav"}
  {:property/id :crystal-cloud,
   :property/image
@@ -4534,5 +4534,5 @@
     {:file "fx/uf_FX_impact.png", :sub-image-bounds [384 48 48 48]}),
    :frame-duration 0.05,
    :looping? nil},
-  :property/id :effects.damage.magic/hit-effect,
+  :property/id :effects.damage.magic/hit-effect_UNUSED,
   :property/sound "sounds/bfxr_curse.wav"})

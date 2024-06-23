@@ -5,23 +5,15 @@
             [cdq.context :refer [transact!]]
             [cdq.effect :as effect]))
 
-; make local fns
-(defn- armor-save   [entity* damage-type] (-> entity* :entity/stats :stats/armor-save   damage-type))
-(defn- armor-pierce [entity* damage-type] (-> entity* :entity/stats :stats/armor-pierce damage-type))
-
-(defn- effective-armor-save [source target damage-type]
-  (max (- (or (armor-save   target damage-type) 0)
-          (or (armor-pierce source damage-type) 0))
+(defn- effective-armor-save [source target]
+  (max (- (or (-> target :entity/stats :stats/armor-save)   0)
+          (or (-> source :entity/stats :stats/armor-pierce) 0))
        0))
 
 (comment
- (let [armor-pierce 0.4
-       armor-save 0.5
-       source {:entity/stats {:stats/armor-pierce {:physical armor-pierce}}}
-       target {:entity/stats {:stats/armor-save   {:physical armor-save}}}]
-   [(armor-save   target :physical)
-    (armor-pierce source :physical)
-    (effective-armor-save source target :physical)])
+ (let [source {:entity/stats {:stats/armor-pierce 0.4}}
+       target {:entity/stats {:stats/armor-save   0.5}}]
+   (effective-armor-save source target))
  )
 
 (defn- apply-damage-modifiers [{:keys [damage/min-max] :as damage}
@@ -31,32 +23,32 @@
     damage))
 
 (comment
- (= (apply-damage-modifiers {:damage/type :physical :damage/min-max [5 10]}
+ (= (apply-damage-modifiers {:damage/min-max [5 10]}
                             {[:val :inc] 3})
-    #:damage{:type :physical, :min-max [8 10]})
+    #:damage{:min-max [8 10]})
  )
 
 (defn- damage-stats [entity*]
   (-> entity* :entity/stats :stats/damage))
 
-(defn- apply-source-modifiers [{:keys [damage/type] :as damage} source]
-  (apply-damage-modifiers damage (-> source damage-stats :damage/deal type)))
+(defn- apply-source-modifiers [damage source]
+  (apply-damage-modifiers damage (-> source damage-stats :damage/deal)))
 
-(defn- apply-target-modifiers [{:keys [damage/type] :as damage} target]
-  (apply-damage-modifiers damage (-> target damage-stats :damage/receive type)))
+(defn- apply-target-modifiers [damage target]
+  (apply-damage-modifiers damage (-> target damage-stats :damage/receive)))
 
 (comment
- (= (apply-source-modifiers {:damage/type :physical :damage/min-max [5 10]}
-                            {:entity/stats {:stats/damage {:damage/deal {:physical {[:val :inc] 1}}}}})
-    #:damage{:type :physical, :min-max [6 10]})
+ (= (apply-source-modifiers {:damage/min-max [5 10]}
+                            {:entity/stats {:stats/damage {:damage/deal {[:val :inc] 1}}}})
+    #:damage{:min-max [6 10]})
 
- (= (apply-source-modifiers {:damage/type :magic :damage/min-max [5 10]}
-                            {:entity/stats {:stats/damage {:damage/deal {:physical {[:val :inc] 1}}}}})
-    #:damage{:type :magic , :min-max [5 10]})
+ (= (apply-source-modifiers {:damage/min-max [5 10]}
+                            {:entity/stats {:stats/damage {:damage/deal {[:val :inc] 1}}}})
+    #:damage{:min-max [6 10]})
 
- (= (apply-source-modifiers {:damage/type :magic :damage/min-max [5 10]}
-                            {:entity/stats {:stats/damage {:damage/deal {:magic {[:max :mult] 3}}}}})
-    #:damage{:type :magic, :min-max [5 30]})
+ (= (apply-source-modifiers {:damage/min-max [5 10]}
+                            {:entity/stats {:stats/damage {:damage/deal {[:max :mult] 3}}}})
+    #:damage{:min-max [5 30]})
  )
 
 (defn- effective-damage
@@ -69,30 +61,30 @@
        (apply-target-modifiers target))))
 
 (comment
- (= (apply-damage-modifiers {:damage/type :physical :damage/min-max [3 10]}
+ (= (apply-damage-modifiers {:damage/min-max [3 10]}
                             {[:max :mult] 2
                              [:val :mult] 1.5
                              [:val :inc] 1
                              [:max :inc] 0})
-    #:damage{:type :physical, :min-max [6 20]})
+    #:damage{:min-max [6 20]})
 
- (= (apply-damage-modifiers {:damage/type :physical :damage/min-max [6 20]}
+ (= (apply-damage-modifiers {:damage/min-max [6 20]}
                             {[:max :mult] 1
                              [:val :mult] 1
                              [:val :inc] -5
                              [:max :inc] 0})
-    #:damage{:type :physical, :min-max [1 20]})
+    #:damage{:min-max [1 20]})
 
- (= (effective-damage {:damage/type :physical :damage/min-max [3 10]}
-                      {:entity/stats {:stats/damage {:damage/deal {:physical {[:max :mult] 2
-                                                                              [:val :mult] 1.5
-                                                                              [:val :inc] 1
-                                                                              [:max :inc] 0}}}}}
-                      {:entity/stats {:stats/damage {:damage/receive {:physical {[:max :mult] 1
-                                                                                 [:val :mult] 1
-                                                                                 [:val :inc] -5
-                                                                                 [:max :inc] 0}}}}})
-    #:damage{:type :physical, :min-max [1 20]})
+ (= (effective-damage {:damage/min-max [3 10]}
+                      {:entity/stats {:stats/damage {:damage/deal {[:max :mult] 2
+                                                                   [:val :mult] 1.5
+                                                                   [:val :inc] 1
+                                                                   [:max :inc] 0}}}}
+                      {:entity/stats {:stats/damage {:damage/receive {[:max :mult] 1
+                                                                      [:val :mult] 1
+                                                                      [:val :inc] -5
+                                                                      [:max :inc] 0}}}})
+    #:damage{:min-max [1 20]})
  )
 
 (defn- saves? [armor-save]
@@ -101,10 +93,10 @@
 (defn- no-hp-left? [hp]
   (zero? (hp 0)))
 
-(defn- damage->text [{:keys [damage/type] [min-dmg max-dmg] :damage/min-max}]
-  (str min-dmg "-" max-dmg " " (name type) " damage"))
+(defn- damage->text [{[min-dmg max-dmg] :damage/min-max}]
+  (str min-dmg "-" max-dmg " damage"))
 
-(defcomponent :tx/damage {:keys [damage/type] :as damage}
+(defcomponent :tx/damage damage
   (effect/text [_ {:keys [effect/source]}]
     (if source
       (let [modified (effective-damage damage @source)]
@@ -126,14 +118,14 @@
        (no-hp-left? hp)
        []
 
-       (saves? (effective-armor-save source* target* type))
-       [[:tx/add-text-effect target "[WHITE]ARMOR"]]
+       (saves? (effective-armor-save source* target*)) ; TODO this 2 in 1 fn ?!
+       [[:tx/add-text-effect target "[WHITE]ARMOR"]] ; TODO !_!_!_!_!_!
 
        :else
-       (let [{:keys [damage/type damage/min-max]} (effective-damage damage source* target*)
+       (let [{:keys [damage/min-max]} (effective-damage damage source* target*)
              dmg-amount (random/rand-int-between min-max)
              hp (apply-val hp #(- % dmg-amount))]
-         [[:tx/audiovisual position (keyword (str "effects.damage." (name type)) "hit-effect")]
+         [[:tx/audiovisual position :effects.damage/hit-effect]
           [:tx/add-text-effect target (str "[RED]" dmg-amount)]
           [:tx/assoc target :entity/hp hp]
           [:tx/event target (if (no-hp-left? hp) :kill :alert)]])))))
