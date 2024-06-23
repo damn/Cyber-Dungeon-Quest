@@ -5,25 +5,23 @@
             [cdq.context :refer [transact!]]
             [cdq.effect :as effect]))
 
-(defn- block-stats [entity*]
-  (-> entity* :entity/stats :stats/armor))
+; make local fns
+(defn- armor-save   [entity* damage-type] (-> entity* :entity/stats :stats/armor-save   damage-type))
+(defn- armor-pierce [entity* damage-type] (-> entity* :entity/stats :stats/armor-pierce damage-type))
 
-(defn- block-rate   [entity* damage-type] (-> entity* block-stats :block/rate   damage-type))
-(defn- block-ignore [entity* damage-type] (-> entity* block-stats :block/ignore damage-type))
-
-(defn- effective-block-rate [source target damage-type]
-  (max (- (or (block-rate   target damage-type) 0)
-          (or (block-ignore source damage-type) 0))
+(defn- effective-armor-save [source target damage-type]
+  (max (- (or (armor-save   target damage-type) 0)
+          (or (armor-pierce source damage-type) 0))
        0))
 
 (comment
- (let [ignore 0.4
-       rate 0.5
-       source {:entity/stats {:stats/armor {:block/ignore {:physical ignore}}}}
-       target {:entity/stats {:stats/armor {:block/rate   {:physical rate}}}}]
-   [(block-rate target :physical)
-    (block-ignore source :physical)
-    (effective-block-rate source target :physical)])
+ (let [armor-pierce 0.4
+       armor-save 0.5
+       source {:entity/stats {:stats/armor-pierce {:physical armor-pierce}}}
+       target {:entity/stats {:stats/armor-save   {:physical armor-save}}}]
+   [(armor-save   target :physical)
+    (armor-pierce source :physical)
+    (effective-armor-save source target :physical)])
  )
 
 (defn- apply-damage-modifiers [{:keys [damage/min-max] :as damage}
@@ -97,8 +95,8 @@
     #:damage{:type :physical, :min-max [1 20]})
  )
 
-(defn- blocks? [block-rate]
-  (< (rand) block-rate))
+(defn- saves? [armor-save]
+  (< (rand) armor-save))
 
 (defn- no-hp-left? [hp]
   (zero? (hp 0)))
@@ -128,7 +126,7 @@
        (no-hp-left? hp)
        []
 
-       (blocks? (effective-block-rate source* target* type))
+       (saves? (effective-armor-save source* target* type))
        [[:tx/add-text-effect target "[WHITE]ARMOR"]]
 
        :else

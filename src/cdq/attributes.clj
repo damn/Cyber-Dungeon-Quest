@@ -108,20 +108,32 @@
   (defattribute :stats/cast-speed   skill-speed-stat)
   (defattribute :stats/attack-speed skill-speed-stat))
 
-; TODO
-; * :stats/armor & :stats/damage
-; => put directly in different separate stats
-; => instead of vector of stuff.
-; => more stuff but simpler - keep stats separate !
-; other solution: make into map instead of vector ...
+(defattribute :physical {:widget :text-field :schema number?})
+(defattribute :magic    {:widget :text-field :schema number?})
+
+(defattribute :stats/armor-save
+  (assoc (map-attribute :physical :magic)
+         :default-value {:physical 0
+                         :magic 0}))
+
+(defattribute :stats/armor-pierce
+  (assoc (map-attribute :physical :magic)
+         :default-value {:physical 0
+                         :magic 0}))
 
 (defattribute :entity/stats (assoc (map-attribute :stats/strength
                                                   :stats/cast-speed
-                                                  :stats/attack-speed)
+                                                  :stats/attack-speed
+                                                  :stats/armor-save
+                                                  :stats/armor-pierce
+                                                  )
                                    ; TODO also DRY @ modifier.all is default value 1 too...
                                    :default-value {:stats/strength 1
                                                    :stats/cast-speed 1
-                                                   :stats/attack-speed 1}
+                                                   :stats/attack-speed 1
+                                                   :stats/armor-save   (:default-value (:stats/armor-save   attributes))
+                                                   :stats/armor-pierce (:default-value (:stats/armor-pierce attributes))
+                                                   }
                                    )) ; TODO default value missing... empty when created
 
 (defattribute :property/entity (components-attribute :entity))
@@ -151,7 +163,10 @@
 (defattribute :modifier/max-mana     {:widget :text-field :schema number?}) ; TODO has to be integer ?
 (defattribute :modifier/cast-speed   pos-attr)
 (defattribute :modifier/attack-speed pos-attr)
-(defattribute :modifier/armor        {:widget :text-field :schema :some}) ; TODO no schema
+
+(defattribute :modifier/armor-save    {:widget :text-field :schema :some}) ; TODO no schema
+(defattribute :modifier/armor-pierce  {:widget :text-field :schema :some}) ; TODO no schema
+
 (defattribute :modifier/damage       {:widget :text-field :schema :some}) ; TODO no schema
 
 (defattribute :item/modifier (components-attribute :modifier))

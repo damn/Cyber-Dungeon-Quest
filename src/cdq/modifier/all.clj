@@ -45,38 +45,35 @@
   (modifier/apply   [_ value] (+ (or value 1) amount))
   (modifier/reverse [_ value] (- value amount)))
 
-(defn- check-block-modifier-value [[source-or-target
-                                    damage-type
-                                    value-delta]]
-  (and (#{:block/ignore :block/rate} source-or-target)
-       (#{:physical :magic} damage-type)))
-
 (defn- dmg-type-text [damage-type]
   (str (str/capitalize (name damage-type)) " damage"))
 
-(defn- block-modifier-text [[source-or-target damage-type value-delta]]
-  #_(assert (check-block-modifier-value value)
-            (str "Wrong value for modifier: " value))
+(defn- armor-modifier-text [modifier-attribute [damage-type value-delta]]
   (str/join " "
-            [(dmg-type-text damage-type)
-             "armor"
-             (case source-or-target
-               :block/ignore "ignore"
-               :block/rate "block")
+            [(name modifier-attribute)
+             (dmg-type-text damage-type)
              ; TODO signum ! negativ possible?
              (str "+" (int (* value-delta 100)) "%")]))
 
-(defn- apply-block-stat [stat value]
-  (assert (check-block-modifier-value value)
-          (str "Wrong value for shield/armor modifier: " value))
-  (update-in stat (drop-last value) #(+ (or % 0) (last value))))
+(defn- apply-block-stat [stat [damage-type value-delta]]
+  (update stat damage-type #(+ (or % 0) value-delta)))
 
-(defn- reverse-block-stat [stat value]
-  (update-in stat (drop-last value) - (last value)))
+(defn- reverse-block-stat [stat [damage-type value-delta]]
+  (update stat damage-type - value-delta))
 
-(defcomponent :modifier/armor value
-  (modifier/text [_] (block-modifier-text value))
-  (modifier/keys [_] [:entity/stats :stats/armor])
+; TODO
+; stat: existing value of stat accessed through modifier/keys.
+; call maybe 'value' and 'delta'
+
+(defcomponent :modifier/armor-save value
+  (modifier/text [[k _]] (armor-modifier-text k value))
+  (modifier/keys [_] [:entity/stats :stats/armor-save])
+  (modifier/apply   [_ stat] (apply-block-stat   stat value))
+  (modifier/reverse [_ stat] (reverse-block-stat stat value)))
+
+(defcomponent :modifier/armor-pierce value
+  (modifier/text [_] (armor-modifier-text value))
+  (modifier/keys [_] [:entity/stats :stats/armor-pierce])
   (modifier/apply   [_ stat] (apply-block-stat   stat value))
   (modifier/reverse [_ stat] (reverse-block-stat stat value)))
 
