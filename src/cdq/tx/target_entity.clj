@@ -6,22 +6,22 @@
             [cdq.effect :as effect]
             [cdq.entity :as entity]))
 
-(defn- in-range? [entity* target maxrange] ; == circle-collides?
+(defn- in-range? [entity* target* maxrange] ; == circle-collides?
   (< (- (float (v/distance (:entity/position entity*)
-                           (:entity/position target)))
+                           (:entity/position target*)))
         (float (:radius (:entity/body entity*)))
-        (float (:radius (:entity/body target))))
+        (float (:radius (:entity/body target*))))
      (float maxrange)))
 
 ; TODO use at projectile & also adjust rotation
-(defn- start-point [entity* target]
+(defn- start-point [entity* target*]
   (v/add (:entity/position entity*)
-         (v/scale (entity/direction entity* target)
+         (v/scale (entity/direction entity* target*)
                   (:radius (:entity/body entity*)))))
 
-(defn- end-point [entity* target maxrange]
-  (v/add (start-point entity* target)
-         (v/scale (entity/direction entity* target)
+(defn- end-point [entity* target* maxrange]
+  (v/add (start-point entity* target*)
+         (v/scale (entity/direction entity* target*)
                   maxrange)))
 
 (defcomponent :tx/target-entity {:keys [maxrange hit-effect]}

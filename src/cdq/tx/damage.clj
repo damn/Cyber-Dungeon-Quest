@@ -5,19 +5,19 @@
             [cdq.context :refer [transact!]]
             [cdq.effect :as effect]))
 
-(defn- effective-armor-save [source target]
-  (max (- (or (-> target :entity/stats :stats/armor-save)   0)
-          (or (-> source :entity/stats :stats/armor-pierce) 0))
+(defn- effective-armor-save [source* target*]
+  (max (- (or (-> target* :entity/stats :stats/armor-save)   0)
+          (or (-> source* :entity/stats :stats/armor-pierce) 0))
        0))
 
 (comment
- (let [source {:entity/stats {:stats/armor-pierce 0.4}}
-       target {:entity/stats {:stats/armor-save   0.5}}]
-   (effective-armor-save source target))
+ (let [source* {:entity/stats {:stats/armor-pierce 0.4}}
+       target* {:entity/stats {:stats/armor-save   0.5}}]
+   (effective-armor-save source* target*))
  )
 
-(defn- armor-saves? [source target]
-  (< (rand) (effective-armor-save source target)))
+(defn- armor-saves? [source* target*]
+  (< (rand) (effective-armor-save source* target*)))
 
 (defn- apply-damage-modifiers [{:keys [damage/min-max] :as damage}
                                modifiers]
@@ -34,11 +34,11 @@
 (defn- damage-stats [entity*]
   (-> entity* :entity/stats :stats/damage))
 
-(defn- apply-source-modifiers [damage source]
-  (apply-damage-modifiers damage (-> source damage-stats :damage/deal)))
+(defn- apply-source-modifiers [damage source*]
+  (apply-damage-modifiers damage (-> source* damage-stats :damage/deal)))
 
-(defn- apply-target-modifiers [damage target]
-  (apply-damage-modifiers damage (-> target damage-stats :damage/receive)))
+(defn- apply-target-modifiers [damage target*]
+  (apply-damage-modifiers damage (-> target* damage-stats :damage/receive)))
 
 (comment
  (= (apply-source-modifiers {:damage/min-max [5 10]}
@@ -55,13 +55,13 @@
  )
 
 (defn- effective-damage
-  ([damage source]
+  ([damage source*]
    (-> damage
-       (apply-source-modifiers source)))
-  ([damage source target]
+       (apply-source-modifiers source*)))
+  ([damage source* target*]
    (-> damage
-       (apply-source-modifiers source)
-       (apply-target-modifiers target))))
+       (apply-source-modifiers source*)
+       (apply-target-modifiers target*))))
 
 (comment
  (= (apply-damage-modifiers {:damage/min-max [3 10]}
