@@ -238,7 +238,7 @@
    </properties>
   </tile>
   <wangsets>
-   <wangset name="Unnamed Set" type="corner" tile="-1">
+   <wangset name="doodads" type="corner" tile="-1">
     <wangcolor name="doodads" color="#ff0000" tile="-1" probability="1"/>
     <wangtile tileid="59" wangid="0,1,0,1,0,1,0,1"/>
     <wangtile tileid="77" wangid="0,1,0,1,0,1,0,1"/>
