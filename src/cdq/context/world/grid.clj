@@ -26,21 +26,13 @@
 (defn- set-cells! [grid entity]
   (let [cells (rectangle->cells grid (:entity/body @entity))]
     (assert (not-any? nil? cells))
-    (swap! entity assoc :cells cells)
+    (swap! entity assoc-in [:entity/body :touched-cells] cells)
     (doseq [cell cells]
       (swap! cell cell/add-entity entity))))
 
 (defn- remove-from-cells! [entity]
-  (doseq [cell (:cells @entity)]
+  (doseq [cell (:touched-cells (:entity/body @entity))]
     (swap! cell cell/remove-entity entity)))
-
-; old version, only calculating cells once, faster
-; but anyway movement calculates it again -> refactor there first
-#_(defn- update-cells! [grid entity]
-  (let [cells (rectangle->cells grid (:entity/body @entity))]
-    (when-not (= cells (:cells @entity))
-      (remove-from-cells! entity)
-      (set-cells! e cells))))
 
 (defn- update-cells! [grid entity]
   (remove-from-cells! entity)
@@ -59,10 +51,10 @@
   (let [cells (rectangle->occupied-cells grid (:entity/body @entity))]
     (doseq [cell cells]
       (swap! cell cell/add-occupying-entity entity))
-    (swap! entity assoc :occupied-cells cells)))
+    (swap! entity assoc-in [:entity/body :occupied-cells] cells)))
 
 (defn- remove-from-occupied-cells! [entity]
-  (doseq [cell (:occupied-cells @entity)]
+  (doseq [cell (:occupied-cells (:entity/body @entity))]
     (swap! cell cell/remove-occupying-entity entity)))
 
 (defn- update-occupied-cells! [grid entity]
