@@ -20,7 +20,9 @@
                  radius
                  solid?
                  rotation-angle
-                 rotate-in-movement-direction?])
+                 rotate-in-movement-direction?
+                 touched-cells
+                 occupied-cells])
 
 (defcomponent :entity/body body
   (entity/create-component [_ {:keys [entity/position]
