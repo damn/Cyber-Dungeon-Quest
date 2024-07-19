@@ -1,17 +1,34 @@
 (ns cdq.screens.main-menu
   (:require [gdl.app :refer [current-context change-screen!]]
-            [gdl.context :refer [exit-app ->text-button key-just-pressed? ->table ->actor]]
+            [gdl.context :refer [exit-app ->text-button key-just-pressed? ->table ->actor ->tiled-map]]
             [gdl.input.keys :as input.keys]
             gdl.screen
-            [utils.core :refer [safe-get]]
-            [cdq.context.game :refer [start-new-game]]))
+            [utils.core :refer [safe-get tile->middle]]
+            [cdq.context :refer [get-property]]
+            [cdq.context.game :refer [start-new-game]]
+            mapgen.module-gen))
+
+(defn- ->vampire-tmx [context]
+  {:tiled-map (->tiled-map context "maps/vampire.tmx")
+   :start-position (tile->middle [32 71])})
+
+(defn- ->rand-module-world [context]
+  (let [{:keys [tiled-map
+                start-position]} (mapgen.module-gen/generate
+                                  context
+                                  (get-property context :worlds/first-level))]
+    {:tiled-map tiled-map
+     :start-position (tile->middle start-position)}))
 
 (defn screen [{:keys [context/config] :as context} background-image]
   (let [table (->table context
                        {:rows (remove nil?
-                                      [[(->text-button context "Start game" (fn [_context]
-                                                                              (swap! current-context start-new-game)
-                                                                              (change-screen! :screens/game)))]
+                                      [[(->text-button context "Start vampire.tmx" (fn [context]
+                                                                                     (swap! current-context start-new-game (->vampire-tmx context))
+                                                                                     (change-screen! :screens/game)))]
+                                       [(->text-button context "Start procedural" (fn [context]
+                                                                                    (swap! current-context start-new-game (->rand-module-world context))
+                                                                                    (change-screen! :screens/game)))]
 
                                        (when (safe-get config :map-editor?)
                                          [(->text-button context "Map editor" (fn [_context]

@@ -8,7 +8,7 @@
             [gdl.math.vector :as v]
             [data.grid2d :as grid2d]
             [utils.core :refer [->tile tile->middle]]
-            [cdq.context :refer [explored? transact! transact-all! ray-blocked? content-grid world-grid get-property]]
+            [cdq.context :refer [explored? transact! transact-all! ray-blocked? content-grid world-grid]]
             [cdq.context.world.grid :refer [create-grid]]
             [cdq.context.world.content-grid :refer [->content-grid]]
             cdq.context.world.render
@@ -18,8 +18,7 @@
             [cdq.world.content-grid :as content-grid]
             [cdq.world.cell :as cell]
             [cdq.entity :as entity]
-            [mapgen.movement-property :refer (movement-property)]
-            mapgen.module-gen))
+            [mapgen.movement-property :refer (movement-property)]))
 
 (defn- on-screen? [entity* {:keys [world-camera world-viewport-width world-viewport-height]}]
   (let [[x y] (:entity/position entity*)
@@ -103,17 +102,19 @@
     (world-grid/entity-position-changed! (world-grid ctx) entity))
   nil)
 
-(defn- first-level [context]
-  (let [{:keys [tiled-map
-                start-position]} (mapgen.module-gen/generate
-                                  context
-                                  (get-property context :worlds/first-level))]
-    {:map-key :first-level
-     :pretty-name "First Level"
-     :tiled-map tiled-map
-     :start-position (tile->middle start-position)}))
+(defn- set-cell-blocked-boolean-array [arr cell*]
+  (let [[x y] (:position cell*)]
+    (aset arr x y (boolean (cell/blocked? cell* {:entity/flying? true})))))
 
-(defn- create-grid-from-tiledmap [tiled-map]
+(defn- ->cell-blocked-boolean-array [grid]
+  (let [arr (make-array Boolean/TYPE
+                        (grid2d/width grid)
+                        (grid2d/height grid))]
+    (doseq [cell (grid2d/cells grid)]
+      (set-cell-blocked-boolean-array arr @cell))
+    arr))
+
+(defn- tiled-map->grid [tiled-map]
   (create-grid (tiled/width  tiled-map)
                (tiled/height tiled-map)
                (fn [position]
@@ -122,41 +123,25 @@
                    "air"  :air
                    "all"  :all))))
 
-(defn- set-cell-blocked-boolean-array [arr cell*]
-  (let [[x y] (:position cell*)]
-    (aset arr x y (boolean (cell/blocked? cell* {:entity/flying? true})))))
-
-(defn- create-cell-blocked-boolean-array [grid]
-  (let [arr (make-array Boolean/TYPE
-                        (grid2d/width grid)
-                        (grid2d/height grid))]
-    (doseq [cell (grid2d/cells grid)]
-      (set-cell-blocked-boolean-array arr @cell))
-    arr))
-
-(defn- create-world-map [{:keys [map-key
-                                 pretty-name
-                                 tiled-map
-                                 start-position] :as argsmap}]
-  (let [grid (create-grid-from-tiledmap tiled-map)
+(defn- ->world-map [{:keys [tiled-map start-position] :as world-map}]
+  (let [grid (tiled-map->grid tiled-map)
         w (grid2d/width  grid)
         h (grid2d/height grid)]
-    (merge ; TODO no merge, list explicit which keys are there
-     (dissoc argsmap :map-key)
-     {:width w
-      :height h
-      :cell-blocked-boolean-array (create-cell-blocked-boolean-array grid)
-      :content-grid (->content-grid w h 16 16)
-      :grid grid
-      :explored-tile-corners (atom (grid2d/create-grid w h (constantly false)))}))
-  ; FIXME !
-  ;(check-not-allowed-diagonals grid)
+    (merge world-map
+           {:width w
+            :height h
+            :grid grid
+            :cell-blocked-boolean-array (->cell-blocked-boolean-array grid)
+            :content-grid (->content-grid w h 16 16)
+            :explored-tile-corners (atom (grid2d/create-grid w h (constantly false)))}))
+  ; TODO
+  ; (check-not-allowed-diagonals grid)
   )
 
-(defn ->context [ctx]
+(defn ->context [ctx tiled-level]
   (when-let [world (:context/world ctx)]
     (dispose (:tiled-map world)))
-  {:context/world (create-world-map (first-level ctx))})
+  {:context/world (->world-map tiled-level)})
 
 (def ^:private spawn-enemies? true)
 
@@ -166,7 +151,7 @@
       (transact-all! ctx
                      (for [[posi creature-id] (tiled/positions-with-property tiled-map :creatures :id)]
                        [:tx/creature
-                        creature-id
+                        (keyword creature-id)
                         #:entity {:position (tile->middle posi)
                                   :state (npc-state/->state :sleeping)}])))
     (tiled/remove-layer! tiled-map :creatures)) ; otherwise will be rendered, is visible

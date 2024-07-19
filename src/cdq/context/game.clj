@@ -29,11 +29,11 @@
          {:context/game-paused? (atom nil)
           :context/game-logic-frame (atom 0)}))
 
-(defn start-new-game [ctx]
+(defn start-new-game [ctx tiled-level]
   (let [ctx (merge ctx
                    (reset-common-game-context! ctx)
                    {:context/replay-mode? false}
-                   (world/->context ctx))]
+                   (world/->context ctx tiled-level))]
     ;(txs/clear-recorded-txs!)
     ;(txs/set-record-txs! true) ; TODO set in config ? ignores option menu setting and sets true always.
     (world/transact-create-entities-from-tiledmap! ctx)
