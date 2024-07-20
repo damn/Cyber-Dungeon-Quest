@@ -7,6 +7,7 @@
             [gdl.graphics.animation :as animation]
             [data.val-max :refer [val-max-schema]]
             [utils.core :refer [safe-get readable-number]]
+            cdq.attributes
             [cdq.api.attributes :as attributes]
             [cdq.api.context :refer [modifier-text effect-text]]))
 

@@ -1,4 +1,4 @@
-(ns cdq.context.world.content-grid
+(ns cdq.world.content-grid
   (:require [data.grid2d :as grid2d]
             cdq.api.world.content-grid))
 

@@ -1,4 +1,4 @@
-(ns cdq.screens.minimap
+(ns screens.minimap
   (:require [gdl.app :refer [current-context change-screen!]]
             gdl.screen
             [gdl.input.keys :as input.keys]

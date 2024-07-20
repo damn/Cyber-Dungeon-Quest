@@ -2,7 +2,6 @@
   (:require [gdl.backends.libgdx.app :as app]
             [gdl.context :refer [generate-ttf ->stage-screen ->image-widget create-image]]
             [utils.core :refer [safe-get]]
-            cdq.attributes
             (cdq.context [properties :as properties]
                          [cursor :as cursor]
                          builder
@@ -19,12 +18,12 @@
                             [inventory-window :as inventory-window]
                             player-modal
                             error-modal)
-            (cdq.screens game
-                         main-menu
-                         map-editor
-                         minimap
-                         options-menu
-                         property-editor)
+            (screens game
+                     main-menu
+                     map-editor
+                     minimap
+                     options-menu
+                     property-editor)
             [cdq.api.context :refer [set-cursor!]]))
 
 (def ^:private production-config
@@ -65,12 +64,12 @@
     (merge context
            ; previous default-font overwritten
            {:default-font (generate-ttf context {:file "exocet/films.EXL_____.ttf" :size 16})
-            :screens/game            (->stage-screen context (cdq.screens.game/screen context))
-            :screens/main-menu       (->stage-screen context (cdq.screens.main-menu/screen context (->background-image)))
-            :screens/map-editor      (->stage-screen context (cdq.screens.map-editor/screen context))
-            :screens/minimap         (cdq.screens.minimap/->Screen)
-            :screens/options-menu    (->stage-screen context (cdq.screens.options-menu/screen context (->background-image)))
-            :screens/property-editor (->stage-screen context (cdq.screens.property-editor/screen context (->background-image)))})))
+            :screens/game            (->stage-screen context (screens.game/screen context))
+            :screens/main-menu       (->stage-screen context (screens.main-menu/screen context (->background-image)))
+            :screens/map-editor      (->stage-screen context (screens.map-editor/screen context))
+            :screens/minimap         (screens.minimap/->Screen)
+            :screens/options-menu    (->stage-screen context (screens.options-menu/screen context (->background-image)))
+            :screens/property-editor (->stage-screen context (screens.property-editor/screen context (->background-image)))})))
 
 (def ^:private tile-size 48)
 

@@ -1,4 +1,4 @@
-(ns cdq.context.world.grid
+(ns cdq.world.grid
   (:require [data.grid2d :as grid2d]
             [gdl.math.geom :as geom]
             [utils.core :refer [->tile tile->middle]]

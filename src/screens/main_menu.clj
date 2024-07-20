@@ -1,4 +1,4 @@
-(ns cdq.screens.main-menu
+(ns screens.main-menu
   (:require [gdl.app :refer [current-context change-screen!]]
             [gdl.context :refer [exit-app ->text-button key-just-pressed? ->table ->actor ->tiled-map]]
             [gdl.input.keys :as input.keys]

@@ -1,4 +1,4 @@
-(ns cdq.screens.options-menu
+(ns screens.options-menu
   (:require [gdl.app :refer [change-screen!]]
             gdl.screen
             [gdl.context :refer [->text-button ->check-box key-just-pressed? ->table]]
@@ -7,7 +7,7 @@
             cdq.context.transaction-handler
             cdq.context.render-debug
             cdq.context.world
-            cdq.screens.game
+            screens.game
             cdq.entity.body))
 
 (defprotocol StatusCheckBox
@@ -46,10 +46,10 @@
                                  #'cdq.context.render-debug/highlight-blocked-cell?
                                  #'cdq.context.render-debug/cell-entities?
                                  #'cdq.context.render-debug/potential-field-colors?
-                                 #'cdq.screens.game/pausing?
+                                 #'screens.game/pausing?
                                  #'cdq.context.world/los-checks?
                                  #'cdq.context.world/spawn-enemies?
-                                 #'cdq.context.world.render/see-all-tiles?]))
+                                 #'cdq.world.render/see-all-tiles?]))
 
 (defn- exit []
   (change-screen! :screens/game))

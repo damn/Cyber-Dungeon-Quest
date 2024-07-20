@@ -1,4 +1,4 @@
-(ns cdq.context.world.render
+(ns cdq.world.render
   (:require [gdl.context :refer [render-tiled-map]]
             [gdl.graphics.color :as color]
             [gdl.math.raycaster :as raycaster]

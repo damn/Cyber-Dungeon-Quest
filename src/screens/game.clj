@@ -1,4 +1,4 @@
-(ns cdq.screens.game
+(ns screens.game
   (:require [gdl.app :refer [change-screen!]]
             [gdl.context :refer [render-world-view delta-time key-just-pressed? key-pressed?]]
             [gdl.screen :refer [Screen]]
