@@ -6,8 +6,7 @@
             [cdq.api.context :refer [item-entity]]
             [cdq.api.entity :as entity]
             [cdq.entity.inventory :as inventory]
-            [cdq.api.state :as state]
-            [cdq.state.player-idle :refer [click-distance-tiles]]))
+            [cdq.api.state :as state]))
 
 (defn- clicked-cell [{:keys [entity/id] :as entity*} cell]
   (let [inventory (:entity/inventory entity*)
@@ -55,7 +54,7 @@
   (placement-point (:entity/position entity*)
                    (world-mouse-position ctx)
                    ; so you cannot put it out of your own reach
-                   (- cdq.state.player-idle/click-distance-tiles 0.1)))
+                   (- (:entity/click-distance-tiles entity*) 0.1)))
 
 (defn- world-item? [ctx]
   (not (mouse-on-stage-actor? ctx)))

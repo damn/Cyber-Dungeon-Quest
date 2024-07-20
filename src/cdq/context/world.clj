@@ -161,5 +161,6 @@
                                  :state (player-state/->state :idle)
                                  :player? true
                                  :free-skill-points 3
-                                 :clickable {:type :clickable/player}}]]))
+                                 :clickable {:type :clickable/player}
+                                 :click-distance-tiles 1.5}]]))
 

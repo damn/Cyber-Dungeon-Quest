@@ -55,12 +55,10 @@
                           :cursors/princess-gray
                           :cursors/princess)))
 
-(def click-distance-tiles 1.5) ; move into player entity, can change like in d2 sorc skill
-
 (defn- ->clickable-mouseover-entity-interaction [ctx player-entity* mouseover-entity*]
   (if (and (< (v/distance (:entity/position player-entity*)
                           (:entity/position mouseover-entity*))
-              click-distance-tiles))
+              (:entity/click-distance-tiles player-entity*)))
     [(clickable->cursor mouseover-entity* false) (fn [] (on-clicked ctx mouseover-entity*))]
     [(clickable->cursor mouseover-entity* true)  (fn [] (denied "Too far away"))]))
 
