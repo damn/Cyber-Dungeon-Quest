@@ -1,6 +1,7 @@
 (ns cdq.attributes
   (:require [malli.core :as m]
-            [data.val-max :refer [val-max-schema]]))
+            [data.val-max :refer [val-max-schema]]
+            [cdq.api.attributes :refer [attributes defattribute]]))
 
 ; TODO new component/modifier/entity component -> add attribute here
 ; or add it to the defcomponent ?!
@@ -15,16 +16,6 @@
 ; because for creature we are adding npc-state / !player-state!
 
 ; TODO namespaced attr all sub-attrs (hit-effect, etc. , body not is record ? or transform @ body create-component)
-
-;;
-
-(def attributes {})
-
-(defn- defattribute [k data]
-  (assert (:schema data) k)
-  (assert (:widget data) k)
-  ; optional: :doc
-  (alter-var-root #'attributes assoc k data))
 
 ;; attribute types
 
@@ -64,12 +55,6 @@
                           (for [k component-attributes]
                             [k {:optional true} (:schema (get attributes k))])))
      :components component-attributes})) ; => fetch from schema ? (optional? )
-
-;;
-
-; TODO this is == :optional key @ components-attribute ?
-(defn removable-component? [k]
-  (#{"tx" "modifier" #_"entity"} (namespace k)))
 
 ;;
 

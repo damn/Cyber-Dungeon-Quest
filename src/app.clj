@@ -1,7 +1,8 @@
-(ns cdq.app.start
+(ns app
   (:require [gdl.backends.libgdx.app :as app]
             [gdl.context :refer [generate-ttf ->stage-screen ->image-widget create-image]]
             [utils.core :refer [safe-get]]
+            cdq.attributes
             (cdq.context [properties :as properties]
                          [cursor :as cursor]
                          builder
@@ -24,7 +25,7 @@
                          minimap
                          options-menu
                          property-editor)
-            [cdq.context :refer [set-cursor!]]))
+            [cdq.api.context :refer [set-cursor!]]))
 
 (def ^:private production-config
   {:full-screen? true

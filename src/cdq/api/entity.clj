@@ -1,4 +1,4 @@
-(ns cdq.entity
+(ns cdq.api.entity
   (:require [x.x :refer [defsystem]]))
 
 (defsystem create-component [_ components ctx])

@@ -1,5 +1,5 @@
 (ns cdq.state.player-moving
-  (:require [cdq.state :as state]
+  (:require [cdq.api.state :as state]
             [cdq.state.wasd-movement :refer [WASD-movement-vector]]))
 
 (defrecord PlayerMoving [movement-vector]

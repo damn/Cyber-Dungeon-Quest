@@ -8,16 +8,16 @@
             [gdl.math.vector :as v]
             [data.grid2d :as grid2d]
             [utils.core :refer [->tile tile->middle]]
-            [cdq.context :refer [explored? transact! transact-all! ray-blocked? content-grid world-grid]]
+            [cdq.api.context :refer [explored? transact! transact-all! ray-blocked? content-grid world-grid]]
             [cdq.context.world.grid :refer [create-grid]]
             [cdq.context.world.content-grid :refer [->content-grid]]
             cdq.context.world.render
             [cdq.state.player :as player-state]
             [cdq.state.npc :as npc-state]
-            [cdq.world.grid :as world-grid]
-            [cdq.world.content-grid :as content-grid]
-            [cdq.world.cell :as cell]
-            [cdq.entity :as entity]
+            [cdq.api.world.grid :as world-grid]
+            [cdq.api.world.content-grid :as content-grid]
+            [cdq.api.world.cell :as cell]
+            [cdq.api.entity :as entity]
             [mapgen.movement-property :refer (movement-property)]))
 
 (defn- on-screen? [entity* {:keys [world-camera world-viewport-width world-viewport-height]}]
@@ -53,7 +53,7 @@
 (def ^:private los-checks? true)
 
 (extend-type gdl.context.Context
-  cdq.context/World
+  cdq.api.context/World
   (render-map [{:keys [world-camera] :as ctx}]
     (cdq.context.world.render/render-map ctx (camera/position world-camera)))
 

@@ -3,8 +3,8 @@
             [x.x :refer [defcomponent]]
             gdl.context
             [utils.core :refer [find-first]]
-            [cdq.context :refer [get-property]]
-            [cdq.entity :as entity]))
+            [cdq.api.context :refer [get-property]]
+            [cdq.api.entity :as entity]))
 
 (def empty-inventory
   (->> #:inventory.slot{:bag      [6 4]
@@ -61,10 +61,10 @@
      (when (:entity/player? entity*)
        [:tx/remove-item-from-widget cell])]))
 
-(defmethod cdq.context/transact! :tx/set-item [[_ entity cell item] _ctx]
+(defmethod cdq.api.context/transact! :tx/set-item [[_ entity cell item] _ctx]
   (set-item @entity cell item))
 
-(defmethod cdq.context/transact! :tx/remove-item [[_ entity cell] _ctx]
+(defmethod cdq.api.context/transact! :tx/remove-item [[_ entity cell] _ctx]
   (remove-item @entity cell))
 
 ; TODO doesnt exist, stackable, usable items with action/skillbar thingy
@@ -88,7 +88,7 @@
     (concat (remove-item entity* cell)
             (set-item entity* cell (update cell-item :count + (:count item))))))
 
-(defmethod cdq.context/transact! :tx/stack-item [[_ entity cell item] _ctx]
+(defmethod cdq.api.context/transact! :tx/stack-item [[_ entity cell item] _ctx]
   (stack-item @entity cell item))
 
 (defn- try-put-item-in [entity* slot item]
@@ -107,10 +107,10 @@
    (try-put-item-in entity* (:item/slot item)   item)
    (try-put-item-in entity* :inventory.slot/bag item)))
 
-(defmethod cdq.context/transact! :tx/pickup-item [[_ entity item] _ctx]
+(defmethod cdq.api.context/transact! :tx/pickup-item [[_ entity item] _ctx]
   (pickup-item @entity item))
 
-(extend-type cdq.entity.Entity
+(extend-type cdq.api.entity.Entity
   entity/Inventory
   (can-pickup-item? [entity* item]
     (boolean (pickup-item entity* item))))

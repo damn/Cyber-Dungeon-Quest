@@ -5,9 +5,9 @@
             [gdl.scene2d.ui.button :refer [button?]]
             [gdl.scene2d.ui.window :refer [window-title-bar?]]
             [gdl.math.vector :as v]
-            [cdq.context :refer [get-property inventory-window skill-usable-state selected-skill]]
-            [cdq.entity :as entity]
-            [cdq.state :as state]
+            [cdq.api.context :refer [get-property inventory-window skill-usable-state selected-skill]]
+            [cdq.api.entity :as entity]
+            [cdq.api.state :as state]
             [cdq.state.wasd-movement :refer [WASD-movement-vector]]))
 
 (defn- denied [text]

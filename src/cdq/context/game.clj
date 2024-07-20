@@ -5,7 +5,7 @@
             [cdq.context.ui.player-message :as player-message]
             [cdq.context.transaction-handler :as txs]
             [cdq.context.world :as world]
-            [cdq.context :refer [rebuild-inventory-widgets reset-actionbar frame->txs transact-all! remove-destroyed-entities!]]))
+            [cdq.api.context :refer [rebuild-inventory-widgets reset-actionbar frame->txs transact-all! remove-destroyed-entities!]]))
 
 (defn- all-entities [ctx]
   (vals @(:cdq.context.ecs/uids->entities ctx))) ; move to ecs

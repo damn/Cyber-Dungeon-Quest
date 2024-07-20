@@ -6,12 +6,12 @@
             [gdl.input.keys :as input.keys]
             [gdl.scene2d.actor :refer [visible? set-visible! toggle-visible!]]
             [utils.core :refer [safe-get]]
-            [cdq.context :refer [render-map render-entities! tick-entities! line-of-sight? content-grid remove-destroyed-entities! update-mouseover-entity! update-potential-fields! update-elapsed-game-time! debug-render-after-entities debug-render-before-entities set-cursor! transact-all! frame->txs windows id->window]]
+            [cdq.api.context :refer [render-map render-entities! tick-entities! line-of-sight? content-grid remove-destroyed-entities! update-mouseover-entity! update-potential-fields! update-elapsed-game-time! debug-render-after-entities debug-render-before-entities set-cursor! transact-all! frame->txs windows id->window]]
             cdq.context.ui.actors
-            [cdq.entity :as entity]
+            [cdq.api.entity :as entity]
             [cdq.entity.movement :as movement]
-            [cdq.state :as state]
-            [cdq.world.content-grid :refer [active-entities]]))
+            [cdq.api.state :as state]
+            [cdq.api.world.content-grid :refer [active-entities]]))
 
 ; for now a function, see gdl.backends.libgdx.context.input reload bug
 ; otherwise keys in dev mode may be unbound because dependency order not reflected

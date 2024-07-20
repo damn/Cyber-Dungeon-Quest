@@ -1,8 +1,8 @@
 (ns cdq.tx.stun
   (:require [x.x :refer [defcomponent]]
             [utils.core :refer [readable-number]]
-            [cdq.context :refer [transact!]]
-            [cdq.effect :as effect]))
+            [cdq.api.context :refer [transact!]]
+            [cdq.api.effect :as effect]))
 
 (defcomponent :tx/stun duration
   (effect/text [_ _ctx]

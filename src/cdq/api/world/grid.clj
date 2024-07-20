@@ -1,4 +1,4 @@
-(ns cdq.world.grid)
+(ns cdq.api.world.grid)
 
 (defprotocol Grid
   (cached-adjacent-cells [_ cell])

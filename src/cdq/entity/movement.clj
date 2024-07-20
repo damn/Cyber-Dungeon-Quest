@@ -1,10 +1,10 @@
 (ns cdq.entity.movement
   (:require [x.x :refer [defcomponent]]
             [gdl.math.vector :as v]
-            [cdq.entity :as entity]
-            [cdq.context :refer [world-grid]]
+            [cdq.api.entity :as entity]
+            [cdq.api.context :refer [world-grid]]
             [cdq.entity.body :as body]
-            [cdq.world.grid :refer [valid-position?]]))
+            [cdq.api.world.grid :refer [valid-position?]]))
 
 (def frames-per-second 60)
 (def max-delta-time 0.04)

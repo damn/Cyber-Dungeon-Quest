@@ -1,7 +1,7 @@
 (ns cdq.entity.line-render
   (:require [x.x :refer [defcomponent]]
             [gdl.context :refer [with-shape-line-width draw-line]]
-            [cdq.entity :as entity]))
+            [cdq.api.entity :as entity]))
 
 (defcomponent :entity/line-render {:keys [thick? end color]}
   (entity/render-default [_ {:keys [entity/position]} c]

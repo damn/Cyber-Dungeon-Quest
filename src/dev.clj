@@ -81,7 +81,7 @@
 
 (comment
  (let [ctx @gdl.app/current-context
-       entity (cdq.context/get-entity ctx 2)
+       entity (cdq.api.context/get-entity ctx 2)
        ]
 
    (clojure.pprint/pprint
@@ -117,7 +117,7 @@
            [(ns-name nmspace) (map (comp symbol name symbol) value-vars)]))))
 
 
- (require '[cdq.context :refer [get-entity]])
+ (require '[cdq.api.context :refer [get-entity]])
  (let [entity* @(get-entity @gdl.app/current-context 49)]
    (:mana entity*)
    )

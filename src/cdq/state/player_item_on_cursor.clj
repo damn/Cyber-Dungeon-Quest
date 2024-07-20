@@ -3,10 +3,10 @@
                                  world-mouse-position gui-mouse-position]]
             [gdl.input.buttons :as buttons]
             [gdl.math.vector :as v]
-            [cdq.context :refer [item-entity]]
-            [cdq.entity :as entity]
+            [cdq.api.context :refer [item-entity]]
+            [cdq.api.entity :as entity]
             [cdq.entity.inventory :as inventory]
-            [cdq.state :as state]
+            [cdq.api.state :as state]
             [cdq.state.player-idle :refer [click-distance-tiles]]))
 
 (defn- clicked-cell [{:keys [entity/id] :as entity*} cell]

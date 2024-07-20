@@ -2,8 +2,8 @@
   (:require [x.x :refer [defcomponent]]
             [data.val-max :refer [apply-val apply-val-max-modifiers]]
             [utils.random :as random]
-            [cdq.context :refer [transact!]]
-            [cdq.effect :as effect]))
+            [cdq.api.context :refer [transact!]]
+            [cdq.api.effect :as effect]))
 
 (defn- effective-armor-save [source* target*]
   (max (- (or (-> target* :entity/stats :stats/armor-save)   0)

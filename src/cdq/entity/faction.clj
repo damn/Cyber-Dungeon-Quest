@@ -1,7 +1,7 @@
 (ns cdq.entity.faction
-  (:require [cdq.entity :as entity]))
+  (:require [cdq.api.entity :as entity]))
 
-(extend-type cdq.entity.Entity
+(extend-type cdq.api.entity.Entity
   entity/Faction
   (enemy-faction [{:keys [entity/faction]}]
     (case faction

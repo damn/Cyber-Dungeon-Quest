@@ -1,4 +1,4 @@
-(ns cdq.modifier
+(ns cdq.api.modifier
   (:refer-clojure :exclude [keys apply reverse])
   (:require [x.x :refer [defsystem]]))
 

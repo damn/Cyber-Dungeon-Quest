@@ -1,9 +1,9 @@
 (ns cdq.context.ui.error-modal
   (:require [gdl.context :refer [->window ->label add-to-stage!]]
-            cdq.context))
+            cdq.api.context))
 
 (extend-type gdl.context.Context
-  cdq.context/ErrorModal
+  cdq.api.context/ErrorModal
   (->error-window [ctx throwable]
     (add-to-stage! ctx
                    (->window ctx {:title "Error"

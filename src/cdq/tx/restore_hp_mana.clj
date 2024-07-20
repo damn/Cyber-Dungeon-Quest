@@ -1,8 +1,8 @@
 (ns cdq.tx.restore-hp-mana
   (:require [x.x :refer [defcomponent]]
             [data.val-max :refer [lower-than-max? set-to-max]]
-            [cdq.context :refer [transact!]]
-            [cdq.effect :as effect]))
+            [cdq.api.context :refer [transact!]]
+            [cdq.api.effect :as effect]))
 
 (defn- restore-hp-tx [entity]
   [:tx/assoc entity :entity/hp (set-to-max (:entity/hp @entity))])

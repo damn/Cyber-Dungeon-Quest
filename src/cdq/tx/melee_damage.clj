@@ -1,7 +1,7 @@
 (ns cdq.tx.melee-damage
   (:require [x.x :refer [defcomponent]]
-            [cdq.effect :as effect]
-            [cdq.context :refer [transact!]]))
+            [cdq.api.effect :as effect]
+            [cdq.api.context :refer [transact!]]))
 
 (defn- entity*->melee-damage [entity*]
   (let [strength (or (:stats/strength (:entity/stats entity*))

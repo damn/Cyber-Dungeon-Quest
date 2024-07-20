@@ -4,7 +4,7 @@
             [gdl.input.keys :as input.keys]
             gdl.screen
             [utils.core :refer [safe-get tile->middle]]
-            [cdq.context :refer [get-property]]
+            [cdq.api.context :refer [get-property]]
             [cdq.context.game :refer [start-new-game]]
             mapgen.module-gen))
 

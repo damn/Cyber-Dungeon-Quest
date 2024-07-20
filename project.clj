@@ -6,7 +6,7 @@
                  [com.github.damn/x.x "55f3c15"]
                  [reduce-fsm "0.1.4"]
                  [metosin/malli "0.13.0"]
-                 ;[lein-hiera "2.0.0"]
+                 [lein-hiera "2.0.0"]
                  ]
   :plugins [[jonase/eastwood "1.2.2"]
             [lein-ancient "1.0.0-RC3"]
@@ -34,7 +34,7 @@
                 ;*unchecked-math* :warn-on-boxed
                 }
 
-  :aliases {"dev" ["run" "-m" "gdl.backends.libgdx.dev" "cdq.app.start" "-main"]})
+  :aliases {"dev" ["run" "-m" "gdl.backends.libgdx.dev" "app" "-main"]})
 
 ; * Notes
 
@@ -47,6 +47,11 @@
 
 (comment
  ; https://github.com/greglook/clj-hiera/blob/main/src/hiera/main.clj
+
+ ; 1. activate dependency first: [lein-hiera "2.0.0"]
+ ; 2. export JVM_OPTS=
+ ; 3. lein repl
+ ; 4. eval this:
  (do
   (require '[hiera.main :as hiera])
 
@@ -54,9 +59,29 @@
    {:sources #{"src"}
     :output "target/hiera"
     :layout :horizontal
-    :cluster-depth 0
+    :cluster-depth 3
     :external false
     :ignore #{"data"
               "utils"
-              "mapgen"}}))
+              "mapgen"
+              "cdq.api"
+              "cdq.modifier"
+              "cdq.context.world"
+              }}))
+
+
+ ; cdq.context.game => screens.main-menu
+ ; cdq.screens.options-menu => debug-menu extra ....
+
+ ;;
+
+ ; cdq.tx => cdq.effect
+
+ ; cdq.tx.spawn -> cdq.state.npc
+ ; wasd-movement
+ ; inventory
+ ; body
+
+
+
  )

@@ -15,7 +15,7 @@
             [gdl.scene2d.group :refer [add-actor!]]
             [gdl.scene2d.ui.widget-group :refer [pack!]]
             [gdl.scene2d.ui.label :refer [set-text!]]
-            [cdq.context :refer [get-property ->error-window]]
+            [cdq.api.context :refer [get-property ->error-window]]
             [utils.core :refer [->tile]]
             [mapgen.movement-property :refer (movement-property movement-properties)]
             [mapgen.module-gen :as module-gen]

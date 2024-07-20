@@ -5,7 +5,7 @@
             [gdl.graphics.color :as color]
             [gdl.graphics.camera :as camera]
             [gdl.context :refer [draw-filled-circle render-world-view key-just-pressed? render-tiled-map]]
-            [cdq.context :refer [explored?]]))
+            [cdq.api.context :refer [explored?]]))
 
 ; 28.4 viewportwidth
 ; 16 viewportheight

@@ -1,9 +1,9 @@
 (ns cdq.context.ui.skill-window
   (:require [gdl.context :refer [->window ->image-button]]
             [gdl.scene2d.actor :refer [add-tooltip!]]
-            [cdq.context :refer [get-property player-tooltip-text transact-all!]]
-            [cdq.entity :as entity]
-            [cdq.state :as state]))
+            [cdq.api.context :refer [get-property player-tooltip-text transact-all!]]
+            [cdq.api.entity :as entity]
+            [cdq.api.state :as state]))
 
 (defn- clicked-skill [{:keys [context/player-entity] :as ctx} id]
   (let [entity* @player-entity]

@@ -5,8 +5,8 @@
             [gdl.graphics.camera :as camera]
             gdl.math.geom
             [utils.core :refer [->tile]]
-            [cdq.context :refer [world-grid]]
-            [cdq.world.grid :refer [circle->cells]]))
+            [cdq.api.context :refer [world-grid]]
+            [cdq.api.world.grid :refer [circle->cells]]))
 
 ; TODO make check-buttons with debug-window or MENU top screen is good for debug I think
 
@@ -91,7 +91,7 @@
                           :none [1 0 0 0.5]))))))
 
 (extend-type gdl.context.Context
-  cdq.context/DebugRender
+  cdq.api.context/DebugRender
   (debug-render-before-entities [ctx]
     (tile-debug ctx))
 

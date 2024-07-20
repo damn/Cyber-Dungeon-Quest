@@ -1,5 +1,5 @@
 (ns cdq.state.npc-dead
-  (:require [cdq.state :as state]))
+  (:require [cdq.api.state :as state]))
 
 (defrecord NpcDead []
   state/State

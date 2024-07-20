@@ -3,12 +3,12 @@
             [clojure.string :as str]
             [malli.core :as m]
             [malli.error :as me]
-            [cdq.attributes :as attributes]
             [gdl.context :refer [get-sprite create-image]]
             [gdl.graphics.animation :as animation]
             [data.val-max :refer [val-max-schema]]
             [utils.core :refer [safe-get readable-number]]
-            [cdq.context :refer [modifier-text effect-text]]))
+            [cdq.api.attributes :as attributes]
+            [cdq.api.context :refer [modifier-text effect-text]]))
 
 ; TODO all this cdq.property-types // like attributes
 
@@ -178,7 +178,7 @@
    (when (seq modifier) (str modifier-color (modifier-text ctx modifier) "[]"))])
 
 (extend-type gdl.context.Context
-  cdq.context/TooltipText
+  cdq.api.context/TooltipText
   (tooltip-text [ctx property]
     (try (->> property
               (property->text ctx)
@@ -188,14 +188,14 @@
            (str t)))); TODO not implemented weapons. ( ?! )
 
   (player-tooltip-text [ctx property]
-    (cdq.context/tooltip-text
+    (cdq.api.context/tooltip-text
      (assoc ctx :effect/source (:context/player-entity ctx))
      property)))
 
 ;;
 
 (extend-type gdl.context.Context
-  cdq.context/PropertyStore
+  cdq.api.context/PropertyStore
   (get-property [{:keys [context/properties]} id]
     (safe-get properties id))
 
@@ -313,7 +313,7 @@
 (comment
  ; # Add new attributes => make into fn for property-type apply fn to all props
  (let [ctx @gdl.app/current-context
-       props (cdq.context/all-properties ctx :property.type/weapon)
+       props (cdq.api.context/all-properties ctx :property.type/weapon)
        props (for [prop props]
                (-> prop
                    (assoc :skill/start-action-sound "sounds/slash.wav"
@@ -322,7 +322,7 @@
    (doseq [prop props]
      (swap! gdl.app/current-context update! prop))
    (def ^:private write-to-file? true)
-   (swap! gdl.app/current-context update! (cdq.context/get-property ctx :creatures/vampire))
+   (swap! gdl.app/current-context update! (cdq.api.context/get-property ctx :creatures/vampire))
    nil)
  )
 

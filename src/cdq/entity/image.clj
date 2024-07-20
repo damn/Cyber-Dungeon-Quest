@@ -1,7 +1,7 @@
 (ns cdq.entity.image
   (:require [x.x :refer [defcomponent]]
             [gdl.context :refer [draw-rotated-centered-image]]
-            [cdq.entity :as entity]))
+            [cdq.api.entity :as entity]))
 
 (defcomponent :entity/image image
   (entity/render-default [_ {:keys [entity/position entity/body]} c]

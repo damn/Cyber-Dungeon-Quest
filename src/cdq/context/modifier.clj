@@ -1,11 +1,11 @@
 (ns cdq.context.modifier
   (:require [clojure.string :as str]
             gdl.context
-            [cdq.context :refer [transact!]]
-            [cdq.modifier :as modifier]))
+            [cdq.api.context :refer [transact!]]
+            [cdq.api.modifier :as modifier]))
 
 (extend-type gdl.context.Context
-  cdq.context/Modifier
+  cdq.api.context/Modifier
   (modifier-text [_ modifier]
     (->> (for [component modifier]
            (modifier/text component))

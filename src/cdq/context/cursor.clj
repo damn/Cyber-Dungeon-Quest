@@ -1,10 +1,10 @@
 (ns cdq.context.cursor
   (:require [gdl.context :refer [->cursor]]
             [utils.core :refer [safe-get mapvals]]
-            cdq.context))
+            cdq.api.context))
 
 (extend-type gdl.context.Context
-  cdq.context/Cursor
+  cdq.api.context/Cursor
   (set-cursor! [{:keys [context/cursors] :as ctx} cursor-key]
     (gdl.context/set-cursor! ctx (safe-get cursors cursor-key))))
 
@@ -31,6 +31,6 @@
                                (->cursor ctx (str "cursors/" file ".png") x y))
                              cursors)})
 
-(defmethod cdq.context/transact! :tx/cursor [[_ cursor-key] ctx]
-  (cdq.context/set-cursor! ctx cursor-key)
+(defmethod cdq.api.context/transact! :tx/cursor [[_ cursor-key] ctx]
+  (cdq.api.context/set-cursor! ctx cursor-key)
   nil)

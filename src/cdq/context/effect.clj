@@ -1,11 +1,11 @@
 (ns cdq.context.effect
   (:require [clojure.string :as str]
             gdl.context
-            [cdq.context :refer [transact-all! valid-params?]]
-            [cdq.effect :as effect]))
+            [cdq.api.context :refer [transact-all! valid-params?]]
+            [cdq.api.effect :as effect]))
 
 (extend-type gdl.context.Context
-  cdq.context/EffectInterpreter
+  cdq.api.context/EffectInterpreter
   (effect-text [ctx txs]
     (->> (keep #(effect/text % ctx) txs)
          (str/join "\n")))
@@ -23,7 +23,7 @@
 (defn- invalid-tx [ctx txs]
   (some #(when (not (effect/valid-params? % ctx)) %) txs))
 
-(defmethod cdq.context/transact! :tx/effect [[_ effect-ctx txs] ctx]
+(defmethod cdq.api.context/transact! :tx/effect [[_ effect-ctx txs] ctx]
   (let [ctx (merge ctx effect-ctx)]
     (assert (valid-params? ctx txs) (pr-str (invalid-tx ctx txs)))
     (transact-all! ctx txs)

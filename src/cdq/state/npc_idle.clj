@@ -1,8 +1,8 @@
 (ns cdq.state.npc-idle
-  (:require [cdq.context :refer [effect-useful? world-grid potential-field-follow-to-enemy skill-usable-state]]
-            [cdq.entity :as entity]
-            [cdq.state :as state]
-            [cdq.world.cell :as cell]))
+  (:require [cdq.api.context :refer [effect-useful? world-grid potential-field-follow-to-enemy skill-usable-state]]
+            [cdq.api.entity :as entity]
+            [cdq.api.state :as state]
+            [cdq.api.world.cell :as cell]))
 
 (defn- effect-context [context entity*]
   (let [cell ((world-grid context) (entity/tile entity*))

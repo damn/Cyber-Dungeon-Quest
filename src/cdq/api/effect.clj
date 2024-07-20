@@ -1,4 +1,4 @@
-(ns cdq.effect
+(ns cdq.api.effect
   (:require [x.x :refer [defsystem]]))
 
 (defsystem text          [_ ctx])

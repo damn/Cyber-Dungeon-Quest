@@ -1,6 +1,6 @@
 (ns cdq.context.transaction-handler
   (:require gdl.context
-            [cdq.context :refer [transact! transact-all!]]))
+            [cdq.api.context :refer [transact! transact-all!]]))
 
 (def ^:private record-txs? false)
 
@@ -37,7 +37,7 @@
                 tx)))
 
 (extend-type gdl.context.Context
-  cdq.context/TransactionHandler
+  cdq.api.context/TransactionHandler
   (transact-all! [{:keys [context/game-logic-frame] :as ctx} txs]
     (doseq [tx txs :when tx]
       (try (let [result (transact! tx ctx)]

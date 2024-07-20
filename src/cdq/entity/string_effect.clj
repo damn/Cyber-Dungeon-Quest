@@ -1,9 +1,9 @@
 (ns cdq.entity.string-effect
   (:require [x.x :refer [defcomponent]]
             [gdl.context :refer [draw-text pixels->world-units]]
-            [cdq.context :refer [->counter stopped? reset]]
+            [cdq.api.context :refer [->counter stopped? reset]]
             [cdq.context.ui.config :refer [hpbar-height-px]]
-            [cdq.entity :as entity]))
+            [cdq.api.entity :as entity]))
 
 (defcomponent :entity/string-effect {:keys [text counter] :as this}
   (entity/tick [[k _] {:keys [entity/id]} context]
@@ -18,7 +18,7 @@
                 :scale 2
                 :up? true})))
 
-(defmethod cdq.context/transact! :tx/add-text-effect [[_ entity text] ctx]
+(defmethod cdq.api.context/transact! :tx/add-text-effect [[_ entity text] ctx]
   [[:tx/assoc
     entity
     :entity/string-effect

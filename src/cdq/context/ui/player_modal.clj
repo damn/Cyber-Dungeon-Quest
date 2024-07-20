@@ -1,7 +1,7 @@
 (ns cdq.context.ui.player-modal
   (:require [gdl.context :refer [get-stage ->window ->label ->text-button add-to-stage!]]
             [gdl.scene2d.actor :refer [remove!]]
-            cdq.context))
+            cdq.api.context))
 
 ; TODO no window movable type cursor appears here like in player idle
 ; inventory still working, other stuff not, because custom listener to keypresses ? use actor listeners?
@@ -25,6 +25,6 @@
                                                   (* gui-viewport-height (/ 3 4))]
                                 :pack? true})))
 
-(defmethod cdq.context/transact! :tx/player-modal [[_ params] ctx]
+(defmethod cdq.api.context/transact! :tx/player-modal [[_ params] ctx]
   (show-player-modal! ctx params)
   nil)

@@ -2,7 +2,7 @@
   (:require [x.x :refer [defcomponent]]
             [gdl.context :refer [draw-rectangle]]
             [gdl.graphics.color :as color]
-            [cdq.entity :as entity]))
+            [cdq.api.entity :as entity]))
 
 ; setting a min-size for colliding bodies so movement can set a max-speed for not
 ; skipping bodies at too fast movement

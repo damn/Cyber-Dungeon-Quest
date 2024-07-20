@@ -3,7 +3,7 @@
             [gdl.scene2d.actor :as actor :refer [remove! add-tooltip!]]
             [gdl.scene2d.group :refer [clear-children! add-actor!]]
             [gdl.scene2d.ui.button-group :refer [clear! add! checked] :as button-group]
-            [cdq.context :refer [player-tooltip-text]]))
+            [cdq.api.context :refer [player-tooltip-text]]))
 
 (defn ->context [ctx]
   {::data {:horizontal-group (->horizontal-group ctx {:pad 2
@@ -12,7 +12,7 @@
                                               :min-check-count 0})}})
 
 (extend-type gdl.context.Context
-  cdq.context/Actionbar
+  cdq.api.context/Actionbar
   (->action-bar [{{:keys [horizontal-group]} ::data}]
     horizontal-group)
 
@@ -24,7 +24,7 @@
     (when-let [skill-button (checked button-group)]
       (actor/id skill-button))))
 
-(defmethod cdq.context/transact! :tx/actionbar-add-skill
+(defmethod cdq.api.context/transact! :tx/actionbar-add-skill
   [[_ {:keys [property/id property/image] :as skill}]
    {{:keys [horizontal-group button-group]} ::data :as ctx}]
   (let [button (->image-button ctx image (fn [_]))]
@@ -34,7 +34,7 @@
     (add! button-group button)
     nil))
 
-(defmethod cdq.context/transact! :tx/actionbar-remove-skill
+(defmethod cdq.api.context/transact! :tx/actionbar-remove-skill
   [[_ {:keys [property/id]}]
    {{:keys [horizontal-group button-group]} ::data}]
   (let [button (get horizontal-group id)]
