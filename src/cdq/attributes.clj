@@ -20,7 +20,7 @@
 ;; attribute types
 
 (def ^:private sound        {:widget :sound      :schema :string})
-(def ^:priate  image        {:widget :image      :schema :some})
+(def ^:private  image       {:widget :image      :schema :some})
 (def ^:private animation    {:widget :animation  :schema :some})
 (def ^:private string-attr  {:widget :text-field :schema :string})
 (def ^:private boolean-attr {:widget :check-box  :schema :boolean :default-value true})
