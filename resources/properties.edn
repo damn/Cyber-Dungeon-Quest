@@ -17,7 +17,7 @@
   :skill/cooldown 0,
   :skill/cost 1,
   :skill/effect
-  {:tx/restore-hp-mana true, :tx/sound "sounds/bfxr_click.wav"},
+  {:tx/entity-mana-set-to-max true, :tx/sound "sounds/bfxr_click.wav"},
   :skill/start-action-sound "sounds/shoot.wav"}
  {:property/id :skills/projectile,
   :property/image

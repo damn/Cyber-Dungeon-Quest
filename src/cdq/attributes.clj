@@ -121,7 +121,8 @@
 (defattribute :tx/sound           sound)
 (defattribute :tx/spawn           {:widget :text-field :schema [:qualified-keyword {:namespace :creatures}]}) ; => one to one attr!
 (defattribute :tx/stun            pos-attr)
-(defattribute :tx/restore-hp-mana {:widget :text-field :schema [:= true]}) ; TODO no schema
+(defattribute :tx/entity-hp-set-to-max {:widget :text-field :schema [:= true]}) ; TODO no schema
+(defattribute :tx/entity-mana-set-to-max {:widget :text-field :schema [:= true]}) ; TODO no schema
 (defattribute :tx/projectile      {:widget :text-field :schema [:= true]})
 (defattribute :tx/target-entity   {:widget :nested-map ; TODO circular depdenency components-attribute  - cannot use map-attribute..
                                    :schema [:map {:closed true}

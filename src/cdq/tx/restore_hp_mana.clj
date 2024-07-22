@@ -4,27 +4,19 @@
             [cdq.api.context :refer [transact!]]
             [cdq.api.effect :as effect]))
 
-(defn- restore-hp-tx [entity]
-  [:tx/assoc entity :entity/hp (set-to-max (:entity/hp @entity))])
+(defmacro def-set-to-max-effect [stat]
+  `(defcomponent ~(keyword "tx" (str (name (namespace stat)) "-" (name stat) "-set-to-max")) ~'_
+     (effect/text ~'[_ _ctx]
+       ~(str "Sets " (name stat) " to max."))
 
-(defn- restore-mana-tx [entity]
-  [:tx/assoc entity :entity/mana (set-to-max (:entity/mana @entity))])
+     (effect/valid-params? ~'[_ {:keys [effect/source]}]
+       ~'source)
 
-; => tx/update ?
-; [:tx/update entity :entity/mana set-to-max]
-; send a function ? not over wire but no problem because its not a low-level txs...
+     (effect/useful? ~'[_ {:keys [effect/source]}]
+       (lower-than-max? (~stat @~'source)))
 
-(defcomponent :tx/restore-hp-mana _
-  (effect/text [_ _ctx]
-    "Restores full hp and mana.")
+     (transact! ~'[_ {:keys [effect/source]}]
+       [[:tx/assoc ~'source ~stat (set-to-max (~stat @~'source))]])))
 
-  (effect/valid-params? [_ {:keys [effect/source]}]
-    source)
-
-  (effect/useful? [_ {:keys [effect/source]}]
-    (or (lower-than-max? (:entity/mana @source))
-        (lower-than-max? (:entity/hp   @source))))
-
-  (transact! [_ {:keys [effect/source]}]
-    [(restore-hp-tx source)
-     (restore-mana-tx source)]))
+(def-set-to-max-effect :entity/hp)
+(def-set-to-max-effect :entity/mana)
