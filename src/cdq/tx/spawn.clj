@@ -27,7 +27,10 @@
  ; keys: :faction(:source)/:target-position/:creature-id
  )
 
-(defcomponent :tx/spawn creature-id
+; => one to one attr!?
+(defcomponent :tx/spawn {:widget :text-field
+                         :schema [:qualified-keyword {:namespace :creatures}]}
+  creature-id
   (effect/text [_ _ctx]
     (str "Spawns a " (name creature-id)))
 

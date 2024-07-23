@@ -4,7 +4,8 @@
             gdl.context
             [utils.core :refer [find-first]]
             [cdq.api.context :refer [get-property]]
-            [cdq.api.entity :as entity]))
+            [cdq.api.entity :as entity]
+            [cdq.attributes :as attr]))
 
 (def empty-inventory
   (->> #:inventory.slot{:bag      [6 4]
@@ -115,7 +116,8 @@
   (can-pickup-item? [entity* item]
     (boolean (pickup-item entity* item))))
 
-(defcomponent :entity/inventory items
+(defcomponent :entity/inventory (attr/one-to-many-ids :property.type/item) ; optional
+  items
   (entity/create [_ {:keys [entity/id]} context]
     (cons [:tx/assoc id :entity/inventory empty-inventory]
           (for [item-id items]

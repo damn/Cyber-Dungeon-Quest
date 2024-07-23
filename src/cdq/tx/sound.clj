@@ -1,7 +1,11 @@
 (ns cdq.tx.sound
-  (:require [gdl.context :refer [play-sound!]]
-            [cdq.api.context :refer [transact!]]))
+  (:require [x.x :refer [defcomponent]]
+            [gdl.context :refer [play-sound!]]
+            [cdq.api.context :refer [transact!]]
+            [cdq.attributes :as attr]))
 
-(defmethod transact! :tx/sound [[_ file] ctx]
-  (play-sound! ctx file)
-  nil)
+(defcomponent :tx/sound attr/sound
+  file
+  (transact! [_ ctx]
+    (play-sound! ctx file)
+    nil))

@@ -7,9 +7,10 @@
             [cdq.api.world.grid :refer [rectangle->cells]]
             [cdq.api.world.cell :as cell :refer [cells->entities]]))
 
-(defcomponent :entity/projectile-collision {:keys [hit-effect
-                                                   already-hit-bodies
-                                                   piercing?]}
+(defcomponent :entity/projectile-collision {}
+  {:keys [hit-effect
+          already-hit-bodies
+          piercing?]}
   (entity/create-component [[_ v] _components _ctx]
     (assoc v :already-hit-bodies #{}))
 

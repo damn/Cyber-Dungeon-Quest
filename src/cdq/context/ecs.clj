@@ -47,7 +47,7 @@
   (swap! uids->entities dissoc uid)
   nil)
 
-(defcomponent :entity/uid uid
+(defcomponent :entity/uid {} uid
   (entity/create  [_ {:keys [entity/id]} _ctx] [[:tx/assoc-uids->entities   id]])
   (entity/destroy [_ _entity*            _ctx] [[:tx/dissoc-uids->entities uid]]))
 

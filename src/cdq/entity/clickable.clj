@@ -3,7 +3,8 @@
             [gdl.context :refer [draw-text]]
             [cdq.api.entity :as entity]))
 
-(defcomponent :entity/clickable {:keys [text]}
+(defcomponent :entity/clickable {}
+  {:keys [text]}
   (entity/render-default [_ {[x y] :entity/position :keys [entity/mouseover? entity/body]} c]
     (when (and mouseover? text)
       (draw-text c

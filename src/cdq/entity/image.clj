@@ -3,7 +3,8 @@
             [gdl.context :refer [draw-rotated-centered-image]]
             [cdq.api.entity :as entity]))
 
-(defcomponent :entity/image image
+(defcomponent :entity/image {}
+  image
   (entity/render-default [_ {:keys [entity/position entity/body]} c]
     (draw-rotated-centered-image c
                                  image

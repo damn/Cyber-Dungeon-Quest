@@ -4,7 +4,8 @@
             [cdq.api.entity :as entity]
             [cdq.api.context :refer [world-grid]]
             [cdq.entity.body :as body]
-            [cdq.api.world.grid :refer [valid-position?]]))
+            [cdq.api.world.grid :refer [valid-position?]]
+            [cdq.attributes :as attr]))
 
 (def frames-per-second 60)
 (def max-delta-time 0.04)
@@ -39,7 +40,9 @@
         (try-move ctx entity* [xdir 0])
         (try-move ctx entity* [0 ydir]))))
 
-(defcomponent :entity/movement tiles-per-second
+; optional, only assoc'ing movement-vector
+(defcomponent :entity/movement attr/pos-attr
+  tiles-per-second
   (entity/create [_ entity* _ctx]
     (assert (and (:entity/body entity*)
                  (:entity/position entity*)))

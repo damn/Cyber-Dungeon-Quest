@@ -5,7 +5,8 @@
             [cdq.context.ui.config :refer [hpbar-height-px]]
             [cdq.api.entity :as entity]))
 
-(defcomponent :entity/string-effect {:keys [text counter] :as this}
+(defcomponent :entity/string-effect {}
+  {:keys [text counter] :as this}
   (entity/tick [[k _] {:keys [entity/id]} context]
     (when (stopped? context counter)
       [[:tx/dissoc id k]]))

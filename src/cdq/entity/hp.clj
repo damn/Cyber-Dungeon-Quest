@@ -4,7 +4,8 @@
             [gdl.context :refer [draw-filled-rectangle pixels->world-units]]
             [data.val-max :refer [val-max-ratio]]
             [cdq.api.entity :as entity]
-            [cdq.context.ui.config :refer (hpbar-height-px)]))
+            [cdq.context.ui.config :refer (hpbar-height-px)]
+            [cdq.attributes :as attr]))
 
 (def ^:private hpbar-colors
   {:green     [0 0.8 0]
@@ -23,7 +24,9 @@
 
 (def ^:private borders-px 1)
 
-(defcomponent :entity/hp hp
+; required for target-entity (remove)
+(defcomponent :entity/hp attr/pos-int-attr
+  hp
   (entity/create-component [[_ max-hp] _components _ctx]
     [max-hp max-hp])
 

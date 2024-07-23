@@ -2,11 +2,15 @@
   (:require [x.x :refer [defcomponent]]
             [data.val-max :refer [apply-val]]
             [cdq.api.context :refer [get-property valid-params? ->counter stopped?]]
-            [cdq.api.entity :as entity]))
+            [cdq.api.entity :as entity]
+            [cdq.attributes :as attr]))
 
 ; FIXME starting skills do not trigger tx/actionbar-add-skill
 ; https://trello.com/c/R6GSIDO1/363
-(defcomponent :entity/skills skills
+
+; required by npc state, also mana!, also movement (no not needed, doesnt do anything then)
+(defcomponent :entity/skills (attr/one-to-many-ids :property.type/skill)
+  skills
   (entity/create-component [_ _components ctx]
     (zipmap skills (map #(get-property ctx %) skills)))
 

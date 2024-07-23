@@ -40,7 +40,10 @@
          (v/scale direction
                   (+ (:radius (:entity/body entity*)) size 0.1))))
 
-(defcomponent :tx/projectile _
+(defcomponent :tx/projectile {:widget :text-field
+                              :schema [:= true]
+                              :default-value true}
+  _
   (effect/text [_ ctx]
     (effect-text ctx hit-effect))
 

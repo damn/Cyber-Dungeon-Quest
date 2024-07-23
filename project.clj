@@ -3,7 +3,7 @@
   :dependencies [[org.clojure/clojure "1.11.1"]
                  [com.github.damn/grid2d "1.0"]
                  [com.github.damn/gdl "be68380f48"]
-                 [com.github.damn/x.x "55f3c15"]
+                 [com.github.damn/x.x "f35a4cb"]
                  [reduce-fsm "0.1.4"]
                  [metosin/malli "0.13.0"]
                  [lein-hiera "2.0.0"]
@@ -79,6 +79,9 @@
 
  ; cdq.tx.spawn -> cdq.state.npc
  ; wasd-movement
+
+ ; TODO fix cdq.entity namespace required manually (movement, body, inventory)
+ ; => namespace package flow only down ... ?!
  ; inventory
  ; body
 

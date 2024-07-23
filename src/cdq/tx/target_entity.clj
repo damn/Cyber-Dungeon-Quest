@@ -1,10 +1,11 @@
 (ns cdq.tx.target-entity
-  (:require [x.x :refer [defcomponent]]
+  (:require [x.x :refer [defattribute defcomponent]]
             [gdl.context :refer [draw-line]]
             [gdl.math.vector :as v]
             [cdq.api.context :refer [transact! effect-text line-of-sight? line-entity]]
             [cdq.api.effect :as effect]
-            [cdq.api.entity :as entity]))
+            [cdq.api.entity :as entity]
+            [cdq.attributes :as attr]))
 
 (defn- in-range? [entity* target* maxrange] ; == circle-collides?
   (< (- (float (v/distance (:entity/position entity*)
@@ -24,7 +25,15 @@
          (v/scale (entity/direction entity* target*)
                   maxrange)))
 
-(defcomponent :tx/target-entity {:keys [maxrange hit-effect]}
+(defattribute :maxrange attr/pos-attr)
+
+(defcomponent :tx/target-entity {:widget :nested-map ; TODO circular depdenency components-attribute  - cannot use map-attribute..
+                                 :schema [:map {:closed true}
+                                          [:hit-effect [:map]]
+                                          [:maxrange pos?]]
+                                 :default-value {:hit-effect {}
+                                                 :max-range 2.0}}
+  {:keys [maxrange hit-effect]}
   (effect/text [_ ctx]
     (str "Range " maxrange " meters\n" (effect-text ctx hit-effect)))
 

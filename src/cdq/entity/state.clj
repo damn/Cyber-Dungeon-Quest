@@ -5,10 +5,11 @@
             [cdq.api.entity :as entity]
             [cdq.api.state :as state]))
 
-(defcomponent :entity/state {:keys [initial-state
-                                    fsm
-                                    state-obj
-                                    state-obj-constructors]}
+(defcomponent :entity/state {}
+  {:keys [initial-state
+          fsm
+          state-obj
+          state-obj-constructors]}
   (entity/create-component [_ _components ctx]
     ; initial state is nil, so associng it.
     ; make bug report TODO

@@ -14,7 +14,7 @@
                         (when (= creature-id :creatures/lady-a)
                           {:entity/clickable {:type :clickable/princess}}))]]))
 
-(defcomponent :entity/plop _
+(defcomponent :entity/plop {} _
   (entity/destroy [_ entity* ctx]
     [[:tx/audiovisual (:entity/position entity*) :projectile/hit-wall-effect]]))
 

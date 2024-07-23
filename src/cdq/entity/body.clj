@@ -1,8 +1,9 @@
 (ns cdq.entity.body
-  (:require [x.x :refer [defcomponent]]
+  (:require [x.x :refer [defattribute defcomponent]]
             [gdl.context :refer [draw-rectangle]]
             [gdl.graphics.color :as color]
-            [cdq.api.entity :as entity]))
+            [cdq.api.entity :as entity]
+            [cdq.attributes :as attr]))
 
 ; setting a min-size for colliding bodies so movement can set a max-speed for not
 ; skipping bodies at too fast movement
@@ -24,7 +25,18 @@
                  touched-cells
                  occupied-cells])
 
-(defcomponent :entity/body body
+; TODO how 2 do default values,its not default-values , its non-optional attributes !
+; similar to components nested-map
+;:default-value {:width 0.5 :height 0.5 :solid? true}
+
+; TODO label == not editable
+(defattribute :width  {:widget :label :schema pos?}) ; TODO make px
+(defattribute :height {:widget :label :schema pos?}) ; TODO make px
+(defattribute :solid? {:widget :label :schema boolean?})
+
+; TODO body assert >+ min body size?
+(defcomponent :entity/body (attr/map-attribute :width :height :solid?)
+  body
   (entity/create-component [_ {:keys [entity/position]
                                [x y] :entity/position
                                {:keys [width

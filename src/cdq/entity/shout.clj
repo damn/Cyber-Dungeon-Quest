@@ -16,7 +16,8 @@
        (filter #(and (= (:entity/faction %) (:entity/faction entity*))
                      (line-of-sight? context entity* %)))))
 
-(defcomponent :entity/shout counter
+(defcomponent :entity/shout {}
+  counter
   (entity/tick [_ {:keys [entity/id] :as entity*} context]
     (when (stopped? context counter)
       (cons [:tx/destroy id]

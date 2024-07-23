@@ -10,9 +10,6 @@
                          potential-fields
                          render-debug
                          transaction-handler)
-            cdq.tx.all
-            cdq.entity.all
-            cdq.modifier.all
             [cdq.entity.movement :refer [frames-per-second]]
             (cdq.context.ui [action-bar :as action-bar]
                             [inventory-window :as inventory-window]

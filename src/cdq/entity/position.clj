@@ -12,7 +12,8 @@
   (direction [{:keys [entity/position]} other-entity*]
     (v/direction position (:entity/position other-entity*))))
 
-(defcomponent :entity/position _
+(defcomponent :entity/position {}
+  _
   (entity/create [_ {:keys [entity/id]} ctx]
     [[:tx/add-to-world id]])
 

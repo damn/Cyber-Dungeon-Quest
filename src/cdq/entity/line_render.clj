@@ -3,7 +3,8 @@
             [gdl.context :refer [with-shape-line-width draw-line]]
             [cdq.api.entity :as entity]))
 
-(defcomponent :entity/line-render {:keys [thick? end color]}
+(defcomponent :entity/line-render {}
+  {:keys [thick? end color]}
   (entity/render-default [_ {:keys [entity/position]} c]
     (if thick?
       (with-shape-line-width c 4

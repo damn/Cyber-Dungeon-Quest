@@ -1,9 +1,10 @@
 (ns cdq.tx.damage
-  (:require [x.x :refer [defcomponent]]
+  (:require [x.x :refer [defattribute defcomponent]]
             [data.val-max :refer [apply-val apply-val-max-modifiers]]
             [utils.random :as random]
             [cdq.api.context :refer [transact!]]
-            [cdq.api.effect :as effect]))
+            [cdq.api.effect :as effect]
+            [cdq.attributes :as attr]))
 
 (defn- effective-armor-save [source* target*]
   (max (- (or (-> target* :entity/stats :stats/armor-save)   0)
@@ -96,7 +97,10 @@
 (defn- damage->text [{[min-dmg max-dmg] :damage/min-max}]
   (str min-dmg "-" max-dmg " damage"))
 
-(defcomponent :tx/damage damage
+(defattribute :damage/min-max attr/val-max-attr)
+
+(defcomponent :tx/damage (attr/map-attribute :damage/min-max)
+  damage
   (effect/text [_ {:keys [effect/source]}]
     (if source
       (let [modified (effective-damage damage @source)]

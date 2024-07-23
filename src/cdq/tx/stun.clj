@@ -2,9 +2,11 @@
   (:require [x.x :refer [defcomponent]]
             [utils.core :refer [readable-number]]
             [cdq.api.context :refer [transact!]]
-            [cdq.api.effect :as effect]))
+            [cdq.api.effect :as effect]
+            [cdq.attributes :as attr]))
 
-(defcomponent :tx/stun duration
+(defcomponent :tx/stun attr/pos-attr
+  duration
   (effect/text [_ _ctx]
     (str "Stuns for " (readable-number duration) " seconds"))
 
