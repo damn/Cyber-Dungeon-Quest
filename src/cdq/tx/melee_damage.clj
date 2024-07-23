@@ -8,8 +8,6 @@
                      0)]
     {:damage/min-max [strength strength]}))
 
-; TODO how does normal attack work ??? this didnt show ...
-
 (defcomponent :tx/melee-damage {}
   _
   (effect/text [_ {:keys [effect/source] :as ctx}]
