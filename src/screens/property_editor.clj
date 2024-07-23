@@ -142,8 +142,8 @@
                                  :center? true
                                  :close-on-escape? true
                                  :cell-defaults {:pad 5}})]
-       (add-rows! window (for [nested-k (remove (set (keys (attribute-widget-group->data attribute-widget-group)))
-                                                (:components (x.x/attributes k)))]
+       (add-rows! window (for [nested-k (sort (remove (set (keys (attribute-widget-group->data attribute-widget-group)))
+                                                      (:components (x.x/attributes k))))]
                            [(->text-button ctx (name nested-k)
                                            (fn [ctx]
                                              (remove! window)
