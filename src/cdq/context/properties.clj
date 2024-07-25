@@ -38,12 +38,6 @@
 (defattribute :world/max-area-level attr/pos-int-attr) ; TODO <= map-size !?
 (defattribute :world/spawn-rate     attr/pos-attr) ; TODO <1 !
 
-(defattribute :app/title attr/string-attr)
-(defattribute :app/width attr/string-attr)
-(defattribute :app/height attr/string-attr)
-(defattribute :app/full-screen? attr/boolean-attr)
-(defattribute :app/fps attr/string-attr)
-
 ; TODO make misc is when no property-type matches ? :else case?
 
 ; TODO similar to map-attribute & components-attribute
