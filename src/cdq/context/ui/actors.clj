@@ -1,5 +1,6 @@
 (ns cdq.context.ui.actors
-  (:require [gdl.app :refer [change-screen!]]
+  (:require gdl.backends.libgdx.context.image-drawer-creator
+            [gdl.app :refer [change-screen!]]
             [gdl.context :refer [->actor ->table ->group ->text-button get-stage]]
             [gdl.scene2d.actor :refer [toggle-visible! add-tooltip!]]
             [gdl.scene2d.group :refer [children]]

@@ -8,7 +8,7 @@
 ; => input events handling
 ; hmmm interesting ... can disable @ item in cursor  / moving / etc.
 
-(defn- show-player-modal! [{:keys [gui-viewport-width gui-viewport-height] :as ctx}
+(defn- show-player-modal! [{{:keys [gui-viewport-width gui-viewport-height]} :context/graphics :as ctx}
                            {:keys [title text button-text on-click]}]
   (assert (not (::modal (get-stage ctx))))
   (add-to-stage! ctx

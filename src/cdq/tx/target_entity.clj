@@ -1,6 +1,6 @@
 (ns cdq.tx.target-entity
   (:require [x.x :refer [defattribute defcomponent]]
-            [gdl.context :refer [draw-line]]
+            [gdl.graphics :as g]
             [gdl.math.vector :as v]
             [cdq.api.context :refer [transact! effect-text line-of-sight? line-entity]]
             [cdq.api.effect :as effect]
@@ -71,12 +71,12 @@
          ; * either use 'MISS' or get enemy entities at end-point
          [:tx/audiovisual (end-point source* target* maxrange) :effects.target-entity/hit-ground-effect]])))
 
-  (effect/render-info [_ {:keys [effect/source effect/target] :as ctx}]
+  (effect/render-info [_ g {:keys [effect/source effect/target] :as ctx}]
     (let [source* @source
           target* @target]
-      (draw-line ctx
-                 (start-point source* target*)
-                 (end-point   source* target* maxrange)
-                 (if (in-range? source* target* maxrange)
-                   [1 0 0 0.5]
-                   [1 1 0 0.5])))))
+      (g/draw-line g
+                   (start-point source* target*)
+                   (end-point   source* target* maxrange)
+                   (if (in-range? source* target* maxrange)
+                     [1 0 0 0.5]
+                     [1 1 0 0.5])))))

@@ -1,7 +1,7 @@
 (ns cdq.entity.hp
   (:require [x.x :refer [defcomponent]]
+            [gdl.graphics :as g]
             [gdl.graphics.color :as color]
-            [gdl.context :refer [draw-filled-rectangle pixels->world-units]]
             [data.val-max :refer [val-max-ratio]]
             [cdq.api.entity :as entity]
             [cdq.context.ui.config :refer (hpbar-height-px)]
@@ -30,20 +30,22 @@
   (entity/create-component [[_ max-hp] _components _ctx]
     [max-hp max-hp])
 
-  (entity/render-info [_ {[x y] :entity/position
-                          {:keys [width half-width half-height]} :entity/body
-                          :keys [entity/mouseover?]}
-                       c]
+  (entity/render-info [_
+                       {[x y] :entity/position
+                        {:keys [width half-width half-height]} :entity/body
+                        :keys [entity/mouseover?]}
+                       g
+                       _ctx]
     (let [ratio (val-max-ratio hp)]
       (when (or (< ratio 1) mouseover?)
         (let [x (- x half-width)
               y (+ y half-height)
-              height (pixels->world-units c hpbar-height-px) ; pre-calculate it maybe somehow, but will put too much stuff in properties?
-              border (pixels->world-units c borders-px)] ; => can actually still use global state? idk
-          (draw-filled-rectangle c x y width height color/black)
-          (draw-filled-rectangle c
-                                 (+ x border)
-                                 (+ y border)
-                                 (- (* width ratio) (* 2 border))
-                                 (- height (* 2 border))
-                                 (hpbar-color ratio)))))))
+              height (g/pixels->world-units g hpbar-height-px) ; pre-calculate it maybe somehow, but will put too much stuff in properties?
+              border (g/pixels->world-units g borders-px)] ; => can actually still use global state? idk
+          (g/draw-filled-rectangle g x y width height color/black)
+          (g/draw-filled-rectangle g
+                                   (+ x border)
+                                   (+ y border)
+                                   (- (* width ratio) (* 2 border))
+                                   (- height (* 2 border))
+                                   (hpbar-color ratio)))))))

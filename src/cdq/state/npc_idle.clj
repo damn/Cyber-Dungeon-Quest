@@ -34,6 +34,6 @@
         [[:tx/event id :movement-direction (or (potential-field-follow-to-enemy context id)
                                                [0 0])]]))) ; nil param not accepted @ entity.state
 
-  (render-below [_ entity* c])
-  (render-above [_ entity* c])
-  (render-info  [_ entity* c]))
+  (render-below [_ entity* g ctx])
+  (render-above [_ entity* g ctx])
+  (render-info  [_ entity* g ctx]))

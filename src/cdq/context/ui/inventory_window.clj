@@ -1,9 +1,8 @@
 (ns cdq.context.ui.inventory-window
   (:require [data.grid2d :as grid]
             [gdl.app :refer [current-context]]
-            [gdl.context :refer [draw-rectangle draw-filled-rectangle spritesheet get-sprite
-                                 gui-mouse-position get-stage ->table ->window
-                                 ->texture-region-drawable ->color ->stack ->image-widget]]
+            [gdl.context :refer [spritesheet get-sprite get-stage ->table ->window ->texture-region-drawable ->color ->stack ->image-widget]]
+            [gdl.graphics :as g]
             [gdl.graphics.color :as color]
             [gdl.scene2d.actor :as actor :refer [set-id! add-listener! set-name! add-tooltip! remove-tooltip!]]
             [cdq.entity.inventory :as inventory]
@@ -21,15 +20,15 @@
 (def ^:private droppable-color    [0   0.6 0 0.8])
 (def ^:private not-allowed-color  [0.6 0   0 0.8])
 
-(defn- draw-cell-rect [c player-entity x y mouseover? cell]
-  (draw-rectangle c x y cell-size cell-size color/gray)
+(defn- draw-cell-rect [g player-entity x y mouseover? cell]
+  (g/draw-rectangle g x y cell-size cell-size color/gray)
   (when (and mouseover?
              (= :item-on-cursor (entity/state @player-entity)))
     (let [item (:entity/item-on-cursor @player-entity)
           color (if (inventory/valid-slot? cell item)
                  droppable-color
                  not-allowed-color)]
-      (draw-filled-rectangle c (inc x) (inc y) (- cell-size 2) (- cell-size 2) color))))
+      (g/draw-filled-rectangle g (inc x) (inc y) (- cell-size 2) (- cell-size 2) color))))
 
 (defn- mouseover? [^Actor actor [x y]]
   (let [v (.stageToLocalCoordinates actor (Vector2. x y))]
@@ -41,13 +40,13 @@
 (defn- draw-rect-actor ^Widget []
   (proxy [Widget] []
     (draw [_batch _parent-alpha]
-      (let [{:keys [context/player-entity] :as c} @current-context
+      (let [{:keys [context/player-entity] g :context/graphics} @current-context
             ^Widget this this]
-        (draw-cell-rect c
+        (draw-cell-rect g
                         player-entity
                         (.getX this)
                         (.getY this)
-                        (mouseover? this (gui-mouse-position c))
+                        (mouseover? this (g/gui-mouse-position g))
                         (actor/id (actor/parent this)))))))
 
 (defn- clicked-cell [{:keys [context/player-entity] :as ctx} cell]
@@ -142,8 +141,8 @@
 (defn ->inventory-window [{{:keys [window] :as inventory} :context/inventory}]
   window)
 
-(defn ->context [{:keys [gui-viewport-width
-                         gui-viewport-height] :as context}]
+(defn ->context [{{:keys [gui-viewport-width gui-viewport-height]} :context/graphics
+                  :as context}]
   ; TODO use ::data ?
   {:context/inventory (let [table (->table context {})]
                         {:window (->window context {:title "Inventory"

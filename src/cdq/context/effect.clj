@@ -16,9 +16,9 @@
   (effect-useful? [ctx txs]
     (some #(effect/useful? % ctx) txs))
 
-  (effect-render-info [ctx txs]
+  (effect-render-info [ctx g txs]
     (doseq [tx txs]
-      (effect/render-info tx ctx))))
+      (effect/render-info tx g ctx))))
 
 (defn- invalid-tx [ctx txs]
   (some #(when (not (effect/valid-params? % ctx)) %) txs))

@@ -15,7 +15,8 @@
             [cdq.context.properties :as properties]
             [cdq.api.context :refer [get-property all-properties tooltip-text ->error-window]]))
 
-(defn- ->scroll-pane-cell [{:keys [gui-viewport-height] :as ctx} rows]
+(defn- ->scroll-pane-cell [{{:keys [gui-viewport-height]} :context/graphics :as ctx}
+                           rows]
   (let [table (->table ctx {:rows rows
                             :cell-defaults {:pad 1}
                             :pack? true})
@@ -326,9 +327,7 @@
 
 ;;
 
-(defn ->property-editor-window [{:keys [gui-viewport-height]
-                                 :as context}
-                                id]
+(defn ->property-editor-window [context id]
   (let [props (get-property context id)
         {:keys [title]} (get properties/property-types (cdq.context.properties/property-type props))
         window (->window context {:title (or title (name id))

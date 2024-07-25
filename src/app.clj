@@ -39,14 +39,29 @@
    :debug-options? true
    :assert? true})
 
+; TODO boolean production / dev version also add.....
 (def ^:private config dev-config)
 
 ; TODO do @ gloal vars, has to be done before ns requires.
 ; (set! *assert* (safe-get config :assert?))
 
+; 1. load properties w/o serialization
+; 2. from property/id :property/app_cdq_foo read out all the values bwlo (font, title, etc.)
+
+(def ^:private properties-file "resources/properties.edn")
+
+(def ^:private raw-properties (properties/load-edn properties-file))
+
+#_{:background-image "ui/moon_background.png"
+   :default-font {:file "exocet/films.EXL_____.ttf" :size 16}
+   :tile-size 48
+   :app {}
+   :dev-mode? false
+   }
+
 (defn- create-context [default-context]
   (let [context (merge default-context
-                       (properties/->context default-context "resources/properties.edn"))
+                       (properties/->context default-context properties-file))
         context (merge context
                        (cursor/->context context)
                        (inventory-window/->context context)
@@ -56,12 +71,13 @@
                                             (create-image context "ui/moon_background.png")
                                             {:fill-parent? true
                                              :scaling :fill
-                                             :align :center})]
+                                             :align :center})
+        context (assoc-in context
+                          [:context/graphics :default-font]
+                          (generate-ttf context {:file "exocet/films.EXL_____.ttf" :size 16}))]
     (set-cursor! context :cursors/default)
     (merge context
-           ; previous default-font overwritten
-           {:default-font (generate-ttf context {:file "exocet/films.EXL_____.ttf" :size 16})
-            :screens/game            (->stage-screen context (screens.game/screen context))
+           {:screens/game            (->stage-screen context (screens.game/screen context))
             :screens/main-menu       (->stage-screen context (screens.main-menu/screen context (->background-image)))
             :screens/map-editor      (->stage-screen context (screens.map-editor/screen context))
             :screens/minimap         (screens.minimap/->Screen)
@@ -76,6 +92,7 @@
          :height 900
          :full-screen? (safe-get config :full-screen?)
          :fps frames-per-second}
+   ; TODO just add here :default-context ...
    :create-context create-context
    :first-screen :screens/main-menu
    :world-unit-scale (/ tile-size)})

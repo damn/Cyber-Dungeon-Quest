@@ -1,5 +1,5 @@
 (ns cdq.state.stunned
-  (:require [gdl.context :refer [draw-circle]]
+  (:require [gdl.graphics :as g]
             [cdq.api.context :refer [stopped? ->counter]]
             [cdq.api.state :as state]))
 
@@ -18,11 +18,11 @@
     (when (stopped? ctx counter)
       [[:tx/event (:entity/id entity*) :effect-wears-off]]))
 
-  (render-below [_ {:keys [entity/position]} ctx]
-    (draw-circle ctx position 0.5 [1 1 1 0.6]))
+  (render-below [_ {:keys [entity/position]} g _ctx]
+    (g/draw-circle g position 0.5 [1 1 1 0.6]))
 
-  (render-above [_ entity* ctx])
-  (render-info  [_ entity* ctx]))
+  (render-above [_ entity* g ctx])
+  (render-info  [_ entity* g ctx]))
 
 (defn ->CreateWithCounter [ctx _entity* duration]
   (->Stunned (->counter ctx duration)))

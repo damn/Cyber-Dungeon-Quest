@@ -18,10 +18,10 @@
      :state-obj ((initial-state state-obj-constructors) ctx nil)
      :state-obj-constructors state-obj-constructors})
 
-  (entity/tick         [_ entity* ctx]         (state/tick state-obj entity* ctx))
-  (entity/render-below [_ entity* ctx] (state/render-below state-obj entity* ctx))
-  (entity/render-above [_ entity* ctx] (state/render-above state-obj entity* ctx))
-  (entity/render-info  [_ entity* ctx] (state/render-info  state-obj entity* ctx)))
+  (entity/tick         [_ entity* ctx]   (state/tick         state-obj entity*   ctx))
+  (entity/render-below [_ entity* g ctx] (state/render-below state-obj entity* g ctx))
+  (entity/render-above [_ entity* g ctx] (state/render-above state-obj entity* g ctx))
+  (entity/render-info  [_ entity* g ctx] (state/render-info  state-obj entity* g ctx)))
 
 (extend-type cdq.api.entity.Entity
   entity/State

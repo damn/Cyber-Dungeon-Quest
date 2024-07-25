@@ -54,7 +54,7 @@
     (add-map-nodes! ctx tree prop 0)
     tree))
 
-(defn- ->scroll-pane-cell [{:keys [gui-viewport-height] :as ctx} rows]
+(defn- ->scroll-pane-cell [{{:keys [gui-viewport-height]} :context/graphics :as ctx} rows]
   (let [table (->table ctx {:rows rows
                             :cell-defaults {:pad 1}
                             :pack? true})
@@ -69,8 +69,8 @@
  ; and cells no atoms! grid! I change multiple at once ...
  ; maybe only add elements on click -> somehow glyphlayout breaks AFTER this returns successfully
  (let [ctx @gdl.app/current-context
-       tree-map @@(:context/mouseover-entity ctx)
-       ;tree-map ctx
+       ;tree-map @@(:context/mouseover-entity ctx)
+       tree-map ctx
        ]
    (add-to-stage! ctx (->window ctx {:title "Context Overview"
                                      :close-button? true

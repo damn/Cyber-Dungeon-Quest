@@ -1,6 +1,6 @@
 (ns cdq.state.player-item-on-cursor
-  (:require [gdl.context :refer [mouse-on-stage-actor? button-just-pressed? draw-centered-image
-                                 world-mouse-position gui-mouse-position]]
+  (:require [gdl.context :refer [mouse-on-stage-actor? button-just-pressed?]]
+            [gdl.graphics :as g]
             [gdl.input.buttons :as buttons]
             [gdl.math.vector :as v]
             [cdq.api.context :refer [item-entity]]
@@ -50,9 +50,9 @@
                   (min maxrange
                        (v/distance player target)))))
 
-(defn- item-place-position [ctx entity*]
+(defn- item-place-position [{g :context/graphics} entity*]
   (placement-point (:entity/position entity*)
-                   (world-mouse-position ctx)
+                   (g/world-mouse-position g)
                    ; so you cannot put it out of your own reach
                    (- (:entity/click-distance-tiles entity*) 0.1)))
 
@@ -89,15 +89,15 @@
        [:tx/dissoc id :entity/item-on-cursor]]))
 
   (tick [_ entity* _ctx])
-  (render-below [_ entity* ctx]
+  (render-below [_ entity* g ctx]
     (when (world-item? ctx)
-      (draw-centered-image ctx (:property/image item) (item-place-position ctx entity*))))
-  (render-above [_ entity* ctx])
-  (render-info  [_ entity* ctc]))
+      (g/draw-centered-image g (:property/image item) (item-place-position ctx entity*))))
+  (render-above [_ entity* g ctx])
+  (render-info  [_ entity* g ctx]))
 
-(defn draw-item-on-cursor [{:keys [context/player-entity] :as context}]
+(defn draw-item-on-cursor [{:keys [context/player-entity] g :context/graphics :as context}]
   (when (and (= :item-on-cursor (entity/state @player-entity))
              (not (world-item? context)))
-    (draw-centered-image context
-                         (:property/image (:entity/item-on-cursor @player-entity))
-                         (gui-mouse-position context))))
+    (g/draw-centered-image g
+                           (:property/image (:entity/item-on-cursor @player-entity))
+                           (g/gui-mouse-position g))))

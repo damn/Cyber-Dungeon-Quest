@@ -1,6 +1,6 @@
 (ns cdq.entity.string-effect
   (:require [x.x :refer [defcomponent]]
-            [gdl.context :refer [draw-text pixels->world-units]]
+            [gdl.graphics :as g]
             [cdq.api.context :refer [->counter stopped? reset]]
             [cdq.context.ui.config :refer [hpbar-height-px]]
             [cdq.api.entity :as entity]))
@@ -11,13 +11,13 @@
     (when (stopped? context counter)
       [[:tx/dissoc id k]]))
 
-  (entity/render-above [_ {[x y] :entity/position :keys [entity/body]} c]
-    (draw-text c
-               {:text text
-                :x x
-                :y (+ y (:half-height body) (pixels->world-units c hpbar-height-px))
-                :scale 2
-                :up? true})))
+  (entity/render-above [_ {[x y] :entity/position :keys [entity/body]} g _ctx]
+    (g/draw-text g
+                 {:text text
+                  :x x
+                  :y (+ y (:half-height body) (g/pixels->world-units g hpbar-height-px))
+                  :scale 2
+                  :up? true})))
 
 (defmethod cdq.api.context/transact! :tx/add-text-effect [[_ entity text] ctx]
   [[:tx/assoc

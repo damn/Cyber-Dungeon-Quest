@@ -6,11 +6,11 @@
 (defsystem destroy          [_ entity* ctx])
 (defsystem tick             [_ entity* ctx])
 
-(defsystem render-below   [_ entity* ctx])
-(defsystem render-default [_ entity* ctx])
-(defsystem render-above   [_ entity* ctx])
-(defsystem render-info    [_ entity* ctx])
-(defsystem render-debug   [_ entity* ctx])
+(defsystem render-below   [_ entity* g ctx])
+(defsystem render-default [_ entity* g ctx])
+(defsystem render-above   [_ entity* g ctx])
+(defsystem render-info    [_ entity* g ctx])
+(defsystem render-debug   [_ entity* g ctx])
 
 (defrecord Entity [])
 

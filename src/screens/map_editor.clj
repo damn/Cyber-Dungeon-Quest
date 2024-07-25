@@ -1,10 +1,8 @@
 (ns screens.map-editor
   (:require [clojure.string :as str]
             [gdl.app :refer [change-screen!]]
-            [gdl.context :refer [key-pressed? key-just-pressed? ->label ->window world-mouse-position
-                                 ->actor ->tiled-map render-tiled-map draw-filled-rectangle
-                                 draw-filled-circle draw-grid render-world-view ->text-button
-                                 current-screen draw-rectangle]]
+            [gdl.context :refer [key-pressed? key-just-pressed? ->label ->window ->actor ->tiled-map ->text-button current-screen]]
+            [gdl.graphics :as g]
             [gdl.disposable :refer [dispose]]
             [gdl.input.keys :as input.keys]
             gdl.screen
@@ -54,15 +52,15 @@ zoom: shift-left,minus
 ESCAPE: leave
 direction keys: move")
 
-(defn- debug-infos [ctx]
-  (let [tile (->tile (world-mouse-position ctx))
+(defn- debug-infos [{g :context/graphics :as ctx}]
+  (let [tile (->tile (g/world-mouse-position g))
         {:keys [tiled-map
                 area-level-grid]} @(current-data ctx)]
     (->> [infotext
           (str "Tile " tile)
           (when-not area-level-grid
             (str "Module " (mapv (comp int /)
-                                 (world-mouse-position ctx)
+                                 (g/world-mouse-position g)
                                  [mapgen.module-gen/module-width
                                   mapgen.module-gen/module-height])))
           (when area-level-grid
@@ -77,7 +75,7 @@ direction keys: move")
          (str/join "\n"))))
 
 ; same as debug-window
-(defn- ->info-window [{:keys [gui-viewport-height] :as ctx}]
+(defn- ->info-window [{{:keys [gui-viewport-height]} :context/graphics :as ctx}]
   (let [label (->label ctx "")
         window (->window ctx {:title "Info" :rows [[label]]})]
     (add-actor! window (->actor ctx {:act #(do
@@ -114,34 +112,34 @@ direction keys: move")
 ; TODO unused
 ; TODO also draw numbers of area levels big as module size...
 
-(defn- render-on-map [{:keys [world-camera] :as c}]
+(defn- render-on-map [{:keys [world-camera] :as g} ctx]
   (let [{:keys [tiled-map
                 area-level-grid
                 start-position
                 show-movement-properties
-                show-grid-lines]} @(current-data c)
+                show-grid-lines]} @(current-data ctx)
         visible-tiles (camera/visible-tiles world-camera)
-        [x y] (->tile (world-mouse-position c))]
-    (draw-rectangle c x y 1 1 color/white)
+        [x y] (->tile (g/world-mouse-position g))]
+    (g/draw-rectangle g x y 1 1 color/white)
     (when start-position
-      (draw-filled-rectangle c (start-position 0) (start-position 1) 1 1 [1 0 1 0.9]))
+      (g/draw-filled-rectangle g (start-position 0) (start-position 1) 1 1 [1 0 1 0.9]))
     ; TODO move down to other doseq and make button
     (when show-movement-properties
       (doseq [[x y] visible-tiles
               :let [movement-property (movement-property tiled-map [x y])]]
-        (draw-filled-circle c [(+ x 0.5) (+ y 0.5)]
-                            0.08
-                            color/black)
-        (draw-filled-circle c [(+ x 0.5) (+ y 0.5)]
-                            0.05
-                            (case movement-property
-                              "all"   color/green
-                              "air"   color/orange
-                              "none"  color/red))))
+        (g/draw-filled-circle g [(+ x 0.5) (+ y 0.5)]
+                              0.08
+                              color/black)
+        (g/draw-filled-circle g [(+ x 0.5) (+ y 0.5)]
+                              0.05
+                              (case movement-property
+                                "all"   color/green
+                                "air"   color/orange
+                                "none"  color/red))))
     (when show-grid-lines
-      (draw-grid c 0 0 (tiled/width  tiled-map) (tiled/height tiled-map) 1 1 [1 1 1 0.5]))))
+      (g/draw-grid g 0 0 (tiled/width  tiled-map) (tiled/height tiled-map) 1 1 [1 1 1 0.5]))))
 
-(defn- generate [{:keys [world-camera] :as context} properties]
+(defn- generate [{{:keys [world-camera]} :context/graphics :as context} properties]
   (let [{:keys [tiled-map
                 area-level-grid
                 start-position]} (module-gen/generate context properties)
@@ -159,17 +157,17 @@ direction keys: move")
     (dispose (:tiled-map @current-data)))
 
   gdl.screen/Screen
-  (show [_ {:keys [world-camera]}]
+  (show [_ {{:keys [world-camera]} :context/graphics}]
     (show-whole-map! world-camera (:tiled-map @current-data)))
 
-  (hide [_ {:keys [world-camera]}]
+  (hide [_ {{:keys [world-camera]} :context/graphics}]
     (camera/reset-zoom! world-camera))
 
-  (render [_ {:keys [world-camera] :as context}]
-    (render-tiled-map context
-                      (:tiled-map @current-data)
-                      (constantly color/white))
-    (render-world-view context render-on-map)
+  (render [_ {{:keys [world-camera] :as g} :context/graphics :as context}]
+    (g/render-tiled-map g
+                        (:tiled-map @current-data)
+                        (constantly color/white))
+    (g/render-world-view g #(render-on-map % context))
     (if (key-just-pressed? context input.keys/l)
       (swap! current-data update :show-grid-lines not))
     (if (key-just-pressed? context input.keys/m)

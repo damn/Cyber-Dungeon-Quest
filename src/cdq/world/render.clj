@@ -1,5 +1,5 @@
 (ns cdq.world.render
-  (:require [gdl.context :refer [render-tiled-map]]
+  (:require [gdl.graphics :as g]
             [gdl.graphics.color :as color]
             [gdl.math.raycaster :as raycaster]
             [utils.core :refer [->tile]])
@@ -66,7 +66,7 @@
             (swap! explored-tile-corners assoc (->tile position) true))
           color/white))))
 
-(defn render-map [{:keys [context/world] :as ctx} light-position]
+(defn render-map [{:keys [context/world] g :context/graphics} light-position]
   (set-map-render-data! world light-position)
-  (render-tiled-map ctx (:tiled-map world) tile-color-setter)
+  (g/render-tiled-map g (:tiled-map world) tile-color-setter)
   #_(reset! do-once false))

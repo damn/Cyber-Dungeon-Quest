@@ -12,8 +12,9 @@
   * ESC - exit/close menu
   * P   - Pause the game")
 
-(defn create [{:keys [gui-viewport-width
-                      gui-viewport-height] :as context}]
+(defn create [{{:keys [gui-viewport-width
+                       gui-viewport-height]} :context/graphics
+               :as context}]
   (->window context
             {:id :help-window
              :title "Controls"

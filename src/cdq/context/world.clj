@@ -1,6 +1,7 @@
 (ns cdq.context.world
-  (:require [gdl.context :refer [render-tiled-map]]
+  (:require gdl.context
             [gdl.disposable :refer [dispose]]
+            [gdl.graphics :as g]
             [gdl.graphics.camera :as camera]
             [gdl.graphics.color :as color]
             [gdl.maps.tiled :as tiled]
@@ -20,7 +21,7 @@
             [cdq.api.entity :as entity]
             [mapgen.movement-property :refer (movement-property)]))
 
-(defn- on-screen? [entity* {:keys [world-camera world-viewport-width world-viewport-height]}]
+(defn- on-screen? [entity* {{:keys [world-camera world-viewport-width world-viewport-height]} :context/graphics}]
   (let [[x y] (:entity/position entity*)
         x (float x)
         y (float y)
@@ -54,7 +55,7 @@
 
 (extend-type gdl.context.Context
   cdq.api.context/World
-  (render-map [{:keys [world-camera] :as ctx}]
+  (render-map [{{:keys [world-camera]} :context/graphics :as ctx}]
     (cdq.world.render/render-map ctx (camera/position world-camera)))
 
   (line-of-sight? [context source* target*]

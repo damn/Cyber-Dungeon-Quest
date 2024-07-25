@@ -15,7 +15,8 @@
        :stats (:entity/stats entity*)
        }))))
 
-(defn create [{:keys [gui-viewport-width] :as context}]
+(defn create [{{:keys [gui-viewport-width]} :context/graphics
+               :as context}]
   (let [label (->label context "")
         window (->window context {:title "Info"
                                   :id :entity-info-window

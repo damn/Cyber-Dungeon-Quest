@@ -1,20 +1,20 @@
 (ns cdq.context.ui.player-message
-  (:require [gdl.context :refer [draw-text ->actor delta-time]]
+  (:require [gdl.context :refer [->actor delta-time]]
+            [gdl.graphics :as g]
             cdq.api.context))
 
 (def ^:private duration-seconds 1.5)
 
 (defn- draw-player-message
-  [{:keys [context/player-message
-           gui-viewport-width
-           gui-viewport-height] :as context}]
+  [{:keys [context/player-message]
+    {:keys [gui-viewport-width gui-viewport-height] :as g} :context/graphics}]
   (when-let [{:keys [message]} @player-message]
-    (draw-text context
-               {:x (/ gui-viewport-width  2)
-                :y (+ (/ gui-viewport-height 2) 200)
-                :text message
-                :scale 2.5
-                :up? true})))
+    (g/draw-text g
+                 {:x (/ gui-viewport-width  2)
+                  :y (+ (/ gui-viewport-height 2) 200)
+                  :text message
+                  :scale 2.5
+                  :up? true})))
 
 (defn- check-remove-message
   [{:keys [context/player-message] :as context}]

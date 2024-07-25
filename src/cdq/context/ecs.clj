@@ -1,7 +1,8 @@
 (ns cdq.context.ecs
   (:require [clj-commons.pretty.repl :as p]
             [x.x :refer [defcomponent update-map apply-system]]
-            [gdl.context :refer [draw-text]]
+            gdl.context
+            [gdl.graphics :as g]
             [utils.core :refer [define-order sort-by-order]]
             [cdq.api.entity :as entity :refer [map->Entity]]
             [cdq.api.context :refer [transact! transact-all! get-entity]]))
@@ -69,17 +70,21 @@
   (p/pretty-pst (ex-info "" (select-keys entity* [:entity/uid]) throwable))
   (reset! thrown-error throwable))
 
-(defn- render-entity* [system entity* {::keys [thrown-error] :as ctx}]
+(defn- render-entity* [system
+                       entity*
+                       g
+                       {::keys [thrown-error] :as ctx}]
   (try
-   (dorun (apply-system system entity* ctx))
+   (dorun (apply-system system entity* g ctx))
    (catch Throwable t
      (when-not @thrown-error
        (handle-entity-error! ctx entity* t))
      (let [[x y] (:entity/position entity*)]
-       (draw-text ctx {:text (str "Error / entity uid: " (:entity/uid entity*))
-                       :x x
-                       :y y
-                       :up? true})))))
+       (g/draw-text g
+                    {:text (str "Error / entity uid: " (:entity/uid entity*))
+                     :x x
+                     :y y
+                     :up? true})))))
 
 (def ^:private render-systems [entity/render-below
                                entity/render-default
@@ -98,16 +103,16 @@
        (catch Throwable t
          (handle-entity-error! ctx entity* t)))))
 
-  (render-entities! [{::keys [render-on-map-order] :as context} entities*]
+  (render-entities! [{::keys [render-on-map-order] :as context} g entities*]
     (doseq [entities* (map second ; FIXME lazy seq
                            (sort-by-order (group-by :entity/z-order entities*)
                                           first
                                           render-on-map-order))
             system render-systems
             entity* entities*]
-      (render-entity* system entity* context))
+      (render-entity* system entity* g context))
     (doseq [entity* entities*]
-      (render-entity* entity/render-debug entity* context)))
+      (render-entity* entity/render-debug entity* g context)))
 
   (remove-destroyed-entities! [{::keys [uids->entities] :as ctx}]
     (doseq [entity (filter (comp :entity/destroyed? deref) (vals @uids->entities))]

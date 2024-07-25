@@ -1,6 +1,6 @@
 (ns cdq.entity.body
   (:require [x.x :refer [defattribute defcomponent]]
-            [gdl.context :refer [draw-rectangle]]
+            [gdl.graphics :as g]
             [gdl.graphics.color :as color]
             [cdq.api.entity :as entity]
             [cdq.attributes :as attr]))
@@ -9,8 +9,8 @@
 ; skipping bodies at too fast movement
 (def min-solid-body-size 0.4)
 
-(defn- draw-bounds [c {[x y] :left-bottom :keys [width height solid?]}]
-  (draw-rectangle c x y width height (if solid? color/white color/gray)))
+(defn- draw-bounds [g {[x y] :left-bottom :keys [width height solid?]}]
+  (g/draw-rectangle g x y width height (if solid? color/white color/gray)))
 
 (def show-body-bounds false)
 
@@ -64,6 +64,6 @@
       :rotation-angle (or rotation-angle 0)
       :rotate-in-movement-direction? rotate-in-movement-direction?}))
 
-  (entity/render-debug [_ _entity* context]
+  (entity/render-debug [_ _entity* g _ctx]
     (when show-body-bounds
-      (draw-bounds context body))))
+      (draw-bounds g body))))

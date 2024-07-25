@@ -1,5 +1,5 @@
 (ns cdq.state.npc-sleeping
-  (:require [gdl.context :refer [draw-text]]
+  (:require [gdl.graphics :as g]
             [gdl.graphics.color :as color]
             [cdq.api.context :refer [world-grid ->counter]]
             [cdq.api.entity :as entity]
@@ -29,11 +29,11 @@
         (when (<= distance aggro-range)
           [[:tx/event (:entity/id entity*) :alert]]))))
 
-  (render-below [_ entity* c])
-  (render-above [_ {[x y] :entity/position :keys [entity/body]} c]
-    (draw-text c
-               {:text "zzz"
-                :x x
-                :y (+ y (:half-height body))
-                :up? true}))
-  (render-info [_ entity* c]))
+  (render-below [_ entity* g ctx])
+  (render-above [_ {[x y] :entity/position :keys [entity/body]} g _ctx]
+    (g/draw-text g
+                 {:text "zzz"
+                  :x x
+                  :y (+ y (:half-height body))
+                  :up? true}))
+  (render-info [_ entity* g ctx]))

@@ -19,6 +19,6 @@
     (if-let [movement-vector (WASD-movement-vector context)]
       [[:tx/assoc id :entity/movement-vector movement-vector]]
       [[:tx/event id :no-movement-input]]))
-  (render-below [_ entity* c])
-  (render-above [_ entity* c])
-  (render-info  [_ entity* c]))
+  (render-below [_ entity* g ctx])
+  (render-above [_ entity* g ctx])
+  (render-info  [_ entity* g ctx]))

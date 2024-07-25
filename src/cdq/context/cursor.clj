@@ -26,6 +26,8 @@
    :cursors/princess ["exclamation001" 0 0]
    :cursors/princess-gray ["exclamation001_gray" 0 0]})
 
+; TODO dispose all cursors , implement gdl.disposable
+
 (defn ->context [ctx]
   {:context/cursors (mapvals (fn [[file x y]]
                                (->cursor ctx (str "cursors/" file ".png") x y))

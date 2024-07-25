@@ -1,5 +1,6 @@
 (ns cdq.state.player-idle
-  (:require [gdl.context :refer [world-mouse-position mouse-on-stage-actor? button-just-pressed? button-pressed?]]
+  (:require [gdl.context :refer [mouse-on-stage-actor? button-just-pressed? button-pressed?]]
+            [gdl.graphics :as g]
             [gdl.input.buttons :as buttons]
             [gdl.scene2d.actor :refer [visible? toggle-visible! parent] :as actor]
             [gdl.scene2d.ui.button :refer [button?]]
@@ -62,10 +63,11 @@
     [(clickable->cursor mouseover-entity* false) (fn [] (on-clicked ctx mouseover-entity*))]
     [(clickable->cursor mouseover-entity* true)  (fn [] (denied "Too far away"))]))
 
-(defn- effect-context [{:keys [context/mouseover-entity] :as context} entity*]
+(defn- effect-context [{:keys [context/mouseover-entity] g :context/graphics :as context}
+                       entity*]
   (let [target @mouseover-entity
         target-position (or (and target (:entity/position @target))
-                            (world-mouse-position context))]
+                            (g/world-mouse-position g))]
     {:effect/source (:entity/id entity*)
      :effect/target target
      :effect/target-position target-position
@@ -152,6 +154,6 @@
   (enter [_ entity* _ctx])
   (exit  [_ entity* context])
   (tick [_ entity* _context])
-  (render-below [_ entity* c])
-  (render-above [_ entity* c])
-  (render-info  [_ entity* c]))
+  (render-below [_ entity* g ctx])
+  (render-above [_ entity* g ctx])
+  (render-info  [_ entity* g ctx]))

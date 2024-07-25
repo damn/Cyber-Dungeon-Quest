@@ -16,9 +16,9 @@
     (when (stopped? ctx counter)
       [[:tx/event id :timer-finished]]))
 
-  (render-below [_ entity* c])
-  (render-above [_ entity* c])
-  (render-info  [_ entity* c]))
+  (render-below [_ entity* g ctx])
+  (render-above [_ entity* g ctx])
+  (render-info  [_ entity* g ctx]))
 
 (defn ->npc-moving [ctx {:keys [entity/reaction-time]} movement-direction]
   (->NpcMoving movement-direction (->counter ctx reaction-time)))
