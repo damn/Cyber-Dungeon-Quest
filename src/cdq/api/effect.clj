@@ -11,4 +11,4 @@
 (defmethod useful? :default [_ _] true)
 
 (defsystem render-info   [_ g ctx])
-(defmethod render-info :default [_ _])
+(defmethod render-info :default [_ _g _ctx])

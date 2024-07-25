@@ -39,29 +39,14 @@
    :debug-options? true
    :assert? true})
 
-; TODO boolean production / dev version also add.....
 (def ^:private config dev-config)
 
 ; TODO do @ gloal vars, has to be done before ns requires.
 ; (set! *assert* (safe-get config :assert?))
 
-; 1. load properties w/o serialization
-; 2. from property/id :property/app_cdq_foo read out all the values bwlo (font, title, etc.)
-
-(def ^:private properties-file "resources/properties.edn")
-
-(def ^:private raw-properties (properties/load-edn properties-file))
-
-#_{:background-image "ui/moon_background.png"
-   :default-font {:file "exocet/films.EXL_____.ttf" :size 16}
-   :tile-size 48
-   :app {}
-   :dev-mode? false
-   }
-
 (defn- create-context [default-context]
   (let [context (merge default-context
-                       (properties/->context default-context properties-file))
+                       (properties/->context default-context "resources/properties.edn"))
         context (merge context
                        (cursor/->context context)
                        (inventory-window/->context context)
@@ -92,7 +77,6 @@
          :height 900
          :full-screen? (safe-get config :full-screen?)
          :fps frames-per-second}
-   ; TODO just add here :default-context ...
    :create-context create-context
    :first-screen :screens/main-menu
    :world-unit-scale (/ tile-size)})

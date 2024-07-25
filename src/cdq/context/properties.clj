@@ -44,28 +44,6 @@
 (defattribute :app/full-screen? attr/boolean-attr)
 (defattribute :app/fps attr/string-attr)
 
-(defattribute :context/app-settings (assoc (attr/map-attribute :app/title
-                                                        :app/width
-                                                        :app/height
-                                                        :app/full-screen?
-                                                        :app/fps)
-                                           :default-value {:app/title "Title"
-                                                           :app/width 800
-                                                           :app/height 600
-                                                           :app/full-screen? false
-                                                           :app/fps 60
-                                                           }
-                                           ))
-
-(defattribute :context/assets attr/string-attr)
-(defattribute :context/views attr/string-attr)
-(defattribute :context/graphics attr/string-attr)
-(defattribute :context/default-font attr/string-attr)
-(defattribute :context/vis-ui-settings attr/string-attr)
-
-(defattribute :property/context (attr/components-attribute :context))
-
-
 ; TODO make misc is when no property-type matches ? :else case?
 
 ; TODO similar to map-attribute & components-attribute
@@ -78,18 +56,7 @@
                   (vector k (:schema (get x.x/attributes k))))))))
 
 (def property-types
-  {:property.type/context {:of-type? :property/context
-                           :edn-file-sort-order 0
-                           :title "Context"
-                           :overview {:title "App"
-                                      :columns 10
-                                      :image/dimensions [96 96]}
-                           :schema (map-attribute-schema
-                                     [:property/id [:qualified-keyword {:namespace :app}]]
-                                     [;:property/image
-                                      :property/context])}
-
-   :property.type/creature {:of-type? :creature/species
+  {:property.type/creature {:of-type? :creature/species
                             :edn-file-sort-order 1
                             :title "Creature"
                             :overview {:title "Creatures"
@@ -338,15 +305,7 @@
                                   explained)))))))))
     property))
 
-(defn load-edn [file]
-  (let [properties (-> file slurp edn/read-string)] ; TODO use .internal Gdx/files  => part of context protocol
-    (assert (apply distinct? (map :property/id properties)))
-    (->> properties
-         (map validate)
-         ;(map #(deserialize context %))
-         (#(zipmap (map :property/id %) %)))))
-
-(defn- load-edn-serialize [context file]
+(defn- load-edn [context file]
   (let [properties (-> file slurp edn/read-string)] ; TODO use .internal Gdx/files  => part of context protocol
     (assert (apply distinct? (map :property/id properties)))
     (->> properties
@@ -355,7 +314,7 @@
          (#(zipmap (map :property/id %) %)))))
 
 (defn ->context [context file]
-  {:context/properties (load-edn-serialize context file)
+  {:context/properties (load-edn context file)
    :context/properties-file file})
 
 (defn- pprint-spit [file data]
