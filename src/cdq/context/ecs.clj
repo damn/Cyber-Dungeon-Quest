@@ -1,6 +1,6 @@
 (ns cdq.context.ecs
   (:require [clj-commons.pretty.repl :as p]
-            [x.x :refer [defcomponent update-map apply-system]]
+            [core.component :refer [defcomponent update-map apply-system]]
             gdl.context
             [gdl.graphics :as g]
             [utils.core :refer [define-order sort-by-order]]

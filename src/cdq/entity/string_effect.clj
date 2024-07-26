@@ -1,5 +1,5 @@
 (ns cdq.entity.string-effect
-  (:require [x.x :refer [defcomponent]]
+  (:require [core.component :refer [defcomponent]]
             [gdl.graphics :as g]
             [cdq.api.context :refer [->counter stopped? reset]]
             [cdq.context.ui.config :refer [hpbar-height-px]]

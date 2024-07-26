@@ -1,5 +1,5 @@
 (ns cdq.tx.melee-damage
-  (:require [x.x :refer [defcomponent]]
+  (:require [core.component :refer [defcomponent]]
             [cdq.api.effect :as effect]
             [cdq.api.context :refer [transact!]]))
 

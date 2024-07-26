@@ -3,7 +3,7 @@
             [clojure.string :as str]
             [malli.core :as m]
             [malli.error :as me]
-            [x.x :refer [defattribute]]
+            [core.component :refer [defattribute]]
             [gdl.context :refer [get-sprite create-image]]
             [gdl.graphics.animation :as animation]
             [data.val-max :refer [val-max-schema]]
@@ -47,7 +47,7 @@
                 ; creature/id ?
                 ; item/id ?
                 (for [k attr-ks]
-                  (vector k (:schema (get x.x/attributes k))))))))
+                  (vector k (:schema (get core.component/attributes k))))))))
 
 (def property-types
   {:property.type/creature {:of-type? :creature/species

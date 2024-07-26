@@ -1,5 +1,5 @@
 (ns cdq.api.context
-  (:require [x.x :refer [defsystem]]))
+  (:require [core.component :refer [defsystem]]))
 
 (defsystem transact! [_ ctx])
 

@@ -1,5 +1,5 @@
 (ns cdq.entity.body
-  (:require [x.x :refer [defattribute defcomponent]]
+  (:require [core.component :refer [defattribute defcomponent]]
             [gdl.graphics :as g]
             [gdl.graphics.color :as color]
             [cdq.api.entity :as entity]

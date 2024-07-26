@@ -1,5 +1,5 @@
 (ns cdq.entity.movement
-  (:require [x.x :refer [defcomponent]]
+  (:require [core.component :refer [defcomponent]]
             [gdl.math.vector :as v]
             [cdq.api.entity :as entity]
             [cdq.api.context :refer [world-grid]]

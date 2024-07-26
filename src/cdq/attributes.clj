@@ -1,6 +1,6 @@
 (ns cdq.attributes
   (:require [malli.core :as m]
-            x.x
+            core.component
             [data.val-max :refer [val-max-schema]]))
 
 (def sound        {:widget :sound      :schema :string})
@@ -29,13 +29,13 @@
   {:widget :nested-map
    :schema (vec (concat [:map {:closed true}]
                         (for [k attr-ks]
-                          (vector k (or (:schema (get x.x/attributes k)) :some)))))})
+                          (vector k (or (:schema (get core.component/attributes k)) :some)))))})
 
 (defn components-attribute [component-namespace]
   (let [component-attributes (filter #(= (name component-namespace) (namespace %))
-                                     (keys x.x/attributes))]
+                                     (keys core.component/attributes))]
     {:widget :nested-map
      :schema (vec (concat [:map {:closed true}]
                           (for [k component-attributes]
-                            [k {:optional true} (or (:schema (get x.x/attributes k)) :some)])))
+                            [k {:optional true} (or (:schema (get core.component/attributes k)) :some)])))
      :components component-attributes})) ; => fetch from schema ? (optional? )

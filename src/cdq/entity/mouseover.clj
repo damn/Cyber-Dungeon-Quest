@@ -1,5 +1,5 @@
 (ns cdq.entity.mouseover
-  (:require [x.x :refer [defcomponent]]
+  (:require [core.component :refer [defcomponent]]
             [gdl.graphics :as g]
             [cdq.api.entity :as entity]))
 

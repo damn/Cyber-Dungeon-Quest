@@ -1,5 +1,5 @@
 (ns cdq.entity.shout
-  (:require [x.x :refer [defcomponent]]
+  (:require [core.component :refer [defcomponent]]
             [cdq.api.context :refer [world-grid line-of-sight? stopped?]]
             [cdq.api.entity :as entity]
             [cdq.api.world.grid :refer [circle->entities]]))

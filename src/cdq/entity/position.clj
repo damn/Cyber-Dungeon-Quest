@@ -1,5 +1,5 @@
 (ns cdq.entity.position
-  (:require [x.x :refer [defcomponent]]
+  (:require [core.component :refer [defcomponent]]
             [gdl.math.vector :as v]
             [utils.core :refer [->tile]]
             [cdq.api.entity :as entity]))

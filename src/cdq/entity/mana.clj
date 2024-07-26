@@ -1,5 +1,5 @@
 (ns cdq.entity.mana
-  (:require [x.x :refer [defcomponent]]
+  (:require [core.component :refer [defcomponent]]
             [cdq.api.entity :as entity]
             [cdq.attributes :as attr]))
 

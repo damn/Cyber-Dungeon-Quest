@@ -1,6 +1,6 @@
 (ns cdq.entity.inventory
   (:require [data.grid2d :as grid]
-            [x.x :refer [defcomponent]]
+            [core.component :refer [defcomponent]]
             gdl.context
             [utils.core :refer [find-first]]
             [cdq.api.context :refer [get-property]]

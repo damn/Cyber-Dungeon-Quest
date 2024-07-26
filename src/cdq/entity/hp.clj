@@ -1,5 +1,5 @@
 (ns cdq.entity.hp
-  (:require [x.x :refer [defcomponent]]
+  (:require [core.component :refer [defcomponent]]
             [gdl.graphics :as g]
             [gdl.graphics.color :as color]
             [data.val-max :refer [val-max-ratio]]

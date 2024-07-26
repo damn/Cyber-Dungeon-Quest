@@ -1,6 +1,6 @@
 (ns cdq.tx.projectile
   (:require [clojure.string :as str]
-            [x.x :refer [defcomponent]]
+            [core.component :refer [defcomponent]]
             [gdl.math.vector :as v]
             [gdl.graphics.animation :as animation]
             [gdl.context :refer [get-sprite spritesheet]]

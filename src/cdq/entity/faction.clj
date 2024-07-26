@@ -1,5 +1,5 @@
 (ns cdq.entity.faction
-  (:require [x.x :refer [defattribute]]
+  (:require [core.component :refer [defattribute]]
             [cdq.api.entity :as entity]
             [cdq.attributes :as attr]))
 

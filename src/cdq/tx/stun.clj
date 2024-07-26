@@ -1,5 +1,5 @@
 (ns cdq.tx.stun
-  (:require [x.x :refer [defcomponent]]
+  (:require [core.component :refer [defcomponent]]
             [utils.core :refer [readable-number]]
             [cdq.api.context :refer [transact!]]
             [cdq.api.effect :as effect]

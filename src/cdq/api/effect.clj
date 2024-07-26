@@ -1,5 +1,5 @@
 (ns cdq.api.effect
-  (:require [x.x :refer [defsystem]]))
+  (:require [core.component :refer [defsystem]]))
 
 (defsystem text          [_ ctx])
 (defmethod text :default [_ _])

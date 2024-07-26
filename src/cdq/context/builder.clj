@@ -1,5 +1,5 @@
 (ns cdq.context.builder
-  (:require [x.x :refer [defcomponent]]
+  (:require [core.component :refer [defcomponent]]
             gdl.context
             [cdq.api.context :refer [transact! get-property]]
             [cdq.api.entity :as entity]))

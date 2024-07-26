@@ -2,7 +2,7 @@
   (:require [clojure.edn :as edn]
             [clojure.string :as str]
             [malli.core :as m]
-            x.x
+            core.component
             [gdl.app :as app :refer [change-screen!]]
             [gdl.context :refer [get-stage ->text-button ->image-button ->label ->text-field ->image-widget ->table ->stack ->window all-sound-files play-sound! ->vertical-group ->check-box ->select-box ->actor key-just-pressed? add-to-stage! ->scroll-pane]]
             [gdl.input.keys :as input.keys]
@@ -44,7 +44,7 @@
 ;;
 
 (defn- attr->value-widget [k]
-  (or (:widget (get x.x/attributes k)) :label))
+  (or (:widget (get core.component/attributes k)) :label))
 
 (defmulti ->value-widget     (fn [[k _v] _ctx] (attr->value-widget k)))
 (defmulti value-widget->data (fn [k _widget]   (attr->value-widget k)))
@@ -65,7 +65,7 @@
 
 (defmethod ->value-widget :text-field [[k v] ctx]
   (let [widget (->text-field ctx (->edn v) {})]
-    (add-tooltip! widget (str "Schema: " (pr-str (m/form (:schema (get x.x/attributes k))))))
+    (add-tooltip! widget (str "Schema: " (pr-str (m/form (:schema (get core.component/attributes k))))))
     widget))
 
 (defmethod value-widget->data :text-field [_ widget]
@@ -83,7 +83,7 @@
 ;;
 
 (defmethod ->value-widget :enum [[k v] ctx]
-  (->select-box ctx {:items (map ->edn (:items (x.x/attributes k)))
+  (->select-box ctx {:items (map ->edn (:items (core.component/attributes k)))
                      :selected (->edn v)}))
 
 (defmethod value-widget->data :enum [_ widget]
@@ -144,13 +144,13 @@
                                  :close-on-escape? true
                                  :cell-defaults {:pad 5}})]
        (add-rows! window (for [nested-k (sort (remove (set (keys (attribute-widget-group->data attribute-widget-group)))
-                                                      (:components (x.x/attributes k))))]
+                                                      (:components (core.component/attributes k))))]
                            [(->text-button ctx (name nested-k)
                                            (fn [ctx]
                                              (remove! window)
                                              (add-actor! attribute-widget-group
                                                          (->attribute-widget-table ctx
-                                                                                   [nested-k (:default-value (x.x/attributes nested-k))]
+                                                                                   [nested-k (:default-value (core.component/attributes nested-k))]
                                                                                    :horizontal-sep?
                                                                                    (pos? (count (children attribute-widget-group)))))
                                              (pack-ancestor-window! attribute-widget-group)))]))
@@ -164,9 +164,9 @@
     (actor/set-id! attribute-widget-group :attribute-widget-group)
     (->table ctx {:cell-defaults {:pad 5}
                   :rows (remove nil?
-                                [(when (:components (x.x/attributes k))
+                                [(when (:components (core.component/attributes k))
                                    [(->add-nested-map-button ctx k attribute-widget-group)])
-                                 (when (:components (x.x/attributes k))
+                                 (when (:components (core.component/attributes k))
                                    [(->horizontal-separator-cell 1)])
                                  [attribute-widget-group]])})))
 
@@ -243,7 +243,7 @@
   (let [table (->table context {:cell-defaults {:pad 5}})]
     (add-one-to-many-rows context
                           table
-                          (:linked-property-type (x.x/attributes attribute))
+                          (:linked-property-type (core.component/attributes attribute))
                           property-ids)
     table))
 
@@ -286,7 +286,7 @@
 
 (defn ->attribute-widget-table [ctx [k v] & {:keys [horizontal-sep?]}]
   (let [label (->label ctx (name k))
-        _ (when-let [doc (:doc (get x.x/attributes k))]
+        _ (when-let [doc (:doc (get core.component/attributes k))]
             (add-tooltip! label doc))
         value-widget (->value-widget [k v] ctx)
         table (->table ctx {:id k

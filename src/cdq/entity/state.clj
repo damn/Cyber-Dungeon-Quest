@@ -1,6 +1,6 @@
 (ns cdq.entity.state
   (:require [reduce-fsm :as fsm]
-            [x.x :refer [defcomponent]]
+            [core.component :refer [defcomponent]]
             [cdq.api.context :refer [transact-all!]]
             [cdq.api.entity :as entity]
             [cdq.api.state :as state]))

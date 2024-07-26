@@ -1,5 +1,5 @@
 (ns cdq.tx.damage
-  (:require [x.x :refer [defattribute defcomponent]]
+  (:require [core.component :refer [defattribute defcomponent]]
             [data.val-max :refer [apply-val apply-val-max-modifiers]]
             [utils.random :as random]
             [cdq.api.context :refer [transact!]]

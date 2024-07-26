@@ -1,5 +1,5 @@
 (ns cdq.tx.target-entity
-  (:require [x.x :refer [defattribute defcomponent]]
+  (:require [core.component :refer [defattribute defcomponent]]
             [gdl.graphics :as g]
             [gdl.math.vector :as v]
             [cdq.api.context :refer [transact! effect-text line-of-sight? line-entity]]

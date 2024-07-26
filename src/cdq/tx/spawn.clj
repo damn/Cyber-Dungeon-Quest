@@ -1,5 +1,5 @@
 (ns cdq.tx.spawn
-  (:require [x.x :refer [defcomponent]]
+  (:require [core.component :refer [defcomponent]]
             [cdq.api.context :refer [transact!]]
             [cdq.api.effect :as effect]
             [cdq.state.npc :as npc-state]))

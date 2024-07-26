@@ -1,7 +1,7 @@
 (ns cdq.modifier.all
   (:require [clojure.string :as str]
             [clojure.math :as math]
-            [x.x :refer [defcomponent]]
+            [core.component :refer [defcomponent]]
             [data.val-max :refer [apply-max]]
             [cdq.api.modifier :as modifier]
             [cdq.attributes :as attr]))

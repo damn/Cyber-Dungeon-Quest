@@ -1,5 +1,5 @@
 (ns cdq.entity.stats
-  (:require [x.x :refer [defattribute]]
+  (:require [core.component :refer [defattribute]]
             [cdq.attributes :as attr]))
 
 (defattribute :stats/strength attr/nat-int-attr)

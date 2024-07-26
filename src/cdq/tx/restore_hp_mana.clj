@@ -1,5 +1,5 @@
 (ns cdq.tx.restore-hp-mana
-  (:require [x.x :refer [defcomponent]]
+  (:require [core.component :refer [defcomponent]]
             [data.val-max :refer [lower-than-max? set-to-max]]
             [cdq.api.context :refer [transact!]]
             [cdq.api.effect :as effect]))

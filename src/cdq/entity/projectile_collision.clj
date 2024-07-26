@@ -1,5 +1,5 @@
 (ns cdq.entity.projectile-collision
-  (:require [x.x :refer [defcomponent]]
+  (:require [core.component :refer [defcomponent]]
             [gdl.math.geom :as geom]
             [utils.core :refer [find-first]]
             [cdq.api.context :refer [world-grid]]
