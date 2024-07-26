@@ -50,7 +50,8 @@
                                             {:fill-parent? true
                                              :scaling :fill
                                              :align :center})]
-    {:screens/game            (->stage-screen ctx (screens.game/screen ctx))
+    {:first-screen :screens/main-menu
+     :screens/game            (->stage-screen ctx (screens.game/screen ctx))
      :screens/main-menu       (->stage-screen ctx (screens.main-menu/screen ctx (->background-image)))
      :screens/map-editor      (->stage-screen ctx (screens.map-editor/screen ctx))
      :screens/minimap         (screens.minimap/->Screen)
@@ -81,7 +82,6 @@
          :full-screen? (safe-get config :full-screen?)
          :fps frames-per-second}
    :create-context create-context
-   :first-screen :screens/main-menu
    :world-unit-scale (/ tile-size)})
 
 (defn -main []
