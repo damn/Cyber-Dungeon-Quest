@@ -63,23 +63,6 @@
      :height (min (- gui-viewport-height 50) (actor/height table))}))
 
 (comment
- ; TODO make tree of namespace parts ! not so many elements
- ; and all components namespaced names
- ; and make for entities/cells too !
- ; and cells no atoms! grid! I change multiple at once ...
- ; maybe only add elements on click -> somehow glyphlayout breaks AFTER this returns successfully
- (let [ctx @gdl.app/current-context
-       ;tree-map @@(:context/mouseover-entity ctx)
-       tree-map ctx
-       ]
-   (add-to-stage! ctx (->window ctx {:title "Context Overview"
-                                     :close-button? true
-                                     :close-on-escape? true
-                                     :center? true
-                                     :rows [[(->scroll-pane-cell ctx [[(->prop-tree ctx (into (sorted-map) tree-map))]])]]
-                                     :pack? true}))))
-
-(comment
  (let [ctx @gdl.app/current-context
        entity (cdq.api.context/get-entity ctx 2)
        ]
@@ -123,3 +106,20 @@
    )
 
  )
+
+(comment
+ ; TODO make tree of namespace parts ! not so many elements
+ ; and all components namespaced names
+ ; and make for entities/cells too !
+ ; and cells no atoms! grid! I change multiple at once ...
+ ; maybe only add elements on click -> somehow glyphlayout breaks AFTER this returns successfully
+ (let [ctx @gdl.app/current-context
+       ;tree-map @@(:context/mouseover-entity ctx)
+       tree-map ctx
+       ]
+   (add-to-stage! ctx (->window ctx {:title "Context Overview"
+                                     :close-button? true
+                                     :close-on-escape? true
+                                     :center? true
+                                     :rows [[(->scroll-pane-cell ctx [[(->prop-tree ctx (into (sorted-map) tree-map))]])]]
+                                     :pack? true}))))
