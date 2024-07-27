@@ -219,11 +219,11 @@
 
 (extend-type gdl.context.Context
   cdq.api.context/PropertyStore
-  (get-property [{:keys [context/properties]} id]
-    (safe-get properties id))
+  (get-property [{{:keys [db]} :context/properties} id]
+    (safe-get db id))
 
-  (all-properties [{:keys [context/properties]} property-type]
-    (filter (:of-type? (get property-types property-type)) (vals properties))))
+  (all-properties [{{:keys [db]} :context/properties} property-type]
+    (filter (:of-type? (get property-types property-type)) (vals db))))
 
 (require 'gdl.backends.libgdx.context.image-drawer-creator)
 
@@ -304,8 +304,8 @@
          (#(zipmap (map :property/id %) %)))))
 
 (defn ->context [context file]
-  {:context/properties (load-edn context file)
-   :context/properties-file file})
+  {:db (load-edn context file)
+   :file file})
 
 (defn- pprint-spit [file data]
   (binding [*print-level* nil]
@@ -320,18 +320,17 @@
 
 (def ^:private write-to-file? true)
 
-(defn- write-properties-to-file! [{:keys [context/properties
-                               context/properties-file]}]
+(defn- write-properties-to-file! [{:keys [db file]}]
   (when write-to-file?
     (.start
      (Thread.
       (fn []
-        (->> properties
+        (->> db
              vals
              sort-by-type
              (map serialize)
              (map #(into (sorted-map) %))
-             (pprint-spit properties-file)))))))
+             (pprint-spit file)))))))
 
 (comment
  ; # Add new attributes => make into fn for property-type apply fn to all props
@@ -343,26 +342,25 @@
                           :skill/action-time-modifier-key :attack-speed)))]
    (def write-to-file? false)
    (doseq [prop props]
-     (swap! gdl.app/current-context update! prop))
+     (swap! gdl.app/current-context update :context/properties update! prop))
    (def ^:private write-to-file? true)
-   (swap! gdl.app/current-context update! (cdq.api.context/get-property ctx :creatures/vampire))
+   (swap! gdl.app/current-context update :context/properties update! (cdq.api.context/get-property ctx :creatures/vampire))
    nil)
  )
 
-(defn update! [{:keys [context/properties] :as context}
-               {:keys [property/id] :as data}]
-  {:pre [(contains? data :property/id) ; <=  part of validate - but misc does not have property/id -> add !
-         (contains? properties id)]}
-  (validate data :humanize? true)
-  ;(binding [*print-level* nil] (clojure.pprint/pprint data))
-  (let [context (update context :context/properties assoc id data)]
-    (write-properties-to-file! context)
-    context))
+(defn update! [{:keys [db] :as properties}
+               {:keys [property/id] :as property}]
+  {:pre [(contains? property :property/id) ; <=  part of validate - but misc does not have property/id -> add !
+         (contains? db id)]}
+  (validate property :humanize? true)
+  ;(binding [*print-level* nil] (clojure.pprint/pprint property))
+  (let [properties (update properties :db assoc id property)]
+    (write-properties-to-file! properties)
+    properties))
 
-(defn delete! [{:keys [context/properties
-                       context/properties-file] :as context}
+(defn delete! [{:keys [db] :as properties}
                property-id]
-  {:pre [(contains? properties property-id)]}
-  (let [context (update context :context/properties dissoc property-id)]
-    (write-properties-to-file! context)
-    context))
+  {:pre [(contains? db property-id)]}
+  (let [properties (update properties :db dissoc property-id)]
+    (write-properties-to-file! properties)
+    properties))

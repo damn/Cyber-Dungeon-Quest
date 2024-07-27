@@ -340,7 +340,7 @@
         apply-context! (fn [f]
                          (fn [ctx]
                            (try
-                            (swap! app/current-context f)
+                            (swap! app/current-context update :context/properties f)
                             (remove! window)
                             (catch Throwable t
                               (->error-window ctx t)))))

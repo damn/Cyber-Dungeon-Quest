@@ -64,7 +64,7 @@
 
 (defn- create-context [default-context]
   (let [context (merge default-context
-                       (properties/->context default-context "resources/properties.edn"))
+                       {:context/properties (properties/->context default-context "resources/properties.edn")})
         context (merge context
                        (cursor/->context context)
                        (inventory-window/->context context)
