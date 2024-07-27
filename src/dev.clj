@@ -114,8 +114,15 @@
  ; and cells no atoms! grid! I change multiple at once ...
  ; maybe only add elements on click -> somehow glyphlayout breaks AFTER this returns successfully
  (let [ctx @gdl.app/current-context
+
+       position (gdl.graphics/world-mouse-position (:context/graphics ctx))
+       cell (get (cdq.api.context/world-grid ctx)
+                 (mapv int position))
+
+       tree-map @cell
        ;tree-map @@(:context/mouseover-entity ctx)
        tree-map ctx
+
        ]
    (add-to-stage! ctx (->window ctx {:title "Context Overview"
                                      :close-button? true

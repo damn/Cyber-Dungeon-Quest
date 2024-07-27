@@ -5,15 +5,35 @@
             [gdl.scene2d.ui.widget-group :refer [pack!]]
             [cdq.api.entity :as entity]))
 
+
+
+
 (defn- entity-info-text [entity*]
   (binding [*print-level* nil]
     (with-out-str
      (clojure.pprint/pprint
-      {:uid   (:entity/uid entity*)
+      #_{:uid   (:entity/uid entity*)
        :state (entity/state entity*)
        :faction (:entity/faction entity*)
-       :stats (:entity/stats entity*)
-       }))))
+       :stats (:entity/stats entity*)}
+      (select-keys entity*
+                   [
+                    ; TODO add 'name!
+                    :entity/hp ; green, orange, red  bar
+                    :entity/mana ; blue bar
+                    :entity/item ; show or not ?
+                    :entity/delete-after-duration  ; bar like in wc3 blue ? projec.
+                    :entity/faction
+                    :entity/projectile-collision ; -> hit-effect, piercing ? ...
+                    :entity/reaction-time
+                    ;:entity/inventory
+                    ;:entity/skills
+                    ;:entity/state
+                    :entity/stats ; damage stats nested map ... not showing ...
+                    ; TODO show a horizontal table like in wh40k ? keep stats simple only AS,Strength,Hp,Mana ... ?
+                    ; no extra stats ? only modifier of that ?!
+
+                    ])))))
 
 (defn create [{{:keys [gui-viewport-width]} :context/graphics
                :as context}]

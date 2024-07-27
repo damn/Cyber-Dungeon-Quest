@@ -54,7 +54,8 @@
   ; otherwise all entities removed with reset-common-game-context!
   (transact-all! ctx (for [e (all-entities ctx)] [:tx/destroy e]))
   (remove-destroyed-entities! ctx)
-  (let [ctx (merge ctx (reset-common-game-context! ctx))]
+  (let [ctx (merge ctx (reset-common-game-context! ctx))] ; without replay-mode / world ... make it explicit we re-use this here ? assign ?
+    ; world visibility is not reset ... ...
     (transact-all! ctx (frame->txs ctx 0))
     (reset! gdl.app/current-context
             (merge ctx {:context/replay-mode? true

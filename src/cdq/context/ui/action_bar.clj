@@ -11,6 +11,12 @@
            :button-group (->button-group ctx {:max-check-count 1
                                               :min-check-count 0})}})
 
+(comment
+ (let [stage (gdl.context/get-stage @gdl.app/current-context)]
+   (::action-bar (:gdl.context.ui.actors/main-table stage))
+   )
+ )
+
 (extend-type gdl.context.Context
   cdq.api.context/Actionbar
   (->action-bar [{{:keys [horizontal-group]} ::data}]

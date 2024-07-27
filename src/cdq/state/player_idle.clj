@@ -149,6 +149,7 @@
                (not (entity/has-skill? entity* skill)))
       [[:tx/assoc id :entity/free-skill-points (dec free-skill-points)]
        [:tx/add-skill id skill]]))
+  ; TODO no else case, no visible fsp..
 
   state/State
   (enter [_ entity* _ctx])

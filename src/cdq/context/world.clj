@@ -164,4 +164,3 @@
                                  :free-skill-points 3
                                  :clickable {:type :clickable/player}
                                  :click-distance-tiles 1.5}]]))
-

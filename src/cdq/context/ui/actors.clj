@@ -72,6 +72,7 @@
                               :bottom? true
                               :left? true}
                              (remove nil? (->buttons ctx)))]
+                :id ::main-table
                 :cell-defaults {:pad 2}
                 :fill-parent? true}))
 
