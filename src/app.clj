@@ -2,6 +2,10 @@
   (:require [gdl.backends.libgdx.app :as app]
             [gdl.context :refer [generate-ttf ->stage-screen ->image-widget create-image]]
             [utils.core :refer [safe-get]]
+            ; load these 3 before cdq.context.properties
+            cdq.tx.all
+            cdq.entity.all
+            cdq.modifier.all
             (cdq.context [properties :as properties]
                          [cursor :as cursor]
                          builder

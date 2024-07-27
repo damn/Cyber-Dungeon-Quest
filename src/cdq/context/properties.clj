@@ -9,10 +9,7 @@
             [data.val-max :refer [val-max-schema]]
             [utils.core :refer [safe-get readable-number]]
             [cdq.api.context :refer [modifier-text effect-text]]
-            [cdq.attributes :as attr]
-            cdq.tx.all
-            cdq.entity.all
-            cdq.modifier.all))
+            [cdq.attributes :as attr]))
 
 (defattribute :property/image       attr/image)
 (defattribute :property/sound       attr/sound)
