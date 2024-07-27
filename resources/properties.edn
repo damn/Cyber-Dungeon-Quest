@@ -2864,7 +2864,7 @@
   :creature/species :species/snake,
   :property/entity
   {:entity/faction :good,
-   :entity/movement 2.0,
+   :entity/movement 3.1,
    :entity/animation
    {:frames
     ({:file "creatures/animations/snake-1.png", :sub-image-bounds nil}
@@ -2874,12 +2874,18 @@
       :sub-image-bounds nil}),
     :frame-duration 0.1,
     :looping? true},
-   :entity/reaction-time 0.2,
-   :entity/mana 11,
-   :entity/body {:width 31/48, :height 25/48, :solid? true},
+   :entity/reaction-time 0.1,
+   :entity/mana 0,
+   :entity/stats
+   {:stats/armor-pierce 0,
+    :stats/armor-save 0,
+    :stats/attack-speed 3,
+    :stats/cast-speed 1,
+    :stats/strength 3},
+   :entity/body {:height 25/48, :solid? true, :width 31/48},
    :entity/flying? false,
-   :entity/hp 12,
-   :entity/skills #{}},
+   :entity/hp 5,
+   :entity/skills #{:skills/melee-attack}},
   :property/id :creatures/snake,
   :property/image
   {:file "creatures/images.png", :sub-image-bounds [240 240 48 48]}}
