@@ -6,8 +6,7 @@
             [gdl.context :refer [get-sprite create-image]]
             [gdl.graphics.animation :as animation]
             [utils.core :refer [safe-get readable-number]]
-            [cdq.api.context :refer [modifier-text effect-text]]
-            [cdq.attributes :as attr]))
+            [cdq.api.context :refer [modifier-text effect-text]]))
 
 (defn property->type [property-types property]
   (some (fn [[type {:keys [of-type?]}]]
