@@ -327,9 +327,11 @@
 
 ;;
 
-(defn ->property-editor-window [context id]
+(defn ->property-editor-window [{:keys [context/properties] :as context} id]
   (let [props (get-property context id)
-        {:keys [title]} (get properties/property-types (cdq.context.properties/property-type props))
+        {:keys [title]} (get (:property-types properties)
+                             (cdq.context.properties/property->type (:property-types properties)
+                                                                    props))
         window (->window context {:title (or title (name id))
                                   :modal? true
                                   :close-button? true
@@ -359,12 +361,12 @@
 (defn- ->overview-table
   "Creates a table with all-properties of property-type and buttons for each id
   which on-clicked calls clicked-id-fn."
-  [ctx property-type clicked-id-fn]
+  [{:keys [context/properties] :as ctx} property-type clicked-id-fn]
   (let [{:keys [title
                 sort-by-fn
                 extra-info-text
                 columns
-                image/dimensions]} (:overview (get properties/property-types property-type))
+                image/dimensions]} (:overview (get (:property-types properties) property-type))
         entities (all-properties ctx property-type)
         entities (if sort-by-fn
                    (sort-by sort-by-fn entities)
@@ -394,10 +396,10 @@
     (set-actor! (second (cells table)) widget)
     (pack! table)))
 
-(defn- ->left-widget [context]
+(defn- ->left-widget [{:keys [context/properties] :as context}]
   (->table context {:cell-defaults {:pad 5}
                     :rows (concat
-                           (for [[property-type {:keys [overview]}] properties/property-types]
+                           (for [[property-type {:keys [overview]}] (:property-types properties)]
                              [(->text-button context
                                              (:title overview)
                                              #(set-second-widget! % (->overview-table % property-type open-property-editor-window!)))])

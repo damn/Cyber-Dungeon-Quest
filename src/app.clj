@@ -2,10 +2,7 @@
   (:require [gdl.backends.libgdx.app :as app]
             [gdl.context :refer [generate-ttf ->stage-screen ->image-widget create-image]]
             [utils.core :refer [safe-get]]
-            ; load these 3 before cdq.context.properties
-            cdq.tx.all
-            cdq.entity.all
-            cdq.modifier.all
+            cdq.properties
             (cdq.context [properties :as properties]
                          [cursor :as cursor]
                          builder
@@ -64,7 +61,9 @@
 
 (defn- create-context [default-context]
   (let [context (merge default-context
-                       {:context/properties (properties/->context default-context "resources/properties.edn")})
+                       {:context/properties (properties/->context default-context
+                                                                  {:file "resources/properties.edn"
+                                                                   :property-types cdq.properties/property-types})})
         context (merge context
                        (cursor/->context context)
                        (inventory-window/->context context)

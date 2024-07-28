@@ -3,124 +3,13 @@
             [clojure.string :as str]
             [malli.core :as m]
             [malli.error :as me]
-            [core.component :refer [defattribute]]
             [gdl.context :refer [get-sprite create-image]]
             [gdl.graphics.animation :as animation]
             [utils.core :refer [safe-get readable-number]]
             [cdq.api.context :refer [modifier-text effect-text]]
             [cdq.attributes :as attr]))
 
-(defattribute :property/image       attr/image)
-(defattribute :property/sound       attr/sound)
-(defattribute :property/pretty-name attr/string-attr)
-
-(defattribute :property/entity (attr/components-attribute :entity))
-(defattribute :skill/effect (attr/components-attribute :tx))
-(defattribute :hit-effect   (attr/components-attribute :tx))
-(defattribute :item/modifier (attr/components-attribute :modifier))
-
-(defattribute :item/slot     {:widget :label :schema [:qualified-keyword {:namespace :inventory.slot}]}) ; TODO one of ... == 'enum' !!
-
-(defattribute :creature/species {:widget :label      :schema [:qualified-keyword {:namespace :species}]}) ; TODO not used ... but one of?
-(defattribute :creature/level   {:widget :text-field :schema [:maybe pos-int?]}) ; pos-int-attr ? ; TODO creature lvl >0, <max-lvls (9 ?)
-
-(defattribute :skill/start-action-sound       attr/sound)
-(defattribute :skill/action-time-modifier-key (attr/enum :stats/cast-speed :stats/attack-speed))
-(defattribute :skill/action-time              attr/pos-attr)
-(defattribute :skill/cooldown                 attr/nat-int-attr)
-(defattribute :skill/cost                     attr/nat-int-attr)
-
-(defattribute :world/map-size       attr/pos-int-attr)
-(defattribute :world/max-area-level attr/pos-int-attr) ; TODO <= map-size !?
-(defattribute :world/spawn-rate     attr/pos-attr) ; TODO <1 !
-
-; TODO make misc is when no property-type matches ? :else case?
-
-; TODO similar to map-attribute & components-attribute
-(defn- map-attribute-schema [id-attribute attr-ks]
-  (m/schema
-   (vec (concat [:map {:closed true} id-attribute] ; TODO same id-attribute w. different namespaces ...
-                ; creature/id ?
-                ; item/id ?
-                (for [k attr-ks]
-                  (vector k (:schema (get core.component/attributes k))))))))
-
-(def property-types
-  {:property.type/creature {:of-type? :creature/species
-                            :edn-file-sort-order 1
-                            :title "Creature"
-                            :overview {:title "Creatures"
-                                       :columns 16
-                                       :image/dimensions [65 65]
-                                       :sort-by-fn #(vector (or (:creature/level %) 9)
-                                                            (name (:creature/species %))
-                                                            (name (:property/id %)))
-                                       :extra-info-text #(str (:creature/level %)
-                                                              (case (:entity/faction (:property/entity %))
-                                                                :good "g"
-                                                                :evil "e"))}
-                            :schema (map-attribute-schema
-                                     [:property/id [:qualified-keyword {:namespace :creatures}]]
-                                     [:property/image
-                                      :creature/species
-                                      :creature/level
-                                      :property/entity])}
-
-   :property.type/skill {:of-type? :skill/effect
-                         :edn-file-sort-order 0
-                         :title "Skill"
-                         :overview {:title "Skill"
-                                    :columns 16
-                                    :image/dimensions [70 70]}
-                         :schema (map-attribute-schema
-                                  [:property/id [:qualified-keyword {:namespace :skills}]]
-                                  [:property/image
-                                   :skill/action-time
-                                   :skill/cooldown
-                                   :skill/cost
-                                   :skill/effect
-                                   :skill/start-action-sound
-                                   :skill/action-time-modifier-key])}
-
-   :property.type/item {:of-type? :item/slot
-                        :edn-file-sort-order 3
-                        :title "Item"
-                        :overview {:title "Items"
-                                   :columns 17
-                                   :image/dimensions [60 60]
-                                   :sort-by-fn #(vector (if-let [slot (:item/slot %)]
-                                                          (name slot)
-                                                          "")
-                                                        (name (:property/id %)))}
-                        :schema (map-attribute-schema
-                                 [:property/id [:qualified-keyword {:namespace :items}]]
-                                 [:property/pretty-name
-                                  :property/image
-                                  :item/slot
-                                  :item/modifier])}
-
-   ; TODO schema missing here .... world/princess key not at defattribute ... require schema ...
-   :property.type/world {:of-type? :world/princess
-                         :edn-file-sort-order 5
-                         :title "World"
-                         :overview {:title "Worlds"
-                                    :columns 10
-                                    :image/dimensions [96 96]}}
-
-   :property.type/misc {:of-type? (fn [{:keys [entity/hp
-                                               creature/species
-                                               item/slot
-                                               skill/effect
-                                               world/princess]}]
-                                    (not (or hp species slot effect princess)))
-                        :edn-file-sort-order 6
-                        :title "Misc"
-                        :overview {:title "Misc"
-                                   :columns 10
-                                   :image/dimensions [96 96]}}
-   })
-
-(defn property-type [property]
+(defn property->type [property-types property]
   (some (fn [[type {:keys [of-type?]}]]
           (when (of-type? property)
             type))
@@ -128,10 +17,12 @@
 
 ;;
 
-(defmulti property->text (fn [_ctx property] (property-type property)))
+(defmulti property->text (fn [{:keys [context/properties]} property]
+                           (property->type (:property-types properties) property)))
 
+; TODO ?
 (defmethod property->text :default [_ctx properties]
-  (cons [:TODO (property-type properties)]
+  #_(cons [:TODO (property-type properties)]
         properties))
 
 (comment
@@ -222,7 +113,7 @@
   (get-property [{{:keys [db]} :context/properties} id]
     (safe-get db id))
 
-  (all-properties [{{:keys [db]} :context/properties} property-type]
+  (all-properties [{{:keys [db property-types]} :context/properties} property-type]
     (filter (:of-type? (get property-types property-type)) (vals db))))
 
 (require 'gdl.backends.libgdx.context.image-drawer-creator)
@@ -282,30 +173,34 @@
        (#(if (:entity/animation (:property/entity %))
            (update-in % [:property/entity :entity/animation] serialize-animation) %))))
 
-(defn- validate [property & {:keys [humanize?]}]
-  (if-let [schema (:schema (get property-types (property-type property)))]
-    (if (m/validate schema property)
-      property
-      (throw (Error. (let [explained (m/explain schema property)]
-                       (str (if humanize?
-                              (me/humanize explained)
-                              (binding [*print-level* nil]
-                                (with-out-str
-                                 (clojure.pprint/pprint
-                                  explained)))))))))
-    property))
+(defn- validate [property-types property & {:keys [humanize?]}]
+  (let [ptype (property->type property-types property)]
+    (if-let [schema (:schema (get property-types ptype))]
+      (if (try (m/validate schema property)
+               (catch Throwable t
+                 (throw (ex-info "m/validate fail" {:property property :ptype ptype} t))))
+        property
+        (throw (Error. (let [explained (m/explain schema property)]
+                         (str (if humanize?
+                                (me/humanize explained)
+                                (binding [*print-level* nil]
+                                  (with-out-str
+                                   (clojure.pprint/pprint
+                                    explained)))))))))
+      property)))
 
-(defn- load-edn [context file]
+(defn- load-edn [context property-types file]
   (let [properties (-> file slurp edn/read-string)] ; TODO use .internal Gdx/files  => part of context protocol
     (assert (apply distinct? (map :property/id properties)))
     (->> properties
-         (map validate)
+         (map #(validate property-types %))
          (map #(deserialize context %))
          (#(zipmap (map :property/id %) %)))))
 
-(defn ->context [context file]
-  {:db (load-edn context file)
-   :file file})
+(defn ->context [context {:keys [file property-types]}]
+  (let [properties {:file file
+                    :property-types property-types}]
+    (assoc properties :db (load-edn context property-types file))))
 
 (defn- pprint-spit [file data]
   (binding [*print-level* nil]
@@ -314,20 +209,23 @@
          with-out-str
          (spit file))))
 
-(defn- sort-by-type [properties]
-  (sort-by #(-> % property-type property-types :edn-file-sort-order)
-           properties))
+(defn- sort-by-type [property-types properties-values]
+  (sort-by #(->> %
+                 (property->type property-types)
+                 property-types
+                 :edn-file-sort-order)
+           properties-values))
 
 (def ^:private write-to-file? true)
 
-(defn- write-properties-to-file! [{:keys [db file]}]
+(defn- write-properties-to-file! [{:keys [db file property-types]}]
   (when write-to-file?
     (.start
      (Thread.
       (fn []
         (->> db
              vals
-             sort-by-type
+             (sort-by-type property-types)
              (map serialize)
              (map #(into (sorted-map) %))
              (pprint-spit file)))))))
@@ -348,11 +246,11 @@
    nil)
  )
 
-(defn update! [{:keys [db] :as properties}
+(defn update! [{:keys [db property-types] :as properties}
                {:keys [property/id] :as property}]
   {:pre [(contains? property :property/id) ; <=  part of validate - but misc does not have property/id -> add !
          (contains? db id)]}
-  (validate property :humanize? true)
+  (validate property-types property :humanize? true)
   ;(binding [*print-level* nil] (clojure.pprint/pprint property))
   (let [properties (update properties :db assoc id property)]
     (write-properties-to-file! properties)
