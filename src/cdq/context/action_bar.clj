@@ -1,4 +1,4 @@
-(ns cdq.context.ui.action-bar
+(ns cdq.context.action-bar
   (:require [core.component :as component]
             [gdl.context :as ctx :refer [->image-button key-just-pressed? ->button-group ->horizontal-group]]
             [gdl.scene2d.actor :as actor :refer [remove! add-tooltip!]]

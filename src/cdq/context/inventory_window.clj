@@ -1,4 +1,4 @@
-(ns cdq.context.ui.inventory-window
+(ns cdq.context.inventory-window
   (:require [core.component :as component]
             [data.grid2d :as grid]
             [gdl.app :refer [current-context]]

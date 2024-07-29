@@ -10,10 +10,10 @@
                          potential-fields
                          render-debug
                          [screens :as screens]
-                         transaction-handler)
-            (cdq.context.ui [action-bar :as action-bar]
-                            [inventory-window :as inventory-window]
-                            player-modal
+                         transaction-handler
+                         [action-bar :as action-bar]
+                         [inventory-window :as inventory-window])
+            (cdq.context.ui player-modal
                             error-modal)))
 
 (component/def :context/config {}
@@ -42,7 +42,7 @@
              [:context/properties {:file "resources/properties.edn"}]
              [:context/cursors true]
              [:context/inventory true]
-             [:cdq.context.ui.action-bar/data true]
+             [:cdq.context.action-bar/data true]
              [:context/config :dev]
              ; requires context/config (debug-windows)
              ; make asserts .... for all dependencies ... everywhere o.o
