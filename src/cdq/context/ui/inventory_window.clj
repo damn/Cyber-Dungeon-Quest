@@ -1,7 +1,8 @@
 (ns cdq.context.ui.inventory-window
-  (:require [data.grid2d :as grid]
+  (:require [core.component :as component]
+            [data.grid2d :as grid]
             [gdl.app :refer [current-context]]
-            [gdl.context :refer [spritesheet get-sprite get-stage ->table ->window ->texture-region-drawable ->color ->stack ->image-widget]]
+            [gdl.context :as ctx :refer [spritesheet get-sprite get-stage ->table ->window ->texture-region-drawable ->color ->stack ->image-widget]]
             [gdl.graphics :as g]
             [gdl.graphics.color :as color]
             [gdl.scene2d.actor :as actor :refer [set-id! add-listener! set-name! add-tooltip! remove-tooltip!]]
@@ -141,15 +142,16 @@
 (defn ->inventory-window [{{:keys [window] :as inventory} :context/inventory}]
   window)
 
-(defn ->context [{{:keys [gui-viewport-width gui-viewport-height]} :context/graphics
+(component/def :context/inventory {}
+  _
+  (ctx/create [_ {{:keys [gui-viewport-width gui-viewport-height]} :context/graphics
                   :as context}]
-  ; TODO use ::data ?
-  {:context/inventory (let [table (->table context {})]
-                        {:window (->window context {:title "Inventory"
-                                                    :id :inventory-window
-                                                    :visible? false
-                                                    :position [gui-viewport-width
-                                                               gui-viewport-height]
-                                                    :rows [[{:actor table :pad 2}]]})
-                         :slot->background (slot->background context)
-                         :table table})})
+    (let [table (->table context {})]
+      {:window (->window context {:title "Inventory"
+                                  :id :inventory-window
+                                  :visible? false
+                                  :position [gui-viewport-width
+                                             gui-viewport-height]
+                                  :rows [[{:actor table :pad 2}]]})
+       :slot->background (slot->background context)
+       :table table})))

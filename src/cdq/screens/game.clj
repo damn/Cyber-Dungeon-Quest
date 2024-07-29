@@ -43,7 +43,7 @@
   (when (key-pressed? context input.keys/minus)
     (adjust-zoom world-camera (- zoom-speed)))
 
-  (when (safe-get config :debug-windows?)
+  (when (safe-get config :debug-windows?) ; FIXME TODO
     (check-window-hotkeys context))
 
   (when (key-just-pressed? context input.keys/escape)

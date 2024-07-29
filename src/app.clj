@@ -1,6 +1,7 @@
 (ns app
-  (:require [gdl.backends.libgdx.app :as app]
-            [gdl.context :refer [generate-ttf]]
+  (:require [core.component :as component]
+            [gdl.context :as ctx]
+            [gdl.backends.libgdx.app :as app]
             (cdq.context [properties :as properties]
                          [cursor :as cursor]
                          builder
@@ -29,20 +30,9 @@
 
 (def ^:private config dev-config)
 
-(defn- create-context [default-context]
-  (let [context (merge default-context
-                       {:context/properties (properties/->context default-context
-                                                                  {:file "resources/properties.edn"})})
-        context (merge context
-                       (cursor/->context context)
-                       (inventory-window/->context context)
-                       (action-bar/->context context)
-                       {:context/config config})
-        context (assoc-in context
-                          [:context/graphics :default-font]
-                          (generate-ttf context {:file "exocet/films.EXL_____.ttf" :size 16}))]
-    (merge context
-           {:context/screens (screens/->context context)})))
+(component/def :context/config {}
+  tag
+  (ctx/create [_ _ctx] config))
 
 (def ^:private app-config
   {:app {:title "Cyber Dungeon Quest"
@@ -50,8 +40,18 @@
          :height 900
          :full-screen? false
          :fps 60}
-   :create-context create-context
-   :world-unit-scale (/ 48)})
+   :context [[:context/graphics {:tile-size 48
+                                 :default-font {:file "exocet/films.EXL_____.ttf" :size 16}}]
+             [:context/assets true]
+             [:context/ui true]
+             [:context/properties {:file "resources/properties.edn"}]
+             [:context/cursors true]
+             [:context/inventory true]
+             [:cdq.context.ui.action-bar/data true]
+             [:context/config config]
+             ; requires context/config (debug-windows)
+             ; make asserts .... for all dependencies ... everywhere o.o
+             [:context/screens true]]})
 
 (defn -main []
   (app/start app-config))

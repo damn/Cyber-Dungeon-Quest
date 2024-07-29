@@ -1,9 +1,10 @@
 (ns cdq.context.properties
   (:require [clojure.edn :as edn]
             [clojure.string :as str]
+            [core.component :as component]
             [malli.core :as m]
             [malli.error :as me]
-            [gdl.context :refer [get-sprite create-image]]
+            [gdl.context :as ctx :refer [get-sprite create-image]]
             cdq.properties
             [gdl.graphics.animation :as animation]
             [utils.core :refer [safe-get]]))
@@ -125,11 +126,13 @@
          (map #(deserialize context %))
          (#(zipmap (map :property/id %) %)))))
 
-(defn ->context [context {:keys [file]}]
-  (let [property-types cdq.properties/property-types
-        properties {:file file
-                    :property-types property-types}]
-    (assoc properties :db (load-edn context property-types file))))
+(component/def :context/properties {}
+  {:keys [file]}
+  (ctx/create [_ ctx]
+    (let [property-types cdq.properties/property-types
+          properties {:file file
+                      :property-types property-types}]
+      (assoc properties :db (load-edn ctx property-types file)))))
 
 (defn- pprint-spit [file data]
   (binding [*print-level* nil]

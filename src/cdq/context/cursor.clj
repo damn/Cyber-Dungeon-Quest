@@ -1,5 +1,6 @@
 (ns cdq.context.cursor
-  (:require [gdl.context :refer [->cursor]]
+  (:require [core.component :as component]
+            [gdl.context :as ctx]
             [utils.core :refer [safe-get mapvals]]
             cdq.api.context))
 
@@ -28,13 +29,14 @@
 
 ; TODO dispose all cursors , implement gdl.disposable
 ; => move to gdl ....
-
-(defn ->context [ctx]
-  (let [cursors (mapvals (fn [[file x y]]
-                           (->cursor ctx (str "cursors/" file ".png") x y))
-                         cursors)]
-    (gdl.context/set-cursor! ctx (:cursors/default cursors))
-    {:context/cursors cursors}))
+(component/def :context/cursors {}
+  _
+  (ctx/create [_ ctx]
+    (let [cursors (mapvals (fn [[file x y]]
+                             (ctx/->cursor ctx (str "cursors/" file ".png") x y))
+                           cursors)]
+      (ctx/set-cursor! ctx (:cursors/default cursors))
+      cursors)))
 
 (defmethod cdq.api.context/transact! :tx/cursor [[_ cursor-key] ctx]
   (cdq.api.context/set-cursor! ctx cursor-key)

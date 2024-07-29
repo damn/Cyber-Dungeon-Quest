@@ -1,15 +1,18 @@
 (ns cdq.context.ui.action-bar
-  (:require [gdl.context :refer [->image-button key-just-pressed? ->button-group ->horizontal-group]]
+  (:require [core.component :as component]
+            [gdl.context :as ctx :refer [->image-button key-just-pressed? ->button-group ->horizontal-group]]
             [gdl.scene2d.actor :as actor :refer [remove! add-tooltip!]]
             [gdl.scene2d.group :refer [clear-children! add-actor!]]
             [gdl.scene2d.ui.button-group :refer [clear! add! checked] :as button-group]
             [cdq.api.context :refer [player-tooltip-text]]))
 
-(defn ->context [ctx]
-  {::data {:horizontal-group (->horizontal-group ctx {:pad 2
-                                                      :space 2})
-           :button-group (->button-group ctx {:max-check-count 1
-                                              :min-check-count 0})}})
+(component/def ::data {}
+  _
+  (ctx/create [_ ctx]
+    {:horizontal-group (->horizontal-group ctx {:pad 2
+                                                :space 2})
+     :button-group (->button-group ctx {:max-check-count 1
+                                        :min-check-count 0})}))
 
 (comment
  (let [stage (gdl.context/get-stage @gdl.app/current-context)]

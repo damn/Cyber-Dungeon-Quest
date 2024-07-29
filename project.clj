@@ -2,8 +2,7 @@
   :repositories [["jitpack" "https://jitpack.io"]]
   :dependencies [[org.clojure/clojure "1.11.1"]
                  [com.github.damn/grid2d "1.0"]
-                 [com.github.damn/gdl "21984c4"]
-                 [com.github.damn/core.component "600ea8e"]
+                 [com.github.damn/gdl "e2e5487"]
                  [reduce-fsm "0.1.4"]
                  [metosin/malli "0.13.0"]
                  [lein-hiera "2.0.0"]
@@ -28,7 +27,7 @@
   ; this from engine, what purpose?
   ;:javac-options ["-target" "1.7" "-source" "1.7" "-Xlint:-options"]
 
-  :global-vars {*warn-on-reflection* true
+  :global-vars {*warn-on-reflection* false
                 *print-level* 3
                 ;*assert* false
                 ;*unchecked-math* :warn-on-boxed
