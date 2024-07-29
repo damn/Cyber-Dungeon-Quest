@@ -14,8 +14,7 @@
             (cdq.context.ui [action-bar :as action-bar]
                             [inventory-window :as inventory-window]
                             player-modal
-                            error-modal)
-            [cdq.api.context :refer [set-cursor!]]))
+                            error-modal)))
 
 (def ^:private production-config
   {:map-editor? false
@@ -44,7 +43,6 @@
         context (assoc-in context
                           [:context/graphics :default-font]
                           (generate-ttf context {:file "exocet/films.EXL_____.ttf" :size 16}))]
-    (set-cursor! context :cursors/default)
     (merge context
            {:context/screens (screens/->context context)})))
 

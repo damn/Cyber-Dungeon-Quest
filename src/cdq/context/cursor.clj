@@ -30,9 +30,11 @@
 ; => move to gdl ....
 
 (defn ->context [ctx]
-  {:context/cursors (mapvals (fn [[file x y]]
-                               (->cursor ctx (str "cursors/" file ".png") x y))
-                             cursors)})
+  (let [cursors (mapvals (fn [[file x y]]
+                           (->cursor ctx (str "cursors/" file ".png") x y))
+                         cursors)]
+    (gdl.context/set-cursor! ctx (:cursors/default cursors))
+    {:context/cursors cursors}))
 
 (defmethod cdq.api.context/transact! :tx/cursor [[_ cursor-key] ctx]
   (cdq.api.context/set-cursor! ctx cursor-key)
