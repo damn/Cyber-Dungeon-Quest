@@ -1,5 +1,5 @@
 (ns app
-  (:require [gdl.backends.libgdx.app :as app]
+  (:require [gdl.libgdx.app :as app]
             (cdq.context properties
                          cursor
                          builder
@@ -21,10 +21,11 @@
          :height 900
          :full-screen? false
          :fps 60}
-   :context [[:context/graphics {:tile-size 48
-                                 :default-font {:file "exocet/films.EXL_____.ttf" :size 16}}]
-             [:context/assets true]
-             [:context/ui true]
+   ; TODO schema needs graphics context minimum ...
+   :context [[:gdl.libgdx.context/graphics {:tile-size 48
+                                            :default-font {:file "exocet/films.EXL_____.ttf" :size 16}}]
+             [:gdl.libgdx.context/assets true]
+             [:gdl.libgdx.context/ui true]
              [:context/properties {:file "resources/properties.edn"}]
              [:context/cursors true]
              [:context/inventory true]

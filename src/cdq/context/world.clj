@@ -1,5 +1,5 @@
 (ns cdq.context.world
-  (:require gdl.context
+  (:require [gdl.context :as ctx]
             [gdl.disposable :refer [dispose]]
             [gdl.graphics :as g]
             [gdl.graphics.camera :as camera]
@@ -21,18 +21,18 @@
             [cdq.api.entity :as entity]
             [mapgen.movement-property :refer (movement-property)]))
 
-(defn- on-screen? [entity* {{:keys [world-camera world-viewport-width world-viewport-height]} :context/graphics}]
+(defn- on-screen? [entity* ctx]
   (let [[x y] (:entity/position entity*)
         x (float x)
         y (float y)
-        [cx cy] (camera/position world-camera)
+        [cx cy] (camera/position (ctx/world-camera ctx))
         px (float cx)
         py (float cy)
         xdist (Math/abs (- x px))
         ydist (Math/abs (- y py))]
     (and
-     (<= xdist (inc (/ (float world-viewport-width)  2)))
-     (<= ydist (inc (/ (float world-viewport-height) 2))))))
+     (<= xdist (inc (/ (float (ctx/world-viewport-width ctx))  2)))
+     (<= ydist (inc (/ (float (ctx/world-viewport-height ctx)) 2))))))
 
 ; TO gdl.math.... // not tested
 (defn- create-double-ray-endpositions
@@ -55,8 +55,8 @@
 
 (extend-type gdl.context.Context
   cdq.api.context/World
-  (render-map [{{:keys [world-camera]} :context/graphics :as ctx}]
-    (cdq.world.render/render-map ctx (camera/position world-camera)))
+  (render-map [ctx]
+    (cdq.world.render/render-map ctx (camera/position (ctx/world-camera ctx))))
 
   (line-of-sight? [context source* target*]
     (and (:entity/z-order target*)  ; is even an entity which renders something

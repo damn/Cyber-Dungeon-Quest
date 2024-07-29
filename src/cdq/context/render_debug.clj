@@ -1,5 +1,5 @@
 (ns cdq.context.render-debug
-  (:require gdl.context
+  (:require [gdl.context :as ctx]
             [gdl.graphics :as g]
             [gdl.graphics.color :as color]
             [gdl.graphics.camera :as camera]
@@ -11,7 +11,7 @@
 ; TODO make check-buttons with debug-window or MENU top screen is good for debug I think
 
 (defn- geom-test [g ctx]
-  (let [position (g/world-mouse-position g)
+  (let [position (ctx/world-mouse-position g)
         grid (world-grid ctx)
         radius 0.8
         circle {:position position :radius radius}]
@@ -71,7 +71,7 @@
 
 (comment
  (let [ctx @gdl.app/current-context
-       [x y] (->tile (g/world-mouse-position (:context/graphics ctx)))
+       [x y] (->tile (ctx/world-mouse-position ctx))
        cell* @((world-grid ctx) [x y])]
    (clojure.pprint/pprint
     cell*)
@@ -83,7 +83,7 @@
 
 (defn- highlight-mouseover-tile [g ctx]
   (when highlight-blocked-cell?
-    (let [[x y] (->tile (g/world-mouse-position g))
+    (let [[x y] (->tile (ctx/world-mouse-position ctx))
           cell (get (world-grid ctx) [x y])]
       (when (and cell (#{:air :none} (:movement @cell)))
         (g/draw-rectangle g x y 1 1

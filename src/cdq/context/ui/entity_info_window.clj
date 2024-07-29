@@ -1,5 +1,5 @@
 (ns cdq.context.ui.entity-info-window
-  (:require [gdl.context :refer [->actor ->window ->label]]
+  (:require [gdl.context :as ctx :refer [->actor ->window ->label]]
             [gdl.scene2d.ui.label :refer [set-text!]]
             [gdl.scene2d.group :refer [add-actor!]]
             [gdl.scene2d.ui.widget-group :refer [pack!]]
@@ -35,13 +35,12 @@
 
                     ])))))
 
-(defn create [{{:keys [gui-viewport-width]} :context/graphics
-               :as context}]
+(defn create [context]
   (let [label (->label context "")
         window (->window context {:title "Info"
                                   :id :entity-info-window
                                   :visible? false
-                                  :position [gui-viewport-width 0]
+                                  :position [(ctx/gui-viewport-width context) 0]
                                   :rows [[{:actor label :expand? true}]]})]
     ; TODO do not change window size ... -> no need to invalidate layout, set the whole stage up again
     ; => fix size somehow.

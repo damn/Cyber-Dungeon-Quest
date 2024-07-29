@@ -1,17 +1,16 @@
 (ns cdq.context.ui.player-message
-  (:require [gdl.context :refer [->actor delta-time]]
+  (:require [gdl.context :as ctx :refer [->actor delta-time]]
             [gdl.graphics :as g]
             cdq.api.context))
 
 (def ^:private duration-seconds 1.5)
 
 (defn- draw-player-message
-  [{:keys [context/player-message]
-    {:keys [gui-viewport-width gui-viewport-height] :as g} :context/graphics}]
+  [{:keys [context/player-message] g :gdl.libgdx.context/graphics :as ctx}]
   (when-let [{:keys [message]} @player-message]
     (g/draw-text g
-                 {:x (/ gui-viewport-width  2)
-                  :y (+ (/ gui-viewport-height 2) 200)
+                 {:x (/ (ctx/gui-viewport-width ctx) 2)
+                  :y (+ (/ (ctx/gui-viewport-height ctx) 2) 200)
                   :text message
                   :scale 2.5
                   :up? true})))

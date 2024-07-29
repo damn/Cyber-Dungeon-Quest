@@ -30,7 +30,7 @@
 (defn- debug-print-tx [tx]
   (pr-str (mapv #(cond
                   (instance? clojure.lang.Atom %) (str "<entity-atom{uid=" (:entity/uid @%) "}>")
-                  (instance? gdl.backends.libgdx.context.image_drawer_creator.Image %) "<Image>"
+                  (instance? gdl.libgdx.context.image_drawer_creator.Image %) "<Image>"
                   (instance? gdl.graphics.animation.ImmutableAnimation %) "<Animation>"
                   (instance? gdl.context.Context %) "<Context>"
                   :else %)

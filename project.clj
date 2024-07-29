@@ -33,7 +33,7 @@
                 ;*unchecked-math* :warn-on-boxed
                 }
 
-  :aliases {"dev" ["run" "-m" "gdl.backends.libgdx.dev" "app" "-main"]})
+  :aliases {"dev" ["run" "-m" "gdl.libgdx.dev" "app" "-main"]})
 
 ; * Notes
 

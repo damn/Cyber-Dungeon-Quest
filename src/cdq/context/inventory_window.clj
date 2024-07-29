@@ -41,13 +41,13 @@
 (defn- draw-rect-actor ^Widget []
   (proxy [Widget] []
     (draw [_batch _parent-alpha]
-      (let [{:keys [context/player-entity] g :context/graphics} @current-context
+      (let [{:keys [context/player-entity] g :gdl.libgdx.context/graphics :as ctx} @current-context
             ^Widget this this]
         (draw-cell-rect g
                         player-entity
                         (.getX this)
                         (.getY this)
-                        (mouseover? this (g/gui-mouse-position g))
+                        (mouseover? this (ctx/gui-mouse-position ctx))
                         (actor/id (actor/parent this)))))))
 
 (defn- clicked-cell [{:keys [context/player-entity] :as ctx} cell]
@@ -144,14 +144,13 @@
 
 (component/def :context/inventory {}
   _
-  (ctx/create [_ {{:keys [gui-viewport-width gui-viewport-height]} :context/graphics
-                  :as context}]
+  (ctx/create [_ context]
     (let [table (->table context {})]
       {:window (->window context {:title "Inventory"
                                   :id :inventory-window
                                   :visible? false
-                                  :position [gui-viewport-width
-                                             gui-viewport-height]
+                                  :position [(ctx/gui-viewport-width context)
+                                             (ctx/gui-viewport-height context)]
                                   :rows [[{:actor table :pad 2}]]})
        :slot->background (slot->background context)
        :table table})))

@@ -1,7 +1,7 @@
 (ns dev
   (:require [clojure.pprint :refer :all]
             [clojure.string :as str]
-            [gdl.context :refer :all]
+            [gdl.context :as ctx :refer :all]
             [gdl.scene2d.actor :as actor]
             ))
 
@@ -54,13 +54,13 @@
     (add-map-nodes! ctx tree prop 0)
     tree))
 
-(defn- ->scroll-pane-cell [{{:keys [gui-viewport-height]} :context/graphics :as ctx} rows]
+(defn- ->scroll-pane-cell [ctx rows]
   (let [table (->table ctx {:rows rows
                             :cell-defaults {:pad 1}
                             :pack? true})
         scroll-pane (->scroll-pane ctx table)]
     {:actor scroll-pane
-     :height (min (- gui-viewport-height 50) (actor/height table))}))
+     :height (min (- (ctx/gui-viewport-height ctx) 50) (actor/height table))}))
 
 (comment
  (let [ctx @gdl.app/current-context
@@ -88,7 +88,7 @@
     avar))
 
 (comment
- (gdl.backends.libgdx.dev/restart!)
+ (gdl.libgdx.dev/restart!)
 
  (spit "app-values-tree.clj"
        (with-out-str
@@ -115,12 +115,12 @@
  ; maybe only add elements on click -> somehow glyphlayout breaks AFTER this returns successfully
  (let [ctx @gdl.app/current-context
 
-       position (gdl.graphics/world-mouse-position (:context/graphics ctx))
+       position (ctx/world-mouse-position ctx)
        cell (get (cdq.api.context/world-grid ctx) (mapv int position))
 
        ;tree-map @cell
-       tree-map @@(:context/mouseover-entity ctx)
-       ;tree-map ctx
+       ;tree-map @@(:context/mouseover-entity ctx)
+       tree-map ctx
 
        ]
    (add-to-stage! ctx (->window ctx {:title "Context Overview"

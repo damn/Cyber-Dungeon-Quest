@@ -45,7 +45,7 @@
   (all-properties [{{:keys [db property-types]} :context/properties} property-type]
     (filter (:of-type? (get property-types property-type)) (vals db))))
 
-(require 'gdl.backends.libgdx.context.image-drawer-creator)
+(require 'gdl.libgdx.context.image-drawer-creator)
 
 (defn- deserialize-image [context {:keys [file sub-image-bounds]}]
   {:pre [file]}
@@ -53,7 +53,7 @@
     (let [[sprite-x sprite-y] (take 2 sub-image-bounds)
           [tilew tileh]       (drop 2 sub-image-bounds)]
       ; TODO get-sprite does not return Image record => do @ image itself.
-      (gdl.backends.libgdx.context.image-drawer-creator/map->Image
+      (gdl.libgdx.context.image-drawer-creator/map->Image
        (get-sprite context
                    {:file file
                     :tilew tileh

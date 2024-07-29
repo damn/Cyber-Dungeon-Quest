@@ -1,5 +1,5 @@
 (ns cdq.state.player-item-on-cursor
-  (:require [gdl.context :refer [mouse-on-stage-actor? button-just-pressed?]]
+  (:require [gdl.context :as ctx :refer [mouse-on-stage-actor? button-just-pressed?]]
             [gdl.graphics :as g]
             [gdl.input.buttons :as buttons]
             [gdl.math.vector :as v]
@@ -50,9 +50,9 @@
                   (min maxrange
                        (v/distance player target)))))
 
-(defn- item-place-position [{g :context/graphics} entity*]
+(defn- item-place-position [ctx entity*]
   (placement-point (:entity/position entity*)
-                   (g/world-mouse-position g)
+                   (ctx/world-mouse-position ctx)
                    ; so you cannot put it out of your own reach
                    (- (:entity/click-distance-tiles entity*) 0.1)))
 
@@ -95,9 +95,9 @@
   (render-above [_ entity* g ctx])
   (render-info  [_ entity* g ctx]))
 
-(defn draw-item-on-cursor [{:keys [context/player-entity] g :context/graphics :as context}]
+(defn draw-item-on-cursor [{:keys [context/player-entity] g :gdl.libgdx.context/graphics :as context}]
   (when (and (= :item-on-cursor (entity/state @player-entity))
              (not (world-item? context)))
     (g/draw-centered-image g
                            (:property/image (:entity/item-on-cursor @player-entity))
-                           (g/gui-mouse-position g))))
+                           (ctx/gui-mouse-position context))))

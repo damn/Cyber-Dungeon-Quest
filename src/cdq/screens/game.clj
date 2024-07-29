@@ -1,6 +1,6 @@
 (ns cdq.screens.game
   (:require [gdl.app :refer [change-screen!]]
-            [gdl.context :refer [delta-time key-just-pressed? key-pressed?]]
+            [gdl.context :as ctx :refer [delta-time key-just-pressed? key-pressed?]]
             [gdl.graphics :as g]
             [gdl.graphics.camera :as camera]
             [gdl.screen :refer [Screen]]
@@ -14,7 +14,7 @@
             [cdq.api.state :as state]
             [cdq.api.world.content-grid :refer [active-entities]]))
 
-; for now a function, see gdl.backends.libgdx.context.input reload bug
+; for now a function, see gdl.libgdx.context.input reload bug
 ; otherwise keys in dev mode may be unbound because dependency order not reflected
 ; because bind-roots
 (defn- hotkey->window []
@@ -34,14 +34,12 @@
 
 (def ^:private zoom-speed 0.05)
 
-(defn- end-of-frame-checks! [{:keys [context/config]
-                              {:keys [world-camera]} :context/graphics
-                              :as context}]
+(defn- end-of-frame-checks! [{:keys [context/config] :as context}]
   (when (key-pressed? context input.keys/shift-left)
-    (adjust-zoom world-camera  zoom-speed))
+    (adjust-zoom (ctx/world-camera context) zoom-speed))
 
   (when (key-pressed? context input.keys/minus)
-    (adjust-zoom world-camera (- zoom-speed)))
+    (adjust-zoom (ctx/world-camera context) (- zoom-speed)))
 
   (when (safe-get config :debug-windows?) ; FIXME TODO
     (check-window-hotkeys context))
@@ -54,11 +52,10 @@
   (when (key-just-pressed? context input.keys/tab)
     (change-screen! :screens/minimap)))
 
-(defn- render-game [{:keys [context/player-entity]
-                     {:keys [world-camera] :as g} :context/graphics
-                     :as context}
+(defn- render-game [{:keys [context/player-entity] g :gdl.libgdx.context/graphics :as context}
                     active-entities*]
-  (camera/set-position! world-camera (:entity/position @player-entity))
+  (camera/set-position! (ctx/world-camera context)
+                        (:entity/position @player-entity))
   (render-map context)
   (g/render-world-view g
                        (fn [g]

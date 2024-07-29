@@ -4,7 +4,7 @@
             [malli.core :as m]
             core.component
             [gdl.app :as app :refer [change-screen!]]
-            [gdl.context :refer [get-stage ->text-button ->image-button ->label ->text-field ->image-widget ->table ->stack ->window all-sound-files play-sound! ->vertical-group ->check-box ->select-box ->actor key-just-pressed? add-to-stage! ->scroll-pane]]
+            [gdl.context :as ctx :refer [get-stage ->text-button ->image-button ->label ->text-field ->image-widget ->table ->stack ->window all-sound-files play-sound! ->vertical-group ->check-box ->select-box ->actor key-just-pressed? add-to-stage! ->scroll-pane]]
             [gdl.input.keys :as input.keys]
             [gdl.scene2d.actor :as actor :refer [remove! set-touchable! parent add-listener! add-tooltip! find-ancestor-window pack-ancestor-window!]]
             [gdl.scene2d.group :refer [add-actor! clear-children! children]]
@@ -15,15 +15,14 @@
             [cdq.context.properties :as properties]
             [cdq.api.context :refer [get-property all-properties tooltip-text ->error-window]]))
 
-(defn- ->scroll-pane-cell [{{:keys [gui-viewport-height]} :context/graphics :as ctx}
-                           rows]
+(defn- ->scroll-pane-cell [ctx rows]
   (let [table (->table ctx {:rows rows
                             :cell-defaults {:pad 1}
                             :pack? true})
         scroll-pane (->scroll-pane ctx table)]
     {:actor scroll-pane
      :width (+ (actor/width table) 200)
-     :height (min (- gui-viewport-height 50) (actor/height table))}))
+     :height (min (- (ctx/gui-viewport-height ctx) 50) (actor/height table))}))
 
 (defn ->scrollable-choose-window [ctx rows]
   (->window ctx {:title "Choose"

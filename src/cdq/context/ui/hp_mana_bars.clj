@@ -1,5 +1,5 @@
 (ns cdq.context.ui.hp-mana-bars
-  (:require [gdl.context :refer [create-image get-sub-image ->actor]]
+  (:require [gdl.context :as ctx :refer [create-image get-sub-image ->actor]]
             [gdl.graphics :as g]
             [utils.core :refer [readable-number]]
             [data.val-max :refer [val-max-ratio]]))
@@ -17,15 +17,15 @@
         rahmenh (second (:pixel-dimensions rahmen))
         hpcontent   (create-image context "ui/hp.png")
         manacontent (create-image context "ui/mana.png")
-        render-hpmana-bar (fn [{g :context/graphics :as ctx} x y contentimg minmaxval name]
+        render-hpmana-bar (fn [{g :gdl.libgdx.context/graphics :as ctx} x y contentimg minmaxval name]
                             (g/draw-image g rahmen [x y])
                             (g/draw-image g
                                           (get-sub-image ctx (assoc contentimg :sub-image-bounds [0 0 (* rahmenw (val-max-ratio minmaxval)) rahmenh]))
                                           [x y])
                             (render-infostr-on-bar g (str (readable-number (minmaxval 0)) "/" (minmaxval 1) " " name) y rahmenh))]
     (->actor context
-             {:draw (fn [{{:keys [gui-viewport-width]} :context/graphics :keys [context/player-entity] :as ctx}]
-                      (let [x (- (/ gui-viewport-width 2)
+             {:draw (fn [{:keys [context/player-entity] :as ctx}]
+                      (let [x (- (/ (ctx/gui-viewport-width ctx) 2)
                                  (/ rahmenw 2))
                             y-hp 5
                             y-mana (+ y-hp rahmenh)]
