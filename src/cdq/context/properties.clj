@@ -4,6 +4,7 @@
             [malli.core :as m]
             [malli.error :as me]
             [gdl.context :refer [get-sprite create-image]]
+            cdq.properties
             [gdl.graphics.animation :as animation]
             [utils.core :refer [safe-get]]))
 
@@ -124,8 +125,9 @@
          (map #(deserialize context %))
          (#(zipmap (map :property/id %) %)))))
 
-(defn ->context [context {:keys [file property-types]}]
-  (let [properties {:file file
+(defn ->context [context {:keys [file]}]
+  (let [property-types cdq.properties/property-types
+        properties {:file file
                     :property-types property-types}]
     (assoc properties :db (load-edn context property-types file))))
 

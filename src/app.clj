@@ -1,7 +1,6 @@
 (ns app
   (:require [gdl.backends.libgdx.app :as app]
             [gdl.context :refer [generate-ttf]]
-            cdq.properties
             (cdq.context [properties :as properties]
                          [cursor :as cursor]
                          builder
@@ -33,8 +32,7 @@
 (defn- create-context [default-context]
   (let [context (merge default-context
                        {:context/properties (properties/->context default-context
-                                                                  {:file "resources/properties.edn"
-                                                                   :property-types cdq.properties/property-types})})
+                                                                  {:file "resources/properties.edn"})})
         context (merge context
                        (cursor/->context context)
                        (inventory-window/->context context)
