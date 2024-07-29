@@ -16,23 +16,18 @@
                             player-modal
                             error-modal)))
 
-(def ^:private production-config
-  {:map-editor? false
-   :property-editor? false
-   :debug-windows? false
-   :debug-options? false})
-
-(def ^:private dev-config
-  {:map-editor? true
-   :property-editor? true
-   :debug-windows? true
-   :debug-options? true})
-
-(def ^:private config dev-config)
-
 (component/def :context/config {}
   tag
-  (ctx/create [_ _ctx] config))
+  (ctx/create [_ _ctx]
+    (case tag
+      :prod {:map-editor? false
+             :property-editor? false
+             :debug-windows? false
+             :debug-options? false}
+      :dev {:map-editor? true
+            :property-editor? true
+            :debug-windows? true
+            :debug-options? true})))
 
 (def ^:private app-config
   {:app {:title "Cyber Dungeon Quest"
@@ -48,7 +43,7 @@
              [:context/cursors true]
              [:context/inventory true]
              [:cdq.context.ui.action-bar/data true]
-             [:context/config config]
+             [:context/config :dev]
              ; requires context/config (debug-windows)
              ; make asserts .... for all dependencies ... everywhere o.o
              [:context/screens true]]})
