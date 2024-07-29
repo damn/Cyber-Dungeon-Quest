@@ -1,4 +1,4 @@
-(ns screens.map-editor
+(ns cdq.screens.map-editor
   (:require [clojure.string :as str]
             [gdl.app :refer [change-screen!]]
             [gdl.context :refer [key-pressed? key-just-pressed? ->label ->window ->actor ->tiled-map ->text-button current-screen]]
@@ -17,7 +17,7 @@
             [utils.core :refer [->tile]]
             [mapgen.movement-property :refer (movement-property movement-properties)]
             [mapgen.module-gen :as module-gen]
-            screens.property-editor))
+            cdq.screens.property-editor))
 
 ; TODO map-coords are clamped ? thats why showing 0 under and left of the map?
 ; make more explicit clamped-map-coords ?
@@ -179,7 +179,7 @@ direction keys: move")
 (defn ->generate-map-window [ctx level-id]
   (->window ctx {:title "Properties"
                  :cell-defaults {:pad 10}
-                 :rows [[(->text-button ctx "Edit" #(screens.property-editor/open-property-editor-window! % level-id))]
+                 :rows [[(->text-button ctx "Edit" #(cdq.screens.property-editor/open-property-editor-window! % level-id))]
                         [(->text-button ctx "Generate" #(try (generate % (get-property % level-id))
                                                              (catch Throwable t
                                                                (->error-window % t)

@@ -1,4 +1,4 @@
-(ns screens.property-editor
+(ns cdq.screens.property-editor
   (:require [clojure.edn :as edn]
             [clojure.string :as str]
             [malli.core :as m]

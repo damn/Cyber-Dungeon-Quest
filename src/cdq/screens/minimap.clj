@@ -1,4 +1,4 @@
-(ns screens.minimap
+(ns cdq.screens.minimap
   (:require [gdl.app :refer [current-context change-screen!]]
             [gdl.context :refer [key-just-pressed?]]
             [gdl.graphics :as g]
