@@ -58,14 +58,28 @@
    {:sources #{"src"}
     :output "target/hiera"
     :layout :horizontal
-    :cluster-depth 3
+    ;:cluster-depth 3
     :external false
-    :ignore #{"data"
-              "utils"
-              "mapgen"
-              "cdq.api"
-              "cdq.modifier"
+    :ignore #{"app"
+              "cdq.context.screens"
+              "cdq.screens.map-editor"
+              "cdq.screens.property-editor"
+              "cdq.context.properties"
+              "cdq.properties"
+              "cdq.screens.main-menu"
+              "cdq.screens.options-menu"
+              "cdq.tx.all"
+              "cdq.entity.all"
+              "cdq.screens.game"
               "cdq.context.world"
+              "cdq.context.ui.actors"
+              "cdq.state.player"
+              "cdq.state.npc"
+              "cdq.tx.spawn"
+              "cdq.entity.movement"
+              "cdq.context.inventory-window"
+              "mapgen.module-gen"
+              "cdq.state.player-item-on-cursor"
               }}))
 
 
