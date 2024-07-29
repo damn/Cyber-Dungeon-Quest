@@ -116,12 +116,11 @@
  (let [ctx @gdl.app/current-context
 
        position (gdl.graphics/world-mouse-position (:context/graphics ctx))
-       cell (get (cdq.api.context/world-grid ctx)
-                 (mapv int position))
+       cell (get (cdq.api.context/world-grid ctx) (mapv int position))
 
-       tree-map @cell
-       ;tree-map @@(:context/mouseover-entity ctx)
-       tree-map ctx
+       ;tree-map @cell
+       tree-map @@(:context/mouseover-entity ctx)
+       ;tree-map ctx
 
        ]
    (add-to-stage! ctx (->window ctx {:title "Context Overview"

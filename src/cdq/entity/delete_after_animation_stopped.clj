@@ -1,9 +1,9 @@
 (ns cdq.entity.delete-after-animation-stopped
-  (:require [core.component :refer [defcomponent]]
+  (:require [core.component :as component]
             [gdl.graphics.animation :as animation]
             [cdq.api.entity :as entity]))
 
-(defcomponent :entity/delete-after-animation-stopped? {}
+(component/def :entity/delete-after-animation-stopped? {}
   _
   (entity/create [_ entity* _ctx]
     (-> entity* :entity/animation :looping? not assert))

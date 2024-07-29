@@ -1,5 +1,5 @@
 (ns cdq.entity.skills
-  (:require [core.component :refer [defcomponent]]
+  (:require [core.component :as component]
             [data.val-max :refer [apply-val]]
             [cdq.api.context :refer [get-property valid-params? ->counter stopped?]]
             [cdq.api.entity :as entity]
@@ -9,7 +9,7 @@
 ; https://trello.com/c/R6GSIDO1/363
 
 ; required by npc state, also mana!, also movement (no not needed, doesnt do anything then)
-(defcomponent :entity/skills (attr/one-to-many-ids :property.type/skill)
+(component/def :entity/skills (attr/one-to-many-ids :property.type/skill)
   skills
   (entity/create-component [_ _components ctx]
     (zipmap skills (map #(get-property ctx %) skills)))

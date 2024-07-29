@@ -1,5 +1,5 @@
 (ns cdq.entity.movement
-  (:require [core.component :refer [defcomponent]]
+  (:require [core.component :as component]
             [gdl.math.vector :as v]
             [cdq.api.entity :as entity]
             [cdq.api.context :refer [world-grid]]
@@ -41,7 +41,7 @@
         (try-move ctx entity* [0 ydir]))))
 
 ; optional, only assoc'ing movement-vector
-(defcomponent :entity/movement attr/pos-attr
+(component/def :entity/movement attr/pos-attr
   tiles-per-second
   (entity/create [_ entity* _ctx]
     (assert (and (:entity/body entity*)

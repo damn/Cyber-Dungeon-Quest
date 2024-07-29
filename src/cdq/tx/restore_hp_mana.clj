@@ -1,12 +1,12 @@
 (ns cdq.tx.restore-hp-mana
-  (:require [core.component :refer [defcomponent]]
+  (:require [core.component :as component]
             [data.val-max :refer [lower-than-max? set-to-max]]
             [cdq.api.context :refer [transact!]]
             [cdq.api.effect :as effect]))
 
 (defmacro def-set-to-max-effect [stat]
   `(let [component# ~(keyword "tx" (str (name (namespace stat)) "-" (name stat) "-set-to-max"))]
-    (defcomponent component# {:widget :label
+    (component/def component# {:widget :label
                               :schema [:= true]
                               :default-value true}
       ~'_

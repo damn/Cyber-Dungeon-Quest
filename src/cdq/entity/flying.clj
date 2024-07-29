@@ -1,5 +1,5 @@
 (ns cdq.entity.flying
-  (:require [core.component :refer [defattribute]]
+  (:require [core.component :as component]
             [cdq.attributes :as attr]))
 
-(defattribute :entity/flying? attr/boolean-attr) ; optional, mixed with z-order
+(component/def :entity/flying? attr/boolean-attr) ; optional, mixed with z-order

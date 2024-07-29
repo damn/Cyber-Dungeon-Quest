@@ -1,7 +1,7 @@
 (ns cdq.properties
   (:require [clojure.string :as str]
             [malli.core :as m]
-            [core.component :refer [defattribute]]
+            [core.component :as component]
             [utils.core :refer [readable-number]]
             [cdq.api.context :refer [modifier-text effect-text]]
             [cdq.attributes :as attr]
@@ -9,29 +9,29 @@
             cdq.entity.all
             cdq.modifier.all))
 
-(defattribute :property/image       attr/image)
-(defattribute :property/sound       attr/sound)
-(defattribute :property/pretty-name attr/string-attr)
+(component/def :property/image       attr/image)
+(component/def :property/sound       attr/sound)
+(component/def :property/pretty-name attr/string-attr)
 
-(defattribute :property/entity (attr/components-attribute :entity))
-(defattribute :skill/effect (attr/components-attribute :tx))
-(defattribute :hit-effect   (attr/components-attribute :tx))
-(defattribute :item/modifier (attr/components-attribute :modifier))
+(component/def :property/entity (attr/components-attribute :entity))
+(component/def :skill/effect (attr/components-attribute :tx))
+(component/def :hit-effect   (attr/components-attribute :tx))
+(component/def :item/modifier (attr/components-attribute :modifier))
 
-(defattribute :item/slot     {:widget :label :schema [:qualified-keyword {:namespace :inventory.slot}]}) ; TODO one of ... == 'enum' !!
+(component/def :item/slot     {:widget :label :schema [:qualified-keyword {:namespace :inventory.slot}]}) ; TODO one of ... == 'enum' !!
 
-(defattribute :creature/species {:widget :label      :schema [:qualified-keyword {:namespace :species}]}) ; TODO not used ... but one of?
-(defattribute :creature/level   {:widget :text-field :schema [:maybe pos-int?]}) ; pos-int-attr ? ; TODO creature lvl >0, <max-lvls (9 ?)
+(component/def :creature/species {:widget :label      :schema [:qualified-keyword {:namespace :species}]}) ; TODO not used ... but one of?
+(component/def :creature/level   {:widget :text-field :schema [:maybe pos-int?]}) ; pos-int-attr ? ; TODO creature lvl >0, <max-lvls (9 ?)
 
-(defattribute :skill/start-action-sound       attr/sound)
-(defattribute :skill/action-time-modifier-key (attr/enum :stats/cast-speed :stats/attack-speed))
-(defattribute :skill/action-time              attr/pos-attr)
-(defattribute :skill/cooldown                 attr/nat-int-attr)
-(defattribute :skill/cost                     attr/nat-int-attr)
+(component/def :skill/start-action-sound       attr/sound)
+(component/def :skill/action-time-modifier-key (attr/enum :stats/cast-speed :stats/attack-speed))
+(component/def :skill/action-time              attr/pos-attr)
+(component/def :skill/cooldown                 attr/nat-int-attr)
+(component/def :skill/cost                     attr/nat-int-attr)
 
-(defattribute :world/map-size       attr/pos-int-attr)
-(defattribute :world/max-area-level attr/pos-int-attr) ; TODO <= map-size !?
-(defattribute :world/spawn-rate     attr/pos-attr) ; TODO <1 !
+(component/def :world/map-size       attr/pos-int-attr)
+(component/def :world/max-area-level attr/pos-int-attr) ; TODO <= map-size !?
+(component/def :world/spawn-rate     attr/pos-attr) ; TODO <1 !
 
 ; TODO make misc is when no property-type matches ? :else case?
 

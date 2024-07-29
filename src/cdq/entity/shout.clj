@@ -1,5 +1,5 @@
 (ns cdq.entity.shout
-  (:require [core.component :refer [defcomponent]]
+  (:require [core.component :as component]
             [cdq.api.context :refer [world-grid line-of-sight? stopped?]]
             [cdq.api.entity :as entity]
             [cdq.api.world.grid :refer [circle->entities]]))
@@ -16,7 +16,7 @@
        (filter #(and (= (:entity/faction %) (:entity/faction entity*))
                      (line-of-sight? context entity* %)))))
 
-(defcomponent :entity/shout {}
+(component/def :entity/shout {}
   counter
   (entity/tick [_ {:keys [entity/id] :as entity*} context]
     (when (stopped? context counter)

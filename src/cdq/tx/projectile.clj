@@ -1,6 +1,6 @@
 (ns cdq.tx.projectile
   (:require [clojure.string :as str]
-            [core.component :refer [defcomponent]]
+            [core.component :as component]
             [gdl.math.vector :as v]
             [gdl.graphics.animation :as animation]
             [gdl.context :refer [get-sprite spritesheet]]
@@ -40,7 +40,7 @@
          (v/scale direction
                   (+ (:radius (:entity/body entity*)) size 0.1))))
 
-(defcomponent :tx/projectile {:widget :text-field
+(component/def :tx/projectile {:widget :text-field
                               :schema [:= true]
                               :default-value true}
   _

@@ -1,8 +1,8 @@
 (ns cdq.api.modifier
   (:refer-clojure :exclude [keys apply reverse])
-  (:require [core.component :refer [defsystem]]))
+  (:require [core.component :as component]))
 
-(defsystem text [_])
-(defsystem keys [_])
-(defsystem apply   [_ value])
-(defsystem reverse [_ value])
+(component/defn text [_])
+(component/defn keys [_])
+(component/defn apply   [_ value])
+(component/defn reverse [_ value])

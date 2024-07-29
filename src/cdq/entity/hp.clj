@@ -1,5 +1,5 @@
 (ns cdq.entity.hp
-  (:require [core.component :refer [defcomponent]]
+  (:require [core.component :as component]
             [gdl.graphics :as g]
             [gdl.graphics.color :as color]
             [data.val-max :refer [val-max-ratio]]
@@ -25,7 +25,7 @@
 (def ^:private borders-px 1)
 
 ; required for target-entity (remove)
-(defcomponent :entity/hp attr/pos-int-attr
+(component/def :entity/hp attr/pos-int-attr
   hp
   (entity/create-component [[_ max-hp] _components _ctx]
     [max-hp max-hp])

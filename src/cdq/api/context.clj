@@ -1,7 +1,7 @@
 (ns cdq.api.context
-  (:require [core.component :refer [defsystem]]))
+  (:require [core.component :as component]))
 
-(defsystem transact! [_ ctx])
+(component/defn transact! [_ ctx])
 
 (defprotocol TransactionHandler
   (transact-all! [_ txs])

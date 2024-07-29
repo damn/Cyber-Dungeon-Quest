@@ -1,6 +1,6 @@
 (ns cdq.entity.inventory
   (:require [data.grid2d :as grid]
-            [core.component :refer [defcomponent]]
+            [core.component :as component]
             gdl.context
             [utils.core :refer [find-first]]
             [cdq.api.context :refer [get-property]]
@@ -116,7 +116,7 @@
   (can-pickup-item? [entity* item]
     (boolean (pickup-item entity* item))))
 
-(defcomponent :entity/inventory (attr/one-to-many-ids :property.type/item) ; optional
+(component/def :entity/inventory (attr/one-to-many-ids :property.type/item) ; optional
   items
   (entity/create [_ {:keys [entity/id]} context]
     (cons [:tx/assoc id :entity/inventory empty-inventory]

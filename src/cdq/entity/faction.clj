@@ -1,9 +1,9 @@
 (ns cdq.entity.faction
-  (:require [core.component :refer [defattribute]]
+  (:require [core.component :as component]
             [cdq.api.entity :as entity]
             [cdq.attributes :as attr]))
 
-(defattribute :entity/faction (attr/enum :good :evil))
+(component/def :entity/faction (attr/enum :good :evil))
 
 (extend-type cdq.api.entity.Entity
   entity/Faction

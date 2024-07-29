@@ -1,5 +1,5 @@
 (ns cdq.entity.body
-  (:require [core.component :refer [defattribute defcomponent]]
+  (:require [core.component :as component]
             [gdl.graphics :as g]
             [gdl.graphics.color :as color]
             [cdq.api.entity :as entity]
@@ -30,12 +30,12 @@
 ;:default-value {:width 0.5 :height 0.5 :solid? true}
 
 ; TODO label == not editable
-(defattribute :width  {:widget :label :schema pos?}) ; TODO make px
-(defattribute :height {:widget :label :schema pos?}) ; TODO make px
-(defattribute :solid? {:widget :label :schema boolean?})
+(component/def :width  {:widget :label :schema pos?}) ; TODO make px
+(component/def :height {:widget :label :schema pos?}) ; TODO make px
+(component/def :solid? {:widget :label :schema boolean?})
 
 ; TODO body assert >+ min body size?
-(defcomponent :entity/body (attr/map-attribute :width :height :solid?)
+(component/def :entity/body (attr/map-attribute :width :height :solid?)
   body
   (entity/create-component [_ {:keys [entity/position]
                                [x y] :entity/position

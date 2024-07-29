@@ -1,9 +1,9 @@
 (ns cdq.entity.delete-after-duration
-  (:require [core.component :refer [defcomponent]]
+  (:require [core.component :as component]
             [cdq.api.context :refer [->counter stopped?]]
             [cdq.api.entity :as entity]))
 
-(defcomponent :entity/delete-after-duration {}
+(component/def :entity/delete-after-duration {}
   counter
   (entity/create-component [[_ duration] _components ctx]
     (->counter ctx duration))

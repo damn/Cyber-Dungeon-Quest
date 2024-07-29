@@ -1,11 +1,11 @@
 (ns cdq.entity.state
   (:require [reduce-fsm :as fsm]
-            [core.component :refer [defcomponent]]
+            [core.component :as component]
             [cdq.api.context :refer [transact-all!]]
             [cdq.api.entity :as entity]
             [cdq.api.state :as state]))
 
-(defcomponent :entity/state {}
+(component/def :entity/state {}
   {:keys [initial-state
           fsm
           state-obj

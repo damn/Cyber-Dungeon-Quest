@@ -1,5 +1,5 @@
 (ns cdq.entity.position
-  (:require [core.component :refer [defcomponent]]
+  (:require [core.component :as component]
             [gdl.math.vector :as v]
             [utils.core :refer [->tile]]
             [cdq.api.entity :as entity]))
@@ -12,7 +12,7 @@
   (direction [{:keys [entity/position]} other-entity*]
     (v/direction position (:entity/position other-entity*))))
 
-(defcomponent :entity/position {}
+(component/def :entity/position {}
   _
   (entity/create [_ {:keys [entity/id]} ctx]
     [[:tx/add-to-world id]])

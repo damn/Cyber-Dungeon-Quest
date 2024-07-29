@@ -1,11 +1,11 @@
 (ns cdq.entity.string-effect
-  (:require [core.component :refer [defcomponent]]
+  (:require [core.component :as component]
             [gdl.graphics :as g]
             [cdq.api.context :refer [->counter stopped? reset]]
             [cdq.context.ui.config :refer [hpbar-height-px]]
             [cdq.api.entity :as entity]))
 
-(defcomponent :entity/string-effect {}
+(component/def :entity/string-effect {}
   {:keys [text counter] :as this}
   (entity/tick [[k _] {:keys [entity/id]} context]
     (when (stopped? context counter)

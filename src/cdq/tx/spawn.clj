@@ -1,5 +1,5 @@
 (ns cdq.tx.spawn
-  (:require [core.component :refer [defcomponent]]
+  (:require [core.component :as component]
             [cdq.api.context :refer [transact!]]
             [cdq.api.effect :as effect]
             [cdq.state.npc :as npc-state]))
@@ -28,7 +28,7 @@
  )
 
 ; => one to one attr!?
-(defcomponent :tx/spawn {:widget :text-field
+(component/def :tx/spawn {:widget :text-field
                          :schema [:qualified-keyword {:namespace :creatures}]}
   creature-id
   (effect/text [_ _ctx]

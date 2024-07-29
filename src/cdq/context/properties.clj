@@ -26,7 +26,7 @@
               (remove nil?)
               (str/join "\n"))
          (catch Throwable t
-           (str t)))); TODO not implemented weapons. ( ?! )
+           (str t))))
 
   (player-tooltip-text [ctx property]
     (cdq.api.context/tooltip-text

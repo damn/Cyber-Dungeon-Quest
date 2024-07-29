@@ -1,5 +1,5 @@
 (ns cdq.tx.melee-damage
-  (:require [core.component :refer [defcomponent]]
+  (:require [core.component :as component]
             [cdq.api.effect :as effect]
             [cdq.api.context :refer [transact!]]))
 
@@ -8,7 +8,7 @@
                      0)]
     {:damage/min-max [strength strength]}))
 
-(defcomponent :tx/melee-damage {}
+(component/def :tx/melee-damage {}
   _
   (effect/text [_ {:keys [effect/source] :as ctx}]
     (if source

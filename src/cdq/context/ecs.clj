@@ -1,6 +1,6 @@
 (ns cdq.context.ecs
   (:require [clj-commons.pretty.repl :as p]
-            [core.component :refer [defcomponent update-map apply-system]]
+            [core.component :as component :refer [update-map apply-system]]
             gdl.context
             [gdl.graphics :as g]
             [utils.core :refer [define-order sort-by-order]]
@@ -48,7 +48,7 @@
   (swap! uids->entities dissoc uid)
   nil)
 
-(defcomponent :entity/uid {} uid
+(component/def :entity/uid {} uid
   (entity/create  [_ {:keys [entity/id]} _ctx] [[:tx/assoc-uids->entities   id]])
   (entity/destroy [_ _entity*            _ctx] [[:tx/dissoc-uids->entities uid]]))
 

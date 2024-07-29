@@ -3,6 +3,17 @@
             core.component
             [data.val-max :refer [val-max-schema]]))
 
+; this is 'value-types'
+; and each value-type can actually define modifiers&effects for it
+; e.g. mana/hp val-max-data -> create there automatically
+
+; TODO validate value-type-schema
+; => do @ specific component types, write extra macro
+; context/def or entity/def etc.
+;(assert (:schema attr-map) k) (not all this, ...)
+;(assert (:widget attr-map) k)
+; optional: :doc ! (maybe not optional make ...)
+
 (def sound        {:widget :sound      :schema :string})
 (def image        {:widget :image      :schema :some})
 (def animation    {:widget :animation  :schema :some})

@@ -1,9 +1,9 @@
 (ns cdq.entity.clickable
-  (:require [core.component :refer [defcomponent]]
+  (:require [core.component :as component]
             [gdl.graphics :as g]
             [cdq.api.entity :as entity]))
 
-(defcomponent :entity/clickable {}
+(component/def :entity/clickable {}
   {:keys [text]}
   (entity/render-default [_ {[x y] :entity/position :keys [entity/mouseover? entity/body]} g _ctx]
     (when (and mouseover? text)

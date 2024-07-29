@@ -1,5 +1,5 @@
 (ns cdq.context.builder
-  (:require [core.component :refer [defcomponent]]
+  (:require [core.component :as component]
             gdl.context
             [cdq.api.context :refer [transact! get-property]]
             [cdq.api.entity :as entity]))
@@ -14,7 +14,7 @@
                         (when (= creature-id :creatures/lady-a)
                           {:entity/clickable {:type :clickable/princess}}))]]))
 
-(defcomponent :entity/plop {} _
+(component/def :entity/plop {} _
   (entity/destroy [_ entity* ctx]
     [[:tx/audiovisual (:entity/position entity*) :projectile/hit-wall-effect]]))
 

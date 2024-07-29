@@ -1,5 +1,5 @@
 (ns cdq.tx.damage
-  (:require [core.component :refer [defattribute defcomponent]]
+  (:require [core.component :as component]
             [data.val-max :refer [apply-val apply-val-max-modifiers]]
             [utils.random :as random]
             [cdq.api.context :refer [transact!]]
@@ -97,9 +97,9 @@
 (defn- damage->text [{[min-dmg max-dmg] :damage/min-max}]
   (str min-dmg "-" max-dmg " damage"))
 
-(defattribute :damage/min-max attr/val-max-attr)
+(component/def :damage/min-max attr/val-max-attr)
 
-(defcomponent :tx/damage (attr/map-attribute :damage/min-max)
+(component/def :tx/damage (attr/map-attribute :damage/min-max)
   damage
   (effect/text [_ {:keys [effect/source]}]
     (if source

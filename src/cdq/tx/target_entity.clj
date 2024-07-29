@@ -1,5 +1,5 @@
 (ns cdq.tx.target-entity
-  (:require [core.component :refer [defattribute defcomponent]]
+  (:require [core.component :as component]
             [gdl.graphics :as g]
             [gdl.math.vector :as v]
             [cdq.api.context :refer [transact! effect-text line-of-sight? line-entity]]
@@ -25,9 +25,9 @@
          (v/scale (entity/direction entity* target*)
                   maxrange)))
 
-(defattribute :maxrange attr/pos-attr)
+(component/def :maxrange attr/pos-attr)
 
-(defcomponent :tx/target-entity {:widget :nested-map ; TODO circular depdenency components-attribute  - cannot use map-attribute..
+(component/def :tx/target-entity {:widget :nested-map ; TODO circular depdenency components-attribute  - cannot use map-attribute..
                                  :schema [:map {:closed true}
                                           [:hit-effect [:map]]
                                           [:maxrange pos?]]

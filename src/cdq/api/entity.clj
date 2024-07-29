@@ -1,16 +1,16 @@
 (ns cdq.api.entity
-  (:require [core.component :refer [defsystem]]))
+  (:require [core.component :as component]))
 
-(defsystem create-component [_ components ctx])
-(defsystem create           [_ entity* ctx])
-(defsystem destroy          [_ entity* ctx])
-(defsystem tick             [_ entity* ctx])
+(component/defn create-component [_ components ctx])
+(component/defn create           [_ entity* ctx])
+(component/defn destroy          [_ entity* ctx])
+(component/defn tick             [_ entity* ctx])
 
-(defsystem render-below   [_ entity* g ctx])
-(defsystem render-default [_ entity* g ctx])
-(defsystem render-above   [_ entity* g ctx])
-(defsystem render-info    [_ entity* g ctx])
-(defsystem render-debug   [_ entity* g ctx])
+(component/defn render-below   [_ entity* g ctx])
+(component/defn render-default [_ entity* g ctx])
+(component/defn render-above   [_ entity* g ctx])
+(component/defn render-info    [_ entity* g ctx])
+(component/defn render-debug   [_ entity* g ctx])
 
 (defrecord Entity [])
 

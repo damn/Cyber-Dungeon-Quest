@@ -1,14 +1,14 @@
 (ns cdq.api.effect
-  (:require [core.component :refer [defsystem]]))
+  (:require [core.component :as component]))
 
-(defsystem text          [_ ctx])
+(component/defn text          [_ ctx])
 (defmethod text :default [_ _])
 
-(defsystem valid-params? [_ ctx])
+(component/defn valid-params? [_ ctx])
 (defmethod valid-params? :default [_ _] true)
 
-(defsystem useful?       [_ ctx])
+(component/defn useful?       [_ ctx])
 (defmethod useful? :default [_ _] true)
 
-(defsystem render-info   [_ g ctx])
+(component/defn render-info   [_ g ctx])
 (defmethod render-info :default [_ _g _ctx])

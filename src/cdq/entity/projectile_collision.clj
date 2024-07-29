@@ -1,5 +1,5 @@
 (ns cdq.entity.projectile-collision
-  (:require [core.component :refer [defcomponent]]
+  (:require [core.component :as component]
             [gdl.math.geom :as geom]
             [utils.core :refer [find-first]]
             [cdq.api.context :refer [world-grid]]
@@ -7,7 +7,7 @@
             [cdq.api.world.grid :refer [rectangle->cells]]
             [cdq.api.world.cell :as cell :refer [cells->entities]]))
 
-(defcomponent :entity/projectile-collision {}
+(component/def :entity/projectile-collision {}
   {:keys [hit-effect
           already-hit-bodies
           piercing?]}
