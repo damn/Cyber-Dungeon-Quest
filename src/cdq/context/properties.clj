@@ -5,8 +5,7 @@
             [malli.error :as me]
             [gdl.context :refer [get-sprite create-image]]
             [gdl.graphics.animation :as animation]
-            [utils.core :refer [safe-get readable-number]]
-            [cdq.api.context :refer [modifier-text effect-text]]))
+            [utils.core :refer [safe-get]]))
 
 (defn property->type [property-types property]
   (some (fn [[type {:keys [of-type?]}]]
@@ -14,81 +13,10 @@
             type))
         property-types))
 
-;;
-
-(defmulti property->text (fn [{:keys [context/properties]} property]
-                           (property->type (:property-types properties) property)))
-
-; TODO ?
-(defmethod property->text :default [_ctx properties]
-  #_(cons [:TODO (property-type properties)]
-        properties))
-
-(comment
- (defn- all-text-colors []
-   (let [colors (seq (.keys (com.badlogic.gdx.graphics.Colors/getColors)))]
-     (str/join "\n"
-               (for [colors (partition-all 4 colors)]
-                 (str/join " , " (map #(str "[" % "]" %) colors)))))))
-
-(com.badlogic.gdx.graphics.Colors/put "ITEM_GOLD"
-                                      (com.badlogic.gdx.graphics.Color. (float 0.84)
-                                                                        (float 0.8)
-                                                                        (float 0.52)
-                                                                        (float 1)))
-
-(com.badlogic.gdx.graphics.Colors/put "MODIFIER_BLUE"
-                                      (com.badlogic.gdx.graphics.Color. (float 0.38)
-                                                                        (float 0.47)
-                                                                        (float 1)
-                                                                        (float 1)))
-
-(defmethod property->text :property.type/creature [_ctx
-                                                   {:keys [property/id
-                                                           creature/species
-                                                           entity/flying?
-                                                           entity/skills
-                                                           entity/inventory
-                                                           creature/level]}]
-  [(str/capitalize (name id))
-   (str/capitalize (name species))
-   (when level (str "Level: " level))
-   (str "Flying? " flying?)
-   (when (seq skills) (str "Spells: " (str/join "," (map name skills))))
-   (when (seq inventory) (str "Items: "   (str/join "," (map name inventory))))])
-
-(def ^:private skill-cost-color "[CYAN]")
-(def ^:private action-time-color "[GOLD]")
-(def ^:private cooldown-color "[SKY]")
-(def ^:private effect-color "[CHARTREUSE]")
-(def ^:private modifier-color "[VIOLET]")
-
-; TODO cdq.tooltips?
-
-(defmethod property->text :property.type/skill [ctx
-                                                {:keys [property/id
-                                                        skill/action-time
-                                                        skill/cooldown
-                                                        skill/cost
-                                                        skill/effect
-                                                        skill/action-time-modifier-key]}]
-  [(str/capitalize (name id))
-   (str skill-cost-color "Cost: " cost "[]")
-   (str action-time-color
-        (case action-time-modifier-key
-          :stats/cast-speed "Casting-Time"
-          :stats/attack-speed "Attack-Time")
-        ": "
-        (readable-number action-time) " seconds" "[]")
-   (str cooldown-color "Cooldown: " (readable-number cooldown) "[]")
-   (str effect-color (effect-text ctx effect) "[]")])
-
-(defmethod property->text :property.type/item [ctx
-                                               {:keys [property/pretty-name
-                                                       item/modifier]
-                                                :as item}]
-  [(str "[ITEM_GOLD]" pretty-name (when-let [cnt (:count item)] (str " (" cnt ")")) "[]")
-   (when (seq modifier) (str modifier-color (modifier-text ctx modifier) "[]"))])
+(defn- property->text [{{:keys [property-types]} :context/properties :as ctx} property]
+  ((:->text (get property-types (property->type property-types property)))
+   ctx
+   property))
 
 (extend-type gdl.context.Context
   cdq.api.context/TooltipText
