@@ -1,7 +1,6 @@
 (ns app
   (:require [gdl.backends.libgdx.app :as app]
             [gdl.context :refer [generate-ttf]]
-            [utils.core :refer [safe-get]]
             cdq.properties
             (cdq.context [properties :as properties]
                          [cursor :as cursor]
@@ -12,7 +11,6 @@
                          render-debug
                          [screens :as screens]
                          transaction-handler)
-            [cdq.entity.movement :refer [frames-per-second]]
             (cdq.context.ui [action-bar :as action-bar]
                             [inventory-window :as inventory-window]
                             player-modal
@@ -20,15 +18,13 @@
             [cdq.api.context :refer [set-cursor!]]))
 
 (def ^:private production-config
-  {:full-screen? true
-   :map-editor? false
+  {:map-editor? false
    :property-editor? false
    :debug-windows? false
    :debug-options? false})
 
 (def ^:private dev-config
-  {:full-screen? false
-   :map-editor? true
+  {:map-editor? true
    :property-editor? true
    :debug-windows? true
    :debug-options? true})
@@ -52,16 +48,14 @@
     (merge context
            {:context/screens (screens/->context context)})))
 
-(def ^:private tile-size 48)
-
 (def ^:private app-config
-  {:app {:title "Vampire Queen"
+  {:app {:title "Cyber Dungeon Quest"
          :width  1440
          :height 900
-         :full-screen? (safe-get config :full-screen?)
-         :fps frames-per-second}
+         :full-screen? false
+         :fps 60}
    :create-context create-context
-   :world-unit-scale (/ tile-size)})
+   :world-unit-scale (/ 48)})
 
 (defn -main []
   (app/start app-config))

@@ -7,7 +7,6 @@
             [cdq.api.world.grid :refer [valid-position?]]
             [cdq.attributes :as attr]))
 
-(def frames-per-second 60)
 (def max-delta-time 0.04)
 
 ; set max speed so small entities are not skipped by projectiles
