@@ -1,3 +1,5 @@
+Archived: Development continues in https://github.com/damn/Fullmoon
+
 # Cyber Dungeon Quest
 
 <img src="screenshot.png">
